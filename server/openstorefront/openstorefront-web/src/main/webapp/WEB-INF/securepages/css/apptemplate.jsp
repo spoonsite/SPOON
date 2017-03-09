@@ -676,6 +676,10 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: #4a4e4f;
 }
 
+.icon-button-color-white-fill {
+	color: white;
+}
+
 .icon-button-color-run {
 	color: #FFA500;
 }
@@ -684,7 +688,7 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: #64B647;
 }
 
-.icon-button-color-add {
+.icon-button-color-save {
 	color: #167DEE;
 }
 
@@ -701,6 +705,7 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 }
 
 /* For icons that don't vertically center for cryptic reasons **/
+
 .icon-vertical-correction {
 	margin-top: -5px;
 }
@@ -723,11 +728,6 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	bottom: 1px;
 }
 
-.icon-vertical-correction-add {
-	position: relative;
-	bottom: 1px;
-}
-
 .icon-small-vertical-correction {
 	margin-top: 5px;
 }
@@ -742,10 +742,18 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 }
 
 .icon-horizontal-correction {
-	margin-left: -3px;
+	margin-right: 3px;
+}
+
+.shift-window-text-right {
+	margin-left: 8px;
 }
 
 .icon-small-horizontal-correction-left {
+	margin-right: 8px;
+}
+
+.icon-small-horizontal-correction-right {
 	margin-left: 5px;
 }
 
@@ -756,7 +764,6 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 }
 
 .icon-vertical-correction-search-tools {
-
 	position: relative;
 	right: 4px;
 	bottom: 6px;

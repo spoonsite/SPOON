@@ -162,7 +162,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				text: 'Save',
 				formBind: true,
-				iconCls: 'fa fa-lg fa-save icon-button-color-add',
+				iconCls: 'fa fa-lg fa-save icon-button-color-save',
 				handler: function () {
 					var data = profileForm.getValues();
 					data.externalGuid = data.guid;

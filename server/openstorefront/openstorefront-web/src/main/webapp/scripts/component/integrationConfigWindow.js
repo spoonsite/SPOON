@@ -23,7 +23,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 	
 	title: 'Integration',
 	modal: true,
-	iconCls: 'fa fa-lg fa-gear',
+	iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 	layout: 'fit',
 	width: '60%',
 	height: '50%',
@@ -34,7 +34,8 @@ Ext.define('OSF.component.IntegrationWindow', {
 		var integrationWindow = this;
 		
 		var addEditWindow = Ext.create('Ext.window.Window', {
-			title: 'Add/Update  Configuration',
+			iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+			title: 'Add/Edit Configuration',
 			modal: true,
 			width: '40%',
 			height: 340,
@@ -141,7 +142,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								{
 									text: 'Save',
 									formBind: true,
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function() {
 										
 										// Force A Jira Check
@@ -314,7 +315,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						},
 						{
 							text: 'Add',							
-							iconCls: 'fa fa-lg fa-plus icon-button-color-add',
+							iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 							handler: function(){
 								addEditWindow.show();
 								addEditWindow.getComponent('configForm').reset();
@@ -394,8 +395,10 @@ Ext.define('OSF.component.IntegrationWindow', {
 								var integrationId = this.up('grid').getSelectionModel().getSelection()[0].get('integrationConfigId');
 								
 								Ext.Msg.show({
-									title:'Confirm',
+									title: 'Delete Configuration?',
+									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete selected configuration?',
+									closeAction: 'destroy',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
 									fn: function(btn) {

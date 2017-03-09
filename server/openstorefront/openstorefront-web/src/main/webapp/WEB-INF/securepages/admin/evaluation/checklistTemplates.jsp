@@ -36,7 +36,7 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-edit',
 										width: '100px',
 										scale: 'medium',
 										handler: function() {
@@ -339,7 +339,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add',									
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',									
 								scale: 'medium',
 								width: '100px',
 								handler: function(){

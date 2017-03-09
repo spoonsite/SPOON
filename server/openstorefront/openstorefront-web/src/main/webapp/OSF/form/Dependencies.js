@@ -93,7 +93,7 @@ Ext.define('OSF.form.Dependencies', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
@@ -121,7 +121,7 @@ Ext.define('OSF.form.Dependencies', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close text-danger',
+							iconCls: 'fa fa-lg fa-close',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -194,7 +194,7 @@ Ext.define('OSF.form.Dependencies', {
 						}, 								
 						{
 							text: 'Refresh',
-							iconCls: 'fa fa-refresh',
+							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}
@@ -205,19 +205,19 @@ Ext.define('OSF.form.Dependencies', {
 						{
 							text: 'Edit',
 							itemId: 'editBtn',
-							iconCls: 'fa fa-edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(dependanciesPanel.dependenciesGrid.getSelection()[0]);
 							}									
 						},
 						{
-							xtype: 'tbfill'
+							xtype: 'tbseparator'
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
-							iconCls: 'fa fa-power-off',									
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',			
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(dependanciesPanel.dependenciesGrid, 'dependencyId', 'dependencies');

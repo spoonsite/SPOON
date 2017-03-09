@@ -55,8 +55,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 		{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 			renderer: function(value, meta, record) {
 				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-					meta.tdCls = 'alert-success';
-					return '<span class="label-text-bold">' + value + '</span><span class="updated-watch"> UPDATED </span>';
+					return '<span class="label-text-bold">' + value + '</span><span class="updated-watch text-success"> UPDATED </span>';
 				} else {
 					return '<span class="label-text-bold">' + value + '</span>';
 				}
@@ -72,9 +71,6 @@ Ext.define('OSF.component.UserWatchPanel', {
 		},
 		{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
 			renderer: function(value, meta, record) {
-				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-					meta.tdCls = 'alert-success';
-				}
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}			
 		},
@@ -122,7 +118,8 @@ Ext.define('OSF.component.UserWatchPanel', {
 						});
 
 						var entryViewWindow = Ext.create('Ext.window.Window', {
-							title: 'Entry',
+							title: 'View Entry',
+							iconCls: 'fa fa-lg fa-eye',
 							maximizable: true,
 							modal: true,
 							closeMode: 'destroy',
@@ -189,7 +186,8 @@ Ext.define('OSF.component.UserWatchPanel', {
 						
 						Ext.Msg.show({
 							title:'Delete Watch?',
-							message: 'Are you sure you want to delete this Watch?',
+							iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+							message: 'Are you sure you want to delete this watch?',
 							buttons: Ext.Msg.YESNO,
 							icon: Ext.Msg.QUESTION,
 							fn: function(btn) {

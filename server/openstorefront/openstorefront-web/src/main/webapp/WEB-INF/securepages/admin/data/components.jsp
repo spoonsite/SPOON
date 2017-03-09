@@ -657,7 +657,7 @@
 							items: [
 								{
 									text: 'Save All',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
 										var records = this.up('grid').getStore().getData();
@@ -2781,7 +2781,7 @@
 								{
 									text: 'Save',
 									tooltip: 'Save General information and continue.',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									formBind: true,
 									handler: function() {
 										
@@ -2906,7 +2906,7 @@
 								{
 									text: 'Close',
 									tooltip: 'Close Add/Edit window',
-									iconCls: 'fa fa-lg fa-times icon-button-color-warning',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').close();
 									}													
@@ -3167,7 +3167,7 @@
 					layout: 'fit',
 					width: '80%',
 					height: '90%',
-					iconCls: 'fa fa-lg fa-edit',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					listeners: {
 						beforeclose: function(panel, opts){
 							Ext.getCmp('resourcesGrid').removeDocked(Ext.getCmp('resourcesGrid').down('form'), true);
@@ -3406,7 +3406,7 @@
 									items: [
 										{
 											text: 'Create Snapshot',
-											iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
 											tooltip: 'Creates snapshot of the current verison',
 											handler: function(){
 												var versionWin = this.up('window');
@@ -3509,6 +3509,7 @@
 					height: '80%',
 					maximizable: true,
 					title: 'Preview',
+					iconCls: 'fa fa-lg fa-eye',
 					modal: true,
 					layout: 'fit',
 					items: [
@@ -3637,7 +3638,7 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
 												
 												// Get Selection
@@ -3726,7 +3727,7 @@
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
 					title: 'Change Type - ',
-					iconCls: 'fa fa-lg fa-user',
+					iconCls: 'fa fa-lg fa-exchange',
 					width: '35%',
 					height: 175,
 					y: 200,
@@ -3768,7 +3769,7 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
 												
 												// Get Selection
@@ -4024,7 +4025,7 @@
 										{
 											text: 'Merge',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-exchange',
+											iconCls: 'fa fa-lg fa-compress',
 											handler: function() {
 												
 												var mergeForm = this.up('form');
@@ -4253,7 +4254,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddEditComponent();
 									}
@@ -4287,7 +4288,7 @@
 									text: 'Approve',
 									id: 'lookupGrid-tools-approve',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-check icon-button-color-refresh icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save icon-vertical-correction',
 									disabled: true,
 									handler: function () {									
 										actionApproveComponent();
@@ -4308,7 +4309,7 @@
 										},
 										{
 											text: 'Change Type',											
-											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
+											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionChangeType();
 											}
@@ -4327,7 +4328,7 @@
 										{
 											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',											
-											iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction icon-button-color-default',
+											iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionCopyComponent();
 											}
@@ -4335,7 +4336,7 @@
 										{
 											id: 'lookupGrid-tools-action-merge',
 											text: 'Merge',
-											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
+											iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionMergeComponent();
 											}

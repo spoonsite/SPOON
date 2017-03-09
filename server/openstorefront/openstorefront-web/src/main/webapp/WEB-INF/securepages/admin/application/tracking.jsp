@@ -411,7 +411,7 @@
 					Ext.create('Ext.window.Window', {
 						id: 'viewUserTrackingInfo',
 						title: 'View Record Information',
-						iconCls: 'fa fa-lg fa-info-circle',
+						iconCls: 'fa fa-lg fa-eye',
 						width: '30%',
 						height: 400,
 						autoScroll: true,

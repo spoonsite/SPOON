@@ -154,7 +154,7 @@ Ext.define('OSF.widget.Feedback', {
 							itemId: 'complete',
 							scale: 'medium',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-edit',
+							iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save',
 							handler: function () {
 								actionMarkStatus(this.up('grid'), this.up('grid').getSelectionModel().getSelection()[0], true);										
 							}									

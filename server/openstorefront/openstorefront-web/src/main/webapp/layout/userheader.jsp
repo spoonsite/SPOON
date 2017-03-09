@@ -172,7 +172,7 @@
 								{
 									text: 'Dashboard',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-home',
+									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -183,7 +183,7 @@
 								{
 									text: 'Profile',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-user',
+									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									handler: function(){
 										actionLoadContent('User-Profile');
 									}									
@@ -191,7 +191,7 @@
 								{
 									text: 'Submissions',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-list',
+									iconCls: 'fa fa-2x fa-list icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
@@ -202,7 +202,7 @@
 								{
 									text: 'Tools',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-wrench',
+									iconCls: 'fa fa-2x fa-wrench icon-button-color-default',
 									width: '140px',
 									menu: {										
 										items: toolsMenu,

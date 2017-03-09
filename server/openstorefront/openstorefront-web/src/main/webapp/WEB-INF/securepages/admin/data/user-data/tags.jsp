@@ -500,7 +500,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddTagForm();
 									}
@@ -1136,7 +1136,7 @@
 										{
 											text: 'Save',
 											id: 'addTagForm-saveButton',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												

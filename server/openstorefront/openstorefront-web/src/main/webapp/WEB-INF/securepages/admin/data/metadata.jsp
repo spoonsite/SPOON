@@ -976,7 +976,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-edit',
 									handler: function () {
 										actionAddLabelForm();
 									}
@@ -1647,7 +1647,7 @@
 					width: '30%',
 					height: 185,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-plus',
+					iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -1712,7 +1712,7 @@
 										{
 											text: 'Create',
 											id: 'addLabelForm-saveButton',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												

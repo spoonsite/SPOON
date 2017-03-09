@@ -2761,7 +2761,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveAndExit',
 							hidden: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-top-padding-2',
 							handler: function () {
 																
 																
@@ -2772,7 +2772,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'Submit',
 							hidden: true,
 							scale: 'large',							
-							iconCls: 'fa fa-2x fa-check icon-top-padding-2 highlight-success',														
+							iconCls: 'fa fa-2x fa-check icon-top-padding-2 icon-button-color-refresh',														
 							handler: function () {
 								
 								submissionPanel.setLoading('Submitting Entry...');
@@ -2817,7 +2817,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveLater',
 							scale: 'large',
 							hidden: true,
-							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-top-padding-2',							
+							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-top-padding-2',							
 							handler: function () {					
 								var promptForSave = false;
 								submissionPanel.cancelSubmissionHandler(promptForSave);																								

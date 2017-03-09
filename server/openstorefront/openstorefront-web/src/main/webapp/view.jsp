@@ -634,7 +634,7 @@
 						maxWidth: 200,
 						scale: 'medium',
 						margin: 10,
-						iconCls: 'fa fa-lg fa-star-half-o icon-button-color-run icon-small-vertical-correction',
+						iconCls: 'fa fa-lg fa-star-half-o icon-small-vertical-correction',
 						handler: function(){							
 							ViewPage.reviewWindow.refresh();
 							ViewPage.reviewWindow.show();

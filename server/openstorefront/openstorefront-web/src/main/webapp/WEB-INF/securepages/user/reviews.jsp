@@ -151,7 +151,8 @@
 				};
 						
 				var reviewWindow = Ext.create('OSF.component.ReviewWindow', {
-					title: 'Edit Review',						
+					title: 'Edit Review',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					postHandler: function(reviewWin, response) {
 						actionRefresh();
 					}

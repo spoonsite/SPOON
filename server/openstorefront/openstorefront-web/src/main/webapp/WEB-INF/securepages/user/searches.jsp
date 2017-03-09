@@ -83,7 +83,7 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										actionSaveSearch();										
 									}
@@ -248,7 +248,7 @@
 									itemId: 'add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -303,8 +303,9 @@
 
 				var actionDelete = function(record) {
 					Ext.Msg.show({
-						title:'Remove Search?',
-						message: 'Are you sure you want to remove this search?',
+						title:'Delete Search?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete this search?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {

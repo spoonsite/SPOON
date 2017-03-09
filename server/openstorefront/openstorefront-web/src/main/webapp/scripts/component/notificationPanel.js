@@ -229,6 +229,7 @@ Ext.define('OSF.component.NotificationPanel', {
 								
 								Ext.Msg.show({
 									title:'Delete All Notifications?',
+									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete all notifications?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,

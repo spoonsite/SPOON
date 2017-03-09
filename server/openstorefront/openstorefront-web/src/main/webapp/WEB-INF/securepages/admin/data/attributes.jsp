@@ -472,7 +472,7 @@
 								text: 'Add New Type',
 								id: 'attributeGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function() {
 									actionAddAttribute();
 								}
@@ -598,7 +598,7 @@
 			var actionAddAttribute = function actionAddAttribute() {
 				Ext.getCmp('editAttributeForm').reset();
 				editAttributeWin.edit = false;
-				editAttributeWin.setTitle('Add Attribute');
+				editAttributeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
@@ -617,7 +617,7 @@
 
 			var actionEditAttribute = function(record) {
 				editAttributeWin.edit = true;
-				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
+				editAttributeWin.setTitle('<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType);
 				editAttributeWin.show();
 				
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
@@ -888,7 +888,7 @@
 										text: 'Save',
 										id: 'set-flags-update-button',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										disabled: true,
 										handler: function() {
 
@@ -1215,8 +1215,10 @@
 				
 				// Confirm Delete Operation
 				Ext.Msg.show({
-					title: 'Delete?',
-					message: 'Are you sure you want to delete ' + name + '?',
+					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+					title: 'Delete Attribute?',
+					minHeight: 180,
+					message: '<b>Are you sure you want to delete attribute - ' + name + '?</b><br /><br /><b>Note:</b> This will remove the attribute from ALL entries approved and <br />&emsp;&emsp;&emsp;not approved.',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -1334,8 +1336,8 @@
 
 			var attachmentUploadWindow = Ext.create('Ext.window.Window', {
 				id: 'attachmentUploadWindow',
-				title: 'Upload Attachment',
-				iconCls: 'fa fa-lg fa-upload',
+				title: 'Add Attachment',
+				iconCls: 'fa fa-lg fa-paperclip',
 				width: '40%',
 				height: 175,
 				y: 60,
@@ -1524,7 +1526,7 @@
 							{
 								text: 'Add New Code',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function () {
 									var parentAttributeRecord = attributeGrid.getSelection()[0];
 									actionAddCode(parentAttributeRecord);
@@ -1564,8 +1566,8 @@
 								disabled: true,
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
-									var title = 'Delete Code';
-									var msg = 'Are you sure you want to delete this code?';
+									var title = 'Delete Attribute Code?';
+									var msg = '<b>Are you sure you want to delete this attribute code?</b><br /><br /><b>Note: </b>This will delete ALL attributes with this code from all<br />&emsp;&emsp;&emsp; approved and not approved entries.';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteCode(record);
@@ -1615,7 +1617,7 @@
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								handler: function() {
 									var record = codesGrid.getSelection()[0];
-									var title = 'Delete Attachment';
+									var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Attachment?</span>';
 									var msg = 'Are you sure you want to delete the attachment for this code?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
@@ -1769,7 +1771,7 @@
 									{
 										text: 'Save',
 										id: 'editCodeWin-save',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
 											var form = Ext.getCmp('editCodeForm');
@@ -1836,7 +1838,7 @@
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
-				editCodeWin.setTitle('Add New Code');
+				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
 				editCodeWin.show();
 			};
@@ -1846,7 +1848,7 @@
 				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
-				editCodeWin.setTitle('Edit Code - ' + record.data.code);
+				editCodeWin.setTitle('<i class="fa fa-edit"></i>' + '<span class="shift-window-text-right">Edit Code - </span>' + record.data.code);
 				Ext.getCmp('editCodeForm-code').setEditable(false);
 				editCodeWin.show();
 			};
@@ -1921,6 +1923,7 @@
 				id: 'manageCodesWin',
 				iconCls: 'fa fa-2x fa-list-alt',
 				title: 'Manage Codes',
+				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
 				modal: true,
 				width: '90%',
 				height: '90%',
@@ -2199,7 +2202,7 @@
 									{
 										text: 'Save',
 										id: 'editAttributeWin-save',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
 											var form = Ext.getCmp('editAttributeForm');
@@ -2500,7 +2503,7 @@
 							
 							var html = '<span style="font-weight: bold;">' + value + "</span>";
 							html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-							html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+							html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 							html += '<span style="float: left;">' + record.get('type').name + '</span>';
 							html += "</div>";
 							
@@ -2762,7 +2765,7 @@
 								// Build Component With Record Type
 								var html = '<span style="font-weight: bold;">' + value + "</span>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + recordType.name + '</span>';
 								html += "</div>";
 							}
@@ -2792,7 +2795,7 @@
 			var manageAssignmentsWin = Ext.create('Ext.window.Window', {
 				id: 'manageAssignmentsWin',
 				title: 'Manage Assignments',
-				iconCls: 'fa fa-2x fa-list-alt',
+				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
 				modal: true,
 				width: '60%',
 				height: '80%',

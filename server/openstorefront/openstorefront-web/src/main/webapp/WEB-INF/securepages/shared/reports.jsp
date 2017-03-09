@@ -211,7 +211,7 @@
 											id: 'reportAddButton',
 											scale: 'medium',
 											width: '100px',
-											iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+											iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 											disabled: false,
 											handler: function () {
 												scheduleReportAdd();
@@ -341,6 +341,7 @@
 
 					Ext.Msg.show({
 						title: 'Delete Scheduled Report?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the scheduled report?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -668,9 +669,9 @@
 					// 
 					//
 					Ext.create('Ext.window.Window', {
-						title: 'Schedule Report',
+						title: 'Add/Edit Scheduled Report',
 						id: 'scheduleReportWin',
-						iconCls: 'fa fa-calendar',
+						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
 						minHeight: 500,
 						y: 100,
@@ -696,7 +697,7 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-lg fa-save icon-button-color-add',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
 												handler: function () {
 
 													var data = {};
@@ -1045,7 +1046,7 @@
 				
 				var historyGrid = Ext.create('Ext.grid.Panel', {
 					id: 'historyGrid',
-					title: 'Reports <i class="fa fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
+					title: 'Reports &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
@@ -1102,7 +1103,7 @@
 								},
 								{
 									text: 'New Report',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
 									scale: 'medium',
 									handler: function () {
 										scheduleReportWin();

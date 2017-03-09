@@ -47,7 +47,7 @@ Ext.define('OSF.form.Resources', {
 					text: 'Save',
 					formBind: true,
 					margin: '0 20 0 0',
-					iconCls: 'fa fa-save',
+					iconCls: 'fa fa-lg fa-save',
 					handler: function(){	
 						var form = this.up('form');
 						var data = form.getValues();
@@ -123,7 +123,7 @@ Ext.define('OSF.form.Resources', {
 				{
 					xtype: 'button',
 					text: 'Cancel',										
-					iconCls: 'fa fa-close text-danger',
+					iconCls: 'fa fa-lg fa-close',
 					handler: function(){
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
@@ -286,7 +286,7 @@ Ext.define('OSF.form.Resources', {
 						}, 								
 						{
 							text: 'Refresh',
-							iconCls: 'fa fa-refresh',
+							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}
@@ -297,7 +297,7 @@ Ext.define('OSF.form.Resources', {
 						{
 							text: 'Edit',
 							itemId: 'editBtn',
-							iconCls: 'fa fa-edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								var record = resourcePanel.resourcesGrid.getSelection()[0];
 								this.up('grid').down('form').reset();
@@ -310,24 +310,24 @@ Ext.define('OSF.form.Resources', {
 							}									
 						},
 						{
-							xtype: 'tbfill'
+							xtype: 'tbseparator'
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
-							iconCls: 'fa fa-power-off',									
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
 							}
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbfill'
 						},
 						{
 							text: 'Delete',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash',																		
+							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',		
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources', undefined, undefined, true);

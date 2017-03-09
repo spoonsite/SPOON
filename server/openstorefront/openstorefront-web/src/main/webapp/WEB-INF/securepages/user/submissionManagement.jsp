@@ -262,7 +262,7 @@
 								{
 									text: 'New Submission',									
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',									
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
 									handler: function () {
 										Ext.getCmp('submissionWindow').show();
 										Ext.getCmp('submissionPanel').resetSubmission();
@@ -288,7 +288,7 @@
 									hidden: true,									
 									scale: 'medium',
 									width: '180px',
-									iconCls: 'fa fa-2x fa-comment-o icon-button-color-default icon-vertical-correction-view',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default icon-vertical-correction-view',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -320,7 +320,7 @@
 											{
 												text: 'Preview',
 												itemId: 'tbPreview',
-												iconCls: 'fa fa-lg fa-binoculars icon-small-vertical-correction',
+												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
 												handler: function () {
 													actionPreviewComponent();
 												}
@@ -331,7 +331,7 @@
 											{
 												text: 'Copy',
 												itemId: 'tbCopy',
-												iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction',
+												iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
 												handler: function () {
 													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 
@@ -354,7 +354,7 @@
 											{
 												text: 'Toggle Notify',
 												itemId: 'tbNotify',
-												iconCls: 'fa fa-lg fa-envelope-o icon-small-vertical-correction',
+												iconCls: 'fa fa-lg fa-envelope-o icon-small-vertical-correction icon-button-color-default',
 												handler: function () {
 													if (currentUser && currentUser.email) {
 														var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -490,7 +490,7 @@
 									itemId: 'tbRemoveChangeRequest',
 									hidden: true,
 									scale: 'medium',								
-									iconCls: 'fa fa-2x icon-button-color-warning icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -531,8 +531,11 @@
 									
 									if (record.get('statusOfPendingChange')) {
 										tools.getComponent('tbSubmitChange').setText('Edit Change');
+										tools.getComponent('tbSubmitChange').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
 									} else {
 										tools.getComponent('tbSubmitChange').setText('Request Change');
+										tools.getComponent('tbSubmitChange').setIconCls('fa fa-2x fa-comment-o icon-button-color-default icon-vertical-correction-view');
+
 									}
 								}
 								if (record.get('approvalState') === 'P'){

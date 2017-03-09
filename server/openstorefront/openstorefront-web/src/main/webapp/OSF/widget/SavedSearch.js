@@ -63,7 +63,7 @@ Ext.define('OSF.widget.SavedSearch', {
 						{
 							text: 'Apply',
 							formBind: true,
-							iconCls: 'fa fa-check icon-button-color-add',
+							iconCls: 'fa fa-check icon-button-color-save',
 							handler: function() {	
 								var form = this.up('form');
 								var data = form.getValues();
