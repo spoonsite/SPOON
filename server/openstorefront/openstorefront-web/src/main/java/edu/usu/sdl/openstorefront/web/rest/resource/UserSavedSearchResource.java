@@ -104,7 +104,7 @@ public class UserSavedSearchResource
 			queryByExample.setOrderBy(userSearchSortExample);
 		}
 
-		List<UserSavedSearch> userSavedSearches = service.getPersistenceService().queryByExample(UserSavedSearch.class, queryByExample);
+		List<UserSavedSearch> userSavedSearches = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserSavedSearchWrapper userSavedSearchWrapper = new UserSavedSearchWrapper();
 		userSavedSearchWrapper.getData().addAll(userSavedSearches);

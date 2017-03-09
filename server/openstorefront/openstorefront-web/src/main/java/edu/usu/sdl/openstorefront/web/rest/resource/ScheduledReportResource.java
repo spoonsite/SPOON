@@ -72,7 +72,7 @@ public class ScheduledReportResource
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
 		}
 
-		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(ScheduledReport.class, reportExample);
+		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(reportExample);
 		reports = filterQueryParams.filter(reports);
 
 		GenericEntity<List<ScheduledReportView>> entity = new GenericEntity<List<ScheduledReportView>>(ScheduledReportView.toReportView(reports))
@@ -93,7 +93,7 @@ public class ScheduledReportResource
 	{
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setScheduleReportId(scheduleReportId);
-		ScheduledReport report = service.getPersistenceService().queryOneByExample(ScheduledReport.class, reportExample);
+		ScheduledReport report = service.getPersistenceService().queryOneByExample(reportExample);
 		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);

@@ -75,7 +75,7 @@ public class ComponentSubmissionMessageGenerator
 		LOG.log(Level.FINER, MessageFormat.format("Query component dts: {0}", componentStartExample.getUpdateDts()));
 
 		//submitted
-		List<Component> components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
+		List<Component> components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (components.isEmpty() == false) {
 			message.append(components.size())
 					.append(" ")
@@ -93,7 +93,7 @@ public class ComponentSubmissionMessageGenerator
 
 		//canceled
 		componentExample.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-		components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
+		components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (components.isEmpty() == false) {
 			message.append(components.size())
 					.append(" ")

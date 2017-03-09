@@ -101,7 +101,7 @@ public class FeedbackResource
 			queryByExample.setOrderBy(ticketSortExample);
 		}
 
-		List<FeedbackTicket> tickets = service.getPersistenceService().queryByExample(FeedbackTicket.class, queryByExample);
+		List<FeedbackTicket> tickets = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new FeedbackTicketWrapper(tickets, total));
 	}

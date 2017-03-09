@@ -88,7 +88,7 @@ public class AttributeServiceImpl
         AttributeType example = new AttributeType();
         example.setActiveStatus(AttributeType.ACTIVE_STATUS);
         example.setRequiredFlg(Boolean.TRUE);
-        List<AttributeType> required = persistenceService.queryByExample(AttributeType.class, new QueryByExample(example));
+        List<AttributeType> required = persistenceService.queryByExample(new QueryByExample(example));
         return required;
     }
 
@@ -99,7 +99,7 @@ public class AttributeServiceImpl
         if (element != null) {
             attributeCodes = (List<AttributeCode>) element.getObjectValue();
         } else {
-            attributeCodes = persistenceService.queryByExample(AttributeCode.class, new AttributeCode());
+            attributeCodes = persistenceService.queryByExample(new AttributeCode());
             element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
             OSFCacheManager.getAttributeCodeAllCache().put(element);
         }
@@ -133,7 +133,7 @@ public class AttributeServiceImpl
             AttributeCodePk attributeCodePk = new AttributeCodePk();
             attributeCodePk.setAttributeType(type);
             attributeCodeExample.setAttributeCodePk(attributeCodePk);
-            attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+            attributeCodes = persistenceService.queryByExample(new QueryByExample(attributeCodeExample));
         } else {
             Element element;
             element = OSFCacheManager.getAttributeCache().get(type);
@@ -147,7 +147,7 @@ public class AttributeServiceImpl
                 attributeCodeExample.setAttributeCodePk(attributeCodePk);
                 attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 
-                attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+                attributeCodes = persistenceService.queryByExample(new QueryByExample(attributeCodeExample));
                 element = new Element(type, attributeCodes);
                 OSFCacheManager.getAttributeCache().put(element);
             }
@@ -169,7 +169,7 @@ public class AttributeServiceImpl
             componentAttributePk.setAttributeType(attributeType.getAttributeType());
             ComponentAttribute componentAttribute = new ComponentAttribute();
             componentAttribute.setComponentAttributePk(componentAttributePk);
-            List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
+            List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(componentAttribute);
 
             List<Component> components = new ArrayList<>();
             componentAttributes.stream().forEach((attr) -> {
@@ -223,7 +223,7 @@ public class AttributeServiceImpl
             ComponentAttribute example = new ComponentAttribute();
             example.setComponentAttributePk(pk);
 
-            List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+            List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(new QueryByExample(example));
 
             List<Component> components = new ArrayList<>();
             componentAttributes.stream().forEach((attr) -> {
@@ -330,7 +330,7 @@ public class AttributeServiceImpl
         componentAttributeExample.setComponentAttributePk(componentAttributePk);
         QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
         queryByExample.setReturnNonProxied(false);
-        return persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
+        return persistenceService.queryByExample(queryByExample);
     }
 
     @Override
@@ -366,7 +366,7 @@ public class AttributeServiceImpl
             attributeCodeExample.setAttributeCodePk(attributeCodePk);
             
             // Remove attachments
-            List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
+            List<AttributeCode> attributeCodes = persistenceService.queryByExample(attributeCodeExample);
             for (AttributeCode attributeCode : attributeCodes) {
                 deleteCodeAttachment(attributeCode);                             
             }
@@ -439,7 +439,7 @@ public class AttributeServiceImpl
     @Override
     public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap) {
         AttributeType attributeTypeExample = new AttributeType();
-        List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+        List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
         Map<String, AttributeType> existingAttributeMap = new HashMap<>();
         attributeTypes.stream().forEach((attributeType) -> {
             existingAttributeMap.put(attributeType.getAttributeType(), attributeType);
@@ -571,7 +571,7 @@ public class AttributeServiceImpl
         } else {
             AttributeType attributeTypeExample = new AttributeType();
             attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-            List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+            List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
             for (AttributeType attributeTypeCheck : attributeTypes) {
                 if (attributeTypeCheck.getAttributeType().equals(type)) {
                     attributeType = attributeTypeCheck;
@@ -676,7 +676,7 @@ public class AttributeServiceImpl
         xrefAttributeTypeExample.setIntegrationType(attributeXrefModel.getIntegrationType());
         xrefAttributeTypeExample.setProjectType(attributeXrefModel.getProjectKey());
         xrefAttributeTypeExample.setIssueType(attributeXrefModel.getIssueType());
-        List<AttributeXRefType> xrefAttributeTypes = persistenceService.queryByExample(AttributeXRefType.class, xrefAttributeTypeExample);
+        List<AttributeXRefType> xrefAttributeTypes = persistenceService.queryByExample(xrefAttributeTypeExample);
         return xrefAttributeTypes;
     }
 
@@ -687,7 +687,7 @@ public class AttributeServiceImpl
         AttributeXRefMap xrefAttributeMapExample = new AttributeXRefMap();
         xrefAttributeMapExample.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 
-        List<AttributeXRefMap> xrefAttributeMaps = persistenceService.queryByExample(AttributeXRefMap.class, xrefAttributeMapExample);
+        List<AttributeXRefMap> xrefAttributeMaps = persistenceService.queryByExample(xrefAttributeMapExample);
         for (AttributeXRefMap xrefAttributeMap : xrefAttributeMaps) {
 
             if (attributeCodeMap.containsKey(xrefAttributeMap.getAttributeType())) {
@@ -725,14 +725,14 @@ public class AttributeServiceImpl
             persistenceService.persist(type);
             AttributeXRefMap mapTemp = new AttributeXRefMap();
             mapTemp.setAttributeType(type.getAttributeType());
-            List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(AttributeXRefMap.class, new QueryByExample(mapTemp));
+            List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(new QueryByExample(mapTemp));
             for (AttributeXRefMap tempMap : tempMaps) {
                 mapTemp = persistenceService.findById(AttributeXRefMap.class, tempMap.getXrefId());
                 persistenceService.delete(mapTemp);
             }
 
             for (AttributeXRefMap map : attributeXRefView.getMap()) {
-                AttributeXRefMap temp = persistenceService.queryOneByExample(AttributeXRefMap.class, map);
+                AttributeXRefMap temp = persistenceService.queryOneByExample(map);
                 if (temp != null) {
                     temp.setActiveStatus(map.getActiveStatus());
                     temp.setAttributeType(map.getAttributeType());
@@ -830,7 +830,7 @@ public class AttributeServiceImpl
             queryByExample.setOrderBy(attributeOrderExample);
         }
 
-        List<AttributeType> attributes = persistenceService.queryByExample(AttributeType.class, queryByExample);
+        List<AttributeType> attributes = persistenceService.queryByExample(queryByExample);
 
         result.setData(attributes);
 
@@ -875,7 +875,7 @@ public class AttributeServiceImpl
             }
         }
 
-        List<AttributeCode> attributes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+        List<AttributeCode> attributes = persistenceService.queryByExample(queryByExample);
         List<AttributeCodeView> views = AttributeCodeView.toViews(attributes);
 
         result.setData(views);

@@ -65,7 +65,7 @@ public class AlertResource
 
 		Alert alertExample = new Alert();
 		alertExample.setActiveStatus(filterQueryParams.getStatus());
-		List<Alert> alerts = service.getPersistenceService().queryByExample(Alert.class, alertExample);
+		List<Alert> alerts = service.getPersistenceService().queryByExample(alertExample);
 		alerts = filterQueryParams.filter(alerts);
 
 		GenericEntity<List<AlertView>> entity = new GenericEntity<List<AlertView>>(AlertView.toView(alerts))
@@ -85,7 +85,7 @@ public class AlertResource
 	{
 		Alert alertExample = new Alert();
 		alertExample.setAlertId(alertId);
-		Alert alert = service.getPersistenceService().queryOneByExample(Alert.class, alertExample);
+		Alert alert = service.getPersistenceService().queryOneByExample(alertExample);
 		return sendSingleEntityResponse(alert);
 	}
 

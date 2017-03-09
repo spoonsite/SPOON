@@ -117,7 +117,7 @@ public class OrganizationResource
 			queryByExample.setOrderBy(organizationSortExample);
 		}
 
-		List<Organization> organizations = service.getPersistenceService().queryByExample(Organization.class, queryByExample);
+		List<Organization> organizations = service.getPersistenceService().queryByExample(queryByExample);
 
 		OrganizationWrapper organizationWrapper = new OrganizationWrapper();
 		organizationWrapper.getData().addAll(OrganizationView.toView(organizations));

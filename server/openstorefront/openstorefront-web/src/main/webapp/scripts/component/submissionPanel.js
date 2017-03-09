@@ -608,6 +608,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'attributeForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -854,11 +855,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: 'Add Contact',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 350,
+				height: 400,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'contactForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -982,6 +984,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -1049,11 +1054,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add External Link',
 				width: '50%',
-				height: 410,
+				height: 465,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'resourceForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1147,7 +1153,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
-							})							
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
+							})
 						],
 						dockedItems: [
 							{
@@ -1368,6 +1377,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -1486,11 +1498,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Dependency',
 				width: '50%',
-				height: 420,
+				height: 470,
 				layout: 'fit',				
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'depForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1533,7 +1546,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
-							})
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
+							})							
 						],
 						dockedItems: [
 							{
@@ -1600,11 +1616,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Metadata',
 				width: '50%',
-				height: 300,
+				height: 350,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'metaForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1666,6 +1683,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -1740,6 +1760,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'relationshipForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -2602,6 +2623,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													items: [
 														{
 															xtype: 'form',
+															scrollable: true,
 															bodyStyle: 'padding: 10px',
 															defaults: {
 																labelAlign: 'top'

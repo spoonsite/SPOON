@@ -126,7 +126,7 @@ public class ReportResource
 			queryByExample.setOrderBy(reportSortExample);
 		}
 
-		List<Report> reports = service.getPersistenceService().queryByExample(Report.class, queryByExample);
+		List<Report> reports = service.getPersistenceService().queryByExample(queryByExample);
 
 		ReportWrapper reportWrapper = new ReportWrapper();
 		reportWrapper.getData().addAll(ReportView.toReportView(reports));
@@ -147,7 +147,7 @@ public class ReportResource
 	{
 		Report reportExample = new Report();
 		reportExample.setReportId(reportId);
-		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
+		Report report = service.getPersistenceService().queryOneByExample(reportExample);
 		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);
@@ -167,7 +167,7 @@ public class ReportResource
 	{
 		Report reportExample = new Report();
 		reportExample.setReportId(reportId);
-		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
+		Report report = service.getPersistenceService().queryOneByExample(reportExample);
 		if (report != null) {
 
 			Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);

@@ -161,7 +161,10 @@ Ext.define('OSF.form.Dependencies', {
 						},
 						Ext.create('OSF.component.SecurityComboBox', {	
 							hidden: dependanciesPanel.hideSecurityMarking
-						})								
+						}),
+						Ext.create('OSF.component.DataSensitivityComboBox', {			
+							width: '100%'
+						})						
 					]
 				},						
 				{

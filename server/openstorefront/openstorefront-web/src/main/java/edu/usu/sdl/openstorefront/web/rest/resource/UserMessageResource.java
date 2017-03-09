@@ -98,7 +98,7 @@ public class UserMessageResource
 			queryByExample.setOrderBy(userMessageSortExample);
 		}
 
-		List<UserMessage> userMessages = service.getPersistenceService().queryByExample(UserMessage.class, queryByExample);
+		List<UserMessage> userMessages = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserMessageWrapper userMessageWrapper = new UserMessageWrapper();
 		userMessageWrapper.setData(userMessages);
@@ -118,7 +118,7 @@ public class UserMessageResource
 	{
 		UserMessage userMessageExample = new UserMessage();
 		userMessageExample.setUserMessageId(userMessageId);
-		UserMessage userMessage = service.getPersistenceService().queryOneByExample(UserMessage.class, userMessageExample);
+		UserMessage userMessage = service.getPersistenceService().queryOneByExample(userMessageExample);
 		return sendSingleEntityResponse(userMessage);
 	}
 

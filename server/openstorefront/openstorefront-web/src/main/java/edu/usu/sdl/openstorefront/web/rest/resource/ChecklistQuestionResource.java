@@ -106,7 +106,7 @@ public class ChecklistQuestionResource
 			queryByExample.setOrderBy(checklistQuestionSortExample);
 		}
 
-		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(ChecklistQuestion.class, queryByExample);
+		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(queryByExample);
 
 		ChecklistQuestionWrapper checklistQuestionWrapper = new ChecklistQuestionWrapper();
 		checklistQuestionWrapper.getData().addAll(ChecklistQuestionView.toView(questions));

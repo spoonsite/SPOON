@@ -54,7 +54,7 @@ public class DBUpdateTest
 		testEntityUpdate.setUpdateDts(TimeUtil.currentDate());
 		service.getPersistenceService().updateByExample(TestEntity.class, testEntityUpdate, testEntityExampleWhere);
 
-		List<TestEntity> tests = service.getPersistenceService().queryByExample(TestEntity.class, new TestEntity());
+		List<TestEntity> tests = service.getPersistenceService().queryByExample(new TestEntity());
 		tests.forEach(test -> {
 			results.append(StringProcessor.printObject(test)).append("<br><br>");
 		});

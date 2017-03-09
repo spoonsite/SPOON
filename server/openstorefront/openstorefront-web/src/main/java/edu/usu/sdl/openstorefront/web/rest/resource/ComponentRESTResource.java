@@ -210,7 +210,7 @@ public class ComponentRESTResource
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
 				componentExample.setComponentType(null);
 			}
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -228,7 +228,7 @@ public class ComponentRESTResource
 
 			Component componentExample = new Component();
 
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -253,7 +253,7 @@ public class ComponentRESTResource
 	{
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 		componentResources = FilterEngine.filter(componentResources, true);
 
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
@@ -533,7 +533,7 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
 
-		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
 
 		if (approvedOnly) {
 			tags = tags.stream()
@@ -565,7 +565,7 @@ public class ComponentRESTResource
 		ComponentReview reviewExample = new ComponentReview();
 		reviewExample.setActiveStatus(filterQueryParams.getStatus());
 
-		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
 
@@ -591,11 +591,11 @@ public class ComponentRESTResource
 		ComponentQuestion questionExample = new ComponentQuestion();
 		questionExample.setActiveStatus(filterQueryParams.getStatus());
 
-		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(questionExample);
 		componentQuestions = filterQueryParams.filter(componentQuestions);
 
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
-		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(responseExample);
 		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
@@ -665,7 +665,7 @@ public class ComponentRESTResource
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 			componentAttributeExample.setComponentId(componentId);
-			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
 					component.getAttributes().add(componentAttribute);
@@ -950,7 +950,7 @@ public class ComponentRESTResource
 		versionHistory.setActiveStatus(ComponentVersionHistory.ACTIVE_STATUS);
 		versionHistory.setComponentId(componentId);
 
-		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(ComponentVersionHistory.class, versionHistory);
+		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(versionHistory);
 
 		GenericEntity<List<ComponentVersionHistory>> entity = new GenericEntity<List<ComponentVersionHistory>>(versionHistories)
 		{
@@ -1086,7 +1086,7 @@ public class ComponentRESTResource
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 
 		GenericEntity<List<ComponentAttribute>> entity = new GenericEntity<List<ComponentAttribute>>(componentAttributes)
@@ -1113,7 +1113,7 @@ public class ComponentRESTResource
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 		List<ComponentAttributeView> componentAttributeViews = ComponentAttributeView.toViewList(componentAttributes);
 
@@ -1139,7 +1139,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		return componentAttributes;
 	}
 
@@ -1161,7 +1161,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		for (ComponentAttribute attribute : componentAttributes) {
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
@@ -1329,7 +1329,7 @@ public class ComponentRESTResource
 		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
 		dependencyExample.setDependencyId(dependencyId);
 		dependencyExample.setComponentId(componentId);
-		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(dependencyExample);
 		return sendSingleEntityResponse(componentExternalDependency);
 	}
 
@@ -1352,7 +1352,7 @@ public class ComponentRESTResource
 		dependencyExample.setActiveStatus(filterQueryParams.getStatus());
 		dependencyExample.setComponentId(componentId);
 
-		List<ComponentExternalDependency> componentExternalDependencies = service.getPersistenceService().queryByExample(ComponentExternalDependency.class, dependencyExample);
+		List<ComponentExternalDependency> componentExternalDependencies = service.getPersistenceService().queryByExample(dependencyExample);
 		componentExternalDependencies = filterQueryParams.filter(componentExternalDependencies);
 		List<ComponentExternalDependencyView> views = ComponentExternalDependencyView.toViewList(componentExternalDependencies);
 
@@ -1401,7 +1401,7 @@ public class ComponentRESTResource
 		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
 		dependencyExample.setDependencyId(dependencyId);
 		dependencyExample.setComponentId(componentId);
-		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(dependencyExample);
 		if (componentExternalDependency != null) {
 			service.getComponentService().activateBaseComponent(ComponentExternalDependency.class, dependencyId);
 		}
@@ -1514,7 +1514,7 @@ public class ComponentRESTResource
 		componentContactExample.setActiveStatus(filterQueryParams.getStatus());
 		componentContactExample.setComponentId(componentId);
 
-		List<ComponentContact> contacts = service.getPersistenceService().queryByExample(ComponentContact.class, componentContactExample);
+		List<ComponentContact> contacts = service.getPersistenceService().queryByExample(componentContactExample);
 		List<ComponentContactView> contactViews = new ArrayList<>();
 		contacts.forEach(contact -> {
 			contactViews.add(ComponentContactView.toView(contact));
@@ -1859,7 +1859,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(filterQueryParams.getStatus());
 		componentResourceExample.setComponentId(componentId);
-		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 		componentResources = filterQueryParams.filter(componentResources);
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -1883,7 +1883,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		return sendSingleEntityResponse(componentResource);
 	}
 
@@ -1905,7 +1905,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 		}
@@ -1930,7 +1930,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 		}
@@ -1955,7 +1955,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().activateBaseComponent(ComponentResource.class, resourceId);
 			componentResource.setActiveStatus(Component.ACTIVE_STATUS);
@@ -2004,7 +2004,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			resource.setComponentId(componentId);
 			resource.setResourceId(resourceId);
@@ -2071,7 +2071,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setActiveStatus(filterQueryParams.getStatus());
 		componentMediaExample.setComponentId(componentId);
-		List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
+		List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(componentMediaExample);
 		componentMedia = filterQueryParams.filter(componentMedia);
 		List<ComponentMediaView> views = ComponentMediaView.toViewList(componentMedia);
 
@@ -2098,7 +2098,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setComponentId(componentId);
 		componentMediaExample.setComponentMediaId(mediaId);
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		return sendSingleEntityResponse(componentMedia);
 	}
 
@@ -2165,7 +2165,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setComponentId(componentId);
 		componentMediaExample.setComponentMediaId(mediaId);
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().activateBaseComponent(ComponentMedia.class, mediaId);
@@ -2285,7 +2285,7 @@ public class ComponentRESTResource
 		ComponentMetadata metadataExample = new ComponentMetadata();
 		metadataExample.setMetadataId(metadataId);
 		metadataExample.setComponentId(componentId);
-		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(metadataExample);
 		return sendSingleEntityResponse(componentMetadata);
 	}
 
@@ -2311,7 +2311,7 @@ public class ComponentRESTResource
 		metadataExample.setActiveStatus(filterQueryParams.getStatus());
 		metadataExample.setComponentId(componentId);
 
-		List<ComponentMetadata> componentMetadata = service.getPersistenceService().queryByExample(ComponentMetadata.class, metadataExample);
+		List<ComponentMetadata> componentMetadata = service.getPersistenceService().queryByExample(metadataExample);
 		componentMetadata = filterQueryParams.filter(componentMetadata);
 		List<ComponentMetadataView> views = ComponentMetadataView.toViewList(componentMetadata);
 
@@ -2360,7 +2360,7 @@ public class ComponentRESTResource
 		ComponentMetadata metadataExample = new ComponentMetadata();
 		metadataExample.setMetadataId(metadataId);
 		metadataExample.setComponentId(componentId);
-		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(metadataExample);
 		if (componentMetadata != null) {
 			service.getComponentService().activateBaseComponent(ComponentMetadata.class, metadataId);
 		}
@@ -2472,13 +2472,13 @@ public class ComponentRESTResource
 		questionExample.setActiveStatus(filterQueryParams.getStatus());
 		questionExample.setComponentId(componentId);
 
-		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(questionExample);
 		componentQuestions = filterQueryParams.filter(componentQuestions);
 
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 
-		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(responseExample);
 		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
@@ -2516,7 +2516,7 @@ public class ComponentRESTResource
 			responseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseExample.setQuestionId(question.getQuestionId());
 
-			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, new QueryByExample(responseExample));
+			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(new QueryByExample(responseExample));
 			ComponentQuestionView questionView = ComponentQuestionView.toView(question, ComponentQuestionResponseView.toViewList(responses));
 			componentQuestionViews.add(questionView);
 		}
@@ -2588,7 +2588,7 @@ public class ComponentRESTResource
 		componentQuestionExample.setComponentId(componentId);
 		componentQuestionExample.setQuestionId(questionId);
 
-		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(ComponentQuestion.class, componentQuestionExample);
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
 		if (componentQuestion != null) {
 			service.getComponentService().activateBaseComponent(ComponentQuestion.class, questionId);
 			componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
@@ -2674,7 +2674,7 @@ public class ComponentRESTResource
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
-		List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(responseExample);
 		return responses;
 	}
 
@@ -2698,7 +2698,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		return sendSingleEntityResponse(questionResponse);
 	}
 
@@ -2722,7 +2722,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
 			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
@@ -2753,7 +2753,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
 			service.getComponentService().activateBaseComponent(ComponentQuestionResponse.class, responseId);
 			questionResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
@@ -2797,7 +2797,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
 			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
@@ -2870,7 +2870,7 @@ public class ComponentRESTResource
 		reviewExample.setActiveStatus(filterQueryParams.getStatus());
 		reviewExample.setComponentId(componentId);
 
-		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
 
@@ -2937,7 +2937,7 @@ public class ComponentRESTResource
 		componentReviewExample.setComponentId(componentId);
 		componentReviewExample.setComponentReviewId(reviewId);
 
-		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(ComponentReview.class, componentReviewExample);
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
 		if (componentReview != null) {
 			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
 			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
@@ -3109,7 +3109,7 @@ public class ComponentRESTResource
 		componentReviewConPk.setComponentReviewId(reviewId);
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
-		return service.getPersistenceService().queryByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewConExample));
 	}
 
 	@GET
@@ -3135,7 +3135,7 @@ public class ComponentRESTResource
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
 
-		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
+		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewConExample));
 		return sendSingleEntityResponse(reviewCon);
 	}
 
@@ -3244,7 +3244,7 @@ public class ComponentRESTResource
 		ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		return service.getPersistenceService().queryByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewProExample));
 	}
 
 	@GET
@@ -3269,7 +3269,7 @@ public class ComponentRESTResource
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProPk.setReviewPro(proId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
+		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewProExample));
 		return sendSingleEntityResponse(componentReviewPro);
 	}
 
@@ -3408,7 +3408,7 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setTagId(tagId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
 		return sendSingleEntityResponse(componentTag);
 	}
 
@@ -3442,7 +3442,7 @@ public class ComponentRESTResource
 		ComponentTag example = new ComponentTag();
 		example.setTagId(tagId);
 		example.setComponentId(componentId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(example));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(example));
 		if (componentTag != null) {
 			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
@@ -3466,7 +3466,7 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setText(example.getText());
-		ComponentTag tag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
+		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
 
 		if (tag != null) {
 			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
@@ -3777,7 +3777,7 @@ public class ComponentRESTResource
 		queryByExample.setOrderBy(trackingOrderExample);
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
-		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
+		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(queryByExample);
 
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
 		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
@@ -3801,7 +3801,7 @@ public class ComponentRESTResource
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
-		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
+		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(componentTrackingExample);
 		return sendSingleEntityResponse(componentTracking);
 	}
 
@@ -3818,7 +3818,7 @@ public class ComponentRESTResource
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
-		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
+		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(componentTrackingExample);
 		if (componentTracking != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentTracking.class, trackingId);
 		}
@@ -3890,7 +3890,7 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integrationExample = new ComponentIntegration();
 		integrationExample.setComponentId(componentId);
-		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(ComponentIntegration.class, integrationExample);
+		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(integrationExample);
 		ComponentIntegrationView view = null;
 		if (integration != null) {
 			view = ComponentIntegrationView.toView(integration);
@@ -4101,7 +4101,7 @@ public class ComponentRESTResource
 		List<ComponentIntegrationConfig> configs;
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
-		configs = service.getPersistenceService().queryByExample(null, integrationConfigExample);
+		configs = service.getPersistenceService().queryByExample(integrationConfigExample);
 		return configs;
 	}
 
@@ -4121,7 +4121,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 		return sendSingleEntityResponse(integrationConfig);
 	}
 
@@ -4191,7 +4191,7 @@ public class ComponentRESTResource
 		configExample.setComponentId(componentId);
 		configExample.setIntegrationConfigId(integrationConfigId);
 
-		configExample = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, configExample);
+		configExample = service.getPersistenceService().queryOneByExample(configExample);
 		if (configExample != null) {
 			ValidationModel validationModel = new ValidationModel(integrationConfig);
 			validationModel.setConsumeFieldsOnly(true);
@@ -4248,7 +4248,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -4269,7 +4269,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
@@ -4289,7 +4289,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().deleteComponentIntegrationConfig(configId);
@@ -4308,7 +4308,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			JobManager.runComponentIntegrationNow(componentId, configId);

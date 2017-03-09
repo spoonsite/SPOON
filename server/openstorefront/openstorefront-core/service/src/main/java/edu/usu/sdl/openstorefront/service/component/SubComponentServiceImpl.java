@@ -93,7 +93,7 @@ public class SubComponentServiceImpl
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
-			List<T> data = persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
+			List<T> data = persistenceService.queryByExample(new QueryByExample(baseComponentExample));
 			data = FilterEngine.filter(data);
 			return data;
 		} catch (InstantiationException | IllegalAccessException ex) {
@@ -201,13 +201,13 @@ public class SubComponentServiceImpl
 			example.setComponentId(componentId);
 
 			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
-				List<T> resources = persistenceService.queryByExample(subComponentClass, example);
+				List<T> resources = persistenceService.queryByExample(example);
 				resources.forEach(resource -> {
 					removeLocalResource((ComponentResource) resource);
 				});
 			}
 			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
-				List<T> media = persistenceService.queryByExample(subComponentClass, example);
+				List<T> media = persistenceService.queryByExample(example);
 				media.forEach(mediaItem -> {
 					removeLocalMedia((ComponentMedia) mediaItem);
 				});
@@ -229,7 +229,7 @@ public class SubComponentServiceImpl
 		pk.setComponentId(componentId);
 		example.setComponentAttributePk(pk);
 		example.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
+		return persistenceService.queryByExample(new QueryByExample(example));
 	}
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
@@ -456,7 +456,7 @@ public class SubComponentServiceImpl
 			QueryByExample queryByExample = new QueryByExample(relationshipCheck);
 			queryByExample.setReturnNonProxied(false);
 
-			componentRelationshipExisting = persistenceService.queryOneByExample(ComponentRelationship.class, queryByExample);
+			componentRelationshipExisting = persistenceService.queryOneByExample(queryByExample);
 		}
 
 		if (componentRelationshipExisting != null) {
@@ -697,7 +697,7 @@ public class SubComponentServiceImpl
 		ComponentReview example = new ComponentReview();
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
-		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
+		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample(example));
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
@@ -713,8 +713,8 @@ public class SubComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
 
 			reviews.add(tempView);
 		});

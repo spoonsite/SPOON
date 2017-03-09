@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
@@ -250,7 +251,9 @@ public class Search
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
+		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
+		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());		
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
 		return Response.ok(listingStats).build();

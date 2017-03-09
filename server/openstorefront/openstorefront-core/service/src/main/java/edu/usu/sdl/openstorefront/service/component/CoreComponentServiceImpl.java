@@ -238,12 +238,12 @@ public class CoreComponentServiceImpl
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
+		List<Component> components = persistenceService.queryByExample(new QueryByExample(componentExample));
 		components = FilterEngine.filter(components);
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(new QueryByExample(componentAttributeExample));
 		Map<String, List<ComponentAttribute>> attributeMaps = new HashMap<>();
 		for (ComponentAttribute attribute : componentAttributes)
 		{
@@ -336,7 +336,7 @@ public class CoreComponentServiceImpl
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample(tempWatch));
 		if (tempUserWatch != null)
 		{
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
@@ -408,8 +408,8 @@ public class CoreComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
 
 			reviews.add(tempView);
 		});
@@ -1232,7 +1232,7 @@ public class CoreComponentServiceImpl
 		UserWatch example = new UserWatch();
 		example.setComponentId(componentId);
 		example.setUsername(userId);
-		example = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(example));
+		example = persistenceService.queryOneByExample(new QueryByExample(example));
 		if (example != null)
 		{
 			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
@@ -1379,7 +1379,7 @@ public class CoreComponentServiceImpl
 
 				Component componentExample = new Component();
 				componentExample.setComponentId(componentId);
-				componentAll.setComponent(persistenceService.queryOneByExample(Component.class, componentExample));
+				componentAll.setComponent(persistenceService.queryOneByExample(componentExample));
 
 				if (componentAll.getComponent() != null)
 				{
@@ -1405,7 +1405,7 @@ public class CoreComponentServiceImpl
 						ComponentQuestionResponse questionResponseExample = new ComponentQuestionResponse();
 						questionResponseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 						questionResponseExample.setQuestionId(question.getQuestionId());
-						questionAll.setResponds(persistenceService.queryByExample(ComponentQuestionResponse.class, questionResponseExample));
+						questionAll.setResponds(persistenceService.queryByExample(questionResponseExample));
 						allQuestions.add(questionAll);
 					}
 					componentAll.setQuestions(allQuestions);
@@ -1421,13 +1421,13 @@ public class CoreComponentServiceImpl
 						ComponentReviewProPk componentReviewProExamplePk = new ComponentReviewProPk();
 						componentReviewProExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
 						componentReviewProExample.setComponentReviewProPk(componentReviewProExamplePk);
-						reviewAll.setPros(persistenceService.queryByExample(ComponentReviewPro.class, componentReviewProExample));
+						reviewAll.setPros(persistenceService.queryByExample(componentReviewProExample));
 
 						ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
 						ComponentReviewConPk componentReviewConExamplePk = new ComponentReviewConPk();
 						componentReviewConExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
 						componentReviewConExample.setComponentReviewConPk(componentReviewConExamplePk);
-						reviewAll.setCons(persistenceService.queryByExample(ComponentReviewCon.class, componentReviewConExample));
+						reviewAll.setCons(persistenceService.queryByExample(componentReviewConExample));
 
 						allReviews.add(reviewAll);
 					}
@@ -1437,7 +1437,7 @@ public class CoreComponentServiceImpl
 					componentIntegrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
 					componentIntegrationExample.setComponentId(componentId);
 
-					ComponentIntegration componentIntegration = persistenceService.queryOneByExample(ComponentIntegration.class, componentIntegrationExample);
+					ComponentIntegration componentIntegration = persistenceService.queryOneByExample(componentIntegrationExample);
 					if (componentIntegration != null)
 					{
 						IntegrationAll integrationAll = new IntegrationAll();
@@ -1446,7 +1446,7 @@ public class CoreComponentServiceImpl
 						ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
 						configExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 						configExample.setComponentId(componentId);
-						integrationAll.setConfigs(persistenceService.queryByExample(ComponentIntegrationConfig.class, configExample));
+						integrationAll.setConfigs(persistenceService.queryByExample(configExample));
 						componentAll.setIntegrationAll(integrationAll);
 					}
 
@@ -1572,7 +1572,7 @@ public class CoreComponentServiceImpl
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 
 		//TODO: consider moving the filtering work to the DB
-		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);
+		List<Component> components = persistenceService.queryByExample(queryByExample);
 
 		components = FilterEngine.filter(components);
 
@@ -1584,7 +1584,7 @@ public class CoreComponentServiceImpl
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 
-		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(integrationConfigExample);
 		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
 		componentIntegrationConfigs.forEach(config
 				->
@@ -1611,7 +1611,7 @@ public class CoreComponentServiceImpl
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
+		List<Component> pendingChanges = persistenceService.queryByExample(queryPendingChanges);
 		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
 		List<ComponentView> componentViews = new ArrayList<>();
 		for (Component component : components)
@@ -1761,7 +1761,7 @@ public class CoreComponentServiceImpl
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
 			updateQueueExample.setNodeId(PropertiesManager.getNodeName());
 
-			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(ComponentUpdateQueue.class, updateQueueExample);
+			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(updateQueueExample);
 			if (componentUpdateQueues.isEmpty() == false)
 			{
 				//Get the latest entries

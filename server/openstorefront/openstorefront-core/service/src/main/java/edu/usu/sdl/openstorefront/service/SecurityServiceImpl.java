@@ -700,7 +700,7 @@ public class SecurityServiceImpl
 			}
 		}
 
-		List<UserSecurity> users = persistenceService.queryByExample(UserSecurity.class, queryByExample);
+		List<UserSecurity> users = persistenceService.queryByExample(queryByExample);
 		if (!users.isEmpty())
 		{
 

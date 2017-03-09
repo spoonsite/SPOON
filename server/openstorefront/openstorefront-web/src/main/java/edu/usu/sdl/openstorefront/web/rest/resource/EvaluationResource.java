@@ -122,7 +122,7 @@ public class EvaluationResource
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
-		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(Evaluation.class, queryByExample);
+		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
 
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
 		evaluationViewWrapper.getData().addAll(EvaluationView.toView(evaluations));

@@ -91,7 +91,7 @@ public class ComponentSearchView
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setComponentId(component.getComponentId());
 		example.setComponentAttributePk(pk);
-		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
 		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
 		return toView(component, attributes, reviews, tags);

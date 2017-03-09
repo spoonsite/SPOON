@@ -691,7 +691,7 @@ public class SystemServiceImpl
 		HelpSection helpSectionExample = new HelpSection();
 		helpSectionExample.setAdminSection(includeAdmin);
 
-		List<HelpSection> helpSections = persistenceService.queryByExample(HelpSection.class, helpSectionExample);
+		List<HelpSection> helpSections = persistenceService.queryByExample(helpSectionExample);
 
 		UserContext userContext = SecurityUtil.getUserContext();
 

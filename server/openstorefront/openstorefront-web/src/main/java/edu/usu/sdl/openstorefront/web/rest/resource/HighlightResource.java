@@ -70,7 +70,7 @@ public class HighlightResource
 		if (!all) {
 			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
 		}
-		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));					
+		List<Highlight> highlights = service.getPersistenceService().queryByExample(new QueryByExample(highlightExample));					
 		highlights = filterQueryParams.filter(highlights);
 		GenericEntity<List<Highlight>> entity = new GenericEntity<List<Highlight>>(highlights)
 		{

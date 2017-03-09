@@ -130,7 +130,7 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, attributeTypeExample);
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 
 		String codeStatus = null;
 		if (!all) {
@@ -261,7 +261,7 @@ public class AttributeResource
 			typeSet.addAll(types);
 		}
 
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
 				AttributeAll attributeAll = new AttributeAll();
@@ -446,7 +446,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		attributeCodeExample.setAttributeCodePk(attributeCodePk);
 
-		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
 		return attributeCodes;
@@ -507,7 +507,7 @@ public class AttributeResource
 		componentAttributePk.setAttributeCode(code);
 		componentAttributeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		for (ComponentAttribute attributeComponent : attributeComponents) {
 
 			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
@@ -1082,7 +1082,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();
@@ -1097,7 +1097,7 @@ public class AttributeResource
 			AttributeXRefMap tempMap = new AttributeXRefMap();
 			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 			tempMap.setAttributeType(type.getAttributeType());
-			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+			model.setMapping(service.getPersistenceService().queryByExample(tempMap));
 
 			attributeXrefMapViews.add(model);
 		}
@@ -1116,7 +1116,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();
@@ -1140,7 +1140,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setAttributeType(attributeType);
-		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(AttributeXRefType.class, example);
+		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(example);
 
 		if (attributeXRefType != null) {
 			model = new AttributeXrefMapView();
@@ -1155,7 +1155,7 @@ public class AttributeResource
 			AttributeXRefMap tempMap = new AttributeXRefMap();
 			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 			tempMap.setAttributeType(attributeXRefType.getAttributeType());
-			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+			model.setMapping(service.getPersistenceService().queryByExample(tempMap));
 		}
 		return sendSingleEntityResponse(model);
 	}

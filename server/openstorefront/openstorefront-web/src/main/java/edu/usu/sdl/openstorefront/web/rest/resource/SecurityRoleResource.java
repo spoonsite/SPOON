@@ -158,7 +158,7 @@ public class SecurityRoleResource
 				
 				QueryByExample<SecurityRole> example = new QueryByExample<>(existing);
 				example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-				existing = service.getPersistenceService().queryOneByExample(SecurityRole.class, example);
+				existing = service.getPersistenceService().queryOneByExample(example);
 				if (existing != null) {
 					return Response.status(Response.Status.CONFLICT).build();
 				}

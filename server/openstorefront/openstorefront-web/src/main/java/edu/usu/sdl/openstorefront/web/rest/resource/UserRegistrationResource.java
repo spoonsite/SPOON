@@ -100,7 +100,7 @@ public class UserRegistrationResource
 			queryByExample.setOrderBy(registrationSortExample);
 		}
 
-		List<UserRegistration> userRegistrations = service.getPersistenceService().queryByExample(UserRegistration.class, queryByExample);
+		List<UserRegistration> userRegistrations = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserRegistrationWrapper userRegistrationWrapper = new UserRegistrationWrapper();
 		userRegistrationWrapper.getData().addAll(UserRegistrationView.toView(userRegistrations));

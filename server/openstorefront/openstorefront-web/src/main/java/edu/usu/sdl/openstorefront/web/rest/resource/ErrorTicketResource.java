@@ -99,7 +99,7 @@ public class ErrorTicketResource
 			queryByExample.setOrderBy(errorTicketSortExample);
 		}
 
-		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
+		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}

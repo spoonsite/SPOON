@@ -165,7 +165,7 @@ public class UserProfileResource
 			queryByExample.setOrderBy(userProfileSortExample);
 		}
 
-		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(UserProfile.class, queryByExample);
+		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserProfileWrapper userProfileWrapper = new UserProfileWrapper();
 		userProfileWrapper.getData().addAll(UserProfileView.toViewList(userProfiles));
@@ -519,7 +519,7 @@ public class UserProfileResource
 		queryByExample.setOrderBy(userTrackingOrderExample);
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
-		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
+		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
 		return sendSingleEntityResponse(new UserTrackingWrapper(userTrackings, total));
 	}
@@ -540,7 +540,7 @@ public class UserProfileResource
 		userTrackingExample.setCreateUser(userId);
 		userTrackingExample.setTrackingId(trackingId);
 
-		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(userTrackingExample);
 		return sendSingleEntityResponse(userTracking);
 	}
 
@@ -560,7 +560,7 @@ public class UserProfileResource
 		userTrackingExample.setTrackingId(trackingId);
 
 		//make sure the that it only remove records for the user
-		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(userTrackingExample);
 		if (userTracking != null) {
 			service.getPersistenceService().setStatusOnEntity(UserTracking.class, trackingId, UserTracking.INACTIVE_STATUS);
 		}

@@ -516,13 +516,13 @@ public class OrientPersistenceService
 	 * @return
 	 */
 	@Override
-	public <T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity)
+	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
-		return queryByExample(exampleClass, new QueryByExample(baseEntity));
+		return queryByExample(new QueryByExample(baseEntity));
 	}
 
 	@Override
-	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
+	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
 
@@ -770,15 +770,15 @@ public class OrientPersistenceService
 	 * @return the entity or null if not found
 	 */
 	@Override
-	public <T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity)
+	public <T> T queryOneByExample(BaseEntity baseEnity)
 	{
-		return queryOneByExample(exampleClass, new QueryByExample(baseEnity));
+		return queryOneByExample(new QueryByExample(baseEnity));
 	}
 
 	@Override
-	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
+	public <T> T queryOneByExample(QueryByExample queryByExample)
 	{
-		List<T> results = queryByExample(exampleClass, queryByExample);
+		List<T> results = queryByExample(queryByExample);
 		if (!results.isEmpty()) {
 			return results.get(0);
 		}

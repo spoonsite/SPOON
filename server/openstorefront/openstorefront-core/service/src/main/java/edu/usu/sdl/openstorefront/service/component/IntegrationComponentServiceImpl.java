@@ -237,7 +237,7 @@ public class IntegrationComponentServiceImpl
 	{
 		ComponentIntegration integrationExample = new ComponentIntegration();
 		integrationExample.setActiveStatus(activeStatus);
-		List<ComponentIntegration> integrations = persistenceService.queryByExample(ComponentIntegration.class, integrationExample);
+		List<ComponentIntegration> integrations = persistenceService.queryByExample(integrationExample);
 		return integrations;
 	}
 
@@ -246,7 +246,7 @@ public class IntegrationComponentServiceImpl
 		ComponentIntegration integrationExample = new ComponentIntegration();
 		integrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
 		integrationExample.setComponentId(componentId);
-		ComponentIntegration componentIntegration = persistenceService.queryOneByExample(ComponentIntegration.class, integrationExample);
+		ComponentIntegration componentIntegration = persistenceService.queryOneByExample(integrationExample);
 		if (componentIntegration != null) {
 
 			boolean run = true;
@@ -284,7 +284,7 @@ public class IntegrationComponentServiceImpl
 				integrationConfigExample.setComponentId(componentId);
 				integrationConfigExample.setIntegrationConfigId(integrationConfigId);
 
-				List<ComponentIntegrationConfig> integrationConfigs = persistenceService.queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+				List<ComponentIntegrationConfig> integrationConfigs = persistenceService.queryByExample(integrationConfigExample);
 				boolean errorConfig = false;
 				if (integrationConfigs.isEmpty() == false) {
 					for (ComponentIntegrationConfig integrationConfig : integrationConfigs) {

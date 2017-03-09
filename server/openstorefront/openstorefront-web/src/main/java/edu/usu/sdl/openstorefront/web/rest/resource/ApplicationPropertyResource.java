@@ -51,7 +51,7 @@ public class ApplicationPropertyResource
 	{
 		ApplicationProperty applicationPropertyExample = new ApplicationProperty();
 		applicationPropertyExample.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
-		List<ApplicationProperty> applicationProperties = service.getPersistenceService().queryByExample(ApplicationProperty.class, new QueryByExample(applicationPropertyExample));
+		List<ApplicationProperty> applicationProperties = service.getPersistenceService().queryByExample(new QueryByExample(applicationPropertyExample));
 		return applicationProperties;
 	}
 

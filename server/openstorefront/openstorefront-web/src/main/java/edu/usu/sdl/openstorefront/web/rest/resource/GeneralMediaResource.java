@@ -59,7 +59,7 @@ public class GeneralMediaResource
 
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setActiveStatus(filterQueryParams.getStatus());
-		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(GeneralMedia.class, generalMediaExample);
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(generalMediaExample);
 		generalMedia = filterQueryParams.filter(generalMedia);
 		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
 
@@ -78,7 +78,7 @@ public class GeneralMediaResource
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setActiveStatus(GeneralMedia.ACTIVE_STATUS);
-		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(GeneralMedia.class, generalMediaExample);
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(generalMediaExample);
 		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
 
 		List<LookupModel> lookups = new ArrayList<>();
@@ -104,7 +104,7 @@ public class GeneralMediaResource
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		return sendSingleEntityResponse(generalMedia);
 	}
 
@@ -118,7 +118,7 @@ public class GeneralMediaResource
 		boolean available = true;
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		if (generalMedia != null) {
 			available = false;
 		}

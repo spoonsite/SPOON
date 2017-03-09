@@ -108,7 +108,7 @@ public class StatisticService
 		componentTrackingGroupBy.setComponentId(QueryByExample.STRING_FLAG);
 		queryByExample.setGroupBy(componentTrackingGroupBy);
 
-		List<ComponentTracking> trackingRecords = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
+		List<ComponentTracking> trackingRecords = service.getPersistenceService().queryByExample(queryByExample);
 		for (ComponentTracking tracking : trackingRecords) {
 			ComponentRecordStatistic recordStatistic = new ComponentRecordStatistic();
 			recordStatistic.setComponentId(tracking.getComponentId());
@@ -168,7 +168,7 @@ public class StatisticService
 		userTrackingGroupBy.setCreateUser(QueryByExample.STRING_FLAG);
 		queryByExample.setGroupBy(userTrackingGroupBy);
 
-		List<UserTracking> trackingRecords = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
+		List<UserTracking> trackingRecords = service.getPersistenceService().queryByExample(queryByExample);
 		for (UserTracking tracking : trackingRecords) {
 			UserRecordStatistic recordStatistic = new UserRecordStatistic();
 			recordStatistic.setUsername(tracking.getCreateUser());

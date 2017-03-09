@@ -50,7 +50,7 @@ public class DBFindByPKTest
 
 		results.append(sectionExample.getComponentEvaluationSectionPk()).append("<br>");
 
-		service.getPersistenceService().queryByExample(ComponentEvaluationSection.class, new QueryByExample(sectionExample));
+		service.getPersistenceService().queryByExample(new QueryByExample(sectionExample));
 
 		results.append("Pass").append("<br>");
 		success = true;

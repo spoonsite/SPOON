@@ -104,7 +104,9 @@ public class SolrComponentModel
 		solrComponentModel.setReleaseDate(view.getReleaseDate());
 		solrComponentModel.setUpdateDts(view.getUpdateDts());
 		solrComponentModel.setGuid(view.getGuid());
-		
+		solrComponentModel.setDataSource(view.getDataSource());
+		solrComponentModel.setDataSensitivity(view.getDataSensitivity());
+				
 		return solrComponentModel;		
 	}
 	

@@ -96,7 +96,7 @@ public class MetaDataSearchHandler
 				}
 			}
 
-			List<ComponentMetadata> metadata = serviceProxy.getPersistenceService().queryByExample(ComponentMetadata.class, queryByExample);
+			List<ComponentMetadata> metadata = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> results = new ArrayList<>();
 			for (ComponentMetadata item : metadata) {
 				results.add(item.getComponentId());

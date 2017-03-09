@@ -100,7 +100,7 @@ public class SystemSearchResource
 			queryByExample.setOrderBy(searchSortExample);
 		}
 
-		List<SystemSearch> searches = service.getPersistenceService().queryByExample(SystemSearch.class, queryByExample);
+		List<SystemSearch> searches = service.getPersistenceService().queryByExample(queryByExample);
 
 		SystemSearchWrapper searchWrapper = new SystemSearchWrapper();
 		searchWrapper.getData().addAll(searches);

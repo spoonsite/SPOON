@@ -81,7 +81,7 @@ public class ComponentSubmissionResource
 			componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
 
@@ -95,7 +95,7 @@ public class ComponentSubmissionResource
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<Component> pendingChanges = service.getPersistenceService().queryByExample(Component.class, queryPendingChanges);
+			List<Component> pendingChanges = service.getPersistenceService().queryByExample(queryPendingChanges);
 			Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
 			for (ComponentView componentView : views) {
 				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
@@ -343,7 +343,7 @@ public class ComponentSubmissionResource
 							ComponentMedia componentMediaExample = new ComponentMedia();
 							componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 							componentMediaExample.setComponentId(exstingComponent.getComponentId());
-							List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
+							List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(componentMediaExample);
 							componentAll.getMedia().addAll(componentMedia);
 
 							//clean out duplicate media
@@ -363,7 +363,7 @@ public class ComponentSubmissionResource
 							ComponentResource componentResourceExample = new ComponentResource();
 							componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 							componentResourceExample.setComponentId(exstingComponent.getComponentId());
-							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 							componentAll.getResources().addAll(componentResources);
 
 							//clean out duplicate resouces
@@ -465,7 +465,7 @@ public class ComponentSubmissionResource
 		componentMediaExample.setComponentMediaId(mediaId);
 		componentMediaExample.setComponentId(componentId);
 
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		if (componentMedia != null) {
 			response = ownerAnonymousCheck(componentMedia);
 			if (response == null) {
@@ -500,7 +500,7 @@ public class ComponentSubmissionResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			response = ownerAnonymousCheck(componentResource);
 			if (response == null) {

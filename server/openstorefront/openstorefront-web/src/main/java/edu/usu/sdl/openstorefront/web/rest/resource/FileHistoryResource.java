@@ -121,7 +121,7 @@ public class FileHistoryResource
 			queryByExample.setOrderBy(fileHistorySortExample);
 		}
 
-		List<FileHistory> fileHistories = service.getPersistenceService().queryByExample(FileHistory.class, queryByExample);
+		List<FileHistory> fileHistories = service.getPersistenceService().queryByExample(queryByExample);
 
 		FileHistoryViewWrapper fileHistoryViewWrapper = new FileHistoryViewWrapper();
 		fileHistoryViewWrapper.getData().addAll(FileHistoryView.toView(fileHistories));

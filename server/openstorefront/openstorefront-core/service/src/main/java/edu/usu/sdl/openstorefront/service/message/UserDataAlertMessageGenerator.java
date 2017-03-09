@@ -80,7 +80,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(componentTagStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<ComponentTag> tags = serviceProxy.getPersistenceService().queryByExample(ComponentTag.class, queryByExample);
+			List<ComponentTag> tags = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			tags = tags.stream()
 					.filter(tag -> Convert.toBoolean(tag.getAdminModified()) == false)
 					.collect(Collectors.toList());
@@ -114,7 +114,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(contactSartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<Contact> contacts = serviceProxy.getPersistenceService().queryByExample(Contact.class, queryByExample);
+			List<Contact> contacts = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			contacts = contacts.stream()
 					.filter(review -> Convert.toBoolean(review.getAdminModified()) == false)
 					.collect(Collectors.toList());
@@ -146,7 +146,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(componentReviewStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<ComponentReview> reviews = serviceProxy.getPersistenceService().queryByExample(ComponentReview.class, queryByExample);
+			List<ComponentReview> reviews = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			reviews = reviews.stream()
 					.filter(review -> Convert.toBoolean(review.getAdminModified()) == false)
 					.collect(Collectors.toList());
@@ -179,7 +179,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(componentQuestionStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(ComponentQuestion.class, queryByExample);
+			List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			questions = questions.stream()
 					.filter(question -> Convert.toBoolean(question.getAdminModified()) == false)
 					.collect(Collectors.toList());
@@ -210,7 +210,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(componentQuestionResponseStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<ComponentQuestionResponse> questionReponses = serviceProxy.getPersistenceService().queryByExample(ComponentQuestionResponse.class, queryByExample);
+			List<ComponentQuestionResponse> questionReponses = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			questionReponses = questionReponses.stream()
 					.filter(questionResponse -> Convert.toBoolean(questionResponse.getAdminModified()) == false)
 					.collect(Collectors.toList());
@@ -243,7 +243,7 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(attributeCodeStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(AttributeCode.class, queryByExample);
+			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			for (AttributeCode attributeCode : attributeCodes) {
 				message.append(" <li> New user-generated attribute code for type '").append(attributeCode.getAttributeCodePk().getAttributeType())
 						.append("': ").append(attributeCode.getLabel())

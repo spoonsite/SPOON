@@ -118,7 +118,7 @@ public class ContactResource
 			queryByExample.setOrderBy(contactSortExample);
 		}
 
-		List<Contact> contacts = service.getPersistenceService().queryByExample(Contact.class, queryByExample);
+		List<Contact> contacts = service.getPersistenceService().queryByExample(queryByExample);
 
 		ContactViewWrapper contactViewWrapper = new ContactViewWrapper();
 		contactViewWrapper.getData().addAll(contacts);

@@ -126,7 +126,7 @@ public class SearchServiceImpl
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		AttributeCode attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		AttributeCode attributeCode = persistenceService.queryOneByExample(attributeCodeExample);
 		if (attributeCode == null) {
 			attributeCode = persistenceService.findById(AttributeCode.class, pk);
 		}
@@ -152,7 +152,7 @@ public class SearchServiceImpl
 			queryByExample.setLikeExample(attributeCodeLikeExample);
 		}
 
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
 		List<String> ids = new ArrayList();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());

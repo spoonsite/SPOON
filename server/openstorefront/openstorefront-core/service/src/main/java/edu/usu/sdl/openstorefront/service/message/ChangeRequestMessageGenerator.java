@@ -71,7 +71,7 @@ public class ChangeRequestMessageGenerator
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		//submitted
-		List<Component> components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
+		List<Component> components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (components.isEmpty() == false) {
 			message.append(components.size())
 					.append(" ")
@@ -89,7 +89,7 @@ public class ChangeRequestMessageGenerator
 
 		//canceled
 		componentExample.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-		components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
+		components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (components.isEmpty() == false) {
 			message.append(components.size())
 					.append(" ")

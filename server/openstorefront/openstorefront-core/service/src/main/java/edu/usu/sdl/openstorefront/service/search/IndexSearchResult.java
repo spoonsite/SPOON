@@ -48,12 +48,13 @@ public class IndexSearchResult
 	 */
 	public void applyDataFilter() 
 	{
-		//only one list will be populated at time
+		
+		UserContext userContext = SecurityUtil.getUserContext();
+		Set<String> dataSources = userContext.dataSources();
+		Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+		
+		int removeFromResults = 0;
 		if (!resultsList.isEmpty()) {
-			UserContext userContext = SecurityUtil.getUserContext();
-			Set<String> dataSources = userContext.dataSources();
-			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
-			
 			int countBefore = resultsList.size();
 			
 			resultsList = resultsList.stream()
@@ -75,12 +76,11 @@ public class IndexSearchResult
 							return false;
 						})
 						.collect(Collectors.toList());
-			totalResults = totalResults - (countBefore - resultsList.size());
-			
-		} else if (!searchViews.isEmpty()) {
-			UserContext userContext = SecurityUtil.getUserContext();
-			Set<String> dataSources = userContext.dataSources();
-			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+			removeFromResults = (countBefore - resultsList.size());
+		} 
+		
+		int removeSearchResults = 0;
+		if (!searchViews.isEmpty()) {
 			
 			int countBefore = searchViews.size();
 			
@@ -103,8 +103,9 @@ public class IndexSearchResult
 							return false;
 						})
 						.collect(Collectors.toList());	
-			totalResults = totalResults - (countBefore - searchViews.size());
+			removeSearchResults = (countBefore - searchViews.size());
 		}
+		totalResults = totalResults - Math.max(removeFromResults, removeSearchResults);
 	}
 	
 	public List<SolrComponentModel> getResultsList()

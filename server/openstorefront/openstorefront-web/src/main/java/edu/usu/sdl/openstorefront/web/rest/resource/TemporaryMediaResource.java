@@ -56,7 +56,7 @@ public class TemporaryMediaResource
 
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setActiveStatus(filterQueryParams.getStatus());
-		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(TemporaryMedia.class, temporaryMediaExample);
+		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(temporaryMediaExample);
 		temporaryMedia = filterQueryParams.filter(temporaryMedia);
 		List<TemporaryMediaView> temporaryMediaViews = TemporaryMediaView.toViewList(temporaryMedia);
 
@@ -76,7 +76,7 @@ public class TemporaryMediaResource
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
-		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(TemporaryMedia.class, temporaryMediaExample);
+		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(temporaryMediaExample);
 		List<TemporaryMediaView> temporaryMediaViews = TemporaryMediaView.toViewList(temporaryMedia);
 
 		List<LookupModel> lookups = new ArrayList<>();
@@ -103,7 +103,7 @@ public class TemporaryMediaResource
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName(name);
-		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		return sendSingleEntityResponse(temporaryMedia);
 	}
 

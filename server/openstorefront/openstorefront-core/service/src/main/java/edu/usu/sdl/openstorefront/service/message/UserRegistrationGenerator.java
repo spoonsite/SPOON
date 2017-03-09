@@ -68,7 +68,7 @@ public class UserRegistrationGenerator
 		specialOperatorModel.setExample(userRegistrationExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);		
 		
-		List<UserRegistration> users = serviceProxy.getPersistenceService().queryByExample(UserRegistration.class, queryByExample);
+		List<UserRegistration> users = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (users.isEmpty() == false) {
 			StringBuilder message = new StringBuilder();
 			

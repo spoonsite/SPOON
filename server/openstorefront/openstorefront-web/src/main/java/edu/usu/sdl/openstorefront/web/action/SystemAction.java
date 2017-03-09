@@ -90,7 +90,7 @@ public class SystemAction
 		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
 		queryByExample.setReturnNonProxied(false);
 
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(queryByExample);
 		int updateCount = 0;
 		for (ComponentAttribute attribute : componentAttributes) {
 			if (ComponentAttribute.ACTIVE_STATUS.equals(attribute.getActiveStatus()) == false) {
@@ -119,7 +119,7 @@ public class SystemAction
 		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
 		queryByExample.setReturnNonProxied(false);
 
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(queryByExample);
 		int dupCount = 0;
 		StringBuilder details = new StringBuilder();
 		for (ComponentAttribute componentAttribute : componentAttributes) {

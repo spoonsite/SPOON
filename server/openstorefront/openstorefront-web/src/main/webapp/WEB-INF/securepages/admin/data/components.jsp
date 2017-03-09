@@ -3938,6 +3938,9 @@
 						{name: 'dataSource', mapping: function(data){
 							return data.component.dataSource;
 						}},
+						{name: 'dataSensitivity', mapping: function(data){
+							return data.component.dataSensitivity;
+						}},					
 						{name: 'securityMarkingType', mapping: function(data){
 							return data.component.securityMarkingType;
 						}},	

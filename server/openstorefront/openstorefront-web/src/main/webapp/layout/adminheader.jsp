@@ -429,8 +429,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-database icon-button-color-default',
-									menu: {										
-										items: dataMenu,
+									menu: {																				
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -444,8 +443,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
-									menu: {										
-										items: evaluationMenu,
+									menu: {																				
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -459,8 +457,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-gears icon-button-color-default',
-									menu: {										
-										items: appMenu,
+									menu: {																				
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());

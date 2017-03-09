@@ -85,7 +85,7 @@ public class UserWatchResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<UserWatch> userWatches = service.getPersistenceService().queryByExample(UserWatch.class, queryByExample);
+		List<UserWatch> userWatches = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserWatchWrapper userWatchWrapper = new UserWatchWrapper();
 		userWatchWrapper.getData().addAll(UserWatchView.toViewList(userWatches));

@@ -224,7 +224,7 @@ public class MediaAction
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		if (generalMedia == null) {
 			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")
@@ -301,7 +301,7 @@ public class MediaAction
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName(name);
-		TemporaryMedia temporaryMediaFound = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		TemporaryMedia temporaryMediaFound = service.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		if (temporaryMediaFound == null) {
 			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")

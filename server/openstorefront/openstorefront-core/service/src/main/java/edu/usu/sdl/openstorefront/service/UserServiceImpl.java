@@ -121,7 +121,7 @@ public class UserServiceImpl
 		UserWatch temp = new UserWatch();
 		temp.setUsername(userId);
 		temp.setActiveStatus(UserWatch.ACTIVE_STATUS);
-		return persistenceService.queryByExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryByExample(new QueryByExample(temp));
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class UserServiceImpl
 	{
 		UserWatch temp = new UserWatch();
 		temp.setUserWatchId(watchId);
-		return persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryOneByExample(new QueryByExample(temp));
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class UserServiceImpl
 		if (!all) {
 			example.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		}
-		return persistenceService.queryByExample(UserProfile.class, new QueryByExample(example));
+		return persistenceService.queryByExample(new QueryByExample(example));
 	}
 
 	@Override
@@ -506,7 +506,7 @@ public class UserServiceImpl
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		userWatchExample.setComponentId(component.getComponentId());
 
-		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
+		List<UserWatch> userWatches = persistenceService.queryByExample(userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
 				
@@ -549,7 +549,7 @@ public class UserServiceImpl
 		userMessageExample.setEmailAddress(userMessage.getEmailAddress());
 
 		//Duplicate check;
-		UserMessage userMessageExisting = persistenceService.queryOneByExample(UserMessage.class, userMessageExample);
+		UserMessage userMessageExisting = persistenceService.queryOneByExample(userMessageExample);
 		if (userMessageExisting == null) {
 			userMessage.setUserMessageId(persistenceService.generateId());
 			userMessage.setRetryCount(0);
@@ -592,7 +592,7 @@ public class UserServiceImpl
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
 			LOG.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
-			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+			List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					usersToSend.add(userProfile);
@@ -673,7 +673,7 @@ public class UserServiceImpl
 		UserMessage userMessageExample = new UserMessage();
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 
-		List<UserMessage> userMessages = persistenceService.queryByExample(UserMessage.class, userMessageExample);
+		List<UserMessage> userMessages = persistenceService.queryByExample(userMessageExample);
 		int minQueueMinutes = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
 		int maxRetries = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
 		if (minQueueMinutes < 0) {
@@ -818,7 +818,7 @@ public class UserServiceImpl
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userProfileExample.setNotifyOfNew(Boolean.TRUE);
 
-		List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+		List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
 		RecentChangeMessage recentChangeMessage = new RecentChangeMessage();
 		recentChangeMessage.setLastRunDts(lastRunDts);
 
@@ -972,7 +972,7 @@ public class UserServiceImpl
 			queryByExample.setOrderBy(userTrackingOrderExample);
 		}
 
-		result.setResult(persistenceService.queryByExample(UserTracking.class, queryByExample));
+		result.setResult(persistenceService.queryByExample(queryByExample));
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setCount(persistenceService.countByExample(queryByExample));
 
@@ -994,7 +994,7 @@ public class UserServiceImpl
 			queryByExample.setMaxResults((int) pageSize);
 			queryByExample.setReturnNonProxied(false);
 
-			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, queryByExample);
+			List<UserProfile> userProfiles = persistenceService.queryByExample(queryByExample);
 			List<String> usernames = new ArrayList<>();
 			for (UserProfile userProfile : userProfiles) {
 				usernames.add(userProfile.getUsername());

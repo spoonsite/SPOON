@@ -473,7 +473,7 @@ public class Application
 			queryByExample.setOrderBy(logRecordSortExample);
 		}
 
-		List<DBLogRecord> logRecords = service.getPersistenceService().queryByExample(DBLogRecord.class, queryByExample);
+		List<DBLogRecord> logRecords = service.getPersistenceService().queryByExample(queryByExample);
 
 		DBLogRecordWrapper logRecordWrapper = new DBLogRecordWrapper();
 		logRecordWrapper.getLogRecords().addAll(logRecords);

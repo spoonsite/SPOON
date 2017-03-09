@@ -92,7 +92,7 @@ public class AlertServiceImpl
 		Alert alertExample = new Alert();
 		alertExample.setAlertType(alertContext.getAlertType());
 		alertExample.setActiveStatus(Alert.ACTIVE_STATUS);
-		List<Alert> alerts = persistenceService.queryByExample(Alert.class, alertExample);
+		List<Alert> alerts = persistenceService.queryByExample(alertExample);
 
 		for (Alert alert : alerts) {
 			boolean createUserMessage = false;

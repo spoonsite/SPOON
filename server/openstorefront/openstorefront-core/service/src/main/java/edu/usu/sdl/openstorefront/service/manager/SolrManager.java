@@ -251,12 +251,12 @@ public class SolrManager
 		if (components.size() > 1) {
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			List<ComponentAttribute> allAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			List<ComponentAttribute> allAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			attributeMap = allAttributes.stream().collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
 			
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-			List<ComponentTag> allTags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+			List<ComponentTag> allTags = service.getPersistenceService().queryByExample(componentTagExample);
 			tagMap = allTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
 			
 		}

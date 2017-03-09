@@ -77,7 +77,7 @@ public class DBSpecialWhereTest
 		specialOperatorModel.setExample(testEntitySpecialExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<TestEntity> testActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, testEntityExample);
+		List<TestEntity> testActiveRecords = service.getPersistenceService().queryByExample(testEntityExample);
 		testActiveRecords.stream().forEach(record -> {
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});
