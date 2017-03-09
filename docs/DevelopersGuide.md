@@ -1,8 +1,8 @@
 
 # Developer Guide
+-------
 
 #1. Internal Development
-------
 
 See documents under /dev for Coding and Style guides.
 
@@ -37,20 +37,38 @@ The following key libraries were used in the development:
 -   Orient DB- No SQL/Multi-Model database
 
 -   Ext.js and tinymce
-  
-##1.3 Notes for Redhat/Centos users:
------
 
-See the following note for Redhat/Centos users.
+##1.3 Dev Environment with NetBeans
 
--   yum install maven
+1. **NetBeans Install/configuration**
+  * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
+    * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
+  * If you already have NetBeans installed
+    * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
+    * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
+2. **Clone the openstorefront GitHub repo to the desired directory**
+  * https://help.github.com/articles/cloning-a-repository/
+3. **Open the openstorefront Project**
+  * Select the Open Project Icon or press CTRL + SHIFT + O
+  * Open the openstorefront/server directory
+  * Select the "openstorefront" option and make sure "Open Required Projects" is selected
+4. **Tomcat Server configuration**
+  * Select Tools -> Servers. Once the servers window opens, select Add Server
+  * Follow the wizard to select the Tomcat server location and add a user
+  * Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
+  * Select the Platform tab and set the VM memory options to -Xmx[memory size].
+    * We recommend at least 2GB. (-Xmx2g)
+  * if you want to use the Tomcat manager-gui you will need to configuring manager application access -  https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access
+    * make sure you have RW access to $Tomcat_HOME/bin/felix-cache
 
-##1.4 Building with Maven
+##1.4 Building with Maven CLI
+
+Install Maven if not installed by your IDE - http://maven.apache.org/install.html
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
-(Skip tests)
-Mav -Dmaven.test.skip=true or -DskipTests=true install
+(Skip tests) mvn -Dmaven.test.skip=true or -DskipTests=true install
+
 
 ##1.5 Deploying
 
@@ -59,26 +77,27 @@ handle this for you. See application server documentation for other deployment
 mechanisms.
 
 ##1.6  Running
--------
 
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
 
-**NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup. 
+**NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup.
 See [Setup](Setup.md)
 
 
 ##1.7 Testing
--------
 
--   Unit tests run as part of the Maven install.
+-   Unit tests
+  * run as part of the Maven install.
+  * NetBeans, Eclipse and IntelliJ Idea have native graphical test runners built in.
+  * with the JUnit CLI java org.junit.runner.JUnitCore [class to test] http://junit.org/junit4/faq.html#atests_1
+
 
 -   Container/Integration tests login as admin go to
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
 
 
 ##1.8  Contributing Patches
---------------------
 
 The code is hosted on the public GitHub
 [https://github.com/di2e/openstorefront](<https://github.com/di2e/openstorefront>). Create a pull request to the
@@ -91,7 +110,6 @@ If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
 ##1.9 Versioning Strategy
--------------------
 
 The software is versioned based on the following:
 
@@ -109,7 +127,6 @@ URL doesn't change with minor versions. However, the API follows with
 the version of the application.
 
 ##1.10 Licensing
------------------
 
 The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
 
@@ -150,27 +167,25 @@ All Data-based API need to handling filtering data.
 
 
 #2. External Developers
-------
 
 This guide is targeted at external developers who want to extend the application.
 
 ##2.1 REST API
 
-The API document is directly reflected from the live code so it is always current for the running version of the application. 
-The API documentation can be accessed by login in as an admin and following the link from the admin tools see application management.
+The API document is directly reflected from the live code so it is always current for the running version of the application.
+The API documentation can be accessed by logging in as an admin and following the link from the admin tools see application management.
 A print view of the API can be generated form there as well.
 
 ##2.2 Adding Custom Parser (Plugin)
-----
 
-A custom parser may be need for handling complex formats that can't be support via data mapping. 
+A custom parser may be needed for handling complex formats that can't be support via data mapping.
 In some cases, both a custom parser and data mapping may be required.
 
 1 - Create an OSGi bundle (you use a maven project)
 
 2 - Add a dependency to openstorefront-core-api
 
-3 - In the Activator.java, register your new parser 
+3 - In the Activator.java, register your new parser
    (More than one parser can be added to a plugin)
 >In start bundle:
 >
@@ -191,14 +206,14 @@ In some cases, both a custom parser and data mapping may be required.
 or copy jar to /var/openstorefront/perm/plugins and the application will auto-deploy
 
 **Note:**  Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
-All other third-party libraries must be included with your JAR. 
+All other third-party libraries must be included with your JAR.
 
 ###2.2.2 Parser Workflow
 
 (Default flow but it can be overridden)
 1 - Check Format (On Web Upload)
 
-2 - Process Data 
+2 - Process Data
 
 > a) Get the parser Reader (CSV, Text, XML...etc)
 
@@ -229,4 +244,3 @@ If the method return null it will skip the record.
 **Note:** The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
-

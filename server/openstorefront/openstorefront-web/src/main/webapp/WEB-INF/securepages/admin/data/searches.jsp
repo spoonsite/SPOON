@@ -43,7 +43,7 @@
 				var searchWindow = Ext.create('Ext.window.Window', {
 					id: 'searchWindow',
 					title: 'Add/Edit Search',
-					iconCls: 'fa fa-search-plus',
+					iconCls: 'fa fa-lg fa-search-plus',
 					modal: true,
 					width: '80%',
 					hieght: '80%',
@@ -82,7 +82,7 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-add',
 									handler: function(){
 										actionSaveSearch();
 									}
@@ -92,7 +92,7 @@
 								},								
 								{
 									text: 'Preview Results',
-									iconCls: 'fa fa-eye',
+									iconCls: 'fa fa-lg fa-eye icon-button-color-view',
 									handler: function(){
 										Ext.getCmp('advanceSearch').previewResults();
 									}							
@@ -103,7 +103,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function () {
 										if (advanceSearch.changed) {
 											Ext.Msg.show({
@@ -274,8 +274,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -287,8 +288,8 @@
 									text: 'Add',
 									itemId: 'add',
 									scale: 'medium',
-									
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -297,21 +298,22 @@
 									text: 'Edit',
 									itemId: 'edit',
 									scale: 'medium',
+									width: '100px',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEdit(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
 									}									
 								},								
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'togglestatus',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
 									}

@@ -215,13 +215,13 @@ public class UserProfileResource
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
-			userProfileView = UserProfileView.toView(userContext);			
+			userProfileView = UserProfileView.toView(userContext);
 		}
 		return sendSingleEntityResponse(userProfileView);
 	}
 
 	@GET
-	@APIDescription("Gets user profile specified by id.")	
+	@APIDescription("Gets user profile specified by id.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
@@ -231,12 +231,12 @@ public class UserProfileResource
 	{
 		UserProfileView userProfileView = null;
 
-		if (SecurityUtil.getCurrentUserName().equals(userId) ||
-			SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)) {
+		if (SecurityUtil.getCurrentUserName().equals(userId)
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)) {
 
 			UserProfile userProfile = service.getUserService().getUserProfile(userId);
 			if (userProfile != null) {
-				userProfileView = UserProfileView.toView(userProfile);				
+				userProfileView = UserProfileView.toView(userProfile);
 			}
 		}
 		return userProfileView;

@@ -144,7 +144,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -209,6 +209,7 @@
 									text: 'Tools',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-wrench',
+									width: '140px',
 									menu: {										
 										items: toolsMenu,
 										listeners: {

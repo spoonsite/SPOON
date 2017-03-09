@@ -28,60 +28,43 @@ licensed under GPL V3.**
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
-## 1.1 Release Notes
-------  
-=======
 ## 1.1 Release Notes for v2.3
 ------
 
-Version 2.2 is a maintenance release that:
+Version 2.3 incorporates:
 
  * Fixes several small bugs
- * Improves the usability of searching
- * Improves submissions, specifically the administration of submissions
 
 ### 1.1.1 Administrator Release Notes, v2.3 @ADMIN-SYSTEM-MANAGEMENT
-------
-
-*What's new in v2.2*
-
-**Attribute Management**
-
- There are new ways to manage attributes in the Admin Tools -> Attributes section.
-
- 1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
-    box is shown where you can select an attribute and code and assign it to differing entries.
- 2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
- 3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
-    (Visble, Important, Allow Multiples, etc.) for the group of attributes.
- 4. Multiple attributes can be deleted by clicking on Action -> Delete.
- 
-**Metadata**
- A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
- values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
- 
-**Tag Management Tool**
-  The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
-  so that tags can be easily associated with various entries by dragging and dropping.
-  
-**User Profiles**
-  User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
-  added to search by Username, First Name, or Last Name.
-  
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
-
 =======
+ * Evaluator Tools added
+ * Admin- System Export/Import
+ * Admin- Adding Roles and Permissions to Users
+
+
+*What's new in v2.3*
+
+**Users, Roles, and Permissions**
+
+**Evaluator Tools**
+ 
+**System Export/Import**
+  
+  
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+
+
 ## 1.2 Known Issues, v2.2 @ADMIN-SYSTEM-MANAGEMENT 
  
  * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
   attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
 
-# 2.  User Features
+# 2. User Features
 ------
 
 The features that are available to users to be able to access the information in a variety of ways.
 
-##   2.1  Searching
+## 2.1  Searching
 ------
 
 Application Search provides a way to find entry lists and articles
@@ -210,7 +193,7 @@ on the home page.
 	 entry will be displayed.
  2.  Click on the "Tag" icon to open the tag panel.  Tags will be displayed
 	 below the "Add Tag" text field.
- 3.  Locate the tag and click on the drop down arrow and select "Remove".
+ 3.  Locate the tag and click on the drop down arrow and select "Delete".
 
 ### 2.1.8 Comparing
 ---------
@@ -458,7 +441,7 @@ Step 3) A change request form will appear that requires 4 steps:
 
 	1. Verify or update all user information and click the "Next" button
 	2. Fill in or edit the required fields and click "Next"
-	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	3. Add/Delete any details (e.g. attributes, contacts, media, etc.) and click "Next"
 	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
@@ -469,7 +452,7 @@ rather than updating the contact information on step3.  That way the contact inf
 user profile.
 
 
-#### 2.3.2.3 How to Remove an Entry
+#### 2.3.2.3 How to Delete an Entry
 -----------
 
 1.  Click on the entry you wish to remove
@@ -522,7 +505,7 @@ question follow the steps below:
 A user can remove an answer or question by clicking on the entry and then clicking
  on the **Delete** button on the right-hand side of the toolbar.
 
-#### 2.3.3.2 Relationships
+#### 2.3.3.2 Relationships @RELATION-VIEW-TOOL
 --------
 
 This screen shows a graphical representation among entries based on organization, attributes,
@@ -606,7 +589,7 @@ Entry reviews can be found under the **Tools** drop-down menu. Users can edit an
  - Select a review and click **Edit**.  Update the fields as desired and click **Post Review** (or Cancel).
 
 **To remove a review:**
- - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking OK in the confirmation box.
+ - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking **Yes** in the confirmation box.
 
  **NOTE:** A review may also be removed from the search results detail screen
 by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
@@ -669,7 +652,7 @@ place.
 Click on an entry to view its details.  From the **Details** page, a user can write a review, submit
 a question or answer, add a tag, watch an entry, submit a correction, and request ownership.
 
-### 2.4.1  Create/Remove a Review
+### 2.4.1  Create/Delete a Review
 --------
 
 How to submit a review of an entry:
@@ -679,10 +662,10 @@ How to submit a review of an entry:
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
 
 To edit a review, click on the **Edit** button.  Make any changes to the review and click **Post Review**.
-To remove a review, click on the **Remove** button.  A confirmation box will ask the user to confirm 
+To remove a review, click on the **Delete** button.  A confirmation box will ask the user to confirm 
 the deletion of the review.
 
-### 2.4.2  Submit/Remove a Question or Answer
+### 2.4.2  Submit/Delete a Question/Answer
 --------
 
 How to submit a question about an entry:
@@ -701,18 +684,18 @@ How to submit an answer to an entry question:
 3.  Type your answer into the text area and click on the **Post** button.
 
 To edit an answer, click on the **Edit** button.  Make any changes to the answer and click **Post**.
-To remove an answer, click on the **Remove** button.
+To remove an answer, click on the **Delete** button.
 
-### 2.4.3  Add/Remove a Tag to an Entry
+### 2.4.3  Add/Delete a Tag to an Entry
 --------
 
 From the **Details** page, click the **Tags** button in the upper-right corner of the entry.
 An **Add Tag** box will appear at the top of the **Details** page where you can either type in your own tag or
 select an existing tag from the drop-down menu.  Click **Add** to attach tag to entry.
 
-To remove a tag, click on the tag's drop-down arrow and select **Remove**.
+To remove a tag, click on the tag's drop-down arrow and select **Delete**.
 
-### 2.4.4  Add/Remove an Entry to Watch List
+### 2.4.4  Add/Delete an Entry to Watch List
 --------
 
 Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
@@ -923,7 +906,7 @@ From the attributes page the Action button has three sub-menus:
  
  * **NOTE:** The _Required_ flag is not shown in the Set Flags box as it is mutually exclusive with Allow Multiples.  If
           the Allow Multiples section is not available for changing, it is because one or more previously selected
-          attributes are required.  Remove the required flag(s) on those attribute(s) and then the Allow Multiple flag
+          attributes are required.  Delete the required flag(s) on those attribute(s) and then the Allow Multiple flag
           will be available for changing.
 
  To **Toggle Status** select one or more attributes then Action -> Toggle Status.  The status of each selected 
@@ -1027,9 +1010,11 @@ Inactive entries are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon to remove.
+1.  Select an entry or entries
 
-2.  Confirm that you want to delete the entry by clicking **OK** on
+2.  Click on Action, then **Delete**
+
+3.  Confirm that you want to delete the entry by clicking **Yes** on
     the confirmation dialog.
 
 **To export an entry:**
@@ -1264,7 +1249,7 @@ Parser - Record Structure handled
 **Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
 
 - Record (Attribute Code) per line
-- Header line not support (Remove before upload)
+- Header line not support (Delete before upload)
 - Does not support attachments
 - Map Name is used for Attribute Type
 
@@ -1275,7 +1260,7 @@ Parser - Record Structure handled
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
 - Record (Component) per line;  It can map SubComponent Entities as well.
-- Header line not support (Remove before upload)
+- Header line not support (Delete before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	
@@ -1386,10 +1371,12 @@ the form is complete.
 
 1.  Select the organization you want to remove.
 
-2.  Click on the delete icon next to the organization.
+2.  Click on the delete icon at the top of the page.
 
-3.  Confirm that you wish to delete the organization by clicking **OK**.
+3.  Confirm that you wish to delete the organization by clicking **Yes**.
 
+**NOTE:** If an organization is associated with an entry you will get this message and it will NOT be deleted:
+"That organization has references and cannot be deleted."
 
 **"No Organization" References:**
 This displays a list of references where no organization is listed.  
@@ -1508,14 +1495,14 @@ at first login will contain the information gathered from the external security 
 
 The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
-security utility (Open AM, LDAP, Databaseetc.) to define the users.
+security utility (Open AM, LDAP, Database?etc.) to define the users.
 
 An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
 activate the user's existing watches, but it won't send any previous
-messages  just messages going forward.
+messages ? just messages going forward.
 
 **To toggle active status:**
 

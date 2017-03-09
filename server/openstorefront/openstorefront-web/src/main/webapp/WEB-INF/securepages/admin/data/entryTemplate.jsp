@@ -260,7 +260,7 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											handler: function(){
 												var win = this.up('window');
 												var form = this.up('form');
@@ -315,7 +315,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function() {
 												this.up('window').close();
 											}
@@ -425,7 +425,7 @@
 													items: [
 														{
 															text: 'Add Custom',
-															iconCls: 'fa fa-plus',
+															iconCls: 'fa fa-lg fa-plus icon-button-color-add',
 															handler: function() {
 																addEditCustomBlock.show();
 																addEditCustomBlock.getComponent('form').reset();																
@@ -527,7 +527,7 @@
 								{
 									text: 'Save/Continue',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
 									handler: function(){
 										var precode = Ext.getCmp('codePanel').getComponent('precode').getValue();
 										var gencode = Ext.getCmp('codePanel').getComponent('gencode').getValue();
@@ -608,7 +608,7 @@
 								{
 									text: 'Close',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 									handler: function(){
 										var win = this.up('window');
 										win.close();
@@ -671,17 +671,17 @@
 										});
 										tools.push({
 											type: 'close',
-											tooltip: 'Remove',
+											tooltip: 'Delete',
 											callback: function(panel, tool, event) {
 												var templateBlockId = panel.block.templateBlock.templateBlockId;
 												Ext.Msg.show({
-													title:'Remove Template Block?',
-													message: 'Are you sure you want to remove block: ' + panel.block.templateBlock.name + '?',
+													title:'Delete Template Block?',
+													message: 'Are you sure you want to delete the block: ' + panel.block.templateBlock.name + '?',
 													buttons: Ext.Msg.YESNO,
 													icon: Ext.Msg.QUESTION,
 													fn: function(btn) {
 														if (btn === 'yes') {
-															Ext.getCmp('blocksPanel').setLoading("Removing...");
+															Ext.getCmp('blocksPanel').setLoading("Deleting...");
 															Ext.Ajax.request({
 																url: 'api/v1/resource/templateblocks/' + templateBlockId,
 																method: 'DELETE',
@@ -813,7 +813,7 @@
 						
 						tools.push({
 							type: 'close',
-							tooltip: 'Remove',							
+							tooltip: 'Delete',							
 							callback: function(panel, tool, event) {
 								Ext.Array.remove(templateBlocks, panel.block);
 								updateTemplate();
@@ -929,7 +929,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -940,45 +940,44 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 									handler: function () {
 										actionAdd();
 									}
-								},
-								{
-									xtype: 'tbseparator'
 								}, 								
 								{
 									text: 'Edit',
 									id: 'lookupGrid-tools-edit',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-edit',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									handler: function () {
 										actionEdit(Ext.getCmp('templateGrid').getSelection()[0]);
 									}								
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},								
 								{
 									text: 'Toggle Status',
 									id: 'lookupGrid-tools-status',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionToggleStatus();
 									}								
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},
 								{
 									text: 'Delete',
 									id: 'lookupGrid-tools-delete',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionDelete(Ext.getCmp('templateGrid').getSelection()[0]);
@@ -1097,7 +1096,7 @@
 								
 							} else {							
 								Ext.Msg.show({
-									title:'Remove Template?',
+									title:'Delete Template?',
 									message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
 									buttons: Ext.Msg.YESNOCANCEL,
 									icon: Ext.Msg.QUESTION,

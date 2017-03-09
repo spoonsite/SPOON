@@ -61,13 +61,13 @@
 
 
 				var alertGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Manage Alerts <i class="fa fa-question-circle"  data-qtip="Alerts are triggers set up to watch the data, that an administrator can subscribe to."></i>',
+					title: 'Manage Alerts <i class="fa fa-lg fa-question-circle"  data-qtip="Alerts are triggers set up to watch the data, that an administrator can subscribe to."></i>',
 					id: 'alertGrid',
 					store: Ext.data.StoreManager.lookup('alertStore'),
 					columnLines: true,
 					selModel: 'rowmodel',
 					columns: [
-						{text: 'Name', dataIndex: 'name', width: 225},
+						{text: 'Name', dataIndex: 'name', width: 225 },
 						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225 },
 						{
 							text: 'Email Addresses',
@@ -94,25 +94,24 @@
 							flex: 1,
 							renderer: function (value, metaData, record) {
 								var option = record.get('userDataAlertOption');
+								var listOfOptions = [];
 								if (option) {
-									var listOfOptions = '<ul>';
 									if (option.alertOnTags) {
-										listOfOptions += '<li>Tags</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Tags </span>');
 									}
 									if (option.alertOnReviews) {
-										listOfOptions += '<li>Reviews</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Reviews </span>');
 									}
 									if (option.alertOnQuestions) {
-										listOfOptions += '<li>Questions/Responses</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Questions/Responses </span>');
 									}
 									if (option.alertOnContactUpdate) {
-										listOfOptions += '<li>Contact Update</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Contact Update </span>');
 									}																		
 									if (option.alertOnUserAttributeCodes) {
-										listOfOptions += '<li>User-Created Attribute Codes</li>';
+										listOfOptions.push('<span class="alerts-option-items"> User-Created Attribute Codes </span>');
 									}
-									listOfOptions += '</ul>';
-									return listOfOptions;
+									return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
 								} else if (record.get('systemErrorAlertOption')) {
 									option = record.get('systemErrorAlertOption');
 									var listOfOptions = '<ul>';
@@ -220,7 +219,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										Ext.getCmp('alertGrid').getStore().load();
 									}
@@ -231,29 +231,31 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 									handler: function () {
 										actionEditAlertForm(null);
 									}
-								},
-								{
-									xtype: 'tbseparator'
 								},
 								{
 									text: 'Edit',
 									id: 'alertGrid-tools-edit',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionEditAlertForm(record);
 									}
 								},
 								{
-									text: 'Deactivate',
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Toggle Status',
 									id: 'alertGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
@@ -262,9 +264,12 @@
 									}
 								},
 								{
+									xtype: 'tbfill'
+								},
+								{
 									text: 'Delete',
 									id: 'alertGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
@@ -303,7 +308,7 @@
 					width: 600,
 					height: 600,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-edit',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -462,7 +467,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											formBind: true,
 											handler: function () {
 												var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
@@ -568,7 +573,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('editAlertForm').reset();
 												Ext.getCmp('alertAddEditWin').hide();

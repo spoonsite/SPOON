@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+// <editor-fold defaultstate="collapsed"  desc="IMPORTS">
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
@@ -24,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -144,6 +146,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+// </editor-fold>
 
 /**
  * ComponentRESTResource Resource
@@ -1524,7 +1527,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a contact from the component")
+	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}")
 	public Response deleteComponentContact(
@@ -1692,7 +1695,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@APIDescription("Removes an evaluation section from the component")
+	@APIDescription("Deletes an evaluation section from the component")
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
@@ -1708,7 +1711,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@APIDescription("Removes all evaluation section from the component")
+	@APIDescription("Deletes all evaluation section from the component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -1910,7 +1913,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a given resource from the specified component")
+	@APIDescription("Delete a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(
@@ -2122,7 +2125,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes media from the specified entity")
+	@APIDescription("Deletes media from the specified entity")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
 			@PathParam("id")
@@ -2341,7 +2344,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@APIDescription("Removes metadata from the specified component")
+	@APIDescription("Deletes metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}/activate")
 	public Response activateComponentMetadata(
 			@PathParam("id")
@@ -2893,7 +2896,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a review from the specified entity")
+	@APIDescription("Delete a review from the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3137,7 +3140,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes all cons from the given review accociated with the specified entity")
+	@APIDescription("Deletes all cons from the given review accociated with the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3271,7 +3274,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes all pros from the review associated with a specified entity")
+	@APIDescription("Deletes all pros from the review associated with a specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3410,11 +3413,12 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity
-	@APIDescription("Remove all tags from the specified component")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Delete all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
 	@Path("/{id}/tags")
+
 	public void deleteComponentTags(
 			@PathParam("id")
 			@RequiredParam String componentId)
@@ -3425,7 +3429,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a tag by id from the specified entity")
+	@APIDescription("Delete a tag by id from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/{tagId}")
 	public Response deleteComponentTagById(
@@ -3449,7 +3453,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a single tag from the specified entity by the Tag Text")
+	@APIDescription("Delete a single tag from the specified entity by the Tag Text")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/text")
 	public Response deleteComponentTag(
@@ -4140,13 +4144,20 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			//check for exsiting config with the same ticket
 			ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
-			configExample.setComponentId(componentId);
+			configExample.setComponentId(integrationConfig.getComponentId());
 			configExample.setIntegrationType(integrationConfig.getIntegrationType());
 			configExample.setProjectType(integrationConfig.getProjectType());
 			configExample.setIssueType(integrationConfig.getIssueType());
 			configExample.setIssueNumber(integrationConfig.getIssueNumber());
 
-			long count = service.getPersistenceService().countByExample(configExample);
+			GenerateStatementOption option = new GenerateStatementOption();
+			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
+
+			QueryByExample configQueryExample = new QueryByExample();
+			configQueryExample.getFieldOptions().put("issueNumber", option);
+			configQueryExample.setExample(configExample);
+
+			long count = service.getPersistenceService().countByExample(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
 				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
@@ -4189,13 +4200,25 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				//check for exsiting config with the same ticket
 				configExample = new ComponentIntegrationConfig();
-				configExample.setComponentId(componentId);
+				configExample.setComponentId(integrationConfig.getComponentId());
+				configExample.setIntegrationConfigId(integrationConfig.getIntegrationConfigId());
 				configExample.setIntegrationType(integrationConfig.getIntegrationType());
 				configExample.setProjectType(integrationConfig.getProjectType());
 				configExample.setIssueType(integrationConfig.getIssueType());
 				configExample.setIssueNumber(integrationConfig.getIssueNumber());
 
-				long count = service.getPersistenceService().countByExample(configExample);
+				GenerateStatementOption configIdOption = new GenerateStatementOption();
+				configIdOption.setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+
+				GenerateStatementOption issueNumberOption = new GenerateStatementOption();
+				issueNumberOption.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
+
+				QueryByExample configQueryExample = new QueryByExample();
+				configQueryExample.getFieldOptions().put("integrationConfigId", configIdOption);
+				configQueryExample.getFieldOptions().put("issueNumber", issueNumberOption);
+				configQueryExample.setExample(configExample);
+
+				long count = service.getPersistenceService().countByExample(configQueryExample);
 				if (count > 0) {
 					RestErrorModel restErrorModel = new RestErrorModel();
 					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
@@ -4256,7 +4279,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
-	@APIDescription("Removes component integration config")
+	@APIDescription("Deletes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
 			@PathParam("componentId")

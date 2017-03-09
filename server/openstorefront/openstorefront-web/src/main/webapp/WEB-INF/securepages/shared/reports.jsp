@@ -196,7 +196,7 @@
 											text: 'Refresh',
 											scale: 'medium',
 											id: 'reportRefreshButton',
-											iconCls: 'fa fa-2x fa-refresh',
+											iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 											tip: 'Refresh the list of records',
 											handler: function () {
 												scheduleReportRefreshGrid();
@@ -204,10 +204,14 @@
 											tooltip: 'Refresh the list of records'
 										},
 										{
+											xtype: 'tbseparator'
+										},
+										{
 											text: 'Add',
 											id: 'reportAddButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-plus',
+											width: '100px',
+											iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 											disabled: false,
 											handler: function () {
 												scheduleReportAdd();
@@ -218,7 +222,8 @@
 											text: 'Edit',
 											id: 'reportEditButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-edit',
+											width: '100px',
+											iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 											disabled: true,
 											handler: function () {
 												scheduleReportEdit();
@@ -226,13 +231,13 @@
 											tooltip: 'Edit a record'
 										},
 										{
-											xtype: 'tbfill'
+											xtype: 'tbseparator'
 										},
 										{
 											text: 'Toggle Status',
 											id: 'reportActivateButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-power-off',
+											iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 											disabled: true,
 											handler: function () {
 												scheduleReportActivate();
@@ -240,10 +245,14 @@
 											tooltip: 'Toggle activation of a record'
 										},
 										{
+											xtype: 'tbfill'
+										},
+										{
 											text: 'Delete',
 											id: 'reportDeleteButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-trash',
+											width: '110px',
+											iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 											disabled: true,
 											handler: function () {
 												scheduleReportDelete();
@@ -664,8 +673,7 @@
 						iconCls: 'fa fa-calendar',
 						width: 700,
 						minHeight: 500,
-						maxHeight: 600,
-						y: 20,
+						y: 100,
 						closeAction: 'destroy',
 						modal: true,						
 						alwaysOnTop: true,											
@@ -686,9 +694,9 @@
 										xtype: 'toolbar',
 										items: [
 											{
-												text: 'Generate',
+												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-add',
 												handler: function () {
 
 													var data = {};
@@ -759,7 +767,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function () {
 													Ext.getCmp('scheduleReportWin').destroy();
 												}
@@ -959,7 +967,7 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										height: 200,
+										maxHeight: 250,										
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
@@ -1081,7 +1089,7 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'historyRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									tip: 'Refresh the list of records',
 									handler: function () {
 										historyRefreshGrid();
@@ -1089,38 +1097,28 @@
 									tooltip: 'Refresh the list of records'
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'New Report',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon',
+									scale: 'medium',
+									handler: function () {
+										scheduleReportWin();
+									}
+								},
+								{
 									text: 'View',
 									scale: 'medium',
 									id: 'historyViewButton',
-									iconCls: 'fa fa-2x fa-eye',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									handler: function () {
 										viewHistory();
 									},
 									tooltip: 'View Report'
-								},								
-								{
-									text: 'Download',
-									id: 'historyExportButton',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download',
-									disabled: true,
-									handler: function () {
-										historyExport();
-									},
-									tooltip: 'Export report'
-								},
-								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'New Report',
-									iconCls: 'fa fa-2x fa-plus',
-									scale: 'medium',
-									handler: function () {
-										scheduleReportWin();
-									}
-								},								
+								},																
 								{
 									xtype: 'tbseparator'
 								},
@@ -1128,12 +1126,23 @@
 									text: 'Scheduled Reports',
 									id: 'scheduledReportBtn',
 									hidden: true,
-									iconCls: 'fa fa-2x fa-clock-o',
+									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function () {
 										scheduledReportsWin.show();
 									},
 									tooltip: 'Schedule Reports'
+								},
+								{
+									text: 'Download',
+									id: 'historyExportButton',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										historyExport();
+									},
+									tooltip: 'Export report'
 								},
 								{
 									xtype: 'tbfill'
@@ -1142,7 +1151,7 @@
 									text: 'Delete',
 									id: 'historyDeleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyDelete();
@@ -1281,7 +1290,7 @@
 					Ext.create('Ext.window.Window', {
 						title: historyTitle,
 						id: 'viewHistoryData',
-						iconCls: 'fa fa-eye',
+						iconCls: 'fa fa-lg fa-eye',
 						width: '50%',
 						height: '60%',
 						y: 40,
@@ -1301,7 +1310,7 @@
 									xtype: 'button',
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-arrow-left',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
 									handler: function () {
 										actionPreviewNextRecord(false);
 									}
@@ -1313,7 +1322,7 @@
 									xtype: 'button',
 									id: 'previewWinTools-download',
 									text: 'Download',
-									iconCls: 'fa fa-download',
+									iconCls: 'fa fa-lg fa-download icon-button-color-default',
 									handler: function () {
 										historyExport();
 									}
@@ -1325,7 +1334,7 @@
 									xtype: 'button',
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-arrow-right',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function () {
 										actionPreviewNextRecord(true);

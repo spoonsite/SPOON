@@ -338,7 +338,7 @@ Ext.define('OSF.form.Media', {
 							xtype: 'tbseparator'
 						},
 						{
-							text: 'Remove',
+							text: 'Delete',
 							itemId: 'removeBtn',
 							iconCls: 'fa fa-trash',
 							disabled: true,

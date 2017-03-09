@@ -132,7 +132,7 @@ public class Search
 				searchWrapper.setData(result.getResults());
 				searchWrapper.setResults(result.getResults().size());
 				searchWrapper.setTotalNumber(result.getTotalNumber());
-				searchWrapper.setResultTypeStats(result.getResultTypeStats());				
+				searchWrapper.setResultTypeStats(result.getResultTypeStats());
 				return sendSingleEntityResponse(searchWrapper);
 			} else {
 				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
@@ -258,25 +258,25 @@ public class Search
 
 	@POST
 	@APIDescription("Export a set of entries")
-	@Produces({"application/csv"})	
+	@Produces({"application/csv"})
 	@Path("/export")
 	public Response export(
-			@FormParam("multipleIds")					
-			@RequiredParam List<String> ids			
+			@FormParam("multipleIds")
+			@RequiredParam List<String> ids
 	)
 	{
 		StringWriter writer = new StringWriter();
 		CSVWriter cvsWriter = new CSVWriter(writer);
-		
+
 		String header[] = {
-			"Name", 
+			"Name",
 			"Organization",
 			"Description",
 			"Last Updated Dts",
 			"Entry Type"
 		};
 		cvsWriter.writeNext(header);
-		
+
 		SimpleDateFormat sdf = TimeUtil.standardDateFormater();
 		List<ComponentSearchView> views = service.getComponentService().getSearchComponentList(ids);
 		for (ComponentSearchView view : views) {
@@ -287,29 +287,29 @@ public class Search
 				sdf.format(view.getLastActivityDts()),
 				view.getComponentTypeDescription()
 			};
-			cvsWriter.writeNext(data);		
+			cvsWriter.writeNext(data);
 		}
-		
+
 		Response.ResponseBuilder response = Response.ok(writer.toString());
 		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"searchResults.csv\"");
-		return response.build();		
+		return response.build();
 	}
-	
+
 	@GET
 	@APIDescription("Gets search suggestions")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchSuggestion.class)
 	@Path("/suggestions")
 	public List<SearchSuggestion> getSearchSuggestions(
-		@QueryParam("query")
-		@DefaultValue("*") String query,
-		@QueryParam("max") 
-		@DefaultValue("6") int maxResults	
-	)			
-	{	
-		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);		
+			@QueryParam("query")
+			@DefaultValue("*") String query,
+			@QueryParam("max")
+			@DefaultValue("6") int maxResults
+	)
+	{
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);
 		return suggestions;
 	}
-	
+
 }

@@ -139,8 +139,9 @@ Ext.define('OSF.widget.Feedback', {
 							text: 'View Details',
 							itemId: 'view',
 							scale: 'medium',
+							width: '150px',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-edit',
+							iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 							handler: function () {
 								actionView(this.up('grid').getSelectionModel().getSelection()[0]);										
 							}									

@@ -194,7 +194,8 @@
 								actionLoadContent('User-Profiles');
 							}							
 						}
-					]
+					],
+					width: '150px',
 				}
 			});
 			
@@ -238,7 +239,8 @@
 								actionLoadContent('Section-Templates');
 							}							
 						}											
-					]
+					],
+					width: '200px',
 				}
 			});
 
@@ -381,7 +383,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -413,7 +415,7 @@
 								{
 									text: 'Dashboard',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-home',
+									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -426,8 +428,9 @@
 									id: 'dataManagementBtn',
 									hidden: true,
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-database',
-									menu: {
+									iconCls: 'fa fa-2x fa-database icon-button-color-default',
+									menu: {										
+										items: dataMenu,
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -440,8 +443,9 @@
 									id: 'evaluationManagementBtn',
 									hidden: true,
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-file-text-o',
-									menu: {	
+									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
+									menu: {										
+										items: evaluationMenu,
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -454,8 +458,9 @@
 									id: 'applicationManagementBtn',
 									hidden: true,
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-gears',
-									menu: {	
+									iconCls: 'fa fa-2x fa-gears icon-button-color-default',
+									menu: {										
+										items: appMenu,
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
