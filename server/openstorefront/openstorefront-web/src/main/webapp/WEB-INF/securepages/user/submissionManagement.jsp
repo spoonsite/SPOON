@@ -38,8 +38,7 @@
 
 			Ext.onReady(function () {
 				
-				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-					var branding = Ext.decode(response.responseText);
+				CoreService.brandingservice.getCurrentBranding().then(function(branding){					
 					
 					var submissionPanel = Ext.create('OSF.component.SubmissionPanel', {							
 						id: 'submissionPanel',

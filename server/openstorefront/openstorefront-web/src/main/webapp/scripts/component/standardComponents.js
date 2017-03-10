@@ -60,7 +60,8 @@ Ext.define('OSF.component.SecurityComboBox', {
 	displayField: 'description',
 	typeAhead: false,
 	editable: false,
-	forceSelection: true,	
+	forceSelection: true,
+	hidden: true,
 	queryMode: 'local',
 	labelAlign: 'top',
 	store: {
@@ -71,8 +72,17 @@ Ext.define('OSF.component.SecurityComboBox', {
 		}
 	},	
 	initComponent: function() {
-		var me = this;	
-		me.callParent();
+		var combo = this;	
+		combo.callParent();
+		
+		//check branding to see it should show
+		
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+			if (branding.allowSecurityMarkingsFlg) {
+				combo.setHidden(false);
+			}
+		});
+		
 	}	
 	
 });

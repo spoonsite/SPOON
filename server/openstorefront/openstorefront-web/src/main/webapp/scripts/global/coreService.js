@@ -141,12 +141,30 @@ var CoreService = {
   brandingservice: {
 	  
 	  getCurrentBranding: function(){
-		  var me = this;
+		var brandingservice = this;		  
+		var deferred = new Ext.Deferred();
 		  
-		  var promise = Ext.Ajax.request({
-			url: 'api/v1/resource/branding/current' 
+		var haveBanding = true;
+		if (brandingservice.branding) {
+			deferred.resolve(branding);
+			haveBanding = true;
+		}		  
+		  
+		if (haveBanding === false) { 
+		  Ext.Ajax.request({
+			url: 'api/v1/resource/branding/current',
+			success: function(response, opts) {
+				var branding = Ext.decode(response.responseText);
+				brandingservice.branding = branding;
+				deferred.resolve(branding);				
+			},
+			failure: function(response, opts) {
+				deferred.reject("Error loading user.");
+			}
 		  });
-		  return promise;
+		}
+		
+		return deferred.promise;
 	  },
 	  
 	  getBranding: function(brandingId){

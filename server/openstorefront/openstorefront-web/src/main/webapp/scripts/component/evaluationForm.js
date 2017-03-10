@@ -564,8 +564,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.add(evalPanel.contentPanel);
 		evalPanel.add(evalPanel.commentPanel);
 		
-		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);			
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 			evalPanel.branding = branding;
 		});
 		

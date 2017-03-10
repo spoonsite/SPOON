@@ -550,8 +550,7 @@
 			});
 			
 			if (fullPage && !hideSecurityBanner) {
-				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-					var branding = Ext.decode(response.responseText);
+				CoreService.brandingservice.getCurrentBranding().then(function(branding){					
 					if (branding.securityBannerText && branding.securityBannerText !== '') {
 						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 							securityBannerText: branding.securityBannerText
