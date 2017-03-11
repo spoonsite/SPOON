@@ -378,7 +378,9 @@ Ext.define('OSF.form.Media', {
 			url: 'api/v1/resource/components/' + componentId + '/media/view'
 		});		
 		
-		opts.commentPanel.loadComments(evaluationId, "Media", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Media", componentId);
+		}
 	}
 	
 });

@@ -357,7 +357,9 @@ Ext.define('OSF.form.Contacts', {
 			url: 'api/v1/resource/components/' + componentId + '/contacts/view'
 		});
 		
-		opts.commentPanel.loadComments(evaluationId, "Contacts", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Contacts", componentId);
+		}
 	}
 	
 });

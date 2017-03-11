@@ -23,20 +23,32 @@ Ext.define('OSF.form.Tags', {
 	
 	layout: 'fit',
 		
-	//bodyStyle: 'padding: 20px',
+	
 	initComponent: function () {			
 		this.callParent();
 		
-		var tagPanel = this;		
+		var tagPanel = this;	
+		
+		var actionAddTag = function(form) {				
+			var data = form.getValues();
+			var componentId = tagPanel.tagGrid.get('componentId');
+
+			CoreUtil.submitForm({
+				url: 'api/v1/resource/components/' + componentId + '/tags',
+				method: 'POST',
+				data: data,
+				form: form,
+				success: function(){
+					tagPanel.tagGrid.getStore().reload();
+					form.reset();
+				}
+			});				
+		};		
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
-				fields: [
-					"text",
-					"tagId",
-					"activeStatus",
-					"createUser",
+				fields: [			
 					{
 						name: 'createDts',
 						type:	'date',
@@ -52,11 +64,12 @@ Ext.define('OSF.form.Tags', {
 				{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
 				{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
 				{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
+				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true },
+				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 150, hidden: true }
 			],
 			listeners: {
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('tagGrid');
+					var fullgrid = tagPanel.tagGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 					} else {
@@ -85,7 +98,7 @@ Ext.define('OSF.form.Tags', {
 							listeners: {
 								specialkey: function(field, e){
 									if (e.getKey() === e.ENTER) {
-									   actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
+									   actionAddTag(this.up('form'));
 									}
 								}
 							}
@@ -98,7 +111,7 @@ Ext.define('OSF.form.Tags', {
 							formBind: true,
 							iconCls: 'fa fa-lg fa-plus',
 							handler: function(){
-								actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
+								actionAddTag(this.up('form'));
 							}
 						}
 					]
@@ -122,16 +135,26 @@ Ext.define('OSF.form.Tags', {
 							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('tagGrid'), 'tagId', 'tags');
+								CoreUtil.actionSubComponentToggleStatus(tagPanel.tagGrid, 'tagId', 'tags');
 							}
 						}
 					]
 				}
-			]);		
+			]
+		});		
+		tagPanel.add(tagPanel.tagGrid);		
 		
 	},
-	
 	loadData: function(evaluationId, componentId, data, opts) {
+		
+		var tagPanel = this;
+		
+		tagPanel.componentId = componentId;
+		tagPanel.tagGrid.componentId = componentId;
+		
+		tagPanel.tagGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/tagsview'
+		});		
 		
 	}
 	

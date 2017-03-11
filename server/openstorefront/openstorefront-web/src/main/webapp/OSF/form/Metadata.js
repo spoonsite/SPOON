@@ -269,7 +269,9 @@ Ext.define('OSF.form.Metadata', {
 			url: 'api/v1/resource/components/' + componentId + '/metadata/view'
 		});
 		
-		opts.commentPanel.loadComments(evaluationId, "Metadata", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Metadata", componentId);
+		}
 	}
 	
 });

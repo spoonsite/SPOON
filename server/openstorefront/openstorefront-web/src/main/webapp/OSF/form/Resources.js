@@ -354,7 +354,9 @@ Ext.define('OSF.form.Resources', {
 			url: 'api/v1/resource/components/' + componentId + '/resources/view'
 		});
 		
-		opts.commentPanel.loadComments(evaluationId, "Resources", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Resources", componentId);
+		}
 	}
 	
 });

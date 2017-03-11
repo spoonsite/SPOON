@@ -166,7 +166,7 @@ Ext.define('OSF.form.Attributes', {
 							valueField: 'attributeType',
 							displayField: 'description',										
 							store: {
-								autoLoad: true,
+								autoLoad: false,
 								proxy: {
 									type: 'ajax',
 									url: 'api/v1/resource/attributes'									
@@ -176,7 +176,29 @@ Ext.define('OSF.form.Attributes', {
 										property: 'requiredFlg',
 										value: 'false'
 									}
-								]
+								],
+								listeners: {
+									load: function(store, records, opts) {
+										store.filterBy(function(attribute){
+											if (attribute.associatedComponentTypes) {
+												var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+													if (item.componentType === attributePanel.component.componentType) {
+														return true;
+													} else {
+														return false;
+													}
+												});
+												if (optFound) {
+													return true;
+												} else {
+													return false;
+												}
+											}else {
+												return true;
+											}
+										});
+									}
+								}
 							},
 							listeners: {
 								change: function (field, newValue, oldValue, opts) {
@@ -185,6 +207,12 @@ Ext.define('OSF.form.Attributes', {
 									var record = field.getSelection();		
 									if (record) {
 										field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
+										
+										if (record.get("allowUserGeneratedCodes")) {																							
+											field.up('form').getComponent('attributeCodeCB').setEditable(true);
+										} else {											
+											field.up('form').getComponent('attributeCodeCB').setEditable(false);
+										}																				
 									} else {
 										field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
 									}
@@ -284,7 +312,24 @@ Ext.define('OSF.form.Attributes', {
 		attributePanel.attributeGrid.componentId = componentId;
 		attributePanel.loadComponentAttributes();
 		
-		opts.commentPanel.loadComments(evaluationId, "Attribute", componentId);
+		var form = attributePanel.attributeGrid.down('form');
+		form.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/components/' + attributePanel.componentId,
+			callback: function() {
+				form.setLoading(false);
+			},
+			success: function(response, opts) {
+				var component = Ext.decode(response.responseText);
+				attributePanel.component = component;
+				attributePanel.attributeGrid.down('form').getComponent('attributeTypeCB').getStore().load();
+			}
+		});
+		
+		
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Attribute", componentId);
+		}
 	}
 	
 });
