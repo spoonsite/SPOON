@@ -54,7 +54,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<orientdb.verison>1.7.10</orientdb.verison>
+		<orientdb.version>2.1.25</orientdb.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
@@ -137,26 +137,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>			
-
-		<dependency>
-			<groupId>com.orientechnologies</groupId>
-			<artifactId>orient-commons</artifactId>
-			<version>${orientdb.verison}</version>
-		</dependency>	
+	
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-core</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-object</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-graphdb</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>asm</groupId>
@@ -183,22 +178,17 @@
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-client</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 		</dependency>  
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-enterprise</artifactId>
-			<version>${orientdb.verison}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.orientechnologies</groupId>
-			<artifactId>orientdb-nativeos</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 		</dependency>			  	
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
-			<version>${orientdb.verison}</version>
+			<version>${orientdb.version}</version>
 		 <exclusions>
 		  <exclusion>
 		   <groupId>javax.mail</groupId>
