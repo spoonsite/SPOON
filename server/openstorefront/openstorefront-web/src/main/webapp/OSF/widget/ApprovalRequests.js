@@ -195,7 +195,7 @@ Ext.define('OSF.widget.ApprovalRequests', {
 												{
 													text: 'Approve',
 													scale: 'medium',
-													iconCls: 'fa fa-2x fa-check',
+													iconCls: 'fa fa-2x fa-check-square-o',
 													handler: function(){
 														var win = this.up('window');
 														var approveUrl = 'api/v1/resource/components/' + componentId + '/approve';

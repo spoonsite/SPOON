@@ -126,20 +126,19 @@ Ext.define('OSF.form.ChecklistSummary', {
 					items: [
 						{
 							text: 'Add',
-							iconCls: 'fa fa-2x fa-plus text-success',
-							scale: 'medium',							
+							iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+							scale: 'medium',
+							width: '100px',
 							handler: function() {
 								actionAddEdit();
 							}
 						},
 						{
-							xtype: 'tbseparator'
-						},
-						{
 							text: 'Edit',
 							itemId: 'edit',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-edit',
+							width: '100px',
+							iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 							scale: 'medium',							
 							handler: function() {
 								var record = summaryForm.recommendations.getSelectionModel().getSelection()[0];
@@ -153,7 +152,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 							text: 'Delete',
 							itemId: 'delete',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-close text-danger',
+							iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 							scale: 'medium',							
 							handler: function() {
 								var record = summaryForm.recommendations.getSelectionModel().getSelection()[0];								
@@ -177,6 +176,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 			
 			var addEditWin = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Recommendations',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 				modal: true,
 				width: 700,
 				height: 600,
@@ -261,7 +261,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 										text: 'Save',
 										formBind: true,
 										scale: 'medium',
-										iconCls: 'fa fa-2x fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 										handler: function() {
 
 											var recommendForm = addEditWin.getComponent('form');
@@ -302,7 +302,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 									{
 										text: 'Cancel',
 										scale: 'medium',
-										iconCls: 'fa fa-2x fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 										handler: function() {
 											addEditWin.close();
 										}								
@@ -322,6 +322,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 		var actionDelete = function(record) {
 			Ext.Msg.show({
 				title:'Delete Recommendation?',
+				iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 				message: 'Are you sure you want to delete this recommendation?',
 				buttons: Ext.Msg.YESNO,
 				icon: Ext.Msg.QUESTION,

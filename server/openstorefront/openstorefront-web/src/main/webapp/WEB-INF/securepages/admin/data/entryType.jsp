@@ -31,7 +31,8 @@
 				
 				var addEditWin = Ext.create('Ext.window.Window', {
 					id: 'addEditWin',
-					title: 'Entry',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+					title: 'Add/Edit Entry Type',
 					modal: true,
 					width: '40%',
 					height: '90%',
@@ -158,7 +159,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function(){
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
@@ -253,7 +254,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddEntry();
 									}
@@ -373,10 +374,11 @@
 					var typeToRemove = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
 					
 					var promptWindow = Ext.create('Ext.window.Window', {
-						title: 'Move Existing Data',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						title: 'Delete Entry Type?',
 						y: 200,
 						width: 400,
-						height: 150,
+						minHeight: 175,
 						modal: true,
 						layout: 'fit',
 						items: [
@@ -391,7 +393,7 @@
 											{
 												text: 'Apply',
 												formBind: true,
-												iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
+												iconCls: 'fa fa-lg fa-check icon-button-color-save',
 												handler: function(){
 													var form = this.up('form');
 													var data = form.getValues();
@@ -428,10 +430,12 @@
 								items: [
 									{
 										xtype: 'combobox',
-										width: '100%',
+										anchor: '100% 10%',
 										name: 'componentType',
-										fieldLabel: 'Entry Type<span class="field-required" />',
+										labelAlign: 'top',
+										fieldLabel: 'Move existing data to<span class="field-required" />',
 										valueField: 'code',
+										emptyText: 'Select Entry Type',
 										displayField: 'description',
 										allowBlank: false,
 										editable: false,

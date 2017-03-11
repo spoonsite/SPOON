@@ -134,7 +134,7 @@ Ext.define('OSF.component.MessageWindow', {
 						items: [
 							{
 								text: 'Add',
-								iconCls: 'fa fa-lg fa-plus icon-button-color-add',
+								iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 								handler: function(){
 									var toText = emailField;
 									
@@ -307,7 +307,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 							handler: function() {
 								var mainForm = this.up('form');
 								var data = mainForm.getValues();

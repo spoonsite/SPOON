@@ -176,7 +176,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction-media-table',
+								iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionEditCodeForm(null);
 								}									
@@ -275,7 +275,7 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function() {
 											var method = edit ? 'PUT' : 'POST'; 
 											var url = edit ? 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : 'api/v1/resource/lookuptypes/' + selectedTable.get('code');       

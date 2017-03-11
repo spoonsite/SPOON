@@ -234,7 +234,7 @@
 							items: [								
 								{
 									text: 'Apply',
-									iconCls: 'fa fa-lg fa-check icon-button-color-add',
+									iconCls: 'fa fa-lg fa-check icon-button-color-save',
 									handler: function() {
 										var originId = typePromptWindow.originId;
 										var originName = typePromptWindow.originName;

@@ -69,7 +69,7 @@ Ext.define('OSF.component.QuestionWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -236,7 +236,7 @@ Ext.define('OSF.component.ResponseWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();

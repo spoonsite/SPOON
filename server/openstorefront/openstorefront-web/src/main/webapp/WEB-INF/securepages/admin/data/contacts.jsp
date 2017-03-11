@@ -152,7 +152,7 @@
 										{											
 											text: 'Save',
 											formBind: true,											
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){	
 												var win = this.up('window');
 												var form = this.up('form');
@@ -391,7 +391,7 @@
 									itemId: 'add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction-add',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -568,7 +568,7 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-lg fa-save icon-button-color-add',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
 												handler: function() {
 													var form = this.up('form');
 													var win = this.up('window');
@@ -614,7 +614,7 @@
 					}
 					
 					Ext.Msg.show({
-						title:'Update Status',
+						title: '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Change Status?</span>',
 						message: 'Do you want to ' + newStatus + ' entry contact reference as well?',
 						buttons: Ext.Msg.YESNOCANCEL,
 						icon: Ext.Msg.QUESTION,
@@ -658,7 +658,7 @@
 							var references = Ext.decode(response.responseText);
 							
 							if (references.length > 0) {
-								Ext.Msg.alert('Reference', 'Unable to delete; Delete references first.');
+								Ext.Msg.alert('<i class="fa fa-warning icon-small-horizontal-correction-left"></i>' + 'Reference', 'Unable to delete contact; Delete references first.');
 							} else {
 							
 								Ext.Msg.show({

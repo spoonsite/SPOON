@@ -367,7 +367,7 @@
 									disabled: true,
 									scale: 'medium',
 									width: '130px',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-add',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-save',
 									iconAlign: 'left',
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();

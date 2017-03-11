@@ -96,9 +96,35 @@ Ext.define('OSF.form.Review', {
 					itemId: 'tools',
 					items: [
 						{
+							text: 'Reply',
+							itemId: 'reply',
+							iconCls: 'fa fa-lg fa-reply icon-button-color-refresh icon-small-vertical-correction',
+							scale: 'medium',
+							disabled: true,							
+							handler: function(){
+								var record = reviewForm.grid.getSelectionModel().getSelection()[0];	
+								actionEditReply(record, true);
+							}							
+						},						
+						{
+							text: 'Edit',
+							itemId: 'edit',
+							iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+							width: '100px',
+							scale: 'medium',
+							disabled: true,							
+							handler: function(){
+								var record = reviewForm.grid.getSelectionModel().getSelection()[0];		
+								actionEditReply(record, false);
+							}							
+						},
+						{
+							xtype: 'tbseparator'
+						},
+						{
 							text: 'Toggle Acknowledge',
 							itemId: 'acknowledge',
-							iconCls: 'fa fa-2x fa-check text-success',
+							iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 							scale: 'medium',
 							disabled: true,
 							handler: function(){
@@ -117,37 +143,12 @@ Ext.define('OSF.form.Review', {
 							}
 						},
 						{
-							xtype: 'tbseparator'
-						},
-						{
-							text: 'Reply',
-							itemId: 'reply',
-							iconCls: 'fa fa-2x fa-reply',
-							scale: 'medium',
-							disabled: true,							
-							handler: function(){
-								var record = reviewForm.grid.getSelectionModel().getSelection()[0];	
-								actionEditReply(record, true);
-							}							
-						},						
-						{
-							text: 'Edit',
-							itemId: 'edit',
-							iconCls: 'fa fa-2x fa-edit',
-							scale: 'medium',
-							disabled: true,							
-							handler: function(){
-								var record = reviewForm.grid.getSelectionModel().getSelection()[0];		
-								actionEditReply(record, false);
-							}							
-						},
-						{
 							xtype: 'tbfill'
 						},
 						{
 							text: 'Delete',
 							itemId: 'delete',
-							iconCls: 'fa fa-2x fa-close text-danager',
+							iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 							scale: 'medium',
 							disabled: true,							
 							handler: function(){

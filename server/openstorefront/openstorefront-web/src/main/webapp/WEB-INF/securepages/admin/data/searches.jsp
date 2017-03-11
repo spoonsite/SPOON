@@ -82,7 +82,7 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										actionSaveSearch();
 									}
@@ -289,7 +289,7 @@
 									itemId: 'add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 									handler: function () {
 										actionAdd();										
 									}									

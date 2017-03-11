@@ -240,6 +240,7 @@
 			
 			var addEditMapping = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Mapping',
+				iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 				modal: true,
 				width: '80%',
 				height: '80%',
@@ -343,7 +344,7 @@
 											{
 												xtype: 'button',
 												text: 'Upload',												
-												iconCls: 'fa fa-upload icon-button-color-default',
+												iconCls: 'fa fa-upload',
 												formBind: true,
 												handler: function() {
 													var uploadForm = this.up('form');
@@ -961,7 +962,7 @@
 									{
 										text: 'Save',										
 										scale: 'medium',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 										handler: function() {
 											mappingActionSave();
 										}
@@ -1210,7 +1211,7 @@
 								text: 'Add',
 								scale: 'medium',
 								width: '100px',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function() {
 									actionShowMappingForm();
 								}
@@ -1334,6 +1335,7 @@
 									
 									var previewWin = Ext.create('Ext.window.Window', {
 										title: 'Preview Mapping',
+										iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction',
 										modal: true,
 										width: '80%',
 										height: '80%',
@@ -1448,6 +1450,7 @@
 									
 									var importWin = Ext.create('Ext.window.Window', {
 										title: 'Import Mapping',
+										iconCls: 'fa fa-lg fa-upload icon-small-vertical-correction',
 										modal: true,
 										width: 450,
 										height: 180,
@@ -1552,6 +1555,7 @@
 									
 									Ext.Msg.show({
 										title:'Delete Mapping',
+										iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 										message: 'Are you sure you want to delete this mapping?',
 										buttons: Ext.Msg.YESNO,
 										icon: Ext.Msg.QUESTION,
@@ -1869,6 +1873,7 @@
 			
 			var detailWindow = Ext.create('Ext.window.Window', {
 				title: 'Details',
+				iconCls: 'fa fa-lg fa-info-circle icon-small-vertical-correction',
 				modal: true,
 				layout: 'fit',
 				width: '60%',

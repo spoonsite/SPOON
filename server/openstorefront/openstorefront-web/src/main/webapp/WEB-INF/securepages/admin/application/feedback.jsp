@@ -106,7 +106,7 @@
 				});
 
 				var ticketGrid =  Ext.create('Ext.grid.Panel', {
-					title: 'User Feedback <i class="fa fa-question-circle"  data-qtip="Display feedback capture in the application"></i>',
+					title: 'User Feedback &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Display feedback capture in the application"></i>',
 					id: 'ticketGrid',
 					columnLines: true,
 					store: ticketGridStore,
@@ -228,16 +228,6 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Mark Complete',
-									itemId: 'complete',
-									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
-									handler: function () {
-										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
-									}									
-								},
-								{
 									text: 'Mark Outstanding',
 									itemId: 'outstanding',
 									scale: 'medium',
@@ -246,7 +236,17 @@
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], false);										
 									}									
-								},								
+								},
+								{
+									text: 'Mark Complete',
+									itemId: 'complete',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save',
+									handler: function () {
+										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
+									}									
+								},
 								{
 									xtype: 'tbfill'
 								},
@@ -310,6 +310,7 @@
 				var actionDelete = function(record) {
 					Ext.Msg.show({
 						title: 'Delete Feedback?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the selected feedback?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,

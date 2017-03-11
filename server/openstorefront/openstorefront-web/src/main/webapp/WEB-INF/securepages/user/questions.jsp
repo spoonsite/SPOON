@@ -157,6 +157,7 @@
 						
 				var responseWindow = Ext.create('OSF.component.ResponseWindow', {
 					title: 'Edit Answer',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					postHandler: function(responseWin, response) {
 						actionRefreshResponses();
 					}
@@ -170,6 +171,7 @@
 				var actionDeleteResponse = function(record) {
 					Ext.Msg.show({
 						title:'Delete Answer?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete this Answer?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -307,7 +309,8 @@
 					});
 					
 					var entryViewWindow = Ext.create('Ext.window.Window', {
-						title: 'Entry',
+						title: 'View Entry',
+						iconCls: 'fa fa-lg fa-eye icon-button-color-view',
 						maximizable: true,
 						modal: true,
 						closeMode: 'destroy',
@@ -327,7 +330,8 @@
 				};
 						
 				var questionWindow = Ext.create('OSF.component.QuestionWindow', {
-					title: 'Edit Question',						
+					title: 'Edit Question',	
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					postHandler: function(questionWin, response) {
 						actionRefreshQuestions();
 					}
@@ -341,6 +345,7 @@
 				var actionDeleteQuestion = function(record) {
 					Ext.Msg.show({
 						title:'Delete Question?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete this question?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,

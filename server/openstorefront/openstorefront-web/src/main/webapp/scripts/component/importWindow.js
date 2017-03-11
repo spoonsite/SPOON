@@ -21,6 +21,7 @@ Ext.define('OSF.component.ImportWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.ImportWindow',
 	title: 'Import Data',
+	iconCls: 'fa fa-lg fa-upload icon-small-vertical-correction',
 	modal: true,
 	width: '50%',
 	height: '70%',

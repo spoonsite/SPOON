@@ -244,3 +244,112 @@ If the method return null it will skip the record.
 **Note:** The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
+
+#3. Database Management
+-----
+
+The application handles all database interaction transparently, so
+direct database access and manipulation is not needed.  
+
+See the following for information on outside control (should rarely be
+needed/used).
+
+##3.1 Refreshing the Database
+-----------------------
+
+**CAUTION:** This will wipe out all data in the application. Data, such
+as User profiles, cannot be recovered. Component user data can be
+preserved by performing an export from the component admin tool.
+
+Make a backup by copying all of the files in the /var/openstorefront/db
+directory or use the following console tools steps:
+
+1.  Stop the Tomcat server  (e.g. service tomcat stop)
+
+2.  Remove the folder /var/openstorefront/db
+    (rm -rf /var/openstorefront/db)
+
+3.  Start the tomcat server
+
+When the application loads it will create a new database and populate
+the data from whatever is currently in the import folders (lookups only; attributes, component, articles will need to be manually
+trigger or uploaded via the Admin Tools UI).
+
+The initial load of the application may take a few minutes. If the
+import directories are empty, the application will load default lookup
+files that are packaged with the application.
+
+##3.2 Installing Database Console
+----------------------------
+
+**CAUTION:** Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.
+
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
+
+2.  Extract the archive
+
+3.  Run the console ./bin/console.sh 
+
+4.  Connect to the DB: 
+
+connect remote: localhost/openstorefront (user) (password) (see the
+    /var/openstorefront/config/openstorefront.properties for
+    connection information)
+
+The database supports an SQL like interface and then adds other
+functionality on top.
+
+-   See [Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html) for
+    information about backup
+
+-   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
+    export and imports.
+
+##3.3 Installing Database Studio
+----------------------------
+
+**NOTE** Orient DB includes a web application for viewing the database
+visually, instead of viewing everything from the console. Once installed,
+Orient DB Studio will run with the database itself once OpenStoreFront 
+is running, and will not require anything to be run locally
+
+**CAUTION:** Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.
+
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
+
+  1. If you already downloaded Orient DB in section 3.2 above,
+    you may simply reuse that download.
+
+2.  Extract the archive
+
+3.  Locate the Studio plugin: ./plugins/studio-2.1.zip
+
+4.  Copy plugin to OpenStoreFront database on server:
+    /var/openstorefront/db/plugins
+
+  1. Copy entire .zip file; do not extract.
+
+5. Start or Restart OpenStoreFront
+
+  1. Plugin will automatically be installed when the database service
+        is initialized.
+
+6. Access Orient DB Studio: <http://localhost:2480/studio/index.html>
+
+  1. Change 'localhost' to the appropriate domain name or IP address if OpenStoreFront is not running locally
+  2. Ensure 'openstorefront' is selected as the database in the dropdown.
+  3. Login using the credentials located in the configuration file: /var/openstorefront/config/openstorefront.properties
+
+The database supports an SQL like interface and then adds other
+functionality on top.
+
+-   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
+    more information about Studio
+
+

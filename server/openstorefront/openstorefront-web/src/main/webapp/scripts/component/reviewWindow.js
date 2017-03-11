@@ -48,9 +48,9 @@ Ext.define('OSF.component.ReviewWindow', {
 					dock: 'bottom',
 					items: [
 						{
-							text: 'Post Review',
+							text: 'Save',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();

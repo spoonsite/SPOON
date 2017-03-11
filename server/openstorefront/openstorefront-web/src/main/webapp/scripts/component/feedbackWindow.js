@@ -69,7 +69,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
