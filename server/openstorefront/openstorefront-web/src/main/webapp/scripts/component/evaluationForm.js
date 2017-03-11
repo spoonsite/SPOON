@@ -241,7 +241,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 									items: [
 										{
 											text: 'Comment',
-											iconCls: 'fa fa-comment',
+											iconCls: 'fa fa-lg fa-comment icon-button-color-save',
 											handler: function(){
 												var form = this.up('form');
 												var data = form.getValues();
@@ -292,7 +292,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 										{
 											text: 'Cancel',
 											itemId: 'cancel',											
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){										
 												var form = this.up('form');
 												form.reset();

@@ -92,7 +92,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-corretion',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-corretion',
 									tooltip: 'Add record',
 									handler: function () {
 										addRecord();
@@ -216,7 +216,7 @@
 				
 				var addRecord = function() {
 					addEditWin.show();
-					addEditWin.setTitle("Add Organization");
+					addEditWin.setTitle('<i class="fa fa-lg fa-plus small-vertical-correction"></i>' + ' &nbsp;&nbsp;' + 'Add Organization');
 //					//reset form
 					Ext.getCmp('entryForm').reset(true);
 					Ext.getCmp('entryForm').edit = false;
@@ -226,7 +226,7 @@
 				var editRecord = function() {
 					
 					addEditWin.show();
-					addEditWin.setTitle("Edit Organization");
+					addEditWin.setTitle('<i class="fa fa-lg fa-edit small-vertical-correction"></i>' + ' &nbsp;&nbsp;' + 'Edit Organization');
 					selectedObj = Ext.getCmp('orgGrid').getSelection()[0];
 					Ext.getCmp('entryForm').reset(true);
 					Ext.getCmp('entryForm').edit = true;
@@ -334,7 +334,8 @@
 				//
 				var noOrgWin = Ext.create('Ext.window.Window', {
 					id: 'noOrgWin',
-					title: 'No Organization References',
+					title: '"No Organization" &nbsp References',
+					iconCls: 'fa fa-lg fa-exclamation-circle icon-small-vertical-correction',
 					modal: true,
 					width: '40%',
 					height: '50%',
@@ -425,6 +426,7 @@
 				var refWin = Ext.create('Ext.window.Window', {
 					id: 'refWin',
 					title: 'Organization References',
+					iconCls: 'fa fa-lg fa-link icon-small-vertical-correction',
 					modal: true,
 					width: '50%',
 					height: '50%',
@@ -494,6 +496,7 @@
 				var mergeWin = Ext.create('Ext.window.Window', {
 					id: 'mergeWin',
 					title: 'Merge Organizations',
+					iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction',
 					modal: true,
 					width: '50%',
 					height: 260,
@@ -573,7 +576,7 @@
 								items: [
 									{
 										text: 'Apply',
-										iconCls: 'fa fa-lg fa-check icon-button-color-add',
+										iconCls: 'fa fa-lg fa-check icon-button-color-save',
 										formBind: true,
 										handler: function(){
 											var data = Ext.getCmp('mergeForm').getValues();
@@ -787,7 +790,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function(){
 												

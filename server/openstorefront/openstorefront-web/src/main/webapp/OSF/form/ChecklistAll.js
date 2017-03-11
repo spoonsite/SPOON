@@ -111,8 +111,9 @@ Ext.define('OSF.form.ChecklistAll', {
 						{
 							text: 'Edit',
 							itemId: 'edit',
-							iconCls: 'fa fa-2x fa-edit',
+							iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 							scale: 'medium',
+							width: '100px',
 							disabled: true,
 							handler: function() {
 								var record = questionForm.questionGrid.getSelectionModel().getSelection()[0];

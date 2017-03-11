@@ -130,6 +130,19 @@
 									xtype: 'tbseparator',
 								},
 								{
+									text: 'Resume Job',
+									tooltip: 'Resume the selected job',
+									scale: 'medium',
+									id: 'jobGrid-jobResume',
+									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
+									name: 'individualJobControl',
+									disabled: true,
+									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										resumeJob(record);
+									}
+								},
+								{
 									text: 'Pause Job',
 									tooltip: 'Pause the selected job',
 									name: 'individualJobControl',
@@ -140,19 +153,6 @@
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										pauseJob(record);
-									}
-								},
-								{
-									text: 'Resume Job',
-									tooltip: 'Resume the selected job',
-									scale: 'medium',
-									id: 'jobGrid-jobResume',
-									iconCls: 'fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction',
-									name: 'individualJobControl',
-									disabled: true,
-									handler: function () {
-										var record = Ext.getCmp('jobGrid').getSelection()[0];
-										resumeJob(record);
 									}
 								},
 								{
@@ -516,7 +516,7 @@
 				};				
 
 				var jobsMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Jobs <i class="fa fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
+					title: 'Manage Jobs &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
 					width: 400,
 					height: 400,
 					items: [jobGrid, taskGrid]
@@ -621,7 +621,7 @@
 								label.setText('Paused');
 								label.setStyle({color: 'red'});
 								button.setText('Resume Scheduler');
-								button.setIconCls('fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction');
+								button.setIconCls('fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction');
 							}
 						},
 						failure: function (response, opts) {

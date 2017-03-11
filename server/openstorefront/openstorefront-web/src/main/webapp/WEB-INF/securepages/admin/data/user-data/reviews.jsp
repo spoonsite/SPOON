@@ -64,7 +64,7 @@
 						items: [
 							{text: 'Component', dataIndex: 'name', width: 225},
 							{text: 'Title', dataIndex: 'title', width: 225},
-							{text: 'Rating', dataIndex: 'rating', width: 75},
+							{text: 'Rating', dataIndex: 'rating', width: 75, align: 'center'},
 							{text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 300},
 							{
 								text: 'Pros', 

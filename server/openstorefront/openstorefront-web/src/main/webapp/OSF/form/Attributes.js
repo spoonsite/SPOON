@@ -117,7 +117,7 @@ Ext.define('OSF.form.Attributes', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save text-success',
+							iconCls: 'fa fa-lg fa-save',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
@@ -146,7 +146,7 @@ Ext.define('OSF.form.Attributes', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close text-danger',
+							iconCls: 'fa fa-lg fa-close',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -239,29 +239,32 @@ Ext.define('OSF.form.Attributes', {
 						}, 								
 						{
 							text: 'Refresh',
-							iconCls: 'fa fa-refresh',
+							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								attributePanel.loadComponentAttributes();
 							}
 						},								
 						{
-							xtype: 'tbfill'
+							xtype: 'tbseparator'
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
-							iconCls: 'fa fa-power-off',									
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function(){
 									attributePanel.loadComponentAttributes();
 								});
 							}
-						},								
+						},
+						{
+							xtype: 'tbfill'
+						},
 						{
 							text: 'Delete',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash text-danger',									
+							iconCls: 'fa fa-trash fa-lg icon-button-color-warning',									
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, true, function(){

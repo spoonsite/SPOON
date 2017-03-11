@@ -113,7 +113,7 @@
 									id: 'highlightGrid-tools-add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddHighlight();
 									}
@@ -286,7 +286,7 @@
 
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
-					var title = 'Delete Highlight?';
+					var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Highlight?</span>';
 					var msg = 'Are you sure you want to delete "' + record.data.title + '"?';
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
@@ -322,7 +322,7 @@
 					scrollable: true,
 					maximizable: true,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-edit',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -391,7 +391,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												var form = Ext.getCmp('editHighlightForm');

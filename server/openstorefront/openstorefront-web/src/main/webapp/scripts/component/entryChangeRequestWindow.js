@@ -198,6 +198,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			Ext.Msg.show({
 				title: 'Delete Change Request?',
 				message: 'Are you sure you want to delete selected change request? ',
+				iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 				buttons: Ext.Msg.YESNO,
 				icon: Ext.Msg.QUESTION,
 				fn: function(btn) {
@@ -327,7 +328,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						{
 							text: 'Approve Change',
 							itemId: 'tool-approveBtn',
-							iconCls: 'fa fa-lg fa-reply icon-button-color-refresh',
+							iconCls: 'fa fa-lg fa-check-square-o icon-button-color-save',
 							disabled: true,
 							hidden: true,
 							handler: function(){
@@ -354,7 +355,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						{
 							text: 'New Change Request',
 							itemId: 'newBtn',
-							iconCls: 'fa fa-lg fa-plus icon-button-color-add',						
+							iconCls: 'fa fa-lg fa-plus icon-button-color-save',						
 							handler: function(){								
 								changeRequestWindow.setLoading('Creating a new change request...');
 								changeRequestWindow.newChangeRequest(changeRequestWindow.currentComponentId);
@@ -483,7 +484,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		var changeRequestWindow = this;
 		
 		changeRequestWindow.currentComponentId = componentId;
-		changeRequestWindow.setTitle('Change Requests - ' + name);
+		changeRequestWindow.setTitle('<i class="fa fa-lg fa-edit"></i>' + '<span class="shift-window-text-right">Change Requests - </span>' + name);
 		
 		//load grid		
 		changeRequestWindow.changeGrid.getStore().load({

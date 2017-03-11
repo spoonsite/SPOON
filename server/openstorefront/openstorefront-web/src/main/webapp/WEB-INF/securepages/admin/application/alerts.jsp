@@ -61,7 +61,7 @@
 
 
 				var alertGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Manage Alerts <i class="fa fa-lg fa-question-circle"  data-qtip="Alerts are triggers set up to watch the data, that an administrator can subscribe to."></i>',
+					title: 'Manage Alerts &nbsp;<i class="fa fa-lg fa-question-circle"  data-qtip="Alerts are triggers set up to watch the data <br />that an administrator can subscribe to."></i>',
 					id: 'alertGrid',
 					store: Ext.data.StoreManager.lookup('alertStore'),
 					columnLines: true,
@@ -221,7 +221,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionEditAlertForm(null);
 									}
@@ -297,7 +297,7 @@
 					width: 600,
 					height: 600,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+//					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -449,7 +449,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
@@ -568,7 +568,7 @@
 					Ext.getCmp('editAlertForm').reset(true);
 					if (record) {
 						// This is an edit form.
-						alertAddEditWin.setTitle('Edit Alert');
+						alertAddEditWin.setTitle('<i class="fa fa-lg fa-edit"></i>' + '<span class="shift-window-text-right">Edit Attribute</span>');
 						Ext.getCmp('editAlertForm').edit = true;
 						Ext.getCmp('editAlertForm').alertId = record.data.alertId;
 						var form = Ext.getCmp('editAlertForm');
@@ -605,7 +605,7 @@
 
 					} else {
 						// This is an add form.
-						alertAddEditWin.setTitle('Add Alert');
+						alertAddEditWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Alert</span>');
 					}
 				};
 
@@ -657,7 +657,7 @@
 				var actionDeleteAlert = function (record) {
 					if (record) {
 						var alertId = record.data.alertId;
-						var title = 'Delete Alert';
+						var title = '<i class="fa fa-lg fa-warning"></i>' + '<span class="shift-window-text-right">Delete Alert</span>';
 						var msg = 'Are you sure you want to delete "' + record.data.name + '"?';
 						Ext.MessageBox.confirm(title, msg, function (btn) {
 							if (btn === 'yes') {

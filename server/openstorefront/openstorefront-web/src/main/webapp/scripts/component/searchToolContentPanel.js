@@ -359,7 +359,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 						{
 							text: 'Save Search',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction',
+							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
 							width: '150px',
 							handler: function () {
 								this.up('panel').saveSearch();
@@ -410,7 +410,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 						},
 						{
 							text: 'Manage Searches',
-							iconCls: 'fa fa-lg fa-gear',
+							iconCls: 'fa fa-lg fa-gear icon-button-color-default',
 							href: 'UserTool.action?load=Searches',
 							hrefTarget: ''
 						}

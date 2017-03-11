@@ -260,7 +260,7 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
 												var win = this.up('window');
 												var form = this.up('form');
@@ -331,7 +331,7 @@
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
 					title: 'Add/Edit Template',
-					iconCls: 'fa fa-file-o',
+					iconCls: 'fa fa-edit',
 					modal: true,
 					width: '80%',
 					height: '80%',
@@ -425,7 +425,7 @@
 													items: [
 														{
 															text: 'Add Custom',
-															iconCls: 'fa fa-lg fa-plus icon-button-color-add',
+															iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 															handler: function() {
 																addEditCustomBlock.show();
 																addEditCustomBlock.getComponent('form').reset();																
@@ -527,7 +527,7 @@
 								{
 									text: 'Save/Continue',
 									scale: 'medium',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 									handler: function(){
 										var precode = Ext.getCmp('codePanel').getComponent('precode').getValue();
 										var gencode = Ext.getCmp('codePanel').getComponent('gencode').getValue();
@@ -676,6 +676,7 @@
 												var templateBlockId = panel.block.templateBlock.templateBlockId;
 												Ext.Msg.show({
 													title:'Delete Template Block?',
+													iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 													message: 'Are you sure you want to delete the block: ' + panel.block.templateBlock.name + '?',
 													buttons: Ext.Msg.YESNO,
 													icon: Ext.Msg.QUESTION,
@@ -941,7 +942,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAdd();
 									}
@@ -1097,6 +1098,7 @@
 							} else {							
 								Ext.Msg.show({
 									title:'Delete Template?',
+									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
 									buttons: Ext.Msg.YESNOCANCEL,
 									icon: Ext.Msg.QUESTION,

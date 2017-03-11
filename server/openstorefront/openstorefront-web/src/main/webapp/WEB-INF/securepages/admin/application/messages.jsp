@@ -337,7 +337,7 @@
 					
 					Ext.create('Ext.window.Window', {
 						title: 'View Message',
-						iconCls: 'fa fa-info-circle',
+						iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction',
 						width: '30%',
 						height: '70%',
 						bodyStyle: 'padding: 10px;',
@@ -477,7 +477,7 @@
 									text: 'Create Admin Message',
 									scale: 'medium',
 									id: 'nAdminMessageButton',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									tooltip: 'Create admin message',
 									handler: function () {
 										nAdminMessage();
@@ -621,7 +621,7 @@
 									{
 										text: 'Send',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
+										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 										handler: function () {
 											var msgtosend = {};
 
@@ -675,6 +675,7 @@
 					var selectedObj = Ext.getCmp('notificationsGrid').getSelection()[0];
 					Ext.Msg.show({
 						title: 'Delete Notification?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the selected notification?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -717,7 +718,7 @@
 				});
 
 				var msgTabPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Messages <i class="fa fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
+					title: 'Manage Messages &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
 					layout: 'fit',
 					items: [
 						messagePanel,

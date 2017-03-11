@@ -41,7 +41,7 @@
 									items: [
 										{
 											text: 'Add Sub-Section',
-											iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',																			
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',																			
 											handler: function(){
 												Ext.getCmp('sectionPanel').expand();
 												addSubSecion(Ext.getCmp('sectionPanel'));
@@ -57,7 +57,7 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 											scale: 'medium',
 											width: '100px',
 											handler: function() {
@@ -368,7 +368,7 @@
 										items: [											
 											{
 												text: 'Add Custom Field',
-												iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
+												iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
 												handler: function() {
 
 													var customFieldWin = Ext.create('Ext.window.Window', {
@@ -471,7 +471,7 @@
 																			{
 																				text: 'Add',
 																				formBind: true,
-																				iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
+																				iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
 																				handler: function(){
 																					var form = this.up('form');
 																					var grid = subSectionCmp.getComponent('customFieldGrid');
@@ -742,7 +742,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								width: '100px',
 								scale: 'medium',
 								handler: function(){

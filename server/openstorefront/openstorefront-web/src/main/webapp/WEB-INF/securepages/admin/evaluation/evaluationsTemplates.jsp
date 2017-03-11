@@ -37,7 +37,7 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-edit',
 										width: '110px',
 										scale: 'medium',
 										handler: function() {
@@ -330,7 +330,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								width: '100px',
 								scale: 'medium',
 								handler: function(){
@@ -451,6 +451,7 @@
 			var actionDelete = function(record) {
 				Ext.Msg.show({
 					title:'Delete Evaluation Template?',
+					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 					message: 'Are you sure you want to delete this template?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
