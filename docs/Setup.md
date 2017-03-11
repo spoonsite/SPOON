@@ -435,6 +435,14 @@ application startup. The high level directory map is stored under
 
 -   db - holds database files
 
+> **NOTE:** When upgrading to version 2.3+ from 2.2 and earlier, there is
+> an additional step when existing data needs to persist. Navigate
+> to the database directory: /var/openstorefront/db/databases/openstorefront
+> and delete the openstorefront .wal file (openstorefront*.wal).
+> First creating a complete backup of the database files would be prudent.
+> Deleting this file allows the database to be upgraded to a newer version
+> which is used starting with version 2.3.
+
 -   import -directory for placing files to be imported.
 
 -   perm - permanent storage location
