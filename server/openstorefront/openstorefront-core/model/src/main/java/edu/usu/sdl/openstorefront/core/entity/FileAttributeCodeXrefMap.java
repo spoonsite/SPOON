@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,6 +30,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Used to store code mapping between external attributes and internal")
+@Embeddable
 public class FileAttributeCodeXrefMap
 	implements Serializable
 {	

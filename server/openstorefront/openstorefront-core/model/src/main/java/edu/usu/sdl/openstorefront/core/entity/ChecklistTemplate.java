@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -60,6 +61,7 @@ public class ChecklistTemplate
 
 	@ConsumeField
 	@DataType(ChecklistTemplateQuestion.class)
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	private List<ChecklistTemplateQuestion> questions;
 

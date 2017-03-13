@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.math.BigDecimal;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -37,6 +38,7 @@ public class ComponentEvaluationSection
 	@PK
 	@ConsumeField
 	@NotNull
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ComponentEvaluationSectionPk componentEvaluationSectionPk;
 

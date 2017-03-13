@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -63,11 +64,13 @@ public class SecurityRole
 	private Integer landingPagePriority;
 
 	@ConsumeField
+	@Embedded
 	@DataType(SecurityRolePermission.class)
 	@OneToMany(orphanRemoval = true)
 	private List<SecurityRolePermission> permissions;
 
 	@ConsumeField
+	@Embedded
 	@DataType(SecurityRoleData.class)
 	@OneToMany(orphanRemoval = true)
 	private List<SecurityRoleData> dataSecurity;

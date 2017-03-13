@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -32,6 +34,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Used to store type mapping between external attributes and internal")
+@Embeddable
 public class FileAttributeTypeXrefMap
 		implements Serializable
 {
@@ -54,6 +57,7 @@ public class FileAttributeTypeXrefMap
 	private String externalType;
 
 	@ConsumeField
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeCodeXrefMap.class)
 	private List<FileAttributeCodeXrefMap> attributeCodeXrefMap;

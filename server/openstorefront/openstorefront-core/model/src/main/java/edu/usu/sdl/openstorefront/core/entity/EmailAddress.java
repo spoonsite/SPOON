@@ -21,8 +21,8 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Holder for an email address (Used in other entities; not standalone)")
+@Embeddable
 public class EmailAddress
 		implements Serializable
 {

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 @APIDescription("Part of Security Role")
+@Embeddable
 public class SecurityRolePermission
 		implements Serializable
 {

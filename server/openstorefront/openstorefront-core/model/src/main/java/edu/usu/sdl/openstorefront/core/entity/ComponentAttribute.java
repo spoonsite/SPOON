@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 
 /**
@@ -32,6 +33,7 @@ public class ComponentAttribute
 
 	@PK
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ComponentAttributePk componentAttributePk;
 

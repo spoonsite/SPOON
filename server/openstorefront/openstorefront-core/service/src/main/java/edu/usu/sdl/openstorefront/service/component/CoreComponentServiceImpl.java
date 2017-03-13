@@ -1460,7 +1460,7 @@ public class CoreComponentServiceImpl
 		{
 			Component componentToFilter = componentAll.getComponent();
 			componentToFilter = FilterEngine.filter(componentToFilter);
-			if (componentToFilter != null)
+			if (componentToFilter == null)
 			{
 				componentAll = null;
 			}

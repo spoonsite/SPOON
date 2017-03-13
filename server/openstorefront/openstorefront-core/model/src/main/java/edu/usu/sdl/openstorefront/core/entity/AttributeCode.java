@@ -30,6 +30,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -49,6 +50,7 @@ public class AttributeCode
 	@PK
 	@NotNull
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private AttributeCodePk attributeCodePk;
 

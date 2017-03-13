@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -56,6 +57,7 @@ public class FileDataMap
 	private String defaultComponentType;
 
 	@ConsumeField
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileDataMapField.class)
 	private List<FileDataMapField> dataMapFields;

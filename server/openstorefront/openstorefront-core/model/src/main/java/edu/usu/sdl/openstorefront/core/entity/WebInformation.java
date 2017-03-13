@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
@@ -27,6 +28,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Part of the feedback ticket")
+@Embeddable
 public class WebInformation
 		implements Serializable
 {
