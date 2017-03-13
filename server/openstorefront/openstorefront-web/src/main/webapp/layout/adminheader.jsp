@@ -320,6 +320,7 @@
 			});
 			appMenu.push({
 				text: 'User Management',
+				itemId: 'usermanagementMenu',
 				permission: 'ADMIN-USER-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('User-Management');
@@ -524,6 +525,23 @@
 					Ext.getCmp('applicationManagementBtn').setHidden(false);
 					Ext.getCmp('applicationManagementBtn').getMenu().add(appMenuItems);
 				}				
+				
+				//Hide built in security page if not needed
+				Ext.Ajax.request({
+					url: 'api/v1/service/security/realmname',
+					success: function(response, opts) {
+						var data = Ext.decode(response.responseText);
+
+						Ext.Array.each(data, function(realm) {
+							if (realm.code !== 'StorefrontRealm') {								
+								var userManagementMenu = Ext.getCmp('applicationManagementBtn').queryById('usermanagementMenu');
+								if (userManagementMenu) {
+									userManagementMenu.setHidden(true);
+								}
+							}
+						});
+					}
+				});	
 				
 			});	
 

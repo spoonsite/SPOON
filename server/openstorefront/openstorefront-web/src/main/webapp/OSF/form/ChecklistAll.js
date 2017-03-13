@@ -92,9 +92,14 @@ Ext.define('OSF.form.ChecklistAll', {
 					text: 'Answer',
 					columns: [
 						{ text: 'Score', dataIndex: 'score', align: 'center', width: 100, 
-							renderer: function(value, metaData, record) {									
-								metaData.tdStyle = "font-size: 2em;";
-								return value ? '<br>' + value : value;
+							renderer: function(value, metaData, record) {	
+								if (record.get('notApplicable')) {
+									metaData.tdStyle = 'background: gray; color: white;';
+									return '<br>NA';
+								} else{
+									metaData.tdStyle = "font-size: 2em;";
+									return value ? '<br>' + value : value;
+								}
 							}
 						},
 						{ text: 'Response', dataIndex: 'response', width: 250, cellWrap: true },
@@ -167,6 +172,17 @@ Ext.define('OSF.form.ChecklistAll', {
 											record.set(chkResponse, {
 												dirty: false
 											});
+											if (!chkResponse.notApplicable) {
+												record.set({
+													notApplicable: null
+												}, {
+													dirty: false
+												});
+											}
+											if (questionForm.refreshCallback) {
+												questionForm.refreshCallback(chkResponse);
+											}											
+											
 											editWin.close();
 										}	
 									});									
@@ -207,6 +223,7 @@ Ext.define('OSF.form.ChecklistAll', {
 							},
 							{
 								xtype: 'combobox',
+								itemId: 'score',
 								name: 'score',
 								fieldCls: 'eval-form-field',
 								labelClsExtra: 'eval-form-field-label',					
@@ -227,6 +244,22 @@ Ext.define('OSF.form.ChecklistAll', {
 									]
 								}
 							},
+							{
+								xtype: 'checkbox',							
+								name: 'notApplicable',
+								boxLabel: 'Not Applicable',
+								listeners: {
+									change: function(field, newValue, oldValue){
+										var scoreField = field.up('form').getComponent('score');
+										if (newValue) {
+											scoreField.setValue(null);
+											scoreField.setDisabled(true);
+										} else {
+											scoreField.setDisabled(false);										
+										}
+									}
+								}
+							},							
 							{
 								xtype: 'panel',	
 								dock: 'top',
@@ -300,6 +333,10 @@ Ext.define('OSF.form.ChecklistAll', {
 		questionForm.questionGrid.getStore().load({
 			url: 'api/v1/resource/evaluations/' + questionForm.evaluationId + '/checklist/' + data.evaluationChecklist.checklistId + '/responses'
 		});
+		
+		if (opts && opts.mainForm) {
+			questionForm.refreshCallback = opts.mainForm.refreshCallback;
+		}		
 		
 		opts.commentPanel.loadComments(evaluationId, "Checklist All", evaluationId);	
 	}
