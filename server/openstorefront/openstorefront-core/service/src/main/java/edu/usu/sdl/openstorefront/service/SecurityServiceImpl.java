@@ -120,7 +120,7 @@ public class SecurityServiceImpl
 			}
 
 			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(element);			
 		}
 		return securityPolicy;
 	}
@@ -141,9 +141,7 @@ public class SecurityServiceImpl
 			securityPolicy = persistenceService.persist(securityPolicy);
 		}
 		//Make sure we have a copy as we may cache it.
-		SecurityPolicy securityPolicyNew = new SecurityPolicy();
-		securityPolicyNew.setPolicyId(securityPolicy.getPolicyId());
-		securityPolicyNew = securityPolicyNew.find();
+		SecurityPolicy securityPolicyNew = securityPolicy.copy();
 
 		OSFCacheManager.getApplicationCache().remove(CURRENT_SECURITY_POLICY);
 		LOG.log(Level.INFO, MessageFormat.format("Security Policy was update by: {0}", SecurityUtil.getCurrentUserName()));

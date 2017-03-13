@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Hold security peferences for the application; note most of these only apply to the internal security.")
 public class SecurityPolicy
-	extends StandardEntity<SecurityPolicy>		
+	extends StandardEntity<SecurityPolicy>
 {
 	@PK(generated = true)
 	@NotNull
@@ -99,6 +99,28 @@ public class SecurityPolicy
 	{
 	}
 
+	
+	public SecurityPolicy copy() 
+	{
+		SecurityPolicy newPolicy = new SecurityPolicy();
+		newPolicy.setAllowJSONPSupport(getAllowJSONPSupport());
+		newPolicy.setAllowRegistration(getAllowRegistration());
+		newPolicy.setAutoApproveUsers(getAutoApproveUsers());
+		newPolicy.setCorsHeaders(getCorsHeaders());
+		newPolicy.setCorsMethods(getCorsMethods());		
+		newPolicy.setCorsOrigins(getCorsOrigins());
+		newPolicy.setCsrfSupport(getCsrfSupport());
+		newPolicy.setCustomHeaders(getCustomHeaders());
+		newPolicy.setLoginLockoutMaxAttempts(getLoginLockoutMaxAttempts());
+		newPolicy.setMinPasswordLength(getMinPasswordLength());
+		newPolicy.setPolicyId(getPolicyId());
+		newPolicy.setRequireAdminUnlock(getRequireAdminUnlock());
+		newPolicy.setRequiresProofOfCitizenship(getRequiresProofOfCitizenship());
+		newPolicy.setResetLockoutTimeMinutes(getResetLockoutTimeMinutes());
+		
+		return newPolicy;
+	}
+	
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
