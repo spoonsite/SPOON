@@ -22,10 +22,11 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SystemSearchWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -99,7 +100,7 @@ public class SystemSearchResource
 			queryByExample.setOrderBy(searchSortExample);
 		}
 
-		List<SystemSearch> searches = service.getPersistenceService().queryByExample(SystemSearch.class, queryByExample);
+		List<SystemSearch> searches = service.getPersistenceService().queryByExample(queryByExample);
 
 		SystemSearchWrapper searchWrapper = new SystemSearchWrapper();
 		searchWrapper.getData().addAll(searches);
@@ -124,7 +125,7 @@ public class SystemSearchResource
 	}	
 	
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@APIDescription("Saves a search")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -137,7 +138,7 @@ public class SystemSearchResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@APIDescription("Updates a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -179,7 +180,7 @@ public class SystemSearchResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a search")
 	@Path("/{searchId}")
@@ -201,7 +202,7 @@ public class SystemSearchResource
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a search")
 	@Path("/{searchId}/activate")

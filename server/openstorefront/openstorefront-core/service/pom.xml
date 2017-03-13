@@ -83,6 +83,12 @@
 			<artifactId>stripes</artifactId>
 			<version>1.6.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>1.2.0</version>
+		</dependency>				
 		
 		<dependency>
 			<groupId>commons-codec</groupId>

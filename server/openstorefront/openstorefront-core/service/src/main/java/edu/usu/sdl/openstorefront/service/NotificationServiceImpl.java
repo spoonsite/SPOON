@@ -276,7 +276,7 @@ public class NotificationServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
+			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(queryByExample);
 			for (NotificationEvent notificationEvent : notificationEvents) {
 				markEventAsRead(notificationEvent.getEventId(), username);
 			}

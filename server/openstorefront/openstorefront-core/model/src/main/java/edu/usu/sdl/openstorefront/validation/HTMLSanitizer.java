@@ -79,21 +79,21 @@ public class HTMLSanitizer
 					.addAttributes(":all", "style")
 					.addEnforcedAttribute("a", "rel", "nofollow")
 			);
-			return RemoveBadStyles(safe);
+			return removeBadStyles(safe);
 		}
 	}
 
-	private String RemoveBadStyles(String html)
+	private String removeBadStyles(String html)
 	{
 		String safe;
-		List<String> badStyles = GetBadStyles();
+		List<String> badStyles = getBadStyles();
 		if (!badStyles.isEmpty()) {
 			Document doc = Jsoup.parse(html);
 			for (String styleToRemove : badStyles) {
-				Elements tags = doc.select(String.format("[style*=\"%s\"]",styleToRemove));
+				Elements tags = doc.select(String.format("[style*=\"%s\"]", styleToRemove));
 				for (Element element : tags) {
 					String elementStyles = element.attr("style");
-					element.attr("style",elementStyles.replace(styleToRemove, ""));
+					element.attr("style", elementStyles.replace(styleToRemove, ""));
 				}
 			}
 			safe = doc.body().html();
@@ -103,7 +103,7 @@ public class HTMLSanitizer
 		return safe;
 	}
 
-	private List<String> GetBadStyles()
+	private List<String> getBadStyles()
 	{
 		List<String> badStyles = new ArrayList();
 		badStyles.add("position:static;");

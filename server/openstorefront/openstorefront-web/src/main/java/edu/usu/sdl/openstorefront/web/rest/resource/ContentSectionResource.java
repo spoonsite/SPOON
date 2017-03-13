@@ -15,55 +15,48 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
-import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Provides access to content sections.")
-@Path("v1/resource/contentsections")
+//@APIDescription("Provides access to content sections.")
+//@Path("v1/resource/contentsections")
 public class ContentSectionResource
-		extends BaseResource
+
 {
 
 	//get sections (option for entity, entityId)
-	@GET
-	@RequireAdmin
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ContentSection.class)
-	@APIDescription("Gets top-level sections")
-	public Response getSections(
-			@QueryParam("entity") String entity,
-			@QueryParam("entityId") String entityId,
-			@QueryParam("workflowStatus") String workflowStatus
-	)
-	{
-		ContentSection contentSection = new ContentSection();
-		contentSection.setEntity(StringProcessor.nullIfBlank(entity));
-		contentSection.setEntityId(StringProcessor.nullIfBlank(entityId));
-		contentSection.setWorkflowStatus(StringProcessor.nullIfBlank(workflowStatus));
-		contentSection.setActiveStatus(ContentSection.ACTIVE_STATUS);
-
-		List<ContentSection> sections = contentSection.findByExample();
-
-		GenericEntity<List<ContentSection>> sectionEntity = new GenericEntity<List<ContentSection>>(sections)
-		{
-		};
-		return sendSingleEntityResponse(sectionEntity);
-	}
+	
+	
+	//Hold on this for now ....keep in mind this may allowing pull sections
+	//from unapproved entry and/or unpublished  evaluations.
+	//We need to think about the security and the need for this.
+	
+	
+//	@GET
+//	@RequireSecurity
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@DataType(ContentSection.class)
+//	@APIDescription("Gets top-level sections")
+//	public Response getSections(
+//			@QueryParam("entity") String entity,
+//			@QueryParam("entityId") String entityId,
+//			@QueryParam("workflowStatus") String workflowStatus
+//	)
+//	{
+//		ContentSection contentSection = new ContentSection();
+//		contentSection.setEntity(StringProcessor.nullIfBlank(entity));
+//		contentSection.setEntityId(StringProcessor.nullIfBlank(entityId));
+//		contentSection.setWorkflowStatus(StringProcessor.nullIfBlank(workflowStatus));
+//		contentSection.setActiveStatus(ContentSection.ACTIVE_STATUS);
+//
+//		List<ContentSection> sections = contentSection.findByExample();
+//
+//		GenericEntity<List<ContentSection>> sectionEntity = new GenericEntity<List<ContentSection>>(sections)
+//		{
+//		};
+//		return sendSingleEntityResponse(sectionEntity);
+//	}
 	
 	//get attributes 
 	

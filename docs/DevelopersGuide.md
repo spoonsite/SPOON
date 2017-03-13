@@ -128,7 +128,43 @@ the version of the application.
 
 ##1.10 Licensing
 
-The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also claries how individual pieces can be used.
+The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
+
+##1.11 Security
+-----------------
+
+Openstorefront support several environments each have different security needs.
+It also support a built in user management.  Regardless of the authentication mechanism the security is based on dynamic role made up of permissions.
+
+The granularity of the permissions is mostly feature/tool based.  
+
+###1.11.1 Adding Permissions
+
+1. Add Permission to SecurityPermission entity in code.
+
+2. Add Permission to auto-generated admin group (See Core-Service-> ...core.init.SecurityInit.java)
+
+3. Apply Permission
+
+
+Two place where permission need to be applied:
+
+_ Server API
+
+_ UI (typically to restrict a page however, it may be used to restrict a piece of functionality)
+
+Use caution in marking APIs as there may be other features that rely a shared API to work correctly. Should be a rare case.
+Also, keep in mind there may be special handling for "owners" of the data beyond a permission.
+
+
+###1.11.2 Data Restriction
+
+Data may be restricted by source and/or data sensitivity.  Data sensitivity may 
+be marked at a entity-level however, not all entity need to be marked. Marking
+support on the UI may be set according to needs.
+
+All Data-based API need to handling filtering data.
+
 
 #2. External Developers
 

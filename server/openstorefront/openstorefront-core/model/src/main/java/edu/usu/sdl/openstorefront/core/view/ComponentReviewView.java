@@ -124,7 +124,7 @@ public class ComponentReviewView
 			ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
 			reviewProPk.setComponentReviewId(review.getComponentReviewId());
 			reviewProExample.setComponentReviewProPk(reviewProPk);
-			List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(ComponentReviewPro.class, reviewProExample);
+			List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(reviewProExample);
 			for (ComponentReviewPro pro : componentReviewPros) {
 				view.toStandardView(pro);
 			}
@@ -139,7 +139,7 @@ public class ComponentReviewView
 			ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
 			reviewConPk.setComponentReviewId(review.getComponentReviewId());
 			reviewConExample.setComponentReviewConPk(reviewConPk);
-			List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(ComponentReviewCon.class, reviewConExample);
+			List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(reviewConExample);
 			for (ComponentReviewCon con : componentReviewCons) {
 				view.toStandardView(con);
 			}

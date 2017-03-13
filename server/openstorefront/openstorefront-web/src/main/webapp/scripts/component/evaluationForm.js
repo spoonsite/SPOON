@@ -564,13 +564,11 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.add(evalPanel.contentPanel);
 		evalPanel.add(evalPanel.commentPanel);
 		
-		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);			
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 			evalPanel.branding = branding;
 		});
 		
-		CoreService.usersevice.getCurrentUser().then(function(response, opts){
-			var user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
 			evalPanel.user = user;	
 			
 			evalPanel.loadContentForm({
@@ -700,7 +698,19 @@ Ext.define('OSF.component.EvaluationPanel', {
 								evalPanel.loadContentForm({
 									form: 'ChecklistAll',
 									title: 'Checklist Questions',
-									data: evaluationAll.checkListAll
+									data: evaluationAll.checkListAll,
+									refreshCallback: function(updatedResponse) {
+										var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+																				
+										var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+										Ext.Array.each(checklistMenu.items.items, function(item){
+											if (item.questionId && updatedResponse.questionId === item.questionId) {
+												var itemStatus = item.getComponent('status');
+												itemStatus.setText(newStatusIcon);	
+												itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
+											}
+										});
+									}									
 								});
 							}							
 						});
@@ -736,7 +746,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 										Ext.Array.each(checklistMenu.items.items, function(item){
 											if (item.questionId && updatedResponse.questionId === item.questionId) {
 												var itemStatus = item.getComponent('status');
-												itemStatus.setText(newStatusIcon);												
+												itemStatus.setText(newStatusIcon);
+												itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
 											}
 										});
 									}

@@ -1,6 +1,6 @@
 This software is licensed as whole under GPL V3.
 
-If desired you can be release from the GPL V3 license by purchasing a commercial license from sencha.com for EXT JS.  This software, as a whole, will then be available under Apache V2 license. Indiviual compoenent have different but compatible licenses.
+If desired you can be released from the GPL V3 license by purchasing a commercial license from sencha.com for EXT JS.  This software, as a whole, will then be available under Apache V2 license. Indiviual compoenent have different but compatible licenses.
 
 FAQ:
 https://www.sencha.com/legal/GPL/
@@ -14,21 +14,21 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 - Can modify Branding with having to release changes? Yes, that would be consider data.
 
-- Does this restrict deploying the applicaition?  No, you can deploy internally and publiclly.  
+- Does this restrict deploying the application?  No, you can deploy internally and publicly.  
 
 - GPL only applies to releasing software? Yes, if you don't release the software you can make any modifications you want and not have to release them.  (See GPL, DOD FAQ)
 
-- What if make a modifications and release? You need to be compliant with the License and release your modification.  Consider contributing your modificaition back to this commnunity but that is not a requirement.
+- What if make a modifications and release? You need to be compliant with the License and release your modification.  Consider contributing your modification back to this community but that is not a requirement.
 
-- What about server application extension? External plugins if standalone they can have their own license.  If they consistute the whole of the application than thye need to comply to GPL license. (See GPL FAQ)
+- What about server application extension? External plugins if standalone they can have their own license.  If they constitute the whole of the application than the need to comply to GPL license. (See GPL FAQ)
 
 - Does this affect external programs using the REST API? No, external programs can have their own licenses.  This is not using AGPL license.  The license does not apply to the data.
 
-- Can I use openstorefront as part of larger application?  Yes, you can integrate it with other applications.  You can use it internally and expose a different inteface publically that is closed source.  In this case it would be simiular to Mysql. 
+- Can I use openstorefront as part of larger application?  Yes, you can integrate it with other applications.  You can use it internally and expose a different interface publicly that is closed source.  In this case it would be similar to Mysql. 
 
 
 This Software Contains (most when compiled/packaged):  
-This is listed here for convience as the individual packages contain there respective licenses.
+This is listed here for convenience as the individual packages contain their respective licenses.
 
 Patterns from http://subtlepatterns.com/
 Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
@@ -37,12 +37,12 @@ UI: (Included)
 
 EXT JS GPL V3 or later
 TinyMCE LGPL V3 or later
-Font Awesome licensed under SIL OFL 1.1 · Code licensed under MIT License
+Font Awesome licensed under SIL OFL 1.1  Code licensed under MIT License
 JQuery, Apache V2 see jquery.org/license
 JQuery UI, MIT
 Socket IO, MIT
 
-Server: (Downloaded packaged on build)
+Server: (Downloaded/packaged on build)
 
 Atomsphere Apache V2
 Apache Commons Apache V2
@@ -73,7 +73,7 @@ urlrewriterfilter	BSD
 org.osgi.core	Apache V2
 felix	Apache V2
 Elasticsearch	Apache V2
-
+passay dual licensed under both the LGPL v3 and Apache 2
 
 
 

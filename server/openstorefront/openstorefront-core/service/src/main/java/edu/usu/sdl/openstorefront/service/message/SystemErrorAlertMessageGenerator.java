@@ -76,7 +76,7 @@ public class SystemErrorAlertMessageGenerator
 		specialOperatorModel.setExample(errorTicketStartExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<ErrorTicket> tickets = serviceProxy.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
+		List<ErrorTicket> tickets = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 		if (!tickets.isEmpty()) {
 			message.append("System errors have occured.  ")
 					.append(tickets.size()).append("  error(s) since: ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");

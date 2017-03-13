@@ -34,7 +34,7 @@ public class ApprovalMessageGenerator
 	@Override
 	protected String getSubject()
 	{
-		return "Component Submission Approved";
+		return "Entry Submission Approved";
 	}
 
 	@Override

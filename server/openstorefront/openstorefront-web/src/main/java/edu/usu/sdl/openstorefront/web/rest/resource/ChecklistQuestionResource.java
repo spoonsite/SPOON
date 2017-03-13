@@ -26,10 +26,11 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -61,7 +62,7 @@ public class ChecklistQuestionResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionWrapper.class)
 	@APIDescription("Gets Checklist questions")
@@ -105,7 +106,7 @@ public class ChecklistQuestionResource
 			queryByExample.setOrderBy(checklistQuestionSortExample);
 		}
 
-		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(ChecklistQuestion.class, queryByExample);
+		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(queryByExample);
 
 		ChecklistQuestionWrapper checklistQuestionWrapper = new ChecklistQuestionWrapper();
 		checklistQuestionWrapper.getData().addAll(ChecklistQuestionView.toView(questions));
@@ -115,7 +116,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionView.class)
 	@APIDescription("Gets a checklist question")
@@ -132,7 +133,7 @@ public class ChecklistQuestionResource
 
 	@GET
 	@APIDescription("Exports questions in JSON format.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportQuestions(
@@ -162,7 +163,7 @@ public class ChecklistQuestionResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@APIDescription("Creates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -174,7 +175,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@APIDescription("Updates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -239,7 +240,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a Question")
 	@Path("/{questionId}/activate")
@@ -263,7 +264,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if question is in use; returns true if in use or no content if not.")
 	@Path("/{questionId}/inuse")
@@ -285,7 +286,7 @@ public class ChecklistQuestionResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a question or remove only if not in use")
 	@Path("/{questionId}")

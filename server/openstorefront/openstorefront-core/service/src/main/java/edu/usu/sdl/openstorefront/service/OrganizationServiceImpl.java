@@ -343,7 +343,7 @@ public class OrganizationServiceImpl
 			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity) entity);
 			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
-			entities = persistenceService.queryByExample((Class<T>) entity.getClass(), queryByExample);
+			entities = persistenceService.queryByExample(queryByExample);
 
 		} else {
 			//Search for records with no org

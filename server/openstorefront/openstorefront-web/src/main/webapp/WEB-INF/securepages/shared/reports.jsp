@@ -968,8 +968,7 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										maxHeight: 250,
-										
+										maxHeight: 250,										
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
@@ -1126,6 +1125,8 @@
 								},
 								{
 									text: 'Scheduled Reports',
+									id: 'scheduledReportBtn',
+									hidden: true,
 									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function () {
@@ -1426,7 +1427,17 @@
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
 					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
-				};				
+				};	
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
+						Ext.getCmp('scheduledReportBtn').setHidden(false);					
+					}				
+				});	
+
+				
+				
+				
 				
 			});
 

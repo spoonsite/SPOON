@@ -56,10 +56,18 @@ Each levels has a different audience. (See java Docs)  Add logging message appro
 
 *FINEST* - Trace message; highly detail.  If gather the information is time consuming (cpu wise) then check logging state first.  If (log.isLoggable(Level.FINIEST)).
 
-If you don't add logging it not avaliable.  So we need add logging where appropriate.  Typically, on anti-condition.  
+If you don't add logging it not avaliable.  So we need add logging where appropriate.  Typically, on anti-conditions.  
 Think, "If I was troubleshooting this in production could I get enough information to solve an issue?" 
 Log the data owner and state.
-Note: Tomcat's loghandler doesn't seem to handle "{0}" subsitution.  Use MessageFormat.format to handle that.
+Note: Tomcat's loghandler doesn't seem to handle "{0}" substitution.  Use MessageFormat.format to handle that.
 
+##Cross Cutting Concerns
 
+**Security** - Make sure permission are applied to the REST/External API and UI features.
+
+**Logging** - Security changes/sensitivity are must have an audit logging. (Log action, who performed it)
+
+**Data Restriction** - Make sure data that should be restricted is and restricted at the appropriate level.  This is not applied universally, as there's complications that require specific handling.
+
+Use caution when modifying the code to keep these feature/requirements intact.    
 

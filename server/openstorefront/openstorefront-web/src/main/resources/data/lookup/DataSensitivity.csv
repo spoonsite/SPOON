@@ -1,0 +1,9 @@
+PUBLIC, Public
+SENSITIVE, Sensitive
+ITAR, ITAR Restrictive, Controls the export and import of defense-related articles and services on the United States Munitions List 
+DISTROA, DISTRIBUTION A, Approved for public release: distribution unlimited.
+DISTROB, DISTRIBUTION B, Distribution authorized to U.S. Government Agencies (reason) (date of determination). Other request for this document shall be referred to (controlling DoD office).
+DISTROC, DISTRIBUTION C, Distribution authorized to U.S. Government Agencies and their contractors. (reason) (date of determination). Other request for this document shall be referred to (controlling DoD office).
+DISTROD, DISTRIBUTION D, Distribution authorized to Department of Defense and U.S. DoD contractors only (reason) (date of determination). Other request for this document shall be referred to (controlling DoD office).
+DISTROE, DISTRIBUTION E, Distribution authorized to DoD components only (reason) (date of determination). Other request for this document shall be referred to (controlling DoD office).
+DISTROF, DISTRIBUTION F, Further dissemination only as directed by (controlling office) (date of determination) or higher DoD authority.

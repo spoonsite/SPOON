@@ -55,6 +55,9 @@ public class EvaluationChecklistResponse
 
 	@ConsumeField
 	private BigDecimal score;
+	
+	@ConsumeField
+	private Boolean notApplicable;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
@@ -80,6 +83,7 @@ public class EvaluationChecklistResponse
 		setPrivateNote(checklistResponse.getPrivateNote());
 		setResponse(checklistResponse.getResponse());
 		setScore(checklistResponse.getScore());
+		setNotApplicable(checklistResponse.getNotApplicable());		
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
 
 	}
@@ -152,6 +156,16 @@ public class EvaluationChecklistResponse
 	public void setWorkflowStatus(String workflowStatus)
 	{
 		this.workflowStatus = workflowStatus;
+	}
+
+	public Boolean getNotApplicable()
+	{
+		return notApplicable;
+	}
+
+	public void setNotApplicable(Boolean notApplicable)
+	{
+		this.notApplicable = notApplicable;
 	}
 
 }

@@ -25,7 +25,7 @@
         <listener-class>edu.usu.sdl.openstorefront.web.init.ShiroLoader</listener-class>
     </listener>
 	
- <!--   
+<!--  
 	<filter>
 		<filter-name>MockHeaderFilter</filter-name>
 		<filter-class>edu.usu.sdl.openstorefront.web.init.HeaderTestFilter</filter-class>

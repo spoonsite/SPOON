@@ -25,7 +25,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-		<h1>API Reference</h1>
+		<h1 style="padding-bottom: 10px;">API Reference</h1>
 		<hr>
 		This document describes the API interface for the open storefront project.<br><br>
 		<b>Base Path:</b> /api<br>

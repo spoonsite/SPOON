@@ -223,7 +223,9 @@ Ext.define('OSF.form.Relationships', {
 			url: 'api/v1/resource/components/' + componentId + '/relationships'
 		});
 		
-		opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		}
 	}	
 	
 });

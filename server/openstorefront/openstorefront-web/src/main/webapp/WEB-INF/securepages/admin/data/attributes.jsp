@@ -507,6 +507,7 @@
 							{
 								text: 'Entry Assignment',
 								id: 'attributeGrid-tools-assign',
+								hidden: true,
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
@@ -573,6 +574,7 @@
 							{
 								text: 'Import',
 								id: 'attributeGrid-tools-import',
+								hidden: true,
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								handler: function() {
@@ -582,6 +584,7 @@
 							{
 								text: 'Export',
 								id: 'attributeGrid-tools-export',
+								hidden: true,
 								scale: 'medium',
 								disabled: true,
 								iconCls: 'fa fa-2x fa-download icon-button-color-default',
@@ -594,6 +597,17 @@
 					}
 				]
 			});
+			
+			CoreService.userservice.getCurrentUser().then(function(user){
+				if (CoreService.userservice.userHasPermisson(user, "ADMIN-ENTRY-MANAGEMENT")) {
+					Ext.getCmp('attributeGrid-tools-assign').setHidden(false);					
+				}
+				if (CoreService.userservice.userHasPermisson(user, "ADMIN-DATA-IMPORT-EXPORT")) {
+					Ext.getCmp('attributeGrid-tools-import').setHidden(false);
+					Ext.getCmp('attributeGrid-tools-export').setHidden(false);
+				}				
+			});			
+			
 
 			var actionAddAttribute = function actionAddAttribute() {
 				Ext.getCmp('editAttributeForm').reset();

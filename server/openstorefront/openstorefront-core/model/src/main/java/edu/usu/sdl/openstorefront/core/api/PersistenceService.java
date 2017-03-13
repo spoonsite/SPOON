@@ -92,12 +92,11 @@ public interface PersistenceService
 	 *
 	 * @param <T>
 	 * @param query
-	 * @param parameterMap
-	 * @param dataClass
+	 * @param parameterMap	 
 	 * @param unwrap
 	 * @return
 	 */
-	<T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap);
+	<T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap);
 
 	/**
 	 * This will run the example with the default options
@@ -107,9 +106,9 @@ public interface PersistenceService
 	 * @param baseEntity
 	 * @return
 	 */
-	<T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity);
+	<T> List<T> queryByExample(BaseEntity baseEntity);
 
-	<T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample);
+	<T> List<T> queryByExample(QueryByExample queryByExample);
 
 	/**
 	 * This just returns one result. Typically the query results in only one
@@ -120,9 +119,9 @@ public interface PersistenceService
 	 * @param baseEnity
 	 * @return the entity or null if not found
 	 */
-	<T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity);
+	<T> T queryOneByExample(BaseEntity baseEnity);
 
-	<T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample);
+	<T> T queryOneByExample(QueryByExample queryByExample);
 
 	void rollback();
 
@@ -142,9 +141,9 @@ public interface PersistenceService
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 
-	<T> List<T> unwrapProxy(Class<T> origClass, List<T> data);
+	<T> List<T> unwrapProxy(List<T> data);
 
-	<T> T unwrapProxyObject(Class<T> origClass, T data);
+	<T> T unwrapProxyObject(T data);
 
 	<T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere);
 

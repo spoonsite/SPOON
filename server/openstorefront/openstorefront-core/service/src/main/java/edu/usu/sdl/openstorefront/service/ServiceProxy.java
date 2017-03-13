@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.PluginService;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
+import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
@@ -83,6 +84,7 @@ public class ServiceProxy
 	private EvaluationService evaluationService;
 	private ChecklistService checklistService;
 	private ContentSectionService contentSectionService;
+	private SecurityService securityService;
 
 	public ServiceProxy()
 	{
@@ -123,7 +125,8 @@ public class ServiceProxy
 	@Override
 	public LookupService getLookupService()
 	{
-		if (lookupService == null) {
+		if (lookupService == null)
+		{
 			lookupService = DynamicProxy.newInstance(new LookupServiceImpl());
 		}
 		return lookupService;
@@ -132,7 +135,8 @@ public class ServiceProxy
 	@Override
 	public AttributeService getAttributeService()
 	{
-		if (attributeService == null) {
+		if (attributeService == null)
+		{
 			attributeService = DynamicProxy.newInstance(new AttributeServiceImpl());
 		}
 		return attributeService;
@@ -141,7 +145,8 @@ public class ServiceProxy
 	@Override
 	public ComponentService getComponentService()
 	{
-		if (componentService == null) {
+		if (componentService == null)
+		{
 			componentService = DynamicProxy.newInstance(new ComponentServiceImpl());
 		}
 		return componentService;
@@ -149,7 +154,8 @@ public class ServiceProxy
 
 	public ComponentServicePrivate getComponentServicePrivate()
 	{
-		if (componentServicePrivate == null) {
+		if (componentServicePrivate == null)
+		{
 			componentServicePrivate = DynamicProxy.newInstance(new ComponentServiceImpl());
 		}
 		return componentServicePrivate;
@@ -158,7 +164,8 @@ public class ServiceProxy
 	@Override
 	public SearchService getSearchService()
 	{
-		if (searchService == null) {
+		if (searchService == null)
+		{
 			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchService;
@@ -166,7 +173,8 @@ public class ServiceProxy
 
 	public SearchServicePrivate getSearchServicePrivate()
 	{
-		if (searchServicePrivate == null) {
+		if (searchServicePrivate == null)
+		{
 			searchServicePrivate = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchServicePrivate;
@@ -175,7 +183,8 @@ public class ServiceProxy
 	@Override
 	public UserService getUserService()
 	{
-		if (userService == null) {
+		if (userService == null)
+		{
 			userService = DynamicProxy.newInstance(new UserServiceImpl());
 		}
 		return userService;
@@ -183,7 +192,8 @@ public class ServiceProxy
 
 	public UserServicePrivate getUserServicePrivate()
 	{
-		if (userService == null) {
+		if (userService == null)
+		{
 			userServicePrivate = DynamicProxy.newInstance(new UserServiceImpl());
 		}
 		return userServicePrivate;
@@ -192,7 +202,8 @@ public class ServiceProxy
 	@Override
 	public SystemService getSystemService()
 	{
-		if (systemService == null) {
+		if (systemService == null)
+		{
 			systemService = DynamicProxy.newInstance(new SystemServiceImpl());
 		}
 		return systemService;
@@ -201,7 +212,8 @@ public class ServiceProxy
 	@Override
 	public AlertService getAlertService()
 	{
-		if (alertService == null) {
+		if (alertService == null)
+		{
 			alertService = DynamicProxy.newInstance(new AlertServiceImpl());
 		}
 		return alertService;
@@ -210,7 +222,8 @@ public class ServiceProxy
 	@Override
 	public ReportService getReportService()
 	{
-		if (reportService == null) {
+		if (reportService == null)
+		{
 			reportService = DynamicProxy.newInstance(new ReportServiceImpl());
 		}
 		return reportService;
@@ -219,7 +232,8 @@ public class ServiceProxy
 	@Override
 	public OrganizationService getOrganizationService()
 	{
-		if (organizationService == null) {
+		if (organizationService == null)
+		{
 			organizationService = DynamicProxy.newInstance(new OrganizationServiceImpl());
 		}
 		return organizationService;
@@ -228,7 +242,8 @@ public class ServiceProxy
 	@Override
 	public PluginService getPluginService()
 	{
-		if (pluginService == null) {
+		if (pluginService == null)
+		{
 			pluginService = DynamicProxy.newInstance(new PluginServiceImpl());
 		}
 		return pluginService;
@@ -236,7 +251,8 @@ public class ServiceProxy
 
 	public PluginServicePrivate getPluginServicePrivate()
 	{
-		if (pluginServicePrivate == null) {
+		if (pluginServicePrivate == null)
+		{
 			pluginServicePrivate = DynamicProxy.newInstance(new PluginServiceImpl());
 		}
 		return pluginServicePrivate;
@@ -244,7 +260,8 @@ public class ServiceProxy
 
 	public AttributeServicePrivate getAttributeServicePrivate()
 	{
-		if (attributeServicePrivate == null) {
+		if (attributeServicePrivate == null)
+		{
 			attributeServicePrivate = DynamicProxy.newInstance(new AttributeServiceImpl());
 		}
 		return attributeServicePrivate;
@@ -253,7 +270,8 @@ public class ServiceProxy
 	@Override
 	public ImportService getImportService()
 	{
-		if (importService == null) {
+		if (importService == null)
+		{
 			importService = DynamicProxy.newInstance(new ImportServiceImpl());
 		}
 		return importService;
@@ -261,7 +279,8 @@ public class ServiceProxy
 
 	public ImportServicePrivate getImportServicePrivate()
 	{
-		if (importServicePrivate == null) {
+		if (importServicePrivate == null)
+		{
 			importServicePrivate = DynamicProxy.newInstance(new ImportServiceImpl());
 		}
 		return importServicePrivate;
@@ -270,7 +289,8 @@ public class ServiceProxy
 	@Override
 	public BrandingService getBrandingService()
 	{
-		if (brandingService == null) {
+		if (brandingService == null)
+		{
 			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
 		}
 		return brandingService;
@@ -279,7 +299,8 @@ public class ServiceProxy
 	@Override
 	public NotificationService getNotificationService()
 	{
-		if (notificationService == null) {
+		if (notificationService == null)
+		{
 			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
 		}
 		return notificationService;
@@ -288,7 +309,8 @@ public class ServiceProxy
 	@Override
 	public FeedbackService getFeedbackService()
 	{
-		if (feedbackService == null) {
+		if (feedbackService == null)
+		{
 			feedbackService = DynamicProxy.newInstance(new FeedbackServiceImpl());
 		}
 		return feedbackService;
@@ -297,7 +319,8 @@ public class ServiceProxy
 	@Override
 	public ContactService getContactService()
 	{
-		if (contactService == null) {
+		if (contactService == null)
+		{
 			contactService = DynamicProxy.newInstance(new ContactServiceImpl());
 		}
 		return contactService;
@@ -333,7 +356,8 @@ public class ServiceProxy
 	@Override
 	public EvaluationService getEvaluationService()
 	{
-		if (evaluationService == null) {
+		if (evaluationService == null)
+		{
 			evaluationService = DynamicProxy.newInstance(new EvaluationServiceImpl());
 		}
 		return evaluationService;
@@ -342,7 +366,8 @@ public class ServiceProxy
 	@Override
 	public ContentSectionService getContentSectionService()
 	{
-		if (contentSectionService == null) {
+		if (contentSectionService == null)
+		{
 			contentSectionService = DynamicProxy.newInstance(new ContentSectionServiceImpl());
 		}
 		return contentSectionService;
@@ -351,10 +376,21 @@ public class ServiceProxy
 	@Override
 	public ChecklistService getChecklistService()
 	{
-		if (checklistService == null) {
+		if (checklistService == null)
+		{
 			checklistService = DynamicProxy.newInstance(new ChecklistServiceImpl());
 		}
 		return checklistService;
+	}
+
+	@Override
+	public SecurityService getSecurityService()
+	{
+		if (securityService == null)
+		{
+			securityService = DynamicProxy.newInstance(new SecurityServiceImpl());
+		}
+		return securityService;
 	}
 
 }

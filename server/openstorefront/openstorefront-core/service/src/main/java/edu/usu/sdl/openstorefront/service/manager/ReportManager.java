@@ -72,11 +72,11 @@ public class ReportManager
 		reportExample.setActiveStatus(Report.ACTIVE_STATUS);
 		reportExample.setRunStatus(RunStatus.PENDING);
 
-		List<Report> reports = serviceProxy.getPersistenceService().queryByExample(Report.class, reportExample);
+		List<Report> reports = serviceProxy.getPersistenceService().queryByExample(reportExample);
 		allReports.addAll(reports);
 
 		reportExample.setRunStatus(RunStatus.WORKING);
-		reports = serviceProxy.getPersistenceService().queryByExample(Report.class, reportExample);
+		reports = serviceProxy.getPersistenceService().queryByExample(reportExample);
 		allReports.addAll(reports);
 
 		return allReports;

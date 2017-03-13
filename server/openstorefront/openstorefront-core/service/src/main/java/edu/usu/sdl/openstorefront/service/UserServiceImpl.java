@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -110,7 +111,7 @@ public class UserServiceImpl
 		implements UserService, UserServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(UserServiceImpl.class.getName());
 
 	private static final int MAX_NAME_CHECK = 100;
 
@@ -120,7 +121,7 @@ public class UserServiceImpl
 		UserWatch temp = new UserWatch();
 		temp.setUsername(userId);
 		temp.setActiveStatus(UserWatch.ACTIVE_STATUS);
-		return persistenceService.queryByExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryByExample(new QueryByExample(temp));
 	}
 
 	@Override
@@ -128,7 +129,7 @@ public class UserServiceImpl
 	{
 		UserWatch temp = new UserWatch();
 		temp.setUserWatchId(watchId);
-		return persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryOneByExample(new QueryByExample(temp));
 	}
 
 	/**
@@ -176,7 +177,7 @@ public class UserServiceImpl
 		if (!all) {
 			example.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		}
-		return persistenceService.queryByExample(UserProfile.class, new QueryByExample(example));
+		return persistenceService.queryByExample(new QueryByExample(example));
 	}
 
 	@Override
@@ -410,7 +411,7 @@ public class UserServiceImpl
 
 			//Activative profile on login
 			if (UserProfile.INACTIVE_STATUS.equals(profile.getActiveStatus())) {
-				log.log(Level.INFO, MessageFormat.format("User: {0} profile was INACTIVE reactivating it on login.", profile.getUsername()));
+				LOG.log(Level.INFO, MessageFormat.format("User: {0} profile was INACTIVE reactivating it on login.", profile.getUsername()));
 				getUserService().reactiveProfile(userprofile.getUsername());
 			}
 
@@ -420,12 +421,7 @@ public class UserServiceImpl
 			}
 
 			profile = persistenceService.deattachAll(profile);
-			userContext.setUserProfile(profile);
-			if (admin != null) {
-				userContext.setAdmin(admin);
-			} else {
-				userContext.setAdmin(SecurityUtil.isAdminUser());
-			}
+			userContext = getSecurityService().getUserContext(profile.getUsername());
 			SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
 
 			//Add tracking if it's a client request
@@ -451,14 +447,14 @@ public class UserServiceImpl
 
 				saveUserTracking(userTracking);
 			} else {
-				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not an external client request...not tracking", profile.getUsername()));
+				LOG.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not an external client request...not tracking", profile.getUsername()));
 			}
 			String adminLog = "";
 			if (userContext.isAdmin()) {
 				adminLog = "(Admin)";
 			}
 
-			log.log(Level.INFO, MessageFormat.format("User {0} sucessfully logged in. {1}", profile.getUsername(), adminLog));
+			LOG.log(Level.INFO, MessageFormat.format("User {0} sucessfully logged in. {1}", profile.getUsername(), adminLog));
 
 		} else {
 			throw new OpenStorefrontRuntimeException("Failed to validate the userprofile. Validation Message: " + validationResult.toString(), "Check data");
@@ -487,7 +483,7 @@ public class UserServiceImpl
 				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
 				Email email = testMessageGenerator.generateMessage();
 				MailManager.send(email);
-				log.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
+				LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 			} else {
 				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
 			}
@@ -510,26 +506,33 @@ public class UserServiceImpl
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		userWatchExample.setComponentId(component.getComponentId());
 
-		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
+		List<UserWatch> userWatches = persistenceService.queryByExample(userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
-				if (Convert.toBoolean(userWatch.getNotifyFlg())) {
-					UserMessage userMessage = new UserMessage();
-					userMessage.setUsername(userWatch.getUsername());
-					userMessage.setComponentId(component.getComponentId());
-					userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
-					userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-					userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-					getUserService().queueUserMessage(userMessage);
-				}
+				
+				//make sure the user can still access the component
+				Component accessComponent = FilterEngine.filter(component);
+				if (accessComponent != null) {
+					if (Convert.toBoolean(userWatch.getNotifyFlg())) {
+						UserMessage userMessage = new UserMessage();
+						userMessage.setUsername(userWatch.getUsername());
+						userMessage.setComponentId(component.getComponentId());
+						userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
+						userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+						userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+						getUserService().queueUserMessage(userMessage);
+					}
 
-				NotificationEvent notificationEvent = new NotificationEvent();
-				notificationEvent.setEventType(NotificationEventType.WATCH);
-				notificationEvent.setUsername(userWatch.getUsername());
-				notificationEvent.setMessage("Component: " + component.getName() + " has been updated.");
-				notificationEvent.setEntityName(Component.class.getSimpleName());
-				notificationEvent.setEntityId(component.getComponentId());
-				getNotificationService().postEvent(notificationEvent);
+					NotificationEvent notificationEvent = new NotificationEvent();
+					notificationEvent.setEventType(NotificationEventType.WATCH);
+					notificationEvent.setUsername(userWatch.getUsername());
+					notificationEvent.setMessage("Component: " + component.getName() + " has been updated.");
+					notificationEvent.setEntityName(Component.class.getSimpleName());
+					notificationEvent.setEntityId(component.getComponentId());
+					getNotificationService().postEvent(notificationEvent);
+				} else {
+					LOG.log(Level.FINE, MessageFormat.format("User can not access component. (User Watch) No message sent.  Component: {0}", component.getName()));
+				}
 			}
 		}
 	}
@@ -546,7 +549,7 @@ public class UserServiceImpl
 		userMessageExample.setEmailAddress(userMessage.getEmailAddress());
 
 		//Duplicate check;
-		UserMessage userMessageExisting = persistenceService.queryOneByExample(UserMessage.class, userMessageExample);
+		UserMessage userMessageExisting = persistenceService.queryOneByExample(userMessageExample);
 		if (userMessageExisting == null) {
 			userMessage.setUserMessageId(persistenceService.generateId());
 			userMessage.setRetryCount(0);
@@ -587,16 +590,16 @@ public class UserServiceImpl
 		List<UserProfile> usersToSend = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
-			log.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
+			LOG.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
-			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+			List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					usersToSend.add(userProfile);
 				}
 			}
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
-			log.log(Level.INFO, "(Admin Message) Sending email to specfic users");
+			LOG.log(Level.INFO, "(Admin Message) Sending email to specfic users");
 			List<String> emailList = new ArrayList<>();
 			for (String email : adminMessage.getUsersToEmail()) {
 				if (StringUtils.isNotBlank(email)) {
@@ -659,7 +662,7 @@ public class UserServiceImpl
 			emailCount++;
 		}
 		MailManager.send(email);
-		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent (in one message)", emailCount));
+		LOG.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent (in one message)", emailCount));
 	}
 
 	@Override
@@ -670,7 +673,7 @@ public class UserServiceImpl
 		UserMessage userMessageExample = new UserMessage();
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 
-		List<UserMessage> userMessages = persistenceService.queryByExample(UserMessage.class, userMessageExample);
+		List<UserMessage> userMessages = persistenceService.queryByExample(userMessageExample);
 		int minQueueMinutes = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
 		int maxRetries = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
 		if (minQueueMinutes < 0) {
@@ -682,7 +685,7 @@ public class UserServiceImpl
 		Map<String, UserMessage> messageMap = new HashMap<>();
 		for (UserMessage userMessage : userMessages) {
 			if (messageMap.containsKey(userMessage.uniqueKey())) {
-				log.log(Level.FINE, MessageFormat.format("Removing duplicate user message: ", userMessage.uniqueKey()));
+				LOG.log(Level.FINE, MessageFormat.format("Removing duplicate user message: ", userMessage.uniqueKey()));
 			} else {
 				messageMap.put(userMessage.uniqueKey(), userMessage);
 			}
@@ -698,12 +701,12 @@ public class UserServiceImpl
 					try {
 						getUserServicePrivate().sendUserMessage(userMessage);
 					} catch (MailException mailException) {
-						log.log(Level.FINE, "Unable to send message.", mailException);
+						LOG.log(Level.FINE, "Unable to send message.", mailException);
 						userMessageExisting.setBodyOfMessage("Unable to send message to user.  Mail Server down? " + mailException.getMessage());
 						userMessageExisting.setRetryCount(userMessage.getRetryCount() + 1);
 						updateUserMessage = true;
 					} catch (Exception e) {
-						log.log(Level.SEVERE, "Unexpected error.  Failed sending message. (Halt sending of " + userMessage.getUserMessageId() + " message.)", e);
+						LOG.log(Level.SEVERE, "Unexpected error.  Failed sending message. (Halt sending of " + userMessage.getUserMessageId() + " message.)", e);
 						userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
 						userMessageExisting.setBodyOfMessage("System exception occured while sending message. See logs for details");
 						updateUserMessage = true;
@@ -722,7 +725,7 @@ public class UserServiceImpl
 				}
 
 			} else {
-				log.log(Level.FINEST, MessageFormat.format("Not time yet to send email to user: {0}", userMessage.getUsername()));
+				LOG.log(Level.FINEST, MessageFormat.format("Not time yet to send email to user: {0}", userMessage.getUsername()));
 			}
 
 		}
@@ -773,6 +776,7 @@ public class UserServiceImpl
 					case UserMessageType.CHANGE_REQUEST_ALERT:
 						generator = new ChangeRequestMessageGenerator(messageContext);
 						break;
+						
 				}
 			}
 
@@ -814,7 +818,7 @@ public class UserServiceImpl
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userProfileExample.setNotifyOfNew(Boolean.TRUE);
 
-		List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+		List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
 		RecentChangeMessage recentChangeMessage = new RecentChangeMessage();
 		recentChangeMessage.setLastRunDts(lastRunDts);
 
@@ -963,12 +967,12 @@ public class UserServiceImpl
 			try {
 				BeanUtils.setProperty(userTrackingOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
 			} catch (IllegalAccessException | InvocationTargetException ex) {
-				log.log(Level.WARNING, "Unable set sort field", ex);
+				LOG.log(Level.WARNING, "Unable set sort field", ex);
 			}
 			queryByExample.setOrderBy(userTrackingOrderExample);
 		}
 
-		result.setResult(persistenceService.queryByExample(UserTracking.class, queryByExample));
+		result.setResult(persistenceService.queryByExample(queryByExample));
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setCount(persistenceService.countByExample(queryByExample));
 
@@ -990,7 +994,7 @@ public class UserServiceImpl
 			queryByExample.setMaxResults((int) pageSize);
 			queryByExample.setReturnNonProxied(false);
 
-			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, queryByExample);
+			List<UserProfile> userProfiles = persistenceService.queryByExample(queryByExample);
 			List<String> usernames = new ArrayList<>();
 			for (UserProfile userProfile : userProfiles) {
 				usernames.add(userProfile.getUsername());
@@ -1002,7 +1006,7 @@ public class UserServiceImpl
 			}
 			for (UserProfile userProfile : userProfiles) {
 				if (activeUserSet.contains(userProfile.getUsername()) == false) {
-					log.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
+					LOG.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
 					deleteProfile(userProfile.getUsername());
 				}
 			}

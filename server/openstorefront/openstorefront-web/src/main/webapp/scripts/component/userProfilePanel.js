@@ -219,8 +219,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 					}
 				});
 			} else {
-				CoreService.usersevice.getCurrentUser().then(function (response) {
-					var usercontext = Ext.decode(response.responseText);
+				CoreService.userservice.getCurrentUser().then(function (usercontext) {					
 					profileForm.getForm().setValues(usercontext);
 				});
 			}

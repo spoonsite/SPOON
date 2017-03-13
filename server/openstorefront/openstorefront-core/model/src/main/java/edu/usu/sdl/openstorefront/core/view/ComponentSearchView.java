@@ -65,6 +65,8 @@ public class ComponentSearchView
 	private Integer listingSecurityMarkingRank;
 	private String listingSecurityMarkingStyle;
 	private float searchScore;
+	private String dataSource;
+	private String dataSensitivity;
 	
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -89,7 +91,7 @@ public class ComponentSearchView
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setComponentId(component.getComponentId());
 		example.setComponentAttributePk(pk);
-		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
 		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
 		return toView(component, attributes, reviews, tags);
@@ -112,6 +114,8 @@ public class ComponentSearchView
 		view.setVersion(component.getVersion());
 		view.setComponentType(component.getComponentType());
 		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
+		view.setDataSource(component.getDataSource());
+		view.setDataSensitivity(component.getDataSensitivity());
 		
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -530,6 +534,26 @@ public class ComponentSearchView
 	public void setSearchScore(float searchScore)
 	{
 		this.searchScore = searchScore;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
 	}
 
 }

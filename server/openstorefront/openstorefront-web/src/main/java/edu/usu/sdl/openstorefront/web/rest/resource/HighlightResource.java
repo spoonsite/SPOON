@@ -19,9 +19,10 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -69,7 +70,7 @@ public class HighlightResource
 		if (!all) {
 			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
 		}
-		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));					
+		List<Highlight> highlights = service.getPersistenceService().queryByExample(new QueryByExample(highlightExample));					
 		highlights = filterQueryParams.filter(highlights);
 		GenericEntity<List<Highlight>> entity = new GenericEntity<List<Highlight>>(highlights)
 		{
@@ -95,7 +96,7 @@ public class HighlightResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Creates a new Highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postHighlight(Highlight highlight)
@@ -104,7 +105,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Updates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -143,7 +144,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Deactivates a highlight")
 	@Path("/{id}/deactivate")
 	public void deactivateHighlight(
@@ -154,7 +155,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Deletes a highlight")
 	@Path("/{id}/delete")
 	public void deleteHighlight(
@@ -165,7 +166,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Activates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/activate")

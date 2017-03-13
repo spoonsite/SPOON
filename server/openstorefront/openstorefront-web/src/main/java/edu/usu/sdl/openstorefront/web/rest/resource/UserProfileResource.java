@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
@@ -39,7 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
@@ -92,7 +93,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Get a list of user profiles")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
@@ -164,7 +165,7 @@ public class UserProfileResource
 			queryByExample.setOrderBy(userProfileSortExample);
 		}
 
-		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(UserProfile.class, queryByExample);
+		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserProfileWrapper userProfileWrapper = new UserProfileWrapper();
 		userProfileWrapper.getData().addAll(UserProfileView.toViewList(userProfiles));
@@ -175,7 +176,6 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Get a list of active user profiles for lookup")
-	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
@@ -193,7 +193,8 @@ public class UserProfileResource
 			if (StringUtils.isNotBlank(userProfile.getFirstName())) {
 				name = userProfile.getFirstName() + ", " + userProfile.getLastName();
 			}
-			lookupModel.setDescription(name);
+			String email = StringUtils.isNotBlank(userProfile.getEmail()) ? "(" + userProfile.getEmail() + ")" : "";
+			lookupModel.setDescription(name + email);
 			profiles.add(lookupModel);
 		}
 
@@ -204,7 +205,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@APIDescription("Gets the current user profile from the session.")
+	@APIDescription("Gets the current user profile from the session. Includes permissions.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/currentuser")
@@ -214,15 +215,13 @@ public class UserProfileResource
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
-			userProfileView = UserProfileView.toView(userContext.getUserProfile());
-			userProfileView.setAdmin(SecurityUtil.isAdminUser());
+			userProfileView = UserProfileView.toView(userContext);
 		}
 		return sendSingleEntityResponse(userProfileView);
 	}
 
 	@GET
 	@APIDescription("Gets user profile specified by id.")
-	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
@@ -232,11 +231,12 @@ public class UserProfileResource
 	{
 		UserProfileView userProfileView = null;
 
-		UserProfile userProfile = service.getUserService().getUserProfile(userId);
-		if (userProfile != null) {
-			userProfileView = UserProfileView.toView(userProfile);
-			if (SecurityUtil.getCurrentUserName().equals(userId)) {
-				userProfileView.setAdmin(SecurityUtil.isAdminUser());
+		if (SecurityUtil.getCurrentUserName().equals(userId)
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)) {
+
+			UserProfile userProfile = service.getUserService().getUserProfile(userId);
+			if (userProfile != null) {
+				userProfileView = UserProfileView.toView(userProfile);
 			}
 		}
 		return userProfileView;
@@ -244,7 +244,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Update user profile and returns updated profile.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
 			@RequiredParam UserProfile inputProfile)
@@ -272,7 +272,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates user profile and returns updated profile.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProfile(
@@ -292,7 +292,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a user profile.  Note: if the user logs in, their profile will be reactivated.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Path("/{username}")
 	public void deleteUserProfile(
 			@PathParam("username")
@@ -303,7 +303,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -320,7 +320,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -337,7 +337,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a user profile.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Path("/{username}/reactivate")
 	public Response reactivateUserProfile(
 			@PathParam("username")
@@ -355,7 +355,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Sends test email to user based on user id")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username,
@@ -368,7 +368,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves active user watches.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
@@ -387,7 +387,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves a user watch by id.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
@@ -404,7 +404,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
@@ -438,7 +438,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates an existing watch.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
@@ -476,8 +476,8 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@APIDescription("Deletes a user watch.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@APIDescription("Removes a user watch.")
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response deleteWatch(
@@ -490,9 +490,8 @@ public class UserProfileResource
 		return Response.noContent().build();
 	}
 
-	// ComponentRESTResource TRACKING section
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTrackingWrapper.class)
@@ -520,13 +519,13 @@ public class UserProfileResource
 		queryByExample.setOrderBy(userTrackingOrderExample);
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
-		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
+		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
 		return sendSingleEntityResponse(new UserTrackingWrapper(userTrackings, total));
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Gets the tracking details on a specified user and tracking id")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
@@ -541,13 +540,13 @@ public class UserProfileResource
 		userTrackingExample.setCreateUser(userId);
 		userTrackingExample.setTrackingId(trackingId);
 
-		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(userTrackingExample);
 		return sendSingleEntityResponse(userTracking);
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Delete a tracking entry from the specified user")
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteUserTracking(
@@ -561,7 +560,7 @@ public class UserProfileResource
 		userTrackingExample.setTrackingId(trackingId);
 
 		//make sure the that it only remove records for the user
-		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(userTrackingExample);
 		if (userTracking != null) {
 			service.getPersistenceService().setStatusOnEntity(UserTracking.class, trackingId, UserTracking.INACTIVE_STATUS);
 		}
@@ -569,7 +568,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a tracking entry for the specified user")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
@@ -584,7 +583,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING, specialCheck = UserProfileRequireHandler.class)
 	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
@@ -626,7 +625,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Exports user profiles in CSV format. Can consume a list of 'userId' form parameters. Not providing 'userId' parameters results in all profiles being exported.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportUserProfiles(

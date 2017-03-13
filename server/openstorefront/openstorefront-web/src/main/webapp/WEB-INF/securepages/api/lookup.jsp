@@ -27,7 +27,7 @@
         <script src="apidoc/script/reference.js" type="text/javascript"></script>
     </head>
     <body>
-        <h2>Lookup Table Reference</h2>	
+        <h2 style="padding-bottom: 10px;">Lookup Table Reference</h2>	
         <div class='wrapper' >
             <table id="tableOfContents"></table>
             <div id="content"></div>

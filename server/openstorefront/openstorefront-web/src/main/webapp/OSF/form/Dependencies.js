@@ -161,7 +161,10 @@ Ext.define('OSF.form.Dependencies', {
 						},
 						Ext.create('OSF.component.SecurityComboBox', {	
 							hidden: dependanciesPanel.hideSecurityMarking
-						})								
+						}),
+						Ext.create('OSF.component.DataSensitivityComboBox', {			
+							width: '100%'
+						})						
 					]
 				},						
 				{
@@ -241,7 +244,9 @@ Ext.define('OSF.form.Dependencies', {
 			url: 'api/v1/resource/components/' + componentId + '/dependencies/view'
 		});	
 		
-		opts.commentPanel.loadComments(evaluationId, "Dependencies", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Dependencies", componentId);
+		}
 	}
 	
 });

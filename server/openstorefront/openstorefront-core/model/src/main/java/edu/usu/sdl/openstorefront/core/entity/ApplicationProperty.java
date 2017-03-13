@@ -48,6 +48,7 @@ public class ApplicationProperty
 	public static final String RECENT_CHANGE_EMAIL_LAST_DTS = "REMAILLASTDTS";
 	public static final String HELP_SYNC = "HELPSYNC";
 	public static final String PLUGIN_LAST_LOAD_MAP = "PLUGINLASTDTS";
+	public static final String APPLICATION_CRYPT_KEY = "APPCRYPTKEY";
 
 	public ApplicationProperty()
 	{

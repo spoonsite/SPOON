@@ -57,6 +57,9 @@ Ext.define('OSF.component.QuestionWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [
@@ -123,8 +126,7 @@ Ext.define('OSF.component.QuestionWindow', {
 		questionWindow.add(questionWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){		
 			if (branding.userInputWarning) {
 				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -136,8 +138,8 @@ Ext.define('OSF.component.QuestionWindow', {
 		});	
 				
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			questionWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			questionWindow.user = user;
 						
 			//confirm that they have the required info
 			questionWindow.on('show', function(){
@@ -145,8 +147,8 @@ Ext.define('OSF.component.QuestionWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								questionWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								questionWindow.user = user;
 								
 							});
 						}
@@ -222,6 +224,9 @@ Ext.define('OSF.component.ResponseWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),			
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [
@@ -290,8 +295,7 @@ Ext.define('OSF.component.ResponseWindow', {
 		responseWindow.add(responseWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 			if (branding.userInputWarning) {
 				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -303,8 +307,8 @@ Ext.define('OSF.component.ResponseWindow', {
 		});
 		
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			responseWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			responseWindow.user = user;
 						
 			//confirm that they have the required info
 			responseWindow.on('show', function(){
@@ -312,8 +316,8 @@ Ext.define('OSF.component.ResponseWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								responseWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								responseWindow.user = user;
 								
 							});
 						}

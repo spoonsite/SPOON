@@ -33,6 +33,7 @@ public class MessageContext
 	private ComponentAll componentAll;
 	private RecentChangeMessage recentChangeMessage;
 	private Alert alert;
+	private String userPasswordResetCode;
 
 	public MessageContext(UserProfile userProfile)
 	{
@@ -87,6 +88,16 @@ public class MessageContext
 	public void setAlert(Alert alert)
 	{
 		this.alert = alert;
+	}
+
+	public String getUserPasswordResetCode()
+	{
+		return userPasswordResetCode;
+	}
+
+	public void setUserPasswordResetCode(String userPasswordResetCode)
+	{
+		this.userPasswordResetCode = userPasswordResetCode;
 	}
 
 }

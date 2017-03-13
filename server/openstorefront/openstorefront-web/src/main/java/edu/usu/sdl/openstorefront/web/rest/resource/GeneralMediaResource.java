@@ -18,10 +18,11 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GeneralMediaView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,6 @@ public class GeneralMediaResource
 {
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets all general media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GeneralMediaView.class)
@@ -59,7 +59,7 @@ public class GeneralMediaResource
 
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setActiveStatus(filterQueryParams.getStatus());
-		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(GeneralMedia.class, generalMediaExample);
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(generalMediaExample);
 		generalMedia = filterQueryParams.filter(generalMedia);
 		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
 
@@ -70,7 +70,6 @@ public class GeneralMediaResource
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets all general media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -79,7 +78,7 @@ public class GeneralMediaResource
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setActiveStatus(GeneralMedia.ACTIVE_STATUS);
-		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(GeneralMedia.class, generalMediaExample);
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(generalMediaExample);
 		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
 
 		List<LookupModel> lookups = new ArrayList<>();
@@ -96,7 +95,6 @@ public class GeneralMediaResource
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets a general media record. See Media.action?GeneralMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GeneralMediaView.class)
@@ -106,12 +104,11 @@ public class GeneralMediaResource
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		return sendSingleEntityResponse(generalMedia);
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Check name to see if it is available. Returns true if avaliable")
 	@Produces({MediaType.TEXT_PLAIN})
 	@Path("/{name}/available")
@@ -121,7 +118,7 @@ public class GeneralMediaResource
 		boolean available = true;
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		if (generalMedia != null) {
 			available = false;
 		}
@@ -129,7 +126,7 @@ public class GeneralMediaResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_MEDIA)
 	@APIDescription("Deletes a general media record.")
 	@Path("/{name}")
 	public void deleteGeneralMedia(

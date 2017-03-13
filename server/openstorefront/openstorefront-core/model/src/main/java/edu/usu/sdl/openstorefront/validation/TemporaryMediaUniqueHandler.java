@@ -33,7 +33,7 @@ public class TemporaryMediaUniqueHandler
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName((String) value);
 
-		TemporaryMedia media = serviceProxy.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		TemporaryMedia media = serviceProxy.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		if (media != null) {
 			unique = false;
 		}

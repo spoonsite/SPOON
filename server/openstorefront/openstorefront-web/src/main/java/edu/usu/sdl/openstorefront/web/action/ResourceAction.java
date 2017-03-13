@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -82,6 +84,7 @@ public class ResourceAction
 	public Resolution loadResource() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+		componentResource = FilterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
@@ -118,7 +121,7 @@ public class ResourceAction
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.isAdminUser()) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
@@ -177,6 +180,7 @@ public class ResourceAction
 	public Resolution redirect() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+		componentResource = FilterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
