@@ -176,6 +176,9 @@ public class FilterEngine
 				}
 			}
 
+		} else {
+			//if it's not filterable just return the source data as it can't be filtered.
+			returnValue = data;
 		}
 		return returnValue;
 	}
