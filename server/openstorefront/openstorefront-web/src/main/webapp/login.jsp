@@ -205,7 +205,7 @@
 				<br>
 				<br>
 				<br>
-				<span id="registration" class="hidden"><a href="http://localhost:8380/openstorefront/registration.jsp">Sign up</a> |</span> <a href="http://localhost:8380/openstorefront/resetPassword.jsp">Forgot Password</a> 
+				<span id="registration" class="hidden"><a href="registration.jsp">Sign up</a> |</span> <a href="resetPassword.jsp">Forgot Password</a> 
 				
 			</div>
 		  </form>
