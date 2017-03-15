@@ -139,13 +139,13 @@ public class UserRegistrationResource
 		} 
 		
 		if (validationResult.valid()) {
-			return Response.ok(validationResult.toRestError()).build();
-		} else {
 			UserRegistration savedRegistration = new UserRegistration();
 			savedRegistration.setUsername(userRegistration.getUsername());
 			savedRegistration = savedRegistration.find();
 			
-			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
+			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();			
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
 	

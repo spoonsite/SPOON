@@ -406,8 +406,17 @@ public class OrientPersistenceService
 		GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();
 		generateStatementOption.setCondition(GenerateStatementOption.CONDITION_COMMA);
 		generateStatementOption.setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
-		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
-		queryString.append(" where ").append(generateWhereClause(exampleWhere));
+		String setQuery = generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>());
+		if (StringUtils.isNotBlank(setQuery)) {
+			queryString.append(" set ").append(setQuery);
+		} else {
+			throw new OpenStorefrontRuntimeException("Update query requires a SET clause.", "Make sure to set the example set");
+		}
+
+		String whereClause = generateWhereClause(exampleWhere);
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(generateWhereClause(exampleWhere));
+		} 
 
 		Map<String, Object> queryParams = new HashMap<>();
 		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));

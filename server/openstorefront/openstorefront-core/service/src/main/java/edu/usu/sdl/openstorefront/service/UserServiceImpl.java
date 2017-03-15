@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserDashboard;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
@@ -52,6 +53,7 @@ import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -341,17 +343,8 @@ public class UserServiceImpl
 		return persistenceService.persist(tracking);
 	}
 
-//  This will be fleshed out more later
-//	@Override
-//	public List<Component> getRecentlyViewed(String userId)
-//	{
-//
-//		//CONTINUE HERE... left off after work on friday.
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//	}
-//
 	@Override
-	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin)
+	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean allowSync)
 	{
 		Objects.requireNonNull(userprofile, "User Profile is required");
 		Objects.requireNonNull(userprofile.getUsername(), "User Profile -> username is required");
@@ -368,46 +361,13 @@ public class UserServiceImpl
 		ValidationResult validationResult = ValidationUtil.validate(validationModelCode);
 		if (validationResult.valid()) {
 
-			//check for an existing profile
+			//check for an existing profile (username must be unique whether internally or externally)
 			UserProfile profile = persistenceService.findById(UserProfile.class, userprofile.getUsername());
 			if (profile == null) {
+				//new user
 				profile = userprofile;
 				saveUserProfile(profile, false);
-			} else {
-				//Check user id
-				boolean conflictUsername = false;
-				if (StringUtils.isNotBlank(profile.getExternalGuid())
-						|| StringUtils.isNotBlank(userprofile.getExternalGuid())) {
-					if (profile.getExternalGuid() != null
-							&& profile.getExternalGuid().equals(userprofile.getExternalGuid()) == false) {
-						conflictUsername = true;
-					} else if (userprofile.getExternalGuid() != null
-							&& userprofile.getExternalGuid().equals(profile.getExternalGuid()) == false) {
-						conflictUsername = true;
-					}
-				}
-
-				if (conflictUsername) {
-					//create a new user name and then save the profile  (We may get multiple "john.doe" so this handles that situation)
-					boolean unique = false;
-					int idIndex = 1;
-					do {
-						String userName = userprofile.getUsername() + "_" + (idIndex++);
-						UserProfile profileCheck = persistenceService.findById(UserProfile.class, userName);
-						if (profileCheck == null) {
-							profile = userprofile;
-							profile.setExternalUserId(userprofile.getUsername());
-							profile.setUsername(userName);
-							saveUserProfile(profile, false);
-							unique = true;
-						}
-					} while (!unique && idIndex < MAX_NAME_CHECK);
-
-					if (unique == false) {
-						throw new OpenStorefrontRuntimeException("Failed to create a unique username.", "Check username and make sure it's unique.");
-					}
-				}
-			}
+			} 
 
 			//Activative profile on login
 			if (UserProfile.INACTIVE_STATUS.equals(profile.getActiveStatus())) {
@@ -418,6 +378,30 @@ public class UserServiceImpl
 			// Modify the 'last login date' if it's a client request
 			if (request != null) {
 				profile.setLastLoginDts(TimeUtil.currentDate());
+			}
+
+			if (Convert.toBoolean(allowSync)) {
+				SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
+				if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit())) {
+
+					profile.setFirstName(userprofile.getFirstName());
+					profile.setLastName(userprofile.getLastName());
+
+					//External may or may not provide this; don't want wipe out existing
+					//Currently the Header Realm has support to send it but Open AM is not configured for it
+					//Daily sync can pull it so we don't want to wipe that out
+					if (StringUtils.isNotBlank(userprofile.getOrganization())) {
+						profile.setOrganization(userprofile.getOrganization());
+					}				
+					profile.setEmail(userprofile.getEmail());
+					profile.setPhone(userprofile.getPhone());
+
+					//In the same situation as Organization
+					if (StringUtils.isNotBlank(userprofile.getExternalGuid())) {
+						profile.setExternalGuid(userprofile.getExternalGuid());
+					}				
+					saveUserProfile(profile, false);				
+				}
 			}
 
 			profile = persistenceService.deattachAll(profile);
@@ -1000,14 +984,46 @@ public class UserServiceImpl
 				usernames.add(userProfile.getUsername());
 			}
 			List<UserRecord> userRecords = userManager.findUsers(usernames);
-			Set<String> activeUserSet = new HashSet<>();
+			Map<String, UserRecord> activeUserMap = new HashMap<>();
 			for (UserRecord userRecord : userRecords) {
-				activeUserSet.add(userRecord.getUsername());
+				activeUserMap.put(userRecord.getUsername(), userRecord);
 			}
 			for (UserProfile userProfile : userProfiles) {
-				if (activeUserSet.contains(userProfile.getUsername()) == false) {
+				if (activeUserMap.containsKey(userProfile.getUsername()) == false) {
 					LOG.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
 					deleteProfile(userProfile.getUsername());
+				} else {
+					//check for syncing; if the user can't edit they should be syncing
+					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
+					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit())) {
+						UserRecord userRecord = activeUserMap.get(userProfile.getUsername());
+						
+						//check to see if needs syncing
+						boolean sync = false;
+						
+						UserRecord currentRecord = new UserRecord();
+						currentRecord.setFirstName(userProfile.getFirstName());
+						currentRecord.setLastName(userProfile.getLastName());
+						currentRecord.setOrganization(userProfile.getOrganization());
+						currentRecord.setEmail(userProfile.getEmail());
+						currentRecord.setPhone(userProfile.getPhone());
+						currentRecord.setGuid(userProfile.getExternalGuid());
+						if (EntityUtil.isObjectsDifferent(userRecord, currentRecord, false)) {
+							sync = true;
+						}
+						
+						if (sync) {
+							userProfile.setFirstName(userRecord.getFirstName());
+							userProfile.setLastName(userRecord.getLastName());
+							userProfile.setOrganization(userRecord.getOrganization());
+							userProfile.setEmail(userRecord.getEmail());
+							userProfile.setPhone(userRecord.getPhone());
+							userProfile.setExternalGuid(userRecord.getGuid());
+							saveUserProfile(userProfile, false);
+							
+							LOG.log(Level.FINEST, MessageFormat.format("Sync user profile for user: {0}", userProfile.getUsername()));							
+						}
+					}
 				}
 			}
 		}

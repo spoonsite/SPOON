@@ -99,7 +99,7 @@ public class HeaderRealm
 			userProfile.setExternalGuid(headerAuthToken.getGuid());
 
 			serviceProxy.getSecurityService().updateRoleGroup(headerAuthToken.getUsername(), headerAuthToken.getGroups());
-			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), false);
+			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), true);
 			userContext.setExternalGroups(headerAuthToken.getGroups());						
 		}
 		headerAccount.setCredentials(userContext);
@@ -159,7 +159,7 @@ public class HeaderRealm
 			headerAuthToken.setGroup(group.toString());
 			headerAuthToken.setGuid(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
 			headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, "sn")));
-			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
+			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, "company")));
 			headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, "sAMAccountName")));
 
 			try {
