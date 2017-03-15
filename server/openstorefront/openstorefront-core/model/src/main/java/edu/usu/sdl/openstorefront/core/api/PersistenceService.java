@@ -107,34 +107,31 @@ public interface PersistenceService
 	 */
 	<T> List<T> queryByExample(BaseEntity baseEntity);
 
-	<T> List<T> queryByExample(QueryByExample queryByExample);
 	/**
 	 * 
 	 * @param <T> type of object to return
-	 * @param exampleClass type of Class (i.e. T.class)
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return List of results of the given type
 	 */
+	<T> List<T> queryByExample(QueryByExample queryByExample);
 
 	/**
 	 * This just returns one result. Typically the query results in only one
 	 * entity.
 	 *
 	 * @param <T> type of object to return
-	 * @param exampleClass type of Class (i.e. T.class)
 	 * @param baseEntity class containing the criteria for the query
 	 * @return the entity or null if not found
 	 */
-	<T> T queryOneByExample(BaseEntity baseEnity);
+	<T> T queryOneByExample(BaseEntity baseEntity);
 
-	<T> T queryOneByExample(QueryByExample queryByExample);
 	/**
 	 * 
 	 * @param <T> type of object to return
-	 * @param exampleClass type of Class (i.e. T.class)
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return the entity or null if not found
 	 */
+	<T> T queryOneByExample(QueryByExample queryByExample);
 
 	void rollback();
 
@@ -154,23 +151,21 @@ public interface PersistenceService
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 	
-	<T> List<T> unwrapProxy(List<T> data);
 	/**
 	 * Detach a list of objects from the database backed objects
 	 * @param <T> type of object
-	 * @param origClass ** unused **
 	 * @param data data that needs detached
 	 * @return list of detached objects
 	 */
+	<T> List<T> unwrapProxy(List<T> data);
 	
-	<T> T unwrapProxyObject(T data);
 	/**
 	 * Detach a single object from the database backed object
 	 * @param <T> type of object
-	 * @param origClass ** unused **
 	 * @param data data that needs detached
 	 * @return a detached version of the object
 	 */
+	<T> T unwrapProxyObject(T data);
 
 	<T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere);
 
