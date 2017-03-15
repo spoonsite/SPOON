@@ -89,7 +89,7 @@ Ext.define('OSF.form.Relationships', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
@@ -117,7 +117,7 @@ Ext.define('OSF.form.Relationships', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close text-danger',
+							iconCls: 'fa fa-lg fa-close',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -187,7 +187,7 @@ Ext.define('OSF.form.Relationships', {
 					items: [						
 						{
 							text: 'Refresh',
-							iconCls: 'fa fa-refresh',
+							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}
@@ -198,7 +198,7 @@ Ext.define('OSF.form.Relationships', {
 						{
 							text: 'Delete',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash text-danger',								
+							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',								
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(relationshipPanel.relationshipsGrid, 'relationshipId', 'relationships');
@@ -223,7 +223,9 @@ Ext.define('OSF.form.Relationships', {
 			url: 'api/v1/resource/components/' + componentId + '/relationships'
 		});
 		
-		opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		if (opts && opts.commentPanel) {
+			opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		}
 	}	
 	
 });

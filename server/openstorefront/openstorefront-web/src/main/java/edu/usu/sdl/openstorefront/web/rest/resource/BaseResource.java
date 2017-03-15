@@ -49,10 +49,10 @@ public abstract class BaseResource
 		}
 	}
 
-	protected Response ownerCheck(StandardEntity entity)
+	protected Response ownerCheck(StandardEntity entity, String permission)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
-				|| SecurityUtil.isAdminUser()) {
+				|| SecurityUtil.hasPermission(permission)) {			
 			return null;
 		} else {
 			return Response.status(Response.Status.FORBIDDEN)

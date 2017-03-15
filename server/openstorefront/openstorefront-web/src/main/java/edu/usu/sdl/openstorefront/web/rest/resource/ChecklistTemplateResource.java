@@ -18,9 +18,10 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ChecklistTemplateDetailView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
 import java.util.List;
@@ -48,7 +49,7 @@ public class ChecklistTemplateResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets templates")
@@ -64,7 +65,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
@@ -80,7 +81,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplateDetailView.class)
 	@APIDescription("Gets a detailed template")
@@ -100,7 +101,7 @@ public class ChecklistTemplateResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@APIDescription("Creates a checklist template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -111,7 +112,7 @@ public class ChecklistTemplateResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@APIDescription("Updates a checklist template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -148,7 +149,7 @@ public class ChecklistTemplateResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
 	@Path("/{templateId}/activate")
@@ -172,7 +173,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
 	@Path("/{templateId}/inuse")
@@ -194,7 +195,7 @@ public class ChecklistTemplateResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template only if it's not in use")
 	@Path("/{templateId}")

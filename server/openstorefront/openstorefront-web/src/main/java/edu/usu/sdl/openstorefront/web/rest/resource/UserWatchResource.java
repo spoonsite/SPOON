@@ -21,12 +21,13 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.core.view.UserWatchWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -50,7 +51,7 @@ public class UserWatchResource
 
 	@GET
 	@APIDescription("Get a list of user watches")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchWrapper.class)
 	public Response getWatches(@BeanParam FilterQueryParams filterQueryParams)
@@ -84,7 +85,7 @@ public class UserWatchResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<UserWatch> userWatches = service.getPersistenceService().queryByExample(UserWatch.class, queryByExample);
+		List<UserWatch> userWatches = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserWatchWrapper userWatchWrapper = new UserWatchWrapper();
 		userWatchWrapper.getData().addAll(UserWatchView.toViewList(userWatches));
@@ -97,11 +98,10 @@ public class UserWatchResource
 
 	@PUT
 	@APIDescription("Activates a set of watches")
-	@RequireAdmin
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(UserWatchResource.class)
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
+	@Consumes({MediaType.APPLICATION_JSON})	
 	@Path("/activate")
-	public Response activateWatches(
+	public void activateWatches(
 			MultipleIds mulitpleIds
 	)
 	{
@@ -115,17 +115,15 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}
-		return Response.ok().build();
+		}		
 	}
 
 	@PUT
 	@APIDescription("Inactivates a set of watches")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
 	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(UserWatchResource.class)
 	@Path("/inactivate")
-	public Response inactivateWatches(
+	public void inactivateWatches(
 			MultipleIds mulitpleIds
 	)
 	{
@@ -139,8 +137,7 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}
-		return Response.ok().build();
+		}		
 	}
 
 }

@@ -20,6 +20,7 @@
 		
 			var createEvaluationWin = Ext.create('Ext.window.Window', {
 				title: 'Create Evaluation',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 				modal: true,
 				width: 550,
 				maxHeight: '80%',
@@ -37,7 +38,7 @@
 								items: [
 									{
 										text: 'Save',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var form = this.up('form');
 											var data = form.getValues();
@@ -61,7 +62,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											createEvaluationWin.close();
 										}										
@@ -238,7 +239,7 @@
 							if (value) {
 								return '<span class="fa fa-lg fa-check icon-button-color-refresh"></span>';
 							} else {
-								return '<span class="fa fa-lg fa-close icon-button-color-delete"></span>';
+								return '<span class="fa fa-lg fa-close icon-button-color-warning"></span>';
 							}
 						}
 					},
@@ -375,7 +376,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									addEditEvaluation();
@@ -398,7 +399,7 @@
 							},
 							{
 								text: 'Toggle Staus',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,									
 								scale: 'medium',
@@ -416,10 +417,19 @@
 									{
 										text: 'Publish',
 										id: 'publish',
-										iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
+										iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											publish(record);
+										}										
+									},
+									{
+										text: 'Unpublish',
+										id: 'unpublish',
+										iconCls: 'fa fa-lg fa-ban icon-button-color-warning icon-small-vertical-correction',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											unpublish(record);
 										}										
 									},
 									{
@@ -427,7 +437,7 @@
 									},									
 									{
 										text: 'Copy',										
-										iconCls: 'fa fa-lg fa-copy icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-clone icon-button-color-default icon-small-vertical-correction',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											copy(record);
@@ -438,7 +448,7 @@
 									},
 									{
 										text: 'Assign Group',
-										iconCls: 'fa fa-lg fa-users icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-users icon-button-color-default icon-small-vertical-correction',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignGroup(record);
@@ -446,7 +456,7 @@
 									},	
 									{
 										text: 'Assign User',
-										iconCls: 'fa fa-lg fa-user icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-user icon-button-color-default icon-small-vertical-correction',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
@@ -456,20 +466,8 @@
 										xtype: 'menuseparator'
 									},
 									{
-										text: 'Unpublish',
-										id: 'unpublish',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
-										handler: function(){
-											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
-											unpublish(record);
-										}										
-									},
-									{
-										xtype: 'menuseparator'
-									},
-									{
 										text: 'Delete',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-trash icon-button-color-warning icon-small-vertical-correction',
 										cls: 'alert-danger',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
@@ -625,6 +623,7 @@
 			var actionDelete = function(record) {
 				Ext.Msg.show({
 					title:'Delete Evaluation?',
+					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 					message: 'Are you sure you want to delete this evaluation?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,

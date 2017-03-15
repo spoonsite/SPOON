@@ -45,6 +45,7 @@ public class UserToolAction
 		pageMap.put("Reports", "/WEB-INF/securepages/shared/reports.jsp");
 		pageMap.put("Searches", "/WEB-INF/securepages/user/searches.jsp");
 		pageMap.put("Relationships", "/WEB-INF/securepages/user/visualSearch.jsp");
+		pageMap.put("Change-Password", "/WEB-INF/securepages/user/changePassword.jsp");		
 
 		return pageMap;
 	}

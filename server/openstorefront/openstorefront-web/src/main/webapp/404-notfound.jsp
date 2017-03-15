@@ -129,6 +129,8 @@
 			}	
 			body{
 				background-color: beige;
+				background-image: url(images/grid.png);
+				background-repeat: repeat;
 			}
 		</style>		
     </head>

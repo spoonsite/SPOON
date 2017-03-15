@@ -52,7 +52,7 @@ public class UserReport
 	{
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-		userProfiles = service.getPersistenceService().queryByExample(UserProfile.class, userProfileExample);
+		userProfiles = service.getPersistenceService().queryByExample(userProfileExample);
 	}
 
 	@Override

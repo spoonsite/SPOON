@@ -25,6 +25,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,7 @@ public class FileHistory
 	private String dataSource;
 
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private FileHistoryOption fileHistoryOption;
 

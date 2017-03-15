@@ -1603,7 +1603,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: 70,
 							items: [
 								{
-									iconCls: 'fa fa-lg fa-edit icon-button-color-edit action-icon icon-small-horizontal-correction-left',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit action-icon icon-small-horizontal-correction-right',
 									tooltip: 'Edit',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
@@ -1717,7 +1717,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									}									
 								},
 								{
-									iconCls: 'fa fa-lg fa-trash action-icon icon-button-color-delete icon-small-horizontal-correction-left',
+									iconCls: 'fa fa-lg fa-trash action-icon icon-button-color-warning icon-small-horizontal-correction-right',
 									tooltip: 'Delete',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
@@ -1830,7 +1830,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){			
 											var win = this.up('window');
 											var form  = this.up('form');											
@@ -1862,7 +1862,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{
 										text: 'Cancel',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}										
@@ -1908,6 +1908,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			
 			var previewWin = Ext.create('Ext.window.Window', {
 				title: 'Search Results',
+				iconCls: 'fa fa-lg fa-search icon-small-vertical-correction',
 				modal: true,
 				width: '70%',
 				height: '50%',

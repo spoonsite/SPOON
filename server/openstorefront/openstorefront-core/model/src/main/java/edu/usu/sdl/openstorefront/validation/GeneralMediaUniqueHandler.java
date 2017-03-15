@@ -37,7 +37,7 @@ public class GeneralMediaUniqueHandler
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName((String) value);
 
-		GeneralMedia media = serviceProxy.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		GeneralMedia media = serviceProxy.getPersistenceService().queryOneByExample(generalMediaExample);
 		if (media != null) {
 			unique = false;
 		}

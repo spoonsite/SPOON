@@ -251,12 +251,12 @@ public class SolrManager
 		if (components.size() > 1) {
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			List<ComponentAttribute> allAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			List<ComponentAttribute> allAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			attributeMap = allAttributes.stream().collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
 			
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-			List<ComponentTag> allTags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+			List<ComponentTag> allTags = service.getPersistenceService().queryByExample(componentTagExample);
 			tagMap = allTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
 			
 		}
@@ -270,6 +270,8 @@ public class SolrManager
 			solrDocModel.setIsComponent(Boolean.TRUE);
 			solrDocModel.setId(component.getComponentId());
 			solrDocModel.setNameString(component.getName());
+			solrDocModel.setDataSource(component.getDataSource());
+			solrDocModel.setDataSensitivity(component.getDataSensitivity());			
 			solrDocModel.setName(component.getName());
 			String description = StringProcessor.stripHtml(component.getDescription());
 			solrDocModel.setDescription(description.replace("<>", "").replace("\n", ""));
@@ -459,6 +461,7 @@ public class SolrManager
 		}
 		indexSearchResult.getResultsList().addAll(resultsList);
 		indexSearchResult.setTotalResults(totalFound);
+		indexSearchResult.applyDataFilter();
 		
 		return indexSearchResult;		
 	}

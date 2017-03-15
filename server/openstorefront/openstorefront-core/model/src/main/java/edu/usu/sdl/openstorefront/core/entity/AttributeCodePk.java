@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 @APIDescription("Primary Key for Attribute Code")
+@Embeddable
 public class AttributeCodePk
 		extends BasePK<AttributeCodePk>
 {

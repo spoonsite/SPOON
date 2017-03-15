@@ -26,7 +26,8 @@ body{
 }
 
 a {
-	color: black
+	color: black;
+	text-decoration: none;
 }
 
 a:visited {
@@ -65,6 +66,7 @@ a:hover {
 }
 
 .api-title{
+	color: white;
 	float: left;
 	font-size: 24px;
 	padding-left: 10px;
@@ -108,7 +110,7 @@ h1{
 	/* text-shadow: 2px 2px 2px grey; */
 }
 
-table{
+/*table{
 	border: 1px black solid;
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -122,7 +124,7 @@ table td,th {
 
 th {
 	color: white;
-	/* text-shadow: 2px 2px 2px black; */
+	 text-shadow: 2px 2px 2px black; 
 	background-color: #2C3342;
 	border: 1px lightgray solid;
 }
@@ -137,7 +139,7 @@ tr:nth-child(odd) {
 
 tr:nth-child(even) {
 	background-color: white;
-}
+}*/
 
 
 .apilist{
@@ -238,4 +240,41 @@ tr:nth-child(even) {
 	bottom: 0px;
 	border-radius: 20px 20px 0px 0px;
 	 	
+}
+
+.api-method {
+	background-color: ghostwhite;
+}
+
+.api-method-header {
+	padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: slategray;
+    color: white;
+}
+
+.api-table {
+	border: 1px black solid;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.api-table th{
+	color: white;
+	text-shadow: 2px 2px 2px black; 
+	background-color: #2C3342;
+	border: 1px lightgray solid;
+}
+
+.api-table td{
+	border: 1px lightgray solid;	
+	padding: 5px;
+}
+
+.api-table tr:nth-child(odd) {
+	background-color: #eeeeee
+}
+
+.api-table tr:nth-child(even) {
+	background-color: white;
 }

@@ -165,7 +165,7 @@
 									id: 'question-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										var cmpSel = componentPanel.getSelectionModel().hasSelection();
 										var qSel = questionPanel.getSelectionModel().hasSelection();
@@ -299,7 +299,7 @@
 									id: 'answer-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										var cmpSel = componentPanel.getSelectionModel().hasSelection();
 										var qSel = questionPanel.getSelectionModel().hasSelection();

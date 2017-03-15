@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 @APIDescription("Part of Evaluation Template")
+@Embeddable
 public class EvaluationSectionTemplate
 		implements Serializable
 {

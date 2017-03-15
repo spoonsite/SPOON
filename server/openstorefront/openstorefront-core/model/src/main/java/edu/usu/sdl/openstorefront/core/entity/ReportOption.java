@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Holds report options")
+@Embeddable
 public class ReportOption
 		implements Serializable
 {

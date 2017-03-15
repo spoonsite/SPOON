@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserDashboard;
 import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -70,7 +71,7 @@ public class UserDashboardResource
 		
 		if (userdashboard != null)
 		{
-			response  = ownerCheck(userdashboard);
+			response  = ownerCheck(userdashboard, SecurityPermission.ADMIN_SYSTEM_MANAGEMENT);
 			if (response == null) {
 				
 				dashboard.getDashboard().setDashboardId(dashboardId);				

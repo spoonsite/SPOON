@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
@@ -46,6 +47,7 @@ public class FileAttributeMap
 	private Boolean addMissingAttributeTypeFlg;
 	
 	@ConsumeField
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeTypeXrefMap.class)
 	private List<FileAttributeTypeXrefMap> attributeTypeXrefMap;

@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class ContactExtractInit
 	extends ApplyOnceInit
 {
-	private static final Logger log = Logger.getLogger(ContactExtractInit.class.getName());	
+	private static final Logger LOG = Logger.getLogger(ContactExtractInit.class.getName());	
 	
 	public ContactExtractInit()
 	{
@@ -41,7 +41,7 @@ public class ContactExtractInit
 			service.getContactService().convertContacts();
 			results.append("Converted Contacts");
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed Converted Contacts", e);
+			LOG.log(Level.WARNING, "Failed Converted Contacts", e);
 		}
 		
 		return results.toString();

@@ -46,7 +46,7 @@ public class SyncLookupTest
 
 		TestEntity testEntityExample = new TestEntity();
 		testEntityExample.setCode("A");
-		LookupEntity lookupEntity = service.getPersistenceService().queryOneByExample(TestEntity.class, testEntityExample);
+		LookupEntity lookupEntity = service.getPersistenceService().queryOneByExample(testEntityExample);
 		if (lookupEntity == null) {
 			failureReason.append("Unable to find look up - A");
 		}
@@ -65,7 +65,7 @@ public class SyncLookupTest
 
 		testEntityExample = new TestEntity();
 		testEntityExample.setCode("C");
-		lookupEntity = service.getPersistenceService().queryOneByExample(TestEntity.class, testEntityExample);
+		lookupEntity = service.getPersistenceService().queryOneByExample(testEntityExample);
 		if (lookupEntity == null) {
 			failureReason.append("Unable to find look up - C");
 		}
@@ -73,7 +73,7 @@ public class SyncLookupTest
 		testEntityExample = new TestEntity();
 		testEntityExample.setCode("B");
 		testEntityExample.setActiveStatus(TestEntity.INACTIVE_STATUS);
-		lookupEntity = service.getPersistenceService().queryOneByExample(TestEntity.class, testEntityExample);
+		lookupEntity = service.getPersistenceService().queryOneByExample(testEntityExample);
 		if (lookupEntity != null) {
 			failureReason.append("Found look up - B");
 		}

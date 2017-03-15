@@ -342,10 +342,11 @@
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-eye',
+								iconCls: 'fa fa-2x fa-binoculars style="position: relative; left: -10px;"',
 								id: 'watchBtn',
 								tooltip: 'Watch',
 								scale: 'large',
+								width: '58px',
 								margin: '0 10 0 0',
 								handler: function(){
 									var watch = {
@@ -368,10 +369,11 @@
 							},
 							{
 								xtype: 'button',								
-								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px; margin-bottom: -10px;"><i class="fa fa-eye fa-stack-1x" style="top: -5px;"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger"  style="top: -5px;"></i></span>',
+								text: '<span class="fa-stack fa-lg"><i class="fa fa-binoculars fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span>',
 								id: 'watchRemoveBtn',
 								tooltip: 'Delete Watch',
-								scale: 'large',								
+								scale: 'small',	
+								height: '44px',
 								margin: '0 10 0 0',
 								hidden: true,
 								handler: function(){
@@ -450,7 +452,7 @@
 									items: [										
 										{
 											text: 'Submit Correction',
-											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -471,7 +473,7 @@
 										},
 										{
 											text: 'Request Ownership',
-											iconCls: 'fa fa-lg fa-envelope-square icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-envelope-square icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -548,8 +550,7 @@
 			});
 			
 			if (fullPage && !hideSecurityBanner) {
-				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-					var branding = Ext.decode(response.responseText);
+				CoreService.brandingservice.getCurrentBranding().then(function(branding){					
 					if (branding.securityBannerText && branding.securityBannerText !== '') {
 						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 							securityBannerText: branding.securityBannerText
@@ -632,7 +633,7 @@
 						maxWidth: 200,
 						scale: 'medium',
 						margin: 10,
-						iconCls: 'fa fa-lg fa-star-half-o icon-button-color-review icon-small-vertical-correction',
+						iconCls: 'fa fa-lg fa-star-half-o icon-small-vertical-correction',
 						handler: function(){							
 							ViewPage.reviewWindow.refresh();
 							ViewPage.reviewWindow.show();
@@ -1256,7 +1257,7 @@
 									{	
 										text: 'Delete',
 										tooltip: 'Delete Question',
-										iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 										handler: function(){
 											Ext.Msg.show({
 												title:'Delete Question?',

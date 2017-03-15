@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -34,7 +35,7 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.OrganizationRelationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -75,7 +76,7 @@ public class OrganizationResource
 	@GET
 	@APIDescription("Gets organization records.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrganizationView.class)
+	@DataType(OrganizationWrapper.class)
 	public Response getOrganizations(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -116,7 +117,7 @@ public class OrganizationResource
 			queryByExample.setOrderBy(organizationSortExample);
 		}
 
-		List<Organization> organizations = service.getPersistenceService().queryByExample(Organization.class, queryByExample);
+		List<Organization> organizations = service.getPersistenceService().queryByExample(queryByExample);
 
 		OrganizationWrapper organizationWrapper = new OrganizationWrapper();
 		organizationWrapper.getData().addAll(OrganizationView.toView(organizations));
@@ -282,7 +283,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -293,7 +294,7 @@ public class OrganizationResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -331,7 +332,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Merges one organization with another")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{targetId}/merge/{mergeId}")
@@ -358,7 +359,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_EXTRACTION)
 	@APIDescription("Extract organizations from the data")
 	@Path("/extract")
 	public Response extractFromData()
@@ -369,7 +370,7 @@ public class OrganizationResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
 	public void deleteReport(

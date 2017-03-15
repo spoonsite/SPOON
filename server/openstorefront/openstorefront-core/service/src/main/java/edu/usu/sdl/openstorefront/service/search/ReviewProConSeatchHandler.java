@@ -107,7 +107,7 @@ public class ReviewProConSeatchHandler
 					}
 
 
-					List<ComponentReviewPro> pros = serviceProxy.getPersistenceService().queryByExample(ComponentReviewPro.class, queryByExample);
+					List<ComponentReviewPro> pros = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 					List<String> results = new ArrayList<>();
 					for (ComponentReviewPro pro : pros) {
 						results.add(pro.getComponentId());
@@ -157,7 +157,7 @@ public class ReviewProConSeatchHandler
 						queryByExample.setLikeExample(componentReviewLike);
 					}
 
-					List<ComponentReviewCon> cons = serviceProxy.getPersistenceService().queryByExample(ComponentReviewCon.class, queryByExample);
+					List<ComponentReviewCon> cons = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 					List<String> results = new ArrayList<>();
 					for (ComponentReviewCon con : cons) {
 						results.add(con.getComponentId());

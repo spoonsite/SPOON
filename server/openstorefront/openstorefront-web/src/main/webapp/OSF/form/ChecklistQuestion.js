@@ -117,6 +117,12 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					}				
 				},
 				{
+					xtype: 'checkbox',
+					itemId: 'notApplicable',
+					name: 'notApplicable',
+					boxLabel: 'Not Applicable'
+				},
+				{
 					xtype: 'panel',						
 					html: '<b>Response</b>'
 				},
@@ -163,7 +169,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			callback: function() {
 				questionForm.setLoading(false);
 			}, 
-			success: function(response, opts) {
+			success: function(response, localOpts) {
 				var responseData = Ext.decode(response.responseText);
 				
 				questionForm.response.getComponent('question').update(responseData.question);
@@ -193,6 +199,19 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					}, undefined, {
 						buffer: 1000
 					});
+					
+					questionForm.response.getComponent('notApplicable').on('change', function(field, newValue, oldValue){
+						var scoreField = questionForm.response.getComponent('score');
+						if (newValue) {
+							scoreField.setValue(null);
+							scoreField.setDisabled(true);
+						} else {
+							scoreField.setDisabled(false);
+							questionForm.saveData();	
+						}
+					}, undefined, {
+						buffer: 1000
+					});					
 
 					questionForm.response.getComponent('response').on('change', function(field, newValue, oldValue){
 						questionForm.saveData();

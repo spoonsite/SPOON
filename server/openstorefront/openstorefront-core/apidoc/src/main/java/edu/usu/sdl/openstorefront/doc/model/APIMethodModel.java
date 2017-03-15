@@ -30,6 +30,7 @@ public class APIMethodModel
 	private String methodPath;	
 	private String description;
 	private boolean requireAdmin;
+	private SecurityRestriction securityRestriction;
 	private String producesTypes;
 	private String consumesTypes;
 	private APIValueModel responseObject;	
@@ -138,6 +139,16 @@ public class APIMethodModel
 	public void setConsumeObject(APIValueModel consumeObject)
 	{
 		this.consumeObject = consumeObject;
+	}
+
+	public SecurityRestriction getSecurityRestriction()
+	{
+		return securityRestriction;
+	}
+
+	public void setSecurityRestriction(SecurityRestriction securityRestriction)
+	{
+		this.securityRestriction = securityRestriction;
 	}
 	
 }

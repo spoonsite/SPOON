@@ -43,7 +43,7 @@ public class ReportType
 	public static final String CATEGORY_COMPONENT = "CATCOMP";
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
 
-	private boolean adminOnly;
+	private String requiredPermission;
 	private boolean componentReport;
 	private List<String> supportedFormats = new ArrayList<>();
 
@@ -66,11 +66,11 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 
 		//update metadata
-		((ReportType) codeMap.get(USAGE)).setAdminOnly(true);
-		((ReportType) codeMap.get(LINK_VALIDATION)).setAdminOnly(true);
-		((ReportType) codeMap.get(USER)).setAdminOnly(true);
-		((ReportType) codeMap.get(SUBMISSION)).setAdminOnly(true);
-		((ReportType) codeMap.get(ORGANIZATION)).setAdminOnly(true);
+		((ReportType) codeMap.get(USAGE)).setRequiredPermission("ADMIN-TRACKING");
+		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission("ADMIN-ENTRY-MANAGEMENT");
+		((ReportType) codeMap.get(USER)).setRequiredPermission("ADMIN-USER-MANAGEMENT");
+		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission("ADMIN-ENTRY-MANAGEMENT");
+		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission("ADMIN-USER-MANAGEMENT");
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
@@ -85,16 +85,6 @@ public class ReportType
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
 
 		return codeMap;
-	}
-
-	public boolean getAdminOnly()
-	{
-		return adminOnly;
-	}
-
-	public void setAdminOnly(boolean adminOnly)
-	{
-		this.adminOnly = adminOnly;
 	}
 
 	public List<String> getSupportedFormats()
@@ -115,6 +105,16 @@ public class ReportType
 	public void setComponentReport(boolean componentReport)
 	{
 		this.componentReport = componentReport;
+	}
+
+	public String getRequiredPermission()
+	{
+		return requiredPermission;
+	}
+
+	public void setRequiredPermission(String requiredPermission)
+	{
+		this.requiredPermission = requiredPermission;
 	}
 
 }

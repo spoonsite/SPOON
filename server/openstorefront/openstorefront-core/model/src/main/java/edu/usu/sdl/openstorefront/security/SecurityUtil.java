@@ -18,11 +18,16 @@ package edu.usu.sdl.openstorefront.security;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 
 /**
@@ -33,7 +38,7 @@ import org.apache.shiro.subject.Subject;
 public class SecurityUtil
 {
 
-	private static final Logger log = Logger.getLogger(SecurityUtil.class.getName());
+	private static final Logger LOG = Logger.getLogger(SecurityUtil.class.getName());
 
 	public static final String ADMIN_ROLE = "administrator";
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
@@ -87,7 +92,7 @@ public class SecurityUtil
 				username = currentUser.getPrincipal().toString();
 			}
 		} catch (Exception e) {
-			log.log(Level.FINE, "Determing Username.  No user is logged in.  This is likely an auto process.");
+			LOG.log(Level.FINE, "Determing Username.  No user is logged in.  This is likely an auto process.");
 		}
 		return username;
 	}
@@ -104,7 +109,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			admin = currentUser.hasRole(ADMIN_ROLE);
 		} catch (Exception e) {
-			log.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
+			LOG.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
 		}
 		return admin;
 	}
@@ -121,7 +126,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+			LOG.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
 		}
 		return userContext;
 	}
@@ -140,6 +145,33 @@ public class SecurityUtil
 			return false;
 		}
 	}
+	
+	/**
+	 * Checks the current for permission
+	 * @param permission
+	 * @return true if the user has the permission (All of them)
+	 */
+	public static boolean hasPermission(String... permissions)
+	{
+		boolean allow = false;
+		if (permissions == null || permissions.length == 0) {
+			allow = true;
+		} else {
+			List<String> toCheck = new ArrayList<>();
+			for (String permission : permissions) {
+				if (StringUtils.isNotBlank(permission)) {
+					toCheck.add(permission);
+				}
+			}			
+			try {
+				SecurityUtils.getSubject().checkPermissions(toCheck.toArray(new String[0]));
+				allow = true;
+			} catch (AuthorizationException authorizationException) {
+				LOG.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);			
+			}
+		}
+		return allow;	
+	}
 
 	/**
 	 * Constructs an Admin Audit Log Message
@@ -154,7 +186,7 @@ public class SecurityUtil
 		message.append("User: ")
 				.append(getCurrentUserName())
 				.append(" (").append(getClientIp(request)).append(") ")
-				.append(" Called Admin API: ");
+				.append(" Called Restricted API: ");
 		if (request != null) {
 			message.append(request.getMethod()).append(" ");
 			if (StringUtils.isNotBlank(request.getQueryString())) {

@@ -211,7 +211,7 @@
 											id: 'reportAddButton',
 											scale: 'medium',
 											width: '100px',
-											iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+											iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 											disabled: false,
 											handler: function () {
 												scheduleReportAdd();
@@ -237,7 +237,7 @@
 											text: 'Toggle Status',
 											id: 'reportActivateButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+											iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 											disabled: true,
 											handler: function () {
 												scheduleReportActivate();
@@ -252,7 +252,7 @@
 											id: 'reportDeleteButton',
 											scale: 'medium',
 											width: '110px',
-											iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+											iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 											disabled: true,
 											handler: function () {
 												scheduleReportDelete();
@@ -341,6 +341,7 @@
 
 					Ext.Msg.show({
 						title: 'Delete Scheduled Report?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the scheduled report?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -668,9 +669,9 @@
 					// 
 					//
 					Ext.create('Ext.window.Window', {
-						title: 'Schedule Report',
+						title: 'Add/Edit Scheduled Report',
 						id: 'scheduleReportWin',
-						iconCls: 'fa fa-calendar',
+						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
 						minHeight: 500,
 						y: 100,
@@ -696,7 +697,7 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-lg fa-save icon-button-color-add',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
 												handler: function () {
 
 													var data = {};
@@ -767,7 +768,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function () {
 													Ext.getCmp('scheduleReportWin').destroy();
 												}
@@ -967,8 +968,7 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										maxHeight: 250,
-										
+										maxHeight: 250,										
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
@@ -1045,7 +1045,7 @@
 				
 				var historyGrid = Ext.create('Ext.grid.Panel', {
 					id: 'historyGrid',
-					title: 'Reports <i class="fa fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
+					title: 'Reports &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
@@ -1102,7 +1102,7 @@
 								},
 								{
 									text: 'New Report',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
 									scale: 'medium',
 									handler: function () {
 										scheduleReportWin();
@@ -1125,7 +1125,9 @@
 								},
 								{
 									text: 'Scheduled Reports',
-									iconCls: 'fa fa-2x fa-clock-o icon-button-color-gray icon-vertical-correction',
+									id: 'scheduledReportBtn',
+									hidden: true,
+									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function () {
 										scheduledReportsWin.show();
@@ -1136,7 +1138,7 @@
 									text: 'Download',
 									id: 'historyExportButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download icon-button-color-gray icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyExport();
@@ -1150,7 +1152,7 @@
 									text: 'Delete',
 									id: 'historyDeleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyDelete();
@@ -1309,7 +1311,7 @@
 									xtype: 'button',
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
 									handler: function () {
 										actionPreviewNextRecord(false);
 									}
@@ -1321,7 +1323,7 @@
 									xtype: 'button',
 									id: 'previewWinTools-download',
 									text: 'Download',
-									iconCls: 'fa fa-lg fa-download icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-download icon-button-color-default',
 									handler: function () {
 										historyExport();
 									}
@@ -1333,7 +1335,7 @@
 									xtype: 'button',
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function () {
 										actionPreviewNextRecord(true);
@@ -1425,7 +1427,17 @@
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
 					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
-				};				
+				};	
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
+						Ext.getCmp('scheduledReportBtn').setHidden(false);					
+					}				
+				});	
+
+				
+				
+				
 				
 			});
 

@@ -23,7 +23,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 	
 	title: 'Integration',
 	modal: true,
-	iconCls: 'fa fa-lg fa-gear',
+	iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 	layout: 'fit',
 	width: '60%',
 	height: '50%',
@@ -34,7 +34,8 @@ Ext.define('OSF.component.IntegrationWindow', {
 		var integrationWindow = this;
 		
 		var addEditWindow = Ext.create('Ext.window.Window', {
-			title: 'Add/Update  Configuration',
+			iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+			title: 'Add/Edit Configuration',
 			modal: true,
 			width: '40%',
 			height: 340,
@@ -119,7 +120,9 @@ Ext.define('OSF.component.IntegrationWindow', {
 									text: 'Check',
 									margin: '30 0 0 0',
 									iconCls: 'fa fa-lg fa-check',
-									handler: function(){
+									handler: function() {
+										
+										// Load Jira Issue
 										loadJiraIssue();
 									}
 								}
@@ -139,7 +142,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								{
 									text: 'Save',
 									formBind: true,
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function() {
 										
 										// Force A Jira Check
@@ -180,7 +183,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function(){
 										this.up('window').close();
 									}							
@@ -193,11 +196,25 @@ Ext.define('OSF.component.IntegrationWindow', {
 		});
 		
 		var loadJiraIssue = function() {
+			
+			// Get Form
 			var form = addEditWindow.getComponent('configForm');
+			
+			// Get Issue Number Field
 			var issueField = form.getForm().findField('issueNumber');
+			
+			// Ensure Issue Number Field Has A Value
 			if (issueField.getValue()) {
+				
+				// Capitalize Jira Issue Number
+				issueField.setValue(issueField.getValue().toUpperCase());
+				
+				// Mask Form
 				form.setLoading('Retrieving Issue Name...');
+				
+				// Make Jira Request
 				Ext.Ajax.request({
+					
 					url: 'api/v1/service/jira/ticket/' + issueField.getValue(),
 					callback: function(){
 						form.setLoading(false);
@@ -298,7 +315,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						},
 						{
 							text: 'Add',							
-							iconCls: 'fa fa-lg fa-plus icon-button-color-add',
+							iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 							handler: function(){
 								addEditWindow.show();
 								addEditWindow.getComponent('configForm').reset();
@@ -342,7 +359,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 							text: 'Toggle Status',
 							itemId: 'tbStatus',
 							disabled: true,
-							iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
@@ -371,15 +388,17 @@ Ext.define('OSF.component.IntegrationWindow', {
 							text: 'Delete',
 							itemId: 'tbDelete',
 							disabled: true,							
-							iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
 								var integrationId = this.up('grid').getSelectionModel().getSelection()[0].get('integrationConfigId');
 								
 								Ext.Msg.show({
-									title:'Confirm',
+									title: 'Delete Configuration?',
+									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete selected configuration?',
+									closeAction: 'destroy',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
 									fn: function(btn) {

@@ -19,12 +19,25 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 
 /**
- * Allows for custom admin checking
+ * Allows for custom security checking
  *
  * @author dshurtleff
  */
 public interface CustomRequireHandler
 {
+	/**
+	 * Get the description of the security check for the API doc
+	 * @return
+	 */
+	String getDescription();
 
-	boolean requireAdminCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext);
+	/**
+	 * Provide a special handling for complex security cases.
+	 * @param resourceInfo
+	 * @param requestContext
+	 * @param requireSecurity
+	 * @return true to proceed checking or false to indicated failed security check
+	 */
+	boolean specialSecurityCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext, RequireSecurity requireSecurity);
+	
 }

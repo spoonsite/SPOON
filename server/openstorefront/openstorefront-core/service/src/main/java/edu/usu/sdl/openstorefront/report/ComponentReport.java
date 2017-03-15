@@ -55,7 +55,7 @@ public class ComponentReport
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		components = service.getPersistenceService().queryByExample(componentExample);
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
@@ -137,7 +137,7 @@ public class ComponentReport
 			queryByExample.setOrderBy(componentTrackingOrderExample);
 			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
 
-			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, queryByExample);
+			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(queryByExample);
 			String lastViewed = "";
 			if (componentTracking != null) {
 				lastViewed = sdf.format(componentTracking.getEventDts());

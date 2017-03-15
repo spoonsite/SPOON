@@ -128,7 +128,43 @@ the version of the application.
 
 ##1.10 Licensing
 
-The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also claries how individual pieces can be used.
+The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
+
+##1.11 Security
+-----------------
+
+Openstorefront support several environments each have different security needs.
+It also support a built in user management.  Regardless of the authentication mechanism the security is based on dynamic role made up of permissions.
+
+The granularity of the permissions is mostly feature/tool based.  
+
+###1.11.1 Adding Permissions
+
+1. Add Permission to SecurityPermission entity in code.
+
+2. Add Permission to auto-generated admin group (See Core-Service-> ...core.init.SecurityInit.java)
+
+3. Apply Permission
+
+
+Two place where permission need to be applied:
+
+_ Server API
+
+_ UI (typically to restrict a page however, it may be used to restrict a piece of functionality)
+
+Use caution in marking APIs as there may be other features that rely a shared API to work correctly. Should be a rare case.
+Also, keep in mind there may be special handling for "owners" of the data beyond a permission.
+
+
+###1.11.2 Data Restriction
+
+Data may be restricted by source and/or data sensitivity.  Data sensitivity may 
+be marked at a entity-level however, not all entity need to be marked. Marking
+support on the UI may be set according to needs.
+
+All Data-based API need to handling filtering data.
+
 
 #2. External Developers
 
@@ -208,3 +244,112 @@ If the method return null it will skip the record.
 **Note:** The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
+
+#3. Database Management
+-----
+
+The application handles all database interaction transparently, so
+direct database access and manipulation is not needed.  
+
+See the following for information on outside control (should rarely be
+needed/used).
+
+##3.1 Refreshing the Database
+-----------------------
+
+**CAUTION:** This will wipe out all data in the application. Data, such
+as User profiles, cannot be recovered. Component user data can be
+preserved by performing an export from the component admin tool.
+
+Make a backup by copying all of the files in the /var/openstorefront/db
+directory or use the following console tools steps:
+
+1.  Stop the Tomcat server  (e.g. service tomcat stop)
+
+2.  Remove the folder /var/openstorefront/db
+    (rm -rf /var/openstorefront/db)
+
+3.  Start the tomcat server
+
+When the application loads it will create a new database and populate
+the data from whatever is currently in the import folders (lookups only; attributes, component, articles will need to be manually
+trigger or uploaded via the Admin Tools UI).
+
+The initial load of the application may take a few minutes. If the
+import directories are empty, the application will load default lookup
+files that are packaged with the application.
+
+##3.2 Installing Database Console
+----------------------------
+
+**CAUTION:** Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.
+
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
+
+2.  Extract the archive
+
+3.  Run the console ./bin/console.sh 
+
+4.  Connect to the DB: 
+
+connect remote: localhost/openstorefront (user) (password) (see the
+    /var/openstorefront/config/openstorefront.properties for
+    connection information)
+
+The database supports an SQL like interface and then adds other
+functionality on top.
+
+-   See [Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html) for
+    information about backup
+
+-   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
+    export and imports.
+
+##3.3 Installing Database Studio
+----------------------------
+
+**NOTE** Orient DB includes a web application for viewing the database
+visually, instead of viewing everything from the console. Once installed,
+Orient DB Studio will run with the database itself once OpenStoreFront 
+is running, and will not require anything to be run locally
+
+**CAUTION:** Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.
+
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
+
+  1. If you already downloaded Orient DB in section 3.2 above,
+    you may simply reuse that download.
+
+2.  Extract the archive
+
+3.  Locate the Studio plugin: ./plugins/studio-2.1.zip
+
+4.  Copy plugin to OpenStoreFront database on server:
+    /var/openstorefront/db/plugins
+
+  1. Copy entire .zip file; do not extract.
+
+5. Start or Restart OpenStoreFront
+
+  1. Plugin will automatically be installed when the database service
+        is initialized.
+
+6. Access Orient DB Studio: <http://localhost:2480/studio/index.html>
+
+  1. Change 'localhost' to the appropriate domain name or IP address if OpenStoreFront is not running locally
+  2. Ensure 'openstorefront' is selected as the database in the dropdown.
+  3. Login using the credentials located in the configuration file: /var/openstorefront/config/openstorefront.properties
+
+The database supports an SQL like interface and then adds other
+functionality on top.
+
+-   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
+    more information about Studio
+
+

@@ -109,6 +109,13 @@ public interface Service
 	public SystemService getSystemService();
 
 	/**
+	 * Handles system and related entities
+	 *
+	 * @return
+	 */
+	public SecurityService getSecurityService();
+
+	/**
 	 * Handles users
 	 *
 	 * @return

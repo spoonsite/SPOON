@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -639,6 +640,12 @@ public class ComponentServiceImpl
 	public void deleteTemplateBlock(String templateBlockId)
 	{
 		core.deleteTemplateBlock(templateBlockId);
+	}
+
+	@Override
+	public ComponentSensitivityModel getComponentSensitivity(String componentId)
+	{
+		return core.getComponentSensitivity(componentId);
 	}
 
 }

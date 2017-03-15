@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -125,7 +126,7 @@ public class SearchServiceImpl
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		AttributeCode attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		AttributeCode attributeCode = persistenceService.queryOneByExample(attributeCodeExample);
 		if (attributeCode == null) {
 			attributeCode = persistenceService.findById(AttributeCode.class, pk);
 		}
@@ -151,7 +152,7 @@ public class SearchServiceImpl
 			queryByExample.setLikeExample(attributeCodeLikeExample);
 		}
 
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
 		List<String> ids = new ArrayList();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());
@@ -306,7 +307,12 @@ public class SearchServiceImpl
 
 				//get intermediate Results
 				if (!masterResults.isEmpty()) {
-					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + Component.class.getSimpleName() + " where componentId in :idList";
+					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + 
+									Component.class.getSimpleName() + 
+									" where " +
+									FilterEngine.queryComponentRestriction() +
+									" and componentId in :idList";
+					
 					Map<String, Object> parameterMap = new HashMap<>();
 					parameterMap.put("idList", masterResults);
 					List<ODocument> results = persistenceService.query(query, parameterMap);

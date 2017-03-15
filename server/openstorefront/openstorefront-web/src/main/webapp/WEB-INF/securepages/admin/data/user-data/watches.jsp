@@ -82,8 +82,7 @@
 						{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 							renderer: function(value, meta, record) {
 								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-									meta.tdCls = 'alert-success';
-									return value + '*Updated';
+									return value + '<span class="updated-watch text-success"> UPDATED </span>';
 								} else {
 									return value;
 								}
@@ -99,9 +98,7 @@
 						},
 						{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
 							renderer: function(value, meta, record) {
-								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-									meta.tdCls = 'alert-success';
-								}
+								
 								return Ext.util.Format.date(value, 'm/d/y H:i:s');
 							}			
 						},
@@ -143,7 +140,7 @@
 									text: 'Toggle Status',
 									itemId: 'toggle',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,									
 									handler: function () {
 										actionSetStatus();

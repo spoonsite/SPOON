@@ -93,22 +93,21 @@ public interface PersistenceService
 	 * @param <T> Type of results expected
 	 * @param query SQL query for selecting items <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE activeStatus &lt;&gt; :selectedStatus)</div>
 	 * @param parameterMap Values to use in the Query <div style="font-size:.9 em; left: 10px">map with key "selectedStatus" and value 'A' </div>
-	 * @param dataClass ** unused **
 	 * @param unwrap detach objects from the database backed objects
 	 * @return List of results of the given type
 	 */
-	<T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap);
+	<T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap);
 
 	/**
 	 * This will run the example with the default options
 	 *
 	 * @param <T> type of object to return
-	 * @param exampleClass type of Class (i.e. T.class)
 	 * @param baseEntity class containing the criteria for the query
 	 * @return List of results of the given type
 	 */
-	<T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity);
+	<T> List<T> queryByExample(BaseEntity baseEntity);
 
+	<T> List<T> queryByExample(QueryByExample queryByExample);
 	/**
 	 * 
 	 * @param <T> type of object to return
@@ -116,7 +115,6 @@ public interface PersistenceService
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return List of results of the given type
 	 */
-	<T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample);
 
 	/**
 	 * This just returns one result. Typically the query results in only one
@@ -127,8 +125,9 @@ public interface PersistenceService
 	 * @param baseEntity class containing the criteria for the query
 	 * @return the entity or null if not found
 	 */
-	<T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEntity);
+	<T> T queryOneByExample(BaseEntity baseEnity);
 
+	<T> T queryOneByExample(QueryByExample queryByExample);
 	/**
 	 * 
 	 * @param <T> type of object to return
@@ -136,7 +135,6 @@ public interface PersistenceService
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return the entity or null if not found
 	 */
-	<T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample);
 
 	void rollback();
 
@@ -156,6 +154,7 @@ public interface PersistenceService
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 	
+	<T> List<T> unwrapProxy(List<T> data);
 	/**
 	 * Detach a list of objects from the database backed objects
 	 * @param <T> type of object
@@ -163,8 +162,8 @@ public interface PersistenceService
 	 * @param data data that needs detached
 	 * @return list of detached objects
 	 */
-	<T> List<T> unwrapProxy(Class<T> origClass, List<T> data);
 	
+	<T> T unwrapProxyObject(T data);
 	/**
 	 * Detach a single object from the database backed object
 	 * @param <T> type of object
@@ -172,7 +171,6 @@ public interface PersistenceService
 	 * @param data data that needs detached
 	 * @return a detached version of the object
 	 */
-	<T> T unwrapProxyObject(Class<T> origClass, T data);
 
 	<T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere);
 

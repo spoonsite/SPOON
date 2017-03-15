@@ -139,7 +139,7 @@
 								text: 'Add New Configuration',
 								id: 'componentConfigGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
 									actionAddNewConfiguration();
 								}
@@ -174,7 +174,7 @@
 								text: 'Toggle Status',
 								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								disabled: true,
 								handler: function () {
 									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
@@ -207,18 +207,22 @@
 								text: 'Delete',
 								id: 'componentConfigGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning icon-vertical-correction',
 								disabled: true,
 								handler: function () {
-									var title = 'Delete Configuration?';
-									
 									var ending = componentConfigGrid.getSelection().length > 1 ? "s" : "";
-									
 									var msg = 'Are you sure you want to delete ' + componentConfigGrid.getSelection().length + ' configuration' + ending + '?';
-									
-									Ext.MessageBox.confirm(title, msg, function (btn) {
-										if (btn === 'yes') {
-											actionDeleteIntegration();
+									Ext.Msg.show({
+										title: 'Delete Configuration?',
+										iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+										message: msg,
+										closeAction: 'destroy',
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+										fn: function(btn) {
+												if (btn === 'yes') {
+													actionDeleteIntegration();
+											} 
 										}
 									});
 								}
@@ -230,7 +234,8 @@
 
 			var entryPickWindow = Ext.create('Ext.window.Window' , {
 				id: 'entryPickWindow',
-				title: 'Choose Entry',
+				title: 'Add New Configuration',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 				modal: true,
 				width: '40%',
 				y: '10em',
@@ -243,11 +248,9 @@
 						width: '100%',
 						items: [
 							{
-								xtype: 'label',
-								text: 'Choose an entry for integration configuration:'
-							},
-							{
 								xtype: 'combobox',
+								fieldLabel: 'Choose an entry for integration configuration',
+								labelAlign: 'top',
 								displayField: 'description',
 								valueField: 'code',
 								width: '100%',
@@ -349,7 +352,7 @@
 			var actionEditIntegration = function actionEditIntegration(record) {
 				integrationWindow.show();
 				integrationWindow.loadConfigs(record.getData().componentId);
-				integrationWindow.setTitle('Integration: ' + record.getData().componentName);
+				integrationWindow.setTitle('Edit Integration: ' + record.getData().componentName);
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
@@ -466,7 +469,7 @@
 
 			var addEditMappingWin = Ext.create('Ext.window.Window', {
 				id: 'addEditMappingWin',
-				iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+				iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 				title: 'Add/Edit Mapping',
 				modal: true,
 				width: '60%',
@@ -708,7 +711,7 @@
 						items: [
 							{
 								text: 'Save',
-								iconCls: 'fa fa-lg fa-save icon-button-color-add',
+								iconCls: 'fa fa-lg fa-save icon-button-color-save',
 								handler: function() {
 									var fields = Ext.getCmp('fieldAssignmentForm').getForm().getValues();
 									var form = Ext.getCmp('addEditMappingForm').getForm().getValues();
@@ -756,7 +759,7 @@
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								id: 'cancelAddWindow',
 								handler: function() {
 									Ext.getCmp('addEditMappingForm').reset();
@@ -834,7 +837,7 @@
 								text: 'Add New Mapping',
 								id: 'jiraConfigGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
 									actionAddMapping();
 								}
@@ -858,7 +861,7 @@
 								text: 'Delete',
 								id: 'jiraConfigGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning',
 								disabled: true,
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];

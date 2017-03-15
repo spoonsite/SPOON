@@ -82,7 +82,7 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										actionSaveSearch();
 									}
@@ -103,7 +103,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function () {
 										if (advanceSearch.changed) {
 											Ext.Msg.show({
@@ -289,7 +289,7 @@
 									itemId: 'add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -313,7 +313,7 @@
 									itemId: 'togglestatus',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
 									}

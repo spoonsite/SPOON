@@ -130,29 +130,29 @@
 									xtype: 'tbseparator',
 								},
 								{
-									text: 'Pause Job',
-									tooltip: 'Pause the selected job',
-									name: 'individualJobControl',
-									scale: 'medium',
-									id: 'jobGrid-jobPause',
-									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction',
-									disabled: true,
-									handler: function () {
-										var record = Ext.getCmp('jobGrid').getSelection()[0];
-										pauseJob(record);
-									}
-								},
-								{
 									text: 'Resume Job',
 									tooltip: 'Resume the selected job',
 									scale: 'medium',
 									id: 'jobGrid-jobResume',
-									iconCls: 'fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
 									name: 'individualJobControl',
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										resumeJob(record);
+									}
+								},
+								{
+									text: 'Pause Job',
+									tooltip: 'Pause the selected job',
+									name: 'individualJobControl',
+									scale: 'medium',
+									id: 'jobGrid-jobPause',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										pauseJob(record);
 									}
 								},
 								{
@@ -234,7 +234,7 @@
 									scale: 'medium',
 									toggleGroup: 'scheduler',
 									id: 'jobGrid-schedulerToggleButton',
-									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									name: 'schedulerControl',
 									handler: function () {
 										toggleScheduler();
@@ -410,7 +410,7 @@
 									tooltip: 'Attempts to cancel the task',
 									scale: 'medium',
 									id: 'taskGrid-tools-cancel',
-									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionCancelTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -424,7 +424,7 @@
 									tooltip: 'Delete the task',
 									scale: 'medium',
 									id: 'taskGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionDeleteTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -516,7 +516,7 @@
 				};				
 
 				var jobsMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Jobs <i class="fa fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
+					title: 'Manage Jobs &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
 					width: 400,
 					height: 400,
 					items: [jobGrid, taskGrid]
@@ -615,13 +615,13 @@
 								label.setText('Running');
 								label.setStyle({color: 'green'});
 								button.setText('Pause Scheduler');
-								button.setIconCls('fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction');
+								button.setIconCls('fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction');
 							}
 							else {
 								label.setText('Paused');
 								label.setStyle({color: 'red'});
 								button.setText('Resume Scheduler');
-								button.setIconCls('fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction');
+								button.setIconCls('fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction');
 							}
 						},
 						failure: function (response, opts) {

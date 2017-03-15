@@ -70,8 +70,7 @@ Ext.define('OSF.component.NotificationPanel', {
 		});
 
 		var actionMarkAsRead = function (record) {
-			CoreService.usersevice.getCurrentUser().then(function (response) {
-				var usercontext = Ext.decode(response.responseText);
+			CoreService.userservice.getCurrentUser().then(function (usercontext) {		
 				Ext.Ajax.request({
 					url: 'api/v1/resource/notificationevent/' + record.get('eventId'),
 					method: 'PUT',
@@ -123,7 +122,16 @@ Ext.define('OSF.component.NotificationPanel', {
 					}
 				},
 				{text: 'Event Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-				{text: 'Type', groupable: 'true', dataIndex: 'eventTypeDescription', width: 175},
+				{text: 'Event Type', groupable: 'true', dataIndex: 'eventType', width: 175,
+					renderer: function(value, metaData, record, rowIndex) {
+
+						// Set Tooltip
+						metaData.tdAttr = 'data-qtip="' + record.get('eventTypeDescription') + '"';
+
+						// Simply Return Value
+						return value;
+					}
+				},
 				{text: 'Message', dataIndex: 'message', flex: 1,
 					renderer: function (value, metadata, record) {
 						switch (record.get('eventType')) {
@@ -223,12 +231,13 @@ Ext.define('OSF.component.NotificationPanel', {
 						{
 							text: 'Delete All',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+							iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 							handler: function () {
 								var notificationStore = this.up('grid').getStore();
 								
 								Ext.Msg.show({
 									title:'Delete All Notifications?',
+									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete all notifications?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
@@ -289,7 +298,7 @@ Ext.define('OSF.component.NotificationWindow', {
   alias: 'osf.widget.NotificationWindow',
   
   title: 'Notifications',
-  iconCls: 'fa fa-envelope',
+  iconCls: 'fa fa-envelope-o',
   y: 40,
   width: '80%',
   modal: true,

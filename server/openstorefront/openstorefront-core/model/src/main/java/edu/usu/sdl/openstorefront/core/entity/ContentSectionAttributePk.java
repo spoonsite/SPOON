@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Section Attributes Primary Key")
+@Embeddable
 public class ContentSectionAttributePk
 		extends BasePK<ContentSectionAttributePk>
 {

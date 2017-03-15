@@ -72,14 +72,21 @@
 			Ext.onReady(function () {
 				var adminUser = ${admin};
 				
+				var currentUser;
+				CoreService.userservice.getCurrentUser().then(function(user){
+					currentUser = user;
+					loadUserWidgets(true);
+				})
+				
 				var widgets = [
 					{
 						name: 'Notifications',
 						code: 'NOTIFICATIONS',
 						description: 'Shows event notifications',
-						iconCls: 'fa fa-envelope',
+						iconCls: 'fa fa-envelope-o',
 						jsClass: 'OSF.component.NotificationPanel',
 						height: 400,
+						permissions: null,
 						allowMultiples: false,
 						refresh: function(widget) {
 							widget.refreshData();
@@ -89,9 +96,10 @@
 						name: 'System Status',
 						code: 'SYSTEMSTATS',
 						description: 'Shows system status',
-						iconCls: 'fa fa-gear',
+						iconCls: 'fa fa-2x fa-gear',
 						jsClass: 'OSF.widget.SystemStats',						
 						height: 320,
+						permissions: "ADMIN-SYSTEM-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -102,9 +110,10 @@
 						name: 'User Stats',
 						code: 'USERSTATS',
 						description: 'Shows user stats',
-						iconCls: 'fa fa-users',
+						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.UserStats',						
 						height: 320,
+						permissions: "ADMIN-USER-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -115,9 +124,10 @@
 						name: 'Entry Stats',
 						code: 'ENTRYSTATS',
 						description: 'Shows entry stats',
-						iconCls: 'fa fa-database',
+						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.EntryStats',						
 						height: 575,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -128,9 +138,10 @@
 						name: 'Pending Approval Requests',
 						code: 'APPROVEREQ',
 						description: 'Shows entry changes and submission that are waiting for approval',
-						iconCls: 'fa fa-list',
+						iconCls: 'fa fa-lg fa-commenting',
 						jsClass: 'OSF.widget.ApprovalRequests',						
 						height: 400,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -141,9 +152,10 @@
 						name: 'Watches',
 						code: 'WATCHES',
 						description: 'Shows all watches on entries',
-						iconCls: 'fa fa-binoculars',
+						iconCls: 'fa fa-lg fa-binoculars icon-small-vertical-correction',
 						jsClass: 'OSF.component.UserWatchPanel',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -154,9 +166,10 @@
 						name: 'Submission Status',
 						code: 'SUBMISSIONSTATS',
 						description: 'Shows the status of your submissions',
-						iconCls: 'fa fa-list',
+						iconCls: 'fa fa-lg fa-list icon-small-vertical-correction',
 						jsClass: 'OSF.widget.Submissions',						
 						height: 400,
+						permissions: "USER-SUBMISSIONS",
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -167,9 +180,10 @@
 						name: 'Saved Search',
 						code: 'SAVEDSEARCH',
 						description: 'Shows the results of a saved search',
-						iconCls: 'fa fa-search',
+						iconCls: 'fa fa-lg fa-search',
 						jsClass: 'OSF.widget.SavedSearch',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: true,
 						refresh: function(widget) {
@@ -189,9 +203,10 @@
 						name: 'Outstanding Feedback',
 						code: 'OFEEDBACK',
 						description: 'Shows outstanding feedback from users.',
-						iconCls: 'fa fa-comment',
+						iconCls: 'fa fa-lg fa-comment',
 						jsClass: 'OSF.widget.Feedback',						
 						height: 400,
+						permissions: "ADMIN-FEEDBACK",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -202,9 +217,10 @@
 						name: 'Reports',
 						code: 'REPORTS',
 						description: 'Shows your generated report history.',
-						iconCls: 'fa fa-file-text-o',
+						iconCls: 'fa fa-lg fa-file-text-o',
 						jsClass: 'OSF.widget.Reports',						
 						height: 400,
+						permissions: "REPORTS",
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -215,9 +231,10 @@
 						name: 'Questions',
 						code: 'QUESTIONS',
 						description: 'Shows your questions and allows for viewing responses.',
-						iconCls: 'fa fa-question',
+						iconCls: 'fa fa-2x fa-question',
 						jsClass: 'OSF.widget.Questions',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -228,9 +245,10 @@
 						name: 'Recent User Data',
 						code: 'RECENTUDATA',
 						description: 'Shows recent user data (questions, reviews, tags, contacts) added/updated in the past 30 days.',
-						iconCls: 'fa fa-list-alt',
+						iconCls: 'fa fa-2x fa-list-alt',
 						jsClass: 'OSF.widget.RecentUserData',						
 						height: 400,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",						
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -258,8 +276,8 @@
 								keep = false;
 							}
 						}
-						if (widget.adminOnly) {
-							if (!adminUser) {
+						if (widget.permissions) {
+							if (!CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
 								keep = false;
 							}
 						}
@@ -309,7 +327,7 @@
 							items: [
 								{
 									text: 'Add Selected Widgets',
-									iconCls: 'fa fa-plus icon-button-color-add icon-small-vertical-correction',									
+									iconCls: 'fa fa-plus icon-button-color-save icon-small-vertical-correction',									
 									handler: function() {
 										var selectedWidget = false;
 										Ext.Array.each(dashboardPage.widgets, function(item) {
@@ -338,7 +356,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close icon-button-color-delete icon-small-vertical-correction',
+									iconCls: 'fa fa-close icon-button-color-warning icon-small-vertical-correction',
 									handler: function() {
 										this.up('window').close();
 									}
@@ -430,7 +448,7 @@
 							items: [
 								{
 									text: 'Add Widget',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 									scale: 'medium',
 									handler: function() {
 										addWidgetsWin.show();
@@ -473,9 +491,9 @@
 								config.widgetColor = widget.widgetColor;
 								
 								var widgetPanel;
-								if (config.adminOnly) {
+								if (config.permissions) {
 									//if the user is no longer admin don't add widget
-									if (adminUser) {
+									if (CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
 										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {
@@ -494,7 +512,7 @@
 					});
 					
 				};
-				loadUserWidgets(true);
+				
 				
 				var widgetsOnDashBoard = [];
 				var addWidgetToDashboard = function(widget, noUpdateDash) {

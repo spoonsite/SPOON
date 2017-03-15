@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 
 /**
@@ -25,6 +26,7 @@ import javax.persistence.Version;
  * @author dshurtleff
  */
 @APIDescription("Linking table to the question pool")
+@Embeddable
 public class ChecklistTemplateQuestion
 		implements Serializable
 {

@@ -118,7 +118,7 @@ Ext.define('OSF.widget.Reports', {
 							text: 'Download',
 							itemId: 'historyExportButton',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-download',
+							iconCls: 'fa fa-2x fa-download icon-button-color-default',
 							disabled: true,
 							handler: function () {
 								var grid = this.up('grid');

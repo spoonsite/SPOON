@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.doc.security.CustomRequireHandler;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 
@@ -32,7 +33,13 @@ public class UserProfileRequireHandler
 	public static final String USERNAME_ID_PARAM = "id";
 
 	@Override
-	public boolean requireAdminCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext)
+	public String getDescription()
+	{
+		return "Allow current user";
+	}
+
+	@Override
+	public boolean specialSecurityCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext, RequireSecurity requireSecurity)
 	{
 		boolean doAdminCheck = true;
 		String useridPassIn = requestContext.getUriInfo().getPathParameters().getFirst(USERNAME_ID_PARAM);

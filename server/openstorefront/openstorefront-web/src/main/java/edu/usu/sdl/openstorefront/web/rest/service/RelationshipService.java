@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
@@ -73,6 +74,7 @@ public class RelationshipService
 				Component component = new Component();
 				component.setComponentId(entityKey);
 				component = component.find();
+				component = FilterEngine.filter(component);
 				if (component != null) {
 					entityExists = true;
 					
@@ -157,6 +159,7 @@ public class RelationshipService
 					componentExample.setApprovalState(ApprovalStatus.APPROVED);		
 					componentExample.setOrganization(organization.getName());
 					List<Component> components = componentExample.findByExample();
+					components = FilterEngine.filter(components);
 					
 					for (Component component : components) {
 						RelationshipView view = new RelationshipView();
@@ -193,6 +196,8 @@ public class RelationshipService
 						componentAttributeExample.setComponentAttributePk(componentAttributePk);
 						
 						List<ComponentAttribute> componentAttributes = componentAttributeExample.findByExample();
+						componentAttributes = FilterEngine.filter(componentAttributes, true);
+						
 						for (ComponentAttribute componentAttribute : componentAttributes) {
 							if (service.getComponentService().checkComponentApproval(componentAttribute.getComponentId())) {
 								RelationshipView relationship = new RelationshipView();							
@@ -247,6 +252,7 @@ public class RelationshipService
 				ComponentTag tagExample = new ComponentTag();
 				tagExample.setText(entityKey);
 				List<ComponentTag> tags = tagExample.findByExample();
+				tags = FilterEngine.filter(tags, true);
 				if (!tags.isEmpty()) {
 					entityExists = true;
 					

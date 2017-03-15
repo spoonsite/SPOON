@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.web.action.admin;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import java.util.Collections;
@@ -79,6 +81,7 @@ public class LoggingAction
 		return new StreamingResolution("text/html", results.toString());
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@HandlesEvent("UpdateLogLevel")
 	public Resolution updateLogLevel()
 	{
@@ -97,6 +100,7 @@ public class LoggingAction
 		return viewLoggers();
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@HandlesEvent("UpdateHandlerLevel")
 	public Resolution updateHandlerLevel()
 	{

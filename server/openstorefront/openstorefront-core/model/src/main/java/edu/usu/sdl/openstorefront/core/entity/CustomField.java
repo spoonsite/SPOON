@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,6 +34,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Defines a field for a subsection")
+@Embeddable
 public class CustomField
 		implements Serializable
 {
@@ -52,6 +55,7 @@ public class CustomField
 	private String value;
 
 	@ConsumeField
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	@DataType(CustomFieldValidValue.class)
 	private List<CustomFieldValidValue> validValues;

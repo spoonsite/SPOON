@@ -61,13 +61,17 @@
 				}
 			});
 			toolsMenu.push({
+				id: 'tools-menu-relationships',
 				text: 'Relationships',
+				hidden: true,
 				handler: function(){
 					actionLoadContent('Relationships');
 				}			
 			});			
 			toolsMenu.push({
+				id: 'tools-menu-reports',
 				text: 'Reports',
+				hidden: true,
 				handler: function(){
 					actionLoadContent('Reports');
 				}			
@@ -140,7 +144,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -172,7 +176,7 @@
 								{
 									text: 'Dashboard',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-home',
+									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -183,15 +187,17 @@
 								{
 									text: 'Profile',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-user',
+									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									handler: function(){
 										actionLoadContent('User-Profile');
 									}									
 								},
 								{
+									id: 'main-menu-submissions',
 									text: 'Submissions',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-list',
+									hidden: true,
+									iconCls: 'fa fa-2x fa-list icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
@@ -202,7 +208,7 @@
 								{
 									text: 'Tools',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-wrench',
+									iconCls: 'fa fa-2x fa-wrench icon-button-color-default',
 									width: '140px',
 									menu: {										
 										items: toolsMenu,
@@ -212,21 +218,59 @@
 											}					
 										}
 									}
-								}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Change password',
+									id: 'main-menu-changepassword',
+									scale   : 'large',
+									iconCls: 'fa fa-2x fa-key',
+									hidden: true,
+									handler: function(){
+										actionLoadContent('Change-Password');
+									}										
+								}			
 							]
 						}
 					]
 				}]
 			});
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText
 					}), 0);
 				}
 			});		
+			
+			CoreService.userservice.getCurrentUser().then(function(user){
+				if (CoreService.userservice.userHasPermisson(user, "REPORTS")) {
+					Ext.getCmp('tools-menu-reports').setHidden(false);					
+				}
+				if (CoreService.userservice.userHasPermisson(user, "RELATION-VIEW-TOOL")) {
+					Ext.getCmp('tools-menu-relationships').setHidden(false);
+				} 
+				if (CoreService.userservice.userHasPermisson(user, "USER-SUBMISSIONS")) {
+					Ext.getCmp('main-menu-submissions').setHidden(false);
+				}
+			});	
+			
+			Ext.Ajax.request({
+				url: 'api/v1/service/security/realmname',
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+					
+					Ext.Array.each(data, function(realm) {
+						if (realm.code === 'StorefrontRealm') {
+							Ext.getCmp('main-menu-changepassword').setHidden(false);
+						}
+					});
+					
+				}
+			});
 						
 			var actionLoadContent = function(key) {
 				window.location.href = 'UserTool.action?load=' + key;

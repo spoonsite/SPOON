@@ -363,10 +363,11 @@
 									// to get proper spacing for this button
 									text: '&nbsp;Message',
 									id: 'userProfileGrid-tools-message',
+									hidden: true,
 									disabled: true,
 									scale: 'medium',
 									width: '130px',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-add',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-save',
 									iconAlign: 'left',
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();
@@ -376,7 +377,7 @@
 								{
 									text: 'Toggle Status',
 									id: 'userProfileGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									scale: 'medium',
 									tooltip: 'Activates/Deactivates',
@@ -397,7 +398,7 @@
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
 									width: '150px',
-									iconCls: 'fa fa-2x fa-download icon-button-color-toggle-status icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction-edit',
 									menu: [
 										{
 											text: 'All Profiles',
@@ -467,6 +468,11 @@
 					}
 				});
 
+				CoreService.userservice.getCurrentUser().then(function(user){				
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT")) {
+						Ext.getCmp('userProfileGrid-tools-message').setHidden(false);
+					}				
+				});
 
 				var actionToggleUser = function actionToggleUser(record) {
 					if (record) {

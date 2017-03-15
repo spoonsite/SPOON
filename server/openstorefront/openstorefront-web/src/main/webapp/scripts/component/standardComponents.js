@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, CoreUtil */
+/* global Ext, CoreUtil, CoreService */
 
 Ext.define('OSF.component.StandardComboBox', {
     extend: 'Ext.form.field.ComboBox',
@@ -60,7 +60,8 @@ Ext.define('OSF.component.SecurityComboBox', {
 	displayField: 'description',
 	typeAhead: false,
 	editable: false,
-	forceSelection: true,	
+	forceSelection: true,
+	hidden: true,
 	queryMode: 'local',
 	labelAlign: 'top',
 	store: {
@@ -71,11 +72,168 @@ Ext.define('OSF.component.SecurityComboBox', {
 		}
 	},	
 	initComponent: function() {
-		var me = this;	
-		me.callParent();
+		var combo = this;	
+		combo.callParent();
+		
+		//check branding to see it should show
+		
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+			if (branding.allowSecurityMarkingsFlg) {
+				combo.setHidden(false);
+			}
+		});
+		
 	}	
 	
 });
+
+Ext.define('OSF.component.DataSensitivityComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSensitivityComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Sensitivity',
+	name: 'dataSensitivity',
+	width: '100%',	
+	valueField: 'dataSensitivity',
+	displayField: 'dataSensitivityDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	hidden: true,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
+		}
+	},	
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];		
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSensitivity',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response.responseText);
+				
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSensitivity) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSensitivity === lookup.code) {
+										return true;
+									}
+								});
+
+								data.push({
+									dataSensitivity: item.dataSensitivity,
+									dataSensitivityDesc: found.description
+								});
+							}
+						});						
+					});
+
+					if (data.length > 0) {
+						combo.setHidden(false);
+					}
+					
+					if (combo.addSelect) {
+						data.push({
+							dataSensitivity: null,
+							dataSensitivityDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+					
+				}
+			});						
+		});	
+	}	
+	
+});
+
+Ext.define('OSF.component.DataSourceComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSourceComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Source',
+	name: 'dataSource',
+	width: '100%',	
+	valueField: 'dataSource',
+	displayField: 'dataSourceDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	hidden: false,
+	hideOnNoData: false,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSource'			
+		}
+	},	
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSource',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response.responseText);
+				
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSource) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSource === lookup.code) {
+										return true;
+									}
+								});
+
+								data.push({
+									dataSource: item.dataSource,
+									dataSourceDesc: found.description
+								});
+							}
+						});
+					});
+					if (combo.hideOnNoData && data.length === 0) {
+						combo.setHidden(true);
+					}					
+					
+					if (combo.addSelect) {
+						data.push({
+							dataSource: null,
+							dataSourceDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+				}
+			});			
+		});		
+		
+	}	
+	
+});
+
 
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',
@@ -104,7 +262,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Home',
-			iconCls: 'fa fa-2x fa-home',
+			iconCls: 'fa fa-2x fa-home icon-button-color-default',
 			href: 'index.jsp'			
 		});
 		
@@ -112,7 +270,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Admin Tools',
 				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-2x fa-gear',
+				iconCls: 'fa fa-2x fa-gear icon-button-color-default',
 				hidden: true,
 				href: 'AdminTool.action'	
 			});
@@ -121,7 +279,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showUserTools) {
 			menuItems.push({
 				text: 'User Tools',
-				iconCls: 'fa fa-2x fa-user',
+				iconCls: 'fa fa-2x fa-user icon-button-color-default',
 				href: 'UserTool.action'		
 			});
 		}	
@@ -132,7 +290,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showHelp) {
 			menuItems.push({
 				text: '<b>Help</b>',
-				iconCls: 'fa fa-2x fa-question-circle',
+				iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
 				handler: function() {
 					userMenu.helpWin.show();
 				}			
@@ -141,7 +299,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-2x fa-commenting',
+			iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 			handler: function() {
 				userMenu.feedbackWin.show();
 			}		
@@ -153,7 +311,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Logout',
-			iconCls: 'fa fa-2x fa-sign-out',
+			iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
 			href: 'Login.action?Logout'			
 		});
 		
@@ -163,9 +321,8 @@ Ext.define('OSF.component.UserMenu', {
 			this.setWidth(this.up('button').getWidth());
 		});
 		
-		CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
+		CoreService.userservice.getCurrentUser().then(function(usercontext){
+								
 				var userMenuText = usercontext.username;
 				if (usercontext.firstName && usercontext.lastName)
 				{
@@ -173,7 +330,42 @@ Ext.define('OSF.component.UserMenu', {
 				}
 				userMenu.setText(userMenuText);	
 				
-				if (usercontext.admin) {
+				var permissions = [
+					"ADMIN-USER-MANAGEMENT",
+					"ADMIN-SYSTEM-MANAGEMENT",
+					"ADMIN-ENTRY-MANAGEMENT",
+					"ADMIN-MESSAGE-MANAGEMENT",
+					"ADMIN-JOB-MANAGEMENT",
+					"ADMIN-INTEGRATION",
+					"ADMIN-DATA-IMPORT-EXPORT",
+					"ADMIN-WATCHES",
+					"ADMIN-TRACKING",
+					"ADMIN-SEARCH",
+					"ADMIN-USER-MANAGEMENT-PROFILES",
+					"ADMIN-TEMPMEDIA-MANAGEMENT",
+					"ADMIN-ORGANIZATION",
+					"ADMIN-LOOKUPS",
+					"ADMIN-HIGHLIGHTS",
+					"ADMIN-MEDIA",
+					"ADMIN-FEEDBACK",
+					"ADMIN-EVALUATION-TEMPLATE",
+					"API-DOCS",
+					"ADMIN-BRANDING",
+					"ADMIN-EVALUATION-TEMPLATE-SECTION",
+					"ADMIN-CONTACT-MANAGEMENT",
+					"ADMIN-ENTRY-TEMPLATES",
+					"ADMIN-ENTRY-TYPES",
+					"ADMIN-QUESTIONS",
+					"ADMIN-REVIEW",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
+					"ADMIN-ATTRIBUTE-MANAGEMENT",
+					"ADMIN-ALERT-MANAGEMENT",
+					"REPORTS-ALL",
+					"ADMIN-EVALUATION-MANAGEMENT"
+				];
+				
+				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
 					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
 				}				
 				

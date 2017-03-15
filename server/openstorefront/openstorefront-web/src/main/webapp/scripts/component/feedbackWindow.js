@@ -69,7 +69,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
@@ -116,7 +116,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function () {
 								feedbackWin.close();
 							}
@@ -201,8 +201,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 									closeMethod: 'destroy',
 									width: 650,
 									saveCallback: function (response, opts) {
-										CoreService.usersevice.getCurrentUser().then(function (response) {
-											var usercontext = Ext.decode(response.responseText);
+										CoreService.userservice.getCurrentUser().then(function (usercontext) {											
 											formPanel.getForm().setValues(usercontext);
 										});
 									}
@@ -221,8 +220,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 		
 		feedbackWin.resetForm = function(fbWin, opts){
 			formPanel.reset();
-			CoreService.usersevice.getCurrentUser().then(function (response) {
-				var usercontext = Ext.decode(response.responseText);
+			CoreService.userservice.getCurrentUser().then(function (usercontext) {				
 				formPanel.getForm().setValues(usercontext);
 			});			
 		};

@@ -45,9 +45,9 @@
 					height: '80%',
 					maximizable: true,
 					title: 'Preview',
-					iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-vertical-correction-view',
+					iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
 					modal: true,
-					width: '110px',
+					minWidth: 500,
 					layout: 'fit',
 					items: [
 						previewContents
@@ -62,7 +62,7 @@
 								},
 								{									
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										previewWin.close();
@@ -80,7 +80,7 @@
 				var addEditBrandingWin = Ext.create('Ext.window.Window', {
 					id: 'addEditBrandingWin',
 					title: 'Add/Edit Branding',
-					iconCls: 'fa fa-lg fa-sliders',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					modal: true,
 					width: '80%',
 					height: '80%',
@@ -467,7 +467,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 											scale: 'medium',
 											formBind: true,
 											handler: function () {
@@ -507,7 +507,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 											scale: 'medium',
 											handler: function () {
 												this.up('window').close();
@@ -562,7 +562,7 @@
 				
 
 				var brandingGrid = Ext.create('Ext.grid.Panel', {
-					title: '  <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
+					title: 'Manage Branding &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
 					id: 'brandingGrid',
 					columnLines: true,
 					store: {
@@ -629,7 +629,7 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									width: '100px',
 									handler: function () {
 										actionAdd();
@@ -654,7 +654,7 @@
 									text: 'Toggle Status',
 									itemId: 'activate',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -666,7 +666,7 @@
 									itemId: 'duplicate',
 									scale: 'medium',
 									width: '150px',
-									iconCls: 'fa fa-2x fa-clone icon-button-color-toggle-status icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
 									menu: {
 										items: [
 											{
@@ -711,7 +711,7 @@
 									text: 'Delete',
 									itemId: 'delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -855,8 +855,10 @@
 					var name = record.get('name');
 
 					Ext.Msg.show({
-						title: 'Delete Branding Entry?',
-						message: 'Are you sure you want to delete:  ' + name + ' ?',
+						title: 'Delete Branding?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: '<b>Are you sure you want to delete branding - "' + name + '"?</b>',
+						minWidth: 400,
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function (btn) {

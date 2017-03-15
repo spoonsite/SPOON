@@ -441,7 +441,7 @@
 									id: 'errorTicketsGrid-tools-delete',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var records = Ext.getCmp('errorTicketsGrid').getSelection();
 										actionDeleteTickets(records);
@@ -500,7 +500,8 @@
 					
 					
 					Ext.Msg.show({
-						title: 'Delete Tickets',
+						title: 'Delete Error Ticket(s)',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete selected ticket(s)?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -566,7 +567,7 @@
 									{
 										xtype: 'button',
 										text: 'Close',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											this.up('window').hide();
 										}
@@ -673,7 +674,7 @@
 					width: '35%',
 					minHeight: 300,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-edit',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -715,7 +716,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('appStatePropForm').key;
@@ -748,7 +749,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('appStatePropForm').reset();
 												Ext.getCmp('editAppStatePropWin').hide();
@@ -814,7 +815,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function() {
 										addSysConfigProp();
 									}
@@ -838,7 +839,7 @@
 									text: 'Delete',
 									id: 'sysConfigPropGrid-tools-delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
@@ -907,7 +908,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,	
 											handler: function() {
 												var url = 'api/v1/service/application/configproperties';
@@ -942,7 +943,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('configPropForm').reset();
 												Ext.getCmp('editSysConfigPropWin').hide();
@@ -973,7 +974,7 @@
 					url += encodeURIComponent(record.data.code);
 
 					var msg = 'Are you sure you want to delete "' + record.getData().code + '"?';
-					Ext.MessageBox.confirm('Confirm Deletion', msg, function(btn) {
+					Ext.MessageBox.confirm('<i class="fa fa-lg fa-warning icon-small-vertical-correction"></i>&nbsp;&nbsp;' + 'Delete Property?', msg, function(btn) {
 						if (btn === 'yes') {
 							Ext.Ajax.request({
 								url: url,
@@ -1116,20 +1117,10 @@
 									scale: 'medium',
 									id: 'clearDbLog',
 									text: 'Delete All Records',
-									iconCls: 'fa fa-trash fa-2x icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-trash fa-2x icon-button-color-warning icon-vertical-correction',
 									tooltip: "Doesn't affect server logs. Note: The application will automatically clear old records exceeding max allowed.",
 									handler: function () {
-										Ext.Ajax.request({
-											url: 'api/v1/service/application/logrecords',
-											method: 'DELETE',
-											success: function(response, opt){
-												Ext.toast('Deleted log records', '', 'tr');
-												logStore.load();
-											},
-											failure: function(response, opt){
-												Ext.toast('Failed to delete log records', '', 'tr');
-											}
-										});
+										deleteAllRecords();
 									}
 								}
 							]
@@ -1142,6 +1133,26 @@
 						}
 					]
 				});
+				
+				var deleteAllRecords = function() {
+					
+					Ext.MessageBox.confirm('<i class="fa fa-lg fa-warning icon-small-vertical-correction"></i>&nbsp;&nbsp;' + 'Delete All Records?', 'Are you sure you want to delete all log records?', function(btn) {
+						if (btn === 'yes') {
+							Ext.Ajax.request({
+								url: 'api/v1/service/application/logrecords',
+								method: 'DELETE',
+								success: function(response, opt){
+									Ext.toast('Deleted log records', '', 'tr');
+									logStore.load();
+								},
+								failure: function(response, opt){
+									Ext.toast('Failed to delete log records', '', 'tr');
+								}
+							});
+						}
+					});
+					
+				}
 
 				var toggleDbLogger = function toggleDbLogger() {
 					if (Ext.getCmp('dbLogStatusLabel').text === 'On'){
@@ -1210,7 +1221,7 @@
 				var viewLogRecordWindow = Ext.create('Ext.window.Window', {
 					id: 'viewLogRecordWindow',
 					title: 'View Log Record',
-					iconCls: 'fa fa-lg fa-info-circle',
+					iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction',
 					width: '50%',
 					minHeight: 400,
 					autoScroll: true,
@@ -1248,7 +1259,7 @@
 									{
 										xtype: 'button',
 										text: 'Close',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											this.up('window').hide();
 										}
@@ -1381,7 +1392,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('loggerForm').getValues().name;
@@ -1415,7 +1426,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('loggerForm').reset();
 												Ext.getCmp('editLoggerWin').hide();
@@ -1526,7 +1537,7 @@
 									text: 'Add Plugin',
 									id: 'pluginGrid-tools-addPlugin',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddPlugin();
 									}
@@ -1535,26 +1546,26 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Stop',
-									id: 'pluginGrid-tools-stop',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-stop icon-vertical-correction',
-									disabled: true,
-									handler: function () {
-										var record = Ext.getCmp('pluginGrid').getSelection()[0];
-										actionStopPlugin(record);
-									}
-								},
-								{
 									text: 'Start',
 									id: 'pluginGrid-tools-start',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('pluginGrid').getSelection()[0];
 										actionStartPlugin(record);
+									}
+								},
+								{
+									text: 'Stop',
+									id: 'pluginGrid-tools-stop',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										var record = Ext.getCmp('pluginGrid').getSelection()[0];
+										actionStopPlugin(record);
 									}
 								},
 								{
@@ -1564,7 +1575,7 @@
 									text: 'Download',
 									id: 'pluginGrid-tools-download',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('pluginGrid').getSelection()[0];
@@ -1578,7 +1589,7 @@
 									text: 'Uninstall',
 									id: 'pluginGrid-tools-uninstall',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('pluginGrid').getSelection()[0];
@@ -1636,7 +1647,8 @@
 					
 					Ext.Msg.show({
 						title:'Uninstall Plugin?',
-						message: 'Are you sure you want to uninstall ' + record.get('name') + '?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to uninstall <b>' + record.get('name') + '</b>?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
@@ -1699,7 +1711,7 @@
 							items: [
 								{
 									text: 'Upload Plugin',
-									iconCls: 'fa fa-lg fa-save icon-button-color-add',
+									iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 									formBind: true,	
 									handler: function() {
 										var form = Ext.getCmp('pluginUploadForm');
@@ -1725,7 +1737,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function () {
 										Ext.getCmp('addPluginWindow').hide();
 									}
@@ -1803,7 +1815,7 @@
 									itemId: 'start',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-play-circle icon-button-color-add icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
 									handler: function(){
 										var grid = this.up('grid');
 										var record = this.up('grid').getSelectionModel().getSelection()[0];										
@@ -1828,7 +1840,7 @@
 									itemId: 'stop',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
 									handler: function(){
 										var grid = this.up('grid');
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -1864,7 +1876,7 @@
 									disabled: true,
 									scale: 'medium',
 									minWidth: '140px',
-									iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-repeat icon-button-color-refresh icon-vertical-correction',
 									handler: function(){
 										var grid = this.up('grid');
 										var record = this.up('grid').getSelectionModel().getSelection()[0];										
@@ -1889,7 +1901,7 @@
 									text: 'Restart Application',
 									scale: 'medium',
 									minWidth: '140px',
-									iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-repeat icon-button-color-refresh icon-vertical-correction',
 									handler: function(){
 										var grid = this.up('grid');																		
 										
@@ -1976,7 +1988,7 @@
 									text: 'Flush Cache',
 									itemId: 'flushBtn',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function(){
 										var grid = this.up('grid');
@@ -2104,7 +2116,7 @@
 											});
 										}
 										else {
-											Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
+											Ext.Msg.alert('Errors/Missing information', 'There are errors in the form. Please complete the form before sending.');
 										}
 									}
 								}								
@@ -2126,7 +2138,7 @@
 				actionLoadRecentChangesInfo();
 
 				var systemMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'System Management <i class="fa fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
+					title: 'System Management &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
 					width: 400,
 					height: 400,
 					items: [

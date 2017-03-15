@@ -120,7 +120,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDelete(Ext.getCmp('reviewGrid').getSelectionModel().getSelection()[0]);
 									}									
@@ -151,7 +151,8 @@
 				};
 						
 				var reviewWindow = Ext.create('OSF.component.ReviewWindow', {
-					title: 'Edit Review',						
+					title: 'Edit Review',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					postHandler: function(reviewWin, response) {
 						actionRefresh();
 					}

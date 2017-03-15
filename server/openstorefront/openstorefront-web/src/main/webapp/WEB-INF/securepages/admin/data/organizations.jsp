@@ -92,7 +92,7 @@
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-corretion',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-corretion',
 									tooltip: 'Add record',
 									handler: function () {
 										addRecord();
@@ -117,7 +117,7 @@
 									text: 'References',
 									id: 'refButton',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-link icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-link icon-button-color-default icon-vertical-correction',
 									tooltip: 'View selected record references',
 									disabled: true,
 									handler: function () {
@@ -127,7 +127,7 @@
 								{
 									scale: 'medium',
 									height: '38px',
-									text: '<span class="fa-stack"><i class="fa fa-link fa-stack-1x icon-horizontal-correction"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger icon-horizontal-correction"></i></span>"No Organization" References',
+									text: '<span class="fa-stack"><i class="fa fa-link fa-stack-1x icon-horizontal-correction"></i><i class="fa fa-2x fa-ban fa-stack-1x icon-button-color-warning icon-horizontal-correction"></i></span>"No Organization" References',
 									tooltip: 'Entries without organizations',
 									handler: function () {
 										noOrg();
@@ -138,7 +138,7 @@
 									id: 'mergeButton',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-compress icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Merge selected record into another record',
 									handler: function () {
@@ -149,7 +149,9 @@
 									xtype: 'tbfill'
 								},
 								{	text: 'Run Extraction',
+									id: 'runExtractorBtn',
 									scale: 'medium',
+									hidden: true,
 									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 									tooltip: 'Start extraction of organizations from metadata',
 									handler: function () {
@@ -163,7 +165,7 @@
 									id: 'deleteButton',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Delete record',
 									handler: function () {
@@ -192,7 +194,15 @@
 				});
 				
 				addComponentToMainViewPort(orgGrid);
-		
+				
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ORGANIZATION-EXTRACTION")) {
+						Ext.getCmp('runExtractorBtn').setHidden(false);					
+					}
+				});
+				
+				
 				var selectedObj=null;
 				
 				var checkButtonChanges = function() {
@@ -216,7 +226,7 @@
 				
 				var addRecord = function() {
 					addEditWin.show();
-					addEditWin.setTitle("Add Organization");
+					addEditWin.setTitle('<i class="fa fa-lg fa-plus small-vertical-correction"></i>' + ' &nbsp;&nbsp;' + 'Add Organization');
 //					//reset form
 					Ext.getCmp('entryForm').reset(true);
 					Ext.getCmp('entryForm').edit = false;
@@ -226,7 +236,7 @@
 				var editRecord = function() {
 					
 					addEditWin.show();
-					addEditWin.setTitle("Edit Organization");
+					addEditWin.setTitle('<i class="fa fa-lg fa-edit small-vertical-correction"></i>' + ' &nbsp;&nbsp;' + 'Edit Organization');
 					selectedObj = Ext.getCmp('orgGrid').getSelection()[0];
 					Ext.getCmp('entryForm').reset(true);
 					Ext.getCmp('entryForm').edit = true;
@@ -334,7 +344,8 @@
 				//
 				var noOrgWin = Ext.create('Ext.window.Window', {
 					id: 'noOrgWin',
-					title: 'No Organization References',
+					title: '"No Organization" &nbsp References',
+					iconCls: 'fa fa-lg fa-exclamation-circle icon-small-vertical-correction',
 					modal: true,
 					width: '40%',
 					height: '50%',
@@ -425,6 +436,7 @@
 				var refWin = Ext.create('Ext.window.Window', {
 					id: 'refWin',
 					title: 'Organization References',
+					iconCls: 'fa fa-lg fa-link icon-small-vertical-correction',
 					modal: true,
 					width: '50%',
 					height: '50%',
@@ -494,6 +506,7 @@
 				var mergeWin = Ext.create('Ext.window.Window', {
 					id: 'mergeWin',
 					title: 'Merge Organizations',
+					iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction',
 					modal: true,
 					width: '50%',
 					height: 260,
@@ -573,7 +586,7 @@
 								items: [
 									{
 										text: 'Apply',
-										iconCls: 'fa fa-lg fa-check icon-button-color-add',
+										iconCls: 'fa fa-lg fa-check icon-button-color-save',
 										formBind: true,
 										handler: function(){
 											var data = Ext.getCmp('mergeForm').getValues();
@@ -608,7 +621,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											Ext.getCmp('mergeWin').close();
 										}											
@@ -787,7 +800,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-lg fa-save icon-button-color-add',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function(){
 												
@@ -815,7 +828,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												Ext.getCmp('addEditWin').close();
 											}											

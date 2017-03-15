@@ -65,6 +65,13 @@ public abstract class StandardEntity<T>
 	@FK(SecurityMarkingType.class)
 	private String securityMarkingType;
 
+	@Sanitize({TextSanitizer.class, BlankSantizer.class})
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = DataSensitivity.class)
+	@APIDescription("Data Sensitivity")
+	@FK(DataSensitivity.class)
+	private String dataSensitivity;
+
 	@NotNull
 	@ValidValueType({"A", "I", "P"})
 	private String activeStatus;
@@ -106,12 +113,13 @@ public abstract class StandardEntity<T>
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		this.setSecurityMarkingType(entity.getSecurityMarkingType());
+		this.setDataSensitivity(entity.getDataSensitivity());		
 		if (entity.getActiveStatus() != null) {
 			this.setActiveStatus(entity.getActiveStatus());
 		}
 
 		this.populateBaseUpdateFields();
-		
+
 		if (StringUtils.isNotBlank(entity.getUpdateUser())) {
 			setUpdateUser(entity.getUpdateUser());
 		}
@@ -123,9 +131,9 @@ public abstract class StandardEntity<T>
 		if (StringUtils.isBlank(getActiveStatus())) {
 			setActiveStatus(ACTIVE_STATUS);
 		}
-		setUpdateDts(TimeUtil.currentDate());		
+		setUpdateDts(TimeUtil.currentDate());
 		setUpdateUser(SecurityUtil.getCurrentUserName());
-		
+
 		if (getAdminModified() == null) {
 			setAdminModified(SecurityUtil.isAdminUser());
 		}
@@ -296,6 +304,16 @@ public abstract class StandardEntity<T>
 	public void setSecurityMarkingType(String securityMarkingType)
 	{
 		this.securityMarkingType = securityMarkingType;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
 	}
 
 }

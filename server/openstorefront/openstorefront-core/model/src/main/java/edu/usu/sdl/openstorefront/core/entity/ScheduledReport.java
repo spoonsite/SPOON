@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
@@ -59,10 +60,12 @@ public class ScheduledReport
 	private String reportFormat;
 
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
 	@ConsumeField
+	@Embedded
 	@DataType(EmailAddress.class)
 	@OneToMany(orphanRemoval = true)
 	private List<EmailAddress> emailAddresses;

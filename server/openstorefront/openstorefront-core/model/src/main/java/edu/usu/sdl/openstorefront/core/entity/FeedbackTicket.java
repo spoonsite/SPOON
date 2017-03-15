@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.persistence.Embedded;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -60,6 +61,7 @@ public class FeedbackTicket
 	private String externalId;
 
 	@ConsumeField
+	@Embedded
 	private WebInformation webInformation;
 
 	public FeedbackTicket()

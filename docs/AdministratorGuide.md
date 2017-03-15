@@ -1,7 +1,7 @@
 
 #Clearinghouse Administrator Guide
 
-Version 2.2
+Version 2.3
 
 
 Space Dynamics Laboratory
@@ -250,7 +250,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **db.connectionpool.min**    -            DB min pool size                                                                                                                                                           ( **5** )
 -  **db.connectionpool.max** -               DB max pool size                                                                                                                                                           ( **40** )
 -  **db.user**             -                 Should match orientdb-server-config.xml                                                                                                                                    
--  **db.pw**            -                    Should match orientdb-server-config.xml                                                                                                                                    
+-  **db.pw**            -                    Should match orientdb-server-config.xml
+-  **external.host.url**   -                 Should point to the external host url (Eg. https://<host>/openstorefront) this is used in emails/external communication                                         ( **http://localhost:8080/openstorefront** )                                                                                                                                    
 -  **job.working.state.override.minutes** -  Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               ( **30** )
 -  **message.archive.days**        -         User message max age of archives                                                                                                                                           ( **30** )
 -  **message.queue.minmintues**    -         User message queue time or the time the message waits before sending.                                                                                                      ( **10** )
@@ -310,8 +311,8 @@ files that are packaged with the application.
 extreme caution when modifying any records as all logic is handled by
 the application.
 
-1.  Download Orient DB (Currently using the 1.7.x series) at
-    [Orient DB.org](http://www.orientechnologies.com/download/)
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
 
 2.  Extract the archive
 
@@ -331,5 +332,49 @@ functionality on top.
 
 -   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
     export and imports.
+
+##3.3 Installing Database Studio
+----------------------------
+
+**NOTE** Orient DB includes a web application for viewing the database
+visually, instead of viewing everything from the console. Once installed,
+Orient DB Studio will run with the database itself once OpenStoreFront 
+is running, and will not require anything to be run locally
+
+**CAUTION:** Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.
+
+1.  Download Orient DB (Currently using the 2.1.x series) at
+    [OrientDB.org](http://www.orientechnologies.com/download/)
+
+  1. If you already downloaded Orient DB in section 3.2 above,
+    you may simply reuse that download.
+
+2.  Extract the archive
+
+3.  Locate the Studio plugin: ./plugins/studio-2.1.zip
+
+4.  Copy plugin to OpenStoreFront database on server:
+    /var/openstorefront/db/plugins
+
+  1. Copy entire .zip file; do not extract.
+
+5. Start or Restart OpenStoreFront
+
+  1. Plugin will automatically be installed when the database service
+        is initialized.
+
+6. Access Orient DB Studio: <http://localhost:2480/studio/index.html>
+
+  1. Change 'localhost' to the appropriate domain name or IP address if OpenStoreFront is not running locally
+  2. Ensure 'openstorefront' is selected as the database in the dropdown.
+  3. Login using the credentials located in the configuration file: /var/openstorefront/config/openstorefront.properties
+
+The database supports an SQL like interface and then adds other
+functionality on top.
+
+-   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
+    more information about Studio
 
 

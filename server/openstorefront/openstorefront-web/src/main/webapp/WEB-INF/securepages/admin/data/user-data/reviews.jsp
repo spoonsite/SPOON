@@ -64,7 +64,7 @@
 						items: [
 							{text: 'Component', dataIndex: 'name', width: 225},
 							{text: 'Title', dataIndex: 'title', width: 225},
-							{text: 'Rating', dataIndex: 'rating', width: 75},
+							{text: 'Rating', dataIndex: 'rating', width: 75, align: 'center'},
 							{text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 300},
 							{
 								text: 'Pros', 
@@ -179,7 +179,7 @@
 								{
 									text: 'Toggle Status',
 									id: 'reviewGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {

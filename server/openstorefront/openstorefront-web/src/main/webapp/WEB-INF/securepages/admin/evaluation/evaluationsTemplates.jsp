@@ -37,7 +37,7 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-edit',
 										width: '110px',
 										scale: 'medium',
 										handler: function() {
@@ -78,7 +78,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -330,7 +330,7 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								width: '100px',
 								scale: 'medium',
 								handler: function(){
@@ -354,7 +354,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -368,7 +368,7 @@
 							},																				
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
@@ -451,6 +451,7 @@
 			var actionDelete = function(record) {
 				Ext.Msg.show({
 					title:'Delete Evaluation Template?',
+					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 					message: 'Are you sure you want to delete this template?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,

@@ -1392,7 +1392,7 @@
 									{
 										text: 'Export',					
 										tooltip: 'Exports records in current view',
-										iconCls: 'fa fa fa-download',																			
+										iconCls: 'fa fa fa-download icon-button-color-default',																			
 										handler: function () {
 											var exportForm = Ext.getDom('exportForm');
 											var exportFormIds = Ext.getDom('exportFormIds');
@@ -1634,7 +1634,7 @@
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -1656,8 +1656,7 @@
 				]
 			});
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText

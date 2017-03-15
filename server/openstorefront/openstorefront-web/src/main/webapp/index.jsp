@@ -35,7 +35,9 @@
 	</div>
 	
 	<script type="text/javascript">
-		
+		//start fresh on index
+		sessionStorage.clear();
+				
 		if (Ext.isIE8m) {
 			Ext.get('browserWarning').setStyle({
 				display: 'block'
@@ -536,7 +538,7 @@
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -564,8 +566,7 @@
 				}]
 			});	
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText
