@@ -384,7 +384,13 @@ public class OrientPersistenceService
 		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
 		queryString.append("delete from ").append(entityClass.getSimpleName());
-		queryString.append(" where ").append(whereClause);
+                
+                // Check For Where Clause
+                if (!whereClause.isEmpty()) {
+                 
+                    // Append Where Clause
+                    queryString.append(" where ").append(whereClause);
+                }
 
 		OObjectDatabaseTx db = getConnection();
 		try {
