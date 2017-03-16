@@ -176,7 +176,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of active and approved components for selection list.")
+	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/lookup")
