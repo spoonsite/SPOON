@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.security.UserRecord;
 import java.lang.reflect.Field;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -53,6 +54,26 @@ public class EntityUtilTest
 		expResult = true;
 		result = EntityUtil.isObjectsDifferent(component, component2, consumeFieldsOnly);
 		assertEquals(expResult, result);
+		
+		UserRecord userRecord1 = new UserRecord();
+		userRecord1.setFirstName("Bob");
+		userRecord1.setLastName("Test");
+		userRecord1.setOrganization("Test");
+		userRecord1.setEmail("Check@test.com");
+		userRecord1.setPhone("555-555-5555");
+		userRecord1.setUsername("Check");
+		
+		UserRecord userRecord2 = new UserRecord();
+		userRecord2.setFirstName("Bob");
+		userRecord2.setLastName("Test");
+		userRecord2.setOrganization("Test");
+		userRecord2.setEmail("newemail@test.com");
+		userRecord2.setPhone("555-555-5555");
+		userRecord2.setUsername("Check");		
+		
+		expResult = true;
+		result = EntityUtil.isObjectsDifferent(userRecord1, userRecord2, false);
+		assertEquals(expResult, result);		
 	}
 
 	/**

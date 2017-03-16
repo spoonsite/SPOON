@@ -132,6 +132,7 @@ public class PropertiesManager
 	public static final String KEY_LDAP_MANAGER_CONTEXT_ROOT = "ldapmanager.contextRoot";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_USERNAME = "ldapmanager.attribute.username";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_EMAIL = "ldapmanager.attribute.email";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_PHONE = "ldapmanager.attribute.phone";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_FULLNAME = "ldapmanager.attribute.fullname";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION = "ldapmanager.attribute.organization";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_GUID = "ldapmanager.attribute.guid";

@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -94,6 +96,14 @@ public class SecurityPolicy
 	@NotNull
 	@ConsumeField
 	private Boolean allowRegistration;
+	
+	@ConsumeField
+	private Boolean disableUserInfoEdit;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(HTMLSanitizer.class)
+	private String externalUserManagementText;
 		
 	public SecurityPolicy()
 	{
@@ -117,7 +127,9 @@ public class SecurityPolicy
 		newPolicy.setRequireAdminUnlock(getRequireAdminUnlock());
 		newPolicy.setRequiresProofOfCitizenship(getRequiresProofOfCitizenship());
 		newPolicy.setResetLockoutTimeMinutes(getResetLockoutTimeMinutes());
-		
+		newPolicy.setDisableUserInfoEdit(getDisableUserInfoEdit());
+		newPolicy.setExternalUserManagementText(getExternalUserManagementText());
+				
 		return newPolicy;
 	}
 	
@@ -141,7 +153,9 @@ public class SecurityPolicy
 		setCustomHeaders(securityPolicy.getCustomHeaders());
 		setCsrfSupport(Convert.toBoolean(securityPolicy.getCsrfSupport()));
 		setAllowRegistration(Convert.toBoolean(securityPolicy.getAllowRegistration()));
-				
+		setDisableUserInfoEdit(securityPolicy.getDisableUserInfoEdit());
+		setExternalUserManagementText(securityPolicy.getExternalUserManagementText());
+						
 	}
 	
 	public String getPolicyId()
@@ -282,6 +296,26 @@ public class SecurityPolicy
 	public void setAllowRegistration(Boolean allowRegistration)
 	{
 		this.allowRegistration = allowRegistration;
+	}
+
+	public Boolean getDisableUserInfoEdit()
+	{
+		return disableUserInfoEdit;
+	}
+
+	public void setDisableUserInfoEdit(Boolean disableUserInfoEdit)
+	{
+		this.disableUserInfoEdit = disableUserInfoEdit;
+	}
+
+	public String getExternalUserManagementText()
+	{
+		return externalUserManagementText;
+	}
+
+	public void setExternalUserManagementText(String externalUserManagementText)
+	{
+		this.externalUserManagementText = externalUserManagementText;
 	}
 	
 }

@@ -145,6 +145,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'firstName',
 					name: 'firstName',
 					fieldLabel: 'First Name <span class="field-required" />',
 					labelSeparator: '',
@@ -154,6 +155,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'lastName',
 					name: 'lastName',
 					fieldLabel: 'Last Name <span class="field-required" />',
 					labelSeparator: '',
@@ -163,6 +165,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'email',
 					name: 'email',
 					inputType: 'email',						
 					fieldLabel: 'Email <span class="field-required" />',
@@ -173,6 +176,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},				
 				{
 					xtype: 'textfield',
+					itemId: 'phone',
 					name: 'phone',
 					fieldLabel: 'Phone <span class="field-required" />',
 					labelSeparator: '',
@@ -181,6 +185,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					maxLength: 80
 				},
 				Ext.create('OSF.component.StandardComboBox', {
+					itemId: 'organization',
 					name: 'organization',
 					allowBlank: false,
 					margin: '0 0 5 0',
@@ -193,6 +198,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 						url: 'api/v1/resource/organizations/lookup'
 					}
 				}),	
+				{
+					xtype: 'panel',
+					itemId: 'externalManagementMessage',
+					html: ''					
+				},
 				{
 					xtype: 'panel',					
 					frame: true,
@@ -3354,6 +3364,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 		CoreService.userservice.getCurrentUser().then(function (usercontext) {			
 			submissionPanel.submitterForm.getForm().setValues(usercontext);
 			submissionPanel.usercontext = usercontext;
+			
+			CoreService.systemservice.getSecurityPolicy().then(function(policy){
+				if (policy.disableUserInfoEdit) {
+					
+					submissionPanel.submitterForm.queryById('firstName').setDisabled(true);
+					submissionPanel.submitterForm.queryById('lastName').setDisabled(true);
+					submissionPanel.submitterForm.queryById('email').setDisabled(true);				
+					submissionPanel.submitterForm.queryById('phone').setDisabled(true);
+					submissionPanel.submitterForm.queryById('organization').setDisabled(true);
+
+					if (policy.externalUserManagementText) {
+						submissionPanel.submitterForm.queryById('externalManagementMessage').update('<br><br><i class="fa fa-2x fa-warning text-warning"></i> ' + policy.externalUserManagementText);
+					}
+				}
+			});				
+			
 		});
 		
 		submissionPanel.currentStep = 1;
