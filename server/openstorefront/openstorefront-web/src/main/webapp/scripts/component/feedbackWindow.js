@@ -22,7 +22,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 	title: 'Feedback / Issues',
 	iconCls: 'fa fa-exclamation-triangle',
 	scrollable: true,
-	width: '40%',
+	width: '75%',
 	minWidth: 150,
 	height: '80%',
 	minHeight: 200,
@@ -195,6 +195,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						},
 						{
 							xtype: 'button',
+							itemId: 'updateProfile',
 							text: 'Update Profile',
 							handler: function () {
 								var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
@@ -222,10 +223,19 @@ Ext.define('OSF.component.FeedbackWindow', {
 			formPanel.reset();
 			CoreService.userservice.getCurrentUser().then(function (usercontext) {				
 				formPanel.getForm().setValues(usercontext);
-			});			
+			});
+			//Correct random scrollbar; bump the layout
+			feedbackWin.setWidth(feedbackWin.getWidth() + 1);
 		};
 		
 		feedbackWin.on('show', feedbackWin.resetForm);
+		
+		CoreService.systemservice.getSecurityPolicy().then(function(policy){
+			if (policy.disableUserInfoEdit) {
+				formPanel.queryById('updateProfile').setHidden(true);
+			}
+		});		
+		
 	}	
 	
 });

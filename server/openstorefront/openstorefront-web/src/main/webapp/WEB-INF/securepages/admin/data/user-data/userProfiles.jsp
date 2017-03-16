@@ -284,7 +284,15 @@
 														{
 															code: 'lastName',
 															description: 'Last Name'
-														}
+														},
+														{
+															code: 'organization',
+															description: 'Organization'
+														},
+														{
+															code: 'email',
+															description: 'Email'
+														}														
 													]
 												}
 											},

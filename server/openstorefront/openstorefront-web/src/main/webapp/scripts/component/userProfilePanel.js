@@ -275,7 +275,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 	modal: true,
 	width: '50%',
 	alwaysOnTop: true,
-	height: 425,
+	height: 525,
 	initComponent: function () {
 		this.callParent();
 
