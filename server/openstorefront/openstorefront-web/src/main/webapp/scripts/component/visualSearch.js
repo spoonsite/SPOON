@@ -28,6 +28,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
 	customActions: [],
+	viewStack: {
+		keys: [],
+		data: []
+	},
+	menus:{
+		collapse:{},
+		expand:{}
+	},
 
 	/**
 	 * RELATION, TAGS, ORG, ATT
@@ -77,39 +85,60 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		};
 
-		var menuItems = [
-			{
+		var expandMenu = [{
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
-					visPanel.loadNextLevel(visPanel.actionMenu.eventContext.key,
-							visPanel.actionMenu.eventContext.type,
-							visPanel.actionMenu.eventContext.name
+					visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
+							visPanel.menus.expand.eventContext.type,
+							visPanel.menus.expand.eventContext.name
 							);
 				}
 			},
 			{
+				xtype: 'menuseparator'
+			}];
+		var collapseMenu = [{
 				text: 'Collapse',
 				iconCls: 'fa fa-compress',
 				handler: function () {
-					var sprite = visPanel.actionMenu.eventContext.sprite;
-					var nodesKeysToRemove = [];
-					Ext.Array.each(sprite.node.edges, function (edge) {
-						if (edge.targetKey !== visPanel.actionMenu.eventContext.key) {
-							nodesKeysToRemove.push(edge.targetKey);
-						}
-					});
-					visPanel.removeNodes(nodesKeysToRemove);
+					visPanel.viewData = [];
+					visPanel.viewStack.keys.pop();
+					visPanel.addViewData(visPanel.viewStack.data.pop());
 				}
 			},
 			{
 				xtype: 'menuseparator'
-			}
-		];
+			}];
+		
 
+//		var dynamicMenuItem = [{
+//				text: visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key)?'Collapse':'Expand',
+//				iconCls:visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key)?'fa fa-compress':'fa fa-expand',
+//				handler: function () {
+//					if(visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key))
+//					{
+//						visPanel.viewData = [];
+//						visPanel.viewStack.keys.pop();
+//						visPanel.addViewData(visPanel.viewStack.data.pop());
+//					}
+//					else
+//					{
+//						visPanel.loadNextLevel(visPanel.actionMenu.eventContext.key,
+//							visPanel.actionMenu.eventContext.type,
+//							visPanel.actionMenu.eventContext.name
+//							);
+//					}
+//				}
+//				
+//		}];
+	
+		visPanel.menus.collapse = Ext.create('Ext.menu.Menu', {
+			items: Ext.Array.merge(collapseMenu, visPanel.customActions)
+		});
 
-		visPanel.actionMenu = Ext.create('Ext.menu.Menu', {
-			items: Ext.Array.merge(menuItems, visPanel.customActions)
+		visPanel.menus.expand = Ext.create('Ext.menu.Menu', {
+			items: Ext.Array.merge(expandMenu, visPanel.customActions)
 		});
 
 		var tip = Ext.create('Ext.tip.ToolTip', {
@@ -177,13 +206,22 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var key = sprite.node.key ? sprite.node.key : sprite.node.targetKey;
 				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
 				var name = sprite.node.name ? sprite.node.name : sprite.node.targetName;
-				visPanel.actionMenu.eventContext = {
+				var eventContext = {
 					sprite: sprite,
 					key: key,
 					type: type,
 					name: name
 				};
-				visPanel.actionMenu.showAt(event.xy);
+				if(visPanel.viewStack.keys.includes(key))
+				{
+					visPanel.menus.collapse.eventContext = eventContext;
+					visPanel.menus.collapse.showAt(event.xy);
+				}
+				else
+				{
+					visPanel.menus.expand.eventContext = eventContext;
+					visPanel.menus.expand.showAt(event.xy);
+				}
 
 
 			} else if (sprite.node && sprite.nodeText) {
@@ -438,7 +476,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			},
 			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
-
+				var itemViewData = [];
+				Ext.Array.each(visPanel.viewData, function (data){
+					itemViewData.push(data);
+				});
+				visPanel.viewStack.keys.push(key);
+				visPanel.viewStack.data.push(itemViewData);
+				visPanel.viewData = [];
+				
 				var viewData = [];
 				Ext.Array.each(data, function (relationship) {
 					viewData.push({
