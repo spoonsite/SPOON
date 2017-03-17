@@ -140,12 +140,18 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			if (sprite.node) {
 				//console.log("Name: " + (sprite.node.name ? sprite.node.name : sprite.node.targetName) + " xy: " + sprite.x + ', ' + sprite.y);
 
-				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
-				if (type === 'component') {
-					type = 'Entry';
-				}
-				if (type === 'attribute') {
-					type = sprite.node.hoverText ? sprite.node.hoverText : 'Attribute/Vital';
+				if (sprite.node.hoverText)
+				{
+					type = sprite.node.hoverText;
+				} else
+				{
+					var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
+					if (type === 'component') {
+						type = 'Entry';
+					}
+					if (type === 'attribute') {
+						type = 'Attribute/Vital';
+					}
 				}
 				var tipXY = event.xy;
 				tipXY[0] += 20;
@@ -1002,13 +1008,37 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 			});
 			if (targetNode) {
-				ownerNode.edges.push({
-					targetKey: relationship.targetKey,
-					ownerKey: relationship.key,
-					relationshipLabel: relationship.relationshipLabel,
-					name: targetNode.name,
-					type: relationship.targetType
-				});
+				if (relationship.targetType === 'attribute') {
+					ownerNode.edges.push({
+						targetKey: relationship.targetKey,
+						ownerKey: relationship.key,
+						relationshipLabel: relationship.relationshipLabel,
+						name: relationship.relationshipLabel,
+						type: relationship.targetType,
+						hoverText: targetNode.name
+					});
+					targetNode.name = relationship.relationshipLabel;
+					//relationship.relationshipLabel = "";
+				} else if (relationship.targetType === 'organization') {
+					ownerNode.edges.push({
+						targetKey: relationship.targetKey,
+						ownerKey: relationship.key,
+						relationshipLabel: relationship.relationshipLabel,
+						name: targetNode.name,
+						type: relationship.targetType,
+						hoverText: targetNode.name
+					});
+					targetNode.name = 'organization';
+				} else
+				{
+					ownerNode.edges.push({
+						targetKey: relationship.targetKey,
+						ownerKey: relationship.key,
+						relationshipLabel: relationship.relationshipLabel,
+						name: targetNode.name,
+						type: relationship.targetType
+					});
+				}
 			}
 		});
 
@@ -1271,11 +1301,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var baseNode = componentNode;
 				if (node.type === 'tag') {
 					baseNode = tagNode;
-				}
-				if (node.type === 'organization') {
+				} else if (node.type === 'organization') {
 					baseNode = organizationNode;
-				}
-				if (node.type === 'attribute') {
+				} else if (node.type === 'attribute') {
 					baseNode = attributeNode;
 				}
 				node.nodeSize = hubNodeRadius;
@@ -1352,7 +1380,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 						var targetNodeTextSprite = Ext.apply({}, {
 							x: targetNode.positionX,
-							y: targetNode.positionY + nodeRadius + 15,
+							y: targetNode.positionY + nodeRadius + 20,
 							text: Ext.util.Format.ellipsis(targetNode.name, 20),
 							node: edgeNode,
 							targetNode: targetNode,
@@ -1609,20 +1637,21 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					theta += Math.PI;
 					xAdjust = -15;
 				}
-
-				var textX = (endX + ownerNode.positionX) / 2 + xAdjust;
-				var textY = ownerNode.positionY + (endY - ownerNode.positionY) / 2 - 10;
-				sprites.push(Ext.apply({}, {
-					x: textX,
-					y: textY,
-					shadowColor: 'black',
-					shadowBlur: 4,
-					shadowOffsetX: 4,
-					shadowOffsetY: 4,
-					text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
-					relationShipText: true
-							//rotationRads: theta
-				}, relationshipText));
+				if (relationship.targetType !== 'attribute') {
+					var textX = (endX + ownerNode.positionX) / 2 + xAdjust;
+					var textY = ownerNode.positionY + (endY - ownerNode.positionY) / 2 - 10;
+					sprites.push(Ext.apply({}, {
+						x: textX,
+						y: textY,
+						shadowColor: 'black',
+						shadowBlur: 4,
+						shadowOffsetX: 4,
+						shadowOffsetY: 4,
+						text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
+						relationShipText: true
+								//rotationRads: theta
+					}, relationshipText));
+				}
 			}
 
 		});
