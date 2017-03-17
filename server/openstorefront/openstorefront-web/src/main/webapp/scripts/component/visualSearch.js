@@ -1331,6 +1331,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				hub.addNode(nodeTextSprite);
 
 				var rotation = 0;
+				var usedRotations = [];
+				usedRotations.push(rotation);
 				var distanceFromHub = componentNode.r * 10;
 				var generation = 1;
 				Ext.Array.each(node.edges, function (edgeNode) {
@@ -1388,12 +1390,15 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						}, textNode);
 						sprites.push(targetNodeTextSprite);
 						hub.addNode(targetNodeTextSprite);
-
-						if ((rotation + 45) >= 360) {
-							generation++;
-							rotation = 0;
-						}
-						rotation += (45 / generation);
+						do
+						{
+							if ((rotation + (45 / generation)) >= 360) {
+								generation++;
+								rotation = 0;
+							}
+							rotation += (45 / generation);
+						} while (usedRotations.includes(rotation));
+						usedRotations.push(rotation);
 
 
 						renderNodes[edgeNode.targetKey] = true;
