@@ -1018,7 +1018,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						hoverText: targetNode.name
 					});
 					targetNode.name = relationship.relationshipLabel;
-					//relationship.relationshipLabel = "";
 				} else if (relationship.targetType === 'organization') {
 					ownerNode.edges.push({
 						targetKey: relationship.targetKey,
@@ -1322,7 +1321,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				var nodeTextSprite = Ext.apply({}, {
 					x: node.positionX,
-					y: node.positionY + hubNodeRadius + 15,
+					y: node.positionY + hubNodeRadius + 20,
 					text: Ext.util.Format.ellipsis(node.name, 20),
 					node: node,
 					nodeText: true
@@ -1331,6 +1330,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				hub.addNode(nodeTextSprite);
 
 				var rotation = 0;
+				var rotationIncroment = 45;
 				var usedRotations = [];
 				usedRotations.push(rotation);
 				var distanceFromHub = componentNode.r * 10;
@@ -1392,11 +1392,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						hub.addNode(targetNodeTextSprite);
 						do
 						{
-							if ((rotation + (45 / generation)) >= 360) {
+							if ((rotation + rotationIncroment) >= 360) {
 								generation++;
 								rotation = 0;
+								rotationIncroment /= 2;
 							}
-							rotation += (45 / generation);
+							rotation += rotationIncroment;
 						} while (usedRotations.includes(rotation));
 						usedRotations.push(rotation);
 
@@ -1642,7 +1643,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					theta += Math.PI;
 					xAdjust = -15;
 				}
-				if (relationship.targetType !== 'attribute') {
+				if (relationship.targetType !== 'attribute'
+						&& ownerNode.type !== 'attribute' ) {
 					var textX = (endX + ownerNode.positionX) / 2 + xAdjust;
 					var textY = ownerNode.positionY + (endY - ownerNode.positionY) / 2 - 10;
 					sprites.push(Ext.apply({}, {
