@@ -32,9 +32,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		keys: [],
 		data: []
 	},
-	menus:{
-		collapse:{},
-		expand:{}
+	menus: {
+		collapse: {},
+		expand: {}
 	},
 
 	/**
@@ -104,7 +104,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					visPanel.addViewData(visPanel.viewStack.data.pop());
 				}
 			}];
-	
+
 		visPanel.menus.collapse = Ext.create('Ext.menu.Menu', {
 			items: Ext.Array.merge(collapseMenu, visPanel.customActions)
 		});
@@ -145,7 +145,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type = 'Entry';
 				}
 				if (type === 'attribute') {
-					type = 'Attribute/Vital';
+					type = sprite.node.hoverText ? sprite.node.hoverText : 'Attribute/Vital';
 				}
 				var tipXY = event.xy;
 				tipXY[0] += 20;
@@ -170,43 +170,40 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 		//DELETE ME:
 		visPanel.on('spritedblclick', function (item, event, opts) {
-				var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
-				var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
-				var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
-				var eventContext = {
-					sprite: item.sprite,
-					key: key,
-					type: type,
-					name: name
-				};
-				if(visPanel.viewStack.keys.includes(key))
+			var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
+			var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
+			var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
+			var eventContext = {
+				sprite: item.sprite,
+				key: key,
+				type: type,
+				name: name
+			};
+			if (visPanel.viewStack.keys.includes(key))
+			{
+				if (visPanel.menus.collapse.items.length === 1)
 				{
-					if(visPanel.menus.collapse.items.length === 1)
-					{
-						visPanel.menus.collapse.eventContext = eventContext;
-						visPanel.menus.collapse.items.items[0].handler();
-					}
-					else
-					{
-						visPanel.menus.collapse.eventContext = eventContext;
-						visPanel.menus.collapse.showAt(event.xy);
-					}
-				}
-				else
+					visPanel.menus.collapse.eventContext = eventContext;
+					visPanel.menus.collapse.items.items[0].handler();
+				} else
 				{
-					if(visPanel.menus.expand.items.length === 1)
-					{
-						visPanel.menus.expand.eventContext = eventContext;
-						visPanel.menus.expand.items.items[0].handler();
-					}
-					else
-					{
-						visPanel.menus.expand.eventContext = eventContext;
-						visPanel.menus.expand.showAt(event.xy);
-					}
+					visPanel.menus.collapse.eventContext = eventContext;
+					visPanel.menus.collapse.showAt(event.xy);
 				}
+			} else
+			{
+				if (visPanel.menus.expand.items.length === 1)
+				{
+					visPanel.menus.expand.eventContext = eventContext;
+					visPanel.menus.expand.items.items[0].handler();
+				} else
+				{
+					visPanel.menus.expand.eventContext = eventContext;
+					visPanel.menus.expand.showAt(event.xy);
+				}
+			}
 		});
-		
+
 		visPanel.on('spriteclick', function (item, event, opts) {
 			var sprite = item && item.sprite;
 
@@ -220,34 +217,30 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: type,
 					name: name
 				};
-				if(visPanel.viewStack.keys.includes(key))
+				if (visPanel.viewStack.keys.includes(key))
 				{
-					if(visPanel.menus.collapse.items.length === 1)
+					if (visPanel.menus.collapse.items.length === 1)
 					{
 						visPanel.menus.collapse.eventContext = eventContext;
 						visPanel.menus.collapse.items.items[0].handler();
-					}
-					else
+					} else
 					{
 						visPanel.menus.collapse.eventContext = eventContext;
 						visPanel.menus.collapse.showAt(event.xy);
 					}
-				}
-				else
+				} else
 				{
-					if(visPanel.menus.expand.items.length === 1)
+					if (visPanel.menus.expand.items.length === 1)
 					{
 						visPanel.menus.expand.eventContext = eventContext;
 						visPanel.menus.expand.items.items[0].handler();
-					}
-					else
+					} else
 					{
 						visPanel.menus.expand.eventContext = eventContext;
 						visPanel.menus.expand.showAt(event.xy);
 					}
 				}
-			} 
-			else if (sprite.node && sprite.nodeText) {
+			} else if (sprite.node && sprite.nodeText) {
 				var winWidth = 500;
 				var winHeight = 400;
 				var descriptionWindow = Ext.create('Ext.window.Window', {
@@ -430,7 +423,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				e.preventDefault();
 			}
 		};
-		
+
 
 		if (window.addEventListener) {
 			window.addEventListener("mousewheel", visPanel.zoom, false);
@@ -501,13 +494,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
 				var itemViewData = [];
-				Ext.Array.each(visPanel.viewData, function (data){
+				Ext.Array.each(visPanel.viewData, function (data) {
 					itemViewData.push(data);
 				});
 				visPanel.viewStack.keys.push(key);
 				visPanel.viewStack.data.push(itemViewData);
 				visPanel.viewData = [];
-				
+
 				var viewData = [];
 				Ext.Array.each(data, function (relationship) {
 					viewData.push({
@@ -586,7 +579,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 			visPanel.setLoading("Loading Initial Relationships for the selected component ...");
 			Ext.Ajax.request({
-				url: 'api/v1/resource/components/' + componentId +'/relationships',
+				url: 'api/v1/resource/components/' + componentId + '/relationships',
 				callback: function () {
 					visPanel.setLoading(false);
 				},
@@ -662,9 +655,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var promptWindow = this.up('window');
 									var orgCb = promptWindow.getComponent('component');
 //									if (orgCb.getValue()) {
-										relationshipLoad(orgCb.getValue());
-										visPanel.updateAttribute(orgCb.getValue());
-										promptWindow.close();
+									relationshipLoad(orgCb.getValue());
+									visPanel.updateAttribute(orgCb.getValue());
+									promptWindow.close();
 //									} else {
 //										Ext.Msg.show({
 //											title: 'Validation Failed',
@@ -1113,7 +1106,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		};
 
 		var organizationNode = {
-			type: 'square',
+			type: 'triangle',
 			size: nodeRadius,
 			fillStyle: 'rgba(160, 160, 160, 1)',
 			lineWidth: 3,
@@ -1127,8 +1120,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			lineWidth: 3,
 			strokeStyle: 'rgba(255, 255, 255, 1)'
 		};
-
-		var hubFillStyle = 'rgba(87, 160, 204, 1)';
 
 		var relationshipEdge = {
 			type: 'line',
@@ -1269,47 +1260,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 
 				var setNodePosition = true;
-//				if (node.edges.length > 0) {
-//					var edgeNode =  Ext.Array.findBy(nodes, function(item) {
-//						if (item.key === node.edges[0].targetKey) {
-//							return true;
-//						} else {
-//							return false;
-//						}
-//					});
-//					
-//					if (edgeNode.positionX && edgeNode.positionY) {
-//						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
-//						node.positionY = edgeNode.positionY;
-//						setNodePosition = false;
-//						
-//						//find hub that contains edgeNode
-//						var hubWithNode;
-//						 Ext.Array.each(hubs, function(h) {
-//							if (h.containsNode(edgeNode.key)) {
-//								hubWithNode = h;
-//							} else {
-//								var hubFound = Ext.Array.findBy(h.edgeHubs, function(edgeHub) {
-//									return edgeHub.containsNode(edgeNode.key);
-//								});
-//								if (hubFound) {
-//									hubWithNode = hubFound;
-//								}
-//							}
-//						});
-//						if (hubWithNode) {
-//							hubWithNode.edgeHubs.push(hub);
-//						}
-//					}
-//				} 
-
 				if (setNodePosition) {
 					node.positionX = startX + (componentNode.r * 6) + 40;
 					node.positionY = startY;
 					hubs.push(hub);
 				}
 
-				var hubNodeRadius = nodeRadius + (node.edges.length);
+				var hubNodeRadius = nodeRadius * 2;
 
 				var baseNode = componentNode;
 				if (node.type === 'tag') {
@@ -1469,28 +1426,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 
 				h.translateHub(transX, transY);
-
-//				sprites.push({
-//					type: 'rect',
-//					x: h.bbox.minX,
-//					y: h.bbox.minY,
-//					width: h.bbox.maxX - h.bbox.minX,
-//					height: h.bbox.maxY - h.bbox.minY,
-//					strokeStyle: 'yellow',
-//					lineWidth: 1, 
-//					fillOpacity: 0
-//				});
-
-//				sprites.push({
-//					type: 'text',
-//					x: h.bbox.minX,
-//					y: h.bbox.minY,					
-//					strokeStyle: 'yellow',
-//					text: h.id,
-//					lineWidth: 1, 
-//					fillOpacity: 1
-//				});
-//				
 				generationMinX = h.bbox.minX;
 				generationMinY = h.bbox.minY;
 				minXOfGeneration = h.bbox.minX;
@@ -1507,28 +1442,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				h.translateHub(point.x, point.y);
 
 
-//				sprites.push({
-//					type: 'text',
-//					x: h.bbox.minX,
-//					y: h.bbox.minY,					
-//					strokeStyle: 'yellow',
-//					text: h.id,
-//					lineWidth: 1, 
-//					fillOpacity: 1
-//				});				
-
-//				sprites.push({
-//					type: 'rect',
-//					x: h.bbox.minX,
-//					y: h.bbox.minY,
-//					width: h.bbox.maxX - h.bbox.minX,
-//					height: h.bbox.maxY - h.bbox.minY,
-//					strokeStyle: 'yellow',
-//					lineWidth: 1, 
-//					fillOpacity: 0
-//				});					
-
-
 			}
 			perviousHub = h;
 
@@ -1542,27 +1455,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				edgeHub.translateHub(point.x, point.y);
 
-//				sprites.push({
-//					type: 'text',
-//					x: edgeHub.bbox.minX,
-//					y: edgeHub.bbox.minY,					
-//					strokeStyle: 'yellow',
-//					text: edgeHub.id,
-//					lineWidth: 1, 
-//					fillOpacity: 1
-//				});						
-
-//				sprites.push({
-//					type: 'rect',
-//					x: edgeHub.bbox.minX,
-//					y: edgeHub.bbox.minY,
-//					width: edgeHub.bbox.maxX - edgeHub.bbox.minX,
-//					height: edgeHub.bbox.maxY - edgeHub.bbox.minY,
-//					strokeStyle: 'red',
-//					lineWidth: 1, 
-//					fillOpacity: 0
-//				});							
-//								
 				perviousHub = h;
 				if (edgeHub.bbox.minX < minXOfGeneration) {
 					minXOfGeneration = edgeHub.bbox.minX;
