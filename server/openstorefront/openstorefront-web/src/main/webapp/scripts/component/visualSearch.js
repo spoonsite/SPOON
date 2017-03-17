@@ -94,9 +94,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							visPanel.menus.expand.eventContext.name
 							);
 				}
-			},
-			{
-				xtype: 'menuseparator'
 			}];
 		var collapseMenu = [{
 				text: 'Collapse',
@@ -106,32 +103,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					visPanel.viewStack.keys.pop();
 					visPanel.addViewData(visPanel.viewStack.data.pop());
 				}
-			},
-			{
-				xtype: 'menuseparator'
 			}];
-		
-
-//		var dynamicMenuItem = [{
-//				text: visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key)?'Collapse':'Expand',
-//				iconCls:visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key)?'fa fa-compress':'fa fa-expand',
-//				handler: function () {
-//					if(visPanel.viewStack.keys.includes(visPanel.actionMenu.eventContext.key))
-//					{
-//						visPanel.viewData = [];
-//						visPanel.viewStack.keys.pop();
-//						visPanel.addViewData(visPanel.viewStack.data.pop());
-//					}
-//					else
-//					{
-//						visPanel.loadNextLevel(visPanel.actionMenu.eventContext.key,
-//							visPanel.actionMenu.eventContext.type,
-//							visPanel.actionMenu.eventContext.name
-//							);
-//					}
-//				}
-//				
-//		}];
 	
 		visPanel.menus.collapse = Ext.create('Ext.menu.Menu', {
 			items: Ext.Array.merge(collapseMenu, visPanel.customActions)
@@ -196,35 +168,86 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});
 
-		visPanel.on('spriteclick', function (item, event, opts) {
-			var sprite = item && item.sprite;
-
-			if (sprite.node && !sprite.nodeText) {
-
-
-
-				var key = sprite.node.key ? sprite.node.key : sprite.node.targetKey;
-				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
-				var name = sprite.node.name ? sprite.node.name : sprite.node.targetName;
+		//DELETE ME:
+		visPanel.on('spritedblclick', function (item, event, opts) {
+				var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
+				var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
+				var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
 				var eventContext = {
-					sprite: sprite,
+					sprite: item.sprite,
 					key: key,
 					type: type,
 					name: name
 				};
 				if(visPanel.viewStack.keys.includes(key))
 				{
-					visPanel.menus.collapse.eventContext = eventContext;
-					visPanel.menus.collapse.showAt(event.xy);
+					if(visPanel.menus.collapse.items.length === 1)
+					{
+						visPanel.menus.collapse.eventContext = eventContext;
+						visPanel.menus.collapse.items.items[0].handler();
+					}
+					else
+					{
+						visPanel.menus.collapse.eventContext = eventContext;
+						visPanel.menus.collapse.showAt(event.xy);
+					}
 				}
 				else
 				{
-					visPanel.menus.expand.eventContext = eventContext;
-					visPanel.menus.expand.showAt(event.xy);
+					if(visPanel.menus.expand.items.length === 1)
+					{
+						visPanel.menus.expand.eventContext = eventContext;
+						visPanel.menus.expand.items.items[0].handler();
+					}
+					else
+					{
+						visPanel.menus.expand.eventContext = eventContext;
+						visPanel.menus.expand.showAt(event.xy);
+					}
 				}
+		});
+		
+		visPanel.on('spriteclick', function (item, event, opts) {
+			var sprite = item && item.sprite;
 
-
-			} else if (sprite.node && sprite.nodeText) {
+			if (sprite.node && !sprite.nodeText) {
+				var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
+				var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
+				var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
+				var eventContext = {
+					sprite: item.sprite,
+					key: key,
+					type: type,
+					name: name
+				};
+				if(visPanel.viewStack.keys.includes(key))
+				{
+					if(visPanel.menus.collapse.items.length === 1)
+					{
+						visPanel.menus.collapse.eventContext = eventContext;
+						visPanel.menus.collapse.items.items[0].handler();
+					}
+					else
+					{
+						visPanel.menus.collapse.eventContext = eventContext;
+						visPanel.menus.collapse.showAt(event.xy);
+					}
+				}
+				else
+				{
+					if(visPanel.menus.expand.items.length === 1)
+					{
+						visPanel.menus.expand.eventContext = eventContext;
+						visPanel.menus.expand.items.items[0].handler();
+					}
+					else
+					{
+						visPanel.menus.expand.eventContext = eventContext;
+						visPanel.menus.expand.showAt(event.xy);
+					}
+				}
+			} 
+			else if (sprite.node && sprite.nodeText) {
 				var winWidth = 500;
 				var winHeight = 400;
 				var descriptionWindow = Ext.create('Ext.window.Window', {
@@ -346,8 +369,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseup', visPanel.spritemouseup);
 
 
-		visPanel.spritemousemove = function (event, item, opts) {
-			var sprite = item && item.sprite;
+		visPanel.spritemousemove = function (event, sprite, opts) {
 			if (visPanel.camera.pan) {
 				visPanel.camera.panX = visPanel.camera.startX + (event.pageX - visPanel.camera.panOriginX);
 				visPanel.camera.panY = visPanel.camera.startY + (event.pageY - visPanel.camera.panOriginY);
@@ -408,6 +430,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				e.preventDefault();
 			}
 		};
+		
 
 		if (window.addEventListener) {
 			window.addEventListener("mousewheel", visPanel.zoom, false);
@@ -443,7 +466,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		if (!Ext.isIE) {
 			visPanel.update();
 		}
-
+		visPanel.viewStack.data = [];
+		visPanel.viewStack.keys = [];
 		visPanel.viewData = [];
 		if (visPanel.viewType === "RELATION") {
 			visPanel.loadRelationships();
