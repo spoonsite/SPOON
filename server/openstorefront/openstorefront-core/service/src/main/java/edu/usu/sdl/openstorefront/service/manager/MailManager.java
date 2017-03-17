@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -91,18 +92,40 @@ public class MailManager
 		}
 		return email;
 	}
+        
+        /**
+         * Sends an email
+         * <p>
+         * Performs validation on recipient email addresses
+         * prior to sending. Catches and logs any exceptions
+         * thrown during the sending of the email. Will not
+         * throw or re-throw exceptions when validation or
+         * sending fails.
+         * 
+         * @param email An email object which is pre-configured
+         * and ready to be sent
+         */
+	public static void send(Email email)
+	{
+                // Send Email
+                send(email, false);
+        }
 
         /**
          * Sends an email
          * <p>
          * Performs validation on recipient email addresses
          * prior to sending. Catches and logs any exceptions
-         * thrown during the sending of the email.
+         * thrown during the sending of the email. Throws or
+         * re-throws exceptions when instructed to do so.
          * 
          * @param email An email object which is pre-configured
          * and ready to be sent
+         * @param throwException When true, throws an exception
+         * when validation or sending fails. When false, will
+         * still log, but will not throw an exception
          */
-	public static void send(Email email)
+	public static void send(Email email, boolean throwException)
 	{
                 // Check For Null Email Object
 		if (email != null) {
@@ -110,14 +133,14 @@ public class MailManager
                         // Check For Null Mailer Service
 			if (mailer != null) {
                             
+                                // Store Recipients
+                                List<Recipient> recipients = email.getRecipients();
+                            
                                 // Validate Recipients
-                                List<Recipient> recipients = validateRecipients(email.getRecipients());
+                                recipients = validateRecipients(recipients);
                                 
                                 // Check For Recipients
                                 if (!recipients.isEmpty()) {
-                                    
-                                        // Adjust Recipients
-                                        email.getRecipients().retainAll(recipients);
 
                                         // Attempt To Send Email
                                         try {
@@ -130,7 +153,22 @@ public class MailManager
                                         catch (MailException e) {
 
                                                 // Log Error
-                                                log.log(Level.SEVERE, "An error occurred while sending email. The error message follows: {0}", e.getMessage());
+                                                log.log(Level.SEVERE, MessageFormat.format("An error occurred while sending email. The error message follows: {0}", e.getMessage()));
+                                                
+                                                // Check If Exception Should Be Thrown
+                                                if (throwException) {
+                                                
+                                                        // Throw Runtime Exception
+                                                        throw new OpenStorefrontRuntimeException("Unable to send email", e);
+                                                }
+                                        }
+                                }
+                                else {
+                                        // Check If Exception Should Be Thrown
+                                        if (throwException) {
+                                        
+                                                // Throw Runtime Exception
+                                                throw new OpenStorefrontRuntimeException("Email validation failed", "Check recipient email address(es)");
                                         }
                                 }
 			}
@@ -217,7 +255,7 @@ public class MailManager
                 if (recipientsFailed) {
                     
                     // Log Failed Recipients
-                    log.log(Level.WARNING, "Some recipient email addresses failed validation. The following are invalid: {0}", failedRecipients.toString());
+                    log.log(Level.WARNING, MessageFormat.format("Some recipient email addresses failed validation. The following are invalid: {0}", failedRecipients.toString()));
                 }
                 
                 // Return New Recipients

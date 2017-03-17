@@ -482,7 +482,7 @@ public class UserServiceImpl
 				}
 				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
 				Email email = testMessageGenerator.generateMessage();
-				MailManager.send(email);
+				MailManager.send(email, true);
 				LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 			} else {
 				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
