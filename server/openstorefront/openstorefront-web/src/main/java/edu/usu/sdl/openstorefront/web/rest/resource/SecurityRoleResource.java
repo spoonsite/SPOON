@@ -69,8 +69,7 @@ public class SecurityRoleResource
 		return securityRoles;
 	} 
 	
-	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@GET	
 	@APIDescription("Gets security roles for pick list.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)

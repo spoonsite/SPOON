@@ -22,7 +22,7 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 		</stripes:layout-render>			
 		
         <script type="text/javascript">

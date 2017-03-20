@@ -75,10 +75,19 @@ Ext.define('OSF.form.EvaluationInfo', {
 		}));
 		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {												
 			width: '100%',
+			itemId: 'dataSensitivity',
 			labelClsExtra: 'eval-form-field-label',
 			fieldCls: 'eval-form-field',
 			labelAlign: 'right',
-			labelWidth: 200
+			labelWidth: 200,
+			listeners: {
+				change: {
+					buffer: 1000,
+					fn: function(field, newValue, oldValue) {
+						evalForm.saveData();
+					}
+				}
+			}	
 		}));
 		
 		evalForm.add(formItems);
@@ -98,9 +107,13 @@ Ext.define('OSF.form.EvaluationInfo', {
 				var record = Ext.create('Ext.data.Model',{					
 				});
 				record.set(evaluation);				
-					
-				
+			
 				evalForm.loadRecord(record);
+				
+				evalForm.queryById('dataSensitivity').on('ready', function() {
+					evalForm.loadRecord(record);
+				});
+				
 				evalForm.evaluation = evaluation;
 				if (opts && opts.mainForm) {
 					evalForm.refreshCallback = opts.mainForm.refreshCallback;
@@ -122,10 +135,12 @@ Ext.define('OSF.form.EvaluationInfo', {
 			) {
 			
 			if (evalForm.evaluation.version !== data.version ||
-				evalForm.evaluation.workflowStatus !== data.workflowStatus)
+				evalForm.evaluation.workflowStatus !== data.workflowStatus ||
+				evalForm.evaluation.dataSensitivity !== data.dataSensitivity)
 			{			
 				evalForm.evaluation.version = data.version;
 				evalForm.evaluation.workflowStatus = data.workflowStatus;
+				evalForm.evaluation.dataSensitivity = data.dataSensitivity;
 				delete evalForm.evaluation.type;
 
 				CoreUtil.submitForm({

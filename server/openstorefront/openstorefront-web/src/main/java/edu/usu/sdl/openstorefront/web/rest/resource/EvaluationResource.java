@@ -232,6 +232,9 @@ public class EvaluationResource
 
 				evaluationExisting.setVersion(evaluation.getVersion());
 				evaluationExisting.setWorkflowStatus(evaluation.getWorkflowStatus());
+				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
+				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
+				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());				
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
