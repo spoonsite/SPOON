@@ -387,7 +387,7 @@ public class OrientPersistenceService
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 		}		
-
+    
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
