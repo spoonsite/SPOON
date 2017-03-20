@@ -189,7 +189,7 @@ public class LoginAction
 			currentUser.login(token);
 			UserProfile userProfile = new UserProfile();
 			userProfile.setUsername(username);
-			service.getUserService().handleLogin(userProfile, getContext().getRequest(), null);
+			service.getUserService().handleLogin(userProfile, getContext().getRequest(), false);
 			String startPage = startPage();
 			if (startPage.toLowerCase().startsWith("http") == false) {
 				startPage = getContext().getServletContext().getContextPath() + startPage;

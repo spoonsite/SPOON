@@ -128,15 +128,33 @@ var CoreService = {
   systemservice: {
     
     getConfigProperties: function(){
-      var me = this;     
+      var systemService = this;     
             
       var promise = Ext.Ajax.request({
         url: 'api/v1/service/application/configproperties'
       });
       
       return promise;
-    }    
+    },   
     	
+	getSecurityPolicy: function() {
+		var systemService = this;
+		var deferred = new Ext.Deferred();
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/securitypolicy',
+			success: function (response, opts) {
+				var securityPolicy = Ext.decode(response.responseText);
+				deferred.resolve(securityPolicy);
+			},
+			failure: function (response, opts) {
+				deferred.reject("Error loading user.");
+			}
+		});
+
+		return deferred.promise;
+	}	
+		
   },
   brandingservice: {
 	  
@@ -144,13 +162,13 @@ var CoreService = {
 		var brandingservice = this;		  
 		var deferred = new Ext.Deferred();
 		  
-		var haveBanding = true;
+		var haveBranding = false;
 		if (brandingservice.branding) {
-			deferred.resolve(branding);
-			haveBanding = true;
+			deferred.resolve(brandingservice.branding);
+			haveBranding = true;
 		}		  
 		  
-		if (haveBanding === false) { 
+		if (haveBranding === false) { 
 		  Ext.Ajax.request({
 			url: 'api/v1/resource/branding/current',
 			success: function(response, opts) {
