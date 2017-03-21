@@ -38,7 +38,7 @@
 		//start fresh on index
 		sessionStorage.clear();
 				
-		if (Ext.isIE8m) {
+		if (Ext.isIE10m) {
 			Ext.get('browserWarning').setStyle({
 				display: 'block'
 			});
