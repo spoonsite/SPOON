@@ -89,6 +89,18 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getWorkflowStatus())) {
 			evaluationExample.setWorkflowStatus(evaluationFilterParams.getWorkflowStatus());
 		}
+		
+		if (StringUtils.isNotBlank(evaluationFilterParams.getAssignedUser())) {
+			evaluationExample.setAssignedUser(evaluationFilterParams.getAssignedUser());
+		}
+
+		if (StringUtils.isNotBlank(evaluationFilterParams.getAssignedGroup())) {
+			evaluationExample.setAssignedGroup(evaluationFilterParams.getAssignedGroup());
+		}
+		
+		if (evaluationFilterParams.getPublished() != null) {			
+			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));			
+		}
 
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());

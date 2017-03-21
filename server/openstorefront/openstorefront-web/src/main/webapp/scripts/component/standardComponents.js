@@ -287,7 +287,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		if (userMenu.showEvaluatorTools) {
 			menuItems.push({
-				text: 'Evaluator Tools',
+				text: 'Evaluation Tools',
 				itemId: 'menuEvalTools',
 				iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
 				href: 'EvaluationTool.action'		

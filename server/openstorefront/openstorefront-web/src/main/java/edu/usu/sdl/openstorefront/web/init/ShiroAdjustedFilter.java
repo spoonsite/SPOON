@@ -61,6 +61,7 @@ public class ShiroAdjustedFilter
 			whiteListRedirectPages.add("index.jsp");
 			whiteListRedirectPages.add("AdminTool.action");
 			whiteListRedirectPages.add("UserTool.action");
+			whiteListRedirectPages.add("EvaluationTool.action");
 			whiteListRedirectPages.add("view.jsp");
 			whiteListRedirectPages.add("ServiceTest.action");
 			whiteListRedirectPages.add("API.action");

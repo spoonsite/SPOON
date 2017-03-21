@@ -42,6 +42,7 @@ public class ReportType
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String CATEGORY_COMPONENT = "CATCOMP";
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
+	public static final String EVALUATION_STATUS = "EVALSTAT";
 
 	private String requiredPermission;
 	private boolean componentReport;
@@ -64,13 +65,15 @@ public class ReportType
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
+		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evalaution Status", "Reports on the status of unpublished evaluations."));
 
 		//update metadata
-		((ReportType) codeMap.get(USAGE)).setRequiredPermission("ADMIN-TRACKING");
-		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission("ADMIN-ENTRY-MANAGEMENT");
-		((ReportType) codeMap.get(USER)).setRequiredPermission("ADMIN-USER-MANAGEMENT");
-		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission("ADMIN-ENTRY-MANAGEMENT");
-		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission("ADMIN-USER-MANAGEMENT");
+		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);
+		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		((ReportType) codeMap.get(USER)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);

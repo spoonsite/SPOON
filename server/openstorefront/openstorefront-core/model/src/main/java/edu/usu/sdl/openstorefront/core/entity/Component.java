@@ -44,6 +44,7 @@ public class Component
 		extends StandardEntity<Component>
 		implements OrganizationModel
 {
+	public static final String FIELD_NAME = "name";
 
 	@PK(generated = true)
 	@NotNull

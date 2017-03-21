@@ -28,6 +28,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ public class ComponentReport
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
+		components = FilterEngine.filter(components);
+		
 	}
 
 	@Override
@@ -91,6 +95,8 @@ public class ComponentReport
 			header.add("Security Marking");
 		}		
 		cvsGenerator.addLine(header.toArray());		
+		
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Component.FIELD_NAME));		
 		
 		//write Body
 		for (Component component : components) {

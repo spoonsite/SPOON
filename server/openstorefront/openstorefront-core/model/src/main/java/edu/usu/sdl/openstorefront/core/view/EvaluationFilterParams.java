@@ -32,7 +32,18 @@ public class EvaluationFilterParams
 	@Size(min = 0, max = 255)
 	@Sanitize(TextSanitizer.class)
 	private String workflowStatus;
-
+	
+	@QueryParam("assignedUser")
+	@Size(min = 0, max = 255)
+	private String assignedUser;
+	
+	@QueryParam("assignedGroup")
+	@Size(min = 0, max = 255)	
+	private String assignedGroup;
+	
+	@QueryParam("published")
+	private Boolean published;
+	
 	public EvaluationFilterParams()
 	{
 	}
@@ -45,6 +56,36 @@ public class EvaluationFilterParams
 	public void setWorkflowStatus(String workflowStatus)
 	{
 		this.workflowStatus = workflowStatus;
+	}
+
+	public String getAssignedUser()
+	{
+		return assignedUser;
+	}
+
+	public void setAssignedUser(String assignedUser)
+	{
+		this.assignedUser = assignedUser;
+	}
+
+	public String getAssignedGroup()
+	{
+		return assignedGroup;
+	}
+
+	public void setAssignedGroup(String assignedGroup)
+	{
+		this.assignedGroup = assignedGroup;
+	}
+
+	public Boolean getPublished()
+	{
+		return published;
+	}
+
+	public void setPublished(Boolean published)
+	{
+		this.published = published;
 	}
 
 }
