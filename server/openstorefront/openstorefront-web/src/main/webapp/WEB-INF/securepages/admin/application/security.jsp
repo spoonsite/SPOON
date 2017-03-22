@@ -95,7 +95,7 @@
 							items: [
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Disbale User Information Edit <i class="fa fa-question-circle" data-qtip="User must edit their information externally.<br>This also enable sync information with an external system."></i>',								
+									boxLabel: 'Disable User Information Editing <i class="fa fa-question-circle" data-qtip="User must edit their information externally.<br>This also enable sync information with an external system."></i>',								
 									name: 'disableUserInfoEdit'
 								},		
 								{

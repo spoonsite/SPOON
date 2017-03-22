@@ -89,7 +89,7 @@ public class EvaluationStatusReport
 																		.collect(Collectors.groupingBy(EvaluationTemplate::getTemplateId));
 		
 		List<EvaluationView> views = EvaluationView.toView(evaluations);
-		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, EvaluationView.FIELD_COMPONENT_NAME));
+		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, EvaluationView.FIELD_COMPONENT_NAME));
 		
 		for (EvaluationView view : views) {
 			EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(view.getEvaluationId());

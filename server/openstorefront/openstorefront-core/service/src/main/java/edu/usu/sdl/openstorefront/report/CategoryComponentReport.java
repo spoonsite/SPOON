@@ -98,7 +98,7 @@ public class CategoryComponentReport
 
 			List<Component> components = componentExample.findByExample();
 			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Component.FIELD_NAME));	
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
 			
 			for (Component component : components) {
 				List<String> data = new ArrayList<>();
@@ -154,7 +154,7 @@ public class CategoryComponentReport
 
 			List<Component> components = componentExample.findByExample();
 			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Component.FIELD_NAME));	
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
 			
 			if (!report.dataIdSet().isEmpty()) {
 				components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());

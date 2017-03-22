@@ -65,7 +65,7 @@ public class ReportType
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
-		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evalaution Status", "Reports on the status of unpublished evaluations."));
+		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evaluation Status", "Reports on the status of unpublished evaluations."));
 
 		//update metadata
 		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);

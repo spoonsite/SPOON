@@ -121,7 +121,7 @@ public class ComponentDetailReport
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
-		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Component.FIELD_NAME));	
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
 	}
 
 	@Override

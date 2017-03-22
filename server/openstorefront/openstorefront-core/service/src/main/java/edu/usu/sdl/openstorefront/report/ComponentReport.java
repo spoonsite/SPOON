@@ -96,7 +96,7 @@ public class ComponentReport
 		}		
 		cvsGenerator.addLine(header.toArray());		
 		
-		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Component.FIELD_NAME));		
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));		
 		
 		//write Body
 		for (Component component : components) {
