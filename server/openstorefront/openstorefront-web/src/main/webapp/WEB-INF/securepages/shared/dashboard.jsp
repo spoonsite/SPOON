@@ -67,6 +67,7 @@
 			Ext.require('OSF.widget.Reports');
 			Ext.require('OSF.widget.Questions');
 			Ext.require('OSF.widget.RecentUserData');
+			Ext.require('OSF.widget.EvaluationStats');
 			
 												
 			Ext.onReady(function () {
@@ -134,6 +135,20 @@
 							widget.refresh();
 						}						
 					},
+					{
+						name: 'Evaluation Stats',
+						code: 'EVALSTATS',
+						description: 'Shows evaluation stats',
+						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
+						jsClass: 'OSF.widget.EvaluationStats',						
+						height: 575,
+						permissions: "EVALUATIONS",
+						adminOnly: true,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}						
+					},					
 					{
 						name: 'Pending Approval Requests',
 						code: 'APPROVEREQ',

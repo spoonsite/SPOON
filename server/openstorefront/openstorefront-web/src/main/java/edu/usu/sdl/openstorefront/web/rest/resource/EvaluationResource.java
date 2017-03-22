@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationVie
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
+import edu.usu.sdl.openstorefront.core.view.statistic.EvaluationStatistic;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -163,7 +164,46 @@ public class EvaluationResource
 			return sendSingleEntityResponse(evaluation);
 		}
 	}
-
+	
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationStatistic.class)
+	@APIDescription("Get Evaluation statistics")	
+	@Path("/statistics")
+	public Response getEvaluationStats(
+			@QueryParam("assignedUser") String assignedUser,
+			@QueryParam("assignedGroup") String assignedGroup
+	)
+	{
+		EvaluationStatistic evaluationStatistic = new EvaluationStatistic();
+				
+		Evaluation evaluationExample = new Evaluation();		
+		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+		evaluationExample.setAssignedUser(assignedUser);
+		evaluationExample.setAssignedGroup(assignedGroup);
+		
+		List<Evaluation> evaluations = evaluationExample.findByExample();		
+		for (Evaluation evaluation : evaluations) {
+			if (evaluation.getPublished()) {
+				evaluationStatistic.setPublished(evaluationStatistic.getPublished() + 1);				
+			} else {
+				evaluationStatistic.setUnpublished(evaluationStatistic.getUnpublished() + 1);				
+				
+				Integer statusCount = evaluationStatistic.getStatusStats().get(evaluation.getWorkflowStatus());
+				if (statusCount == null) {
+					statusCount = 1;
+					evaluationStatistic.getStatusStats().put(evaluation.getWorkflowStatus(), statusCount);
+				} else {
+					statusCount = statusCount + 1;
+					evaluationStatistic.getStatusStats().put(evaluation.getWorkflowStatus(), statusCount);
+				}
+			}	
+		}
+		
+		return sendSingleEntityResponse(evaluationStatistic);
+	}	
+	
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})

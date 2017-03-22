@@ -197,8 +197,7 @@ Ext.define('OSF.form.Media', {
 					fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline reference in the description." ></i>',
 					name: 'usedInline'
 				},
-				Ext.create('OSF.component.SecurityComboBox', {	
-					hidden: mediaPanel.hideSecurityMarking
+				Ext.create('OSF.component.SecurityComboBox', {					
 				}),
 				Ext.create('OSF.component.DataSensitivityComboBox', {												
 					width: '100%'
