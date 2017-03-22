@@ -152,7 +152,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 					}
 
 					combo.getStore().loadData(data);
-					
+					combo.fireEvent('ready');
 				}
 			});						
 		});	
@@ -246,6 +246,7 @@ Ext.define('OSF.component.UserMenu', {
 	initCallBack: null,
 	showUserTools: true,
 	showAdminTools: true,
+	showEvaluatorTools: true,
 	showHelp: true,
 	menu: {},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
@@ -281,6 +282,15 @@ Ext.define('OSF.component.UserMenu', {
 				text: 'User Tools',
 				iconCls: 'fa fa-2x fa-user icon-button-color-default',
 				href: 'UserTool.action'		
+			});
+		}			
+		
+		if (userMenu.showEvaluatorTools) {
+			menuItems.push({
+				text: 'Evaluation Tools',
+				itemId: 'menuEvalTools',
+				iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
+				href: 'EvaluationTool.action'		
 			});
 		}	
 		menuItems.push({
@@ -368,6 +378,10 @@ Ext.define('OSF.component.UserMenu', {
 				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
 					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
 				}				
+				
+				if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
+					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+				}					
 				
 				if (userMenu.initCallBack) {
 					userMenu.initCallBack(usercontext);	

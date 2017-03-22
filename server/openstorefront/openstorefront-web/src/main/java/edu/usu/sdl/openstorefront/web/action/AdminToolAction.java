@@ -30,7 +30,7 @@ public class AdminToolAction
 	@DefaultHandler
 	public Resolution loadPage()
 	{
-		return handleLoadPage(false);
+		return handleLoadPage("adminheader.jsp");
 	}
 
 	@Override

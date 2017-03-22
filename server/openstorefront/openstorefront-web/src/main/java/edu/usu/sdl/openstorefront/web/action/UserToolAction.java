@@ -30,7 +30,7 @@ public class UserToolAction
 	@DefaultHandler
 	public Resolution loadPage()
 	{
-		return handleLoadPage(true);
+		return handleLoadPage("userheader.jsp");
 	}
 
 	@Override

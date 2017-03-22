@@ -31,17 +31,20 @@ public abstract class BaseToolAction
 
 	protected String load;
 	protected Map<String, String> pageMap = new HashMap<>();
+	protected String headerPage;
 
-	protected Resolution handleLoadPage(boolean user)
+	protected Resolution handleLoadPage(String headerPage)
 	{
 		String newPage = "/WEB-INF/securepages/shared/dashboard.jsp";
+		
+		this.setHeaderPage(headerPage);
 
 		String page = getPageMap().get(load);
 		if (StringUtils.isNotBlank(page)) {
 			newPage = page;
 		}
 
-		return new ForwardResolution(newPage).addParameter("user", user);
+		return new ForwardResolution(newPage);
 	}
 
 	public abstract Map<String, String> getPageMap();
@@ -59,6 +62,16 @@ public abstract class BaseToolAction
 	public void setLoad(String load)
 	{
 		this.load = load;
+	}
+
+	public String getHeaderPage()
+	{
+		return headerPage;
+	}
+
+	public void setHeaderPage(String headerPage)
+	{
+		this.headerPage = headerPage;
 	}
 
 }
