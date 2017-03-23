@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -32,9 +33,11 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
@@ -42,11 +45,14 @@ import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.statistic.EvaluationStatistic;
+import edu.usu.sdl.openstorefront.core.view.statistic.WorkflowStats;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -178,10 +184,26 @@ public class EvaluationResource
 	{
 		EvaluationStatistic evaluationStatistic = new EvaluationStatistic();
 				
+		List<WorkflowStatus> workflowStatuses = service.getLookupService().findLookup(WorkflowStatus.class);
+		Map<String, WorkflowStats> statusMap = new HashMap<>();
+		for (WorkflowStatus status : workflowStatuses) 
+		{
+			WorkflowStats stat = new WorkflowStats();
+			stat.setStatus(status.getCode());
+			stat.setStatusLabel(status.getDescription());
+			stat.setStatusOrder(status.getSortOrder());
+				
+			statusMap.put(status.getCode(), stat);
+		}
+		
 		Evaluation evaluationExample = new Evaluation();		
 		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
-		evaluationExample.setAssignedUser(assignedUser);
-		evaluationExample.setAssignedGroup(assignedGroup);
+		if (StringUtils.isNotBlank(assignedUser)){
+			evaluationExample.setAssignedUser(assignedUser);
+		}
+		if (StringUtils.isNotBlank(assignedGroup)){
+			evaluationExample.setAssignedGroup(assignedGroup);
+		}
 		
 		List<Evaluation> evaluations = evaluationExample.findByExample();		
 		for (Evaluation evaluation : evaluations) {
@@ -190,16 +212,15 @@ public class EvaluationResource
 			} else {
 				evaluationStatistic.setUnpublished(evaluationStatistic.getUnpublished() + 1);				
 				
-				Integer statusCount = evaluationStatistic.getStatusStats().get(evaluation.getWorkflowStatus());
-				if (statusCount == null) {
-					statusCount = 1;
-					evaluationStatistic.getStatusStats().put(evaluation.getWorkflowStatus(), statusCount);
-				} else {
-					statusCount = statusCount + 1;
-					evaluationStatistic.getStatusStats().put(evaluation.getWorkflowStatus(), statusCount);
-				}
+				WorkflowStats stat = statusMap.get(evaluation.getWorkflowStatus());
+				if (stat != null) {
+					stat.setCount(stat.getCount() + 1);
+				}				
 			}	
 		}
+		
+		evaluationStatistic.getStatusStats().addAll(statusMap.values());
+		evaluationStatistic.getStatusStats().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, WorkflowStats.FIELD_STATUSORDER));		
 		
 		return sendSingleEntityResponse(evaluationStatistic);
 	}	

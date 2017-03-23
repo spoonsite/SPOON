@@ -15,54 +15,61 @@
  */
 package edu.usu.sdl.openstorefront.core.view.statistic;
 
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author dshurtleff
  */
-public class EvaluationStatistic
+public class WorkflowStats
 {
-	private int published;
-	private int unpublished;
+	public static final String FIELD_STATUSORDER = "statusOrder";
 	
-	@DataType(WorkflowStats.class)
-	private List<WorkflowStats> statusStats = new ArrayList<>();
+	private String status;
+	private String statusLabel;
+	private Integer statusOrder;
+	private int count;
 
-	public EvaluationStatistic()
+	public WorkflowStats()
 	{
 	}
 
-	public int getPublished()
+	public String getStatus()
 	{
-		return published;
+		return status;
 	}
 
-	public void setPublished(int published)
+	public void setStatus(String status)
 	{
-		this.published = published;
+		this.status = status;
 	}
 
-	public int getUnpublished()
+	public int getCount()
 	{
-		return unpublished;
+		return count;
 	}
 
-	public void setUnpublished(int unpublished)
+	public void setCount(int count)
 	{
-		this.unpublished = unpublished;
+		this.count = count;
 	}
 
-	public List<WorkflowStats> getStatusStats()
+	public Integer getStatusOrder()
 	{
-		return statusStats;
+		return statusOrder;
 	}
 
-	public void setStatusStats(List<WorkflowStats> statusStats)
+	public void setStatusOrder(Integer statusOrder)
 	{
-		this.statusStats = statusStats;
+		this.statusOrder = statusOrder;
+	}
+
+	public String getStatusLabel()
+	{
+		return statusLabel;
+	}
+
+	public void setStatusLabel(String statusLabel)
+	{
+		this.statusLabel = statusLabel;
 	}
 	
 }

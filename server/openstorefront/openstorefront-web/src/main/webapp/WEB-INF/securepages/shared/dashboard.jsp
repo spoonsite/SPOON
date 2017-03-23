@@ -139,11 +139,11 @@
 						name: 'Evaluation Stats',
 						code: 'EVALSTATS',
 						description: 'Shows evaluation stats',
-						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
+						iconCls: 'fa fa-lg fa-pie-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.EvaluationStats',						
 						height: 575,
 						permissions: "EVALUATIONS",
-						adminOnly: true,
+						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
 							widget.refresh();
@@ -508,7 +508,7 @@
 								var widgetPanel;
 								if (config.permissions) {
 									//if the user is no longer admin don't add widget
-									if (CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
+									if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
 										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {
