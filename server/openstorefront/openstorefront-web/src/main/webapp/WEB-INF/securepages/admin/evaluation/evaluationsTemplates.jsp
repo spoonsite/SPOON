@@ -144,7 +144,7 @@
 								items: [
 									{
 										xtype: 'grid',
-										title: 'Section Pool',
+										title: 'Section Pool - <span class="alert-warning">drag to add <i class="fa fa-lg fa-arrow-right"></i></span>', 
 										id: 'sectionPool',
 										width: '50%',
 										margin: '0 5 0 0',
@@ -185,7 +185,7 @@
 									{
 										xtype: 'grid',
 										id: 'sectionsInTemplate',
-										title: 'Sections In Template',
+										title: 'Sections In Template - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove</span>',
 										width: '50%',
 										columnLines: true,
 										store: {											
