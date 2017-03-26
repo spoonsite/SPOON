@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
@@ -298,7 +299,9 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
-	public Response getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAttributeTypes(
+			@BeanParam FilterQueryParams filterQueryParams
+	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -306,6 +309,57 @@ public class AttributeResource
 		}
 
 		AttributeTypeWrapper entity = service.getAttributeService().getFilteredTypes(filterQueryParams);
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets attribute types based on filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/required")
+	public Response getRequiredAttributeTypes(
+			@QueryParam("componentType") String componentType
+	)
+	{
+		List<AttributeType> requiredAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+
+		for (AttributeType attributeType : attributeTypes) {
+
+			boolean keep = true;
+
+			if (attributeType.getAssociatedComponentTypes() != null) {
+				keep = false;
+				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						keep = true;
+					}
+				}
+			}
+
+			//check required
+			if (keep) {
+				if (attributeType.getRequiredRestrictions() != null) {
+					for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+						if (restriction.getComponentType().equals(componentType)) {
+							requiredAttributes.add(attributeType);
+						}
+					}
+				} else {
+					requiredAttributes.add(attributeType);
+				}
+			}
+
+		}
+
+		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(requiredAttributes)
+		{
+		};
 		return sendSingleEntityResponse(entity);
 	}
 

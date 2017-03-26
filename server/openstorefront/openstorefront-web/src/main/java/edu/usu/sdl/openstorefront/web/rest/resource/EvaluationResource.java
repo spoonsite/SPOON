@@ -96,7 +96,7 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getWorkflowStatus())) {
 			evaluationExample.setWorkflowStatus(evaluationFilterParams.getWorkflowStatus());
 		}
-		
+
 		if (StringUtils.isNotBlank(evaluationFilterParams.getAssignedUser())) {
 			evaluationExample.setAssignedUser(evaluationFilterParams.getAssignedUser());
 		}
@@ -104,9 +104,9 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getAssignedGroup())) {
 			evaluationExample.setAssignedGroup(evaluationFilterParams.getAssignedGroup());
 		}
-		
-		if (evaluationFilterParams.getPublished() != null) {			
-			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));			
+
+		if (evaluationFilterParams.getPublished() != null) {
+			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));
 		}
 
 		Evaluation startExample = new Evaluation();
@@ -170,12 +170,12 @@ public class EvaluationResource
 			return sendSingleEntityResponse(evaluation);
 		}
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationStatistic.class)
-	@APIDescription("Get Evaluation statistics")	
+	@APIDescription("Get Evaluation statistics")
 	@Path("/statistics")
 	public Response getEvaluationStats(
 			@QueryParam("assignedUser") String assignedUser,
@@ -183,48 +183,47 @@ public class EvaluationResource
 	)
 	{
 		EvaluationStatistic evaluationStatistic = new EvaluationStatistic();
-				
+
 		List<WorkflowStatus> workflowStatuses = service.getLookupService().findLookup(WorkflowStatus.class);
 		Map<String, WorkflowStats> statusMap = new HashMap<>();
-		for (WorkflowStatus status : workflowStatuses) 
-		{
+		for (WorkflowStatus status : workflowStatuses) {
 			WorkflowStats stat = new WorkflowStats();
 			stat.setStatus(status.getCode());
 			stat.setStatusLabel(status.getDescription());
 			stat.setStatusOrder(status.getSortOrder());
-				
+
 			statusMap.put(status.getCode(), stat);
 		}
-		
-		Evaluation evaluationExample = new Evaluation();		
+
+		Evaluation evaluationExample = new Evaluation();
 		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
-		if (StringUtils.isNotBlank(assignedUser)){
+		if (StringUtils.isNotBlank(assignedUser)) {
 			evaluationExample.setAssignedUser(assignedUser);
 		}
-		if (StringUtils.isNotBlank(assignedGroup)){
+		if (StringUtils.isNotBlank(assignedGroup)) {
 			evaluationExample.setAssignedGroup(assignedGroup);
 		}
-		
-		List<Evaluation> evaluations = evaluationExample.findByExample();		
+
+		List<Evaluation> evaluations = evaluationExample.findByExample();
 		for (Evaluation evaluation : evaluations) {
 			if (evaluation.getPublished()) {
-				evaluationStatistic.setPublished(evaluationStatistic.getPublished() + 1);				
+				evaluationStatistic.setPublished(evaluationStatistic.getPublished() + 1);
 			} else {
-				evaluationStatistic.setUnpublished(evaluationStatistic.getUnpublished() + 1);				
-				
+				evaluationStatistic.setUnpublished(evaluationStatistic.getUnpublished() + 1);
+
 				WorkflowStats stat = statusMap.get(evaluation.getWorkflowStatus());
 				if (stat != null) {
 					stat.setCount(stat.getCount() + 1);
-				}				
-			}	
+				}
+			}
 		}
-		
+
 		evaluationStatistic.getStatusStats().addAll(statusMap.values());
-		evaluationStatistic.getStatusStats().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, WorkflowStats.FIELD_STATUSORDER));		
-		
+		evaluationStatistic.getStatusStats().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, WorkflowStats.FIELD_STATUSORDER));
+
 		return sendSingleEntityResponse(evaluationStatistic);
-	}	
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -307,7 +306,7 @@ public class EvaluationResource
 				evaluationExisting.setWorkflowStatus(evaluation.getWorkflowStatus());
 				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
-				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());				
+				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
@@ -320,7 +319,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Make sure change request exists for the evaluation; It will create new one if needed.")
 	@DataType(Evaluation.class)
