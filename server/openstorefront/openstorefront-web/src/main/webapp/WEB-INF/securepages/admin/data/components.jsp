@@ -635,7 +635,8 @@
 									{
 										xtype: 'datefield',
 										fieldLabel: 'Release Date',
-										name: 'releaseDate'									
+										name: 'releaseDate',
+										submitFormat: 'Y-m-d\\TH:i:s.u'
 									},
 									{
 										xtype: 'textfield',

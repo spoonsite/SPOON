@@ -328,7 +328,6 @@ public class AttributeResource
 		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
 
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
-
 		for (AttributeType attributeType : attributeTypes) {
 
 			boolean keep = true;
@@ -345,7 +344,7 @@ public class AttributeResource
 			//check required
 			if (keep) {
 				if (attributeType.getRequiredRestrictions() != null) {
-					for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 						if (restriction.getComponentType().equals(componentType)) {
 							requiredAttributes.add(attributeType);
 						}

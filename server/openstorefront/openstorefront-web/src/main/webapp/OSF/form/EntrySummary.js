@@ -68,7 +68,8 @@ Ext.define('OSF.form.EntrySummary', {
 					xtype: 'datefield',
 					itemId: 'releaseDate',
 					fieldLabel: 'Release Date',
-					name: 'releaseDate'									
+					name: 'releaseDate',
+					submitFormat: 'Y-m-d\\TH:i:s.u'
 				},
 				{
 					xtype: 'textfield',
@@ -196,42 +197,196 @@ Ext.define('OSF.form.EntrySummary', {
 				success: function(response, opts) {
 					var attributes = Ext.decode(response.responseText);
 					
-					data.componentType = entryForm.componentData.componentType;
-					data.approvalState = entryForm.componentData.approvalState;
-					
-					var requiredForComponent = {
-						component: data,
-						attributes: []						
-					};
-					Ext.Array.each(attributes, function(attribute){
-						requiredForComponent.attributes.push({
-							componentAttributePk: {
-								attributeType: attribute.componentAttributePk.attributeType,
-								attributeCode: attribute.componentAttributePk.attributeCode
-							}
-						});
-					});
-					
-					CoreUtil.submitForm({
-						url: 'api/v1/resource/components/' + 
-							entryForm.componentId,
-						method: 'PUT',
-						data: requiredForComponent,
-						form: entryForm,
-						noLoadmask: true,
-						callback: function() {
-							entryForm.saving = false;
-						},
-						success: function(action, opts) {							
-
-							Ext.toast('Saved Entry Summary');
-							entryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+					Ext.Ajax.request({
+						url: 'api/v1/resource/attributes/attributetypes/required?componentType=' + entryForm.componentData.componentType,
+						success: function(response, opts) {
 							
-							if (entryForm.refreshCallback) {
-								entryForm.refreshCallback();
+							var requiredAttributes = Ext.decode(response.responseText);
+							var missingAttributes = [];
+							
+							data.componentType = entryForm.componentData.componentType;
+							data.approvalState = entryForm.componentData.approvalState;
+							
+							var requiredForComponent = {
+								component: data,
+								attributes: []						
+							};
+							Ext.Array.each(attributes, function(attribute){
+								requiredForComponent.attributes.push({
+									componentAttributePk: {
+										attributeType: attribute.componentAttributePk.attributeType,
+										attributeCode: attribute.componentAttributePk.attributeCode
+									}
+								});								
+							});
+							
+							var hasAllRequiredAttributes = false;
+							Ext.Array.each(requiredAttributes, function(required){
+								var found = false;
+								Ext.Array.each(attributes, function(attribute){
+									if (required.attributeType === attribute.componentAttributePk.attributeType) {
+										found = true;
+									}
+								});				
+								if (!found) {
+									missingAttributes.push(required);
+								}
+							});
+							
+							if (missingAttributes.length > 0) {
+								//fill in defaults if possible	
+								var promptAttributes = [];
+								Ext.Array.each(missingAttributes, function(attributeType){
+									if (attributeType.defaultAttributeCode) {
+										requiredForComponent.attributes.push({
+											componentAttributePk: {
+												attributeType: attributeType.attributeType,
+												attributeCode: attributeType.defaultAttributeCode
+											}
+										});	
+									} else  {
+										promptAttributes.push(attributeType);
+									}
+								});
+								if (promptAttributes.length > 0) {
+									entryForm.saving = false;
+									
+									//prompt for any remaining
+									var promptWin = Ext.create('Ext.window.Window', {
+										title: 'Missing Required Attributes',
+										modal: true,
+										closeAction: 'destroy',
+										closable: false,
+										width: 400,
+										height: (100 * promptAttributes.length) + 75,
+										layout: 'fit',
+										items: [
+											{
+												xtype: 'form',
+												scrollable: false,
+												itemId: 'form',
+												bodyStyle: 'padding: 10px;',
+												layout: 'anchor',
+												defaults: {
+													labelAlign: 'top',
+													width: '100%',
+													labelSeparator: '',
+													allowBlank: false
+												},
+												items: [],
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'bottom',
+														items: [													
+															{
+																text: 'Save',
+																formBind: true,
+																iconCls: 'fa fa-lg fa-save icon-button-color-save',
+																handler: function(){
+																	var attributeForm = this.up('form');
+																	var attributeItems = attributeForm.items.items;
+
+																	var countOfSaves = 0;
+																	var completeSave = function() {
+																		countOfSaves++;
+																		if (countOfSaves === promptAttributes.length) {
+																			promptWin.setLoading(false);
+																			promptWin.close();
+																			Ext.toast('Updated required Attributes; Continuing with save...');																	
+																			entryForm.saveData();
+																		}
+																	};																	
+																	
+																	promptWin.setLoading('Saving...');																	
+																	Ext.Array.each(attributeItems, function(item) {
+
+																		var promise = Ext.Ajax.request({
+																			url: 'api/v1/resource/components/' + entryForm.componentId + '/attributes',
+																			method: 'POST',
+																			jsonData: {
+																				componentAttributePk: {
+																					attributeType: item.attribute.attributeType,
+																					attributeCode: item.getValue()	
+																				}
+																			}
+																		});					
+																		promise.then(function(response){
+																			completeSave();
+																		});																
+																	});																														
+																}
+															}
+														]
+													}
+												]												
+											}
+										]
+									});
+									
+									//add prompts
+									var requiredToAdd = [];
+									Ext.Array.each(promptAttributes, function(promptAttribute){
+										requiredToAdd.push({
+											xtype: 'combo',
+											name: 'attribute',
+											attribute: promptAttribute,
+											valueField: 'attributeCode',
+											displayField: 'label',
+											emptyText: 'Select',
+											fieldLabel: promptAttribute.attributeType + ' <span class="field-required" />',
+											store: {
+												autoLoad: true,
+												fields: [
+													{ name: 'attributeCode', mapping: function(mappedData) {
+															return mappedData.attributeCodePk.attributeCode;
+														}
+													}
+												],
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/attributes/attributetypes/' + promptAttribute.attributeType + '/attributecodes'
+												}
+											}
+										});
+									});
+									promptWin.queryById('form').add(requiredToAdd);
+									promptWin.show();
+									
+								} else {
+									hasAllRequiredAttributes = true;
+								}
+							} else {
+								hasAllRequiredAttributes = true;
 							}
-						}	
-					});	
+
+							if (hasAllRequiredAttributes) {
+								CoreUtil.submitForm({
+									url: 'api/v1/resource/components/' + 
+										entryForm.componentId,
+									method: 'PUT',
+									data: requiredForComponent,
+									form: entryForm,
+									noLoadmask: true,
+									callback: function() {
+										entryForm.saving = false;
+									},
+									success: function(action, opts) {							
+
+										Ext.toast('Saved Entry Summary');
+										entryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+
+										if (entryForm.refreshCallback) {
+											entryForm.refreshCallback();
+										}
+									}	
+								});	
+							}
+							
+							
+						}
+					});
+
 				},
 				failure: function(response, opt) {
 					entryForm.saving = false;
