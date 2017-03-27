@@ -40,7 +40,6 @@ public class SecurityPolicyResource
 {
 	
 	@GET 
-	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
 	@APIDescription("Gets current security policy.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityPolicy.class)

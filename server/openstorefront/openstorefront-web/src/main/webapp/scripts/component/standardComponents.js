@@ -289,6 +289,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Evaluation Tools',
 				itemId: 'menuEvalTools',
+				hidden: true,
 				iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
 				href: 'EvaluationTool.action'		
 			});

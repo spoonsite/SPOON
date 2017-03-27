@@ -635,7 +635,8 @@
 									{
 										xtype: 'datefield',
 										fieldLabel: 'Release Date',
-										name: 'releaseDate'									
+										name: 'releaseDate',
+										submitFormat: 'Y-m-d\\TH:i:s.u'
 									},
 									{
 										xtype: 'textfield',
@@ -2113,8 +2114,11 @@
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(mainAddEditWin, record);
 						mainAddEditWin.generalForm.loadRecord(record);
-						handleAttributes(record.get('componentType'));	
-						mainAddEditWin.generalForm.loadComponentAttributes();
+						handleAttributes(record.get('componentType'));
+						Ext.defer(function(){
+							mainAddEditWin.generalForm.loadComponentAttributes();
+						}, 250);
+						
 						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);						
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						

@@ -28,7 +28,7 @@
 	
 
 	<div id="browserWarning" class="browser-warning" >
-		 <p>You are using an <strong>outdated</strong> browser. Please switch to <strong>
+		 <p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
 		 <a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
 		 <a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
 		 <a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>		
