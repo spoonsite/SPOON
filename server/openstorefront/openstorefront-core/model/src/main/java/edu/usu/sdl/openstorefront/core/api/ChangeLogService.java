@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
+import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
@@ -23,9 +27,35 @@ public interface ChangeLogService
 	extends AsyncService
 {
 	
-	//log changes (option to not save report change
+	/**
+	 * Find changes (optional saves changes) between the original and the
+	 * updated entity
+	 * 
+	 * @param <T>
+	 * @param original
+	 * @param updated
+	 * @param save
+	 * @return 
+	 */	
+	public <T extends LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
 	
+	/**
+	 * Save a added change record to parent entities history
+	 * 
+	 * @param <T>
+	 * @param parentEntity
+	 * @param addedEntity
+	 * @return 
+	 */
+	public <T extends LoggableModel> ChangeLog addEntityChange(T parentEntity, T addedEntity);
 	
-	
+	/**
+	 * 
+	 * @param <T>
+	 * @param parentEntity
+	 * @param temovedEntity
+	 * @return 
+	 */
+	public <T extends LoggableModel> ChangeLog removeEntityChange(T parentEntity, T temovedEntity);
 	
 }

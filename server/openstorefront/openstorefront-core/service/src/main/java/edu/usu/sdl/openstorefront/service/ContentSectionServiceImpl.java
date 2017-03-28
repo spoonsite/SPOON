@@ -18,8 +18,6 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
@@ -48,20 +46,6 @@ public class ContentSectionServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(FeedbackServiceImpl.class.getName());
-
-	@Override
-	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute)
-	{
-		ContentSectionAttribute existing = persistenceService.findById(ContentSectionAttribute.class, contentSectionAttribute.getContentSectionAttributePk());
-		if (existing != null) {
-			existing.updateFields(contentSectionAttribute);
-			existing = persistenceService.persist(existing);
-		} else {
-			contentSectionAttribute.populateBaseCreateFields();
-			existing = persistenceService.persist(contentSectionAttribute);
-		}
-		return existing;
-	}
 
 	@Override
 	public String saveAll(ContentSectionAll contentSectionAll)
@@ -175,12 +159,6 @@ public class ContentSectionServiceImpl
 	public void deleteContentSection(String contentSectionId)
 	{
 		Objects.requireNonNull(contentSectionId);
-
-		ContentSectionAttribute attributeExample = new ContentSectionAttribute();
-		ContentSectionAttributePk attributePk = new ContentSectionAttributePk();
-		attributePk.setContentSectionId(contentSectionId);
-		attributeExample.setContentSectionAttributePk(attributePk);
-		persistenceService.deleteByExample(attributeExample);
 
 		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 		contentSectionMedia.setContentSectionId(contentSectionId);

@@ -190,7 +190,7 @@ public class MediaAction
 							try {
 								service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
 
-								if (SecurityUtil.isAdminUser() == false) {
+								if (SecurityUtil.isEntryAdminUser() == false) {
 									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
 										service.getComponentService().checkComponentCancelStatus(componentMedia.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
 									}

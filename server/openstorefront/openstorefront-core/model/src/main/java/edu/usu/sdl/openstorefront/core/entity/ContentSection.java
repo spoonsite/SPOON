@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,6 +35,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents and section of content")
 public class ContentSection
 		extends StandardEntity<ContentSection>
+		implements LoggableModel<ContentSection>
 {
 
 	public static final String ENTITY_EVALUATION = Evaluation.class.getSimpleName();
@@ -94,6 +96,12 @@ public class ContentSection
 
 	}
 
+	@Override
+	public List<ChangeLog> findChanges(ContentSection updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
+	
 	public String getContentSectionId()
 	{
 		return contentSectionId;

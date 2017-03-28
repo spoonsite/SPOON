@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,6 +35,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Checklist question response")
 public class EvaluationChecklistResponse
 		extends StandardEntity<EvaluationChecklistResponse>
+		implements LoggableModel<EvaluationChecklistResponse>
 {
 
 	@PK(generated = true)
@@ -87,6 +89,12 @@ public class EvaluationChecklistResponse
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
 
 	}
+	
+	@Override
+	public List<ChangeLog> findChanges(EvaluationChecklistResponse updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
 
 	public String getResponseId()
 	{

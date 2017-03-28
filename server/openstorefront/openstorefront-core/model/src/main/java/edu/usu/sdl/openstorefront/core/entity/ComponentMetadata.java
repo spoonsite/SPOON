@@ -19,9 +19,12 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,6 +35,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Metadata that is not linked to filters; Free keyed attributes")
 public class ComponentMetadata
 		extends BaseComponent<ComponentMetadata>
+		implements LoggableModel<ComponentMetadata>
 {
 
 	public static final String FIELD_LABEL = "label";
@@ -78,6 +82,16 @@ public class ComponentMetadata
 		this.setValue(metadata.getValue());
 	}
 
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentMetadata updated)
+	{	
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentId");
+		excludeFields.add("metadataId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		return changes;
+	}	
+	
 	public String getMetadataId()
 	{
 		return metadataId;

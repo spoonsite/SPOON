@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents a tag")
 public class ComponentTag
 		extends BaseComponent<ComponentTag>
+		implements LoggableModel<ComponentTag>			
 {
 	public static final String FIELD_TEXT = "text";
 
@@ -70,6 +72,12 @@ public class ComponentTag
 
 	}
 
+	@Override
+	public List<ChangeLog> findChanges(ComponentTag updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
+	
 	public String getTagId()
 	{
 		return tagId;

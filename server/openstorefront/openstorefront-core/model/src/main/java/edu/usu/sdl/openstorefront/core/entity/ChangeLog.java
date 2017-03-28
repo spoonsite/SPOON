@@ -42,7 +42,13 @@ public class ChangeLog
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String entity;
-
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String parentEntityId;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String parentEntity;
+	
 	private String field;
 	private String oldValue;
 	private String newValue;	
@@ -156,6 +162,26 @@ public class ChangeLog
 	public void setChangeType(String changeType)
 	{
 		this.changeType = changeType;
+	}
+
+	public String getParentEntityId()
+	{
+		return parentEntityId;
+	}
+
+	public void setParentEntityId(String parentEntityId)
+	{
+		this.parentEntityId = parentEntityId;
+	}
+
+	public String getParentEntity()
+	{
+		return parentEntity;
+	}
+
+	public void setParentEntity(String parentEntity)
+	{
+		this.parentEntity = parentEntity;
 	}
 	
 }

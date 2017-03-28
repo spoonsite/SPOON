@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent<ComponentResource>
+		implements LoggableModel<ComponentRelationship>			
 {
 
 	@PK(generated = true)
@@ -157,6 +159,12 @@ public class ComponentResource
 		return path;
 	}
 
+	@Override
+	public List<ChangeLog> findChanges(ComponentRelationship updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
+	
 	public String getResourceId()
 	{
 		return resourceId;

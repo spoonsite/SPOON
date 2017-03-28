@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
+import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Holds a review for a component")
 public class ComponentReview
 		extends BaseComponent<ComponentReview>
-		implements OrganizationModel
+		implements OrganizationModel, LoggableModel<ComponentReview>
 {
 
 	@PK(generated = true)
@@ -122,6 +123,12 @@ public class ComponentReview
 		this.setTitle(review.getTitle());
 		this.setUserTypeCode(review.getUserTypeCode());
 
+	}
+	
+	@Override
+	public List<ChangeLog> findChanges(ComponentReview updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	public String getComponentReviewId()

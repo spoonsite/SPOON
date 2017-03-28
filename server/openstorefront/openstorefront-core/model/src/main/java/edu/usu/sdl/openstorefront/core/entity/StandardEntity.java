@@ -33,6 +33,8 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
@@ -95,6 +97,19 @@ public abstract class StandardEntity<T>
 	public StandardEntity()
 	{
 	}
+	
+	protected Set<String> excludedChangeFields() 
+	{
+		Set<String> excludedFields = new HashSet<>();
+		
+		excludedFields.add("createUser");
+		excludedFields.add("createDts");
+		excludedFields.add("updateUser");
+		excludedFields.add("updateDts");
+		excludedFields.add("adminModified");
+		
+		return excludedFields;
+	}
 
 	@Override
 	public int compareTo(T o)
@@ -135,7 +150,7 @@ public abstract class StandardEntity<T>
 		setUpdateUser(SecurityUtil.getCurrentUserName());
 
 		if (getAdminModified() == null) {
-			setAdminModified(SecurityUtil.isAdminUser());
+			setAdminModified(SecurityUtil.isEntryAdminUser());
 		}
 	}
 
@@ -154,7 +169,7 @@ public abstract class StandardEntity<T>
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
 		if (getAdminModified() == null) {
-			setAdminModified(SecurityUtil.isAdminUser());
+			setAdminModified(SecurityUtil.isEntryAdminUser());
 		}
 	}
 

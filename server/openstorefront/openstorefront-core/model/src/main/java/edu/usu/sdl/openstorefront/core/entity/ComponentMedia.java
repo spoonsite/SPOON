@@ -23,12 +23,15 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
 		extends BaseComponent<ComponentMedia>
+		implements LoggableModel<ComponentMedia>
 {
 
 	@PK(generated = true)
@@ -160,6 +164,17 @@ public class ComponentMedia
 		return path;
 	}
 
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentMedia updated)
+	{	
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentId");
+		excludeFields.add("componentMediaId");
+		excludeFields.add("fileName");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		return changes;
+	}
+	
 	public String getComponentMediaId()
 	{
 		return componentMediaId;

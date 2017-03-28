@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents an entry evaluation")
 public class Evaluation
 		extends StandardEntity<Evaluation>
+		implements LoggableModel<Evaluation>
 {
 
 	@PK(generated = true)
@@ -104,6 +106,12 @@ public class Evaluation
 		setAllowNewSubSections(evaluation.getAllowNewSubSections());		
 	}
 
+	@Override
+	public List<ChangeLog> findChanges(Evaluation updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
+	
 	public String getEvaluationId()
 	{
 		return evaluationId;

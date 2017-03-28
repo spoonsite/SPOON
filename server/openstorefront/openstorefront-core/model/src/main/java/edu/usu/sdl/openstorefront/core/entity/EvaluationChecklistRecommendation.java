@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Evalution recommendation")
 public class EvaluationChecklistRecommendation
 		extends StandardEntity<EvaluationChecklistRecommendation>
+		implements LoggableModel<EvaluationChecklistRecommendation>
 {
 
 	@PK(generated = true)
@@ -71,6 +73,12 @@ public class EvaluationChecklistRecommendation
 		setRecommendationType(evaluationChecklistRecommendation.getRecommendationType());
 
 	}
+	
+	@Override
+	public List<ChangeLog> findChanges(EvaluationChecklistRecommendation updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
 
 	public String getRecommendationId()
 	{

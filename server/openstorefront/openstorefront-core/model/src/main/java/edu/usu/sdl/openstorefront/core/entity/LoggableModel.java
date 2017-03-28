@@ -15,11 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import java.util.List;
+
 /**
  * Used to support the change log
  * @author dshurtleff
+ * @param <T>
  */
-public interface LoggableModel
+public interface LoggableModel<T>
 {
+	
+	/**
+	 * Find fields that have changed between this model and an updated version
+	 * This should be fields that are user changeable for the most part.
+	 * 
+	 * @param updated entity
+	 * @return 
+	 */
+	public List<FieldChangeModel> findChanges(T updated);
 	
 }

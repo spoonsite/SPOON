@@ -42,7 +42,7 @@ public class HelpResource
 	public Response getAllHelp()
 	{
 		Boolean adminHelp = Boolean.FALSE;
-		if (SecurityUtil.isAdminUser()) {
+		if (SecurityUtil.isEntryAdminUser()) {
 			adminHelp = null;
 		}
 		HelpSectionAll helpSectionAll = service.getSystemService().getAllHelp(adminHelp);

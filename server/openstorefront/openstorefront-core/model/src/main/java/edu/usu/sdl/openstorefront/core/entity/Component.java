@@ -25,12 +25,15 @@ import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -42,7 +45,7 @@ import javax.validation.constraints.Size;
 @APIDescription("This is the main listing item that represents a component, asset, topic landing page, etc.")
 public class Component
 		extends StandardEntity<Component>
-		implements OrganizationModel
+		implements OrganizationModel, LoggableModel<Component>
 {
 	public static final String FIELD_NAME = "name";
 
@@ -215,6 +218,21 @@ public class Component
 
 	}
 
+	@Override
+	public List<FieldChangeModel> findChanges(Component updated)
+	{	
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("fileHistoryId");
+		excludeFields.add("recordVersion");
+		excludeFields.add("pendingChangeId");
+		excludeFields.add("lastModificationType");
+		excludeFields.add("lastActivityDts");
+		excludeFields.add("componentId");
+		
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		return changes;
+	}
+	
 	public String getName()
 	{
 		return name;

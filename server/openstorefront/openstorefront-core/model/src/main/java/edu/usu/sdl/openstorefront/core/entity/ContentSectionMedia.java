@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Section Media")
 public class ContentSectionMedia
 		extends StandardEntity<ContentSectionMedia>
+		implements LoggableModel<ContentSectionMedia>		
 {
 
 	@PK(generated = true)
@@ -109,6 +111,12 @@ public class ContentSectionMedia
 		}
 		return path;
 	}
+	
+	@Override
+	public List<ChangeLog> findChanges(ContentSectionMedia updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
 
 	public String getContentSectionMediaId()
 	{

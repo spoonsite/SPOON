@@ -22,8 +22,8 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Holds all contact information")
 public class Contact
 	extends StandardEntity<Contact>	
-	implements OrganizationModel
+	implements OrganizationModel, LoggableModel<Contact>
 {
 	public static final String FIELD_FIRSTNAME = "firstName";
 	
@@ -98,6 +98,12 @@ public class Contact
 		this.setPhone(contact.getPhone());
 
 	}
+	
+	@Override
+	public List<ChangeLog> findChanges(Contact updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
 	
 	public String getContactId()
 	{

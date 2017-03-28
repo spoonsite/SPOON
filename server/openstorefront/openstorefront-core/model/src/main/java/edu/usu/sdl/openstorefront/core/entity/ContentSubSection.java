@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents a fragment of a section")
 public class ContentSubSection
 		extends StandardEntity<ContentSubSection>
+		implements LoggableModel<ContentSubSection>	
 {
 
 	@PK(generated = true)
@@ -101,6 +102,12 @@ public class ContentSubSection
 
 	}
 
+	@Override
+	public List<ChangeLog> findChanges(ContentSubSection updated)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}	
+	
 	public String getSubSectionId()
 	{
 		return subSectionId;

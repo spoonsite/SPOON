@@ -22,8 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
@@ -233,26 +231,6 @@ public class EvaluationServiceImpl
 				templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
 				List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
 				copySectionMedia(templateMediaRecords, contentSection);
-
-				ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
-				ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
-				contentSectionAttributePk.setContentSectionId(templateSection.getContentSectionId());
-				templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
-
-				List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
-				for (ContentSectionAttribute attribute : attributes)
-				{
-
-					ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
-					ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
-					sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
-					sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
-					sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
-					sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
-					sectionAttribute.populateBaseCreateFields();
-					persistenceService.persist(sectionAttribute);
-
-				}
 
 				ContentSubSection templateSubSectionExample = new ContentSubSection();
 				templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
@@ -538,26 +516,6 @@ public class EvaluationServiceImpl
 			existingMedia.setContentSectionId(existingSectionId);
 			List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();
 			copySectionMedia(existingMediaRecords, contentSection);
-
-			ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
-			ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
-			contentSectionAttributePk.setContentSectionId(existingSectionId);
-			templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
-
-			List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
-			for (ContentSectionAttribute attribute : attributes)
-			{
-
-				ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
-				ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
-				sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
-				sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
-				sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
-				sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
-				sectionAttribute.populateBaseCreateFields();
-				persistenceService.persist(sectionAttribute);
-
-			}
 
 		}
 
