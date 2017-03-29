@@ -89,10 +89,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
-					visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
-							visPanel.menus.expand.eventContext.type,
-							visPanel.menus.expand.eventContext.name
-							);
+					if(visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
+						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
+								visPanel.menus.expand.eventContext.type,
+								visPanel.menus.expand.eventContext.name
+								);
+					}
 				}
 			}];
 		var collapseMenu = [{
@@ -174,45 +176,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});
 
-		//DELETE ME:
-		visPanel.on('spritedblclick', function (item, event, opts) {
-			var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
-			var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
-			var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
-			var eventContext = {
-				sprite: item.sprite,
-				key: key,
-				type: type,
-				name: name
-			};
-			if (visPanel.viewStack.keys.includes(key))
-			{
-				if (visPanel.menus.collapse.items.length === 1)
-				{
-					visPanel.menus.collapse.eventContext = eventContext;
-					visPanel.menus.collapse.items.items[0].handler();
-				} else
-				{
-					visPanel.menus.collapse.eventContext = eventContext;
-					visPanel.menus.collapse.showAt(event.xy);
-				}
-			} else
-			{
-				if (visPanel.menus.expand.items.length === 1)
-				{
-					visPanel.menus.expand.eventContext = eventContext;
-					visPanel.menus.expand.items.items[0].handler();
-				} else
-				{
-					visPanel.menus.expand.eventContext = eventContext;
-					visPanel.menus.expand.showAt(event.xy);
-				}
-			}
-		});
-
 		visPanel.on('spriteclick', function (item, event, opts) {
 			var sprite = item && item.sprite;
-
+			
 			if (sprite.node && !sprite.nodeText) {
 				var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
 				var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
@@ -221,7 +187,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					sprite: item.sprite,
 					key: key,
 					type: type,
-					name: name
+					name: name,
+					detail: sprite.node.detail
 				};
 				if (visPanel.viewStack.keys.includes(key))
 				{
@@ -437,14 +404,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		} else {
 			window.attachEvent("onmousewheel", visPanel.zoom);
 		}
-
-
-
-
-//		window.oncontextmenu = function (e){
-//			return false;
-//		};
-
 	},
 
 	reset: function () {
@@ -854,6 +813,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							relationshipLabel: attributeRelationship.relationshipLabel,
 							targetKey: attributeRelationship.key,
 							targetName: attributeRelationship.name,
+							relationType: attributeRelationship.relationType,
 							targetType: 'attribute'
 						});
 					});
@@ -898,7 +858,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									type: 'json',
 									rootProperty: 'data'
 								}
-							}
+							},
+							filters: [{
+								property: 'architectureFlg',
+								value: /false/
+							}]
 						}
 					}
 				],
@@ -964,6 +928,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					key: node.key,
 					name: node.label,
 					type: node.type,
+					detail: node.relationType === "ATTRIBUTE_CODE" && node.type === "attribute" ? "ATTRIBUTE_TYPE" : undefined,
 					edges: []
 				});
 				nodeKeys[node.key] = true;
@@ -973,6 +938,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					key: node.targetKey,
 					name: node.targetName,
 					type: node.targetType,
+					detail: node.relationType,
 					edges: []
 				});
 				nodeKeys[node.targetKey] = true;
@@ -1008,7 +974,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 			});
 			if (targetNode) {
-				if (relationship.targetType === 'attribute') {
+				if (relationship.targetType === 'attribute'
+						&& ownerNode.type !== 'attribute') {
 					ownerNode.edges.push({
 						targetKey: relationship.targetKey,
 						ownerKey: relationship.key,
@@ -1839,7 +1806,11 @@ Ext.define('OSF.component.VisualContainerPanel', {
 								type: 'json',
 								rootProperty: 'data'
 							}
-						}
+						},
+						filters: [{
+							property: 'architectureFlg',
+							value: /false/
+						}]
 					},
 					listeners: {
 						change: function (cb, newValue, oldValue, opts) {
