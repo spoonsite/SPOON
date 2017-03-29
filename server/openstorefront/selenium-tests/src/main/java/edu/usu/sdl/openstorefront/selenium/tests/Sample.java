@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class Sample  {
     public static void main(String[] args) {
 		
-		System.setProperty("webdriver.gecko.driver", "drivers\\geckodriver-v0.15.0-win64\\geckodriver.exe");
+		System.setProperty("webdriver.gecko.driver", "drivers\\firefox\\geckodriver.exe");
 		
 		
         // Create a new instance of the Firefox driver
@@ -57,5 +57,7 @@ public class Sample  {
         
         //Close the browser
         driver.close();
+		//this will close the browser but it will complain.
+		//driver.quit();
     }
 }
