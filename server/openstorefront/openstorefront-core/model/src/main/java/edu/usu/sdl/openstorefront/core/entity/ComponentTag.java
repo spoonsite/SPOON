@@ -19,9 +19,11 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -73,9 +75,12 @@ public class ComponentTag
 	}
 
 	@Override
-	public List<ChangeLog> findChanges(ComponentTag updated)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public List<FieldChangeModel> findChanges(ComponentTag updated)
+	{	
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("tagId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		return changes;
 	}	
 	
 	public String getTagId()

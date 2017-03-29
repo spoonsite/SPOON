@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -75,10 +77,14 @@ public class EvaluationChecklistRecommendation
 	}
 	
 	@Override
-	public List<ChangeLog> findChanges(EvaluationChecklistRecommendation updated)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}	
+	public List<FieldChangeModel> findChanges(EvaluationChecklistRecommendation updated)
+	{	
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("recommendationId");
+		excludeFields.add("checklistId");	
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		return changes;
+	}
 
 	public String getRecommendationId()
 	{

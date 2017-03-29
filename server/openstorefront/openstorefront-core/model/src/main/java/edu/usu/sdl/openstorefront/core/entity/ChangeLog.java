@@ -52,7 +52,7 @@ public class ChangeLog
 	private String field;
 	private String oldValue;
 	private String newValue;	
-	private String version;
+	private Integer version;
 	private String archivedExternalResourceId;	
 	private String archivedEntity;
 	
@@ -124,12 +124,12 @@ public class ChangeLog
 		this.newValue = newValue;
 	}
 
-	public String getVersion()
+	public Integer getVersion()
 	{
 		return version;
 	}
 
-	public void setVersion(String version)
+	public void setVersion(Integer version)
 	{
 		this.version = version;
 	}

@@ -86,7 +86,6 @@ public class ComponentMetadata
 	public List<FieldChangeModel> findChanges(ComponentMetadata updated)
 	{	
 		Set<String> excludeFields = excludedChangeFields();
-		excludeFields.add("componentId");
 		excludeFields.add("metadataId");
 		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
 		return changes;

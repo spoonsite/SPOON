@@ -168,7 +168,6 @@ public class ComponentMedia
 	public List<FieldChangeModel> findChanges(ComponentMedia updated)
 	{	
 		Set<String> excludeFields = excludedChangeFields();
-		excludeFields.add("componentId");
 		excludeFields.add("componentMediaId");
 		excludeFields.add("fileName");
 		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				

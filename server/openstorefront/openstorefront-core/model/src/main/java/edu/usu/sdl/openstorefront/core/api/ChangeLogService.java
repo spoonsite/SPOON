@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import java.util.List;
@@ -26,6 +27,16 @@ import java.util.List;
 public interface ChangeLogService 
 	extends AsyncService
 {
+	/**
+	 * Finds changes and saves them
+	 * 
+	 * @param <T>
+	 * @param original
+	 * @param updated
+	 * @return 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)	
+	public <T extends BaseEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated);	
 	
 	/**
 	 * Find changes (optional saves changes) between the original and the
@@ -36,8 +47,9 @@ public interface ChangeLogService
 	 * @param updated
 	 * @param save
 	 * @return 
-	 */	
-	public <T extends LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)	
+	public <T extends BaseEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
 	
 	/**
 	 * Save a added change record to parent entities history
@@ -47,7 +59,8 @@ public interface ChangeLogService
 	 * @param addedEntity
 	 * @return 
 	 */
-	public <T extends LoggableModel> ChangeLog addEntityChange(T parentEntity, T addedEntity);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends BaseEntity & LoggableModel> ChangeLog addEntityChange(T parentEntity, T addedEntity);
 	
 	/**
 	 * 
@@ -56,6 +69,7 @@ public interface ChangeLogService
 	 * @param temovedEntity
 	 * @return 
 	 */
-	public <T extends LoggableModel> ChangeLog removeEntityChange(T parentEntity, T temovedEntity);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends BaseEntity & LoggableModel> ChangeLog removeEntityChange(T parentEntity, T removedEntity);
 	
 }

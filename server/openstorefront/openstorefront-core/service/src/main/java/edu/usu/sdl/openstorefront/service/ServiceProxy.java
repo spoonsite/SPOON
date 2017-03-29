@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
+import edu.usu.sdl.openstorefront.core.api.ChangeLogService;
 import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
@@ -85,6 +86,7 @@ public class ServiceProxy
 	private ChecklistService checklistService;
 	private ContentSectionService contentSectionService;
 	private SecurityService securityService;
+	private ChangeLogService changeLogService;
 
 	public ServiceProxy()
 	{
@@ -393,4 +395,14 @@ public class ServiceProxy
 		return securityService;
 	}
 
+	@Override
+	public ChangeLogService getChangeLogService()
+	{
+		if (changeLogService == null)
+		{
+			changeLogService = DynamicProxy.newInstance(new ChangeLogServiceImpl());
+		}
+		return changeLogService;
+	}	
+	
 }

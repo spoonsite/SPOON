@@ -65,7 +65,7 @@ public class EvaluationServiceImpl
 	{
 		Objects.requireNonNull(checklistAll);
 		Objects.requireNonNull(checklistAll.getEvaluationChecklist());
-
+			
 		EvaluationChecklist evaluationChecklist = checklistAll.getEvaluationChecklist().save();
 
 		//remove old recommendations replace with the new ones

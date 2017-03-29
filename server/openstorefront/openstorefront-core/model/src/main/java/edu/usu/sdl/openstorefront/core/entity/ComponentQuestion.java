@@ -97,7 +97,6 @@ public class ComponentQuestion
 	public List<FieldChangeModel> findChanges(ComponentQuestion updated)
 	{	
 		Set<String> excludeFields = excludedChangeFields();
-		excludeFields.add("componentId");
 		excludeFields.add("questionId");
 		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
 		return changes;

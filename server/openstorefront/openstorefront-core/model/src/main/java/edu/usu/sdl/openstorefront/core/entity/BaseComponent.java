@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -78,6 +79,13 @@ public abstract class BaseComponent<T>
 		customKeyClear();
 	}
 
+	protected Set<String> excludedChangeFields() 
+	{
+		Set<String> excludeFields = super.excludedChangeFields();
+		excludeFields.add("componentId");
+		return excludeFields;
+	} 
+	
 	//Override to add primary key clearing
 	protected abstract void customKeyClear();
 

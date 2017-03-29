@@ -142,7 +142,6 @@ public class ComponentContact
 	public List<FieldChangeModel> findChanges(ComponentContact updated)
 	{	
 		Set<String> excludeFields = excludedChangeFields();
-		excludeFields.add("componentId");
 		excludeFields.add("componentContactId");
 		excludeFields.add("contactId");
 		
