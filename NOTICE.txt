@@ -75,6 +75,10 @@ felix	Apache V2
 Elasticsearch	Apache V2
 passay dual licensed under both the LGPL v3 and Apache 2
 
+Testing only:
+
+Selenium Apache V2
+geckodriver MPL V2  (https://github.com/mozilla/geckodriver for source)
 
 
 
