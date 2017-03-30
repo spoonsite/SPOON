@@ -89,7 +89,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
-					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
+					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE"
+							&& !(visPanel.menus.expand.eventContext.isTagView && visPanel.menus.expand.eventContext.type === 'tag')) {
 						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
 								visPanel.menus.expand.eventContext.type,
 								visPanel.menus.expand.eventContext.name
@@ -187,15 +188,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			if (sprite.node && !sprite.nodeText) {
 				if (item.sprite.node.isTagView)
 				{
-					key = item.sprite.node.ownerKey;
-					type = item.sprite.node.ownerType;
+					key = item.sprite.node.ownerKey ? item.sprite.node.ownerKey : item.sprite.node.key;
+					type = item.sprite.node.ownerType ? item.sprite.node.ownerType : item.sprite.node.type;
 					name = item.sprite.node.name;
 					eventContext = {
 						sprite: item.sprite,
 						key: key,
 						type: type,
 						name: name,
-						detail: sprite.node.detail
+						detail: sprite.node.detail,
+						isTagView: item.sprite.node.isTagView
 					};
 				} else
 				{
@@ -207,7 +209,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						key: key,
 						type: type,
 						name: name,
-						detail: sprite.node.detail
+						detail: sprite.node.detail,
+						isTagView: item.sprite.node.isTagView
 					};
 				}
 				if (visPanel.viewStack.keys.includes(key))
@@ -495,7 +498,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						relationshipLabel: relationship.relationshipLabel,
 						targetKey: relationship.targetKey,
 						targetName: relationship.targetName,
-						targetType: relationship.targetEntityType
+						targetType: relationship.targetEntityType,
+						isTagView: (entityType === 'tag')
 					});
 				});
 
