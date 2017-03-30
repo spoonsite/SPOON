@@ -15,61 +15,87 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
-import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public interface ChangeLogService 
-	extends AsyncService
+public interface ChangeLogService
+		extends AsyncService
 {
+
 	/**
 	 * Finds changes and saves them
-	 * 
+	 *
 	 * @param <T>
 	 * @param original
 	 * @param updated
-	 * @return 
+	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)	
-	public <T extends BaseEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated);	
-	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated);
+
 	/**
 	 * Find changes (optional saves changes) between the original and the
 	 * updated entity
-	 * 
+	 *
 	 * @param <T>
 	 * @param original
 	 * @param updated
 	 * @param save
-	 * @return 
+	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)	
-	public <T extends BaseEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
-	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
+
 	/**
 	 * Save a added change record to parent entities history
-	 * 
+	 *
 	 * @param <T>
 	 * @param parentEntity
 	 * @param addedEntity
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public <T extends BaseEntity & LoggableModel> ChangeLog addEntityChange(T parentEntity, T addedEntity);
-	
+	public <T extends StandardEntity> ChangeLog addEntityChange(T addedEntity);
+
 	/**
-	 * 
+	 * Create a record for a remove entity (Sub-entity)
+	 *
 	 * @param <T>
 	 * @param parentEntity
 	 * @param temovedEntity
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public <T extends BaseEntity & LoggableModel> ChangeLog removeEntityChange(T parentEntity, T removedEntity);
-	
+	public <T extends StandardEntity> ChangeLog removeEntityChange(T removedEntity);
+
+	/**
+	 * This is used for the records deleting a set of (sub-entities)
+	 *
+	 * @param <T>
+	 * @param parentEntity
+	 * @param temovedEntity
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity> ChangeLog removedAllEntityChange(T exampleRemovedEntity);
+
+	/**
+	 * Logs and active status change in cases where that not handle in an
+	 * update.
+	 *
+	 * @param <T>
+	 * @param parentEntity
+	 * @param statusEntity
+	 * @param newStatus
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity> ChangeLog logStatusChange(final T statusEntity, String newStatus);
+
 }

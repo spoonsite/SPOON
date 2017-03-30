@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
@@ -99,15 +100,15 @@ public class ComponentMedia
 	public String uniqueKey()
 	{
 		String key = getMediaTypeCode()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getCaption()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getHideInDisplay()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getUsedInline()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
 		return key;
 	}
@@ -121,9 +122,10 @@ public class ComponentMedia
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
-		super.updateFields(entity);
-
 		ComponentMedia media = (ComponentMedia) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, media);
+
+		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(media.getLink())) {
 			this.setFileName(null);
@@ -166,14 +168,14 @@ public class ComponentMedia
 
 	@Override
 	public List<FieldChangeModel> findChanges(ComponentMedia updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("componentMediaId");
 		excludeFields.add("fileName");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
-	
+
 	public String getComponentMediaId()
 	{
 		return componentMediaId;

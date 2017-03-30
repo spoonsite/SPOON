@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -39,7 +40,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents a fragment of a section")
 public class ContentSubSection
 		extends StandardEntity<ContentSubSection>
-		implements LoggableModel<ContentSubSection>	
+		implements LoggableModel<ContentSubSection>
 {
 
 	@PK(generated = true)
@@ -90,9 +91,10 @@ public class ContentSubSection
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		ContentSubSection contentSubSection = (ContentSubSection) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contentSubSection);
 		super.updateFields(entity);
 
-		ContentSubSection contentSubSection = (ContentSubSection) entity;
 		setContent(contentSubSection.getContent());
 		setCustomFields(contentSubSection.getCustomFields());
 		setHideTitle(contentSubSection.getHideTitle());
@@ -106,14 +108,14 @@ public class ContentSubSection
 
 	@Override
 	public List<FieldChangeModel> findChanges(ContentSubSection updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("subSectionId");
 		excludeFields.add("contentSectionId");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
-	
+
 	public String getSubSectionId()
 	{
 		return subSectionId;

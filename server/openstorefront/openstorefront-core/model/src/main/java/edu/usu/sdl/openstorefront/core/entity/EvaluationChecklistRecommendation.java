@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import java.util.List;
 import java.util.Set;
@@ -67,22 +68,23 @@ public class EvaluationChecklistRecommendation
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, evaluationChecklistRecommendation);
 		super.updateFields(entity);
 
-		EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) entity;
 		setReason(evaluationChecklistRecommendation.getReason());
 		setRecommendation(evaluationChecklistRecommendation.getRecommendation());
 		setRecommendationType(evaluationChecklistRecommendation.getRecommendationType());
 
 	}
-	
+
 	@Override
 	public List<FieldChangeModel> findChanges(EvaluationChecklistRecommendation updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("recommendationId");
-		excludeFields.add("checklistId");	
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		excludeFields.add("checklistId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
 

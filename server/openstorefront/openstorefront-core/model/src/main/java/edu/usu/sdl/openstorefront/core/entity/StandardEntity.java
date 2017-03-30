@@ -57,6 +57,7 @@ public abstract class StandardEntity<T>
 	public static final String INACTIVE_STATUS = "I";
 	public static final String PENDING_STATUS = "P";
 
+	public static final String FIELD_ACTIVE_STATUS = "activeStatus";
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
 
@@ -97,17 +98,17 @@ public abstract class StandardEntity<T>
 	public StandardEntity()
 	{
 	}
-	
-	protected Set<String> excludedChangeFields() 
+
+	protected Set<String> excludedChangeFields()
 	{
 		Set<String> excludedFields = new HashSet<>();
-		
+
 		excludedFields.add("createUser");
 		excludedFields.add("createDts");
 		excludedFields.add("updateUser");
 		excludedFields.add("updateDts");
 		excludedFields.add("adminModified");
-		
+
 		return excludedFields;
 	}
 
@@ -128,7 +129,7 @@ public abstract class StandardEntity<T>
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		this.setSecurityMarkingType(entity.getSecurityMarkingType());
-		this.setDataSensitivity(entity.getDataSensitivity());		
+		this.setDataSensitivity(entity.getDataSensitivity());
 		if (entity.getActiveStatus() != null) {
 			this.setActiveStatus(entity.getActiveStatus());
 		}

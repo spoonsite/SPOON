@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
@@ -43,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent<ComponentResource>
-		implements LoggableModel<ComponentResource>			
+		implements LoggableModel<ComponentResource>
 {
 
 	@PK(generated = true)
@@ -83,7 +84,7 @@ public class ComponentResource
 	@ConsumeField
 	@APIDescription("This is used to indentify if a resource requires a login or CAC")
 	private Boolean restricted;
-	
+
 	public ComponentResource()
 	{
 	}
@@ -91,14 +92,14 @@ public class ComponentResource
 	@Override
 	public String uniqueKey()
 	{
-		String key = getResourceType() 
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+		String key = getResourceType()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getDescription()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getRestricted()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
 		return key;
 	}
@@ -112,9 +113,9 @@ public class ComponentResource
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
-		super.updateFields(entity);
-
 		ComponentResource resource = (ComponentResource) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, resource);
+		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(resource.getLink())) {
 			this.setFileName(null);
@@ -130,9 +131,7 @@ public class ComponentResource
 		this.setResourceType(resource.getResourceType());
 		this.setRestricted(resource.getRestricted());
 
-		
 	}
-	
 
 	@Override
 	public int customCompareTo(ComponentResource o)
@@ -163,14 +162,14 @@ public class ComponentResource
 
 	@Override
 	public List<FieldChangeModel> findChanges(ComponentResource updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("resourceId");
 		excludeFields.add("fileName");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
-	}		
-	
+	}
+
 	public String getResourceId()
 	{
 		return resourceId;

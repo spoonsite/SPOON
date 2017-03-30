@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -59,7 +60,7 @@ public class EvaluationChecklistResponse
 
 	@ConsumeField
 	private BigDecimal score;
-	
+
 	@ConsumeField
 	private Boolean notApplicable;
 
@@ -81,25 +82,26 @@ public class EvaluationChecklistResponse
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		EvaluationChecklistResponse checklistResponse = (EvaluationChecklistResponse) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, checklistResponse);
 		super.updateFields(entity);
 
-		EvaluationChecklistResponse checklistResponse = (EvaluationChecklistResponse) entity;
 		setPrivateNote(checklistResponse.getPrivateNote());
 		setResponse(checklistResponse.getResponse());
 		setScore(checklistResponse.getScore());
-		setNotApplicable(checklistResponse.getNotApplicable());		
+		setNotApplicable(checklistResponse.getNotApplicable());
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
 
 	}
-	
+
 	@Override
 	public List<FieldChangeModel> findChanges(EvaluationChecklistResponse updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("responseId");
-		excludeFields.add("checklistId");	
+		excludeFields.add("checklistId");
 		excludeFields.add("questionId");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
 

@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -110,6 +111,11 @@ public class SubComponentServiceImpl
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, T.INACTIVE_STATUS);
+			}
+
 			found.setActiveStatus(T.INACTIVE_STATUS);
 			found.setUpdateDts(TimeUtil.currentDate());
 			if (StringUtils.isBlank(updateUser)) {
@@ -129,6 +135,10 @@ public class SubComponentServiceImpl
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, T.ACTIVE_STATUS);
+			}
+
 			found.setActiveStatus(T.ACTIVE_STATUS);
 			found.populateBaseUpdateFields();
 			persistenceService.persist(found);
@@ -153,6 +163,10 @@ public class SubComponentServiceImpl
 			}
 			if (found instanceof ComponentMedia) {
 				removeLocalMedia((ComponentMedia) found);
+			}
+
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().removeEntityChange(found);
 			}
 
 			persistenceService.delete(found);
@@ -212,6 +226,10 @@ public class SubComponentServiceImpl
 					removeLocalMedia((ComponentMedia) mediaItem);
 				});
 			}
+			if (example instanceof LoggableModel) {
+				componentService.getChangeLogService().removedAllEntityChange(example);
+			}
+
 			persistenceService.deleteByExample(example);
 
 			if (updateComponentActivity) {
@@ -682,7 +700,7 @@ public class SubComponentServiceImpl
 	{
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
 		List<ComponentTag> tags = persistenceService.query(query, null);
-		tags = FilterEngine.filter(tags, true);		
+		tags = FilterEngine.filter(tags, true);
 		return tags;
 	}
 

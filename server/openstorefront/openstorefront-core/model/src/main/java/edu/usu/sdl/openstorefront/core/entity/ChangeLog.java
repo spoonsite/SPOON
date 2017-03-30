@@ -29,8 +29,11 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Internal record of changes that have been applied to an entity. Mainly for Components and Evaluations.")
 public class ChangeLog
-	extends StandardEntity<ChangeLog>		
+		extends StandardEntity<ChangeLog>
 {
+
+	public static final String REMOVED_ALL_ID = "-1";
+
 	@PK(generated = true)
 	@NotNull
 	private String changeLogId;
@@ -42,20 +45,20 @@ public class ChangeLog
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String entity;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String parentEntityId;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String parentEntity;
-	
+
 	private String field;
 	private String oldValue;
-	private String newValue;	
+	private String newValue;
 	private Integer version;
-	private String archivedExternalResourceId;	
+	private String archivedExternalResourceId;
 	private String archivedEntity;
-	
+
 	@ValidValueType(value = {}, lookupClass = ChangeType.class)
 	@FK(ChangeType.class)
 	private String changeType;
@@ -183,5 +186,5 @@ public class ChangeLog
 	{
 		this.parentEntity = parentEntity;
 	}
-	
+
 }

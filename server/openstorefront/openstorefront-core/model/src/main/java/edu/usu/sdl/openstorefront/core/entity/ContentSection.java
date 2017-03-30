@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -85,9 +86,10 @@ public class ContentSection
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		ContentSection contentSection = (ContentSection) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contentSection);
 		super.updateFields(entity);
 
-		ContentSection contentSection = (ContentSection) entity;
 		setContent(contentSection.getContent());
 		setEntity(contentSection.getEntity());
 		setEntityId(contentSection.getEntityId());
@@ -100,15 +102,15 @@ public class ContentSection
 
 	@Override
 	public List<FieldChangeModel> findChanges(ContentSection updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("contentSectionId");
 		excludeFields.add("entityId");
 		excludeFields.add("entity");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
-	}		
-	
+	}
+
 	public String getContentSectionId()
 	{
 		return contentSectionId;

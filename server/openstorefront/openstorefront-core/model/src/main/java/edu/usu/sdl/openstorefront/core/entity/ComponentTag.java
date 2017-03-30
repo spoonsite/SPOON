@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -34,8 +35,9 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents a tag")
 public class ComponentTag
 		extends BaseComponent<ComponentTag>
-		implements LoggableModel<ComponentTag>			
+		implements LoggableModel<ComponentTag>
 {
+
 	public static final String FIELD_TEXT = "text";
 
 	@PK(generated = true)
@@ -67,22 +69,23 @@ public class ComponentTag
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentTag tag = (ComponentTag) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, tag);
 		super.updateFields(entity);
 
-		ComponentTag tag = (ComponentTag) entity;
 		this.setText(tag.getText());
 
 	}
 
 	@Override
 	public List<FieldChangeModel> findChanges(ComponentTag updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("tagId");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
-	}	
-	
+	}
+
 	public String getTagId()
 	{
 		return tagId;

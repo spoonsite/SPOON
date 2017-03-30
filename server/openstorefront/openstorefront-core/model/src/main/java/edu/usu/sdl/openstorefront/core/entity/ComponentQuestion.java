@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -84,21 +85,22 @@ public class ComponentQuestion
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentQuestion componentQuestion = (ComponentQuestion) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, componentQuestion);
 		super.updateFields(entity);
 
-		ComponentQuestion componentQuestion = (ComponentQuestion) entity;
 		this.setOrganization(componentQuestion.getOrganization());
 		this.setQuestion(componentQuestion.getQuestion());
 		this.setUserTypeCode(componentQuestion.getUserTypeCode());
 
 	}
-	
+
 	@Override
 	public List<FieldChangeModel> findChanges(ComponentQuestion updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("questionId");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
 

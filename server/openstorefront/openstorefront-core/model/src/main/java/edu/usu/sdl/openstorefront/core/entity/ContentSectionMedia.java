@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import java.io.File;
 import java.nio.file.Path;
@@ -39,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Section Media")
 public class ContentSectionMedia
 		extends StandardEntity<ContentSectionMedia>
-		implements LoggableModel<ContentSectionMedia>		
+		implements LoggableModel<ContentSectionMedia>
 {
 
 	@PK(generated = true)
@@ -49,7 +50,7 @@ public class ContentSectionMedia
 	@NotNull
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@FK(ContentSection.class)	
+	@FK(ContentSection.class)
 	private String contentSectionId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -71,9 +72,9 @@ public class ContentSectionMedia
 	private String mimeType;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String caption;
-	
+
 	@NotNull
 	@ConsumeField
 	private Boolean privateMedia;
@@ -85,9 +86,9 @@ public class ContentSectionMedia
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity);
-
 		ContentSectionMedia contentSectionMedia = (ContentSectionMedia) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contentSectionMedia);
+		super.updateFields(entity);
 
 		setContentSectionMediaId(contentSectionMedia.contentSectionMediaId);
 		setFileName(contentSectionMedia.getFileName());
@@ -95,7 +96,7 @@ public class ContentSectionMedia
 		setMimeType(contentSectionMedia.getMimeType());
 		setOriginalName(contentSectionMedia.getOriginalName());
 		setPrivateMedia(contentSectionMedia.getPrivateMedia());
-		setCaption(contentSectionMedia.getCaption());		
+		setCaption(contentSectionMedia.getCaption());
 	}
 
 	/**
@@ -113,17 +114,17 @@ public class ContentSectionMedia
 		}
 		return path;
 	}
-	
+
 	@Override
 	public List<FieldChangeModel> findChanges(ContentSectionMedia updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("contentSectionMediaId");
 		excludeFields.add("contentSectionId");
 		excludeFields.add("fileName");
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
-	}		
+	}
 
 	public String getContentSectionMediaId()
 	{

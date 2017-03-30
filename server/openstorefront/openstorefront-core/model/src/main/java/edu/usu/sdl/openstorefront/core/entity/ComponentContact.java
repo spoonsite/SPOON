@@ -125,9 +125,11 @@ public class ComponentContact
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentContact contact = (ComponentContact) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contact);
+
 		super.updateFields(entity);
 
-		ComponentContact contact = (ComponentContact) entity;
 		this.setContactId(contact.getContactId());
 		this.setContactType(contact.getContactType());
 		this.setEmail(contact.getEmail());
@@ -137,22 +139,22 @@ public class ComponentContact
 		this.setPhone(contact.getPhone());
 
 	}
-	
+
 	@Override
 	public List<FieldChangeModel> findChanges(ComponentContact updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("componentContactId");
 		excludeFields.add("contactId");
-		
+
 		//covered in contact
 		excludeFields.add("firstName");
 		excludeFields.add("lastName");
 		excludeFields.add("email");
 		excludeFields.add("phone");
 		excludeFields.add("organization");
-		
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
 
