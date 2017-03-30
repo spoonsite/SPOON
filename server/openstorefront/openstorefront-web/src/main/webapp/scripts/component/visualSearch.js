@@ -141,19 +141,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var sprite = item && item.sprite;
 			if (sprite.node) {
 				//console.log("Name: " + (sprite.node.name ? sprite.node.name : sprite.node.targetName) + " xy: " + sprite.x + ', ' + sprite.y);
-
+				var type = undefined;
 				if (sprite.node.hoverText)
 				{
 					type = sprite.node.hoverText;
 				} else
 				{
-					var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
-					if (type === 'component') {
-						type = 'Entry';
-					}
-					if (type === 'attribute') {
-						type = 'Attribute/Vital';
-					}
+					type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
+
+				}
+				if (type === 'component') {
+					type = 'Entry';
+				}
+				if (type === 'attribute') {
+					type = 'Attribute/Vital';
 				}
 				var tipXY = event.xy;
 				tipXY[0] += 20;
@@ -179,17 +180,36 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spriteclick', function (item, event, opts) {
 			var sprite = item && item.sprite;
 
+			var key = undefined;
+			var type = undefined;
+			var name = undefined;
+			var eventContext = undefined;
 			if (sprite.node && !sprite.nodeText) {
-				var key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
-				var type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
-				var name = item.sprite.node.name ? item.sprite.node.name : item.sprite.node.targetName;
-				var eventContext = {
-					sprite: item.sprite,
-					key: key,
-					type: type,
-					name: name,
-					detail: sprite.node.detail
-				};
+				if (item.sprite.node.isTagView)
+				{
+					key = item.sprite.node.ownerKey;
+					type = item.sprite.node.ownerType;
+					name = item.sprite.node.name;
+					eventContext = {
+						sprite: item.sprite,
+						key: key,
+						type: type,
+						name: name,
+						detail: sprite.node.detail
+					};
+				} else
+				{
+					key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
+					type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
+					name = item.sprite.node.name;
+					eventContext = {
+						sprite: item.sprite,
+						key: key,
+						type: type,
+						name: name,
+						detail: sprite.node.detail
+					};
+				}
 				if (visPanel.viewStack.keys.includes(key))
 				{
 					if (visPanel.menus.collapse.items.length === 1)
@@ -502,7 +522,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});
 
-		visPanel.initVisual(visPanel.viewData, entityType === 'tag');
+		visPanel.initVisual(visPanel.viewData);
 	},
 
 	removeNodes: function (nodeKeysToRemove) {
@@ -669,12 +689,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							relationshipLabel: '',
 							targetKey: tagview.text,
 							targetName: tagview.text,
-							targetType: 'tag'
+							targetType: 'tag',
+							isTagView: true
 						});
 					});
 
 					visPanel.viewData = visPanel.viewData.concat(viewData);
-					visPanel.initVisual(visPanel.viewData, true);
+					visPanel.initVisual(visPanel.viewData);
 				}
 			});
 		};
@@ -738,10 +759,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								iconCls: 'fa fa-lg fa-check icon-button-color-save',
 								handler: function () {
 									var promptWindow = this.up('window');
-									var orgCb = promptWindow.getComponent('tag');
-									if (orgCb.getValue()) {
-										tagLoad(orgCb.getValue());
-										visPanel.updateAttribute(orgCb.getValue());
+									var tagCb = promptWindow.getComponent('tag');
+									if (tagCb.getValue()) {
+										tagLoad(tagCb.getValue());
+										visPanel.updateAttribute(tagCb.getValue());
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -1002,7 +1023,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	initVisual: function (viewData, isTagView = false) {
+	initVisual: function (viewData) {
 		var visPanel = this;
 
 		//group and sort data
@@ -1017,6 +1038,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: node.type,
 					detail: node.relationType === "ATTRIBUTE_CODE" && node.type === "attribute" ? "ATTRIBUTE_TYPE" : undefined,
 					isHub: false,
+					isTagView: node.isTagView,
 					edges: []
 				});
 				nodeKeys[node.key] = true;
@@ -1028,6 +1050,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: node.targetType,
 					detail: node.relationType,
 					isHub: false,
+					isTagView: node.isTagView,
 					edges: []
 				});
 				nodeKeys[node.targetKey] = true;
@@ -1035,7 +1058,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		});
 		Ext.Array.each(viewData, function (relationship) {
 			var targetNode = Ext.Array.findBy(nodes, function (node) {
-				if (isTagView) {
+				if (node.isTagView) {
 					if (node.key === relationship.key) {
 						return true;
 					} else {
@@ -1063,7 +1086,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 
 			var ownerNode = Ext.Array.findBy(nodes, function (node) {
-				if (isTagView) {
+				if (node.isTagView) {
 					if (node.key === relationship.targetKey) {
 						return true;
 					} else {
@@ -1092,7 +1115,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: relationship.relationshipLabel,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType: targetNode.type
+						ownerType: targetNode.type,
+						isTagView: ownerNode.isTagView
 					});
 					targetNode.name = relationship.relationshipLabel;
 				} else if (relationship.targetType === 'organization') {
@@ -1103,9 +1127,21 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: targetNode.name,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType: targetNode.type
+						ownerType: targetNode.type,
+						isTagView: ownerNode.isTagView
 					});
 					targetNode.name = 'organization';
+				} else if (ownerNode.isTagView && relationship.targetType === 'tag') {
+					ownerNode.edges.push({
+						targetKey: relationship.targetKey,
+						ownerKey: relationship.key,
+						relationshipLabel: relationship.relationshipLabel,
+						name: targetNode.name,
+						type: relationship.targetType,
+						ownerType: targetNode.type,
+						hoverText: targetNode.type,
+						isTagView: ownerNode.isTagView
+					});
 				} else
 				{
 					ownerNode.edges.push({
@@ -1114,7 +1150,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						relationshipLabel: relationship.relationshipLabel,
 						name: targetNode.name,
 						type: relationship.targetType,
-						ownerType: targetNode.type
+						ownerType: targetNode.type,
+						isTagView: ownerNode.isTagView
 					});
 				}
 			}
@@ -1414,10 +1451,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var generation = 1;
 			Ext.Array.each(node.edges, function (edgeNode) {
 
-				if ((isTagView && !renderNodes[edgeNode.ownerKey]) || !renderNodes[edgeNode.targetKey]) {
+				if ((edgeNode.isTagView && !renderNodes[edgeNode.ownerKey]) || !renderNodes[edgeNode.targetKey]) {
 
 					var targetNode = Ext.Array.findBy(nodes, function (item) {
-						if (isTagView)
+						if (edgeNode.isTagView)
 						{
 							if (item.key === edgeNode.ownerKey) {
 								return true;
@@ -1444,7 +1481,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					targetNode.positionY = point.y;
 
 					var baseNode = componentNode;
-					var nodeType = isTagView ? edgeNode.ownerType : edgeNode.type;
+					var nodeType = edgeNode.isTagView ? edgeNode.ownerType : edgeNode.type;
 					if (nodeType === 'tag') {
 						baseNode = tagNode;
 						targetNode.nodeSize = baseNode.size;
@@ -1468,7 +1505,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					hub.addNode(targetNodeSprite);
 
 					var targetNodeTextSprite;
-					if (isTagView)
+					if (edgeNode.isTagView)
 					{
 						targetNodeTextSprite = Ext.apply({}, {
 							x: targetNode.positionX,
@@ -1501,7 +1538,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					} while (usedRotations.includes(rotation));
 					usedRotations.push(rotation);
 
-					if (isTagView)
+					if (edgeNode.isTagView)
 					{
 						renderNodes[edgeNode.ownerKey] = true;
 					} else
@@ -1824,7 +1861,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 		if (visPanel.completedInit) {
 			visPanel.completedInit(nodes);
-	}
+		}
 
 	},
 
