@@ -47,6 +47,7 @@ public class Component
 		extends StandardEntity<Component>
 		implements OrganizationModel, LoggableModel<Component>
 {
+
 	public static final String FIELD_NAME = "name";
 
 	@PK(generated = true)
@@ -220,7 +221,7 @@ public class Component
 
 	@Override
 	public List<FieldChangeModel> findChanges(Component updated)
-	{	
+	{
 		Set<String> excludeFields = excludedChangeFields();
 		excludeFields.add("fileHistoryId");
 		excludeFields.add("recordVersion");
@@ -228,11 +229,11 @@ public class Component
 		excludeFields.add("lastModificationType");
 		excludeFields.add("lastActivityDts");
 		excludeFields.add("componentId");
-		
-		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);				
+
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
 	}
-	
+
 	public String getName()
 	{
 		return name;
