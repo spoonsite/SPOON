@@ -199,7 +199,7 @@
 					
 					var addUserWin = Ext.create('Ext.window.Window', {
 						title: 'Add User',
-						iconCls: 'fa fa-user',
+						iconCls: 'fa fa-user-plus',
 						closeAction: 'destroy',
 						modal: true,
 						width: '700px',

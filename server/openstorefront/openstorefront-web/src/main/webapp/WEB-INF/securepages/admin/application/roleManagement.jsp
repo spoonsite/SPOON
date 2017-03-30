@@ -720,7 +720,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSensitivityGrid',
-												title: 'Available',
+												title: 'Restricted <i class="fa fa-question-circle"  data-qtip="Drag record to add to ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -751,7 +751,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to Add to Role'
+														dragText: 'Add: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
@@ -762,7 +763,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSensitivitiesInRoleGrid',
-												title: 'In Role',
+												title: 'Accessible <i class="fa fa-question-circle"  data-qtip="Drag record to remove from ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -771,7 +772,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to <b>Available</b> to delete from <b>In Role</b>'
+														dragText: 'Remove: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
