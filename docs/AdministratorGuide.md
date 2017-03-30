@@ -171,17 +171,22 @@ To
 
 The user types are:
 
--   User: This is restricted user that constitutes a normal user of
-    the application.
+Are defined as based on the roles they belong to.  
+If using the built-in security then the system will create default roles for 
+default users, admins and evaluators.  It will create a default admin user: (admin / Secret1@)
 
--   Administrator: This is an unrestricted user that can use the
-    administrator tools in the application.
+**WARNING** You should change the admin password after login in.
+
 
 ##2.2  Integration External LDAP (User Syncing)
 ----------------------------------------
 
 When a user is not located in the external management system then the
 user profile in the application will be deactivated.
+
+The Security Policy in the application now allows for disabling user information editing. (Optional)
+This allow the external LDAP/Active Directory to be sole source of user information.
+Information will be synced at login and periodically according to teh user sync job.
 
 Warning: This will not prevent login! Upon login the user profile will
 be reactivated. To prevent login, refer to the external user management
@@ -191,6 +196,11 @@ there.
 Configure in: /var/openstorefront/config/openstorefront.properties
 
 ( **Property** -description ( **Default** ))
+
+Also need to set the following properties to activate the feature:
+-	**external.sync.activate**			- Set to true to activate
+-	**external.usermanager**			- LdapUserManager
+
 
 -   **ldapmanager.url**                       -Full URL to the LDAP (ldap://ldapHost:389 or ldap://localhost:389/o=JNDITutorial)   
 -   **ldapmanager.userDnTemplate**   -         uid={0},ou=users,dc=mycompany,dc=com; Reserved, not currently used                  

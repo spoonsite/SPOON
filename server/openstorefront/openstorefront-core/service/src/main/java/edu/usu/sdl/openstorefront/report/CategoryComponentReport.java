@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -24,8 +25,10 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +97,9 @@ public class CategoryComponentReport
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
+			components = FilterEngine.filter(components);
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
+			
 			for (Component component : components) {
 				List<String> data = new ArrayList<>();
 				data.add("");
@@ -147,7 +153,9 @@ public class CategoryComponentReport
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
-
+			components = FilterEngine.filter(components);
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
+			
 			if (!report.dataIdSet().isEmpty()) {
 				components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 			}

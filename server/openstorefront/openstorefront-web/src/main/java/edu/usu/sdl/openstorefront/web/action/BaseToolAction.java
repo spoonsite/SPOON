@@ -15,8 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.web.model.PageModel;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import org.apache.commons.lang.StringUtils;
@@ -30,23 +34,33 @@ public abstract class BaseToolAction
 {
 
 	protected String load;
-	protected Map<String, String> pageMap = new HashMap<>();
+	protected Map<String, PageModel> pageMap = new HashMap<>();
+	protected String headerPage;
 
-	protected Resolution handleLoadPage(boolean user)
+	protected Resolution handleLoadPage(String headerPage)
 	{
 		String newPage = "/WEB-INF/securepages/shared/dashboard.jsp";
+		
+		this.setHeaderPage(headerPage);
 
-		String page = getPageMap().get(load);
-		if (StringUtils.isNotBlank(page)) {
-			newPage = page;
+		PageModel page = getPageMap().get(load);
+		if (page != null && page.getRoles() != null) 
+		{
+			if (SecurityUtil.hasPermission(page.getRoles()) == false) {
+				return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Missing permisson to access page.");
+			}
+		}
+		
+		if (page != null && StringUtils.isNotBlank(page.getPage())) {
+			newPage = page.getPage();
 		}
 
-		return new ForwardResolution(newPage).addParameter("user", user);
+		return new ForwardResolution(newPage);
 	}
 
-	public abstract Map<String, String> getPageMap();
+	public abstract Map<String, PageModel> getPageMap();
 
-	public void setPageMap(Map<String, String> pageMap)
+	public void setPageMap(Map<String, PageModel> pageMap)
 	{
 		this.pageMap = pageMap;
 	}
@@ -59,6 +73,16 @@ public abstract class BaseToolAction
 	public void setLoad(String load)
 	{
 		this.load = load;
+	}
+
+	public String getHeaderPage()
+	{
+		return headerPage;
+	}
+
+	public void setHeaderPage(String headerPage)
+	{
+		this.headerPage = headerPage;
 	}
 
 }

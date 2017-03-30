@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
@@ -608,6 +609,14 @@ public class SecurityServiceImpl
 					persistenceService.delete(userRole);
 				}
 			}
+						
+			String query = "update " + Evaluation.class.getSimpleName() + " set assignedGroup = null where assignedGroup = :rolename";
+			Map<String, Object> evalQueryParams = new HashMap<>();
+			evalQueryParams.put("rolename", securityRole.getRoleName());
+			
+			int updatedCount = persistenceService.runDbCommand(query, evalQueryParams);
+			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{updatedCount, securityRole.getRoleName()}));
+			
 			persistenceService.delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
@@ -753,7 +762,9 @@ public class SecurityServiceImpl
 			persistenceService.deleteByExample(userRegistration);
 
 			getUserService().deleteProfile(username);
-
+			
+			//Evaluation assigned to user should be fine and can be reassigned later. There profile will just be inactive.
+			
 			persistenceService.delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));

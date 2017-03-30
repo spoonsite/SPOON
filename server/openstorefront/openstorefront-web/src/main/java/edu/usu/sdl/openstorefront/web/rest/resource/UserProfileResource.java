@@ -193,7 +193,7 @@ public class UserProfileResource
 			if (StringUtils.isNotBlank(userProfile.getFirstName())) {
 				name = userProfile.getFirstName() + ", " + userProfile.getLastName();
 			}
-			String email = StringUtils.isNotBlank(userProfile.getEmail()) ? "(" + userProfile.getEmail() + ")" : "";
+			String email = StringUtils.isNotBlank(userProfile.getEmail()) ? " (" + userProfile.getEmail() + ")" : "";
 			lookupModel.setDescription(name + email);
 			profiles.add(lookupModel);
 		}

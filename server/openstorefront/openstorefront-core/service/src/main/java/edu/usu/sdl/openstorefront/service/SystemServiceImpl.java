@@ -68,6 +68,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -169,7 +170,19 @@ public class SystemServiceImpl
 		}
 		if (existing != null)
 		{
+			Date existingUpdateDts = existing.getUpdateDts();
+			boolean useOldUpdateDts = false;
+			if (existing.hasChange(highlight) == false)
+			{
+				useOldUpdateDts = true;
+			}
 			existing.updateFields(highlight);
+
+			if (useOldUpdateDts)
+			{
+				existing.setUpdateDts(existingUpdateDts);
+			}
+
 			persistenceService.persist(existing);
 		}
 		else

@@ -33,7 +33,8 @@ import org.apache.commons.beanutils.BeanUtils;
 public class EvaluationView
 		extends Evaluation
 {
-
+	public static final String FIELD_COMPONENT_NAME = "componentName";
+	
 	private String componentName;
 	private String workflowStatusDescription;
 	

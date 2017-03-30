@@ -22,7 +22,7 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 		</stripes:layout-render>			
 		
         <script type="text/javascript">
@@ -490,6 +490,12 @@
 									if (scheduleData.data.reportOption.category) {
 										Ext.getCmp('categorySelect').setValue(scheduleData.data.reportOption.category);
 									}
+									if (scheduleData.data.reportOption.assignedUser) {
+										Ext.getCmp('assignedUser').setValue(scheduleData.data.reportOption.assignedUser);
+									}
+									if (scheduleData.data.reportOption.assignedGroup) {
+										Ext.getCmp('assignedGroup').setValue(scheduleData.data.reportOption.assignedGroup);
+									}
 									if (scheduleData.data.reportOption.maxWaitSeconds) {
 										Ext.getCmp('waitSeconds').setValue(scheduleData.data.reportOption.maxWaitSeconds);
 									}
@@ -631,6 +637,9 @@
 						Ext.getCmp('startDate').setHidden(true);
 						Ext.getCmp('endDate').setHidden(true);
 						Ext.getCmp('previousDaysSelect').setHidden(true);
+						Ext.getCmp('assignedUser').setHidden(true);
+						Ext.getCmp('assignedGroup').setHidden(true);						
+						
 						Ext.getCmp('waitSeconds').setValue('');
 						Ext.getCmp('filterForEntries').setValue('');
 						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();											
@@ -658,6 +667,10 @@
 							Ext.getCmp('endDate').setHidden(false);
 							Ext.getCmp('previousDaysSelect').setHidden(false);
 						}
+						else if (rType === 'EVALSTAT') {							
+							Ext.getCmp('assignedUser').setHidden(false);
+							Ext.getCmp('assignedGroup').setHidden(false);
+						}
 						else if (rType === 'USER' || rType === 'ORGANIZATION') {
 							//Do nothing just the base form which is already active.
 						}
@@ -669,7 +682,7 @@
 					// 
 					//
 					Ext.create('Ext.window.Window', {
-						title: 'Add/Edit Scheduled Report',
+						title: 'Schedule Report',
 						id: 'scheduleReportWin',
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
@@ -695,9 +708,9 @@
 										xtype: 'toolbar',
 										items: [
 											{
-												text: 'Save',
+												text: 'Run Report',
 												formBind: true,
-												iconCls: 'fa fa-lg fa-save icon-button-color-save',
+												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 												handler: function () {
 
 													var data = {};
@@ -717,6 +730,12 @@
 													if (Ext.getCmp('categorySelect').isVisible()) {
 														reportOpt.category = Ext.getCmp('categorySelect').getValue();
 													}
+													if (Ext.getCmp('assignedUser').isVisible()) {
+														reportOpt.assignedUser = Ext.getCmp('assignedUser').getValue();
+													}													
+													if (Ext.getCmp('assignedGroup').isVisible()) {
+														reportOpt.assignedGroup = Ext.getCmp('assignedGroup').getValue();
+													}													
 
 													if (Ext.getCmp('startDate').isVisible()) {
 
@@ -734,6 +753,7 @@
 													if (Ext.getCmp('waitSeconds').isVisible()) {
 														reportOpt.maxWaitSeconds = Ext.getCmp('waitSeconds').getValue();
 													}
+												
 													data.reportOption = reportOpt;
 
 													if (data.scheduleIntervalDays === null)
@@ -961,6 +981,64 @@
 												}
 											}
 										}
+									},	
+									{
+										xtype: 'combobox',
+										id: 'assignedUser',
+										name: 'assignedUser',
+										fieldLabel: 'Assigned User',
+										displayField: 'description',
+										valueField: 'code',								
+										emptyText: 'All',
+										labelAlign: 'top',
+										width: '100%',
+										editable: false,
+										hidden: true,
+										forceSelection: true,
+										store: {									
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/userprofiles/lookup'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													store.add({
+														code: null,
+														description: 'All'
+													});
+												}
+											}									
+										}										
+									},
+									{
+										xtype: 'combobox',
+										id: 'assignedGroup',
+										name: 'assignedGroup',
+										fieldLabel: 'Assign to Group',
+										displayField: 'description',
+										valueField: 'code',								
+										emptyText: 'All',
+										labelAlign: 'top',
+										width: '100%',
+										hidden: true,
+										editable: false,
+										forceSelection: true,
+										store: {									
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/securityroles/lookup'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													store.add({
+														code: null,
+														description: 'All'
+													});
+												}
+											}
+										}									
 									},									
 									{
 										xtype: 'gridpanel',

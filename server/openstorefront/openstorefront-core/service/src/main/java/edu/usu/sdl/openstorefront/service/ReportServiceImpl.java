@@ -62,6 +62,7 @@ public class ReportServiceImpl
 		report.setRunStatus(RunStatus.PENDING);
 		report.populateBaseCreateFields();
 		report = persistenceService.persist(report);
+		report = persistenceService.deattachAll(report);
 		return report;
 	}
 

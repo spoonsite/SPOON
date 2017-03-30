@@ -95,14 +95,23 @@
 							items: [
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Allow JSON-P Support',
-									toolTip: 'JSON-P allow external javascript application access the API',
+									boxLabel: 'Disable User Information Editing <i class="fa fa-question-circle" data-qtip="User must edit their information externally.<br>This also enable sync information with an external system."></i>',								
+									name: 'disableUserInfoEdit'
+								},		
+								{
+									xtype: 'textfield',
+									name: 'externalUserManagementText',
+									fieldLabel: 'External User Management Note <i class="fa fa-question-circle" data-qtip="This creates a message about how the user can update there user information."></i>',									
+									maxLength: 255
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Allow JSON-P Support <i class="fa fa-question-circle" data-qtip="JSON-P allow external javascript application access the API"></i>',									
 									name: 'allowJSONPSupport'
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'CSRF Support',
-									toolTip: 'Cross Site Request Forgery protection; May intefer with CORS.',
+									boxLabel: 'CSRF Support <i class="fa fa-question-circle" data-qtip="Cross Site Request Forgery protection; May intefer with CORS."></i>',
 									name: 'csrfSupport'
 								},
 								{
@@ -143,26 +152,22 @@
 							items: [
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Allow User Registration',
-									toolTip: 'Allow Registration',
+									boxLabel: 'Allow User Registration',									
 									name: 'allowRegistration'									
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Require Proof Citzenship',
-									toolTip: 'User must provide citzenship information before approval.',
+									boxLabel: 'Require Proof Citzenship <i class="fa fa-question-circle" data-qtip="User must provide citzenship information before approval."></i>',								
 									name: 'requiresProofOfCitizenship'									
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Auto Approve Users',
-									toolTip: 'Approve new user automatically.',
+									boxLabel: 'Auto Approve Users <i class="fa fa-question-circle" data-qtip="Approve new user automatically."></i>',								
 									name: 'autoApproveUsers'									
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Require an Admin to unlock',
-									toolTip: 'Require an Admin to unlock a locked account.',
+									boxLabel: 'Require an Admin to unlock <i class="fa fa-question-circle" data-qtip="Require an Admin to unlock a locked account."></i>',									
 									name: 'requireAdminUnlock'	
 								},
 								{
@@ -170,21 +175,21 @@
 									fieldLabel: 'Reset Timeout (Minutes)',
 									name: 'resetLockoutTimeMinutes',
 									minValue: 1,
-									maxValue: 1440,
+									maxValue: 1440
 								},
 								{
 									xtype: 'numberfield',
 									fieldLabel: 'Login Max Failed Attempt',
 									name: 'loginLockoutMaxAttempts',
 									minValue: 0,
-									maxValue: 25,
+									maxValue: 25
 								},
 								{
 									xtype: 'numberfield',
-									fieldLabel: 'Login Max Failed Attempt',
+									fieldLabel: 'Minimum password length',
 									name: 'minPasswordLength',
 									minValue: 0,
-									maxValue: 80,
+									maxValue: 80
 								}	
 							]
 						}

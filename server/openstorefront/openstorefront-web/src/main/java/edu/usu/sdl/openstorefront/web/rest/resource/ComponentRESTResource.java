@@ -652,7 +652,7 @@ public class ComponentRESTResource
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (!SecurityUtil.isAdminUser()) {
+		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
@@ -1301,7 +1301,7 @@ public class ComponentRESTResource
 	@POST
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentContact.class)
+	@DataType(ComponentAttribute.class)
 	@Path("/{id}/attributes")
 	public Response addComponentAttribute(
 			@PathParam("id")

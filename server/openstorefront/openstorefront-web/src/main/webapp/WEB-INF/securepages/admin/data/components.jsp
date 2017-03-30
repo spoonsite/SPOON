@@ -302,7 +302,7 @@
 									},
 									{
 										text: 'Integration',
-										id: 'integrationBtn',
+										itemId: 'integrationBtn',
 										iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction icon-button-color-default',
 										disabled: true,
 										handler: function() {
@@ -421,12 +421,14 @@
 																		});
 																		record.set(data);
 																	}
-
+																	
+																	// Remove Loading Mask
+																	form.setLoading(false);
+																	mainAddEditWin.close();
+																	
 																	// Refresh Add/Edit Window
 																	actionAddEditComponent(record);
 
-																	// Remove Loading Mask
-																	form.setLoading(false);
 																}
 															});	
 														},
@@ -633,7 +635,8 @@
 									{
 										xtype: 'datefield',
 										fieldLabel: 'Release Date',
-										name: 'releaseDate'									
+										name: 'releaseDate',
+										submitFormat: 'Y-m-d\\TH:i:s.u'
 									},
 									{
 										xtype: 'textfield',
@@ -2111,9 +2114,12 @@
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(mainAddEditWin, record);
 						mainAddEditWin.generalForm.loadRecord(record);
-						handleAttributes(record.get('componentType'));	
-						mainAddEditWin.generalForm.loadComponentAttributes();
-						Ext.getCmp('integrationBtn').setDisabled(false);						
+						handleAttributes(record.get('componentType'));
+						Ext.defer(function(){
+							mainAddEditWin.generalForm.loadComponentAttributes();
+						}, 250);
+						
+						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);						
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						
@@ -2121,7 +2127,7 @@
 						requiredStore.removeAll();
 												
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 
-						Ext.getCmp('integrationBtn').setDisabled(true);
+						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(true);
 						
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');

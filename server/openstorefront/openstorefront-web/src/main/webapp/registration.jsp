@@ -96,6 +96,12 @@
 									minLength: 8
 								},
 								{
+									xtype: 'panel',
+									html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
+										  '<li>At least 1 Number</li>' +
+										  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+								},
+								{
 									xtype: 'textfield',
 									fieldLabel: 'Confirm Password <span class="field-required" />',
 									inputType: 'password',
@@ -230,7 +236,7 @@
 																										
 													var message = '<h2>Account was created Successfully.</h2>';													
 													if (!${autoApprove}) {
-														message += '<br><br><i class="fa fa-2x fa-warning text-warning"></i> An Admin must approve the account before the account is activated.<br><br>An rmail will be sent when the account is approved.';
+														message += '<br><br><i class="fa fa-2x fa-warning text-warning"></i> An Admin must approve the account before the account is activated.<br><br>An email will be sent when the account is approved.';
 													} else {
 														message += '<br><br> Login to continue';
 													}
