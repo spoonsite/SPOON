@@ -812,7 +812,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				modal: true,
 				closeMode: 'destory',
 				width: 500,
-				height: 150,
+				height: 200,
 				bodyStyle: 'padding: 10px;',
 				layout: 'anchor',
 				items: [
@@ -846,7 +846,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							},
 							{
 								text: 'Show',
-								iconCls: 'fa fa-check',
+								iconCls: 'fa fa-lg fa-check icon-button-color-save',
 								handler: function () {
 									var promptWindow = this.up('window');
 									var orgCb = promptWindow.getComponent('organization');
@@ -921,7 +921,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				modal: true,
 				closeMode: 'destory',
 				width: 400,
-				height: 150,
+				height: 200,
 				bodyStyle: 'padding: 10px;',
 				layout: 'anchor',
 				items: [
@@ -963,7 +963,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							},
 							{
 								text: 'Show',
-								iconCls: 'fa fa-check',
+								iconCls: 'fa fa-lg fa-check icon-button-color-save',
 								handler: function () {
 									var promptWindow = this.up('window');
 									var attributeTypeCb = promptWindow.getComponent('attributeType');
