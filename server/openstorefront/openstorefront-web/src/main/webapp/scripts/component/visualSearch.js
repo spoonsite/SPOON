@@ -1092,7 +1092,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: relationship.relationshipLabel,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType : targetNode.type
+						ownerType: targetNode.type
 					});
 					targetNode.name = relationship.relationshipLabel;
 				} else if (relationship.targetType === 'organization') {
@@ -1103,7 +1103,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: targetNode.name,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType : targetNode.type
+						ownerType: targetNode.type
 					});
 					targetNode.name = 'organization';
 				} else
@@ -1114,7 +1114,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						relationshipLabel: relationship.relationshipLabel,
 						name: targetNode.name,
 						type: relationship.targetType,
-						ownerType : targetNode.type
+						ownerType: targetNode.type
 					});
 				}
 			}
@@ -1467,14 +1467,27 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					sprites.push(targetNodeSprite);
 					hub.addNode(targetNodeSprite);
 
-					var targetNodeTextSprite = Ext.apply({}, {
-						x: targetNode.positionX,
-						y: targetNode.positionY + nodeRadius + 20,
-						text: Ext.util.Format.ellipsis(targetNode.name, 20),
-						node: edgeNode,
-						targetNode: targetNode,
-						nodeText: true
-					}, textNode);
+					var targetNodeTextSprite;
+					if (isTagView)
+					{
+						targetNodeTextSprite = Ext.apply({}, {
+							x: targetNode.positionX,
+							y: targetNode.positionY + nodeRadius + 20,
+							text: Ext.util.Format.ellipsis(targetNode.name, 20),
+							node: targetNode,
+							targetNode: edgeNode,
+							nodeText: true
+						}, textNode);
+					} else {
+						targetNodeTextSprite = Ext.apply({}, {
+							x: targetNode.positionX,
+							y: targetNode.positionY + nodeRadius + 20,
+							text: Ext.util.Format.ellipsis(targetNode.name, 20),
+							node: edgeNode,
+							targetNode: targetNode,
+							nodeText: true
+						}, textNode);
+					}
 					sprites.push(targetNodeTextSprite);
 					hub.addNode(targetNodeTextSprite);
 					do
