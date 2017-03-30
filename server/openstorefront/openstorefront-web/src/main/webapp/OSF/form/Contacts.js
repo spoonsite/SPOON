@@ -249,8 +249,7 @@ Ext.define('OSF.form.Contacts', {
 							maxLength: '120',
 							name: 'phone'
 						},
-						Ext.create('OSF.component.SecurityComboBox', {	
-							hidden: contactPanel.hideSecurityMarking
+						Ext.create('OSF.component.SecurityComboBox', {								
 						}),
 						Ext.create('OSF.component.DataSensitivityComboBox', {												
 							width: '100%'

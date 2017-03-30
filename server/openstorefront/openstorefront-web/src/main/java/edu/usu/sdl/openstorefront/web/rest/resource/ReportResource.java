@@ -276,7 +276,7 @@ public class ReportResource
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, report.getReportType());
 			boolean run = true;
-			if (SecurityUtil.hasPermission(reportType.getRequiredPermission())) {				
+			if (SecurityUtil.hasPermission(reportType.getRequiredPermission()) == false) {				
 				run = false;
 			}
 

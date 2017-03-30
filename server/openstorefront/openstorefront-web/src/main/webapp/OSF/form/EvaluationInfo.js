@@ -75,10 +75,19 @@ Ext.define('OSF.form.EvaluationInfo', {
 		}));
 		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {												
 			width: '100%',
+			itemId: 'dataSensitivity',
 			labelClsExtra: 'eval-form-field-label',
 			fieldCls: 'eval-form-field',
 			labelAlign: 'right',
-			labelWidth: 200
+			labelWidth: 200,
+			listeners: {
+				change: {
+					buffer: 1000,
+					fn: function(field, newValue, oldValue) {
+						evalForm.saveData();
+					}
+				}
+			}	
 		}));
 		
 		evalForm.add(formItems);
@@ -98,9 +107,17 @@ Ext.define('OSF.form.EvaluationInfo', {
 				var record = Ext.create('Ext.data.Model',{					
 				});
 				record.set(evaluation);				
-					
-				
+			
 				evalForm.loadRecord(record);
+				
+				evalForm.queryById('dataSensitivity').on('ready', function() {
+					evalForm.loadRecord(record);
+					
+					Ext.defer(function(){
+						evalForm.doneInitialLoad = true;
+					}, 2000);
+				});
+				
 				evalForm.evaluation = evaluation;
 				if (opts && opts.mainForm) {
 					evalForm.refreshCallback = opts.mainForm.refreshCallback;
@@ -114,32 +131,37 @@ Ext.define('OSF.form.EvaluationInfo', {
 		var evalForm = this;
 		
 		var data = evalForm.getValues();
-		if (evalForm.isValid() &&
-				data.version && 
-				data.version !== '' &&				
-				data.workflowStatus &&
-				data.workflowStatus !== ''
-			) {
-			
-			if (evalForm.evaluation.version !== data.version ||
-				evalForm.evaluation.workflowStatus !== data.workflowStatus)
-			{			
-				evalForm.evaluation.version = data.version;
-				evalForm.evaluation.workflowStatus = data.workflowStatus;
-				delete evalForm.evaluation.type;
+		
+		if (evalForm.doneInitialLoad) {
+			if (evalForm.isValid() &&
+					data.version && 
+					data.version !== '' &&				
+					data.workflowStatus &&
+					data.workflowStatus !== ''
+				) {
 
-				CoreUtil.submitForm({
-					url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId,
-					method: 'PUT',
-					data: evalForm.evaluation,
-					form: evalForm,
-					success: function(action, opts) {
-						Ext.toast('Updated evaluation');
-						if (evalForm.refreshCallback) {
-							evalForm.refreshCallback();
-						}
-					}	
-				});
+				if (evalForm.evaluation.version !== data.version ||
+					evalForm.evaluation.workflowStatus !== data.workflowStatus ||
+					evalForm.evaluation.dataSensitivity !== data.dataSensitivity)
+				{			
+					evalForm.evaluation.version = data.version;
+					evalForm.evaluation.workflowStatus = data.workflowStatus;
+					evalForm.evaluation.dataSensitivity = data.dataSensitivity;
+					delete evalForm.evaluation.type;
+
+					CoreUtil.submitForm({
+						url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId,
+						method: 'PUT',
+						data: evalForm.evaluation,
+						form: evalForm,
+						success: function(action, opts) {
+							Ext.toast('Updated evaluation');
+							if (evalForm.refreshCallback) {
+								evalForm.refreshCallback();
+							}
+						}	
+					});
+				}
 			}
 		}
 	}

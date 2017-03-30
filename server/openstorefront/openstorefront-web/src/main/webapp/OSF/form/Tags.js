@@ -31,7 +31,7 @@ Ext.define('OSF.form.Tags', {
 		
 		var actionAddTag = function(form) {				
 			var data = form.getValues();
-			var componentId = tagPanel.tagGrid.get('componentId');
+			var componentId = tagPanel.componentId;
 
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/components/' + componentId + '/tags',

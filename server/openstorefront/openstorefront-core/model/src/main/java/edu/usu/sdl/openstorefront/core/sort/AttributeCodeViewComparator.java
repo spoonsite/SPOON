@@ -34,7 +34,7 @@ public class AttributeCodeViewComparator<T extends AttributeCodeView>
 		if (o1.getSortOrder() != null && o2.getSortOrder() != null) {
 			return o1.getSortOrder().compareTo(o2.getSortOrder());
 		} else {
-			return o1.getLabel().compareTo(o2.getLabel());
+			return o1.getLabel().toLowerCase().compareTo(o2.getLabel().toLowerCase());
 		}
 	}
 

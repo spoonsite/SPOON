@@ -341,6 +341,12 @@
 														data.permissions = record.data.permissions;
 														data.dataSecurity = record.data.dataSecurity;
 													}	
+													if (!data.allowUnspecifiedDataSource) {
+														data.allowUnspecifiedDataSource = false;
+													}
+													if (!data.allowUnspecifiedDataSensitivity) {
+														data.allowUnspecifiedDataSensitivity = false;
+													}													
 													
 													CoreUtil.submitForm({
 														url: 'api/v1/resource/securityroles' + urlEnd,

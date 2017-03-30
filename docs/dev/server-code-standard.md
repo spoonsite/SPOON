@@ -9,7 +9,8 @@
 6. External resources should be handled by a Manager that in-turn handles the life-cycle.
 7. Use example query framework where possible. Keep custom queries to a minimum as this allow for greater flexibility as well as type safety on the query.  Which in turn make refactoring easier and reduces errors.
 8. Beware of any potential infinite loops.
-9. Pay attention to Transaction boundaries. For the most part it's automatic but, you can carrier over transaction where it unintended. 
+9. Pay attention to Transaction boundaries. For the most part it's automatic but, you can carrier over transaction where it's unintended. 
+10. Prefer constants over hard coded strings. Keep constants with entity/object they relate to.  For general constants use OpenstorefrontConstant.
 
 ##Entities
 

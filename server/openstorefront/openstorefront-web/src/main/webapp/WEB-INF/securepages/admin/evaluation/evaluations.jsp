@@ -153,8 +153,24 @@
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
 								valueField: 'code',								
-								emptyText: 'Unassigned'
-								//TODO: add Group
+								emptyText: 'Unassigned',
+								forceSelection: true,
+								editable: false,
+								store: {									
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/securityroles/lookup'
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											store.add({
+												code: null,
+												description: 'Unassigned'
+											});
+										}
+									}
+								}									
 							},
 							{
 								xtype: 'combobox',
@@ -162,13 +178,23 @@
 								fieldLabel: 'Assign to User',
 								displayField: 'description',
 								valueField: 'code',								
-								emptyText: 'Unassigned',								
+								emptyText: 'Unassigned',
+								forceSelection: true,
+								editable: false,
 								store: {									
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/userprofiles/lookup'
-									}
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											store.add({
+												code: null,
+												description: 'Unassigned'
+											});
+										}
+									}									
 								}								
 							},
 							{
@@ -529,10 +555,194 @@
 			
 			var actionAssignGroup = function(record) {
 				
+				var assignWin = Ext.create('Ext.window.Window', {
+					title: 'Assign Group',
+					iconCls: 'fa fa-users',
+					closeAction: 'destroy',
+					modal: true,
+					width: 400,
+					height: 200,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'form',
+							bodyStyle: 'padding: 10px;',
+							layout: 'anchor',
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'assignedGroup',
+									fieldLabel: 'Assign to Group',
+									displayField: 'description',
+									valueField: 'code',								
+									emptyText: 'Unassigned',
+									labelAlign: 'top',
+									width: '100%',
+									editable: false,
+									forceSelection: true,
+									store: {									
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/securityroles/lookup'
+										},
+										listeners: {
+											load: function(store, records, opts) {
+												store.add({
+													code: null,
+													description: 'Unassigned'
+												});
+											}
+										}
+									}
+								}	
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											handler: function() {
+												var form = this.up('form');
+												var formData = form.getValues();
+												
+												var data = record.data;
+												
+												data = Ext.apply(data, formData);
+												
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/evaluations/' + data.evaluationId,
+													method: 'PUT',
+													form: form,
+													data: data,
+													success: function(action, opts) {
+														actionRefresh();
+														assignWin.close();														
+													}
+												});
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												assignWin.close();
+											}											
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				assignWin.show();
+				
+				assignWin.queryById('form').loadRecord(record);
+				
 			};
 
 			var actionAssignUser = function(record) {
+
+				var assignWin = Ext.create('Ext.window.Window', {
+					title: 'Assign Group',
+					iconCls: 'fa fa-user',
+					closeAction: 'destroy',
+					modal: true,
+					width: 400,
+					height: 200,					
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'form',
+							bodyStyle: 'padding: 10px;',
+							layout: 'anchor',
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'assignedUser',
+									fieldLabel: 'Assign to User',
+									displayField: 'description',
+									valueField: 'code',								
+									emptyText: 'Unassigned',
+									labelAlign: 'top',
+									width: '100%',
+									editable: false,
+									forceSelection: true,
+									store: {									
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/userprofiles/lookup'
+										},
+										listeners: {
+											load: function(store, records, opts) {
+												store.add({
+													code: null,
+													description: 'Unassigned'
+												});
+											}
+										}									
+									}
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											handler: function() {
+												var form = this.up('form');
+												var formData = form.getValues();
+												
+												var data = record.data;
+												
+												data = Ext.apply(data, formData);
+												
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/evaluations/' + data.evaluationId,
+													method: 'PUT',
+													form: form,
+													data: data,
+													success: function(action, opts) {
+														actionRefresh();
+														assignWin.close();														
+													}
+												});
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												assignWin.close();
+											}											
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				assignWin.show();
 				
+				assignWin.queryById('form').loadRecord(record);		
+		
 			};
 
 			var copy = function(record) {

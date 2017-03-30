@@ -96,6 +96,12 @@
 									minLength: 8
 								},
 								{
+									xtype: 'panel',
+									html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
+										  '<li>At least 1 Number</li>' +
+										  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+								},
+								{
 									xtype: 'textfield',
 									fieldLabel: 'Confirm Password <span class="field-required" />',
 									inputType: 'password',

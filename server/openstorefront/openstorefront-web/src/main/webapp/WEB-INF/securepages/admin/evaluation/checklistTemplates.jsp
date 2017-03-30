@@ -141,7 +141,7 @@
 								items: [
 									{
 										xtype: 'grid',
-										title: 'Question Pool',
+										title: 'Question Pool - <span class="alert-warning"> drag to add <i class="fa fa-lg fa-arrow-right"></i> </span>',
 										id: 'questionPool',
 										width: '50%',
 										margin: '0 5 0 0',
@@ -187,7 +187,7 @@
 									{
 										xtype: 'grid',
 										id: 'questionsInTemplate',
-										title: 'Questions In Template',
+										title: 'Questions In Template - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
 										width: '50%',
 										columnLines: true,
 										store: {											

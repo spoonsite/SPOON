@@ -187,8 +187,7 @@ Ext.define('OSF.form.Resources', {
 						change: CoreUtil.handleMaxFileLimit
 					}
 				},
-				Ext.create('OSF.component.SecurityComboBox', {	
-					hidden: resourcePanel.hideSecurityMarking 
+				Ext.create('OSF.component.SecurityComboBox', {						
 				}),
 				Ext.create('OSF.component.DataSensitivityComboBox', {												
 					width: '100%'

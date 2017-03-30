@@ -53,7 +53,8 @@
 					iconCls: 'fa fa-key icon-correction-key icon-small-vertical-correction',
 					y: 200,
 					width: 500,
-					height: 400,
+					height: 450,
+					resizable: false,
 					closable: false,
 					draggable: false,
 					onEsc: Ext.emptyFn,
@@ -85,6 +86,12 @@
 									maxLength: 80,
 									minLength: 8
 								},
+								{
+									xtype: 'panel',
+									html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
+										  '<li>At least 1 Number</li>' +
+										  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+								},								
 								{
 									xtype: 'textfield',
 									fieldLabel: 'Confirm Password <span class="field-required" />',
@@ -218,6 +225,7 @@
 						},
 						{
 							region: 'center',
+							scrollable: true,
 							bodyStyle: 'background-image: url(images/grid.png); background-repeat: repeat;',
 						}
 					]

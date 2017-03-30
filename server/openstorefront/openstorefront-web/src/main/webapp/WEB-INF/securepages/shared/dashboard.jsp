@@ -27,7 +27,7 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">	
     <stripes:layout-component name="contents">
 		
-	<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+	<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 	</stripes:layout-render>		
 		
 	<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
@@ -67,6 +67,7 @@
 			Ext.require('OSF.widget.Reports');
 			Ext.require('OSF.widget.Questions');
 			Ext.require('OSF.widget.RecentUserData');
+			Ext.require('OSF.widget.EvaluationStats');
 			
 												
 			Ext.onReady(function () {
@@ -134,6 +135,20 @@
 							widget.refresh();
 						}						
 					},
+					{
+						name: 'Evaluation Stats',
+						code: 'EVALSTATS',
+						description: 'Shows evaluation stats',
+						iconCls: 'fa fa-lg fa-pie-chart icon-small-vertical-correction',
+						jsClass: 'OSF.widget.EvaluationStats',						
+						height: 575,
+						permissions: "EVALUATIONS",
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}						
+					},					
 					{
 						name: 'Pending Approval Requests',
 						code: 'APPROVEREQ',
@@ -493,7 +508,7 @@
 								var widgetPanel;
 								if (config.permissions) {
 									//if the user is no longer admin don't add widget
-									if (CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
+									if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
 										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {

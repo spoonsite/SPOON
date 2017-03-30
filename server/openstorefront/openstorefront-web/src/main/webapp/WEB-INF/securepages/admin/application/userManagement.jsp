@@ -275,12 +275,22 @@
 												maxLength: 80
 											},			
 											{
-												xtype: 'textfield',
-												fieldLabel: 'Organization',
+												xtype: 'combobox',
 												name: 'organization',
 												allowBlank: true,
-												maxLength: 120
-											},								
+												maxLength: 120,
+												fieldLabel: 'Organization',
+												forceSelection: false,
+												valueField: 'description',
+												displayField: 'description',
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/organizations/lookup'
+													}
+												}
+											},											
 											{
 												xtype: 'textfield',
 												fieldLabel: 'Email <span class="field-required" />',
