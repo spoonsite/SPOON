@@ -226,7 +226,7 @@
 									text: 'Change password',
 									id: 'main-menu-changepassword',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-key',
+									iconCls: 'fa fa-2x fa-key icon-button-color-key icon-correction-key',
 									hidden: true,
 									handler: function(){
 										actionLoadContent('Change-Password');
