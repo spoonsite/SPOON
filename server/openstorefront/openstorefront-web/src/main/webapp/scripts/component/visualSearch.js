@@ -30,7 +30,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	customActions: [],
 	viewStack: {
 		keys: [],
-		data: []
+		viewData: [],
+		layerData: {}
 	},
 	menus: {
 		collapse: {},
@@ -50,6 +51,38 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		mouseleave: 'spritemouseup',
 		mousewheel: 'zoom',
 		DOMMouseScroll: 'zoom'
+	},
+
+	layerData: {
+		keys: [],
+		maxLevel: 0,
+		nodeData: {},
+		add: function (level, newData) {
+			if (level > maxLevel)
+			{
+				maxLevel = level;
+				for (var i = 0; i <= maxLevel; i++)
+				{
+					if (nodeData[i] === undefined) {
+						nodeData[i] = [];
+					}
+				}
+			}
+			Array.each(newData, function (item) {
+				if (!this.keys.includes(item.key))
+				{
+					nodeData[level].push(item);
+					this.keys.push(item.key);
+				}
+			});
+		},
+		getData: function () {
+			var newData = [];
+			for (var i = 0; i <= maxLevel; i++)
+			{
+				newData = newData.concat(nodeData[i]);
+			}
+		}
 	},
 
 	initComponent: function () {
@@ -561,10 +594,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	loadRelationships: function (relationshipId, componentName = "") {
+	loadRelationships: function (relationshipId, componentName, level = 1) {
 		var visPanel = this;
 
-		var relationshipLoad = function (componentId, componentName) {
+		var relationshipLoad = function (componentId, componentName, level) {
 
 			visPanel.setLoading("Loading Initial Relationships for the selected component ...");
 			Ext.Ajax.request({
@@ -598,6 +631,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							});
 						});
 					}
+					visPanel.layerData[level] = visPanel.layerData[level].concat(viewData);
 					visPanel.viewData = visPanel.viewData.concat(viewData);
 					visPanel.initVisual(visPanel.viewData);
 				}
@@ -606,7 +640,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		};
 
 		if (relationshipId) {
-			relationshipLoad(relationshipId, componentName);
+			relationshipLoad(relationshipId, componentName, level);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -1076,6 +1110,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.reset();
 		visPanel.viewData = relationShipData;
 		visPanel.initVisual(visPanel.viewData);
+	},
+
+	updateRelationshipLevel: function (newLevel) {
+
 	},
 
 	initVisual: function (viewData) {
@@ -1990,10 +2028,13 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 
 							containerPanel.getComponent('tools').getComponent('entry').reset();
+							containerPanel.getComponent('tools').getComponent('entryLevel').reset();
 							if (newValue === 'RELATION') {
 								containerPanel.getComponent('tools').getComponent('entry').setHidden(false);
+								containerPanel.getComponent('tools').getComponent('entryLevel').setHidden(false);
 							} else {
 								containerPanel.getComponent('tools').getComponent('entry').setHidden(true);
+								containerPanel.getComponent('tools').getComponent('entryLevel').setHidden(true);
 							}
 
 							containerPanel.getComponent('tools').getComponent('tag').reset();
@@ -2143,6 +2184,35 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						}
 					}
 				}, // Add Entry
+				{
+					xtype: 'combo',
+					fieldLabel: 'Levels',
+					labelAlign: 'right',
+					itemId: 'entryLevel',
+					valueField: 'code',
+					width: 200,
+					labelWidth: 100,
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,
+					value: 1,
+					store: {
+						data: [
+							{code: 1, description: 'One'},
+							{code: 2, description: 'Two'},
+							{code: 3, description: 'Three'}
+						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+
+							if (newValue) {
+								containerPanel.visualPanel.updateRelationshipLevel(newValue);
+							}
+						}
+					}
+				}, // entity levels
 				{
 					xtype: 'combo',
 					fieldLabel: 'Add Tag',
