@@ -663,7 +663,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var relCb = promptWindow.getComponent('component');
 									if (relCb.getSelection().getData().code) {
 										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
-										visPanel.updateAttribute(relCb.getSelection().getData().code);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -802,7 +801,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var tagCb = promptWindow.getComponent('tag');
 									if (tagCb.getSelection().getData().text) {
 										tagLoad(tagCb.getSelection().getData().text);
-										visPanel.updateAttribute(tagCb.getSelection().getData().text);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -919,7 +917,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var orgCb = promptWindow.getComponent('organization');
 									if (orgCb.getSelection().getData().code) {
 										organizationLoad(orgCb.getSelection().getData().code, orgCb.getSelection().getData().description);
-										visPanel.updateAttribute(orgCb.getSelection().getData().code);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -1045,7 +1042,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var attributeTypeCb = promptWindow.getComponent('attributeType');
 									if (attributeTypeCb.getSelection().getData().attributeType) {
 										attributeLoad(attributeTypeCb.getSelection().getData().attributeType, attributeTypeCb.getSelection().getData().description);
-										visPanel.updateAttribute(attributeTypeCb.getSelection().getData().attributeType);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -1068,16 +1064,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			});
 			prompt.show();
 		}
-	},
-
-	updateVisual: function (relationShipData) {
-		var visPanel = this;
-		visPanel.viewType = null;
-		visPanel.reset();
-		visPanel.viewData = relationShipData;
-		visPanel.initVisual(visPanel.viewData);
-	},
-
+	},	
 	initVisual: function (viewData) {
 		var visPanel = this;
 
@@ -2231,9 +2218,6 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			completedInit: function (nodes) {
 				var findCB = containerPanel.getComponent('tools').getComponent('find');
 				findCB.getStore().setData(nodes);
-			},
-			updateAttribute: function (attributeType) {
-				containerPanel.getComponent('tools').getComponent('attributeType').setValue(attributeType);
 			}
 		});
 
