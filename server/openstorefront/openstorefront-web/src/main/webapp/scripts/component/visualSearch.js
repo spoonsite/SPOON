@@ -625,7 +625,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL'
-							}
+							},
+							sorters: [
+								new Ext.util.Sorter({
+									property: 'description',
+									direction: 'ASC',
+									transform: function (value) {
+										return value.toLowerCase();
+									}
+								})
+							]
 						}
 					}
 				],
@@ -734,6 +743,15 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								type: 'ajax',
 								url: 'api/v1/resource/components/tagviews?approvedOnly=true'
 							},
+							sorters: [
+								new Ext.util.Sorter({
+									property: 'text',
+									direction: 'ASC',
+									transform: function (value) {
+										return value.toLowerCase();
+									}
+								})
+							],
 							listeners: {
 								load: function (store, records, successful, operation, eOpts) {
 									var uniqueItems = [];
@@ -1938,6 +1956,20 @@ Ext.define('OSF.component.VisualContainerPanel', {
 								containerPanel.getComponent('tools').getComponent('organization').setHidden(true);
 							}
 
+							containerPanel.getComponent('tools').getComponent('entry').reset();
+							if (newValue === 'RELATION') {
+								containerPanel.getComponent('tools').getComponent('entry').setHidden(false);
+							} else {
+								containerPanel.getComponent('tools').getComponent('entry').setHidden(true);
+							}
+
+							containerPanel.getComponent('tools').getComponent('tag').reset();
+							if (newValue === 'TAGS') {
+								containerPanel.getComponent('tools').getComponent('tag').setHidden(false);
+							} else {
+								containerPanel.getComponent('tools').getComponent('tag').setHidden(true);
+							}
+
 							var findCB = containerPanel.getComponent('tools').getComponent('find');
 							findCB.reset();
 
@@ -1946,7 +1978,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 
 						}
 					}
-				},
+				}, // Initial View
 				{
 					xtype: 'combo',
 					itemId: 'find',
@@ -1975,7 +2007,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 						}
 					}
-				},
+				}, // Find
 				{
 					xtype: 'combo',
 					fieldLabel: 'Add Attribute',
@@ -2011,7 +2043,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 						}
 					}
-				},
+				}, // Add Attribute
 				{
 					xtype: 'combo',
 					fieldLabel: 'Add Organization',
@@ -2040,10 +2072,85 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 						}
 					}
-				},
+				}, // Add Organization
+				{
+					xtype: 'combo',
+					fieldLabel: 'Add Entry',
+					labelAlign: 'right',
+					itemId: 'entry',
+					valueField: 'code',
+					width: 600,
+					labelWidth: 100,
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL'
+						},
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'description',
+								direction: 'ASC',
+								transform: function (value) {
+									return value.toLowerCase();
+								}
+							})
+						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+
+							if (newValue) {
+								containerPanel.visualPanel.loadRelationships(newValue);
+							}
+						}
+					}
+				}, // Add Entry
+				{
+					xtype: 'combo',
+					fieldLabel: 'Add Tag',
+					labelAlign: 'right',
+					itemId: 'tag',
+					hidden: true,
+					valueField: 'text',
+					width: 425,
+					labelWidth: 150,
+					displayField: 'text',
+					typeAhead: true,
+					editable: true,
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/components/tagviews?approvedOnly=true'
+						},
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'text',
+								direction: 'ASC',
+								transform: function (value) {
+									return value.toLowerCase();
+								}
+							})
+						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+
+							if (newValue) {
+								containerPanel.visualPanel.loadTags(newValue);
+							}
+						}
+					}
+				}, // Add Tag
 				{
 					xtype: 'tbfill'
-				},
+				}, // fill
 				{
 					text: 'Download Image',
 					iconCls: 'fa fa-lg fa-download icon-button-color-stop',
@@ -2059,10 +2166,10 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						form.destroy();
 
 					}
-				},
+				}, // Download Image
 				{
 					xtype: 'tbseparator'
-				},
+				}, // separator
 				{
 					text: 'Reset',
 					iconCls: 'fa fa-lg fa-undo icon-button-color-refresh',
@@ -2074,7 +2181,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 
 						containerPanel.visualPanel.reset();
 					}
-				}
+				} // Reset
 			]
 		}
 	],
