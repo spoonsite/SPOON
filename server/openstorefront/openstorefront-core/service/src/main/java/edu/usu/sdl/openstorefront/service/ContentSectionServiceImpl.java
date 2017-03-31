@@ -55,6 +55,8 @@ public class ContentSectionServiceImpl
 
 		ContentSection contentSection = contentSectionAll.getSection().save();
 
+		//pull sub sections
+		//update if changed
 		ContentSubSection contentSubSectionExample = new ContentSubSection();
 		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
 		persistenceService.deleteByExample(contentSubSectionExample);
@@ -104,12 +106,12 @@ public class ContentSectionServiceImpl
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
-		
+
 		//Note: proxied media caused an overflow on serialization
 		ContentSectionMedia updatedMedia = new ContentSectionMedia();
 		updatedMedia.setContentSectionMediaId(savedMedia.getContentSectionMediaId());
 		updatedMedia = updatedMedia.find();
-		
+
 		return updatedMedia;
 	}
 
@@ -127,6 +129,8 @@ public class ContentSectionServiceImpl
 				}
 			}
 			persistenceService.delete(existing);
+
+			//TODO: Add Remove log
 		}
 	}
 
@@ -172,6 +176,7 @@ public class ContentSectionServiceImpl
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
 		}
+		//TODO: Add Remove log
 	}
 
 	@Override
