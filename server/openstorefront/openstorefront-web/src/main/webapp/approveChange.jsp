@@ -53,7 +53,7 @@
 					title: 'Verifying Approval Code',
 					iconCls: 'fa fa-check-square',
 					y: 200,
-					width: 700,
+					width: 600,
 					height: 300,
 					closable: false,
 					draggable: false,
@@ -77,7 +77,7 @@
 								},
 								{
 									text: 'Login',
-									iconCls: 'fa fa-2x fa-sign-in',
+									iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function(){										
 										window.location.href = 'login.jsp';
@@ -96,7 +96,7 @@
 					var infoPanel = approveWindow.getComponent('infopanel');
 					
 					if (!approvalCode || approvalCode === '') {
-						infoPanel.update("<h2><i class='fa fa-2x fa-warning text-danger'></i> Approval code is missing.</h2><br><br>Make sure to click or copy the complete the url in the email.");
+						infoPanel.update("<i class='fa fa-2x fa-warning icon-button-color-warning'></i><span class='approval-message'>Approval code is missing.</span></span><br><br>Make sure to click or copy the complete url in the email.");
 					} else {					
 						infoPanel.setLoading('Checking...');
 						Ext.Ajax.request({

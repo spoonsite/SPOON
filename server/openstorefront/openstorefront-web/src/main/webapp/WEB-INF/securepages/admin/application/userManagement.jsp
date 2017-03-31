@@ -102,7 +102,7 @@
 							items: [
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									scale: 'medium',
 									handler: function(){
 										actionRefreshRegs();
@@ -113,7 +113,7 @@
 								},
 								{
 									text: 'Add',
-									iconCls: 'fa fa-2x fa-plus',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
 									scale: 'medium',
 									handler: function(){
 										actionAddUser();
@@ -127,7 +127,7 @@
 									itemId: 'message',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',								
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-default',								
 									handler: function () {
 										var record = registrationGrid.getSelection()[0];
 										actionMessageUser(record);
@@ -140,14 +140,15 @@
 									text: 'Delete',
 									itemId: 'delete',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
 									handler: function(){
 										var record = registrationGrid.getSelectionModel().getSelection()[0];
 										
 										Ext.Msg.show({
 											title:'Delete Registration?',
-											message: 'Are you sure you want to remove this registration? <br><b>Warning:</b> This will delete the user as well.',
+											iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+											message: 'Are you sure you want to remove this registration? <br/><br/><b>Warning:</b> This will delete the user as well.',
 											buttons: Ext.Msg.YESNO,
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
@@ -198,11 +199,11 @@
 					
 					var addUserWin = Ext.create('Ext.window.Window', {
 						title: 'Add User',
-						iconCls: 'fa fa-user',
+						iconCls: 'fa fa-user-plus',
 						closeAction: 'destroy',
 						modal: true,
-						width: '75%',
-						height: '75%',
+						width: '700px',
+						minHeight: '75%',
 						maximizable: true,
 						layout: 'fit',
 						items: [
@@ -338,7 +339,7 @@
 										items: [
 											{
 												text: 'Signup',
-												iconCls: 'fa fa-2x fa-check',
+												iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 												formBind: true,
 												scale: 'medium',
 												handler: function(){										
@@ -365,7 +366,7 @@
 															data: data,
 															form: form,
 															success: function(action, opts) {
-																Ext.toast('Successfully add new user.<br>Remember user may need to be approved.');
+																Ext.toast('Successfully added new user.<br>Remember user may need to be approved.');
 																actionRefreshRegs();
 																actionRefreshUsers();
 																addUserWin.close();
@@ -379,7 +380,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-2x fa-close',
+												iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 												scale: 'medium',
 												handler: function(){										
 													addUserWin.close();
@@ -453,8 +454,9 @@
 							renderer: function(value, meta, record){
 								if (value) {
 									meta.tdCls = 'alert-warning';
+									return 'Pending';
 								}
-								return value;
+								return '';
 							}
 						},
 						{ text: 'Password Update Date', align: 'center', dataIndex: 'passwordUpdateDts', width: 175, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -627,7 +629,7 @@
 							items: [
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									scale: 'medium',
 									handler: function(){
 										actionRefreshUsers();
@@ -639,7 +641,7 @@
 								{
 									text: 'Approve',
 									itemId: 'approve',
-									iconCls: 'fa fa-2x fa-check',
+									iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 									scale: 'medium',
 									disabled: true,
 									handler: function(){
@@ -648,20 +650,9 @@
 									}
 								},
 								{
-									text: 'Unlock',
-									itemId: 'unlock',
-									iconCls: 'fa fa-2x fa-unlock',
-									scale: 'medium',
-									disabled: true,
-									handler: function(){
-										var record = userGrid.getSelectionModel().getSelection()[0];
-										actionUnlockUser(record);
-									}
-								},
-								{
 									text: 'Reset Password',
 									itemId: 'reset',
-									iconCls: 'fa fa-2x fa-rotate-left',
+									iconCls: 'fa fa-2x fa-rotate-left icon-button-color-refresh icon-vertical-correction',
 									scale: 'medium',
 									disabled: true,
 									handler: function(){
@@ -674,7 +665,7 @@
 									itemId: 'role',
 									disabled: true,	
 									hidden: true,
-									iconCls: 'fa fa-2x fa-key',
+									iconCls: 'fa fa-2x fa-key icon-correction-key icon-button-color-key',
 									scale: 'medium',
 									handler: function() {
 										var record = userGrid.getSelectionModel().getSelection()[0];
@@ -682,11 +673,12 @@
 									}
 								},
 								{
-									text: '&nbsp;Message',
+									text: 'Message',
 									itemId: 'message',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',								
+									width: '130px',
+									iconCls: 'fa fa-2x fa-envelope-o icon-button-color-default icon-vertical-correction-send',								
 									handler: function () {
 										var record = userGrid.getSelection()[0];
 										actionMessageUser(record);
@@ -694,12 +686,24 @@
 								},
 								{
 									xtype: 'tbseparator'
-								},								
+								},
 								{
-									text: '&nbsp;Disable/Lock',
-									itemId: 'disable',
-									iconCls: 'fa fa-2x fa-user-times',
+									text: 'Unlock Account',
+									itemId: 'unlock',
+									iconCls: 'fa fa-2x fa-unlock-alt icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
+									disabled: true,
+									handler: function(){
+										var record = userGrid.getSelectionModel().getSelection()[0];
+										actionUnlockUser(record);
+									}
+								},
+								{
+									text: 'Lock Account',
+									itemId: 'disable',
+									iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction',
+									scale: 'medium',
+									tooltip: 'Locks/inactivates user account',
 									disabled: true,
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
@@ -712,8 +716,9 @@
 								{
 									text: 'Delete',
 									itemId: 'delete',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
+									width: '110px',
 									disabled: true,
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
@@ -767,7 +772,7 @@
 										
 					var formWindow = Ext.create('Ext.window.Window', {
 						title: 'Reset Password',
-						iconCls: 'fa fa-rotate-left',
+						iconCls: 'fa fa-warning',
 						closeAction: 'destroy',
 						modal: true,
 						layout: 'fit',
@@ -800,7 +805,7 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
 												handler: function() {
 													
 													var form = this.up('form');
@@ -848,7 +853,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function() {
 													formWindow.close();
 												}												
@@ -881,7 +886,8 @@
 				var actionDeleteUser = function(record) {
 					Ext.Msg.show({
 						title:'Delete User?',
-						message: 'Are you sure you want to delete ' + record.get('username'),
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete user, <b>' + record.get('username') + '</b>?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
@@ -957,14 +963,15 @@
 										width: 50,
 										items:[
 											{												
-												iconCls: 'x-fa fa-trash',
+												iconCls: 'x-fa fa-trash icon-button-color-warning icon-small-horizontal-correction-trash',
 												tooltip: 'delete',
 												handler: function(grid, rowIndex, colIndex) {
 													var selectedRole = grid.getStore().getAt(rowIndex);
 													
 													Ext.Msg.show({
 														title:'Delete role from user?',
-														message: 'Are you sure you want to remove ' + selectedRole.get('roleName') + ' from the user?',
+														iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+														message: 'Are you sure you want to delete <b>' + selectedRole.get('roleName') + '</b> from the user?',
 														buttons: Ext.Msg.YESNO,
 														icon: Ext.Msg.QUESTION,
 														fn: function(btn) {
@@ -1023,6 +1030,7 @@
 											{
 												xtype: 'toolbar',
 												dock: 'bottom',
+												style: 'margin-bottom:15px',
 												items: [
 													{
 														xtype: 'tbfill'
@@ -1030,7 +1038,7 @@
 													{
 														text: 'Add',
 														formBind: true,
-														iconCls: 'fa fa-plus',
+														iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 														handler: function(){
 															var form = this.up('form');
 															var data = form.getValues();
@@ -1054,7 +1062,7 @@
 													},
 													{
 														text: 'Cancel',
-														iconCls: 'fa fa-close',
+														iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 														handler: function(){
 															var form = this.up('form');
 															form.reset();

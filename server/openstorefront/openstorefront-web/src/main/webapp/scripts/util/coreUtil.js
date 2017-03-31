@@ -906,6 +906,18 @@ var CoreUtil = {
 		});
 		searchWin.showResults(searchId);
 
+	},
+	renderer: {
+		
+		booleanRenderer: function(value, meta, record) {
+			if (value) {
+				meta.tdCls = 'alert-success';
+				return '<i class="fa fa-check"></i>';
+			} else {
+				meta.tdCls = 'alert-danger';
+				return '<i class="fa fa-close"></i>';
+			}
+		}
 	}
 	
 };

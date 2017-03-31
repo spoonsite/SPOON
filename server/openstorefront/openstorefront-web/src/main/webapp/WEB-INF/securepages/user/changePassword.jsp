@@ -81,7 +81,8 @@
 							xtype: 'button',
 							text: 'Update Password',
 							formBind: true,
-							iconCls: 'fa fa-2x fa-save',
+							iconCls: 'fa fa-2x fa-save icon-vertical-correction-save',
+							width: '180px',
 							scale: 'medium',
 							handler: function() {
 
@@ -90,15 +91,16 @@
 
 								if (data.password !== data.confirmPassword) {
 									Ext.Msg.show({
-										title:'Validation',
-										message: 'Password and the Confirm Password must match',
+										title:'Error',
+										iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+										message: '<b>New Password and Confirm New Password must match.</b>',
 										buttons: Ext.Msg.OK,
 										icon: Ext.Msg.Error,
 										fn: function(btn) {
 										}
 									});
 									form.getForm().markInvalid({
-										confirmPassword: 'Must match password'
+										confirmPassword: 'Confirm Password must match New Password'
 									});											
 								} else {
 

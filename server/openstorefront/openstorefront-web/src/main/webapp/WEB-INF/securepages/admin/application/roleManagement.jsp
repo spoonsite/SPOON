@@ -30,6 +30,60 @@
 
 			Ext.onReady(function () {
 				
+				Ext.override(Ext.view.DragZone, {
+					
+				    getDragText: function() {
+					
+				        if (this.dragTextField) {
+					
+							// Check For Dot In Text Field
+							if (this.dragTextField.indexOf('.') !== -1) {
+								
+								// Get Text Field Split
+								var dragTextFieldSplit = this.dragTextField.split('.')
+								
+								// Get Parent (Permits Only A Single Parent)
+								var fieldParent = this.dragData.records[0].get(dragTextFieldSplit[0]);
+								
+								// Set Field Value
+								var fieldValue = fieldParent[dragTextFieldSplit[1]];
+							}
+							else {
+							
+								var fieldValue = this.dragData.records[0].get(this.dragTextField);
+							}
+							
+				            return Ext.String.format(this.dragText, fieldValue);
+				        }
+						else {
+							
+				            var count = this.dragData.records.length;
+				            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
+				        }
+				    }
+				});
+				
+				Ext.override(Ext.grid.plugin.DragDrop, {
+				    onViewRender : function(view) {
+				        var me = this;
+
+				        if (me.enableDrag) {
+				            me.dragZone = Ext.create('Ext.view.DragZone', {
+				                view: view,
+				                ddGroup: me.dragGroup || me.ddGroup,
+				                dragText: me.dragText,
+				                dragTextField: me.dragTextField
+				            });
+				        }
+
+				        if (me.enableDrop) {
+				            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
+				                view: view,
+				                ddGroup: me.dropGroup || me.ddGroup
+				            });
+				        }
+				    }
+				});
 				
 				var roleGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Security Role Management <i class="fa fa-question-circle"  data-qtip="Manage security roles that allow access to features in the application."></i>',
@@ -56,10 +110,16 @@
 					columns: [
 						{ text: 'Name', dataIndex: 'roleName', width: 200 },
 						{ text: 'Description', dataIndex: 'description',flex: 1, minWidth: 200 },
-						{ text: 'Landing Page', dataIndex: 'landingPage', width: 200 },
-						{ text: 'Landing Page Priority', dataIndex: 'landingPagePriority', width: 200 },						
-						{ text: 'Allow Unspecified Data Source', dataIndex: 'allowUnspecifiedDataSource', width: 200 },
-						{ text: 'Allow Unspecified Data Sensitivity', dataIndex: 'allowUnspecifiedDataSensitivity', width: 200 },
+						{ text: 'Landing Page', dataIndex: 'landingPage', width: 225 },
+						{ text: 'Landing Page Priority', dataIndex: 'landingPagePriority', width: 225 },						
+						{ text: 'Allow Unspecified Data Source', dataIndex: 'allowUnspecifiedDataSource', width: 225, align: 'center',
+							
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
+						{ text: 'Allow Unspecified Data Sensitivity', dataIndex: 'allowUnspecifiedDataSensitivity', width: 225, align: 'center',
+							
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true },
 						{ text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true  },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true },
@@ -95,8 +155,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									scale: 'medium',
+									width: '110px',
 									handler: function() {
 										actionRefresh();
 									}
@@ -107,7 +168,8 @@
 								{
 									text: 'Add',
 									itemId: 'add',
-									iconCls: 'fa fa-2x fa-plus',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
+									width: '100px',
 									scale: 'medium',
 									handler: function() {
 										actionAddEditRole();
@@ -117,7 +179,8 @@
 									text: 'Edit',
 									itemId: 'edit',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									scale: 'medium',
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
@@ -132,7 +195,8 @@
 									itemId: 'users',
 									disabled: true,
 									hidden: true,
-									iconCls: 'fa fa-2x fa-users',
+									width: '170px',
+									iconCls: 'fa fa-2x fa-users icon-button-color-default icon-correction-users',
 									scale: 'medium',
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
@@ -143,8 +207,9 @@
 									text: 'Manage Permissions',
 									itemId: 'permissions',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-key',
+									iconCls: 'fa fa-2x fa-key icon-correction-key icon-button-color-key',
 									scale: 'medium',
+									width: '200px',
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionManagePermissions(record);
@@ -154,7 +219,8 @@
 									text: 'Manage Data Restrictions',
 									itemId: 'dataRestrictions',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-legal',
+									iconCls: 'fa fa-2x fa-legal icon-correction-gavel icon-button-color-default',
+									width: '240px',
 									scale: 'medium',
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
@@ -168,7 +234,8 @@
 									text: 'Delete',
 									itemId: 'delete',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									width: '100px',
 									scale: 'medium',
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
@@ -191,11 +258,12 @@
 					
 					var addEditWin = Ext.create('Ext.window.Window', {
 						title: 'Add/Edit Roles',
+						iconCls: 'fa fa-2x fa-user',
 						closeAction: 'destroy',
 						layout: 'fit',
 						modal: true,
 						width: '50%',
-						height: 510,
+						minHeight: 525,
 						items: [
 							{
 								xtype: 'form',
@@ -257,8 +325,9 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-2x fa-save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 												scale: 'medium',
+												height: '40px',
 												handler: function() {
 													var form = this.up('form');
 													
@@ -296,8 +365,9 @@
 											},
 											{
 												text: 'Close',
-												iconCls: 'fa fa-2x fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 												scale: 'medium',
+												height: '40px',
 												handler: function() {
 													addEditWin.close();
 												}												
@@ -319,7 +389,8 @@
 					
 					//prompt of moving existing user to new role
 					var deleteWin = Ext.create('Ext.window.Window', {
-						title: 'Delete Role: ' + record.get('roleName') + '?',												
+						title: 'Delete Role: ' + record.get('roleName') + '?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						closeAction: 'destroy',
 						width: 400,
 						height: 200,
@@ -368,9 +439,9 @@
 										dock: 'bottom',
 										items: [
 											{
-												text: 'Delete Role',																								
-												iconCls: 'fa fa-2x fa-trash',
-												scale: 'medium',
+												text: 'Confirm',																								
+												iconCls: 'fa fa-lg fa-check icon-button-color-save',
+												scale: 'small',
 												handler: function(){
 													var form = this.up('form');
 													
@@ -394,8 +465,8 @@
 											},
 											{
 												text: 'Cancel',																								
-												iconCls: 'fa fa-2x fa-close',
-												scale: 'medium',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												scale: 'small',
 												handler: function(){
 													deleteWin.close();
 												}												
@@ -413,8 +484,8 @@
 				var actionManagePermissions = function(record) {
 						
 					var permissionWin = Ext.create('Ext.window.Window', {
-						title: 'Permissions for Role: ' + record.get('roleName'),						
-						iconCls: 'fa fa-key',
+						title: record.get('roleName') + ' Permissions',						
+						iconCls: 'fa fa-key icon-correction-key icon-button-color-key icon-small-vertical-correction',
 						closeAction: 'destroy',
 						width: 1000,
 						height: 500,
@@ -457,7 +528,7 @@
 								viewConfig: {
 									plugins: {
 										ptype: 'gridviewdragdrop',
-										dragText: 'Drag and drop to Add to Role Permissions'
+										dragText: 'Drag and drop to <b>Current Role Permissions</b> to add'
 									}
 								},
 								columns: [
@@ -468,7 +539,7 @@
 							{
 								xtype: 'grid',
 								itemId: 'rolePermissionsGrid',
-								title: 'Permissions In Role',
+								title: 'Current Role Permissions',
 								width: '50%',
 								columnLines: true,
 								store: {									
@@ -476,7 +547,7 @@
 								viewConfig: {
 									plugins: {
 										ptype: 'gridviewdragdrop',
-										dragText: 'Drag and drop to Available to Remove Role'
+										dragText: 'Drag and drop to <b>Permissions Available</b> to delete Role'
 									}
 								},
 								columns: [
@@ -489,11 +560,13 @@
 							{
 								xtype: 'toolbar',
 								dock: 'bottom',
+								style: 'margin-top:20px',
 								items: [
 									{
 										text: 'Save',
-										iconCls: 'fa fa-2x fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 										scale: 'medium',
+										height: '40px',
 										handler: function(){
 											
 											var permissions = [];
@@ -528,8 +601,9 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-2x fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 										scale: 'medium',
+										height: '40px',
 										handler: function(){
 											permissionWin.close();
 										}										
@@ -545,7 +619,7 @@
 				var actionManageData = function(record) {
 					
 					var dataWin = Ext.create('Ext.window.Window', {
-						title: 'Data Restrictions for Role: ' + record.get('roleName'),						
+						title:  record.get('roleName') + ' Data Restrictions',						
 						iconCls: 'fa fa-legal',
 						closeAction: 'destroy',
 						width: 1000,
@@ -569,7 +643,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSourcesGrid',
-												title: 'Available (Drag record to Add)',
+												title: 'Restricted <i class="fa fa-question-circle"  data-qtip="Drag record to remove restriction from ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -601,7 +675,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to Add to Role'
+														dragText: 'Add: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
@@ -612,7 +687,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSourcesInRoleGrid',
-												title: 'In Role (Drag record to Remove)',
+												title: 'Accessible <i class="fa fa-question-circle"  data-qtip="Drag record to add restriction to ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -621,7 +696,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to Available to Remove from Role'
+														dragText: 'Remove: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
@@ -644,7 +720,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSensitivityGrid',
-												title: 'Available',
+												title: 'Restricted <i class="fa fa-question-circle"  data-qtip="Drag record to add to ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -675,7 +751,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to Add to Role'
+														dragText: 'Add: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
@@ -686,7 +763,7 @@
 											{
 												xtype: 'grid',
 												id: 'dataSensitivitiesInRoleGrid',
-												title: 'In Role',
+												title: 'Accessible <i class="fa fa-question-circle"  data-qtip="Drag record to remove from ' + record.get('roleName') + '"></i>',
 												width: '50%',
 												margin: '0 5 0 0',
 												columnLines: true,
@@ -695,7 +772,8 @@
 												viewConfig: {
 													plugins: {
 														ptype: 'gridviewdragdrop',
-														dragText: 'Drag and drop to Available to Remove from Role'
+														dragText: 'Remove: {0}',
+														dragTextField: 'description'
 													}
 												},										
 												columns: [
@@ -715,8 +793,9 @@
 								items: [
 									{
 										text: 'Save',
-										iconCls: 'fa fa-2x fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 										scale: 'medium',
+										height: '40px',
 										handler: function() {
 											
 											var dataRestrictions = [];
@@ -756,8 +835,9 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-2x fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 										scale: 'medium',
+										height: '40px',
 										handler: function(){
 											dataWin.close();
 										}										
@@ -772,10 +852,10 @@
 				var actionManageUsers = function(record) {
 					
 					var userWin = Ext.create('Ext.window.Window', {
-						title: 'Users for Role: ' + record.get('roleName'),						
+						title: 'Users with ' + record.get('roleName') + ' role',						
 						iconCls: 'fa fa-users',
 						closeAction: 'destroy',
-						width: 1000,
+						width: 700,
 						height: 500,
 						layout: {
 							type: 'fit'
@@ -785,7 +865,6 @@
 							{
 								xtype: 'grid',
 								itemId: 'grid',										
-								title: 'Users In Role',
 								columnLines: true,
 								store: {
 									autoLoad: true,
@@ -801,14 +880,15 @@
 										width: 50,
 										items:[
 											{												
-												iconCls: 'x-fa fa-trash',
+												iconCls: 'x-fa fa-trash icon-button-color-warning icon-small-horizontal-correction-trash',
 												tooltip: 'delete',
 												handler: function(grid, rowIndex, colIndex) {
 													var selectedUser = grid.getStore().getAt(rowIndex);
 													
 													Ext.Msg.show({
-														title:'Delete user from Role?',
-														message: 'Are you sure you want to remove ' + selectedUser.get('username') + ' from the role?',
+														title:'Delete role from user?',
+														iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+														message: 'Are you sure you want to delete ' + record.get('roleName') + ' role from ' + selectedUser.get('username') + '?',
 														buttons: Ext.Msg.YESNO,
 														icon: Ext.Msg.QUESTION,
 														fn: function(btn) {
@@ -878,6 +958,7 @@
 											{
 												xtype: 'toolbar',
 												dock: 'bottom',
+												style: 'margin-bottom:15px',
 												items: [
 													{
 														xtype: 'tbfill'
@@ -885,7 +966,8 @@
 													{
 														text: 'Add',
 														formBind: true,
-														iconCls: 'fa fa-plus',
+														iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+														width: '80px',
 														handler: function(){
 															var form = this.up('form');
 															var data = form.getValues();
@@ -909,7 +991,7 @@
 													},
 													{
 														text: 'Cancel',
-														iconCls: 'fa fa-close',
+														iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 														handler: function(){
 															var form = this.up('form');
 															form.reset();
