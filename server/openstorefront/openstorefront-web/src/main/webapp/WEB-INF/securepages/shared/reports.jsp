@@ -1156,7 +1156,9 @@
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
-						{text: 'Scheduled', dataIndex: 'scheduled', width: 100},
+						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender }
 					],
 					dockedItems: [
