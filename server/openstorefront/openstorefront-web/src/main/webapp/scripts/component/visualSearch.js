@@ -561,10 +561,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	loadRelationships: function (relationshipId) {
+	loadRelationships: function (relationshipId, componentName = "") {
 		var visPanel = this;
 
-		var relationshipLoad = function (componentId) {
+		var relationshipLoad = function (componentId, componentName) {
 
 			visPanel.setLoading("Loading Initial Relationships for the selected component ...");
 			Ext.Ajax.request({
@@ -576,19 +576,28 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					Ext.Array.each(data, function (relationship) {
+					if (data.length === 0)
+					{
 						viewData.push({
 							type: 'component',
-							nodeId: relationship.relationshipId,
-							key: relationship.ownerComponentId,
-							label: relationship.ownerComponentName,
-							relationshipLabel: relationship.relationshipTypeDescription,
-							targetKey: relationship.targetComponentId,
-							targetName: relationship.targetComponentName,
-							targetType: 'component'
+							key: componentId,
+							label: componentName
 						});
-					});
-
+					} else
+					{
+						Ext.Array.each(data, function (relationship) {
+							viewData.push({
+								type: 'component',
+								nodeId: relationship.relationshipId,
+								key: relationship.ownerComponentId,
+								label: relationship.ownerComponentName,
+								relationshipLabel: relationship.relationshipTypeDescription,
+								targetKey: relationship.targetComponentId,
+								targetName: relationship.targetComponentName,
+								targetType: 'component'
+							});
+						});
+					}
 					visPanel.viewData = visPanel.viewData.concat(viewData);
 					visPanel.initVisual(visPanel.viewData);
 				}
@@ -597,7 +606,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		};
 
 		if (relationshipId) {
-			relationshipLoad(relationshipId);
+			relationshipLoad(relationshipId, componentName);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -651,10 +660,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								iconCls: 'fa fa-lg fa-check icon-button-color-save',
 								handler: function () {
 									var promptWindow = this.up('window');
-									var orgCb = promptWindow.getComponent('component');
-									if (orgCb.getValue()) {
-										relationshipLoad(orgCb.getValue());
-										visPanel.updateAttribute(orgCb.getValue());
+									var relCb = promptWindow.getComponent('component');
+									if (relCb.getSelection().getData().code) {
+										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
+										visPanel.updateAttribute(relCb.getSelection().getData().code);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -676,7 +685,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				]
 			});
 			prompt.show();
-		}
+	}
 	},
 
 	loadTags: function (tag) {
@@ -693,20 +702,29 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					Ext.Array.each(data, function (tagview) {
+					if (data.length === 0)
+					{
 						viewData.push({
-							type: 'component',
-							nodeId: tagview.tagId,
-							key: tagview.componentId,
-							label: tagview.componentName,
-							relationshipLabel: '',
-							targetKey: tagview.text,
-							targetName: tagview.text,
-							targetType: 'tag',
-							isTagView: true
+							type: 'tag',
+							key: tag,
+							label: tag
 						});
-					});
-
+					} else
+					{
+						Ext.Array.each(data, function (tagview) {
+							viewData.push({
+								type: 'component',
+								nodeId: tagview.tagId,
+								key: tagview.componentId,
+								label: tagview.componentName,
+								relationshipLabel: '',
+								targetKey: tagview.text,
+								targetName: tagview.text,
+								targetType: 'tag',
+								isTagView: true
+							});
+						});
+					}
 					visPanel.viewData = visPanel.viewData.concat(viewData);
 					visPanel.initVisual(visPanel.viewData);
 				}
@@ -782,9 +800,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								handler: function () {
 									var promptWindow = this.up('window');
 									var tagCb = promptWindow.getComponent('tag');
-									if (tagCb.getValue()) {
-										tagLoad(tagCb.getValue());
-										visPanel.updateAttribute(tagCb.getValue());
+									if (tagCb.getSelection().getData().text) {
+										tagLoad(tagCb.getSelection().getData().text);
+										visPanel.updateAttribute(tagCb.getSelection().getData().text);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -809,10 +827,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}
 	},
 
-	loadOrganizations: function (organizationId) {
+	loadOrganizations: function (organizationId, corganizationName) {
 		var visPanel = this;
 
-		var organizationLoad = function (organizationId) {
+		var organizationLoad = function (organizationId, corganizationName) {
 			visPanel.setLoading("Loading Organizations...");
 			Ext.Ajax.request({
 				url: 'api/v1/resource/organizations/componentrelationships?organizationId=' + organizationId,
@@ -822,10 +840,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				success: function (response, opts) {
 					var data = Ext.decode(response.responseText);
 
-					if (data.length === 0) {
-						Ext.toast('No entries found for organization.');
-					} else {
-						var viewData = [];
+					var viewData = [];
+					if (data.length === 0)
+					{
+						viewData.push({
+							type: 'organization',
+							key: organizationId,
+							label: corganizationName
+						});
+					} else
+					{
 						Ext.Array.each(data, function (tagview) {
 							viewData.push({
 								type: 'organization',
@@ -838,16 +862,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								targetType: 'component'
 							});
 						});
-
-						visPanel.viewData = visPanel.viewData.concat(viewData);
-						visPanel.initVisual(visPanel.viewData);
 					}
+
+					visPanel.viewData = visPanel.viewData.concat(viewData);
+					visPanel.initVisual(visPanel.viewData);
 				}
 			});
 		};
 
 		if (organizationId) {
-			organizationLoad(organizationId);
+			organizationLoad(organizationId, corganizationName);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -893,9 +917,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								handler: function () {
 									var promptWindow = this.up('window');
 									var orgCb = promptWindow.getComponent('organization');
-									if (orgCb.getValue()) {
-										organizationLoad(orgCb.getValue());
-										visPanel.updateAttribute(orgCb.getValue());
+									if (orgCb.getSelection().getData().code) {
+										organizationLoad(orgCb.getSelection().getData().code, orgCb.getSelection().getData().description);
+										visPanel.updateAttribute(orgCb.getSelection().getData().code);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -920,10 +944,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}
 	},
 
-	loadAttributes: function (attributeType) {
+	loadAttributes: function (attributeType, attributeName) {
 		var visPanel = this;
 
-		var attributeLoad = function (attributeType) {
+		var attributeLoad = function (attributeType, attributeName) {
 			visPanel.setLoading("Loading Attributes...");
 			Ext.Ajax.request({
 				url: 'api/v1/resource/attributes/relationships?attributeType=' + attributeType,
@@ -934,20 +958,29 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					Ext.Array.each(data, function (attributeRelationship) {
+					if (data.length === 0)
+					{
 						viewData.push({
 							type: 'attribute',
-							nodeId: attributeRelationship.key,
-							key: attributeRelationship.targetKey,
-							label: attributeRelationship.targetName,
-							relationshipLabel: attributeRelationship.relationshipLabel,
-							targetKey: attributeRelationship.key,
-							targetName: attributeRelationship.name,
-							relationType: attributeRelationship.relationType,
-							targetType: 'attribute'
+							key: attributeType,
+							label: attributeName
 						});
-					});
-
+					} else
+					{
+						Ext.Array.each(data, function (attributeRelationship) {
+							viewData.push({
+								type: 'attribute',
+								nodeId: attributeRelationship.key,
+								key: attributeRelationship.targetKey,
+								label: attributeRelationship.targetName,
+								relationshipLabel: attributeRelationship.relationshipLabel,
+								targetKey: attributeRelationship.key,
+								targetName: attributeRelationship.name,
+								relationType: attributeRelationship.relationType,
+								targetType: 'attribute'
+							});
+						});
+					}
 					visPanel.viewData = visPanel.viewData.concat(viewData);
 					visPanel.initVisual(visPanel.viewData);
 				}
@@ -956,7 +989,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 
 		if (attributeType) {
-			attributeLoad(attributeType);
+			attributeLoad(attributeType, attributeName);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -1010,9 +1043,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								handler: function () {
 									var promptWindow = this.up('window');
 									var attributeTypeCb = promptWindow.getComponent('attributeType');
-									if (attributeTypeCb.getValue()) {
-										attributeLoad(attributeTypeCb.getValue());
-										visPanel.updateAttribute(attributeTypeCb.getValue());
+									if (attributeTypeCb.getSelection().getData().attributeType) {
+										attributeLoad(attributeTypeCb.getSelection().getData().attributeType, attributeTypeCb.getSelection().getData().description);
+										visPanel.updateAttribute(attributeTypeCb.getSelection().getData().attributeType);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -2039,7 +2072,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							var containerPanel = this.up('panel');
 
 							if (newValue) {
-								containerPanel.visualPanel.loadAttributes(newValue);
+								containerPanel.visualPanel.loadAttributes(newValue, cb.getSelection().getData().description);
 							}
 						}
 					}
@@ -2068,7 +2101,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							var containerPanel = this.up('panel');
 
 							if (newValue) {
-								containerPanel.visualPanel.loadOrganizations(newValue);
+								containerPanel.visualPanel.loadOrganizations(newValue, cb.getSelection().getData().description);
 							}
 						}
 					}
@@ -2105,7 +2138,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							var containerPanel = this.up('panel');
 
 							if (newValue) {
-								containerPanel.visualPanel.loadRelationships(newValue);
+								containerPanel.visualPanel.loadRelationships(newValue, cb.getSelection().getData().description);
 							}
 						}
 					}
@@ -2176,8 +2209,11 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					handler: function () {
 						var containerPanel = this.up('panel');
 
-						var findCB = containerPanel.getComponent('tools').getComponent('find');
-						findCB.reset();
+						containerPanel.getComponent('tools').getComponent('attributeType').reset();
+						containerPanel.getComponent('tools').getComponent('organization').reset();
+						containerPanel.getComponent('tools').getComponent('entry').reset();
+						containerPanel.getComponent('tools').getComponent('tag').reset();
+						containerPanel.getComponent('tools').getComponent('find').reset();
 
 						containerPanel.visualPanel.reset();
 					}
