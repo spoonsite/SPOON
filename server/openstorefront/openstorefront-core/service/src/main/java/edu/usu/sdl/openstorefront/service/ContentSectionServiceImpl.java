@@ -32,9 +32,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -55,16 +57,22 @@ public class ContentSectionServiceImpl
 
 		ContentSection contentSection = contentSectionAll.getSection().save();
 
-		//pull sub sections
-		//update if changed
 		ContentSubSection contentSubSectionExample = new ContentSubSection();
 		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
-		persistenceService.deleteByExample(contentSubSectionExample);
+		List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
+		Map<String, List<ContentSubSection>> subSectionMap = subSections.stream()
+				.collect(Collectors.groupingBy(ContentSubSection::getContentSectionId));
 
 		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
-			subSection.setContentSectionId(contentSection.getContentSectionId());
-			subSection.populateBaseCreateFields();
-			persistenceService.persist(subSection);
+			if (subSection.getContentSectionId() != null && subSectionMap.containsKey(subSection.getContentSectionId())) {
+				ContentSubSection existing = subSectionMap.get(subSection.getContentSectionId()).get(0);
+				existing.updateFields(subSection);
+				persistenceService.persist(existing);
+			} else {
+				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.populateBaseCreateFields();
+				persistenceService.persist(subSection);
+			}
 		}
 
 		return contentSection.getContentSectionId();
@@ -129,8 +137,7 @@ public class ContentSectionServiceImpl
 				}
 			}
 			persistenceService.delete(existing);
-
-			//TODO: Add Remove log
+			getChangeLogService().removeEntityChange(existing);
 		}
 	}
 
@@ -175,8 +182,8 @@ public class ContentSectionServiceImpl
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
+			getChangeLogService().removeEntityChange(contentSection);
 		}
-		//TODO: Add Remove log
 	}
 
 	@Override

@@ -67,7 +67,7 @@ public class ChangeLogServiceImpl
 			ChangeLog changeLog = new ChangeLog();
 			changeLog.setChangeLogId(getPersistenceService().generateId());
 			changeLog.setChangeType(ChangeType.UPDATED);
-			changeLog.setEntity(original.getClass().getSimpleName());
+			changeLog.setEntity(EntityUtil.getRealClassName(original.getClass().getSimpleName()));
 			changeLog.setEntityId(EntityUtil.getPKFieldValue(original));
 			changeLog.setField(change.getField());
 			changeLog.setOldValue(change.getOldValue());
@@ -122,7 +122,7 @@ public class ChangeLogServiceImpl
 		ChangeLog changeLog = new ChangeLog();
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.ADDED);
-		changeLog.setEntity(addedEntity.getClass().getSimpleName());
+		changeLog.setEntity(EntityUtil.getRealClassName(addedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(addedEntity));
 		setParent(changeLog, addedEntity);
 
@@ -145,7 +145,7 @@ public class ChangeLogServiceImpl
 
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.REMOVED);
-		changeLog.setEntity(removedEntity.getClass().getSimpleName());
+		changeLog.setEntity(EntityUtil.getRealClassName(removedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(removedEntity));
 		changeLog.setArchivedEntity(archivedValue);
 		setParent(changeLog, removedEntity);
@@ -162,7 +162,7 @@ public class ChangeLogServiceImpl
 		ChangeLog changeLog = new ChangeLog();
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.UPDATED);
-		changeLog.setEntity(statusEntity.getClass().getSimpleName());
+		changeLog.setEntity(EntityUtil.getRealClassName(statusEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(statusEntity));
 		changeLog.setField(StandardEntity.FIELD_ACTIVE_STATUS);
 		changeLog.setOldValue(statusEntity.getActiveStatus());
@@ -182,7 +182,7 @@ public class ChangeLogServiceImpl
 
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.REMOVED);
-		changeLog.setEntity(exampleRemovedEntity.getClass().getSimpleName());
+		changeLog.setEntity(EntityUtil.getRealClassName(exampleRemovedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(ChangeLog.REMOVED_ALL_ID);
 
 		setParent(changeLog, exampleRemovedEntity);
@@ -200,17 +200,37 @@ public class ChangeLogServiceImpl
 		Objects.requireNonNull(entityId);
 
 		ChangeLog changeLogExample = new ChangeLog();
-		changeLogExample.setParentEntity(entity);
+		changeLogExample.setParentEntity(EntityUtil.getRealClassName(entity));
 		changeLogExample.setParentEntityId(entityId);
 		long childRecordsRemoved = persistenceService.deleteByExample(changeLogExample);
 		LOG.log(Level.FINE, MessageFormat.format("Removed: {0} child change log records.", childRecordsRemoved));
 
 		changeLogExample = new ChangeLog();
-		changeLogExample.setEntity(entity);
+		changeLogExample.setEntity(EntityUtil.getRealClassName(entity));
 		changeLogExample.setEntityId(entityId);
 		long recordsRemoved = persistenceService.deleteByExample(changeLogExample);
 		LOG.log(Level.FINE, MessageFormat.format("Removed: {0} change log records.", recordsRemoved));
 
+	}
+
+	@Override
+	public <T extends StandardEntity> ChangeLog logFieldChange(T original, String fieldChanged, String oldValue, String newValue)
+	{
+		ChangeLog changeLog = new ChangeLog();
+
+		changeLog.setChangeLogId(getPersistenceService().generateId());
+		changeLog.setChangeType(ChangeType.UPDATED);
+		changeLog.setEntity(EntityUtil.getRealClassName(original.getClass().getSimpleName()));
+		changeLog.setEntityId(EntityUtil.getPKFieldValue(original));
+		changeLog.setField(fieldChanged);
+		changeLog.setOldValue(oldValue);
+		changeLog.setNewValue(newValue);
+		setParent(changeLog, original);
+
+		changeLog.populateBaseCreateFields();
+		persistenceService.persist(changeLog);
+
+		return changeLog;
 	}
 
 }

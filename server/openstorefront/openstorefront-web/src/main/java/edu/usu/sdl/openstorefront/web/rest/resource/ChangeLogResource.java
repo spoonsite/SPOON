@@ -41,16 +41,16 @@ import javax.ws.rs.core.Response;
 @Path("v1/resource/changelogs")
 @APIDescription("Change log endpoints for see history on entities that support it.")
 public class ChangeLogResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
-	@APIDescription("Gets all brandings")
+	@APIDescription("Gets changes log for an entity (also pulls children changes as an option)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChangeLogView.class)
 	@Path("/{entity}/{entityId}")
 	public Response getChangeLogForEntity(
-			@PathParam("entity") String entity,			
+			@PathParam("entity") String entity,
 			@PathParam("entityId") String entityId,
 			@QueryParam("includeChildren") boolean includeChildren
 	)
@@ -59,26 +59,26 @@ public class ChangeLogResource
 		changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
 		changeLogExample.setEntity(entity);
 		changeLogExample.setEntityId(entityId);
-		
+
 		List<ChangeLog> changeLogs = changeLogExample.findByExample();
-				
+
 		if (includeChildren) {
 			changeLogExample = new ChangeLog();
 			changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
 			changeLogExample.setParentEntity(entity);
 			changeLogExample.setParentEntityId(entityId);
-			
+
 			List<ChangeLog> childrenChanges = changeLogExample.findByExample();
 			changeLogs.addAll(childrenChanges);
 		}
-		
+
 		List<ChangeLogView> views = ChangeLogView.toView(changeLogs);
 		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, StandardEntity.FIELD_CREATE_DTS));
-				
+
 		GenericEntity<List<ChangeLogView>> returnEntity = new GenericEntity<List<ChangeLogView>>(views)
 		{
 		};
 		return sendSingleEntityResponse(returnEntity);
 	}
-	
+
 }

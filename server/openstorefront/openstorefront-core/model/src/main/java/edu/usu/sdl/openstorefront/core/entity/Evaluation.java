@@ -38,6 +38,8 @@ public class Evaluation
 		implements LoggableModel<Evaluation>
 {
 
+	public static final String FIELD_PUBLISHED = "published";
+
 	@PK(generated = true)
 	@NotNull
 	private String evaluationId;

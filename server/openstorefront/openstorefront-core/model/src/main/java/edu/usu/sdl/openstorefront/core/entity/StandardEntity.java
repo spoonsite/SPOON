@@ -103,11 +103,14 @@ public abstract class StandardEntity<T>
 	{
 		Set<String> excludedFields = new HashSet<>();
 
+		excludedFields.add("activeStatus");
 		excludedFields.add("createUser");
 		excludedFields.add("createDts");
 		excludedFields.add("updateUser");
 		excludedFields.add("updateDts");
 		excludedFields.add("adminModified");
+		excludedFields.add("handler");
+		excludedFields.add("storageVersion");
 
 		return excludedFields;
 	}

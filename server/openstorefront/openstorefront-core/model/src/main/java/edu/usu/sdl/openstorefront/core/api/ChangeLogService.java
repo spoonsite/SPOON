@@ -53,6 +53,17 @@ public interface ChangeLogService
 	public <T extends StandardEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated, boolean save);
 
 	/**
+	 * Saves a new change for a field based on the original entity
+	 *
+	 * @param <T>
+	 * @param original
+	 * @param fieldChanged
+	 * @param newValue
+	 * @return
+	 */
+	public <T extends StandardEntity> ChangeLog logFieldChange(T original, String fieldChanged, String oldValue, String newValue);
+
+	/**
 	 * Save a added change record to parent entities history
 	 *
 	 * @param <T>
