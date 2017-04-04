@@ -58,6 +58,7 @@ public interface ChangeLogService
 	 * @param <T>
 	 * @param original
 	 * @param fieldChanged
+	 * @param oldValue
 	 * @param newValue
 	 * @return
 	 */
@@ -67,7 +68,6 @@ public interface ChangeLogService
 	 * Save a added change record to parent entities history
 	 *
 	 * @param <T>
-	 * @param parentEntity
 	 * @param addedEntity
 	 * @return
 	 */
@@ -78,19 +78,19 @@ public interface ChangeLogService
 	 * Create a record for a remove entity (Sub-entity)
 	 *
 	 * @param <T>
-	 * @param parentEntity
-	 * @param temovedEntity
+	 * @param removedEntityClass (This is needed to resolve proxy versions of
+	 * entity)
+	 * @param removedEntity
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public <T extends StandardEntity> ChangeLog removeEntityChange(T removedEntity);
+	public <T extends StandardEntity> ChangeLog removeEntityChange(Class<T> removedEntityClass, T removedEntity);
 
 	/**
 	 * This is used for the records deleting a set of (sub-entities)
 	 *
 	 * @param <T>
-	 * @param parentEntity
-	 * @param temovedEntity
+	 * @param exampleRemovedEntity
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
@@ -101,12 +101,23 @@ public interface ChangeLogService
 	 * update.
 	 *
 	 * @param <T>
-	 * @param parentEntity
 	 * @param statusEntity
 	 * @param newStatus
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public <T extends StandardEntity> ChangeLog logStatusChange(final T statusEntity, String newStatus);
+
+	/**
+	 * Logs a generic change type (Example: use is for snapshots and restores)
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @param changeType
+	 * @param comment
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity> ChangeLog logOtherChange(T entity, String changeType, String comment);
 
 }

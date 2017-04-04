@@ -104,6 +104,12 @@ public class ComponentQuestion
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getQuestion();
+	}
+
 	public String getQuestion()
 	{
 		return question;

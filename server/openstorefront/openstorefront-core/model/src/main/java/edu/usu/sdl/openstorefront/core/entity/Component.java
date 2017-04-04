@@ -236,6 +236,12 @@ public class Component
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getName();
+	}
+
 	public String getName()
 	{
 		return name;

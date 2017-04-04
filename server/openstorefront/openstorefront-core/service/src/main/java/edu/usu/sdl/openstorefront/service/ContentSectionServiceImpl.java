@@ -61,11 +61,11 @@ public class ContentSectionServiceImpl
 		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
 		List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
 		Map<String, List<ContentSubSection>> subSectionMap = subSections.stream()
-				.collect(Collectors.groupingBy(ContentSubSection::getContentSectionId));
+				.collect(Collectors.groupingBy(ContentSubSection::getSubSectionId));
 
 		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
-			if (subSection.getContentSectionId() != null && subSectionMap.containsKey(subSection.getContentSectionId())) {
-				ContentSubSection existing = subSectionMap.get(subSection.getContentSectionId()).get(0);
+			if (subSection.getSubSectionId() != null && subSectionMap.containsKey(subSection.getSubSectionId())) {
+				ContentSubSection existing = subSectionMap.get(subSection.getSubSectionId()).get(0);
 				existing.updateFields(subSection);
 				persistenceService.persist(existing);
 			} else {
@@ -105,6 +105,10 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(contentSectionMedia);
 		Objects.requireNonNull(in);
 
+		if (contentSectionMedia.getContentSectionMediaId() == null) {
+			getChangeLogService().addEntityChange(contentSectionMedia);
+		}
+
 		ContentSectionMedia savedMedia = contentSectionMedia.save();
 
 		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
@@ -137,7 +141,7 @@ public class ContentSectionServiceImpl
 				}
 			}
 			persistenceService.delete(existing);
-			getChangeLogService().removeEntityChange(existing);
+			getChangeLogService().removeEntityChange(ContentSectionMedia.class, existing);
 		}
 	}
 
@@ -182,7 +186,7 @@ public class ContentSectionServiceImpl
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
-			getChangeLogService().removeEntityChange(contentSection);
+			getChangeLogService().removeEntityChange(ContentSection.class, contentSection);
 		}
 	}
 

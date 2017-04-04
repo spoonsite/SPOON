@@ -20,19 +20,27 @@ import java.util.List;
 
 /**
  * Used to support the change log
+ *
  * @author dshurtleff
  * @param <T>
  */
 public interface LoggableModel<T>
 {
-	
+
 	/**
 	 * Find fields that have changed between this model and an updated version
 	 * This should be fields that are user changeable for the most part.
-	 * 
+	 *
 	 * @param updated entity
-	 * @return 
+	 * @return
 	 */
 	public List<FieldChangeModel> findChanges(T updated);
-	
+
+	/**
+	 * This should be message that identifies the record to a user.
+	 *
+	 * @return Field Message
+	 */
+	public String addRemoveComment();
+
 }

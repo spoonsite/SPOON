@@ -59,6 +59,7 @@ public class ChangeLog
 	private Integer version;
 	private String archivedExternalResourceId;
 	private String archivedEntity;
+	private String comment;
 
 	@ValidValueType(value = {}, lookupClass = ChangeType.class)
 	@FK(ChangeType.class)
@@ -186,6 +187,16 @@ public class ChangeLog
 	public void setParentEntity(String parentEntity)
 	{
 		this.parentEntity = parentEntity;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
 	}
 
 }

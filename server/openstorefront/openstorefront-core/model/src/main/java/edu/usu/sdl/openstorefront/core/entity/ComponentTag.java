@@ -86,6 +86,12 @@ public class ComponentTag
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getText();
+	}
+
 	public String getTagId()
 	{
 		return tagId;

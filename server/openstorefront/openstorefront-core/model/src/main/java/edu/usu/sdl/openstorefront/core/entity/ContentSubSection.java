@@ -116,6 +116,12 @@ public class ContentSubSection
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getTitle();
+	}
+
 	public String getSubSectionId()
 	{
 		return subSectionId;

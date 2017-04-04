@@ -93,6 +93,12 @@ public class ComponentMetadata
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getLabel() + " - " + getValue();
+	}
+
 	public String getMetadataId()
 	{
 		return metadataId;

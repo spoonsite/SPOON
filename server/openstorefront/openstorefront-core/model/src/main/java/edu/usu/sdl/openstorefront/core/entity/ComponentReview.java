@@ -138,6 +138,12 @@ public class ComponentReview
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getTitle();
+	}
+
 	public String getComponentReviewId()
 	{
 		return componentReviewId;

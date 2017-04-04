@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -168,6 +169,12 @@ public class ComponentResource
 		excludeFields.add("fileName");
 		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(ResourceType.class, getResourceType()) + " - " + (getLink() != null ? getLink() : getOriginalName());
 	}
 
 	public String getResourceId()

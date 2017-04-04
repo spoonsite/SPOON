@@ -109,6 +109,12 @@ public class ComponentQuestionResponse
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getResponse();
+	}
+
 	public String getResponseId()
 	{
 		return responseId;

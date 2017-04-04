@@ -124,6 +124,12 @@ public class Evaluation
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getVersion();
+	}
+
 	public String getEvaluationId()
 	{
 		return evaluationId;

@@ -34,7 +34,9 @@ public class ChangeType
 	public static final String UPDATED = "UPDATED";
 	public static final String ADDED = "ADDED";
 	public static final String REMOVED = "REMOVED";
-	
+	public static final String SNAPSHOT = "SNAPSHOT";
+	public static final String RESTORE = "RESTORE";
+
 	public ChangeType()
 	{
 	}
@@ -46,7 +48,9 @@ public class ChangeType
 		codeMap.put(UPDATED, newLookup(ChangeType.class, UPDATED, "Updated"));
 		codeMap.put(ADDED, newLookup(ChangeType.class, ADDED, "Added"));
 		codeMap.put(REMOVED, newLookup(ChangeType.class, REMOVED, "Removed"));
+		codeMap.put(SNAPSHOT, newLookup(ChangeType.class, SNAPSHOT, "Snapshot"));
+		codeMap.put(RESTORE, newLookup(ChangeType.class, RESTORE, "Restore"));
 		return codeMap;
 	}
-	
+
 }

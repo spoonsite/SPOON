@@ -163,6 +163,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 			]
 		});
 		
+		var changeHistory = Ext.create('OSF.component.ChangeLogWindow', {									
+		});
+		
 		evalPanel.contentPanel = Ext.create('Ext.panel.Panel', {
 			region: 'center',			
 			layout: 'fit',
@@ -183,6 +186,38 @@ Ext.define('OSF.component.EvaluationPanel', {
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Change History',
+							itemId: 'changeHistoryBtn',
+							iconCls: 'fa fa-2x fa-history',
+							scale: 'medium',
+							handler: function() {									
+								changeHistory.show();
+								
+								changeHistory.load({
+									entity: 'Component',												
+									entityId: evalPanel.componentId,
+									includeChildren: true,
+									addtionalLoad: function(data, changeWindow) {
+										changeWindow.setLoading(true);
+										Ext.Ajax.request({
+											url: 'api/v1/resource/changelogs/Evaluation/' + evalPanel.evaluationId + '?includeChildren=true',
+											callback: function() {
+												changeWindow.setLoading(false);
+											},
+											success: function(response, opts) {
+												var extraData = Ext.decode(response.responseText);
+												data.push(extraData);
+												data.sort(function(a, b){
+													return Ext.Date.parse(b.createDts, 'C') - Ext.Date.parse(a.createDts, 'C');
+												});												
+												changeWindow.updateData(data);
+											}
+										});
+									}
+								});
+							}
 						}
 					]
 				}
@@ -582,6 +617,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 		var evalPanel = this;
 		
 		evalPanel.setLoading(true);
+		evalPanel.evaluationId = evaluationId;
+		evalPanel.componentId = componentId;
 		
 		var entryType = 'COMP';		
 		Ext.Ajax.request({

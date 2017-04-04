@@ -117,6 +117,7 @@
 								{
 									xtype: 'image',
 									height: 53,
+									alt: 'logo',
 									cls: 'linkItem',
 									title: 'Go back to Home Page',
 									src: '${branding.secondaryLogoUrl}',

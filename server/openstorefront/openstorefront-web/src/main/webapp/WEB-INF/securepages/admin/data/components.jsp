@@ -264,7 +264,11 @@
 										iconCls: 'fa fa-lg fa-history',
 										handler: function() {
 											changeHistory.show();
-											changeHistory.load('Component', generalForm.componentRecord.get('componentId'), true);
+											changeHistory.load({
+												entity: 'Component',												
+												entityId: generalForm.componentRecord.get('componentId'),
+												includeChildren: true
+											});
 										}
 									},
 									{

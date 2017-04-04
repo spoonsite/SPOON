@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
+import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
@@ -1813,6 +1814,8 @@ public class CoreComponentServiceImpl
 			versionHistory.setVersion(version);
 			versionHistory.populateBaseCreateFields();
 
+			componentService.getChangeLogService().logOtherChange(componentAll.getComponent(), ChangeType.SNAPSHOT, "Version: " + version);
+
 			try {
 				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(componentAll);
 				String archiveName = versionHistory.pathToFile().toString();
@@ -1965,6 +1968,7 @@ public class CoreComponentServiceImpl
 				}
 				//Always leave versions
 				deleteOptions.getIgnoreClasses().add(ComponentVersionHistory.class.getSimpleName());
+				deleteOptions.getIgnoreClasses().add(ChangeLog.class.getSimpleName());
 				cascadeDeleteOfComponent(versionHistory.getComponentId(), deleteOptions);
 
 				//copy resources
@@ -2022,6 +2026,8 @@ public class CoreComponentServiceImpl
 				fileHistoryOptions.setUploadIntegration(options.getRestoreIntegration());
 
 				saveFullComponent(archivedVersion, fileHistoryOptions);
+
+				componentService.getChangeLogService().logOtherChange(archivedVersion.getComponent(), ChangeType.RESTORE, "Version: " + versionHistory.getVersion());
 
 				cleanupCache(archivedVersion.getComponent().getComponentId());
 				return archivedVersion.getComponent();

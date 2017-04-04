@@ -106,6 +106,12 @@ public class Contact
 	}
 
 	@Override
+	public String addRemoveComment()
+	{
+		return getFirstName() + ", " + getLastName();
+	}
+
+	@Override
 	public List<FieldChangeModel> findChanges(Contact updated)
 	{
 		Set<String> excludeFields = excludedChangeFields();

@@ -42,10 +42,11 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@WebFilter(filterName = "CSRFFilter", urlPatterns = {"/*"}, dispatcherTypes ={DispatcherType.REQUEST, DispatcherType.ASYNC})
+@WebFilter(filterName = "CSRFFilter", urlPatterns = {"/*"}, dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.ASYNC})
 public class CSRFFilter
-	implements Filter
+		implements Filter
 {
+
 	private static final String CSRF_TOKEN = "CSRF-TOKEN";
 	private static final String X_CSRF_TOKEN = "X-Csrf-Token";
 
@@ -58,66 +59,74 @@ public class CSRFFilter
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
 	{
-		
+
 		//look at the method (GET, HEAD, OPTIONS...no CSRF check is needed)
 		Set<String> safeMethods = new HashSet<>();
 		safeMethods.addAll(Arrays.asList(
-			"GET",
-			"HEAD",
-			"OPTIONS"
+				"GET",
+				"HEAD",
+				"OPTIONS"
 		));
-		
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		if (!safeMethods.contains(httpRequest.getMethod())) {
-		
+		boolean upload = false;
+
+		String contentType = httpRequest.getHeader("Content-Type");
+		if (StringUtils.isNotBlank(contentType)) {
+			if (contentType.toLowerCase().contains("multipart/form-data")) {
+				upload = true;
+			}
+		}
+
+		if (!safeMethods.contains(httpRequest.getMethod()) && !upload) {
+
 			if (SecurityUtil.isLoggedIn()) {
-				
+
 				SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 				if (securityPolicy.getCsrfSupport()) {
-					
-					//check session for token					
-					String token = (String)httpRequest.getSession().getAttribute(CSRF_TOKEN);
+
+					//check session for token
+					String token = (String) httpRequest.getSession().getAttribute(CSRF_TOKEN);
 					if (token != null) {
 						boolean valid = false;
-						
+
 						String tokenFromHeader = httpRequest.getHeader(X_CSRF_TOKEN);
-						if (StringUtils.isNotBlank(tokenFromHeader))
-						{
+						if (StringUtils.isNotBlank(tokenFromHeader)) {
 							if (tokenFromHeader.equals(token)) {
 								valid = true;
 							}
 						}
-						
+
 						if (!valid) {
 							HttpServletResponse httpResponse = (HttpServletResponse) response;
-							httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF TOKEN is invalid");							
+							httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF TOKEN is invalid");
 						}
-						
+
 					} else {
 						token = UUID.randomUUID().toString();
 						httpRequest.getSession().setAttribute(CSRF_TOKEN, token);
-						
+
 						HttpServletResponse httpResponse = (HttpServletResponse) response;
 						Cookie cookie = new Cookie(X_CSRF_TOKEN, token);
 						cookie.setHttpOnly(false);
 						cookie.setPath("/");
-						cookie.setMaxAge(-1);						
+						cookie.setMaxAge(-1);
 						httpResponse.addCookie(cookie);
-						
+
 						//Let request through...origin server must be the first request
 						//this will be case as the user must first login in order for a CSRF attack to be successful.
-					}					
-				}				
+					}
+				}
 			}
 		}
-		
+
 		chain.doFilter(request, response);
-	}	
+	}
 
 	@Override
 	public void destroy()
 	{
 		//nothing to shutdown
 	}
-	
+
 }

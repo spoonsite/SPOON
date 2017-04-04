@@ -399,8 +399,8 @@ Ext.define('OSF.component.ChangeLogWindow', {
 	title: 'Change History',
 	modal: false,	
 	maximizable: true,
-	width: '50%',
-	height: '40%',
+	width: '40%',
+	height: '70%',
 	layout: 'fit',
 	alwaysOnTop: true,
 	dockedItems: [
@@ -408,6 +408,13 @@ Ext.define('OSF.component.ChangeLogWindow', {
 			xtype: 'toolbar',
 			dock: 'bottom',
 			items: [
+				{
+					text: 'Refresh',
+					iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+					handler: function() {
+						this.up('window').refresh();
+					}
+				},
 				{
 					xtype: 'tbfill'
 				},
@@ -417,9 +424,6 @@ Ext.define('OSF.component.ChangeLogWindow', {
 					handler: function() {
 						this.up('window').close();
 					}
-				},
-				{
-					xtype: 'tbfill'
 				}
 			]
 		}
@@ -435,78 +439,53 @@ Ext.define('OSF.component.ChangeLogWindow', {
 		this.callParent();
 		
 		var changeWindow = this;		
-		
-//		changeWindow.grid = Ext.create('Ext.grid.Panel', {
-//			columnLines: true,
-//			store: {
-//				fields: [
-//					{
-//						name: 'createDts',
-//						type:	'date',
-//						dateFormat: 'c'
-//					}
-//				],
-//				proxy: {
-//					type: 'ajax',
-//					url: ''
-//				}
-//			},
-//			viewConfig: {
-//				enableTextSelection: true
-//			},			
-//			columns: [
-//				{ text: 'Change Type', dataIndex: 'changeType', width: 175,
-//					renderer: function(value, meta, record) {
-//						return record.get('changeTypeDescription');
-//					}
-//				},
-//				{ text: 'User', dataIndex: 'createUser', width: 175},
-//				{ text: 'Date', dataIndex: 'createDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 175 },
-//				{ text: 'Item', dataIndex: 'entity', width: 175 },
-//				{ text: 'Field', dataIndex: 'field', width: 175 },
-//				{ text: 'Old Value', dataIndex: 'oldValue', flex: 1, minWidth: 175 },
-//				{ text: 'New Value', dataIndex: 'newValue', flex: 2, minWidth: 175 }
-//			]
-//		});
-		
-		//changeWindow.add(changeWindow.grid);
-		
+
 		changeWindow.details = Ext.create('Ext.panel.Panel', {
 			bodyStyle: 'padding: 10px;',
 			scrollable: true,
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',
+				'	<tpl if="changeTypeDescription">',
 				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
-				'	{entity} <tpl if="field">Field: {field}</tpl><br><br>',				
-				'	<tpl if="newValue"><b>New Value: </b><br>',
+				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment">{comment}</tpl><br>',									
+				'	<tpl if="newValue"><br><b>New Value: </b><br>',
 				'	<b>{newValue}</b><br><br></tpl>',
 				'	<tpl if="oldValue"><b>Old Value:</b> <br>',
 				'	<span style="color: gray">{oldValue}</span></tpl>',
-				'	<hr>',
+				'	<hr></tpl>',				
 				'</tpl>'
 			)			
 		});
 		changeWindow.add(changeWindow.details);
 	},
-	load: function(entity, entityId, includeChildern) {
+	load: function(loadInfo) {
 		var changeWindow = this;
-		
-//		changeWindow.grid.getStore().load({
-//			url: 'api/v1/resource/changelogs/' + entity + '/' + entityId + '?includeChildern=' + (includeChildern ? true : false)		
-//		});
-		
+
 		changeWindow.setLoading(true);
+		changeWindow.loadInfo  = loadInfo;
+		
 		Ext.Ajax.request({
-			url: 'api/v1/resource/changelogs/' + entity + '/' + entityId + '?includeChildren=' + (includeChildern ? true : false),
+			url: 'api/v1/resource/changelogs/' + loadInfo.entity + '/' + loadInfo.entityId + '?includeChildren=' + (loadInfo.includeChildren ? true : false),
 			callback: function() {
 				changeWindow.setLoading(false);
 			},
 			success: function(response, opts) {
 				var data = Ext.decode(response.responseText);
-				changeWindow.details.update(data);
+				if (loadInfo.addtionalLoad) {
+					loadInfo.addtionalLoad(data, changeWindow);
+				} else {
+					changeWindow.updateData(data);
+				}
 			}
 		});
-
+	},
+	updateData: function(data) {
+		var changeWindow = this;		
+		changeWindow.details.update(data);			
+	},
+	refresh: function() {
+		var changeWindow = this;
+		changeWindow.load(changeWindow.loadInfo);
 	}
 	
 });

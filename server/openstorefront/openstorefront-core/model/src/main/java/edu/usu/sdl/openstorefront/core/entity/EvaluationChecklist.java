@@ -86,6 +86,12 @@ public class EvaluationChecklist
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getSummary();
+	}
+
 	public String getChecklistId()
 	{
 		return checklistId;

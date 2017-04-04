@@ -88,6 +88,12 @@ public class EvaluationChecklistRecommendation
 		return changes;
 	}
 
+	@Override
+	public String addRemoveComment()
+	{
+		return getReason();
+	}
+
 	public String getRecommendationId()
 	{
 		return recommendationId;

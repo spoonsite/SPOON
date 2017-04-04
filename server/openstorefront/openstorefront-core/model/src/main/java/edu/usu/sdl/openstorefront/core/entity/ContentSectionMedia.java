@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -124,6 +125,12 @@ public class ContentSectionMedia
 		excludeFields.add("fileName");
 		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
 		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + getOriginalName();
 	}
 
 	public String getContentSectionMediaId()

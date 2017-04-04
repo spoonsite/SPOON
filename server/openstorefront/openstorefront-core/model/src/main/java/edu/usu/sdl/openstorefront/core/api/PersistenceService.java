@@ -71,7 +71,9 @@ public interface PersistenceService
 
 	String generateId();
 
-	boolean isAttached(BaseEntity baseEntity);
+	boolean isManaged(BaseEntity baseEntity);
+
+	boolean isProxy(BaseEntity baseEntity);
 
 	boolean isTransactionActive();
 
@@ -92,7 +94,7 @@ public interface PersistenceService
 	 *
 	 * @param <T>
 	 * @param query
-	 * @param parameterMap	 
+	 * @param parameterMap
 	 * @param unwrap
 	 * @return
 	 */
