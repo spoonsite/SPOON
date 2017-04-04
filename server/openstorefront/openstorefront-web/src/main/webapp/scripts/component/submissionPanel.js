@@ -611,7 +611,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Attribute',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>',
 				width: '50%',
 				height: 200,
 				layout: 'fit',
@@ -726,7 +726,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										text: 'Save',
 										itemId: 'saveButton',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function () {
 											var attributeWindow = this.up('window');
 											var form = this.up('form');
@@ -840,7 +840,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											this.up('window').close();
 										}
@@ -862,7 +862,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var addWindow = Ext.create('Ext.window.Window', {
 				closeAction: 'destory',
 				modal: true,
-				title: 'Add Contact',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
 				width: '50%',
 				height: 400,
@@ -1007,7 +1007,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var form = this.up('form');
 											var formWindow = this.up('window');
@@ -1040,7 +1040,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1062,7 +1062,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add External Link',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add External Link</span>',
 				width: '50%',
 				height: 465,
 				layout: 'fit',
@@ -1176,7 +1176,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var resourceWindow = this.up('window');
 											var form = this.up('form');
@@ -1257,7 +1257,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1279,7 +1279,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Media',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Media</span>',
 				width: '50%',
 				height: 500,
 				minHeight: 500,
@@ -1400,7 +1400,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var mediaWindow = this.up('window');
 											var form = this.up('form');
@@ -1482,7 +1482,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1506,7 +1506,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Dependency',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Dependency</span>',
 				width: '50%',
 				height: 470,
 				layout: 'fit',				
@@ -1569,7 +1569,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var depWindow = this.up('window');
 											var form = this.up('form');
@@ -1602,7 +1602,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1624,7 +1624,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Metadata',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Metadata</span>',
 				width: '50%',
 				height: 350,
 				layout: 'fit',
@@ -1706,7 +1706,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var metaWindow = this.up('window');
 											var form = this.up('form');
@@ -1740,7 +1740,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1762,7 +1762,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var addWindow = Ext.create('Ext.window.Window', {
 				closeAction: 'destory',
 				modal: true,
-				title: 'Add Relationship',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Relationship</span>',
 				alwaysOnTop: true,
 				width: '50%',
 				height: 300,
@@ -1849,7 +1849,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var relationShipWindow = this.up('window');
 											var form = this.up('form');
@@ -1882,7 +1882,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1963,7 +1963,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												addEditAttribute();
 											}
@@ -1971,7 +1971,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){												
 												var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -1984,7 +1984,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Delete',	
 											itemId: 'removeBtn',
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											disabled: true,
 											handler: function(){
 												actionSubComponentRemove({
@@ -2055,7 +2055,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditContact(null, grid);
@@ -2064,7 +2064,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2079,7 +2079,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2145,7 +2145,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditResource(null, grid);
@@ -2154,7 +2154,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2169,7 +2169,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2234,7 +2234,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditMedia(null, grid);
@@ -2244,7 +2244,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Edit',
 											itemId: 'editBtn',
 											disabled: true,
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-edit',
 											handler: function(){
 												var grid = this.up('grid');
 												var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -2258,7 +2258,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												var record = this.up('grid').getSelection()[0];
 												var neededGrid = this.up('grid');
@@ -2340,7 +2340,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditDependency(null, grid);
@@ -2349,7 +2349,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2364,7 +2364,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2426,7 +2426,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditMetadata(null, grid);
@@ -2435,7 +2435,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2450,7 +2450,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2515,7 +2515,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');												
 												addEditRelationship(null, grid);
@@ -2525,7 +2525,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){	
 												var grid = this.up('grid');	
@@ -2540,7 +2540,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2599,7 +2599,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												
@@ -2626,7 +2626,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													closeAction: 'destory',
 													modal: true,
 													alwaysOnTop: true,
-													title: 'Add Tag',
+													title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Tag</span>',
 													width: '40%',
 													height: 200,
 													layout: 'fit',
@@ -2666,7 +2666,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		{
 																			text: 'Add',
 																			formBind: true,
-																			iconCls: 'fa fa-plus',
+																			iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 																			handler: function(){																				
 																				addTag(this.up('window'));
 																			}
@@ -2676,7 +2676,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		},
 																		{
 																			text: 'Cancel',										
-																			iconCls: 'fa fa-close',
+																			iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 																			handler: function(){
 																				this.up('window').close();
 																			}
@@ -2696,7 +2696,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
