@@ -319,7 +319,7 @@
 									{
 										text: 'Save',
 										tooltip: 'Save General information and continue.',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function() {
 
