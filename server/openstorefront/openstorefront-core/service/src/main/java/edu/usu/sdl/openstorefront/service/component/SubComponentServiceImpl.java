@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
@@ -90,14 +91,17 @@ public class SubComponentServiceImpl
 
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, String activeStatus)
 	{
-		try {
+		try
+		{
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
 			List<T> data = persistenceService.queryByExample(new QueryByExample(baseComponentExample));
 			data = FilterEngine.filter(data);
 			return data;
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex)
+		{
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -110,21 +114,25 @@ public class SubComponentServiceImpl
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, String updateUser)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
+		if (found != null)
+		{
 
-			if (found instanceof LoggableModel) {
+			if (found instanceof LoggableModel)
+			{
 				componentService.getChangeLogService().logStatusChange(found, T.INACTIVE_STATUS);
 			}
 
 			found.setActiveStatus(T.INACTIVE_STATUS);
 			found.setUpdateDts(TimeUtil.currentDate());
-			if (StringUtils.isBlank(updateUser)) {
+			if (StringUtils.isBlank(updateUser))
+			{
 				updateUser = SecurityUtil.getCurrentUserName();
 			}
 			found.setUpdateUser(updateUser);
 			persistenceService.persist(found);
 
-			if (updateComponentActivity) {
+			if (updateComponentActivity)
+			{
 				updateComponentLastActivity(found.getComponentId());
 			}
 		}
@@ -134,8 +142,10 @@ public class SubComponentServiceImpl
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
-			if (found instanceof LoggableModel) {
+		if (found != null)
+		{
+			if (found instanceof LoggableModel)
+			{
 				componentService.getChangeLogService().logStatusChange(found, T.ACTIVE_STATUS);
 			}
 
@@ -156,22 +166,27 @@ public class SubComponentServiceImpl
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
+		if (found != null)
+		{
 			String componentId = found.getComponentId();
-			if (found instanceof ComponentResource) {
+			if (found instanceof ComponentResource)
+			{
 				removeLocalResource((ComponentResource) found);
 			}
-			if (found instanceof ComponentMedia) {
+			if (found instanceof ComponentMedia)
+			{
 				removeLocalMedia((ComponentMedia) found);
 			}
 
-			if (found instanceof LoggableModel) {
+			if (found instanceof LoggableModel)
+			{
 				componentService.getChangeLogService().removeEntityChange(found);
 			}
 
 			persistenceService.delete(found);
 
-			if (updateComponentActivity) {
+			if (updateComponentActivity)
+			{
 				updateComponentLastActivity(componentId);
 			}
 		}
@@ -181,9 +196,12 @@ public class SubComponentServiceImpl
 	{
 		//Note: this can't be rolled back
 		Path path = componentResource.pathToResource();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete() == false) {
+		if (path != null)
+		{
+			if (path.toFile().exists())
+			{
+				if (path.toFile().delete() == false)
+				{
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
 				}
 			}
@@ -194,9 +212,12 @@ public class SubComponentServiceImpl
 	{
 		//Note: this can't be rolled back
 		Path path = componentMedia.pathToMedia();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete() == false) {
+		if (path != null)
+		{
+			if (path.toFile().exists())
+			{
+				if (path.toFile().delete() == false)
+				{
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
 				}
 			}
@@ -210,32 +231,41 @@ public class SubComponentServiceImpl
 
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId, boolean updateComponentActivity)
 	{
-		try {
+		try
+		{
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 
-			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
+			if (subComponentClass.getName().equals(ComponentResource.class.getName()))
+			{
 				List<T> resources = persistenceService.queryByExample(example);
-				resources.forEach(resource -> {
+				resources.forEach(resource ->
+				{
 					removeLocalResource((ComponentResource) resource);
 				});
 			}
-			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
+			if (subComponentClass.getName().equals(ComponentMedia.class.getName()))
+			{
 				List<T> media = persistenceService.queryByExample(example);
-				media.forEach(mediaItem -> {
+				media.forEach(mediaItem ->
+				{
 					removeLocalMedia((ComponentMedia) mediaItem);
 				});
 			}
-			if (example instanceof LoggableModel) {
+			if (example instanceof LoggableModel)
+			{
 				componentService.getChangeLogService().removedAllEntityChange(example);
 			}
 
 			persistenceService.deleteByExample(example);
 
-			if (updateComponentActivity) {
+			if (updateComponentActivity)
+			{
 				updateComponentLastActivity(componentId);
 			}
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex)
+		{
 			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -270,8 +300,10 @@ public class SubComponentServiceImpl
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 		AttributeCode code = persistenceService.findById(AttributeCode.class, pk);
 
-		if (type != null && code != null) {
-			if (type.getAllowMultipleFlg() == false) {
+		if (type != null && code != null)
+		{
+			if (type.getAllowMultipleFlg() == false)
+			{
 				ComponentAttribute example = new ComponentAttribute();
 				example.setComponentAttributePk(new ComponentAttributePk());
 				example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
@@ -280,30 +312,45 @@ public class SubComponentServiceImpl
 			}
 
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
-			if (oldAttribute != null) {
+			if (oldAttribute != null)
+			{
+				componentService.getChangeLogService().logFieldChange(oldAttribute, ChangeLog.PK_FIELD, oldAttribute.getComponentAttributePk().pkValue(), attribute.getComponentAttributePk().pkValue());
+
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 				oldAttribute.updateFields(attribute);
 				persistenceService.persist(oldAttribute);
-			} else {
+			}
+			else
+			{
 				attribute.populateBaseCreateFields();
 				persistenceService.persist(attribute);
+
+				componentService.getChangeLogService().addEntityChange(attribute);
 			}
-			if (updateLastActivity) {
+			if (updateLastActivity)
+			{
 				updateComponentLastActivity(attribute.getComponentAttributePk().getComponentId());
 			}
 
-		} else {
+		}
+		else
+		{
 			StringBuilder error = new StringBuilder();
-			if (type == null) {
+			if (type == null)
+			{
 				error.append("Attribute type not found.  Type: ").append(attribute.getComponentAttributePk().getAttributeType());
 			}
 
-			if (code == null) {
+			if (code == null)
+			{
 				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
 			}
-			if (skipMissingAttribute) {
+			if (skipMissingAttribute)
+			{
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
-			} else {
+			}
+			else
+			{
 				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
 			}
 		}
@@ -321,17 +368,23 @@ public class SubComponentServiceImpl
 
 		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
 
-		if (oldContact != null) {
+		if (oldContact != null)
+		{
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
-		} else {
+		}
+		else
+		{
 			contact.setComponentContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
+
+			componentService.getChangeLogService().addEntityChange(contact);
 		}
 		componentService.getOrganizationService().addOrganization(contact.getOrganization());
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(contact.getComponentId());
 		}
 	}
@@ -344,15 +397,21 @@ public class SubComponentServiceImpl
 	public void saveComponentDependency(ComponentExternalDependency dependency, boolean updateLastActivity)
 	{
 		ComponentExternalDependency oldDependency = persistenceService.findById(ComponentExternalDependency.class, dependency.getDependencyId());
-		if (oldDependency != null) {
+		if (oldDependency != null)
+		{
 			oldDependency.updateFields(dependency);
 			persistenceService.persist(oldDependency);
-		} else {
+		}
+		else
+		{
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.populateBaseCreateFields();
 			persistenceService.persist(dependency);
+
+			componentService.getChangeLogService().addEntityChange(dependency);
 		}
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(dependency.getComponentId());
 		}
 	}
@@ -364,10 +423,12 @@ public class SubComponentServiceImpl
 
 	public void saveComponentEvaluationSection(List<ComponentEvaluationSection> sections)
 	{
-		sections.forEach(section -> {
+		sections.forEach(section ->
+		{
 			saveComponentEvaluationSection(section, false);
 		});
-		if (!sections.isEmpty()) {
+		if (!sections.isEmpty())
+		{
 			updateComponentLastActivity(sections.get(0).getComponentId());
 		}
 	}
@@ -375,15 +436,19 @@ public class SubComponentServiceImpl
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section, boolean updateLastActivity)
 	{
 		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentEvaluationSectionPk());
-		if (oldSection != null) {
+		if (oldSection != null)
+		{
 			oldSection.updateFields(section);
 			persistenceService.persist(oldSection);
-		} else {
+		}
+		else
+		{
 			section.populateBaseCreateFields();
 			persistenceService.persist(section);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(section.getComponentId());
 		}
 	}
@@ -398,23 +463,33 @@ public class SubComponentServiceImpl
 		ComponentMedia newMedia;
 
 		ComponentMedia oldMedia = persistenceService.findById(ComponentMedia.class, media.getComponentMediaId());
-		if (oldMedia != null) {
-			if (StringUtils.isNotBlank(media.getLink())) {
+		if (oldMedia != null)
+		{
+			if (StringUtils.isNotBlank(media.getLink()))
+			{
 				removeLocalMedia(oldMedia);
 			}
 			oldMedia.updateFields(media);
 			newMedia = persistenceService.persist(oldMedia);
-		} else {
+		}
+		else
+		{
 			media.setComponentMediaId(persistenceService.generateId());
 
 			//On a merge there may be a pre-existing file that needs to be rename
-			if (StringUtils.isNotBlank(media.getFileName())) {
-				if (media.getFileName().equals(media.getComponentMediaId()) == false) {
+			if (StringUtils.isNotBlank(media.getFileName()))
+			{
+				if (media.getFileName().equals(media.getComponentMediaId()) == false)
+				{
 					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
-						try {
+					if (oldPath != null)
+					{
+						try
+						{
 							Files.move(oldPath, oldPath.resolveSibling(media.getComponentMediaId()));
-						} catch (IOException ioe) {
+						}
+						catch (IOException ioe)
+						{
 							throw new OpenStorefrontRuntimeException("Failed to rename media; trying to re-point record.", "Download media; delete original media record and then re-upload.", ioe);
 						}
 						media.setFileName(media.getComponentMediaId());
@@ -423,9 +498,11 @@ public class SubComponentServiceImpl
 			}
 			media.populateBaseCreateFields();
 			newMedia = persistenceService.persist(media);
+			componentService.getChangeLogService().addEntityChange(media);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(media.getComponentId());
 		}
 		return newMedia;
@@ -439,16 +516,21 @@ public class SubComponentServiceImpl
 	void saveComponentMetadata(ComponentMetadata metadata, boolean updateLastActivity)
 	{
 		ComponentMetadata oldMetadata = persistenceService.findById(ComponentMetadata.class, metadata.getMetadataId());
-		if (oldMetadata != null) {
+		if (oldMetadata != null)
+		{
 			oldMetadata.updateFields(metadata);
 			persistenceService.persist(oldMetadata);
-		} else {
+		}
+		else
+		{
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.populateBaseCreateFields();
 			persistenceService.persist(metadata);
+			componentService.getChangeLogService().addEntityChange(metadata);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(metadata.getComponentId());
 		}
 	}
@@ -464,7 +546,8 @@ public class SubComponentServiceImpl
 
 		ComponentRelationship componentRelationshipExisting = persistenceService.findById(ComponentRelationship.class, componentRelationship.getComponentRelationshipId());
 
-		if (componentRelationshipExisting == null) {
+		if (componentRelationshipExisting == null)
+		{
 			//handle duplicates
 			ComponentRelationship relationshipCheck = new ComponentRelationship();
 			relationshipCheck.setRelationshipType(componentRelationship.getRelationshipType());
@@ -477,16 +560,22 @@ public class SubComponentServiceImpl
 			componentRelationshipExisting = persistenceService.queryOneByExample(queryByExample);
 		}
 
-		if (componentRelationshipExisting != null) {
+		if (componentRelationshipExisting != null)
+		{
 			componentRelationshipExisting.updateFields(componentRelationship);
 			newRelationship = persistenceService.persist(componentRelationshipExisting);
-		} else {
+		}
+		else
+		{
 			componentRelationship.setComponentRelationshipId(persistenceService.generateId());
 			componentRelationship.populateBaseCreateFields();
 			newRelationship = persistenceService.persist(componentRelationship);
+
+			componentService.getChangeLogService().addEntityChange(componentRelationship);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(componentRelationship.getComponentId());
 		}
 		return newRelationship;
@@ -500,19 +589,25 @@ public class SubComponentServiceImpl
 	void saveComponentQuestion(ComponentQuestion question, boolean updateLastActivity)
 	{
 		ComponentQuestion oldQuestion = persistenceService.findById(ComponentQuestion.class, question.getQuestionId());
-		if (oldQuestion != null) {
+		if (oldQuestion != null)
+		{
 			oldQuestion.updateFields(question);
 			persistenceService.persist(oldQuestion);
 			question = oldQuestion;
-		} else {
+		}
+		else
+		{
 			question.setQuestionId(persistenceService.generateId());
 			question.populateBaseCreateFields();
 			persistenceService.persist(question);
+
+			componentService.getChangeLogService().addEntityChange(question);
 		}
 		handleUserDataAlert(question);
 		componentService.getOrganizationService().addOrganization(question.getOrganization());
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(question.getComponentId());
 		}
 	}
@@ -525,19 +620,25 @@ public class SubComponentServiceImpl
 	public void saveComponentQuestionResponse(ComponentQuestionResponse response, boolean updateLastActivity)
 	{
 		ComponentQuestionResponse oldResponse = persistenceService.findById(ComponentQuestionResponse.class, response.getResponseId());
-		if (oldResponse != null) {
+		if (oldResponse != null)
+		{
 			oldResponse.updateFields(response);
 			persistenceService.persist(oldResponse);
 			response = oldResponse;
-		} else {
+		}
+		else
+		{
 			response.setResponseId(persistenceService.generateId());
 			response.populateBaseCreateFields();
 			persistenceService.persist(response);
+
+			componentService.getChangeLogService().addEntityChange(response);
 		}
 		handleUserDataAlert(response);
 		componentService.getOrganizationService().addOrganization(response.getOrganization());
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(response.getComponentId());
 		}
 	}
@@ -550,26 +651,36 @@ public class SubComponentServiceImpl
 	ComponentResource saveComponentResource(ComponentResource resource, boolean updateLastActivity)
 	{
 		ComponentResource oldResource = persistenceService.findById(ComponentResource.class, resource.getResourceId());
-		if (oldResource != null) {
+		if (oldResource != null)
+		{
 
-			if (StringUtils.isNotBlank(resource.getLink())) {
+			if (StringUtils.isNotBlank(resource.getLink()))
+			{
 				removeLocalResource(oldResource);
 			}
 			oldResource.updateFields(resource);
 
 			persistenceService.persist(oldResource);
 			resource = oldResource;
-		} else {
+		}
+		else
+		{
 			resource.setResourceId(persistenceService.generateId());
 
 			//On a merge there may be a pre-existing file that needs to be rename
-			if (StringUtils.isNotBlank(resource.getFileName())) {
-				if (resource.getFileName().equals(resource.getResourceId()) == false) {
+			if (StringUtils.isNotBlank(resource.getFileName()))
+			{
+				if (resource.getFileName().equals(resource.getResourceId()) == false)
+				{
 					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
-						try {
+					if (oldPath != null)
+					{
+						try
+						{
 							Files.move(oldPath, oldPath.resolveSibling(resource.getResourceId()));
-						} catch (IOException ioe) {
+						}
+						catch (IOException ioe)
+						{
 							throw new OpenStorefrontRuntimeException("Failed to rename resource; trying to re-point record.", "Download resource; delete original media resource and then re-upload.", ioe);
 						}
 						resource.setFileName(resource.getResourceId());
@@ -579,9 +690,11 @@ public class SubComponentServiceImpl
 
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
+			componentService.getChangeLogService().addEntityChange(resource);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(resource.getComponentId());
 		}
 		return resource;
@@ -595,19 +708,24 @@ public class SubComponentServiceImpl
 	void saveComponentReview(ComponentReview review, boolean updateLastActivity)
 	{
 		ComponentReview oldReview = persistenceService.findById(ComponentReview.class, review.getComponentReviewId());
-		if (oldReview != null) {
+		if (oldReview != null)
+		{
 			oldReview.updateFields(review);
 			persistenceService.persist(oldReview);
 			review = oldReview;
-		} else {
+		}
+		else
+		{
 			review.setComponentReviewId(persistenceService.generateId());
 			review.populateBaseCreateFields();
 			persistenceService.persist(review);
+			componentService.getChangeLogService().addEntityChange(review);
 		}
 		handleUserDataAlert(review);
 		componentService.getOrganizationService().addOrganization(review.getOrganization());
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(review.getComponentId());
 		}
 	}
@@ -620,15 +738,19 @@ public class SubComponentServiceImpl
 	void saveComponentReviewCon(ComponentReviewCon con, boolean updateLastActivity)
 	{
 		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentReviewConPk());
-		if (oldCon != null) {
+		if (oldCon != null)
+		{
 			oldCon.updateFields(con);
 			persistenceService.persist(oldCon);
-		} else {
+		}
+		else
+		{
 			con.populateBaseCreateFields();
 			persistenceService.persist(con);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(con.getComponentId());
 		}
 	}
@@ -641,19 +763,23 @@ public class SubComponentServiceImpl
 	void saveComponentReviewPro(ComponentReviewPro pro, boolean updateLastActivity)
 	{
 		ComponentReviewPro oldPro = persistenceService.findById(ComponentReviewPro.class, pro.getComponentReviewProPk());
-		if (oldPro != null) {
+		if (oldPro != null)
+		{
 			oldPro.setActiveStatus(pro.getActiveStatus());
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
-		} else {
+		}
+		else
+		{
 			pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(pro);
 		}
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(pro.getComponentId());
 		}
 	}
@@ -666,18 +792,23 @@ public class SubComponentServiceImpl
 	public void doSaveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
-		if (oldTag != null) {
+		if (oldTag != null)
+		{
 			oldTag.updateFields(tag);
 			persistenceService.persist(oldTag);
 			tag = oldTag;
-		} else {
+		}
+		else
+		{
 			tag.setTagId(persistenceService.generateId());
 			tag.populateBaseCreateFields();
 			persistenceService.persist(tag);
+			componentService.getChangeLogService().addEntityChange(tag);
 		}
 		handleUserDataAlert(tag);
 
-		if (updateLastActivity) {
+		if (updateLastActivity)
+		{
 			updateComponentLastActivity(tag.getComponentId());
 		}
 	}
@@ -687,10 +818,12 @@ public class SubComponentServiceImpl
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-		if (persistenceService.findById(AttributeCode.class, pk) == null) {
+		if (persistenceService.findById(AttributeCode.class, pk) == null)
+		{
 			return Boolean.FALSE;
 		}
-		if (persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType()) == null) {
+		if (persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType()) == null)
+		{
 			return Boolean.FALSE;
 		}
 		return Boolean.TRUE;
@@ -717,7 +850,8 @@ public class SubComponentServiceImpl
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample(example));
 		List<ComponentReviewView> reviews = new ArrayList();
-		tempReviews.forEach(review -> {
+		tempReviews.forEach(review ->
+		{
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
 			ComponentReviewCon tempCon = new ComponentReviewCon();
@@ -738,9 +872,11 @@ public class SubComponentServiceImpl
 		});
 
 		//filter out unapproved
-		for (int i = reviews.size() - 1; i >= 0; i--) {
+		for (int i = reviews.size() - 1; i >= 0; i--)
+		{
 			ComponentReviewView reviewView = reviews.get(i);
-			if (core.checkComponentApproval(reviewView.getComponentId()) == false) {
+			if (core.checkComponentApproval(reviewView.getComponentId()) == false)
+			{
 				reviews.remove(i);
 			}
 		}
@@ -758,15 +894,19 @@ public class SubComponentServiceImpl
 		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
 
-		if (StringUtils.isBlank(media.getComponentMediaId())) {
+		if (StringUtils.isBlank(media.getComponentMediaId()))
+		{
 			media = saveComponentMedia(media, updateLastActivity);
 		}
 		media.setFileName(media.getComponentMediaId());
-		try (InputStream in = fileInput) {
+		try (InputStream in = fileInput)
+		{
 			Files.copy(in, media.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			media = saveComponentMedia(media, updateLastActivity);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex)
+		{
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 		return media;
@@ -777,15 +917,19 @@ public class SubComponentServiceImpl
 		Objects.requireNonNull(resource);
 		Objects.requireNonNull(fileInput);
 
-		if (StringUtils.isBlank(resource.getResourceId())) {
+		if (StringUtils.isBlank(resource.getResourceId()))
+		{
 			resource.setResourceId(persistenceService.generateId());
 		}
 		resource.setFileName(resource.getResourceId());
-		try (InputStream in = fileInput) {
+		try (InputStream in = fileInput)
+		{
 			Files.copy(in, resource.pathToResource(), StandardCopyOption.REPLACE_EXISTING);
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentResource(resource);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex)
+		{
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
@@ -799,16 +943,23 @@ public class SubComponentServiceImpl
 		ValidationResult reviewResults = ValidationUtil.validate(validationModel);
 		validationResult.merge(reviewResults);
 
-		for (ComponentReviewPro reviewPro : pros) {
+		for (ComponentReviewPro reviewPro : pros)
+		{
 			ReviewPro proCode = componentService.getLookupService().getLookupEnity(ReviewPro.class, reviewPro.getComponentReviewProPk().getReviewPro());
-			if (proCode == null) {
+			if (proCode == null)
+			{
 				proCode = componentService.getLookupService().getLookupEnityByDesc(ReviewPro.class, reviewPro.getComponentReviewProPk().getReviewPro());
-				if (proCode == null) {
+				if (proCode == null)
+				{
 					reviewPro.getComponentReviewProPk().setReviewPro(null);
-				} else {
+				}
+				else
+				{
 					reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
 				}
-			} else {
+			}
+			else
+			{
 				reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
 			}
 			validationModel = new ValidationModel(reviewPro);
@@ -817,16 +968,23 @@ public class SubComponentServiceImpl
 			validationResult.merge(proResults);
 		}
 
-		for (ComponentReviewCon reviewCon : cons) {
+		for (ComponentReviewCon reviewCon : cons)
+		{
 			ReviewCon conCode = componentService.getLookupService().getLookupEnity(ReviewCon.class, reviewCon.getComponentReviewConPk().getReviewCon());
-			if (conCode == null) {
+			if (conCode == null)
+			{
 				conCode = componentService.getLookupService().getLookupEnityByDesc(ReviewCon.class, reviewCon.getComponentReviewConPk().getReviewCon());
-				if (conCode == null) {
+				if (conCode == null)
+				{
 					reviewCon.getComponentReviewConPk().setReviewCon(null);
-				} else {
+				}
+				else
+				{
 					reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
 				}
-			} else {
+			}
+			else
+			{
 				reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
 			}
 			validationModel = new ValidationModel(reviewCon);
@@ -835,7 +993,8 @@ public class SubComponentServiceImpl
 			validationResult.merge(conResults);
 		}
 
-		if (validationResult.valid()) {
+		if (validationResult.valid())
+		{
 
 			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
@@ -849,7 +1008,8 @@ public class SubComponentServiceImpl
 			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewProExample);
 
-			for (ComponentReviewPro reviewPro : pros) {
+			for (ComponentReviewPro reviewPro : pros)
+			{
 				reviewPro.setComponentId(review.getComponentId());
 				reviewPro.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
 				reviewPro.setCreateUser(SecurityUtil.getCurrentUserName());
@@ -865,7 +1025,8 @@ public class SubComponentServiceImpl
 			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewConExample);
 
-			for (ComponentReviewCon reviewCon : cons) {
+			for (ComponentReviewCon reviewCon : cons)
+			{
 				reviewCon.setComponentId(review.getComponentId());
 				reviewCon.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
 				reviewCon.setCreateUser(SecurityUtil.getCurrentUserName());
@@ -884,28 +1045,37 @@ public class SubComponentServiceImpl
 	{
 		Set<String> componentIdSet = new HashSet<>();
 
-		for (ComponentAttribute componentAttribute : bulkComponentAttributeChange.getAttributes()) {
+		for (ComponentAttribute componentAttribute : bulkComponentAttributeChange.getAttributes())
+		{
 
 			componentAttribute.populateBaseUpdateFields();
-			switch (bulkComponentAttributeChange.getOpertionType()) {
+			switch (bulkComponentAttributeChange.getOpertionType())
+			{
 				case ACTIVATE:
 					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
+
+					componentService.getChangeLogService().logStatusChange(componentAttribute, ComponentAttribute.ACTIVE_STATUS);
 					break;
 				case INACTIVE:
 					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.INACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
+
+					componentService.getChangeLogService().logStatusChange(componentAttribute, ComponentAttribute.INACTIVE_STATUS);
 					break;
 				case DELETE:
 					persistenceService.delete(componentAttribute);
+
+					componentService.getChangeLogService().removeEntityChange(componentAttribute);
 					break;
 				default:
 					throw new UnsupportedOperationException("Add support for other type of operations");
 			}
 		}
-		componentIdSet.forEach(componentId -> {
+		componentIdSet.forEach(componentId ->
+		{
 			updateComponentLastActivity(componentId);
 		});
 	}

@@ -62,7 +62,8 @@ public class ChangeLogServiceImpl
 		List<ChangeLog> changeLogs = new ArrayList<>();
 
 		List<FieldChangeModel> changes = original.findChanges(updated);
-		for (FieldChangeModel change : changes) {
+		for (FieldChangeModel change : changes)
+		{
 
 			ChangeLog changeLog = new ChangeLog();
 			changeLog.setChangeLogId(getPersistenceService().generateId());
@@ -77,8 +78,10 @@ public class ChangeLogServiceImpl
 			changeLogs.add(changeLog);
 		}
 
-		if (save) {
-			for (ChangeLog changeLog : changeLogs) {
+		if (save)
+		{
+			for (ChangeLog changeLog : changeLogs)
+			{
 				changeLog.populateBaseCreateFields();
 				persistenceService.persist(changeLog);
 			}
@@ -89,25 +92,32 @@ public class ChangeLogServiceImpl
 
 	private <T extends StandardEntity> void setParent(ChangeLog changeLog, T original)
 	{
-		if (original instanceof BaseComponent) {
+		if (original instanceof BaseComponent)
+		{
 
 			BaseComponent baseComponent = (BaseComponent) original;
 			changeLog.setParentEntity(Component.class.getSimpleName());
 			changeLog.setParentEntityId(baseComponent.getComponentId());
 
-		} else if (original instanceof EvaluationChecklist) {
+		}
+		else if (original instanceof EvaluationChecklist)
+		{
 
 			EvaluationChecklist evaluationChecklist = (EvaluationChecklist) original;
 			changeLog.setParentEntity(Evaluation.class.getSimpleName());
 			changeLog.setParentEntityId(evaluationChecklist.getEvaluationId());
 
-		} else if (original instanceof EvaluationChecklistRecommendation) {
+		}
+		else if (original instanceof EvaluationChecklistRecommendation)
+		{
 
 			EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) original;
 			changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
 			changeLog.setParentEntityId(evaluationChecklistRecommendation.getChecklistId());
 
-		} else if (original instanceof EvaluationChecklistResponse) {
+		}
+		else if (original instanceof EvaluationChecklistResponse)
+		{
 
 			EvaluationChecklistResponse evaluationChecklistResponse = (EvaluationChecklistResponse) original;
 			changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
@@ -137,9 +147,17 @@ public class ChangeLogServiceImpl
 	{
 		ChangeLog changeLog = new ChangeLog();
 		String archivedValue = null;
-		try {
+		try
+		{
+			if (persistenceService.isAttached(removedEntity))
+			{
+				removedEntity = persistenceService.deattachAll(removedEntity);
+			}
+
 			archivedValue = StringProcessor.defaultObjectMapper().writeValueAsString(removedEntity);
-		} catch (JsonProcessingException ex) {
+		}
+		catch (JsonProcessingException ex)
+		{
 			LOG.log(Level.WARNING, "Unable to create a archive of entity. (Change Log) Entity: " + removedEntity.getClass().getSimpleName(), ex);
 		}
 

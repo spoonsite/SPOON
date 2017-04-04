@@ -33,6 +33,7 @@ public class ChangeLog
 {
 
 	public static final String REMOVED_ALL_ID = "-1";
+	public static final String PK_FIELD = "PK";
 
 	@PK(generated = true)
 	@NotNull
