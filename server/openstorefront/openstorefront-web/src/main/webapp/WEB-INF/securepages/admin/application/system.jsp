@@ -1483,7 +1483,9 @@
 								return value;
 							}
 						},
-						{text: 'Core Module', dataIndex: 'coreModule', flex: 1},
+						{text: 'Core Module', dataIndex: 'coreModule', flex: 1, align: 'center',
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2, hidden: true},
 						{text: 'System Location', dataIndex: 'location', flex: 2, hidden: true},
 						{text: 'Type', dataIndex: 'pluginType', flex: 1}
@@ -1783,13 +1785,7 @@
 						{ text: 'Name', dataIndex: 'name', width: 250 },
 						{ text: 'Class', dataIndex: 'managerClass', minWidth: 250, flex: 1 },
 						{ text: 'Started', dataIndex: 'started', align: 'center', width: 150, 
-							renderer: function(value) {
-								if (value) {
-									return '<i class="fa fa-lg fa-check" style="color: green"></i>';
-								} else {
-									return '<i class="fa fa-lg fa-close" style="color: red"></i>';
-								}
-							}
+							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{ text: 'Order', dataIndex: 'order', align: 'center', width: 150 }
 					],
