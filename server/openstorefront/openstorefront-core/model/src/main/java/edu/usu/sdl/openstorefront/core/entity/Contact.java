@@ -120,6 +120,12 @@ public class Contact
 		return changes;
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
+	}
+
 	public String getContactId()
 	{
 		return contactId;

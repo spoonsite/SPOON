@@ -242,6 +242,12 @@ public class Component
 		return getName();
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
+	}
+
 	public String getName()
 	{
 		return name;

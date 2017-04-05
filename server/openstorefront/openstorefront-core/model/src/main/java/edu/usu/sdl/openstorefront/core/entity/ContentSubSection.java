@@ -122,6 +122,13 @@ public class ContentSubSection
 		return getTitle();
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(ContentSection.class.getSimpleName());
+		changeLog.setParentEntityId(getContentSectionId());
+	}
+
 	public String getSubSectionId()
 	{
 		return subSectionId;

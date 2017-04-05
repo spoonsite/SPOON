@@ -29,6 +29,16 @@ public interface ChangeLogService
 {
 
 	/**
+	 * Pulls changes logs
+	 *
+	 * @param entity
+	 * @param entityId
+	 * @param includeChildren (pulls all child levels)
+	 * @return
+	 */
+	public List<ChangeLog> getChangeLogs(String entity, String entityId, boolean includeChildren);
+
+	/**
 	 * Finds changes and saves them
 	 *
 	 * @param <T>

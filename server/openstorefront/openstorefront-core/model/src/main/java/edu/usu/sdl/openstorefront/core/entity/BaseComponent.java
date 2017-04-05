@@ -79,13 +79,20 @@ public abstract class BaseComponent<T>
 		customKeyClear();
 	}
 
-	protected Set<String> excludedChangeFields() 
+	@Override
+	protected Set<String> excludedChangeFields()
 	{
 		Set<String> excludeFields = super.excludedChangeFields();
 		excludeFields.add("componentId");
 		return excludeFields;
-	} 
-	
+	}
+
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(Component.class.getSimpleName());
+		changeLog.setParentEntityId(getComponentId());
+	}
+
 	//Override to add primary key clearing
 	protected abstract void customKeyClear();
 

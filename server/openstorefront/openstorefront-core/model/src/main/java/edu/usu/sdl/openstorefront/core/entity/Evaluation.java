@@ -130,6 +130,12 @@ public class Evaluation
 		return getVersion();
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
+	}
+
 	public String getEvaluationId()
 	{
 		return evaluationId;

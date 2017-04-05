@@ -128,6 +128,13 @@ public class ContentSectionMedia
 	}
 
 	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(ContentSection.class.getSimpleName());
+		changeLog.setParentEntityId(getContentSectionId());
+	}
+
+	@Override
 	public String addRemoveComment()
 	{
 		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + getOriginalName();

@@ -18,17 +18,8 @@ package edu.usu.sdl.openstorefront.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.ChangeLogService;
-import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ChangeType;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
-import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
-import edu.usu.sdl.openstorefront.core.entity.Evaluation;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
@@ -67,7 +58,8 @@ public class ChangeLogServiceImpl
 		List<ChangeLog> changeLogs = new ArrayList<>();
 
 		List<FieldChangeModel> changes = original.findChanges(updated);
-		for (FieldChangeModel change : changes) {
+		for (FieldChangeModel change : changes)
+		{
 
 			ChangeLog changeLog = new ChangeLog();
 			changeLog.setChangeLogId(getPersistenceService().generateId());
@@ -82,8 +74,10 @@ public class ChangeLogServiceImpl
 			changeLogs.add(changeLog);
 		}
 
-		if (save) {
-			for (ChangeLog changeLog : changeLogs) {
+		if (save)
+		{
+			for (ChangeLog changeLog : changeLogs)
+			{
 				changeLog.populateBaseCreateFields();
 				persistenceService.persist(changeLog);
 			}
@@ -94,40 +88,10 @@ public class ChangeLogServiceImpl
 
 	private <T extends StandardEntity> void setParent(ChangeLog changeLog, T original)
 	{
-		if (original instanceof BaseComponent) {
-
-			BaseComponent baseComponent = (BaseComponent) original;
-			changeLog.setParentEntity(Component.class.getSimpleName());
-			changeLog.setParentEntityId(baseComponent.getComponentId());
-
-		} else if (original instanceof EvaluationChecklist) {
-
-			EvaluationChecklist evaluationChecklist = (EvaluationChecklist) original;
-			changeLog.setParentEntity(Evaluation.class.getSimpleName());
-			changeLog.setParentEntityId(evaluationChecklist.getEvaluationId());
-
-		} else if (original instanceof EvaluationChecklistRecommendation) {
-
-			EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) original;
-			changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
-			changeLog.setParentEntityId(evaluationChecklistRecommendation.getChecklistId());
-
-		} else if (original instanceof EvaluationChecklistResponse) {
-
-			EvaluationChecklistResponse evaluationChecklistResponse = (EvaluationChecklistResponse) original;
-			changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
-			changeLog.setParentEntityId(evaluationChecklistResponse.getChecklistId());
-
-		} else if (original instanceof ContentSubSection) {
-
-			EvaluationChecklistResponse evaluationChecklistResponse = (EvaluationChecklistResponse) original;
-			changeLog.setParentEntity(ContentSubSection.class.getSimpleName());
-			changeLog.setParentEntityId(evaluationChecklistResponse.getChecklistId());
-
-		} else if (original instanceof ContentSection) {
-
-		} else if (original instanceof ContentSectionMedia) {
-
+		if (original instanceof LoggableModel)
+		{
+			LoggableModel loggableModel = (LoggableModel) original;
+			loggableModel.setChangeParent(changeLog);
 		}
 
 	}
@@ -140,7 +104,8 @@ public class ChangeLogServiceImpl
 		changeLog.setChangeType(ChangeType.ADDED);
 		changeLog.setEntity(EntityUtil.getRealClassName(addedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(addedEntity));
-		if (addedEntity instanceof LoggableModel) {
+		if (addedEntity instanceof LoggableModel)
+		{
 			LoggableModel loggableModel = (LoggableModel) addedEntity;
 			changeLog.setComment(loggableModel.addRemoveComment());
 		}
@@ -157,12 +122,15 @@ public class ChangeLogServiceImpl
 	{
 		ChangeLog changeLog = new ChangeLog();
 		String archivedValue = null;
-		try {
+		try
+		{
 			T copy = removedEntityClass.newInstance();
 			BeanUtils.copyProperties(copy, removedEntity);
 
 			archivedValue = StringProcessor.defaultObjectMapper().writeValueAsString(copy);
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | JsonProcessingException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException | InvocationTargetException | JsonProcessingException ex)
+		{
 			LOG.log(Level.WARNING, "Unable to create a archive of entity. (Change Log) Entity: " + removedEntity.getClass().getSimpleName(), ex);
 		}
 
@@ -170,7 +138,8 @@ public class ChangeLogServiceImpl
 		changeLog.setChangeType(ChangeType.REMOVED);
 		changeLog.setEntity(EntityUtil.getRealClassName(removedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(removedEntity));
-		if (removedEntity instanceof LoggableModel) {
+		if (removedEntity instanceof LoggableModel)
+		{
 			LoggableModel loggableModel = (LoggableModel) removedEntity;
 			changeLog.setComment(loggableModel.addRemoveComment());
 		}
@@ -247,7 +216,8 @@ public class ChangeLogServiceImpl
 		ChangeLog changeLog = null;
 
 		if ((newValue != null && newValue.equals(oldValue) == false)
-				|| (oldValue != null && newValue == null)) {
+				|| (oldValue != null && newValue == null))
+		{
 
 			changeLog = new ChangeLog();
 			changeLog.setChangeLogId(getPersistenceService().generateId());
@@ -282,6 +252,32 @@ public class ChangeLogServiceImpl
 		persistenceService.persist(changeLog);
 
 		return changeLog;
+	}
+
+	@Override
+	public List<ChangeLog> getChangeLogs(String entity, String entityId, boolean includeChildren)
+	{
+		ChangeLog changeLogExample = new ChangeLog();
+		changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
+		changeLogExample.setEntity(entity);
+		changeLogExample.setEntityId(entityId);
+
+		List<ChangeLog> changeLogs = changeLogExample.findByExample();
+
+		if (includeChildren)
+		{
+			changeLogExample = new ChangeLog();
+			changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
+			changeLogExample.setParentEntity(entity);
+			changeLogExample.setParentEntityId(entityId);
+
+			List<ChangeLog> childrenChanges = changeLogExample.findByExample();
+			changeLogs.addAll(childrenChanges);
+
+			//look at cases where another level.
+		}
+
+		return changeLogs;
 	}
 
 }

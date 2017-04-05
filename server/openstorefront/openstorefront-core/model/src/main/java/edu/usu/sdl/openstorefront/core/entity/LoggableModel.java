@@ -43,4 +43,11 @@ public interface LoggableModel<T>
 	 */
 	public String addRemoveComment();
 
+	/**
+	 * Set parent entity
+	 *
+	 * @param changeLog
+	 */
+	public void setChangeParent(ChangeLog changeLog);
+
 }

@@ -94,6 +94,13 @@ public class EvaluationChecklistRecommendation
 		return getReason();
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
+		changeLog.setParentEntityId(getChecklistId());
+	}
+
 	public String getRecommendationId()
 	{
 		return recommendationId;

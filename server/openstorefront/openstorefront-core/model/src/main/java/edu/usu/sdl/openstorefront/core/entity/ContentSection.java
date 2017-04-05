@@ -117,6 +117,12 @@ public class ContentSection
 		return getTitle();
 	}
 
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
+	}
+
 	public String getContentSectionId()
 	{
 		return contentSectionId;
