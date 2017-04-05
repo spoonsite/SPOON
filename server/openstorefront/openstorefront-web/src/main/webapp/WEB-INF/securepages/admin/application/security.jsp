@@ -49,8 +49,9 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-2x fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 									scale: 'medium',
+									height: '40px',
 									handler: function() {
 										var form = this.up('form');
 										
@@ -201,8 +202,9 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-2x fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 									scale: 'medium',
+									height: '40px',
 									handler: function() {
 										var form = this.up('form');
 										

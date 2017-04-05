@@ -176,7 +176,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of active and approved components for selection list.")
+	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/lookup")
@@ -519,6 +519,38 @@ public class ComponentRESTResource
 		return response.build();
 	}
 
+	@GET
+	@APIDescription("Get a list of components with a given tag")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(TagView.class)
+	@Path("/singletagview")
+	public Response getAllComponentsForTag(
+			@QueryParam("tag") String tagText,
+			@QueryParam("approvedOnly") boolean approvedOnly
+	)
+	{
+		List<TagView> views = new ArrayList<>();
+
+		ComponentTag componentTagExample = new ComponentTag();
+		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentTagExample.setText(tagText);
+
+		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
+
+		if (approvedOnly) {
+			tags = tags.stream()
+					.filter(tag -> service.getComponentService().checkComponentApproval(tag.getComponentId()))
+					.collect(Collectors.toList());
+		}
+
+		views.addAll(TagView.toView(tags));
+
+		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+	
 	@GET
 	@APIDescription("Get a list of components tags")
 	@Produces(MediaType.APPLICATION_JSON)

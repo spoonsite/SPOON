@@ -261,13 +261,7 @@
 					{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
 					{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },
 					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
-						renderer: function(value) {
-							if (value) {
-								return '<span class="fa fa-lg fa-check icon-button-color-refresh"></span>';
-							} else {
-								return '<span class="fa fa-lg fa-close icon-button-color-warning"></span>';
-							}
-						}
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},

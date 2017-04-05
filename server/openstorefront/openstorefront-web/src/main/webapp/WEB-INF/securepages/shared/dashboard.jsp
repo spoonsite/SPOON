@@ -501,24 +501,27 @@
 										return true;
 									}
 								});
-								config = Ext.clone(config);								
-								config.name = widget.widgetName;
-								config.widgetColor = widget.widgetColor;
-								
-								var widgetPanel;
-								if (config.permissions) {
-									//if the user is no longer admin don't add widget
-									if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
-										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
-									} 
-								} else {
-									widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
-								}
-								
-								//set other settings
-								if (widgetPanel) {
-									if (widget.widgetState) {
-										config.restore(widgetPanel.getComponent('actualWidget'), Ext.decode(widget.widgetState));
+
+								if (config) {
+									config = Ext.clone(config);								
+									config.name = widget.widgetName;
+									config.widgetColor = widget.widgetColor;
+
+									var widgetPanel;
+									if (config.permissions) {
+										//if the user is no longer admin don't add widget
+										if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
+											widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
+										} 
+									} else {
+										widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
+									}
+
+									//set other settings
+									if (widgetPanel) {
+										if (widget.widgetState) {
+											config.restore(widgetPanel.getComponent('actualWidget'), Ext.decode(widget.widgetState));
+										}
 									}
 								}
 							});

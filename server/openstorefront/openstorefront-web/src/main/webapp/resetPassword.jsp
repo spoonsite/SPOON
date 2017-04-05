@@ -50,7 +50,7 @@
 				
 				var resetWindow = Ext.create('Ext.window.Window', {
 					title: 'Reset Password',
-					iconCls: 'fa fa-key',
+					iconCls: 'fa fa-key icon-correction-key icon-small-vertical-correction',
 					y: 200,
 					width: 500,
 					height: 450,
@@ -109,8 +109,9 @@
 									items: [
 										{											
 											text: 'Send Approval',
-											iconCls: 'fa fa-2x fa-envelope-o',
+											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction-send icon-button-color-default',
 											scale: 'medium',
+											width: '160px',
 											formBind: true,
 											handler: function() {
 												
@@ -197,7 +198,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-2x fa-close',
+											iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 											scale: 'medium',
 											handler: function(){										
 												window.location.href = 'login.jsp';

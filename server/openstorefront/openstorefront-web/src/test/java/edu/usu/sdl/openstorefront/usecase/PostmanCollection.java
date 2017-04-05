@@ -57,7 +57,7 @@ public class PostmanCollection
 			postmanRequest.setTimestamp(TimeUtil.currentDate());
 			postmanRequest.setVersion(2);
 			postmanRequest.setUrl(urlBase + code + "/force");
-			postmanRequest.setDescription("Remove code:  " + code);
+			postmanRequest.setDescription("Delete code:  " + code);
 			postmanCollectionModel.getRequests().add(postmanRequest);
 		}
 
