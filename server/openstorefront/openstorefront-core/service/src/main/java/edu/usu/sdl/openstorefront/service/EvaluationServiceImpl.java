@@ -22,8 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
@@ -46,9 +44,11 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -70,30 +70,45 @@ public class EvaluationServiceImpl
 
 		EvaluationChecklist evaluationChecklist = checklistAll.getEvaluationChecklist().save();
 
-		//remove old recommendations replace with the new ones
 		EvaluationChecklistRecommendation recommendationDeleteExample = new EvaluationChecklistRecommendation();
 		recommendationDeleteExample.setChecklistId(evaluationChecklist.getChecklistId());
-		persistenceService.deleteByExample(recommendationDeleteExample);
+		List<EvaluationChecklistRecommendation> recommendations = recommendationDeleteExample.findByExampleProxy();
+		Map<String, List<EvaluationChecklistRecommendation>> existingRecs = recommendations.stream()
+				.collect(Collectors.groupingBy(EvaluationChecklistRecommendation::getRecommendationId));
 
-		for (EvaluationChecklistRecommendation recommendation : checklistAll.getRecommendations())
-		{
-			recommendation.setChecklistId(evaluationChecklist.getChecklistId());
-			recommendation.setRecommendationId(persistenceService.generateId());
-			recommendation.populateBaseCreateFields();
-			persistenceService.persist(recommendation);
+		for (EvaluationChecklistRecommendation recommendation : checklistAll.getRecommendations()) {
+
+			if (recommendation.getRecommendationId() != null && existingRecs.containsKey(recommendation.getRecommendationId())) {
+				EvaluationChecklistRecommendation existing = existingRecs.get(recommendation.getRecommendationId()).get(0);
+				existing.updateFields(recommendation);
+				persistenceService.persist(existing);
+			} else {
+				recommendation.setChecklistId(evaluationChecklist.getChecklistId());
+				recommendation.setRecommendationId(persistenceService.generateId());
+				recommendation.populateBaseCreateFields();
+				persistenceService.persist(recommendation);
+			}
+
 		}
 
 		//remove old responses replace with the new ones
 		EvaluationChecklistResponse responseDeleteExample = new EvaluationChecklistResponse();
 		responseDeleteExample.setChecklistId(evaluationChecklist.getChecklistId());
-		persistenceService.deleteByExample(responseDeleteExample);
+		List<EvaluationChecklistResponse> responses = responseDeleteExample.findByExampleProxy();
+		Map<String, List<EvaluationChecklistResponse>> existingResponses = responses.stream()
+				.collect(Collectors.groupingBy(EvaluationChecklistResponse::getResponseId));
 
-		for (EvaluationChecklistResponse response : checklistAll.getResponses())
-		{
-			response.setChecklistId(evaluationChecklist.getChecklistId());
-			response.setResponseId(persistenceService.generateId());
-			response.populateBaseCreateFields();
-			persistenceService.persist(response);
+		for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
+			if (response.getResponseId() != null && existingResponses.containsKey(response.getResponseId())) {
+				EvaluationChecklistResponse existing = existingResponses.get(response.getResponseId()).get(0);
+				existing.updateFields(response);
+				persistenceService.persist(existing);
+			} else {
+				response.setChecklistId(evaluationChecklist.getChecklistId());
+				response.setResponseId(persistenceService.generateId());
+				response.populateBaseCreateFields();
+				persistenceService.persist(response);
+			}
 		}
 
 		return evaluationChecklist.getChecklistId();
@@ -109,8 +124,7 @@ public class EvaluationServiceImpl
 		EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
 		evaluationChecklist.setChecklistId(checklistId);
 		evaluationChecklist = evaluationChecklist.find();
-		if (evaluationChecklist != null)
-		{
+		if (evaluationChecklist != null) {
 			checklistAll = new ChecklistAll();
 			checklistAll.setEvaluationChecklist(evaluationChecklist);
 
@@ -138,8 +152,7 @@ public class EvaluationServiceImpl
 		Evaluation savedEvalation = evaluationAll.getEvaluation().save();
 		evaluationAll.getCheckListAll().getEvaluationChecklist().setEvaluationId(savedEvalation.getEvaluationId());
 		saveCheckListAll(evaluationAll.getCheckListAll());
-		for (ContentSectionAll contentSectionAll : evaluationAll.getContentSections())
-		{
+		for (ContentSectionAll contentSectionAll : evaluationAll.getContentSections()) {
 			contentSectionAll.getSection().setEntityId(savedEvalation.getEvaluationId());
 			contentSectionAll.getSection().setEntity(Evaluation.class.getSimpleName());
 			getContentSectionService().saveAll(contentSectionAll);
@@ -158,8 +171,7 @@ public class EvaluationServiceImpl
 		evaluation.setOriginComponentId(evaluation.getComponentId());
 		Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getComponentId());
 		evaluation.setComponentId(changeRequest.getComponentId());
-		if (StringUtils.isBlank(evaluation.getWorkflowStatus()))
-		{
+		if (StringUtils.isBlank(evaluation.getWorkflowStatus())) {
 			evaluation.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());
 		}
 		evaluation.setEvaluationId(persistenceService.generateId());
@@ -173,16 +185,12 @@ public class EvaluationServiceImpl
 		evaluationTemplate.setTemplateId(evaluation.getTemplateId());
 		evaluationTemplate = evaluationTemplate.find();
 
-		if (evaluationTemplate == null)
-		{
+		if (evaluationTemplate == null) {
 			throw new OpenStorefrontRuntimeException("Unable to create evaluation", "Evaluation Template was not found.  Template Id: " + evaluation.getTemplateId());
-		}
-		else
-		{
+		} else {
 
 			WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
-			if (initialStatus == null)
-			{
+			if (initialStatus == null) {
 				throw new OpenStorefrontRuntimeException("Unable to get initial workflow status", "Add at least one workflow status.");
 			}
 
@@ -198,8 +206,7 @@ public class EvaluationServiceImpl
 			checklistTemplate.setChecklistTemplateId(evaluationTemplate.getChecklistTemplateId());
 			checklistTemplate = checklistTemplate.find();
 
-			for (ChecklistTemplateQuestion question : checklistTemplate.getQuestions())
-			{
+			for (ChecklistTemplateQuestion question : checklistTemplate.getQuestions()) {
 				EvaluationChecklistResponse response = new EvaluationChecklistResponse();
 				response.setChecklistId(checklist.getChecklistId());
 				response.setResponseId(persistenceService.generateId());
@@ -209,8 +216,7 @@ public class EvaluationServiceImpl
 				persistenceService.persist(response);
 			}
 
-			for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates())
-			{
+			for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates()) {
 				ContentSection templateSection = new ContentSection();
 				templateSection.setEntity(ContentSectionTemplate.class.getSimpleName());
 				templateSection.setEntityId(sectionTemplate.getSectionTemplateId());
@@ -234,32 +240,11 @@ public class EvaluationServiceImpl
 				List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
 				copySectionMedia(templateMediaRecords, contentSection);
 
-				ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
-				ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
-				contentSectionAttributePk.setContentSectionId(templateSection.getContentSectionId());
-				templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
-
-				List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
-				for (ContentSectionAttribute attribute : attributes)
-				{
-
-					ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
-					ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
-					sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
-					sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
-					sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
-					sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
-					sectionAttribute.populateBaseCreateFields();
-					persistenceService.persist(sectionAttribute);
-
-				}
-
 				ContentSubSection templateSubSectionExample = new ContentSubSection();
 				templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
 
 				List<ContentSubSection> templateSubSections = templateSubSectionExample.findByExample();
-				for (ContentSubSection templateSubSection : templateSubSections)
-				{
+				for (ContentSubSection templateSubSection : templateSubSections) {
 
 					ContentSubSection subSection = new ContentSubSection();
 					subSection.setContentSectionId(contentSection.getContentSectionId());
@@ -293,8 +278,7 @@ public class EvaluationServiceImpl
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
 		evaluation = FilterEngine.filter(evaluation);
-		if (evaluation != null)
-		{
+		if (evaluation != null) {
 			evaluationAll = new EvaluationAll();
 			evaluationAll.setEvaluation(evaluation);
 
@@ -311,8 +295,7 @@ public class EvaluationServiceImpl
 			contentSectionExample.setEntityId(evaluation.getEvaluationId());
 
 			List<ContentSection> contentSections = contentSectionExample.findByExample();
-			for (ContentSection contentSection : contentSections)
-			{
+			for (ContentSection contentSection : contentSections) {
 				ContentSectionAll contentSectionAll = getContentSectionService().getContentSectionAll(contentSection.getContentSectionId());
 				evaluationAll.getContentSections().add(contentSectionAll);
 			}
@@ -332,20 +315,15 @@ public class EvaluationServiceImpl
 
 		List<Evaluation> evaluations = evaluationExample.findByExample();
 		Evaluation latest = null;
-		for (Evaluation evaluation : evaluations)
-		{
-			if (latest == null)
-			{
+		for (Evaluation evaluation : evaluations) {
+			if (latest == null) {
 				latest = evaluation;
-			}
-			else if (evaluation.getCreateDts().after(latest.getCreateDts()))
-			{
+			} else if (evaluation.getCreateDts().after(latest.getCreateDts())) {
 				latest = evaluation;
 			}
 		}
 
-		if (latest != null)
-		{
+		if (latest != null) {
 			return getEvaluation(latest.getEvaluationId());
 		}
 		return null;
@@ -355,21 +333,18 @@ public class EvaluationServiceImpl
 	public void deleteEvaluation(String evaluationId)
 	{
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
-		if (evaluation != null)
-		{
+		if (evaluation != null) {
 
 			//delete changeRequest if it exists
 			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
-			if (changeRequest != null)
-			{
+			if (changeRequest != null) {
 				getComponentService().cascadeDeleteOfComponent(changeRequest.getComponentId());
 			}
 
 			EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
 			evaluationChecklist.setEvaluationId(evaluationId);
 			evaluationChecklist = evaluationChecklist.findProxy();
-			if (evaluationChecklist != null)
-			{
+			if (evaluationChecklist != null) {
 
 				EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
 				recommendation.setChecklistId(evaluationChecklist.getChecklistId());
@@ -387,10 +362,10 @@ public class EvaluationServiceImpl
 			contentSection.setEntityId(evaluationId);
 
 			List<ContentSection> sections = contentSection.findByExample();
-			for (ContentSection section : sections)
-			{
+			for (ContentSection section : sections) {
 				getContentSectionService().deleteContentSection(section.getContentSectionId());
 			}
+			getChangeLogServicePrivate().removeChangeLogs(Evaluation.class.getSimpleName(), evaluationId);
 
 			persistenceService.delete(evaluation);
 		}
@@ -400,22 +375,20 @@ public class EvaluationServiceImpl
 	public void publishEvaluation(String evaluationId)
 	{
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
-		if (evaluation != null)
-		{
+		if (evaluation != null) {
 
 			//merge change request
 			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
-			if (changeRequest != null)
-			{
+			if (changeRequest != null) {
 				getComponentService().mergePendingChange(changeRequest.getComponentId());
 			}
+
+			getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.TRUE.toString());
 
 			evaluation.setPublished(Boolean.TRUE);
 			evaluation.populateBaseUpdateFields();
 			persistenceService.persist(evaluation);
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
 		}
 	}
@@ -424,14 +397,14 @@ public class EvaluationServiceImpl
 	public void unpublishEvaluation(String evaluationId)
 	{
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
-		if (evaluation != null)
-		{
+		if (evaluation != null) {
+
+			getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.FALSE.toString());
+
 			evaluation.setPublished(Boolean.FALSE);
 			evaluation.populateBaseUpdateFields();
 			persistenceService.persist(evaluation);
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
 		}
 
@@ -441,11 +414,9 @@ public class EvaluationServiceImpl
 	public void checkEvaluationComponent(String evaluationId)
 	{
 		Evaluation evaluationExisting = persistenceService.findById(Evaluation.class, evaluationId);
-		if (evaluationExisting != null)
-		{
+		if (evaluationExisting != null) {
 			Component component = persistenceService.findById(Component.class, evaluationExisting.getComponentId());
-			if (component == null)
-			{
+			if (component == null) {
 				Component changeRequest = getComponentService().createPendingChangeComponent(evaluationExisting.getOriginComponentId());
 
 				evaluationExisting.setComponentId(changeRequest.getComponentId());
@@ -453,9 +424,7 @@ public class EvaluationServiceImpl
 				//Don't update the evaluation user and date as it didn't actually change
 				persistenceService.persist(evaluationExisting);
 			}
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation: " + evaluationId, "Refresh to see if data still exists.");
 		}
 	}
@@ -466,8 +435,7 @@ public class EvaluationServiceImpl
 		Objects.requireNonNull(evaluationId);
 
 		EvaluationAll existing = getEvaluation(evaluationId);
-		if (existing == null)
-		{
+		if (existing == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find evaluation to copy: " + evaluationId);
 		}
 
@@ -492,8 +460,7 @@ public class EvaluationServiceImpl
 		checklist.populateBaseCreateFields();
 		checklist = persistenceService.persist(checklist);
 
-		for (EvaluationChecklistRecommendation recommendation : existing.getCheckListAll().getRecommendations())
-		{
+		for (EvaluationChecklistRecommendation recommendation : existing.getCheckListAll().getRecommendations()) {
 			EvaluationChecklistRecommendation newRecommendation = new EvaluationChecklistRecommendation();
 
 			newRecommendation.updateFields(recommendation);
@@ -503,8 +470,7 @@ public class EvaluationServiceImpl
 			persistenceService.persist(newRecommendation);
 		}
 
-		for (EvaluationChecklistResponse response : existing.getCheckListAll().getResponses())
-		{
+		for (EvaluationChecklistResponse response : existing.getCheckListAll().getResponses()) {
 			EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
 			newResponse.updateFields(response);
 			newResponse.setQuestionId(response.getQuestionId());
@@ -515,8 +481,7 @@ public class EvaluationServiceImpl
 			persistenceService.persist(newResponse);
 		}
 
-		for (ContentSectionAll sectionAll : existing.getContentSections())
-		{
+		for (ContentSectionAll sectionAll : existing.getContentSections()) {
 			String existingSectionId = sectionAll.getSection().getContentSectionId();
 
 			sectionAll.getSection().setContentSectionId(persistenceService.generateId());
@@ -526,8 +491,7 @@ public class EvaluationServiceImpl
 			sectionAll.getSection().populateBaseCreateFields();
 			ContentSection contentSection = persistenceService.persist(sectionAll.getSection());
 
-			for (ContentSubSection subSection : sectionAll.getSubsections())
-			{
+			for (ContentSubSection subSection : sectionAll.getSubsections()) {
 				subSection.setSubSectionId(persistenceService.generateId());
 				subSection.setContentSectionId(contentSection.getContentSectionId());
 				subSection.populateBaseCreateFields();
@@ -539,26 +503,6 @@ public class EvaluationServiceImpl
 			List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();
 			copySectionMedia(existingMediaRecords, contentSection);
 
-			ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
-			ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
-			contentSectionAttributePk.setContentSectionId(existingSectionId);
-			templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
-
-			List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
-			for (ContentSectionAttribute attribute : attributes)
-			{
-
-				ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
-				ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
-				sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
-				sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
-				sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
-				sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
-				sectionAttribute.populateBaseCreateFields();
-				persistenceService.persist(sectionAttribute);
-
-			}
-
 		}
 
 		return evaluation.getEvaluationId();
@@ -566,8 +510,7 @@ public class EvaluationServiceImpl
 
 	private void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection)
 	{
-		for (ContentSectionMedia templateMedia : originalMedia)
-		{
+		for (ContentSectionMedia templateMedia : originalMedia) {
 			ContentSectionMedia sectionMedia = new ContentSectionMedia();
 			sectionMedia.setContentSectionId(newSection.getContentSectionId());
 			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
@@ -575,32 +518,21 @@ public class EvaluationServiceImpl
 			sectionMedia.setOriginalName(templateMedia.getOriginalName());
 
 			Path path = templateMedia.pathToMedia();
-			if (path != null)
-			{
-				if (path.toFile().exists())
-				{
-					try (InputStream in = new FileInputStream(path.toFile()))
-					{
+			if (path != null) {
+				if (path.toFile().exists()) {
+					try (InputStream in = new FileInputStream(path.toFile())) {
 						getContentSectionService().saveMedia(sectionMedia, in);
-					}
-					catch (IOException ex)
-					{
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]
-						{
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
 							path.toString(), templateMedia.getOriginalName()
 						}), ex);
 					}
-				}
-				else
-				{
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]
-					{
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
 						path.toString(), templateMedia.getOriginalName()
 					}));
 				}
-			}
-			else
-			{
+			} else {
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
 			}
 		}

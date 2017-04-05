@@ -34,7 +34,7 @@
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
-		request.setAttribute("admin", SecurityUtil.isAdminUser());
+		request.setAttribute("admin", SecurityUtil.isEntryAdminUser());
 	%>	
 	
 		

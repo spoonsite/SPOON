@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
@@ -40,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -110,6 +112,11 @@ public class SubComponentServiceImpl
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, T.INACTIVE_STATUS);
+			}
+
 			found.setActiveStatus(T.INACTIVE_STATUS);
 			found.setUpdateDts(TimeUtil.currentDate());
 			if (StringUtils.isBlank(updateUser)) {
@@ -129,6 +136,10 @@ public class SubComponentServiceImpl
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, T.ACTIVE_STATUS);
+			}
+
 			found.setActiveStatus(T.ACTIVE_STATUS);
 			found.populateBaseUpdateFields();
 			persistenceService.persist(found);
@@ -153,6 +164,10 @@ public class SubComponentServiceImpl
 			}
 			if (found instanceof ComponentMedia) {
 				removeLocalMedia((ComponentMedia) found);
+			}
+
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().removeEntityChange(subComponentClass, found);
 			}
 
 			persistenceService.delete(found);
@@ -202,16 +217,22 @@ public class SubComponentServiceImpl
 
 			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
 				List<T> resources = persistenceService.queryByExample(example);
-				resources.forEach(resource -> {
+				resources.forEach(resource
+						-> {
 					removeLocalResource((ComponentResource) resource);
 				});
 			}
 			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
 				List<T> media = persistenceService.queryByExample(example);
-				media.forEach(mediaItem -> {
+				media.forEach(mediaItem
+						-> {
 					removeLocalMedia((ComponentMedia) mediaItem);
 				});
 			}
+			if (example instanceof LoggableModel) {
+				componentService.getChangeLogService().removedAllEntityChange(example);
+			}
+
 			persistenceService.deleteByExample(example);
 
 			if (updateComponentActivity) {
@@ -263,12 +284,16 @@ public class SubComponentServiceImpl
 
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 			if (oldAttribute != null) {
+				componentService.getChangeLogService().logFieldChange(oldAttribute, ChangeLog.PK_FIELD, oldAttribute.getComponentAttributePk().pkValue(), attribute.getComponentAttributePk().pkValue());
+
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 				oldAttribute.updateFields(attribute);
 				persistenceService.persist(oldAttribute);
 			} else {
 				attribute.populateBaseCreateFields();
 				persistenceService.persist(attribute);
+
+				componentService.getChangeLogService().addEntityChange(attribute);
 			}
 			if (updateLastActivity) {
 				updateComponentLastActivity(attribute.getComponentAttributePk().getComponentId());
@@ -310,6 +335,8 @@ public class SubComponentServiceImpl
 			contact.setComponentContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
+
+			componentService.getChangeLogService().addEntityChange(contact);
 		}
 		componentService.getOrganizationService().addOrganization(contact.getOrganization());
 
@@ -333,6 +360,8 @@ public class SubComponentServiceImpl
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.populateBaseCreateFields();
 			persistenceService.persist(dependency);
+
+			componentService.getChangeLogService().addEntityChange(dependency);
 		}
 		if (updateLastActivity) {
 			updateComponentLastActivity(dependency.getComponentId());
@@ -346,7 +375,8 @@ public class SubComponentServiceImpl
 
 	public void saveComponentEvaluationSection(List<ComponentEvaluationSection> sections)
 	{
-		sections.forEach(section -> {
+		sections.forEach(section
+				-> {
 			saveComponentEvaluationSection(section, false);
 		});
 		if (!sections.isEmpty()) {
@@ -405,6 +435,7 @@ public class SubComponentServiceImpl
 			}
 			media.populateBaseCreateFields();
 			newMedia = persistenceService.persist(media);
+			componentService.getChangeLogService().addEntityChange(media);
 		}
 
 		if (updateLastActivity) {
@@ -428,6 +459,7 @@ public class SubComponentServiceImpl
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.populateBaseCreateFields();
 			persistenceService.persist(metadata);
+			componentService.getChangeLogService().addEntityChange(metadata);
 		}
 
 		if (updateLastActivity) {
@@ -466,6 +498,8 @@ public class SubComponentServiceImpl
 			componentRelationship.setComponentRelationshipId(persistenceService.generateId());
 			componentRelationship.populateBaseCreateFields();
 			newRelationship = persistenceService.persist(componentRelationship);
+
+			componentService.getChangeLogService().addEntityChange(componentRelationship);
 		}
 
 		if (updateLastActivity) {
@@ -490,6 +524,8 @@ public class SubComponentServiceImpl
 			question.setQuestionId(persistenceService.generateId());
 			question.populateBaseCreateFields();
 			persistenceService.persist(question);
+
+			componentService.getChangeLogService().addEntityChange(question);
 		}
 		handleUserDataAlert(question);
 		componentService.getOrganizationService().addOrganization(question.getOrganization());
@@ -515,6 +551,8 @@ public class SubComponentServiceImpl
 			response.setResponseId(persistenceService.generateId());
 			response.populateBaseCreateFields();
 			persistenceService.persist(response);
+
+			componentService.getChangeLogService().addEntityChange(response);
 		}
 		handleUserDataAlert(response);
 		componentService.getOrganizationService().addOrganization(response.getOrganization());
@@ -561,6 +599,7 @@ public class SubComponentServiceImpl
 
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
+			componentService.getChangeLogService().addEntityChange(resource);
 		}
 
 		if (updateLastActivity) {
@@ -585,6 +624,7 @@ public class SubComponentServiceImpl
 			review.setComponentReviewId(persistenceService.generateId());
 			review.populateBaseCreateFields();
 			persistenceService.persist(review);
+			componentService.getChangeLogService().addEntityChange(review);
 		}
 		handleUserDataAlert(review);
 		componentService.getOrganizationService().addOrganization(review.getOrganization());
@@ -656,6 +696,7 @@ public class SubComponentServiceImpl
 			tag.setTagId(persistenceService.generateId());
 			tag.populateBaseCreateFields();
 			persistenceService.persist(tag);
+			componentService.getChangeLogService().addEntityChange(tag);
 		}
 		handleUserDataAlert(tag);
 
@@ -682,7 +723,7 @@ public class SubComponentServiceImpl
 	{
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
 		List<ComponentTag> tags = persistenceService.query(query, null);
-		tags = FilterEngine.filter(tags, true);		
+		tags = FilterEngine.filter(tags, true);
 		return tags;
 	}
 
@@ -699,7 +740,8 @@ public class SubComponentServiceImpl
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample(example));
 		List<ComponentReviewView> reviews = new ArrayList();
-		tempReviews.forEach(review -> {
+		tempReviews.forEach(review
+				-> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
 			ComponentReviewCon tempCon = new ComponentReviewCon();
@@ -874,20 +916,27 @@ public class SubComponentServiceImpl
 					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
+
+					componentService.getChangeLogService().logStatusChange(componentAttribute, ComponentAttribute.ACTIVE_STATUS);
 					break;
 				case INACTIVE:
 					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.INACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
+
+					componentService.getChangeLogService().logStatusChange(componentAttribute, ComponentAttribute.INACTIVE_STATUS);
 					break;
 				case DELETE:
 					persistenceService.delete(componentAttribute);
+
+					componentService.getChangeLogService().removeEntityChange(ComponentAttribute.class, componentAttribute);
 					break;
 				default:
 					throw new UnsupportedOperationException("Add support for other type of operations");
 			}
 		}
-		componentIdSet.forEach(componentId -> {
+		componentIdSet.forEach(componentId
+				-> {
 			updateComponentLastActivity(componentId);
 		});
 	}

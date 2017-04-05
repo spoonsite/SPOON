@@ -21,6 +21,10 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,7 +35,10 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents an entry evaluation")
 public class Evaluation
 		extends StandardEntity<Evaluation>
+		implements LoggableModel<Evaluation>
 {
+
+	public static final String FIELD_PUBLISHED = "published";
 
 	@PK(generated = true)
 	@NotNull
@@ -67,7 +74,7 @@ public class Evaluation
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String assignedGroup;
-	
+
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = WorkflowStatus.class)
@@ -76,10 +83,10 @@ public class Evaluation
 
 	@NotNull
 	private Boolean published;
-	
+
 	@NotNull
 	private Boolean allowNewSections;
-	
+
 	@NotNull
 	private Boolean allowNewSubSections;
 
@@ -90,9 +97,10 @@ public class Evaluation
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		Evaluation evaluation = (Evaluation) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, evaluation);
 		super.updateFields(entity);
 
-		Evaluation evaluation = (Evaluation) entity;
 		setAssignedGroup(evaluation.getAssignedGroup());
 		setAssignedUser(evaluation.getAssignedUser());
 		setComponentId(evaluation.getComponentId());
@@ -101,7 +109,31 @@ public class Evaluation
 		setVersion(evaluation.getVersion());
 		setWorkflowStatus(evaluation.getWorkflowStatus());
 		setAllowNewSections(evaluation.getAllowNewSections());
-		setAllowNewSubSections(evaluation.getAllowNewSubSections());		
+		setAllowNewSubSections(evaluation.getAllowNewSubSections());
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(Evaluation updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("evaluationId");
+		excludeFields.add("componentId");
+		excludeFields.add("originComponentId");
+		excludeFields.add("templateId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return getVersion();
+	}
+
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
 	}
 
 	public String getEvaluationId()

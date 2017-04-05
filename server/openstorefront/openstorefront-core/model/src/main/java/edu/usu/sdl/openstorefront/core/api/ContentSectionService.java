@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
@@ -29,15 +28,6 @@ import java.io.InputStream;
 public interface ContentSectionService
 		extends AsyncService
 {
-
-	/**
-	 * Saves content Section Attribute
-	 *
-	 * @param contentSectionAttribute
-	 * @return
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute);
 
 	/**
 	 * Save media for a section This doesn't support transactions
@@ -95,7 +85,7 @@ public interface ContentSectionService
 	/**
 	 * Checks all ties to a content template
 	 *
-	 * @param checklistTemplateId
+	 * @param templateId
 	 * @return
 	 */
 	public boolean isContentTemplateBeingUsed(String templateId);

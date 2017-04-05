@@ -20,24 +20,29 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Holds all contact information
+ *
  * @author dshurtleff
  */
 @APIDescription("Holds all contact information")
 public class Contact
-	extends StandardEntity<Contact>	
-	implements OrganizationModel
+		extends StandardEntity<Contact>
+		implements OrganizationModel, LoggableModel<Contact>
 {
+
 	public static final String FIELD_FIRSTNAME = "firstName";
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String contactId;
@@ -73,7 +78,7 @@ public class Contact
 	public Contact()
 	{
 	}
-	
+
 	public String uniqueKey()
 	{
 		if (StringUtils.isNotBlank(getEmail())) {
@@ -82,15 +87,16 @@ public class Contact
 			return getPhone();
 		} else {
 			return getFirstName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getLastName();
-		}		
-	}	
-	
+		}
+	}
+
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		Contact contact = (Contact) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contact);
 		super.updateFields(entity);
 
-		Contact contact = (Contact) entity;
 		this.setEmail(contact.getEmail());
 		this.setFirstName(contact.getFirstName());
 		this.setLastName(contact.getLastName());
@@ -98,7 +104,28 @@ public class Contact
 		this.setPhone(contact.getPhone());
 
 	}
-	
+
+	@Override
+	public String addRemoveComment()
+	{
+		return getFirstName() + ", " + getLastName();
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(Contact updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("contactId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		//top-level
+	}
+
 	public String getContactId()
 	{
 		return contactId;
@@ -160,5 +187,5 @@ public class Contact
 	{
 		this.lastName = lastName;
 	}
-	
+
 }

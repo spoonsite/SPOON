@@ -71,7 +71,9 @@ public interface PersistenceService
 
 	String generateId();
 
-	boolean isAttached(BaseEntity baseEntity);
+	boolean isManaged(BaseEntity baseEntity);
+
+	boolean isProxy(BaseEntity baseEntity);
 
 	boolean isTransactionActive();
 
@@ -81,8 +83,12 @@ public interface PersistenceService
 	 * This will run the query and returns the Proxy Objects
 	 *
 	 * @param <T> Type of results expected
-	 * @param query SQL query for selecting items <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE activeStatus &lt;&gt; :selectedStatus)</div>
-	 * @param parameterMap Values to use in the Query <div style="font-size:.9 em; left: 10px">map with key "selectedStatus" and value 'A' </div>
+	 * @param query SQL query for selecting items
+	 * <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE
+	 * activeStatus &lt;&gt; :selectedStatus)</div>
+	 * @param parameterMap Values to use in the Query
+	 * <div style="font-size:.9 em; left: 10px">map with key "selectedStatus"
+	 * and value 'A' </div>
 	 * @return List of results of the given type
 	 */
 	<T> List<T> query(String query, Map<String, Object> parameterMap);
@@ -91,8 +97,12 @@ public interface PersistenceService
 	 * This will run the query and then unwrap if desired
 	 *
 	 * @param <T> Type of results expected
-	 * @param query SQL query for selecting items <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE activeStatus &lt;&gt; :selectedStatus)</div>
-	 * @param parameterMap Values to use in the Query <div style="font-size:.9 em; left: 10px">map with key "selectedStatus" and value 'A' </div>
+	 * @param query SQL query for selecting items
+	 * <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE
+	 * activeStatus &lt;&gt; :selectedStatus)</div>
+	 * @param parameterMap Values to use in the Query
+	 * <div style="font-size:.9 em; left: 10px">map with key "selectedStatus"
+	 * and value 'A' </div>
 	 * @param unwrap detach objects from the database backed objects
 	 * @return List of results of the given type
 	 */
@@ -108,7 +118,7 @@ public interface PersistenceService
 	<T> List<T> queryByExample(BaseEntity baseEntity);
 
 	/**
-	 * 
+	 *
 	 * @param <T> type of object to return
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return List of results of the given type
@@ -126,7 +136,7 @@ public interface PersistenceService
 	<T> T queryOneByExample(BaseEntity baseEntity);
 
 	/**
-	 * 
+	 *
 	 * @param <T> type of object to return
 	 * @param queryByExample Query object with the criteria for the query
 	 * @return the entity or null if not found
@@ -150,17 +160,19 @@ public interface PersistenceService
 	<T extends BaseEntity> T saveNonPkEntity(T entity);
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
-	
+
 	/**
 	 * Detach a list of objects from the database backed objects
+	 *
 	 * @param <T> type of object
 	 * @param data data that needs detached
 	 * @return list of detached objects
 	 */
 	<T> List<T> unwrapProxy(List<T> data);
-	
+
 	/**
 	 * Detach a single object from the database backed object
+	 *
 	 * @param <T> type of object
 	 * @param data data that needs detached
 	 * @return a detached version of the object

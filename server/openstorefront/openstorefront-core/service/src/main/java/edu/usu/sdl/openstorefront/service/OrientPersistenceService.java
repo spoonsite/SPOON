@@ -154,7 +154,7 @@ public class OrientPersistenceService
 	}
 
 	@Override
-	public boolean isAttached(BaseEntity baseEntity)
+	public boolean isManaged(BaseEntity baseEntity)
 	{
 		boolean attached = false;
 		OObjectDatabaseTx database = getConnection();
@@ -164,6 +164,16 @@ public class OrientPersistenceService
 			closeConnection(database);
 		}
 		return attached;
+	}
+
+	@Override
+	public boolean isProxy(BaseEntity baseEntity)
+	{
+		boolean proxied = false;
+		if (baseEntity instanceof Proxy) {
+			proxied = true;
+		}
+		return proxied;
 	}
 
 	@Override
@@ -358,15 +368,15 @@ public class OrientPersistenceService
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
 			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {				
+			if (StringUtils.isNotBlank(extraWhere)) {
 				appendToWhere(queryString, extraWhere);
 				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
-		
+
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}		
+		}
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -386,8 +396,8 @@ public class OrientPersistenceService
 		queryString.append("delete from ").append(entityClass.getSimpleName());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-		}		
-    
+		}
+
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
@@ -418,7 +428,7 @@ public class OrientPersistenceService
 		String whereClause = generateWhereClause(exampleWhere);
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(generateWhereClause(exampleWhere));
-		} 
+		}
 
 		Map<String, Object> queryParams = new HashMap<>();
 		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
@@ -492,7 +502,7 @@ public class OrientPersistenceService
 
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}			
+		}
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -562,15 +572,15 @@ public class OrientPersistenceService
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
 			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {		
+			if (StringUtils.isNotBlank(extraWhere)) {
 				appendToWhere(queryString, extraWhere);
 				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
-		
+
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}		
+		}
 
 		if (queryByExample.getGroupBy() != null) {
 			String names = generateExampleNames(queryByExample.getGroupBy());
@@ -601,16 +611,16 @@ public class OrientPersistenceService
 		return results;
 	}
 
-	private void appendToWhere(StringBuilder queryString, String conditionClause) 
+	private void appendToWhere(StringBuilder queryString, String conditionClause)
 	{
 		if (queryString.indexOf(" where ") != -1) {
-				queryString.append(" AND ");
+			queryString.append(" AND ");
 		} else {
-			queryString.append(" where ");			
-		}		
+			queryString.append(" where ");
+		}
 		queryString.append(conditionClause);
 	}
-	
+
 	private <T> String generateWhereClause(T example)
 	{
 		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOptionBuilder().build(), new HashMap<>());

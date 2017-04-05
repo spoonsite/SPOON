@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,22 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 
 /**
- * Used to jump into a transactions when needed.
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public interface AttributeServicePrivate
+public interface ChangeLogServicePrivate
 {
 
+	/**
+	 * Removes all change logs for an entity Both entity and the entities
+	 * children
+	 *
+	 * @param entity
+	 * @param entityId
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveAttributeType(AttributeType attributeType);
-
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveAttributeCode(AttributeCode attributeCode);
+	public void removeChangeLogs(String entity, String entityId);
 
 }

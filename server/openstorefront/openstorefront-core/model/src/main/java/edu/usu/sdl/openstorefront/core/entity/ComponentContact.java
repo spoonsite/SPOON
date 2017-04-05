@@ -22,10 +22,13 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Holds a link to a contact")
 public class ComponentContact
 		extends BaseComponent<ComponentContact>
-		implements OrganizationModel
+		implements OrganizationModel, LoggableModel<ComponentContact>
 {
 
 	@PK(generated = true)
@@ -98,7 +101,7 @@ public class ComponentContact
 	public Contact toContact()
 	{
 		Contact contact = new Contact();
-		contact.setContactId(this.contactId);
+		contact.setContactId(this.getContactId());
 		contact.setEmail(this.getEmail());
 		contact.setFirstName(this.getFirstName());
 		contact.setLastName(this.getLastName());
@@ -123,9 +126,11 @@ public class ComponentContact
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentContact contact = (ComponentContact) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contact);
+
 		super.updateFields(entity);
 
-		ComponentContact contact = (ComponentContact) entity;
 		this.setContactId(contact.getContactId());
 		this.setContactType(contact.getContactType());
 		this.setEmail(contact.getEmail());
@@ -134,6 +139,30 @@ public class ComponentContact
 		this.setOrganization(contact.getOrganization());
 		this.setPhone(contact.getPhone());
 
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentContact updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentContactId");
+		excludeFields.add("contactId");
+
+		//covered in contact
+		excludeFields.add("firstName");
+		excludeFields.add("lastName");
+		excludeFields.add("email");
+		excludeFields.add("phone");
+		excludeFields.add("organization");
+
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(ContactType.class, getContactType()) + " - " + getFirstName() + ", " + getLastName();
 	}
 
 	@Override

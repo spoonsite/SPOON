@@ -21,10 +21,13 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -37,6 +40,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Represents a fragment of a section")
 public class ContentSubSection
 		extends StandardEntity<ContentSubSection>
+		implements LoggableModel<ContentSubSection>
 {
 
 	@PK(generated = true)
@@ -87,9 +91,10 @@ public class ContentSubSection
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		ContentSubSection contentSubSection = (ContentSubSection) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, contentSubSection);
 		super.updateFields(entity);
 
-		ContentSubSection contentSubSection = (ContentSubSection) entity;
 		setContent(contentSubSection.getContent());
 		setCustomFields(contentSubSection.getCustomFields());
 		setHideTitle(contentSubSection.getHideTitle());
@@ -99,6 +104,34 @@ public class ContentSubSection
 		setTitle(contentSubSection.getTitle());
 		setOrder(contentSubSection.getOrder());
 
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ContentSubSection updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("subSectionId");
+		excludeFields.add("contentSectionId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return getTitle();
+	}
+
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(ContentSection.class.getSimpleName());
+		changeLog.setParentEntityId(getContentSectionId());
+		String comment = changeLog.getComment();
+		if (comment == null) {
+			comment = addRemoveComment();
+		}
+		changeLog.setComment(comment);
 	}
 
 	public String getSubSectionId()
