@@ -170,7 +170,7 @@ public class OrientPersistenceService
 	public boolean isProxy(BaseEntity baseEntity)
 	{
 		boolean proxied = false;
-		if ((baseEntity instanceof Proxy) == false) {
+		if (baseEntity instanceof Proxy) {
 			proxied = true;
 		}
 		return proxied;

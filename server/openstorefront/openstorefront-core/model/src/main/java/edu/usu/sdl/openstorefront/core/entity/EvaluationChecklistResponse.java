@@ -116,6 +116,13 @@ public class EvaluationChecklistResponse
 	{
 		changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
 		changeLog.setParentEntityId(getChecklistId());
+		ChecklistQuestion question = ServiceProxyFactory.getServiceProxy().getChecklistService().findQuestion(questionId);
+
+		String comment = changeLog.getComment();
+		if (comment != null) {
+			comment = "Question: " + question.getQid();
+		}
+		changeLog.setComment(comment);
 	}
 
 	public String getResponseId()

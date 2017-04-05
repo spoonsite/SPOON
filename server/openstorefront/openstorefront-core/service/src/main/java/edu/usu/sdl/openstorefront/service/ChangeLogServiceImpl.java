@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.ChangeLogService;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ChangeType;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
@@ -46,6 +49,9 @@ public class ChangeLogServiceImpl
 
 	private static final Logger LOG = Logger.getLogger(ChangeLogServiceImpl.class.getName());
 
+	//This is only valid for this instance (See supend/resume)
+	private boolean saveChanges = true;
+
 	@Override
 	public <T extends StandardEntity & LoggableModel> List<ChangeLog> findUpdateChanges(T original, T updated)
 	{
@@ -58,61 +64,81 @@ public class ChangeLogServiceImpl
 		List<ChangeLog> changeLogs = new ArrayList<>();
 
 		List<FieldChangeModel> changes = original.findChanges(updated);
-		for (FieldChangeModel change : changes)
-		{
+		original = unwrapProxy(original);
 
-			ChangeLog changeLog = new ChangeLog();
-			changeLog.setChangeLogId(getPersistenceService().generateId());
-			changeLog.setChangeType(ChangeType.UPDATED);
-			changeLog.setEntity(EntityUtil.getRealClassName(original.getClass().getSimpleName()));
-			changeLog.setEntityId(EntityUtil.getPKFieldValue(original));
-			changeLog.setField(change.getField());
-			changeLog.setOldValue(change.getOldValue());
-			changeLog.setNewValue(change.getNewValue());
-			setParent(changeLog, original);
+		for (FieldChangeModel change : changes) {
 
-			changeLogs.add(changeLog);
+			if ((change.getNewValue() != null && change.getNewValue().equals(change.getOldValue()) == false)
+					|| (change.getOldValue() != null && change.getNewValue() == null)) {
+
+				ChangeLog changeLog = new ChangeLog();
+
+				changeLog.setChangeLogId(getPersistenceService().generateId());
+				changeLog.setChangeType(ChangeType.UPDATED);
+				changeLog.setEntity(EntityUtil.getRealClassName(original.getClass().getSimpleName()));
+				changeLog.setEntityId(EntityUtil.getPKFieldValue(original));
+				changeLog.setField(change.getField());
+				changeLog.setOldValue(change.getOldValue());
+				changeLog.setNewValue(change.getNewValue());
+				setParent(changeLog, original);
+
+				changeLogs.add(changeLog);
+			}
 		}
 
-		if (save)
-		{
-			for (ChangeLog changeLog : changeLogs)
-			{
-				changeLog.populateBaseCreateFields();
-				persistenceService.persist(changeLog);
+		if (save) {
+			for (ChangeLog changeLog : changeLogs) {
+				saveChangeRecord(changeLog);
 			}
 		}
 
 		return changeLogs;
 	}
 
+	private void saveChangeRecord(ChangeLog changeLog)
+	{
+		if (saveChanges) {
+			changeLog.populateBaseCreateFields();
+			persistenceService.persist(changeLog);
+		}
+	}
+
+	private <T extends StandardEntity> T unwrapProxy(T original)
+	{
+		T unwrapped;
+		if (persistenceService.isProxy(original)) {
+			unwrapped = persistenceService.deattachAll(original);
+		} else {
+			unwrapped = original;
+		}
+		return unwrapped;
+	}
+
 	private <T extends StandardEntity> void setParent(ChangeLog changeLog, T original)
 	{
-		if (original instanceof LoggableModel)
-		{
+		if (original instanceof LoggableModel) {
 			LoggableModel loggableModel = (LoggableModel) original;
 			loggableModel.setChangeParent(changeLog);
 		}
-
 	}
 
 	@Override
 	public <T extends StandardEntity> ChangeLog addEntityChange(T addedEntity)
 	{
 		ChangeLog changeLog = new ChangeLog();
+
+		addedEntity = unwrapProxy(addedEntity);
+
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.ADDED);
 		changeLog.setEntity(EntityUtil.getRealClassName(addedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(addedEntity));
-		if (addedEntity instanceof LoggableModel)
-		{
+		if (addedEntity instanceof LoggableModel) {
 			LoggableModel loggableModel = (LoggableModel) addedEntity;
 			changeLog.setComment(loggableModel.addRemoveComment());
 		}
 		setParent(changeLog, addedEntity);
-
-		changeLog.populateBaseCreateFields();
-		persistenceService.persist(changeLog);
+		saveChangeRecord(changeLog);
 
 		return changeLog;
 	}
@@ -121,16 +147,16 @@ public class ChangeLogServiceImpl
 	public <T extends StandardEntity> ChangeLog removeEntityChange(Class<T> removedEntityClass, T removedEntity)
 	{
 		ChangeLog changeLog = new ChangeLog();
+
+		removedEntity = unwrapProxy(removedEntity);
+
 		String archivedValue = null;
-		try
-		{
+		try {
 			T copy = removedEntityClass.newInstance();
 			BeanUtils.copyProperties(copy, removedEntity);
 
 			archivedValue = StringProcessor.defaultObjectMapper().writeValueAsString(copy);
-		}
-		catch (InstantiationException | IllegalAccessException | InvocationTargetException | JsonProcessingException ex)
-		{
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | JsonProcessingException ex) {
 			LOG.log(Level.WARNING, "Unable to create a archive of entity. (Change Log) Entity: " + removedEntity.getClass().getSimpleName(), ex);
 		}
 
@@ -138,16 +164,14 @@ public class ChangeLogServiceImpl
 		changeLog.setChangeType(ChangeType.REMOVED);
 		changeLog.setEntity(EntityUtil.getRealClassName(removedEntity.getClass().getSimpleName()));
 		changeLog.setEntityId(EntityUtil.getPKFieldValue(removedEntity));
-		if (removedEntity instanceof LoggableModel)
-		{
+		if (removedEntity instanceof LoggableModel) {
 			LoggableModel loggableModel = (LoggableModel) removedEntity;
 			changeLog.setComment(loggableModel.addRemoveComment());
 		}
 		changeLog.setArchivedEntity(archivedValue);
 		setParent(changeLog, removedEntity);
 
-		changeLog.populateBaseCreateFields();
-		persistenceService.persist(changeLog);
+		saveChangeRecord(changeLog);
 
 		return changeLog;
 	}
@@ -156,6 +180,9 @@ public class ChangeLogServiceImpl
 	public <T extends StandardEntity> ChangeLog logStatusChange(T statusEntity, String newStatus)
 	{
 		ChangeLog changeLog = new ChangeLog();
+
+		statusEntity = unwrapProxy(statusEntity);
+
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.UPDATED);
 		changeLog.setEntity(EntityUtil.getRealClassName(statusEntity.getClass().getSimpleName()));
@@ -165,8 +192,7 @@ public class ChangeLogServiceImpl
 		changeLog.setNewValue(newStatus);
 		setParent(changeLog, statusEntity);
 
-		changeLog.populateBaseCreateFields();
-		persistenceService.persist(changeLog);
+		saveChangeRecord(changeLog);
 
 		return changeLog;
 	}
@@ -176,6 +202,8 @@ public class ChangeLogServiceImpl
 	{
 		ChangeLog changeLog = new ChangeLog();
 
+		exampleRemovedEntity = unwrapProxy(exampleRemovedEntity);
+
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.REMOVED);
 		changeLog.setEntity(EntityUtil.getRealClassName(exampleRemovedEntity.getClass().getSimpleName()));
@@ -184,8 +212,7 @@ public class ChangeLogServiceImpl
 
 		setParent(changeLog, exampleRemovedEntity);
 
-		changeLog.populateBaseCreateFields();
-		persistenceService.persist(changeLog);
+		saveChangeRecord(changeLog);
 
 		return changeLog;
 	}
@@ -216,8 +243,9 @@ public class ChangeLogServiceImpl
 		ChangeLog changeLog = null;
 
 		if ((newValue != null && newValue.equals(oldValue) == false)
-				|| (oldValue != null && newValue == null))
-		{
+				|| (oldValue != null && newValue == null)) {
+
+			original = unwrapProxy(original);
 
 			changeLog = new ChangeLog();
 			changeLog.setChangeLogId(getPersistenceService().generateId());
@@ -229,8 +257,7 @@ public class ChangeLogServiceImpl
 			changeLog.setNewValue(newValue);
 			setParent(changeLog, original);
 
-			changeLog.populateBaseCreateFields();
-			persistenceService.persist(changeLog);
+			saveChangeRecord(changeLog);
 		}
 
 		return changeLog;
@@ -241,6 +268,8 @@ public class ChangeLogServiceImpl
 	{
 		ChangeLog changeLog = new ChangeLog();
 
+		entity = unwrapProxy(entity);
+
 		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(changeType);
 		changeLog.setEntity(EntityUtil.getRealClassName(entity.getClass().getSimpleName()));
@@ -248,8 +277,7 @@ public class ChangeLogServiceImpl
 		changeLog.setComment(comment);
 		setParent(changeLog, entity);
 
-		changeLog.populateBaseCreateFields();
-		persistenceService.persist(changeLog);
+		saveChangeRecord(changeLog);
 
 		return changeLog;
 	}
@@ -264,8 +292,7 @@ public class ChangeLogServiceImpl
 
 		List<ChangeLog> changeLogs = changeLogExample.findByExample();
 
-		if (includeChildren)
-		{
+		if (includeChildren) {
 			changeLogExample = new ChangeLog();
 			changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
 			changeLogExample.setParentEntity(entity);
@@ -274,10 +301,64 @@ public class ChangeLogServiceImpl
 			List<ChangeLog> childrenChanges = changeLogExample.findByExample();
 			changeLogs.addAll(childrenChanges);
 
-			//look at cases where another level.
+			if (Evaluation.class.getSimpleName().equals(entity)) {
+				ContentSection contentSectionExample = new ContentSection();
+				contentSectionExample.setEntity(Evaluation.class.getSimpleName());
+				contentSectionExample.setEntityId(entityId);
+
+				List<ContentSection> contentSections = contentSectionExample.findByExample();
+				for (ContentSection contentSection : contentSections) {
+
+					changeLogExample = new ChangeLog();
+					changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
+					changeLogExample.setEntity(ContentSection.class.getSimpleName());
+					changeLogExample.setEntityId(contentSection.getContentSectionId());
+
+					childrenChanges = changeLogExample.findByExample();
+					changeLogs.addAll(childrenChanges);
+
+					changeLogExample = new ChangeLog();
+					changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
+					changeLogExample.setParentEntity(ContentSection.class.getSimpleName());
+					changeLogExample.setParentEntityId(contentSection.getContentSectionId());
+
+					childrenChanges = changeLogExample.findByExample();
+					changeLogs.addAll(childrenChanges);
+				}
+
+				//get checklist children
+				EvaluationChecklist evaluationChecklistExample = new EvaluationChecklist();
+				evaluationChecklistExample.setEvaluationId(entityId);
+				List<EvaluationChecklist> checklists = evaluationChecklistExample.findByExample();
+				for (EvaluationChecklist checklist : checklists) {
+
+					changeLogExample = new ChangeLog();
+					changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
+					changeLogExample.setParentEntity(EvaluationChecklist.class.getSimpleName());
+					changeLogExample.setParentEntityId(checklist.getChecklistId());
+
+					childrenChanges = changeLogExample.findByExample();
+					changeLogs.addAll(childrenChanges);
+				}
+			}
+
 		}
 
 		return changeLogs;
+	}
+
+	@Override
+	public void suspendSaving()
+	{
+		saveChanges = false;
+		LOG.log(Level.FINE, "Supended Change Logging");
+	}
+
+	@Override
+	public void resumeSaving()
+	{
+		saveChanges = true;
+		LOG.log(Level.FINE, "Resumed Change Logging");
 	}
 
 }

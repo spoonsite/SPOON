@@ -1697,97 +1697,103 @@ public class CoreComponentServiceImpl
 
 	public Component copy(String orignalComponentId)
 	{
-		cleanupCache(orignalComponentId);
-		ComponentAll componentAll = getFullComponent(orignalComponentId);
-		if (componentAll != null) {
-			componentAll.getComponent().setComponentId(null);
-			componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
-			componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-			componentAll.getComponent().setApprovedDts(null);
-			componentAll.getComponent().setApprovedUser(null);
-			componentAll.getComponent().setExternalId(null);
+		try {
+			componentService.getChangeLogService().suspendSaving();
 
-			clearBaseComponentKey(componentAll.getAttributes());
-			clearBaseComponentKey(componentAll.getContacts());
-			clearBaseComponentKey(componentAll.getEvaluationSections());
-			clearBaseComponentKey(componentAll.getExternalDependencies());
-			clearBaseComponentKey(componentAll.getMetadata());
-			clearBaseComponentKey(componentAll.getRelationships());
-			clearBaseComponentKey(componentAll.getTags());
-
-			//Don't copy these item
-			componentAll.setIntegrationAll(null);
-			componentAll.setReviews(new ArrayList<>());
-			componentAll.setQuestions(new ArrayList<>());
-
-			//Handle local media seperately
-			List<ComponentMedia> localMedia = new ArrayList<>();
-			for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
-				ComponentMedia media = componentAll.getMedia().get(i);
-				if (media.getFileName() != null) {
-					localMedia.add(componentAll.getMedia().remove(i));
-				} else {
-					media.clearKeys();
-				}
-			}
-
-			//Handle local resource seperately
-			List<ComponentResource> localResources = new ArrayList<>();
-			for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
-				ComponentResource resource = componentAll.getResources().get(i);
-				if (resource.getFileName() != null) {
-					localResources.add(componentAll.getResources().remove(i));
-				} else {
-					resource.clearKeys();
-				}
-			}
-
-			FileHistoryOption fileHistoryOption = new FileHistoryOption();
-			fileHistoryOption.setSkipDuplicationCheck(true);
-			fileHistoryOption.setSkipRequiredAttributes(true);
-
-			componentAll = saveFullComponent(componentAll, fileHistoryOption);
-
-			//copy over local resources
-			for (ComponentMedia media : localMedia) {
-				media.setComponentId(componentAll.getComponent().getComponentId());
-				Path oldPath = media.pathToMedia();
-				if (oldPath != null) {
-					media.setComponentMediaId(persistenceService.generateId());
-					media.setFileName(media.getComponentMediaId());
-					Path newPath = media.pathToMedia();
-					try {
-						Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
-					}
-					media.populateBaseUpdateFields();
-					persistenceService.persist(media);
-				}
-			}
-
-			for (ComponentResource resource : localResources) {
-				resource.setComponentId(componentAll.getComponent().getComponentId());
-				Path oldPath = resource.pathToResource();
-				if (oldPath != null) {
-					resource.setResourceId(persistenceService.generateId());
-					resource.setFileName(resource.getResourceId());
-					Path newPath = resource.pathToResource();
-					try {
-						Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
-					}
-					resource.populateBaseUpdateFields();
-					persistenceService.persist(resource);
-				}
-			}
 			cleanupCache(orignalComponentId);
-			cleanupCache(componentAll.getComponent().getComponentId());
+			ComponentAll componentAll = getFullComponent(orignalComponentId);
+			if (componentAll != null) {
+				componentAll.getComponent().setComponentId(null);
+				componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
+				componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+				componentAll.getComponent().setApprovedDts(null);
+				componentAll.getComponent().setApprovedUser(null);
+				componentAll.getComponent().setExternalId(null);
 
-			return componentAll.getComponent();
-		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find component to copy  id: " + orignalComponentId, "Must sure component still exists");
+				clearBaseComponentKey(componentAll.getAttributes());
+				clearBaseComponentKey(componentAll.getContacts());
+				clearBaseComponentKey(componentAll.getEvaluationSections());
+				clearBaseComponentKey(componentAll.getExternalDependencies());
+				clearBaseComponentKey(componentAll.getMetadata());
+				clearBaseComponentKey(componentAll.getRelationships());
+				clearBaseComponentKey(componentAll.getTags());
+
+				//Don't copy these item
+				componentAll.setIntegrationAll(null);
+				componentAll.setReviews(new ArrayList<>());
+				componentAll.setQuestions(new ArrayList<>());
+
+				//Handle local media seperately
+				List<ComponentMedia> localMedia = new ArrayList<>();
+				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
+					ComponentMedia media = componentAll.getMedia().get(i);
+					if (media.getFileName() != null) {
+						localMedia.add(componentAll.getMedia().remove(i));
+					} else {
+						media.clearKeys();
+					}
+				}
+
+				//Handle local resource seperately
+				List<ComponentResource> localResources = new ArrayList<>();
+				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
+					ComponentResource resource = componentAll.getResources().get(i);
+					if (resource.getFileName() != null) {
+						localResources.add(componentAll.getResources().remove(i));
+					} else {
+						resource.clearKeys();
+					}
+				}
+
+				FileHistoryOption fileHistoryOption = new FileHistoryOption();
+				fileHistoryOption.setSkipDuplicationCheck(true);
+				fileHistoryOption.setSkipRequiredAttributes(true);
+
+				componentAll = saveFullComponent(componentAll, fileHistoryOption);
+
+				//copy over local resources
+				for (ComponentMedia media : localMedia) {
+					media.setComponentId(componentAll.getComponent().getComponentId());
+					Path oldPath = media.pathToMedia();
+					if (oldPath != null) {
+						media.setComponentMediaId(persistenceService.generateId());
+						media.setFileName(media.getComponentMediaId());
+						Path newPath = media.pathToMedia();
+						try {
+							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
+						}
+						media.populateBaseUpdateFields();
+						persistenceService.persist(media);
+					}
+				}
+
+				for (ComponentResource resource : localResources) {
+					resource.setComponentId(componentAll.getComponent().getComponentId());
+					Path oldPath = resource.pathToResource();
+					if (oldPath != null) {
+						resource.setResourceId(persistenceService.generateId());
+						resource.setFileName(resource.getResourceId());
+						Path newPath = resource.pathToResource();
+						try {
+							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
+						}
+						resource.populateBaseUpdateFields();
+						persistenceService.persist(resource);
+					}
+				}
+				cleanupCache(orignalComponentId);
+				cleanupCache(componentAll.getComponent().getComponentId());
+
+				return componentAll.getComponent();
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find component to copy  id: " + orignalComponentId, "Must sure component still exists");
+			}
+		} finally {
+			componentService.getChangeLogService().resumeSaving();
 		}
 	}
 

@@ -59,7 +59,7 @@ public class ContentSectionServiceImpl
 
 		ContentSubSection contentSubSectionExample = new ContentSubSection();
 		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
-		List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
+		List<ContentSubSection> subSections = contentSubSectionExample.findByExampleProxy();
 		Map<String, List<ContentSubSection>> subSectionMap = subSections.stream()
 				.collect(Collectors.groupingBy(ContentSubSection::getSubSectionId));
 

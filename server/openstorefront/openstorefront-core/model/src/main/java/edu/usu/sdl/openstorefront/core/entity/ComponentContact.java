@@ -162,7 +162,7 @@ public class ComponentContact
 	@Override
 	public String addRemoveComment()
 	{
-		return TranslateUtil.translate(ContactType.class, getContactType());
+		return TranslateUtil.translate(ContactType.class, getContactType()) + " - " + getFirstName() + ", " + getLastName();
 	}
 
 	@Override

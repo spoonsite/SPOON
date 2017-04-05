@@ -93,19 +93,16 @@ public class SecurityServiceImpl
 	{
 		SecurityPolicy securityPolicy = null;
 		Element element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
-		if (element != null)
-		{
+		if (element != null) {
 			securityPolicy = (SecurityPolicy) element.getObjectValue();
 		}
 
-		if (securityPolicy == null)
-		{
+		if (securityPolicy == null) {
 			securityPolicy = new SecurityPolicy();
 			securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
 			securityPolicy = securityPolicy.find();
 
-			if (securityPolicy == null)
-			{
+			if (securityPolicy == null) {
 				//default
 				securityPolicy = new SecurityPolicy();
 				securityPolicy.setAllowRegistration(Boolean.TRUE);
@@ -121,7 +118,7 @@ public class SecurityServiceImpl
 			}
 
 			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-			OSFCacheManager.getApplicationCache().put(element);			
+			OSFCacheManager.getApplicationCache().put(element);
 		}
 		return securityPolicy;
 	}
@@ -130,13 +127,10 @@ public class SecurityServiceImpl
 	public SecurityPolicy updateSecurityPolicy(SecurityPolicy securityPolicy)
 	{
 		SecurityPolicy existing = persistenceService.findById(SecurityPolicy.class, securityPolicy.getPolicyId());
-		if (existing != null)
-		{
+		if (existing != null) {
 			existing.updateFields(securityPolicy);
 			securityPolicy = persistenceService.persist(existing);
-		}
-		else
-		{
+		} else {
 			securityPolicy.setPolicyId(persistenceService.generateId());
 			securityPolicy.populateBaseCreateFields();
 			securityPolicy = persistenceService.persist(securityPolicy);
@@ -157,10 +151,8 @@ public class SecurityServiceImpl
 
 		org.passay.RuleResult checkResult = validator.validate(new PasswordData(new String(password)));
 
-		if (checkResult.isValid() == false)
-		{
-			for (String errorMessage : validator.getMessages(checkResult))
-			{
+		if (checkResult.isValid() == false) {
+			for (String errorMessage : validator.getMessages(checkResult)) {
 				RuleResult ruleResult = new RuleResult();
 				ruleResult.setEntityClassName(UserSecurity.class.getSimpleName());
 				ruleResult.setFieldName(UserSecurity.PASSWORD_FIELD);
@@ -212,8 +204,7 @@ public class SecurityServiceImpl
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
 		userSecurity = userSecurity.find();
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			RuleResult result = new RuleResult();
 			result.setMessage("Username is already exists");
 			result.setValidationRule("Username must be unique");
@@ -228,8 +219,7 @@ public class SecurityServiceImpl
 	{
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 
 			SecurityPolicy securityPolicy = getSecurityPolicy();
 
@@ -244,15 +234,12 @@ public class SecurityServiceImpl
 			userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
-			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());			
+			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			if (securityPolicy.getAutoApproveUsers())
-			{
+			if (securityPolicy.getAutoApproveUsers()) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
-			}
-			else
-			{
+			} else {
 				userSecurity.setApprovalStatus(UserApprovalStatus.PENDING);
 				userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);
 			}
@@ -265,12 +252,9 @@ public class SecurityServiceImpl
 			userProfile.setLastName(userRegistration.getLastName());
 			userProfile.setOrganization(userRegistration.getOrganization());
 			userProfile.setPhone(userRegistration.getPhone());
-			if (StringUtils.isNotBlank(userRegistration.getUserTypeCode()))
-			{
+			if (StringUtils.isNotBlank(userRegistration.getUserTypeCode())) {
 				userProfile.setUserTypeCode(userRegistration.getUserTypeCode());
-			}
-			else
-			{
+			} else {
 				userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
@@ -282,8 +266,7 @@ public class SecurityServiceImpl
 			getAlertService().checkAlert(alertContext);
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was created.", userRegistration.getUsername()));
 
-			if (securityPolicy.getAutoApproveUsers() == false)
-			{
+			if (securityPolicy.getAutoApproveUsers() == false) {
 				alertContext = new AlertContext();
 				alertContext.setAlertType(AlertType.USER_MANAGEMENT);
 				alertContext.setDataTrigger(userSecurity);
@@ -300,8 +283,7 @@ public class SecurityServiceImpl
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
 			userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 			userSecurity.populateBaseUpdateFields();
@@ -317,9 +299,7 @@ public class SecurityServiceImpl
 			MailManager.send(email);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was approved by: {1}", username, SecurityUtil.getCurrentUserName()));
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to approve", "Check input: " + username);
 		}
 	}
@@ -335,8 +315,7 @@ public class SecurityServiceImpl
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 
 			String rawApprovalCode = persistenceService.generateId();
 
@@ -351,26 +330,20 @@ public class SecurityServiceImpl
 			UserProfile userProfile = new UserProfile();
 			userProfile.setUsername(username.toLowerCase());
 			userProfile = userProfile.find();
-			if (userProfile != null)
-			{
-				if (StringUtils.isNotBlank(userProfile.getEmail()))
-				{
+			if (userProfile != null) {
+				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					MessageContext messageContent = new MessageContext(userProfile);
 					messageContent.setUserPasswordResetCode(rawApprovalCode);
 					ResetPasswordMessageGenerator resetPasswordMessageGenerator = new ResetPasswordMessageGenerator(messageContent);
 					Email email = resetPasswordMessageGenerator.generateMessage();
 					MailManager.send(email);
 				}
-			}
-			else
-			{
+			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user profile to reset", "Check input: " + username);
 			}
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} request a password change. Change is awaiting approval by user", username));
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);
 		}
 		return approvalCode;
@@ -386,8 +359,7 @@ public class SecurityServiceImpl
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setPasswordChangeApprovalCode(approvalCode);
 		userSecurity = userSecurity.findProxy();
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			userSecurity.setPassword(userSecurity.getTempPassword());
 			userSecurity.setTempPassword(null);
 			userSecurity.setPasswordChangeApprovalCode(null);
@@ -396,9 +368,7 @@ public class SecurityServiceImpl
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			success = true;
-		}
-		else
-		{
+		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with password approval code: ", approvalCode));
 		}
 		return success;
@@ -413,27 +383,21 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			ValidationResult validationResult = validatePassword(password);
-			if (validationResult.valid())
-			{
+			if (validationResult.valid()) {
 				DefaultPasswordService passwordService = new DefaultPasswordService();
 				String encryptedValue = passwordService.encryptPassword(password);
 				userSecurity.setPassword(encryptedValue);
 				userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
-				userSecurity.setUsingDefaultPassword(Boolean.FALSE);				
+				userSecurity.setUsingDefaultPassword(Boolean.FALSE);
 				userSecurity.populateBaseUpdateFields();
 				persistenceService.persist(userSecurity);
 				LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
-			}
-			else
-			{
+			} else {
 				throw new OpenStorefrontRuntimeException("Password is not valid", validationResult.toString());
 			}
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);
 		}
 	}
@@ -447,16 +411,13 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			LOG.log(Level.INFO, MessageFormat.format("user {0} was unlocked by: {1}", username, SecurityUtil.getCurrentUserName()));
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to unlock.", "Check input: " + username);
 		}
 	}
@@ -470,8 +431,7 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
@@ -480,9 +440,7 @@ public class SecurityServiceImpl
 			getUserService().deleteProfile(username);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was locked by: {1}", username, SecurityUtil.getCurrentUserName()));
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to lock.", "Check input: " + username);
 		}
 	}
@@ -493,13 +451,10 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(securityRole);
 
 		SecurityRole existing = persistenceService.findById(SecurityRole.class, securityRole.getRoleName());
-		if (existing != null)
-		{
+		if (existing != null) {
 			existing.updateFields(securityRole);
 			securityRole = persistenceService.persist(existing);
-		}
-		else
-		{
+		} else {
 			securityRole.populateBaseCreateFields();
 			securityRole = persistenceService.persist(securityRole);
 		}
@@ -518,19 +473,15 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(role);
 			userRole.setUsername(username.toLowerCase());
 
 			userRole = userRole.find();
-			if (userRole != null)
-			{
+			if (userRole != null) {
 				LOG.log(Level.INFO, MessageFormat.format("User {0} already had role: {1}", username, role));
-			}
-			else
-			{
+			} else {
 				userRole = new UserRole();
 				userRole.setRole(role);
 				userRole.setUsername(username.toLowerCase());
@@ -540,9 +491,7 @@ public class SecurityServiceImpl
 
 				LOG.log(Level.INFO, MessageFormat.format("Role {0} was added to user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
 			}
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to add role to.", "Check input: " + username);
 		}
 	}
@@ -557,21 +506,17 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 			UserRole userRoleExample = new UserRole();
 			userRoleExample.setRole(role);
 			userRoleExample.setUsername(username.toLowerCase());
 
 			userRoleExample = userRoleExample.findProxy();
-			if (userRoleExample != null)
-			{
+			if (userRoleExample != null) {
 				persistenceService.delete(userRoleExample);
 				LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
 			}
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to remove role from.", "Check input: " + username);
 		}
 	}
@@ -580,8 +525,7 @@ public class SecurityServiceImpl
 	public byte[] applicationCryptKey()
 	{
 		String key = getSystemService().getPropertyValue(ApplicationProperty.APPLICATION_CRYPT_KEY);
-		if (key == null)
-		{
+		if (key == null) {
 			throw new OpenStorefrontRuntimeException("Crypt key is not set", "Set the application Property (Base64): " + ApplicationProperty.APPLICATION_CRYPT_KEY);
 		}
 		return Base64.getUrlDecoder().decode(key);
@@ -591,32 +535,27 @@ public class SecurityServiceImpl
 	public void deleteSecurityRole(String roleName, String moveUserToRole)
 	{
 		SecurityRole securityRole = persistenceService.findById(SecurityRole.class, roleName);
-		if (securityRole != null)
-		{
+		if (securityRole != null) {
 			UserRole userRoleExample = new UserRole();
 			userRoleExample.setRole(roleName);
 			List<UserRole> users = userRoleExample.findByExampleProxy();
-			for (UserRole userRole : users)
-			{
-				if (StringUtils.isNotBlank(moveUserToRole))
-				{
+			for (UserRole userRole : users) {
+				if (StringUtils.isNotBlank(moveUserToRole)) {
 					userRole.setRole(moveUserToRole);
 					userRole.populateBaseUpdateFields();
 					persistenceService.persist(userRole);
-				}
-				else
-				{
+				} else {
 					persistenceService.delete(userRole);
 				}
 			}
-						
+
 			String query = "update " + Evaluation.class.getSimpleName() + " set assignedGroup = null where assignedGroup = :rolename";
 			Map<String, Object> evalQueryParams = new HashMap<>();
 			evalQueryParams.put("rolename", securityRole.getRoleName());
-			
+
 			int updatedCount = persistenceService.runDbCommand(query, evalQueryParams);
 			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{updatedCount, securityRole.getRoleName()}));
-			
+
 			persistenceService.delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
@@ -633,8 +572,7 @@ public class SecurityServiceImpl
 		UserProfile userProfile = new UserProfile();
 		userProfile.setUsername(username);
 		userProfile = userProfile.find();
-		if (userProfile != null)
-		{
+		if (userProfile != null) {
 			userContext = new UserContext();
 			userContext.setUserProfile(userProfile);
 
@@ -644,8 +582,7 @@ public class SecurityServiceImpl
 
 			List<UserRole> roles = userRole.findByExample();
 			List<SecurityRole> securityRoles = new ArrayList<>();
-			for (UserRole role : roles)
-			{
+			for (UserRole role : roles) {
 				SecurityRole securityRole = new SecurityRole();
 				securityRole.setRoleName(role.getRole());
 				securityRole = securityRole.find();
@@ -655,14 +592,11 @@ public class SecurityServiceImpl
 			SecurityRole defaultRole = new SecurityRole();
 			defaultRole.setRoleName(SecurityRole.DEFAULT_GROUP);
 			defaultRole = defaultRole.find();
-			if (defaultRole != null)
-			{
+			if (defaultRole != null) {
 				securityRoles.add(defaultRole);
 			}
 			userContext.getRoles().addAll(securityRoles);
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("User doesn't exist: " + username, "User may have be deleted; relogin.");
 		}
 		return userContext;
@@ -677,8 +611,7 @@ public class SecurityServiceImpl
 
 		//post filter
 		UserSecurity userSecurityExample = new UserSecurity();
-		if (Convert.toBoolean(queryParams.getAll()) == false)
-		{
+		if (Convert.toBoolean(queryParams.getAll()) == false) {
 			userSecurityExample.setActiveStatus(queryParams.getStatus());
 		}
 		userSecurityExample.setApprovalStatus(queryParams.getApprovalState());
@@ -687,11 +620,9 @@ public class SecurityServiceImpl
 
 		if (StringUtils.isNotBlank(queryParams.getSearchField())
 				&& StringUtils.isNotBlank(queryParams.getSearchValue())
-				&& UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField()))
-		{
+				&& UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())) {
 			UserSecurity userSecuritySearchExample = new UserSecurity();
-			try
-			{
+			try {
 				BeanUtils.setProperty(userSecuritySearchExample, queryParams.getSearchField(), queryParams.getSearchValue().toLowerCase() + "%");
 
 				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -700,16 +631,13 @@ public class SecurityServiceImpl
 				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 				queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			}
-			catch (IllegalAccessException | InvocationTargetException ex)
-			{
+			} catch (IllegalAccessException | InvocationTargetException ex) {
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to search user profiles by field: {0}", queryParams.getSearchField()));
 			}
 		}
 
 		List<UserSecurity> users = persistenceService.queryByExample(queryByExample);
-		if (!users.isEmpty())
-		{
+		if (!users.isEmpty()) {
 
 			Set<String> usernames = users.stream()
 					.map(u -> u.getUsername())
@@ -723,19 +651,16 @@ public class SecurityServiceImpl
 
 			if (StringUtils.isNotBlank(queryParams.getSearchField())
 					&& StringUtils.isNotBlank(queryParams.getSearchValue())
-					&& !UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField()))
-			{
+					&& !UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())) {
 				query += " and " + queryParams.getSearchField() + ".toLowerCase() like :searchValue";
 				parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
 			}
 
 			List<UserProfile> userProfiles = persistenceService.query(query, parameterMap);
 			Map<String, List<UserProfile>> profileMap = userProfiles.stream().collect(Collectors.groupingBy(UserProfile::getUsername));
-			for (UserSecurity userSecurity : users)
-			{
+			for (UserSecurity userSecurity : users) {
 				List<UserProfile> profiles = profileMap.getOrDefault(userSecurity.getUsername(), new ArrayList<>());
-				if (!profiles.isEmpty())
-				{
+				if (!profiles.isEmpty()) {
 					UserSecurityView view = UserSecurityView.toView(userSecurity, profiles.get(0));
 					views.add(view);
 				}
@@ -754,17 +679,15 @@ public class SecurityServiceImpl
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
-		if (userSecurity != null)
-		{
+		if (userSecurity != null) {
 
 			UserRegistration userRegistration = new UserRegistration();
 			userRegistration.setUsername(username);
 			persistenceService.deleteByExample(userRegistration);
 
 			getUserService().deleteProfile(username);
-			
+
 			//Evaluation assigned to user should be fine and can be reassigned later. There profile will just be inactive.
-			
 			persistenceService.delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));
@@ -776,36 +699,35 @@ public class SecurityServiceImpl
 	{
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(groups);
-		
+
 		UserRole userRole = new UserRole();
 		userRole.setUsername(username);
 		persistenceService.deleteByExample(userRole);
-		
+
 		SecurityRole roleExample = new SecurityRole();
 		roleExample.setActiveStatus(SecurityRole.ACTIVE_STATUS);
-		
+
 		List<SecurityRole> roles = roleExample.findByExample();
 		Set<String> existingRoleSet = roles.stream()
-											.map(SecurityRole::getRoleName)
-											.collect(Collectors.toSet());
-		
-		for (String group : groups) 
-		{
-			if (existingRoleSet.contains(group)) {									
-				
-				//we just need to add the role without having a security user				
+				.map(SecurityRole::getRoleName)
+				.collect(Collectors.toSet());
+
+		for (String group : groups) {
+			if (existingRoleSet.contains(group)) {
+
+				//we just need to add the role without having a security user
 				userRole = new UserRole();
 				userRole.setRole(group);
 				userRole.setUsername(username);
 				userRole.setUserRoleId(persistenceService.generateId());
 				userRole.populateBaseCreateFields();
 				persistenceService.persist(userRole);
-				
+
 			} else {
 				LOG.log(Level.FINER, MessageFormat.format("No Matching Role for group: {0}", group));
 			}
-		}		
-		
+		}
+
 	}
 
 }

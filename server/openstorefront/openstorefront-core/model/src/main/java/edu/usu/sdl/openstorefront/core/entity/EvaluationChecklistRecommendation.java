@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
@@ -91,7 +92,7 @@ public class EvaluationChecklistRecommendation
 	@Override
 	public String addRemoveComment()
 	{
-		return getReason();
+		return getRecommendation();
 	}
 
 	@Override
@@ -99,6 +100,12 @@ public class EvaluationChecklistRecommendation
 	{
 		changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
 		changeLog.setParentEntityId(getChecklistId());
+
+		String comment = changeLog.getComment();
+		if (comment != null) {
+			comment = StringProcessor.ellipseString(getRecommendation(), 60);
+		}
+		changeLog.setComment(comment);
 	}
 
 	public String getRecommendationId()

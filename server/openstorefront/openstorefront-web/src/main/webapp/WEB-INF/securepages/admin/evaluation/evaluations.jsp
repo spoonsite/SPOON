@@ -309,7 +309,7 @@
 						
 						if (selected.length > 0 && selected[0].get('published')) {
 							Ext.getCmp('publish').setDisabled(true);
-							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('edit').setDisabled(true);
 							Ext.getCmp('unpublish').setDisabled(false);
 						} else {
 							Ext.getCmp('publish').setDisabled(false);

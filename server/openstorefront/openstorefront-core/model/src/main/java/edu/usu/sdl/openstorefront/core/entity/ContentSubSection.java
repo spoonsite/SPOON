@@ -127,6 +127,11 @@ public class ContentSubSection
 	{
 		changeLog.setParentEntity(ContentSection.class.getSimpleName());
 		changeLog.setParentEntityId(getContentSectionId());
+		String comment = changeLog.getComment();
+		if (comment == null) {
+			comment = addRemoveComment();
+		}
+		changeLog.setComment(comment);
 	}
 
 	public String getSubSectionId()

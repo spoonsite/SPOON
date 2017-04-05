@@ -130,4 +130,14 @@ public interface ChangeLogService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public <T extends StandardEntity> ChangeLog logOtherChange(T entity, String changeType, String comment);
 
+	/**
+	 * This will only suspend the current instance of the service
+	 */
+	public void suspendSaving();
+
+	/**
+	 * This will only resume the current instance of the service
+	 */
+	public void resumeSaving();
+
 }

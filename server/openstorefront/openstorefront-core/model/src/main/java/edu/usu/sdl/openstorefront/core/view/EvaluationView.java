@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -33,11 +34,12 @@ import org.apache.commons.beanutils.BeanUtils;
 public class EvaluationView
 		extends Evaluation
 {
+
 	public static final String FIELD_COMPONENT_NAME = "componentName";
-	
+
 	private String componentName;
 	private String workflowStatusDescription;
-	
+
 	public EvaluationView()
 	{
 	}
@@ -50,10 +52,13 @@ public class EvaluationView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		Service service = ServiceProxyFactory.getServiceProxy();		
+		Service service = ServiceProxyFactory.getServiceProxy();
 		evaluationView.setComponentName(service.getComponentService().getComponentName(evaluation.getComponentId()));
+		if (StringUtils.isBlank(evaluationView.getComponentName())) {
+			evaluationView.setComponentName(service.getComponentService().getComponentName(evaluation.getOriginComponentId()));
+		}
 		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
-		
+
 		return evaluationView;
 	}
 
@@ -86,5 +91,5 @@ public class EvaluationView
 	{
 		this.workflowStatusDescription = workflowStatusDescription;
 	}
-	
+
 }

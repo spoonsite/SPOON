@@ -207,8 +207,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 												changeWindow.setLoading(false);
 											},
 											success: function(response, opts) {
-												var extraData = Ext.decode(response.responseText);
-												data.push(extraData);
+												var extraData = Ext.decode(response.responseText);												
+												Ext.Array.push(data, extraData);
 												data.sort(function(a, b){
 													return Ext.Date.parse(b.createDts, 'C') - Ext.Date.parse(a.createDts, 'C');
 												});												

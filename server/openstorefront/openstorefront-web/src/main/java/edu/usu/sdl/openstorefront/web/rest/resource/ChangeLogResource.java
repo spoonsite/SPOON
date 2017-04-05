@@ -55,22 +55,7 @@ public class ChangeLogResource
 			@QueryParam("includeChildren") boolean includeChildren
 	)
 	{
-		ChangeLog changeLogExample = new ChangeLog();
-		changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
-		changeLogExample.setEntity(entity);
-		changeLogExample.setEntityId(entityId);
-
-		List<ChangeLog> changeLogs = changeLogExample.findByExample();
-
-		if (includeChildren) {
-			changeLogExample = new ChangeLog();
-			changeLogExample.setActiveStatus(ChangeLog.ACTIVE_STATUS);
-			changeLogExample.setParentEntity(entity);
-			changeLogExample.setParentEntityId(entityId);
-
-			List<ChangeLog> childrenChanges = changeLogExample.findByExample();
-			changeLogs.addAll(childrenChanges);
-		}
+		List<ChangeLog> changeLogs = service.getChangeLogService().getChangeLogs(entity, entityId, includeChildren);
 
 		List<ChangeLogView> views = ChangeLogView.toView(changeLogs);
 		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, StandardEntity.FIELD_CREATE_DTS));

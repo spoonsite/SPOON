@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
+
 /**
  *
  * @author dshurtleff
@@ -29,6 +32,7 @@ public interface ChangeLogServicePrivate
 	 * @param entity
 	 * @param entityId
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeChangeLogs(String entity, String entityId);
 
 }
