@@ -57,31 +57,33 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		keys: [],
 		maxLevel: 0,
 		nodeData: {},
+		currentLevel: 1,
 		add: function (level, newData) {
-			if (level > maxLevel)
+			if (level > this.maxLevel)
 			{
-				maxLevel = level;
-				for (var i = 0; i <= maxLevel; i++)
+				this.maxLevel = level;
+				for (var i = 0; i <= this.maxLevel; i++)
 				{
-					if (nodeData[i] === undefined) {
-						nodeData[i] = [];
+					if (this.nodeData[i] === undefined) {
+						this.nodeData[i] = [];
 					}
 				}
 			}
-			Array.each(newData, function (item) {
+			Ext.Array.each(newData, function (item) {
 				if (!this.keys.includes(item.key))
 				{
-					nodeData[level].push(item);
+					this.nodeData[level].push(item);
 					this.keys.push(item.key);
 				}
-			});
+			}, this);
 		},
 		getData: function () {
 			var newData = [];
-			for (var i = 0; i <= maxLevel; i++)
+			for (var i = 0; i <= this.currentLevel; i++)
 			{
-				newData = newData.concat(nodeData[i]);
+				newData = newData.concat(this.nodeData[i]);
 			}
+			return newData;
 		}
 	},
 
@@ -594,7 +596,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	loadRelationships: function (relationshipId, componentName, level = 1) {
+	loadRelationships: function (relationshipId, componentName, level = 1, updateVisual = true) {
 		var visPanel = this;
 
 		var relationshipLoad = function (componentId, componentName, level) {
@@ -608,10 +610,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				success: function (response, opts) {
 					var data = Ext.decode(response.responseText);
 
-					var viewData = [];
 					if (data.length === 0)
 					{
-						viewData.push({
+						visPanel.layerData.add(level, {
 							type: 'component',
 							key: componentId,
 							label: componentName
@@ -619,7 +620,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					} else
 					{
 						Ext.Array.each(data, function (relationship) {
-							viewData.push({
+							visPanel.layerData.add(level + 1, {
 								type: 'component',
 								nodeId: relationship.relationshipId,
 								key: relationship.ownerComponentId,
@@ -631,9 +632,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							});
 						});
 					}
-					visPanel.layerData[level] = visPanel.layerData[level].concat(viewData);
-					visPanel.viewData = visPanel.viewData.concat(viewData);
-					visPanel.initVisual(visPanel.viewData);
+					if (updateVisual) {
+						visPanel.viewData = visPanel.layerData.getData();
+						visPanel.initVisual(visPanel.viewData);
+					}
 				}
 			});
 
@@ -696,7 +698,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var promptWindow = this.up('window');
 									var relCb = promptWindow.getComponent('component');
 									if (relCb.getSelection().getData().code) {
+<<<<<<< Updated upstream
 										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
+=======
+										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description, 0);
+										visPanel.updateAttribute(relCb.getSelection().getData().code);
+>>>>>>> Stashed changes
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -1100,7 +1107,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}
 	},	
 	updateRelationshipLevel: function (newLevel) {
-
+		var visPanel = this;
+		visPanel.layerData.currentLevel = newLevel;
+		while (visPanel.layerData.currentLevel > visPanel.layerData.maxLevel)
+		{
+			var index = visPanel.layerData.maxLevel;
+			Ext.Array.each(visPanel.layerData.nodeData[index], function (item) {
+				visPanel.loadRelationships(item.key, item.label, index, false);
+			});
+		}
+		visPanel.viewData = visPanel.layerData.getData();
+		visPanel.initVisual(visPanel.viewData);
 	},
 
 	initVisual: function (viewData) {
