@@ -704,16 +704,32 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: #0d4577;
 }
 
+.icon-button-color-key {
+	color: #FFA500;
+}
+
 /* For icons that don't vertically center for cryptic reasons **/
 
 .icon-vertical-correction {
-	margin-top: -5px;
+	position: relative;
+	bottom: 3px;
 }
 
 .icon-vertical-correction-send {
 	position: relative;
-	right: 10px;
+	right: 8px;
 	bottom: 3px;
+}
+
+.icon-vertical-correction-save {
+	position: relative;
+	right: 3px;
+	bottom: 3px;
+}
+
+.icon-vertical-correction-add {
+	position: relative;
+	bottom: 2px;
 }
 
 .icon-vertical-correction-view {
@@ -726,6 +742,28 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	position: relative;
 	right: 4px;
 	bottom: 1px;
+}
+
+.icon-vertical-correction-check {
+	position: relative;
+	bottom: 4px;
+	right: 2px;
+}
+
+.icon-correction-users {
+	position: relative;
+	right: 8px;
+	bottom: 3px;
+}
+
+.icon-correction-key {
+	transform: rotate(270deg) scaleX(-1);
+}
+
+.icon-correction-gavel {
+	position: relative;
+	bottom: 2px;
+	right: 3px;
 }
 
 .icon-small-vertical-correction {
@@ -757,6 +795,10 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	margin-left: 5px;
 }
 
+.icon-small-horizontal-correction-trash {
+	margin-left: 12px;
+}
+
 .icon-vertical-correction-eraser {
 	position: relative;
 	right: 5px;
@@ -767,6 +809,12 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	position: relative;
 	right: 4px;
 	bottom: 6px;
+}
+
+.approval-message {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-left: 7px;
 }
 
 .alerts-option-items {

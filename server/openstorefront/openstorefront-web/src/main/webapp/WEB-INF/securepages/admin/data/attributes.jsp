@@ -841,7 +841,7 @@
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-multiples-group',
-								fieldLabel: 'Allow Multiples <i class="fa fa-lg fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Remove the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
+								fieldLabel: 'Allow Multiples <i class="fa fa-lg fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Delete the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
 								labelAlign: 'top',
 								width: '100%',
 								columns: 3,

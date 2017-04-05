@@ -103,15 +103,8 @@
 							}			
 						},
 						{ text: 'Send Email Notification', align: 'center', dataIndex: 'notifyFlg', width: 200,
-							renderer: function(value, meta, record) {
-								if (value) {
-									meta.tdCls = 'alert-success';
-									return '<i class="fa fa-check"></i>';
-								} else {
-									meta.tdCls = 'alert-danger';
-									return '<i class="fa fa-close"></i>';
-								}
-							}
+							
+							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{ text: 'Create Date', align: 'center', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User', dataIndex: 'createUser', width: 200 },

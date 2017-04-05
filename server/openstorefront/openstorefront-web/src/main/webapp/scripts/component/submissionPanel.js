@@ -658,35 +658,48 @@ Ext.define('OSF.component.SubmissionPanel', {
 									change: function (field, newValue, oldValue, opts) {
 										
 										// Clear Previously Selected Code
-										field.up('form').getComponent('attributeCodeCB').clearValue();
+										var codeField = field.up('form').getComponent('attributeCodeCB');
+										codeField.clearValue();
+														
+										codeField.setLoading(true);
+										Ext.Ajax.request({
+											url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes',
+											callback: function(){
+												codeField.setLoading(false);
+											},
+											success: function(response, opts) {
+												var attributeCodes = Ext.decode(response.responseText);
+												
+												var lookUpCodes = [];
+												Ext.Array.each(attributeCodes, function(attributeCode) {
+													lookUpCodes.push({
+														code: attributeCode.attributeCodePk.attributeCode,
+														label: attributeCode.label
+													});
+												});
+												codeField.getStore().loadData(lookUpCodes);
+											}
+										});
 										
-										// Reload Store
-										// (Ensure We Are Using The Latest Data)
-										field.getStore().reload();
-
-										// Get Selected Type
 										var record = field.getSelection();
 										
 										// Check For Selected Type
 										if (record) {
 											
-											// Load Codes For Type
-											field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
-											
 											// Check For User-Generated Codes Being Enabled
 											if (record.get("allowUserGeneratedCodes")) {												
 												// Allow Editing Of ComboBox
-												field.up('form').getComponent('attributeCodeCB').setEditable(true);
+												codeField.setEditable(true);
 											}
 											else {
 												// Disallow Editing Of ComboBox
-												field.up('form').getComponent('attributeCodeCB').setEditable(false);
+												codeField.setEditable(false);
 											}
 										}
 										else {
 											
 											// Nothing Selcted, Remove All Codes
-											field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
+											codeField.getStore().removeAll();
 										}
 									}
 								}
@@ -828,6 +841,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 															});
 														}
 													});													
+												} else {
+													handleSaveAttribute();
 												}
 												
 											} else {

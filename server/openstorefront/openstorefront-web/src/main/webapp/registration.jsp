@@ -206,7 +206,7 @@
 								},
 								{
 									text: 'Signup',
-									iconCls: 'fa fa-2x fa-check',
+									iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 									scale: 'medium',
 									formBind: true,
 									handler: function(){										
@@ -234,10 +234,10 @@
 												form: form,
 												success: function(action, opts) {
 																										
-													var message = '<h2>Account was created Successfully.</h2>';													
+													var message = '<i class="fa fa-2x fa-check-circle icon-button-color-refresh"></i><span class="approval-message">Account Created Successfully.</span>';													
 													if (!${autoApprove}) {
-														message += '<br><br><i class="fa fa-2x fa-warning text-warning"></i> An Admin must approve the account before the account is activated.<br><br>An email will be sent when the account is approved.';
-													} else {
+														message += '<br><br><i class="fa fa-lg fa-warning icon-button-color-warning"></i>&nbsp;&nbsp;An Admin must approve the account before the account is activated.<br><br>An email will be sent when the account is approved.';
+													} else { 
 														message += '<br><br> Login to continue';
 													}
 													
@@ -262,7 +262,7 @@
 																	},
 																	{ 
 																		text: 'Login',
-																		iconCls: 'fa fa-2x fa-sign-in',
+																		iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction',
 																		scale: 'medium',
 																		handler: function() {
 																			window.location.href = 'login.jsp';
@@ -291,7 +291,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
 									handler: function(){										
 										window.location.href = 'login.jsp';
