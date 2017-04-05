@@ -139,7 +139,7 @@ Ext.define('OSF.form.OldEvaluationSummary', {
 					items: [
 						{
 							text: 'Save All',
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var componentId = evalPanel.componentId;
 								var records = this.up('grid').getStore().getData();
