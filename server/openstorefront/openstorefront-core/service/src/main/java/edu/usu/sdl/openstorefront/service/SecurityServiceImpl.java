@@ -246,6 +246,11 @@ public class SecurityServiceImpl
 			persistenceService.persist(userSecurity);
 
 			UserProfile userProfile = new UserProfile();
+			if (securityPolicy.getAutoApproveUsers()) {
+				userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			} else {
+				userProfile.setActiveStatus(UserProfile.INACTIVE_STATUS);
+			}
 			userProfile.setUsername(userRegistration.getUsername().toLowerCase());
 			userProfile.setEmail(userRegistration.getEmail());
 			userProfile.setFirstName(userRegistration.getFirstName());
