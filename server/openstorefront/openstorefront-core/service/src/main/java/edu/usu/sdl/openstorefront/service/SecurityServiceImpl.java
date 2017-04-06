@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
@@ -206,6 +207,8 @@ public class SecurityServiceImpl
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
 			RuleResult result = new RuleResult();
+			result.setFieldName(UserSecurity.FIELD_USERNAME);
+			result.setEntityClassName(UserProfile.class.getSimpleName());
 			result.setMessage("Username is already exists");
 			result.setValidationRule("Username must be unique");
 			validationResult.getRuleResults().add(result);
@@ -246,6 +249,11 @@ public class SecurityServiceImpl
 			persistenceService.persist(userSecurity);
 
 			UserProfile userProfile = new UserProfile();
+			if (securityPolicy.getAutoApproveUsers()) {
+				userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			} else {
+				userProfile.setActiveStatus(UserProfile.INACTIVE_STATUS);
+			}
 			userProfile.setUsername(userRegistration.getUsername().toLowerCase());
 			userProfile.setEmail(userRegistration.getEmail());
 			userProfile.setFirstName(userRegistration.getFirstName());
@@ -443,6 +451,30 @@ public class SecurityServiceImpl
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to lock.", "Check input: " + username);
 		}
+	}
+
+	@Override
+	public ValidationResult validateSecurityRoleName(String roleName)
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		//check name for uniqueness (case-insensitive)...rare to be case-sensitive in LDAPs
+		SecurityRole existing = new SecurityRole();
+		existing.setRoleName(roleName.toLowerCase());
+
+		QueryByExample<SecurityRole> example = new QueryByExample<>(existing);
+		example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+		existing = persistenceService.queryOneByExample(example);
+		if (existing != null) {
+			RuleResult result = new RuleResult();
+			result.setFieldName(SecurityRole.FIELD_ROLENAME);
+			result.setEntityClassName(SecurityRole.class.getSimpleName());
+			result.setMessage("Rolename is already exists");
+			result.setValidationRule("Rolename must be unique");
+			validationResult.getRuleResults().add(result);
+		}
+
+		return validationResult;
 	}
 
 	@Override

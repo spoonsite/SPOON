@@ -38,34 +38,35 @@ public class IndexSearchResult
 	public IndexSearchResult()
 	{
 	}
-	
+
 	/**
-	 * This will filter the data according to the user 
-	 * Keep mind the total may NOT be accurate; The only way to make it accurate
-	 * would be to pull all results or apply filter to the query. (Which should
-	 * consider for the future).
-	 * 
+	 * This will filter the data according to the user Keep mind the total may
+	 * NOT be accurate; The only way to make it accurate would be to pull all
+	 * results or apply filter to the query. (Which should consider for the
+	 * future).
+	 *
 	 */
-	public void applyDataFilter() 
+	public void applyDataFilter()
 	{
-		
+
 		UserContext userContext = SecurityUtil.getUserContext();
-		Set<String> dataSources = userContext.dataSources();
-		Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
-		
-		int removeFromResults = 0;
-		if (!resultsList.isEmpty()) {
-			int countBefore = resultsList.size();
-			
-			resultsList = resultsList.stream()
-						.filter(result ->{
+		if (userContext != null) {
+			Set<String> dataSources = userContext.dataSources();
+			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+
+			int removeFromResults = 0;
+			if (!resultsList.isEmpty()) {
+				int countBefore = resultsList.size();
+
+				resultsList = resultsList.stream()
+						.filter(result -> {
 							boolean keepSource = false;
 							if (result.getDataSource() == null && userContext.allowUnspecifiedDataSources()) {
-								 keepSource = true;
+								keepSource = true;
 							} else if (dataSources.contains(result.getDataSource())) {
 								keepSource = true;
-							} 
-							
+							}
+
 							if (keepSource) {
 								if (result.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
 									return true;
@@ -76,23 +77,23 @@ public class IndexSearchResult
 							return false;
 						})
 						.collect(Collectors.toList());
-			removeFromResults = (countBefore - resultsList.size());
-		} 
-		
-		int removeSearchResults = 0;
-		if (!searchViews.isEmpty()) {
-			
-			int countBefore = searchViews.size();
-			
-			searchViews.stream()
-						.filter(result ->{
+				removeFromResults = (countBefore - resultsList.size());
+			}
+
+			int removeSearchResults = 0;
+			if (!searchViews.isEmpty()) {
+
+				int countBefore = searchViews.size();
+
+				searchViews.stream()
+						.filter(result -> {
 							boolean keepSource = false;
 							if (result.getDataSource() == null && userContext.allowUnspecifiedDataSources()) {
-								 keepSource = true;
+								keepSource = true;
 							} else if (dataSources.contains(result.getDataSource())) {
 								keepSource = true;
-							} 
-							
+							}
+
 							if (keepSource) {
 								if (result.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
 									return true;
@@ -102,12 +103,13 @@ public class IndexSearchResult
 							}
 							return false;
 						})
-						.collect(Collectors.toList());	
-			removeSearchResults = (countBefore - searchViews.size());
+						.collect(Collectors.toList());
+				removeSearchResults = (countBefore - searchViews.size());
+			}
+			totalResults = totalResults - Math.max(removeFromResults, removeSearchResults);
 		}
-		totalResults = totalResults - Math.max(removeFromResults, removeSearchResults);
 	}
-	
+
 	public List<SolrComponentModel> getResultsList()
 	{
 		return resultsList;
