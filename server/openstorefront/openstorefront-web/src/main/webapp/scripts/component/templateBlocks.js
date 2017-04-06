@@ -624,3 +624,304 @@ Ext.define('OSF.component.template.Relationships', {
 	
 });
 
+Ext.define('OSF.component.template.Reviews', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.Reviews',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Reviews',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var reviewPanel = this;
+		
+		var reviewActions = {
+			editReview: function(reviewId) {
+				var reviewData;
+				Ext.Array.each(ViewPage.reviews, function(review){
+					if (review.reviewId === reviewId) {
+						reviewData = review;
+					}
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(reviewData);
+				
+				ViewPage.reviewWindow.show();
+				ViewPage.reviewWindow.editReview(record);
+			},
+			
+			deleteReview: function(reviewId, componentId) {
+				Ext.Msg.show({
+					title:'Delete Review?',
+					message: 'Are you sure you want to delete this review?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('reviewPanel').setLoading("Deleting...");
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('reviewPanel').setLoading(false);
+								},
+								success: function(){
+									ViewPage.refreshReviews();
+								}
+							});
+						} 
+					}
+				});				
+			}
+		};
+		
+		var processReviews = function(entryLocal) {
+				
+				//gather summary
+				var summaryData = {					
+					totalRatings: 0,
+					averageRatingStars: [],
+					pros: [],
+					cons: [],
+					totalReviews: entryLocal.reviews.length,
+					recommended: 0
+				};
+				
+				Ext.Array.each(entryLocal.reviews, function(review){
+					summaryData.totalRatings += review.rating;
+					if (review.recommend) {					
+						summaryData.recommended++;
+					}
+					
+					Ext.Array.each(review.pros, function(pro) {
+						var found = false;
+					
+						Ext.Array.each(summaryData.pros, function(sumpro){
+							if (sumpro.text === pro.text) {
+								sumpro.count++;
+								found = true;
+							}
+						});
+						
+						if (!found) {
+							summaryData.pros.push({
+								text: pro.text,
+								count: 1
+							});
+						}
+					});
+					
+					Ext.Array.each(review.cons, function(con) {
+						var found = false;
+					
+						Ext.Array.each(summaryData.cons, function(sumpro){
+							if (sumpro.text === con.text) {
+								sumpro.count++;
+								found = true;
+							}
+						});
+						
+						if (!found) {
+							summaryData.cons.push({
+								text: con.text,
+								count: 1
+							});
+						}
+					});	
+					
+					Ext.Array.sort(review.pros, function(a, b){
+						return a.text.localeCompare(b.text);	
+					});
+					Ext.Array.sort(review.cons, function(a, b){
+						return a.text.localeCompare(b.text);	
+					});	
+					
+					review.ratingStars = [];
+					for (var i=0; i<5; i++){					
+						review.ratingStars.push({						
+							star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+						});
+					}
+					
+					if (review.username === '${user}' || ${admin}) {
+						review.owner = true;
+					}
+					
+				});
+				ViewPage.reviews = entryLocal.reviews;
+				
+				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
+				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
+				
+				Ext.Array.sort(summaryData.pros, function(a, b){
+					return a.text.localeCompare(b.text);	
+				});
+				Ext.Array.sort(summaryData.cons, function(a, b){
+					return a.text.localeCompare(b.text);	
+				});				
+				var averageRating = summaryData.totalRatings / summaryData.totalReviews;
+				summaryData.averageRating = averageRating;
+
+				var fullStars = Math.floor(averageRating);
+				for (var i=1; i<=fullStars; i++) {
+					summaryData.averageRatingStars.push({star: 'star'})
+				}
+
+				// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
+				var halfStar = Math.abs(fullStars - averageRating) >= 0.5;
+				if (halfStar) {
+					summaryData.averageRatingStars.push({star: 'star-half-o'});
+				}
+
+				// Add empty stars until there are 5 stars total.
+				while (summaryData.averageRatingStars.length < 5) {
+					summaryData.averageRatingStars.push({star: 'star-o'})
+				}
+
+								
+				if (entryLocal.reviews.length > 0) {
+					reviewPanelSummary.setHidden(false);
+					reviewPanelSummary.update(summaryData);
+					reviewPanelReviews.setHidden(false);
+					reviewPanelReviews.update(entryLocal.reviews);					
+				} else {					
+					reviewPanelSummary.update(summaryData);					
+					reviewPanelReviews.update(entryLocal.reviews);	
+					reviewPanelSummary.setHidden(true);
+					reviewPanelReviews.setHidden(true);
+				}
+				
+			};		
+		
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.Questions', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.Questions',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Questions',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.RelatedAttributes', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.RelatedAttributes',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Related Entries',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.RelatedOrganization', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.RelatedOrganization',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Related Organization Entries',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationVersionSelect', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationVersionSelect',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Versions',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationSections', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationSections',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Details',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationCheckistSummary', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationCheckistSummary',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Summary',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationCheckistRecommendation', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationCheckistRecommendation',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Details',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationCheckistScores', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationCheckistScores',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Details',
+	
+		
+	initComponent: function () {
+		this.callParent();
+	}
+
+});

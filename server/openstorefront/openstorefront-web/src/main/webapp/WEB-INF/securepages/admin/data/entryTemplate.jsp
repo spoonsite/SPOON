@@ -173,6 +173,21 @@
 							});
 							return relationships;
 						}
+					},
+					{
+						name: 'Layout - Tabs',
+						layoutBlock: true,
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('Ext.tab.Panel', {" +
+									"margin: '0 0 20 0'" +
+									"});";							
+						},
+						generate: function(entryData) {
+							var tabContainer = Ext.create('Ext.tab.Panel', {
+								margin: '0 0 20 0'
+							});
+							return tabContainer;							
+						}
 					}
 				];
 				
@@ -327,7 +342,6 @@
 					]
 				});
 				
-				
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
 					title: 'Add/Edit Template',
@@ -352,89 +366,108 @@
 									collapsible: true,
 									titleCollapse: true,
 									collapseDirection: 'left',
-									split: true,
-									scrollable: true,
+									split: true,									
 									bodyStyle: 'padding: 10px;',
-									layout: 'anchor',
+									layout: 'fit',
 									items: [
 										{
-											xtype: 'combobox',
-											fieldLabel: 'Sample Data',
-											labelAlign: 'top',
-											name: 'entry',		
-											width: '100%',
-											queryMode: 'remote',
-											editable: false,
-											emptyText: 'Select Entry',
-											displayField: 'description',											
-											valueField: 'code',
-											store: {
-												proxy: {
-													type: 'ajax',
-													url: 'api/v1/resource/components/lookup'
-												}
-											},
-											listeners: {
-												change: function(cb, newValue, oldValue, opts) {
-													
-													if (newValue) {
-														Ext.getCmp('dataFieldPanel').setLoading(true);
-														Ext.Ajax.request({
-															url: 'api/v1/resource/components/' + newValue + '/detail',
-															callback: function(){
-																Ext.getCmp('dataFieldPanel').setLoading(false);
-															},
-															success: function(response, opts){
-																entryData = Ext.decode(response.responseText);
-
-																var fieldDisplay = getAllDataField(entryData, '', 0);
-																Ext.getCmp('dataFieldPanel').update(fieldDisplay);
-																updateTemplate();
-															}
-														});
-													}
-													
-												}
-											}
-										},
-										{
-											xtype: 'panel',
-											id: 'dataFieldPanel',
-											title: 'Data Fields',
-											border: true,	
-											width: '100%',
-											collapsible: true,
-											titleCollapse: true,
-											bodyStyle: 'padding: 10px;',
-											margin: '0 0 10 0'											
-										},
-										{
-											xtype: 'panel',
-											id: 'blocksPanel',
-											title: 'Template Blocks',											
-											width: '100%',
-											collapsible: true,											
-											titleCollapse: true,											
-											bodyStyle: 'padding: 10px;',
-											layout: 'anchor',
-											border: true,
-											dockedItems: [
+											xtype: 'tabpanel',
+											minTabWidth: 100,
+											items: [
 												{
-													xtype: 'toolbar',
-													dock: 'top',
+													xtype: 'panel',	
+													title: 'Template Blocks',
+													scrollable: true,
 													items: [
 														{
-															text: 'Add Custom',
-															iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-															handler: function() {
-																addEditCustomBlock.show();
-																addEditCustomBlock.getComponent('form').reset();																
-															}
+															xtype: 'panel',
+															id: 'blocksPanel',																										
+															width: '100%',																										
+															bodyStyle: 'padding: 10px;',
+															layout: 'anchor',
+															border: true															
+														}													
+													],
+													dockedItems: [
+														{
+															xtype: 'toolbar',
+															dock: 'top',
+															items: [
+																{
+																	text: 'Add Custom',
+																	iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+																	handler: function() {
+																		addEditCustomBlock.show();
+																		addEditCustomBlock.getComponent('form').reset();																
+																	}
+																}
+															]
 														}
+													]
+												},
+												{
+													xtype: 'panel',
+													title: 'Data',
+													layout: 'fit',
+													dockedItems: [
+														{
+															xtype: 'combobox',
+															dock: 'top',
+															fieldLabel: 'Sample Data',
+															labelAlign: 'top',
+															name: 'entry',		
+															width: '100%',
+															queryMode: 'remote',
+															editable: false,
+															emptyText: 'Select Entry',
+															displayField: 'description',											
+															valueField: 'code',
+															store: {
+																proxy: {
+																	type: 'ajax',
+																	url: 'api/v1/resource/components/lookup'
+																}
+															},
+															listeners: {
+																change: function(cb, newValue, oldValue, opts) {
+
+																	if (newValue) {
+																		Ext.getCmp('dataFieldPanel').setLoading(true);
+																		Ext.Ajax.request({
+																			url: 'api/v1/resource/components/' + newValue + '/detail',
+																			callback: function(){
+																				Ext.getCmp('dataFieldPanel').setLoading(false);
+																			},
+																			success: function(response, opts){
+																				entryData = Ext.decode(response.responseText);
+
+																				var fieldDisplay = getAllDataField(entryData, '', 0);
+																				Ext.getCmp('dataFieldPanel').update(fieldDisplay);
+																				updateTemplate();
+																			}
+																		});
+																	}
+
+																}
+															}
+														}															
+														
+													],
+													items: [														
+														{
+															xtype: 'panel',
+															id: 'dataFieldPanel',
+															title: 'Data Fields',
+															border: true,
+															scrollable: true,
+															width: '100%',															
+															bodyStyle: 'padding: 10px;',
+															margin: '0 0 10 0'											
+														}														
 													]
 												}
 											]
-										}
+										}										
 									]
 								},
 								{
@@ -713,7 +746,7 @@
 									
 									var panel = Ext.create('Ext.panel.Panel', {
 										title: block.name,
-										block: block,
+										block: block,										
 										header: {
 											cls: 'entry-template_block'
 										},
