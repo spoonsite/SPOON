@@ -1085,9 +1085,14 @@ public class CoreComponentServiceImpl
 
 	public List<Component> findRecentlyAdded(int maxResults)
 	{
+		String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+		if (StringUtils.isNotBlank(dataFilterRestriction)) {
+			dataFilterRestriction = " and " + dataFilterRestriction;
+		}
+
 		String query = "select from Component where activeStatus = :activeStatusParam "
-				+ " and approvalState = :approvedStateParam and "
-				+ FilterEngine.queryComponentRestriction()
+				+ " and approvalState = :approvedStateParam "
+				+ dataFilterRestriction
 				+ " order by approvedDts DESC LIMIT " + maxResults;
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -1102,6 +1107,11 @@ public class CoreComponentServiceImpl
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 		if (componentIds.isEmpty() == false) {
 
+			String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+			if (StringUtils.isNotBlank(dataFilterRestriction)) {
+				dataFilterRestriction += " and ";
+			}
+
 			//get all active data
 			StringBuilder componentQuery = new StringBuilder();
 			componentQuery.append("select from Component where activeStatus='")
@@ -1109,8 +1119,8 @@ public class CoreComponentServiceImpl
 					.append("'and approvalState='")
 					.append(ApprovalStatus.APPROVED)
 					.append("' and ")
-					.append(FilterEngine.queryComponentRestriction())
-					.append(" and componentId IN :componentIdsParams");
+					.append(dataFilterRestriction)
+					.append(" componentId IN :componentIdsParams");
 
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("componentIdsParams", componentIds);
