@@ -63,134 +63,149 @@
 					region: 'center',
 					title: 'Fill out the form to signup for an account',
 					iconCls: 'fa fa-warning',
-					scrollable: true,
-					style: 'background-image: url(images/grid.png);',					
-					bodyStyle: 'padding-top: 40px; padding-left: 20%; padding-right: 20%;',
+					scrollable: true,										
+					bodyStyle: 'padding: 40px;',
 					layout: 'anchor',					
 					items: [
 						{
-							xtype: 'fieldset',
-							title: '<span style="color: black;">Login Credentials</span>',
-							style: 'box-shadow: 5px 10px 15px;',
-							layout: 'anchor',
-							defaults: {
-								width: '75%',
-								labelSeparator: '',
-								labelAlign: 'top'
-							},
+							xtype: 'panel',							
+							titleAlign: 'center',
+							title: '<span style="">Login Credentials</span>',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							layout: 'center',
 							items: [
 								{
-									xtype: 'textfield',
-									fieldLabel: 'Username <span class="field-required" />',
-									name: 'username',
-									allowBlank: false,
-									maxLength: 80
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Password <span class="field-required" />',
-									inputType: 'password',
-									name: 'password',
-									allowBlank: false,
-									maxLength: 80,
-									minLength: 8
-								},
-								{
 									xtype: 'panel',
-									html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
-										  '<li>At least 1 Number</li>' +
-										  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Confirm Password <span class="field-required" />',
-									inputType: 'password',
-									name: 'confirmPassword',
-									allowBlank: false,
-									maxLength: 80,
-									minLength: 8
+									layout: 'anchor',
+									defaults: {
+										width: 600,
+										labelSeparator: '',
+										labelAlign: 'top'
+									},
+									items: [
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Username <span class="field-required" />',
+											name: 'username',
+											allowBlank: false,
+											maxLength: 80
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Password <span class="field-required" />',
+											inputType: 'password',
+											name: 'password',
+											allowBlank: false,
+											maxLength: 80,
+											minLength: 8
+										},
+										{
+											xtype: 'panel',
+											html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
+												  '<li>At least 1 Number</li>' +
+												  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Confirm Password <span class="field-required" />',
+											inputType: 'password',
+											name: 'confirmPassword',
+											allowBlank: false,
+											maxLength: 80,
+											minLength: 8
+										}										
+									]
 								}
 							]
 						},						
 						{
-							xtype: 'fieldset',
-							title: '<span style="color: black;">User Information</span>',
-							style: 'box-shadow: 5px 10px 15px;',
-							layout: 'anchor',
-							defaults: {
-								width: '75%',
-								labelSeparator: '',
-								labelAlign: 'top'
-							},							
+							xtype: 'panel',
+							title: '<span style="">User Information</span>',
+							titleAlign: 'center',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							margin: '20 0 0 0',
+							layout: 'center',						
 							items: [
 								{
-									xtype: 'textfield',
-									fieldLabel: 'First Name <span class="field-required" />',
-									name: 'firstName',
-									allowBlank: false,
-									maxLength: 80
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Last Name <span class="field-required" />',
-									name: 'lastName',
-									allowBlank: false,
-									maxLength: 80
-								},		
-								{
-									xtype: 'combobox',
-									name: 'organization',
-									allowBlank: false,
-									maxLength: 120,
-									fieldLabel: 'Organization <span class="field-required" />',
-									forceSelection: false,
-									valueField: 'description',
-									displayField: 'description',
-									store: {
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/organizations/lookup'
-										}
-									}
-								},							
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Email <span class="field-required" />',
-									name: 'email',
-									allowBlank: false,
-									maxLength: 1024
-								},	
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Phone <span class="field-required" />',
-									name: 'phone',
-									allowBlank: false,
-									maxLength: 80
-								},
-								{
-									xtype: 'combobox',
-									fieldLabel: 'User Type',
-									name: 'userTypeCode',
-									valueField: 'code',
-									displayField: 'description',									
-									editable: false,
-									forceSelection: true,									
-									store: {
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/lookuptypes/UserTypeCode'
+									xtype: 'panel',
+									layout: 'anchor',
+									defaults: {
+										width: 600,
+										labelSeparator: '',
+										labelAlign: 'top'
+									},	
+									items: [
+										{
+											xtype: 'textfield',
+											fieldLabel: 'First Name <span class="field-required" />',
+											name: 'firstName',
+											allowBlank: false,
+											maxLength: 80
 										},
-										listeners: {
-											load: function(store, records, opts) {
-												store.add({
-													code: null,
-													description: 'Select'
-												});
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Last Name <span class="field-required" />',
+											name: 'lastName',
+											allowBlank: false,
+											maxLength: 80
+										},		
+										{
+											xtype: 'combobox',
+											name: 'organization',
+											allowBlank: false,
+											maxLength: 120,
+											fieldLabel: 'Organization <span class="field-required" />',
+											forceSelection: false,
+											valueField: 'description',
+											displayField: 'description',
+											store: {
+												autoLoad: true,
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/organizations/lookup'
+												}
 											}
-										}
-									}
+										},							
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Email <span class="field-required" />',
+											name: 'email',
+											vtype: 'email',
+											allowBlank: false,
+											maxLength: 1024
+										},	
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Phone <span class="field-required" />',
+											name: 'phone',
+											allowBlank: false,
+											maxLength: 80
+										},
+										{
+											xtype: 'combobox',
+											fieldLabel: 'User Type',
+											name: 'userTypeCode',
+											valueField: 'code',
+											displayField: 'description',									
+											editable: false,
+											forceSelection: true,									
+											store: {
+												autoLoad: true,
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/lookuptypes/UserTypeCode'
+												},
+												listeners: {
+													load: function(store, records, opts) {
+														store.add({
+															code: null,
+															description: 'Select'
+														});
+													}
+												}
+											}
+										}										
+									]
 								}
 							]
 						}
