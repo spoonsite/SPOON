@@ -28,10 +28,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
 	customActions: [],
+	pendingAjaxRequests: 0,
 	viewStack: {
 		keys: [],
 		viewData: [],
-		layerData: {}
+		layerData: {},
+		clear: function () {
+			this.keys = [];
+			this.viewData = [];
+			this.layerData = {};
+		}
 	},
 	menus: {
 		collapse: {},
@@ -55,8 +61,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 	layerData: {
 		keys: [],
-		maxLevel: 0,
-		nodeData: {},
+		maxLevel: -1,
+		nodeData: [],
 		currentLevel: 1,
 		add: function (level, newData) {
 			if (level > this.maxLevel)
@@ -70,10 +76,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 			}
 			Ext.Array.each(newData, function (item) {
-				if (!this.keys.includes(item.key))
+				if (!this.keys.includes(item.nodeId))
 				{
 					this.nodeData[level].push(item);
-					this.keys.push(item.key);
+					this.keys.push(item.nodeId);
 				}
 			}, this);
 		},
@@ -81,9 +87,18 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var newData = [];
 			for (var i = 0; i <= this.currentLevel; i++)
 			{
-				newData = newData.concat(this.nodeData[i]);
+				if (this.nodeData[i] !== undefined)
+				{
+					newData = newData.concat(this.nodeData[i]);
+				}
 			}
 			return newData;
+		},
+		clear: function () {
+			this.keys = [];
+			this.maxLevel = -1;
+			this.nodeData = [];
+			this.currentLevel = 1;
 		}
 	},
 
@@ -482,10 +497,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		if (!Ext.isIE) {
 			visPanel.update();
 		}
-		visPanel.viewStack.data = [];
-		visPanel.viewStack.keys = [];
+		visPanel.viewStack.clear();
+		visPanel.layerData.clear();
+		visPanel.pendingAjaxRequests = 0;
 		visPanel.viewData = [];
 		if (visPanel.viewType === "RELATION") {
+			var containerPanel = this.up('panel');
+			containerPanel.getComponent('tools').getComponent('entryLevel').reset();
 			visPanel.loadRelationships();
 		} else if (visPanel.viewType === "TAGS") {
 			visPanel.loadTags();
@@ -596,7 +614,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	loadRelationships: function (relationshipId, componentName, level = 1, updateVisual = true) {
+	loadRelationships: function (relationshipId, componentName, level) {
 		var visPanel = this;
 
 		var relationshipLoad = function (componentId, componentName, level) {
@@ -609,15 +627,21 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				},
 				success: function (response, opts) {
 					var data = Ext.decode(response.responseText);
-
-					if (data.length === 0)
-					{
-						visPanel.layerData.add(level, {
-							type: 'component',
-							key: componentId,
-							label: componentName
+					if (level === 0) {
+						var foundNode = Ext.Array.findBy(visPanel.layerData.getData(), function (node) {
+							return (componentId === node.key || componentId === node.targetKey || componentId === node.nodeId);
 						});
-					} else
+						if (!foundNode) {
+							visPanel.layerData.add(level, {
+								type: 'component',
+								nodeId: componentId,
+								key: componentId,
+								label: componentName,
+								isHub: true
+							});
+						}
+					}
+					if (data.length !== 0)
 					{
 						Ext.Array.each(data, function (relationship) {
 							visPanel.layerData.add(level + 1, {
@@ -632,7 +656,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							});
 						});
 					}
-					if (updateVisual) {
+					if (visPanel.pendingAjaxRequests > 0)
+					{
+						visPanel.pendingAjaxRequests--;
+					}
+					if (visPanel.pendingAjaxRequests === 0) {
 						visPanel.viewData = visPanel.layerData.getData();
 						visPanel.initVisual(visPanel.viewData);
 					}
@@ -698,7 +726,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var promptWindow = this.up('window');
 									var relCb = promptWindow.getComponent('component');
 									if (relCb.getSelection().getData().code) {
-										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
+										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description, 0);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -720,7 +748,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				]
 			});
 			prompt.show();
-	}
+		}
 	},
 
 	loadTags: function (tag) {
@@ -1100,17 +1128,23 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			});
 			prompt.show();
 		}
-	},	
+	},
+
 	updateRelationshipLevel: function (newLevel) {
 		var visPanel = this;
-		visPanel.layerData.currentLevel = newLevel;
-		while (visPanel.layerData.currentLevel > visPanel.layerData.maxLevel)
+		for (var index = visPanel.layerData.maxLevel; index <= newLevel; index++)
 		{
-			var index = visPanel.layerData.maxLevel;
-			Ext.Array.each(visPanel.layerData.nodeData[index], function (item) {
-				visPanel.loadRelationships(item.key, item.label, index, false);
-			});
+			if (visPanel.layerData.nodeData[index] !== undefined)
+			{
+				visPanel.pendingAjaxRequests += visPanel.layerData.nodeData[index].length;
+				Ext.Array.each(visPanel.layerData.nodeData[index], function (item) {
+					var key = (item.targetKey !== undefined) ? item.targetKey : item.key;
+					var label = (item.targetName !== undefined) ? item.targetName : item.label;
+					visPanel.loadRelationships(key, label, index);
+				});
+			}
 		}
+		visPanel.layerData.currentLevel = newLevel;
 		visPanel.viewData = visPanel.layerData.getData();
 		visPanel.initVisual(visPanel.viewData);
 	},
@@ -1129,7 +1163,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					name: node.label,
 					type: node.type,
 					detail: node.relationType === "ATTRIBUTE_CODE" && node.type === "attribute" ? "ATTRIBUTE_TYPE" : undefined,
-					isHub: false,
+					isHub: node.isHub,
 					isTagView: node.isTagView,
 					edges: []
 				});
@@ -1193,10 +1227,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				}
 			});
-			if (ownerNode)
-			{
-				ownerNode.isHub = true;
-			}
+
 			if (targetNode) {
 				if (relationship.targetType === 'attribute'
 						&& ownerNode.type !== 'attribute') {
@@ -1501,7 +1532,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				hubs.push(hub);
 			}
 
-			var hubNodeRadius = nodeRadius * 2;
+			var hubNodeRadius = nodeRadius;
+			if (node.isHub)
+			{
+				hubNodeRadius *= 2;
+			}
 
 			var baseNode = componentNode;
 			if (node.type === 'tag') {
