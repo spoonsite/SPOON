@@ -528,8 +528,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				viewData.push({
 					type: entityType,
-					nodeId: key.replace('#', '~'),
-					key: key.replace('#', '~'),
+					key: key,
 					label: nodeName,
 					isHub: true
 				});
