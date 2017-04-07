@@ -698,12 +698,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var promptWindow = this.up('window');
 									var relCb = promptWindow.getComponent('component');
 									if (relCb.getSelection().getData().code) {
-<<<<<<< Updated upstream
 										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
-=======
-										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description, 0);
-										visPanel.updateAttribute(relCb.getSelection().getData().code);
->>>>>>> Stashed changes
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
