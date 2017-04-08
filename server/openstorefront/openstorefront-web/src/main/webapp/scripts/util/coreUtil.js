@@ -19,6 +19,7 @@
 /* global Ext, URL */
 
 var CoreUtil = {	
+	pageActions: {},
 	showContextMenu: function (menu, event) {
 
 		event.stopEvent();

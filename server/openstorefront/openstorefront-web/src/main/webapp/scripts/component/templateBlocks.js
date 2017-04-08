@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, MediaViewer */
+/* global Ext, MediaViewer, CoreService, CoreUtil, relatedStore */
 
 Ext.define('OSF.component.template.BaseBlock', {
 	extend: 'Ext.panel.Panel',
@@ -631,8 +631,105 @@ Ext.define('OSF.component.template.Reviews', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Reviews',
+	bodyStyle: 'padding: 10px;',
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	dockedItems: [
+		{
+			xtype: 'button',
+			text: 'Write a Review',
+			maxWidth: 200,
+			scale: 'medium',
+			margin: 10,
+			iconCls: 'fa fa-lg fa-star-half-o icon-small-vertical-correction',
+			handler: function(){	
+				var reviewPanel = this.up('panel');
+				reviewPanel.reviewActions.reviewWindow.refresh();
+				reviewPanel.reviewActions.reviewWindow.show();
+			}
+		}
+	],		
+	items: [
+		{
+			xtype: 'panel',
+			itemId: 'summary',
+			title: 'Review Summary',
+			titleCollapse: true,
+			collapsible: true,
+			hidden: true,
+			margin: '0 0 1 0',
+			bodyStyle: 'padding: 10px;',
+			tpl: new Ext.XTemplate(
+				'<table style="width:100%"><tr>',
+				'	<td valign="top">',
+				'		<tpl if="totalReviews && totalReviews &gt; 0">',
+				'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',							
+				'			<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
+				'		</tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="pros.length &gt; 0">',
+				'			<div class="review-pro-con-header">Pros</div>',
+				'			<tpl for="pros">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',	
+				'			</tpl>',
+				'		</tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="cons.length &gt; 0">',
+				'			<div class="review-pro-con-header">Cons</div>',							
+				'			<tpl for="cons">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',	
+				'			</tpl>',
+				'		</tpl>',
+				'   <td>',
+				'</tr></table>'
+			)						
+		},
+		{
+			xtype: 'panel',
+			itemId: 'reviews',
+			title: 'User Reviews',
+			hidden: true,						
+			titleCollapse: true,
+			collapsible: true,
+			bodyStyle: 'padding: 10px;',
+			tpl: new Ext.XTemplate(
+				'<tpl for=".">',	
+				'<table style="width:100%"><tr>',
+				'	<td valign="top">',
+				'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
+				'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
+				'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
+				'		</div><br>',
+				'		<b>Organization:</b> {organization}<br>',
+				'		<b>Experience:</b> {userTimeDescription}<br>',							
+				'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="pros.length &gt; 0">',									
+				'		<div class="review-pro-con-header">Pros</div>',
+				'		<tpl for="pros">',
+				'			- {text}<br>',	
+				'		</tpl></tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="cons.length &gt; 0">',
+				'		<div class="review-pro-con-header">Cons</div>',
+				'		<tpl for="cons">',
+				'			- {text}<br>',	
+				'		</tpl></tpl>',
+				'   <td>',
+				'</tr></table>',
+				'<br><b>Comments:</b><br>{comment}',
+				' <br><br><hr>',
+				'</tpl>'
+			)						
+		}
+	],	
 	
-		
 	initComponent: function () {
 		this.callParent();
 	},
@@ -643,7 +740,7 @@ Ext.define('OSF.component.template.Reviews', {
 		var reviewActions = {
 			editReview: function(reviewId) {
 				var reviewData;
-				Ext.Array.each(ViewPage.reviews, function(review){
+				Ext.Array.each(reviewActions.reviews, function(review){
 					if (review.reviewId === reviewId) {
 						reviewData = review;
 					}
@@ -653,8 +750,8 @@ Ext.define('OSF.component.template.Reviews', {
 				});
 				record.set(reviewData);
 				
-				ViewPage.reviewWindow.show();
-				ViewPage.reviewWindow.editReview(record);
+				reviewActions.reviewWindow.show();
+				reviewActions.reviewWindow.editReview(record);
 			},
 			
 			deleteReview: function(reviewId, componentId) {
@@ -667,22 +764,45 @@ Ext.define('OSF.component.template.Reviews', {
 						if (btn === 'yes') {
 							Ext.getCmp('reviewPanel').setLoading("Deleting...");
 							Ext.Ajax.request({
-								url: 'api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
+								url: 'api/v1/resource/components/'+ componentId+'/reviews/'+reviewId,
 								method: 'DELETE',
 								callback: function(){
 									Ext.getCmp('reviewPanel').setLoading(false);
 								},
 								success: function(){
-									ViewPage.refreshReviews();
+									reviewActions.refreshReviews();
 								}
 							});
 						} 
 					}
 				});				
-			}
+			},
+			refreshReviews: function() {
+				Ext.getCmp('reviewPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + entry.componentId + '/reviews/view',
+					callback: function(){
+						Ext.getCmp('reviewPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var reviews = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.reviews = reviews;
+						processReviews(entryLocal);							
+					}
+				});				
+			},
+			reviewWindow: Ext.create('OSF.component.ReviewWindow', {	
+				componentId: entry.componentId,
+				postHandler: function(reviewWin, response) {
+					reviewActions.refreshReviews();
+				}
+			})			
 		};
+		reviewPanel.reviewActions = reviewActions;
+		CoreUtil.pageActions.reviewActions = reviewActions;
 		
-		var processReviews = function(entryLocal) {
+		var processReviews = function(entryLocal, user) {
 				
 				//gather summary
 				var summaryData = {					
@@ -750,15 +870,18 @@ Ext.define('OSF.component.template.Reviews', {
 						});
 					}
 					
-					if (review.username === '${user}' || ${admin}) {
+					if (review.username === user.username || 
+							CoreService.userservice.userHasPermisson(user, ['ADMIN-REVIEW'])
+						) {
 						review.owner = true;
 					}
 					
 				});
-				ViewPage.reviews = entryLocal.reviews;
 				
-				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
-				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
+				reviewActions.reviews = entryLocal.reviews;
+				
+				var reviewPanelReviews = reviewPanel.getComponent('reviews');
+				var reviewPanelSummary = reviewPanel.getComponent('summary');
 				
 				Ext.Array.sort(summaryData.pros, function(a, b){
 					return a.text.localeCompare(b.text);	
@@ -771,7 +894,7 @@ Ext.define('OSF.component.template.Reviews', {
 
 				var fullStars = Math.floor(averageRating);
 				for (var i=1; i<=fullStars; i++) {
-					summaryData.averageRatingStars.push({star: 'star'})
+					summaryData.averageRatingStars.push({star: 'star'});
 				}
 
 				// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
@@ -782,7 +905,7 @@ Ext.define('OSF.component.template.Reviews', {
 
 				// Add empty stars until there are 5 stars total.
 				while (summaryData.averageRatingStars.length < 5) {
-					summaryData.averageRatingStars.push({star: 'star-o'})
+					summaryData.averageRatingStars.push({star: 'star-o'});
 				}
 
 								
@@ -800,6 +923,9 @@ Ext.define('OSF.component.template.Reviews', {
 				
 			};		
 		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			processReviews(entry, user);
+		});		
 		
 		return null;
 	}
@@ -813,10 +939,233 @@ Ext.define('OSF.component.template.Questions', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Questions',
-	
+	bodyStyle: 'padding: 10px;',
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	dockedItems: [
+		{
+			xtype: 'button',
+			text: 'Ask a Question',
+			maxWidth: 200,
+			scale: 'medium',
+			margin: 10,
+			iconCls: 'fa  fa-lg fa-comment icon-small-vertical-correction',
+			handler: function(){	
+				var questionPanel = this.up('panel');
+				questionPanel.questionActions.questionWindow.show();
+				questionPanel.questionActions.questionWindow.refresh();
+			}
+		}
+	],	
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var questionPanel = this;
+		
+		var questionActions = {
+			
+			refreshQuestions: function(){
+				Ext.getCmp('questionPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + entry.componentId + '/questions/view',
+					callback: function(){
+						Ext.getCmp('questionPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var questions = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.questions = questions;
+						processQuestions(entryLocal);							
+					}
+				});
+			},
+			editResponse: function(responseId) {
+				var responseData;
+				Ext.Array.each(questionActions.questions, function(question){
+					Ext.Array.each(question.responses, function(response){
+						if (response.responseId === responseId) {
+							responseData = response;							
+						}						
+					});
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(responseData);
+				
+				questionActions.responseWindow.show();
+				questionActions.responseWindow.edit(record);				
+				
+			},
+			deleteResponse: function(responseId, questionId, componentId){
+				
+				Ext.Msg.show({
+					title:'Delete Answer?',
+					message: 'Are you sure you want to delete this answer?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('questionPanel').setLoading("Deleting...");
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('questionPanel').setLoading(false);
+								},
+								success: function(){
+									questionActions.refreshQuestions();
+								}
+							});
+						} 
+					}
+				});				
+			},			
+			questionWindow: Ext.create('OSF.component.QuestionWindow', {
+				componentId: entry.componentId,
+				postHandler: function(questionWin, response) {
+					questionActions.refreshQuestions();
+				}				
+			}),
+			responseWindow: Ext.create('OSF.component.ResponseWindow', {
+				componentId: entry.componentId,
+				postHandler: function(responseWin, response) {
+					questionActions.refreshQuestions();
+				}
+			})
+		};
+		
+		questionPanel.questionActions = questionActions;
+		CoreUtil.pageActions.questionActions = questionActions;		
+		
+		var processQuestions = function(entryLocal, user) {
+
+			var questionPanels = [];
+			questionActions.questions = entryLocal.questions;
+			Ext.Array.each(entryLocal.questions, function(question){
+
+				var questionSecurity = '';
+				if (question.securityMarkingType) {
+					questionSecurity = '(' + question.securityMarkingType + ') '; 
+				}
+
+				var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
+				text += '<div class="question-info">' +
+						question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
+						'</div>';
+
+				Ext.Array.each(question.responses, function(response){
+					response.questionId = question.questionId;
+					response.componentId = question.componentId;
+					response.owner = (question.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
+				});
+
+
+				var panel = Ext.create('Ext.panel.Panel', {
+					titleCollapse: true,
+					collapsible: true,
+					title: text,
+					bodyStyle: 'padding: 10px;',
+					data: question.responses,
+					tpl: new Ext.XTemplate(							
+						'<tpl for=".">',
+						'	<tpl if="activeStatus === \'A\'">',
+						'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
+						'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
+						'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
+						'		<hr>',
+						'	</tpl>',
+						'</tpl>'
+					),
+					dockedItems: [
+						{
+							xtype: 'button',
+							dock: 'bottom',
+							text: 'Answer',
+							maxWidth: 150,
+							scale: 'medium',								
+							margin: 10,
+							iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
+							handler: function(){
+								questionActions.responseWindow.questionId = question.questionId;
+								questionActions.responseWindow.show();
+								questionActions.responseWindow.refresh();
+							}
+						}
+					]				
+				});
+				if (question.username === user.username || 
+						CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS'])
+					) 
+				{
+					panel.addDocked(
+						{
+							xtype: 'toolbar',
+							dock: 'top',								
+							items: [
+								{
+									text: 'Edit',
+									tooltip: 'Edit Question',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function(){
+										questionActions.questionWindow.show();
+
+										var record = Ext.create('Ext.data.Model');
+										record.set(question);											
+										questionActions.questionWindow.edit(record);
+									}
+								},
+								{	
+									text: 'Delete',
+									tooltip: 'Delete Question',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+									handler: function(){
+										Ext.Msg.show({
+											title:'Delete Question?',
+											message: 'Are you sure you want to delete this Question?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													Ext.getCmp('questionPanel').setLoading("Deleting...");
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/' + entryLocal.componentId + '/questions/' + question.questionId,
+														method: 'DELETE',
+														callback: function(){
+															Ext.getCmp('questionPanel').setLoading(false);
+														},
+														success: function(){
+															questionActions.refreshQuestions();
+														}
+													});
+												} 
+											}
+										});
+									}										
+								}
+							]
+						}
+					);
+				}											
+
+				questionPanels.push(panel);				
+
+			});
+			questionPanel.removeAll();
+			questionPanel.add(questionPanels);
+
+		};		
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			processQuestions(entry, user);
+		});	
+		
+		return null;
 	}
 
 });
@@ -828,10 +1177,155 @@ Ext.define('OSF.component.template.RelatedAttributes', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Related Entries',
-	
-		
+	layout: 'fit',
+	dockedItems: [
+		{
+			xtype: 'combobox',
+			itemId: 'attributeSelect',
+			valueField: 'code',
+			displayField: 'description',
+			fieldLabel: 'Related to',
+			editable: false,
+			forceSelection: true,			
+			store: {},
+			listeners: {
+				change: function(field, newValue, oldValue, opts) {
+					var relatedPanel = field.up('panel');
+					
+					var record = field.getSelection();
+					
+					var searchObj = {
+						"sortField": "name",
+						"sortDirection": "ASC",
+						"searchElements": [{
+								"searchType": "ATTRIBUTE",
+								"keyField": record.get('type'),
+								"keyValue": record.get('code'),
+								"caseInsensitive": true,
+								"numberOperation": "EQUALS",
+								"stringOperation": "EQUALS",
+								"mergeCondition": "OR"
+							}]
+					};
+					 
+					var store = relatedPanel.getComponent('grid').getStore();
+					store.getProxy().buildRequest = function (operation) {
+						var initialParams = Ext.apply({
+							paging: true,
+							sortField: operation.getSorters()[0].getProperty(),
+							sortOrder: operation.getSorters()[0].getDirection(),
+							offset: operation.getStart(),
+							max: operation.getLimit()
+						}, operation.getParams());
+						params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+						var request = new Ext.data.Request({
+							url: 'api/v1/service/search/advance',
+							params: params,
+							operation: operation,
+							action: operation.getAction(),
+							jsonData: Ext.util.JSON.encode(searchObj)
+						});
+						operation.setRequest(request);
+
+						return request;
+					};
+					store.loadPage(1);						 
+					
+				}
+			}
+		}
+	],		
 	initComponent: function () {
 		this.callParent();
+		var relatedPanel = this;
+		
+		relatedPanel.relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'name',
+					direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== relatedPanel.componentId;
+					});
+				}
+			}			
+		});
+		
+		relatedPanel.add({
+			xtype: 'grid',
+			itemId: 'grid',
+			height: 300,
+			columnLines: true,
+			store: relatedPanel.relatedStore,
+			columns: [
+				{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+					renderer: function (value, meta, record) {
+						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
+					}
+				},
+				{ text: 'Description', dataIndex: 'description', flex: 2,
+					cellWrap: true,
+					renderer: function (value) {
+						value = Ext.util.Format.stripTags(value);
+						return Ext.String.ellipsis(value, 300);
+					}
+				},							
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }				
+			],
+			dockedItems: [
+				{
+					xtype: 'pagingtoolbar',							
+					dock: 'bottom',
+					store: relatedPanel.relatedStore,
+					displayInfo: true
+				}				
+			]
+		});		
+		
+	},
+	
+	updateHandler: function(entry){
+		var relatedPanel = this;
+				
+		if ((!entry.attributes || entry.attributes.length === 0)) {
+			this.setHidden(true);
+		}
+		
+		relatedPanel.componentId = entry.componentId;
+
+		if (entry.attributes) {
+			var attributes = [];	
+			Ext.Array.each(entry.attributes, function(item){
+				attributes.push({
+					code: item.code,
+					type: item.type,
+					description: item.typeDescription + ": " + item.codeDescription
+				});
+			});
+			
+			//load
+			relatedPanel.queryById('attributeSelect').getStore().loadData(attributes);
+			relatedPanel.queryById('attributeSelect').setValue(attributes[0].code);
+		}		
+		
+		
+		return null;
 	}
 
 });
@@ -843,10 +1337,116 @@ Ext.define('OSF.component.template.RelatedOrganization', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Related Organization Entries',
-	
-		
+	layout: 'fit',
+
 	initComponent: function () {
 		this.callParent();
+		
+		var relatedPanel = this;
+		
+		relatedPanel.relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'name',
+					direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== relatedPanel.componentId;
+					});
+				}
+			}			
+		});
+		
+		relatedPanel.add({
+			xtype: 'grid',
+			itemId: 'grid',
+			height: 300,
+			columnLines: true,
+			store: relatedPanel.relatedStore,
+			columns: [
+				{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+					renderer: function (value, meta, record) {
+						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
+					}
+				},
+				{ text: 'Description', dataIndex: 'description', flex: 2,
+					cellWrap: true,
+					renderer: function (value) {
+						value = Ext.util.Format.stripTags(value);
+						return Ext.String.ellipsis(value, 300);
+					}
+				},							
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }				
+			],
+			dockedItems: [
+				{
+					xtype: 'pagingtoolbar',							
+					dock: 'bottom',
+					store: relatedPanel.relatedStore,
+					displayInfo: true
+				}				
+			]
+		});				
+	},
+	
+	updateHandler: function(entry){
+		var relatedPanel = this;
+	
+		relatedPanel.componentId = entry.componentId;
+	
+		var searchObj = {
+			"sortField": "name",
+			"sortDirection": "ASC",				
+			"searchElements": [{
+					"searchType": 'COMPONENT',
+					"field": 'organization',
+					"value": entry.organization,
+					"caseInsensitive": true,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR" 
+			}]
+		 };
+
+		var store = relatedPanel.getComponent('grid').getStore();
+		store.getProxy().buildRequest = function (operation) {
+			var initialParams = Ext.apply({
+				paging: true,
+				sortField: operation.getSorters()[0].getProperty(),
+				sortOrder: operation.getSorters()[0].getDirection(),
+				offset: operation.getStart(),
+				max: operation.getLimit()
+			}, operation.getParams());
+			params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+			var request = new Ext.data.Request({
+				url: 'api/v1/service/search/advance',
+				params: params,
+				operation: operation,
+				action: operation.getAction(),
+				jsonData: Ext.util.JSON.encode(searchObj)
+			});
+			operation.setRequest(request);
+
+			return request;
+		};
+		store.loadPage(1);	
+		
+		return null;
 	}
 
 });
@@ -862,6 +1462,10 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		
 	}
 
 });
@@ -877,6 +1481,10 @@ Ext.define('OSF.component.template.EvaluationSections', {
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		
 	}
 
 });
@@ -892,6 +1500,10 @@ Ext.define('OSF.component.template.EvaluationCheckistSummary', {
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		
 	}
 
 });
@@ -907,6 +1519,10 @@ Ext.define('OSF.component.template.EvaluationCheckistRecommendation', {
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		
 	}
 
 });
@@ -922,6 +1538,10 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 		
 	initComponent: function () {
 		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		
 	}
 
 });

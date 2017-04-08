@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import java.io.FileInputStream;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -117,6 +119,11 @@ public class EvaluationServiceImpl
 	@Override
 	public ChecklistAll getChecklistAll(String checklistId)
 	{
+		return getChecklistAll(checklistId, false);
+	}
+
+	private ChecklistAll getChecklistAll(String checklistId, boolean publicInformationOnly)
+	{
 		Objects.requireNonNull(checklistId);
 
 		ChecklistAll checklistAll = null;
@@ -133,10 +140,18 @@ public class EvaluationServiceImpl
 			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
 			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendation.findByExample()));
 
-			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
-			response.setChecklistId(checklistId);
-			response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
-			checklistAll.getResponses().addAll(ChecklistResponseView.toView(response.findByExample()));
+			EvaluationChecklistResponse responses = new EvaluationChecklistResponse();
+			responses.setChecklistId(checklistId);
+			responses.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+			checklistAll.getResponses().addAll(ChecklistResponseView.toView(responses.findByExample()));
+
+			//clear private notes
+			if (publicInformationOnly) {
+				for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
+					response.setPrivateNote(null);
+				}
+			}
+
 		}
 
 		return checklistAll;
@@ -270,6 +285,11 @@ public class EvaluationServiceImpl
 	@Override
 	public EvaluationAll getEvaluation(String evaluationId)
 	{
+		return getEvaluation(evaluationId, false);
+	}
+
+	private EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
+	{
 		Objects.requireNonNull(evaluationId);
 
 		EvaluationAll evaluationAll = null;
@@ -287,7 +307,7 @@ public class EvaluationServiceImpl
 			evaluationChecklist.setEvaluationId(evaluation.getEvaluationId());
 			evaluationChecklist = evaluationChecklist.find();
 
-			evaluationAll.setCheckListAll(getChecklistAll(evaluationChecklist.getChecklistId()));
+			evaluationAll.setCheckListAll(getChecklistAll(evaluationChecklist.getChecklistId(), publicInformationOnly));
 
 			ContentSection contentSectionExample = new ContentSection();
 			contentSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
@@ -296,12 +316,44 @@ public class EvaluationServiceImpl
 
 			List<ContentSection> contentSections = contentSectionExample.findByExample();
 			for (ContentSection contentSection : contentSections) {
-				ContentSectionAll contentSectionAll = getContentSectionService().getContentSectionAll(contentSection.getContentSectionId());
-				evaluationAll.getContentSections().add(contentSectionAll);
+				boolean keep = false;
+				if (publicInformationOnly) {
+					if (!contentSection.getPrivateSection()) {
+						keep = true;
+					}
+				} else {
+					keep = true;
+				}
+
+				if (keep) {
+					ContentSectionAll contentSectionAll = getContentSectionService().getContentSectionAll(contentSection.getContentSectionId(), publicInformationOnly);
+					evaluationAll.getContentSections().add(contentSectionAll);
+				}
 			}
 		}
 
 		return evaluationAll;
+	}
+
+	@Override
+	public List<EvaluationAll> getPublishEvaluations(String componentId)
+	{
+		Objects.requireNonNull(componentId);
+
+		List<EvaluationAll> evaluationAlls = new ArrayList<>();
+
+		Evaluation evaluationExample = new Evaluation();
+		evaluationExample.setOriginComponentId(componentId);
+		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+		evaluationExample.setPublished(Boolean.TRUE);
+
+		List<Evaluation> evaluations = evaluationExample.findByExample();
+		evaluations.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Evaluation.FIELD_CREATE_DTS));
+		for (Evaluation evaluation : evaluations) {
+			evaluationAlls.add(getEvaluation(evaluation.getEvaluationId(), true));
+		}
+
+		return evaluationAlls;
 	}
 
 	@Override
@@ -310,7 +362,7 @@ public class EvaluationServiceImpl
 		Objects.requireNonNull(componentId);
 
 		Evaluation evaluationExample = new Evaluation();
-		evaluationExample.setComponentId(componentId);
+		evaluationExample.setOriginComponentId(componentId);
 		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
 
 		List<Evaluation> evaluations = evaluationExample.findByExample();

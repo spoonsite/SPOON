@@ -79,12 +79,16 @@ public class ContentSectionServiceImpl
 	}
 
 	@Override
-	public ContentSectionAll getContentSectionAll(String contentSectionId)
+	public ContentSectionAll getContentSectionAll(String contentSectionId, boolean publicInformationOnly)
 	{
 		ContentSectionAll contentSectionAll = null;
 
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
+			if (publicInformationOnly && contentSection.getPrivateSection()) {
+				return null;
+			}
+
 			contentSectionAll = new ContentSectionAll();
 			contentSectionAll.setSection(contentSection);
 
@@ -93,6 +97,20 @@ public class ContentSectionServiceImpl
 			contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
 
 			List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
+			for (ContentSubSection subSection : subSections) {
+				boolean keep = false;
+				if (publicInformationOnly) {
+					if (!subSection.getPrivateSection()) {
+						keep = true;
+					}
+				} else {
+					keep = true;
+				}
+
+				if (keep) {
+					contentSectionAll.getSubsections().add(subSection);
+				}
+			}
 			contentSectionAll.getSubsections().addAll(subSections);
 		}
 
@@ -105,11 +123,10 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(contentSectionMedia);
 		Objects.requireNonNull(in);
 
-		if (contentSectionMedia.getContentSectionMediaId() == null) {
-			getChangeLogService().addEntityChange(contentSectionMedia);
-		}
-
 		ContentSectionMedia savedMedia = contentSectionMedia.save();
+		if (contentSectionMedia.getContentSectionMediaId() == null) {
+			getChangeLogService().addEntityChange(savedMedia);
+		}
 
 		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
 		try (InputStream fileInput = in) {

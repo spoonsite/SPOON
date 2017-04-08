@@ -32,7 +32,9 @@
 				
 		<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
+		<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<div style="display:none; visibility: hidden;" id="templateHolder"></div>
 		<form id="viewForm" action="Template.action?PreviewTemplate"  method="POST">		
@@ -172,6 +174,62 @@
 								margin: '0 0 20 0'
 							});
 							return relationships;
+						}
+					},
+					{
+						name: 'Reviews',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Reviews', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var reviews = Ext.create('OSF.component.template.Reviews', {
+								margin: '0 0 20 0'
+							});
+							return reviews;
+						}
+					},
+					{
+						name: 'Questions',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Questions', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var questions = Ext.create('OSF.component.template.Questions', {
+								margin: '0 0 20 0'
+							});
+							return questions;
+						}				
+					},
+					{
+						name: 'Related By Attributes',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.RelatedAttributes', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.RelatedAttributes', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}
+					},
+					{
+						name: 'Related By Organization',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.RelatedOrganization', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.RelatedOrganization', {
+								margin: '0 0 20 0'
+							});
+							return related;
 						}
 					},
 					{

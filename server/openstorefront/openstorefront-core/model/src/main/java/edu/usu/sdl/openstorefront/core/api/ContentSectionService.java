@@ -69,9 +69,11 @@ public interface ContentSectionService
 	 * Get the complete model for a section
 	 *
 	 * @param contentSectionId
+	 * @param publicInformationOnly (true to Not include, private sub-sections
+	 * and will return null for private sections)
 	 * @return
 	 */
-	public ContentSectionAll getContentSectionAll(String contentSectionId);
+	public ContentSectionAll getContentSectionAll(String contentSectionId, boolean publicInformationOnly);
 
 	/**
 	 * Saves a template with it's section and subsection

@@ -572,7 +572,7 @@ Ext.define('OSF.form.Section', {
 					contentPanel.add(items);
 					sectionForm.add(contentPanel);
 				} else {
-					if (data.section.noContent) {
+					if (originalData.section.noContent) {
 						sectionForm.update("There's no content allowed for this section. Check template.");
 					} else {
 						sectionForm.add({
@@ -581,7 +581,7 @@ Ext.define('OSF.form.Section', {
 							style: { border: '0' },					
 							name: 'content',			
 							maxLength: 32000,
-							value: data.section.content,
+							value: originalData.section.content,
 							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
 									mediaSelectionUrl: mediaSelectionUrl,
 									mediaUploadHandler: mediaUploadHandler
@@ -598,7 +598,7 @@ Ext.define('OSF.form.Section', {
 					}
 				}
 
-				if (data.section.privateSection) {
+				if (originalData.section.privateSection) {
 					sectionForm.setTitle("PRIVATE");
 				}
 
