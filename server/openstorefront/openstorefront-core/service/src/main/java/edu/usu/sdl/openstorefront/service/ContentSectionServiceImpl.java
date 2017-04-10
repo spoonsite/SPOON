@@ -111,7 +111,6 @@ public class ContentSectionServiceImpl
 					contentSectionAll.getSubsections().add(subSection);
 				}
 			}
-			contentSectionAll.getSubsections().addAll(subSections);
 		}
 
 		return contentSectionAll;

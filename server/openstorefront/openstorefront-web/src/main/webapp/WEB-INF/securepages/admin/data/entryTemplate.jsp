@@ -107,7 +107,7 @@
 						}
 					},
 					{
-						name: 'Evaluation Summary',
+						name: 'Evaluation Summary (Old)',
 						blockCode: function(){
 							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSummary', {" +
 									"margin: '0 0 20 0'" +
@@ -233,6 +233,81 @@
 						}
 					},
 					{
+						name: 'Evaluation Version',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationVersionSelect', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationVersionSelect', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}						
+					},
+					{
+						name: 'Evaluation Sections - All',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSections', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationSections', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}									
+					},
+					{
+						name: 'Evaluation Sections - By Title',
+						prompt: function() {
+							
+						},
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
+									"margin: '0 0 20 0', " +
+									"sectionTitle: '" + this.sectionTitle + "'" 
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', {
+								margin: '0 0 20 0',
+								sectionTitle: this.sectionTitle 
+							});
+							return related;
+						}
+					},
+					{
+						name: 'Evaluation Recommendations',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}						
+					},
+					{
+						name: 'Evaluation Checklist Summary',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistSummary', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistSummary', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}
+					},
+					{
 						name: 'Layout - Tabs',
 						layoutBlock: true,
 						blockCode: function(){
@@ -284,7 +359,7 @@
 					width: '60%',
 					height: '80%', 
 					maximizable: true,
-					layout: 'fit',
+					layout: 'fit',					
 					items: [
 						{
 							xtype: 'form',
@@ -409,6 +484,11 @@
 					height: '80%',
 					maximizable: true,
 					layout: 'fit',
+					listeners: {
+						show: function() {        
+							this.removeCls("x-unselectable");    
+						}
+					},					
 					items: [
 						{
 							xtype: 'panel',

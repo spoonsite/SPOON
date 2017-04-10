@@ -770,7 +770,7 @@ public class EvaluationResource
 		section.setContentSectionId(sectionId);
 		section = section.find();
 		if (section != null) {
-			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId);
+			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId, false);
 		}
 		return sendSingleEntityResponse(contentSectionAll);
 	}

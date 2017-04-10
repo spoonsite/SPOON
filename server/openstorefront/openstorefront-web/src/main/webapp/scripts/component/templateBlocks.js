@@ -1457,15 +1457,63 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Versions',
-	
+	title: 'Evaluation Versions',	
+	items: [
+		{
+			xtype: 'combo',
+			itemId: 'versions',
+			valueField: 'code',
+			displayField: 'description',			
+			editable: false,
+			forceSelection: true,			
+			store: {},
+			listeners: {
+				change: function(field, newValue, oldValue, opts) {
+					var versionSelect = field.up('panel');
+					
+					versionSelect.entry.currentEval = field.getSelection().data.eval;
+					
+					//update all registered blocks on switch
+					if (versionSelect.entry.evalListeners) {
+						Ext.Array.each(versionSelect.entry.evalListeners, function(callback){
+							Ext.Function.defer(callback, 0, this, versionSelect.entry.currentEval);
+						});
+					}					
+				}	
+			}
+		}
+	],
 		
 	initComponent: function () {
 		this.callParent();
 	},
 	
 	updateHandler: function(entry){
+		var versionSelect = this;
 		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length <= 1) {
+			versionSelect.setHidden(true);
+		} else {
+
+			if (entry.fullEvaluations.length > 0) {
+				//populate combo
+				var versions = [];
+				Ext.Array.each(entry.fullEvaluations, function(eval){
+					versions.push({
+						code: eval.evaluation.evaluationId,
+						eval: eval,
+						description: "Version: " + eval.evaluation.version
+					});
+				});
+
+				versionSelect.queryById('versions').getStore().loadData(versions);
+				entry.currentEval = entry.fullEvaluations[0];
+				entry.evalListeners = [];
+				versionSelect.entry = entry;
+			}
+		}
+		
+		return null;
 	}
 
 });
@@ -1476,15 +1524,123 @@ Ext.define('OSF.component.template.EvaluationSections', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Details',
-	
-		
+	title: 'Evaluation Sections',
+	items: [
+		{
+			xtype: 'tabpanel',
+			itemId: 'tabs'
+		}
+	],		
 	initComponent: function () {
-		this.callParent();
+		this.callParent();		
 	},
 	
 	updateHandler: function(entry){
+		var sectionPanel = this;
 		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length <= 0) {
+			sectionPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				
+				var tabPanel = sectionPanel.queryById('tabs');
+				tabPanel.removeAll();
+				
+				var internalPanels = [];
+				Ext.Array.each(evaluation.contentSections, function(section){
+					internalPanels.push({
+						xtype: 'panel',
+						title: section.section.title,					
+						tpl: new Ext.XTemplate(
+							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
+							'	<tpl if="section.content">{section.content}</tpl>',
+							'	<tpl for="subsections">',
+							'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+							'		<tpl if="content">{content}</tpl>',
+							'		<tpl for="customFields">',
+							'			<b>{label}:</b> {value}',
+							'		</tpl>',
+							'	</tpl>',
+							'</div>'		
+						),						
+						data: section
+					});					
+				});
+				if (internalPanels.length > 0) {
+					tabPanel.add(internalPanels);	
+					
+
+					Ext.defer(function(){
+						sectionPanel.updateLayout(true, true);
+						tabPanel.setActiveTab(0);
+					}, 200);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);			
+			
+		}	
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationSectionByTitle', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationSectionByTitle',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: '',
+	sectionTitle: '',
+	tpl: new Ext.XTemplate(
+		'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
+		'	<tpl if="section.content">{section.content}</tpl>',
+		'	<tpl for="subsections">',
+		'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+		'		<tpl if="content">{content}</tpl>',
+		'		<tpl for="customFields">',
+		'			<b>{label}:</b> {value}',
+		'		</tpl>',
+		'	</tpl>',
+		'</div>'		
+	),
+		
+	initComponent: function () {
+		this.callParent();
+		var sectionPanel = this;
+	},
+	
+	updateHandler: function(entry){
+		var sectionPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			sectionPanel.setHidden(true);
+		} else {			
+			
+			var updateSection = function(evaluation) {			
+				var sectionFound = null;
+				Ext.Array.each(evaluation.contentSections, function(section){
+					if (sectionPanel.sectionTitle === section.section.title) {
+						sectionFound = section;
+					}	
+				});
+				if (sectionFound) {
+					sectionPanel.setTitle(sectionFound.section.title);
+					sectionPanel.update(sectionFound);
+				}	
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+		}
+		return null;
 	}
 
 });
@@ -1496,14 +1652,85 @@ Ext.define('OSF.component.template.EvaluationCheckistSummary', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Evaluation Checklist Summary',
-	
+	tpl: new Ext.XTemplate(
+		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
+		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
+		'</div>'		
+	),	
 		
 	initComponent: function () {
 		this.callParent();
 	},
 	
 	updateHandler: function(entry){
+		var checklistPanel = this;
 		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			checklistPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				if (evaluation.checkListAll.evaluationChecklist.summary) {
+					checklistPanel.setHidden(false);
+					checklistPanel.update(evaluation);
+				} else {
+					checklistPanel.setHidden(true);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;		
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationCheckistDetail', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationCheckistDetail',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Details',
+	tpl: new Ext.XTemplate(
+		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
+		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
+		'</div>'		
+	),	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var checklistPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			checklistPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				if (evaluation.checkListAll.evaluationChecklist.summary) {
+					checklistPanel.setHidden(false);
+					checklistPanel.update(evaluation);
+				} else {
+					checklistPanel.setHidden(true);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;		
 	}
 
 });
@@ -1514,15 +1741,46 @@ Ext.define('OSF.component.template.EvaluationCheckistRecommendation', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Checklist Details',
-	
+	title: 'Evaluation Recommendations',
+	tpl: new Ext.XTemplate(
+		' <table class="details-table" width="100%">',			
+		'	<tpl for="checkListAll.recommendations">',	
+		'		<tr class="details-table">',
+		'			<td class="details-table" width="150"><b>{recommendationTypeDescription}</b></td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+		'				<tpl if="recommendation">{recommendation}</tpl>',				
+		'			</td>',		
+		'			<tpl if="reason"><td class="details-table">',
+		'				<{reason}',						
+		'			</td></tpl>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'				
+	),	
 		
 	initComponent: function () {
 		this.callParent();
 	},
 	
 	updateHandler: function(entry){
+		var recomendationPanel = this;
 		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			recomendationPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {			
+				recomendationPanel.update(evaluation);
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;
 	}
 
 });
@@ -1541,7 +1799,12 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 	},
 	
 	updateHandler: function(entry){
+		var scorePanel = this;
 		
+		
+		
+		
+		return null;
 	}
 
 });
