@@ -1698,9 +1698,33 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 	collapsible: true,
 	title: 'Evaluation Checklist Details',
 	tpl: new Ext.XTemplate(
-		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
-		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
-		'</div>'		
+		' <table class="details-table" width="100%">',	
+		'	<th class="details-table" style="text-align: center; width: 75px;">QID</th><th class="details-table" style="text-align: center; width: 125px;">Section</th><th class="details-table">Question</th><th class="details-table" style="text-align: center; width: 75px;">Score</th><th class="details-table">Response</th>',
+		'	<tpl for="checkListAll.responses">',	
+		'		<tr class="details-table">',
+		'			<td class="details-table" style="text-align: center; width: 75px;">',
+		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'{questionId}\')">',
+		'					<b>{question.qid}</b>',
+		'				</a>',
+		'			</td>',
+		'			<td class="details-table" style="text-align: center; width: 125px;">',
+		'				{question.evaluationSectionDescription}',
+		'			</td>',		
+		'			<td class="details-table">',
+		'				{question.question}',				
+		'			</td>',	
+		'			<td class="details-table" style="text-align: center; width: 75px;" >',
+		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'{questionId}\')">',		
+		'					<tpl if="notApplicable"><span style="font-weight: bold;">N/A</span></tpl>',	
+		'					<tpl if="score"><span style="font-weight: bold;">{score}</span></tpl>',	
+		'				</a>',
+		'			</td>',		
+		'			<td class="details-table">',
+		'				{response}',						
+		'			</td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'		
 	),	
 		
 	initComponent: function () {
@@ -1718,6 +1742,107 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 				if (evaluation.checkListAll.evaluationChecklist.summary) {
 					checklistPanel.setHidden(false);
 					checklistPanel.update(evaluation);
+					
+					var findQuestion = function(questionId) {
+						var question;
+						Ext.Array.each(evaluation.checkListAll.responses, function(response){
+							if (response.question.questionId === questionId) {
+								question = response.question;
+							}
+						});
+						return question;
+					};
+					
+					CoreUtil.pageActions.checklistDetail = {
+						showQuestionDetails: function(questionId) {
+							var question = findQuestion(questionId);
+							
+							var detailWin = Ext.create('Ext.window.Window', {
+								title: 'Question Details',
+								closeAction: 'destroy',
+								modal: true,
+								width: '95%',
+								height: '60%',							
+								draggable: false,
+								maximizable: true,
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								data: question,
+								tpl: new Ext.XTemplate(
+									'<tpl if="objective"><b>Question Objective:</b> <br><br>',
+									'{objective}<br><br></tpl>',
+									'<tpl if="narrative"><b>Narrative:</b><br><br>',
+									'{narrative}</tpl>',
+									'<tpl if="!objective && !narrative">No addtional details</tpl>'
+								),
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close',
+												handler: function() {
+													detailWin.close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											}
+										]
+									}
+								]								
+							});
+							detailWin.show();
+						},
+						showScoreDetails: function(questionId) {
+							var question = findQuestion(questionId);
+							
+							var detailWin = Ext.create('Ext.window.Window', {
+								title: 'Scoring Details',
+								closeAction: 'destroy',
+								modal: true,
+								width: '95%',
+								height: '60%',							
+								draggable: false,
+								maximizable: true,
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								data: question,
+								tpl: new Ext.XTemplate(
+									'<tpl if="scoreCriteria"><b>Scoring Criteria:</b> <br><br>',
+									'{scoreCriteria}<br><br></tpl>',
+									'<tpl if="!scoreCriteria">No addtional details</tpl>'
+								),
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close',
+												handler: function() {
+													detailWin.close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											}
+										]
+									}
+								]								
+							});
+							detailWin.show();
+						}
+					};
 				} else {
 					checklistPanel.setHidden(true);
 				}
@@ -1727,6 +1852,8 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 				entry.evalListeners = [];
 			} 
 			entry.evalListeners.push(updateSection);
+			
+			
 			
 		}
 		
@@ -1791,7 +1918,21 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Checklist Details',
+	title: 'Evaluation Checklist Scores',
+	tpl: new Ext.XTemplate(
+		'<div class="rolling-container">',			
+		'	<div class="rolling-container-row">',
+		'		<tpl for="evaluation.evaluationSections">',	
+		'			<div class="rolling-container-block">',
+		'				<div class="detail-eval-item ">',
+		'					<span class="detail-eval-label">{name} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
+		'					<span class="detail-eval-score" data-qtip="{actualScore}">{display}</span>',	
+		'				</div>',	
+		'			</div>',
+		'		</tpl>',
+		'	</div>',
+		'</div>'
+	),	
 	
 		
 	initComponent: function () {
@@ -1801,8 +1942,31 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 	updateHandler: function(entry){
 		var scorePanel = this;
 		
-		
-		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			scorePanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {			
+				
+				//group by section
+				var groupStatus = {};
+				
+				Ext.Array.each(evaluation.checkListAll.responses, function(response){
+					if (groupStatus[response.question.evaluationSection]) {
+						
+					}
+				});				
+				
+				scorePanel.update(evaluation);
+				
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
 		
 		return null;
 	}

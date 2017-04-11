@@ -306,6 +306,20 @@
 							});
 							return related;
 						}
+					},					
+					{
+						name: 'Evaluation Checklist Details',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistDetail', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', {
+								margin: '0 0 20 0'
+							});
+							return related;
+						}						
 					},
 					{
 						name: 'Layout - Tabs',

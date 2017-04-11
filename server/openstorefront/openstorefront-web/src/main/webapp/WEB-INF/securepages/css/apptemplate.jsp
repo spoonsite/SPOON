@@ -329,7 +329,8 @@ limitations under the License.
 
 .details-table {
 	 border-collapse: collapse;
-	 border: 1px solid grey;	 
+	 border: 1px solid grey;
+	table-layout:fixed;
 }
 
 th.details-table {
@@ -354,6 +355,7 @@ td.details-table {
 	border: 1px solid grey;
 	padding: 5px;
 	text-align: left;
+	word-wrap:break-word;
 }
 
 tr.details-table:hover {
