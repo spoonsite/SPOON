@@ -53,6 +53,14 @@ Ext.define('OSF.form.ChecklistSummary', {
 					xtype: 'tbfill'
 				},
 				{
+					text: 'Save',
+					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+					handler: function() {
+						var summaryWest = this.up('panel');
+						summaryWest.saveData();
+					}
+				},
+				{
 					xtype: 'tbtext',
 					itemId: 'status'
 				}				
