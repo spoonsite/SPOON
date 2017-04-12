@@ -262,19 +262,28 @@
 					},
 					{
 						name: 'Evaluation Sections - By Title',
-						prompt: function() {
-							
+						prompt: function(successAction) {
+							var sectionBlock = this;
+							Ext.Msg.prompt('Section Select', 'Enter Section Title:', function(btn, text){
+								if (btn == 'ok'){
+									sectionBlock.config.sectionTitle = text;
+									successAction();
+								}
+							});
+						},
+						config: {
+							sectionTitle: ''
 						},
 						blockCode: function(){
 							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
 									"margin: '0 0 20 0', " +
-									"sectionTitle: '" + this.sectionTitle + "'" 
+									"sectionTitle: '" + this.config.sectionTitle + "'" + 
 									"});";
 						},								
 						generate: function(entryData) {
 							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', {
 								margin: '0 0 20 0',
-								sectionTitle: this.sectionTitle 
+								sectionTitle: this.config.sectionTitle 
 							});
 							return related;
 						}
@@ -322,17 +331,60 @@
 						}						
 					},
 					{
-						name: 'Layout - Tabs',
-						layoutBlock: true,
+						name: 'Evaluation Checklist Scores',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('Ext.tab.Panel', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock;
+						},
+						childBlock: function() {
+							return " Ext.create('OSF.component.template.EvaluationCheckistScores', {" +
 									"margin: '0 0 20 0'" +
-									"});";							
+									"}) ";
 						},
 						generate: function(entryData) {
-							var tabContainer = Ext.create('Ext.tab.Panel', {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistScores', {
 								margin: '0 0 20 0'
 							});
+							return related;
+						}					
+					},
+					{
+						name: 'Layout - Tabs',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var tabBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(tabBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock());
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutTab', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var tabBlock = this;
+							
+							var tabContainer = Ext.create('OSF.component.template.LayoutTab', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(tabBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate());
+							});
+							tabContainer.add(itemsToAdd);
+							Ext.defer(function(){
+								tabContainer.setActiveTab(0);
+								tabContainer.updateLayout(true, true);
+							}, 200);
+							
 							return tabContainer;							
 						}
 					}
@@ -744,12 +796,8 @@
 											});	
 										}										
 										
-										if (valid) {
-											var blockNames = [];
-											Ext.Array.each(templateBlocks, function(block){
-												blockNames.push(block.name);
-											});
-											var visualState = blockNames.join(',');
+										if (valid) {											
+											var visualState = Ext.encode(templateBlocks);
 											
 											
 											var method = 'POST';
@@ -888,11 +936,20 @@
 									tools.push({
 										type: 'plus',
 										tooltip: 'Add Block',
-										callback: function(panel, tool, event) {
+										callback: function(panel, tool, event) {											
 											var newBlock = Ext.clone(panel.block);
-											newBlock.blockId = Ext.id().replace('-', '_');
-											templateBlocks.push(newBlock);
-											updateTemplate();
+											
+											var addBlock = function() {
+												newBlock.blockId = Ext.id().replace('-', '_');
+												templateBlocks.push(newBlock);
+												updateTemplate();												
+											};
+											
+											if (newBlock.prompt){
+												newBlock.prompt(addBlock);
+											} else {
+												addBlock();
+											}
 										}										
 									});
 									
@@ -900,11 +957,36 @@
 										title: block.name,
 										block: block,										
 										header: {
-											cls: 'entry-template_block'
+											cls: block.layoutBlock ? 'entry-template_block-layout' : 'entry-template_block' 
 										},
 										margin: '0 0 5 0',
-										tools: tools
+										tools: tools,
+										listeners: {
+											afterrender: function(blockPanel, opts) {
+												blockPanel.dragSource = new Ext.drag.Source(Ext.apply({
+														block: block
+													}, {
+													element: panel.getEl(),
+													proxy: {
+														type: 'placeholder',
+														cls: 'entry-template-drag-proxy',
+														invalidCls: 'entry-template-drag-proxy-invalid',
+														validCls: 'entry-template-drag-proxy-valid',
+														html: '<b>' + block.name + '</b>'														
+													}
+												}));												
+											},
+											destroy: function(blockPanel, opts) {
+												if (blockPanel.dragSource) {
+													Ext.destroy(blockPanel.dragSource);
+												}
+											}
+										}
 									});
+									
+									
+
+									
 									allBlocks.push(panel);
 								});
 
@@ -946,85 +1028,121 @@
 					
 					var visualPanels = [];					
 					Ext.Array.each(templateBlocks, function(block, index){
-						
-						var templateBlockPanel = block.generate();
-						if (entryData) {
-							templateBlockPanel.updateTemplate(entryData);
-						}
-						var tools = [];
-						var moveUpTool = {
-							type: 'plus',
-							tooltip: 'Move Up',
-							callback: function(panel, tool, event) {
-								var blockIndex = 0; 
-								Ext.Array.each(templateBlocks, function(item, index) {
-									if (panel.block.blockId === item.blockId) {
-										blockIndex = index;
-										return false;
+						if (block) {
+							var templateBlockPanel = block.generate();
+							if (block.layoutBlock) {
+								templateBlockPanel.on('afterrender', function(blockPanel, opts) {
+									blockPanel.dragTarget =	new Ext.drag.Target(Ext.apply({
+										block: block,
+										element: blockPanel.getEl()
+									}, {
+											listeners: {
+												drop: function (target, info) {
+													/*
+													var s = Ext.String.format('Dropped "{0} on "{1}"', 
+																	info.source.block.name, target.block.name);
+
+													Ext.toast({
+														html: s,
+														closable: false,
+														align: 't',
+														slideInDuration: 400,
+														minWidth: 400
+													});
+													*/
+													target.block.blocks.push(info.source.block);
+													updateTemplate();
+												}
+											}
+										}));									
+								});
+								templateBlockPanel.on('destroy', function(blockPanel, opts) {
+									if (blockPanel.dragTarget) {
+										Ext.destroy(blockPanel.dragTarget);
 									}
 								});
-								var temp = templateBlocks[blockIndex];
-								templateBlocks[blockIndex] = templateBlocks[blockIndex-1];
-								templateBlocks[blockIndex-1] = temp;
-								updateTemplate();
 							}
-						};
-						
-						var moveDownTool = {
-							type: 'minus',
-							tooltip: 'Move Down',
-							callback: function(panel, tool, event) {
-								var blockIndex = 0; 
-								Ext.Array.each(templateBlocks, function(item, index) {
-									if (panel.block.blockId === item.blockId) {
-										blockIndex = index;
-										return false;
-									}
-								});
-								var temp = templateBlocks[blockIndex];
-								templateBlocks[blockIndex] = templateBlocks[blockIndex+1];
-								templateBlocks[blockIndex+1] = temp;
-								updateTemplate();
+
+							if (entryData) {
+								if (templateBlockPanel.updateTemplate) {
+									templateBlockPanel.updateTemplate(entryData);
+								}
 							}
+							var tools = [];
+							var moveUpTool = {
+								type: 'plus',
+								tooltip: 'Move Up',
+								callback: function(panel, tool, event) {
+									var blockIndex = 0; 
+									Ext.Array.each(templateBlocks, function(item, index) {
+										if (panel.block.blockId === item.blockId) {
+											blockIndex = index;
+											return false;
+										}
+									});
+									var temp = templateBlocks[blockIndex];
+									templateBlocks[blockIndex] = templateBlocks[blockIndex-1];
+									templateBlocks[blockIndex-1] = temp;
+									updateTemplate();
+								}
+							};
+
+							var moveDownTool = {
+								type: 'minus',
+								tooltip: 'Move Down',
+								callback: function(panel, tool, event) {
+									var blockIndex = 0; 
+									Ext.Array.each(templateBlocks, function(item, index) {
+										if (panel.block.blockId === item.blockId) {
+											blockIndex = index;
+											return false;
+										}
+									});
+									var temp = templateBlocks[blockIndex];
+									templateBlocks[blockIndex] = templateBlocks[blockIndex+1];
+									templateBlocks[blockIndex+1] = temp;
+									updateTemplate();
+								}
+							}
+
+							if (index == 0) {
+								tools.push(moveDownTool);							
+							} else if (index === templateBlocks.length - 1){
+								tools.push(moveUpTool);
+							} else {
+								tools.push(moveUpTool);
+								tools.push(moveDownTool);	
+							}
+
+							tools.push({
+								type: 'close',
+								tooltip: 'Delete',							
+								callback: function(panel, tool, event) {
+									Ext.Array.remove(templateBlocks, panel.block);
+									updateTemplate();
+								}							
+							});
+
+							var wrapperPanel = Ext.create('Ext.panel.Panel', {
+								title: block.name,
+								collapsible: true,
+								block: block,
+								header: {
+									cls: block.layoutBlock ? 'entry-template_block-layout' : 'entry-template_block' 
+								},
+								margin: '0 0 5 0',
+								bodyStyle: 'padding: 5px;',
+								border: true,
+								tools: tools,							
+								items: [
+									templateBlockPanel
+								]
+							});
+							visualPanels.push(wrapperPanel);
 						}
-						
-						if (index == 0) {
-							tools.push(moveDownTool);							
-						} else if (index === templateBlocks.length - 1){
-							tools.push(moveUpTool);
-						} else {
-							tools.push(moveUpTool);
-							tools.push(moveDownTool);	
-						}
-						
-						tools.push({
-							type: 'close',
-							tooltip: 'Delete',							
-							callback: function(panel, tool, event) {
-								Ext.Array.remove(templateBlocks, panel.block);
-								updateTemplate();
-							}							
-						});
-						
-						var wrapperPanel = Ext.create('Ext.panel.Panel', {
-							title: block.name,
-							collapsible: true,
-							block: block,
-							header: {
-								cls: 'entry-template_block'
-							},
-							margin: '0 0 5 0',
-							bodyStyle: 'padding: 5px;',
-							border: true,
-							tools: tools,
-							items: [
-								templateBlockPanel
-							]
-						});
-						visualPanels.push(wrapperPanel);
 					});					
 					Ext.getCmp('visualPanel').removeAll();
-					Ext.getCmp('visualPanel').add(visualPanels);
+					Ext.getCmp('visualPanel').add(visualPanels);				
 					
 				};				
 				
@@ -1223,16 +1341,27 @@
 					templateBlocks = [];
 					var blockList = record.get('templateBlocks');
 					if (blockList) {
-						var blocks = blockList.split(',');
-						Ext.Array.each(blocks, function(blockName) {
-							Ext.Array.each(allBasicBlocks, function(block) {
-								if (blockName === block.name) {
-									var newBlock = Ext.clone(block);
-									newBlock.blockId = Ext.id().replace('-', '_');
-									templateBlocks.push(newBlock);							
-								}
-							});						
-						});
+						try {
+							//restore state and function
+							
+							var blocks = Ext.decode(blockList);
+							Ext.Array.each(blocks, function(blockConfig) {
+								Ext.Array.each(allBasicBlocks, function(block) {
+									if (blockConfig.name === block.name) {
+										
+										Ext.applyIf(blockConfig, block);				
+										
+										//make sure id are still good
+										blockConfig.blockId = Ext.id().replace('-', '_');																			
+										templateBlocks.push(blockConfig);
+									}
+								});						
+							});
+							
+						} catch(e) {
+							Ext.log(e.message);
+							Ext.log(e);
+						}
 					}					
 					updateTemplate();					
 				

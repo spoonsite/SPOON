@@ -565,6 +565,34 @@ td.info-table {
 	background-color: #45587B;
 }
 
+.entry-template_block-layout {
+	background-color: #c79300;;
+}
+
+.entry-template-drag-proxy {
+    color: #000;
+    padding: 5px;
+    width: 150px;
+    height: 50px;
+    background-color: #ffeb3b;
+    border: 5px dotted #ffeb3b;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.entry-template-drag-proxy-invalid {
+	background-color: #bc0000;
+	color: white;
+}
+
+.entry-template-drag-proxy-valid {
+	background-color: #00bc19;
+	color: white;
+}
+
 .generated-code {
 	background-color: darkslategrey;
 	color: white;

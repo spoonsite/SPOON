@@ -1632,6 +1632,11 @@ Ext.define('OSF.component.template.EvaluationSectionByTitle', {
 				if (sectionFound) {
 					sectionPanel.setTitle(sectionFound.section.title);
 					sectionPanel.update(sectionFound);
+					Ext.defer(function(){
+						sectionPanel.updateLayout(true, true);						
+					}, 200);					
+				} else {
+					sectionPanel.setHidden(true);
 				}	
 			};
 			updateSection(entry.fullEvaluations[0]);
@@ -1918,15 +1923,15 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Checklist Scores',
+	title: 'Reusability Factors (5=best)',
 	tpl: new Ext.XTemplate(
 		'<div class="rolling-container">',			
 		'	<div class="rolling-container-row">',
-		'		<tpl for="evaluation.evaluationSections">',	
+		'		<tpl for=".">',	
 		'			<div class="rolling-container-block">',
 		'				<div class="detail-eval-item ">',
-		'					<span class="detail-eval-label">{name} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
-		'					<span class="detail-eval-score" data-qtip="{actualScore}">{display}</span>',	
+		'					<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
+		'					<span class="detail-eval-score" data-qtip="{average}">{display}</span>',	
 		'				</div>',	
 		'			</div>',
 		'		</tpl>',
@@ -1948,16 +1953,69 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 			
 			var updateSection = function(evaluation) {			
 				
-				//group by section
-				var groupStatus = {};
-				
-				Ext.Array.each(evaluation.checkListAll.responses, function(response){
-					if (groupStatus[response.question.evaluationSection]) {
+				Ext.Ajax.request({
+					url: 'api/v1/resource/lookuptypes/EvaluationSection',
+					success: function(response, opts){
+						var sectionLookup = Ext.decode(response.responseText);
 						
+						var findSectionDesc = function(sectionKey) {
+							var desc = null;
+							Ext.Array.each(sectionLookup, function(lookup) {
+								if (lookup.code === sectionKey) {
+									desc = lookup.detailedDescription;
+								}
+							});
+							return desc;
+						};
+						
+						//group by section
+						var groupStatus = {};				
+						Ext.Array.each(evaluation.checkListAll.responses, function(response){
+							if (groupStatus[response.question.evaluationSection]) {
+								var stat = groupStatus[response.question.evaluationSection];						
+								if (!response.notApplicable) {
+									stat.count++;
+									stat.totalScore += response.score;
+								}
+							} else {
+								groupStatus[response.question.evaluationSection] = {
+									title: response.question.evaluationSectionDescription,
+									sectionDescription: findSectionDesc(response.question.evaluationSection),
+									count: 1,
+									totalScore: response.score ? response.score : 0
+								};
+							}
+						});		
+
+						//average and add dots
+						var sections = [];
+						Ext.Object.eachValue(groupStatus, function(section) {
+							if (section.count > 0) {
+								section.average = Math.round((section.totalScore/section.count)*10) / 10;
+								
+								var score = Math.round(section.average);
+								section.display = "";
+								for (var i= 0; i<score; i++){
+									section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+								}								
+							} else {
+								section.average = 0;								
+							}
+							if (section.average === 0) {
+								section.display = 'N/A';
+							}
+							
+							sections.push(section);
+						});
+						Ext.Array.sort(sections, function(a, b){
+							return a.title.localeCompare(b.title);
+						});
+
+						scorePanel.update(sections);
 					}
-				});				
+				});
 				
-				scorePanel.update(evaluation);
+
 				
 			};
 			updateSection(entry.fullEvaluations[0]);
@@ -1971,4 +2029,26 @@ Ext.define('OSF.component.template.EvaluationCheckistScores', {
 		return null;
 	}
 
+});
+
+Ext.define('OSF.component.template.LayoutTab', {
+	extend: 'Ext.tab.Panel',
+	alias: 'osf.widget.template.LayoutTab',
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
 });
