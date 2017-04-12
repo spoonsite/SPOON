@@ -651,7 +651,7 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Toggle Status',
+									text: 'Toggle Branding Status',
 									itemId: 'activate',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
