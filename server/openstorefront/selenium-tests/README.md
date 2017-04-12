@@ -8,5 +8,5 @@
 ../selenium-tests/src/test/java/edu/usu/sdl/openstorefront/ui/test/
 
 ### HTML Results are accessible at:
-file:///[local code path]/selenium-tests/target/site/surefire-report.html#edu.usu.sdl.openstorefront.ui.test
+file:///[local code path]/selenium-tests/target/site/swat_results.html
 

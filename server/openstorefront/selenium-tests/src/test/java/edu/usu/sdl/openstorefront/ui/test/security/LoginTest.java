@@ -32,7 +32,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class LoginTest
 		extends BrowserTestBase
 {
-
 	@Test
 	public void loginTest()
 	{
