@@ -333,12 +333,14 @@
 					{
 						name: 'Evaluation Checklist Scores',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock;
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
 						},
-						childBlock: function() {
+						childBlock: function(cfg) {
+							
 							return " Ext.create('OSF.component.template.EvaluationCheckistScores', {" +
 									"margin: '0 0 20 0'" +
-									"}) ";
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var related = Ext.create('OSF.component.template.EvaluationCheckistScores', {
@@ -1073,17 +1075,19 @@
 								type: 'plus',
 								tooltip: 'Move Up',
 								callback: function(panel, tool, event) {
-									var blockIndex = 0; 
-									Ext.Array.each(templateBlocks, function(item, index) {
-										if (panel.block.blockId === item.blockId) {
-											blockIndex = index;
-											return false;
-										}
-									});
-									var temp = templateBlocks[blockIndex];
-									templateBlocks[blockIndex] = templateBlocks[blockIndex-1];
-									templateBlocks[blockIndex-1] = temp;
-									updateTemplate();
+									if (templateBlocks.length > 1) {
+										var blockIndex = 0; 
+										Ext.Array.each(templateBlocks, function(item, index) {
+											if (panel.block.blockId === item.blockId) {
+												blockIndex = index;
+												return false;
+											}
+										});
+										var temp = templateBlocks[blockIndex];
+										templateBlocks[blockIndex] = templateBlocks[blockIndex-1];
+										templateBlocks[blockIndex-1] = temp;
+										updateTemplate();
+									}
 								}
 							};
 
@@ -1091,17 +1095,19 @@
 								type: 'minus',
 								tooltip: 'Move Down',
 								callback: function(panel, tool, event) {
-									var blockIndex = 0; 
-									Ext.Array.each(templateBlocks, function(item, index) {
-										if (panel.block.blockId === item.blockId) {
-											blockIndex = index;
-											return false;
-										}
-									});
-									var temp = templateBlocks[blockIndex];
-									templateBlocks[blockIndex] = templateBlocks[blockIndex+1];
-									templateBlocks[blockIndex+1] = temp;
-									updateTemplate();
+									if (templateBlocks.length > 1) {
+										var blockIndex = 0; 
+										Ext.Array.each(templateBlocks, function(item, index) {
+											if (panel.block.blockId === item.blockId) {
+												blockIndex = index;
+												return false;
+											}
+										});
+										var temp = templateBlocks[blockIndex];
+										templateBlocks[blockIndex] = templateBlocks[blockIndex+1];
+										templateBlocks[blockIndex+1] = temp;
+										updateTemplate();
+									}
 								}
 							}
 

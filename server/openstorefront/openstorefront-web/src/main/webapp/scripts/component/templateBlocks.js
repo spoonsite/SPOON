@@ -2052,3 +2052,138 @@ Ext.define('OSF.component.template.LayoutTab', {
 	}
 	
 });
+
+Ext.define('OSF.component.template.LayoutScroll', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutScroll',
+	
+	scrollable: true,
+	layout: 'anchor',
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutHbox', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutHbox',
+	
+	layout: {
+		type: 'hbox',
+		align: 'stretch'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutVbox', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutVbox',
+	
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutAccordion', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutAccordion',
+	
+	layout: {
+        type: 'accordion',
+        titleCollapse: true,
+        animate: true,
+        activeOnTop: false
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+
+Ext.define('OSF.component.template.LayoutCenter', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutCenter',
+	
+	layout: {
+        type: 'center'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
