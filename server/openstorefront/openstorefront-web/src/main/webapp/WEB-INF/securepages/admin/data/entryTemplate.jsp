@@ -319,10 +319,14 @@
 					{
 						name: 'Evaluation Checklist Details',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistDetail', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationCheckistDetail', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
 							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', {
 								margin: '0 0 20 0'
@@ -335,8 +339,7 @@
 						blockCode: function(){
 							return 'var block_' + this.blockId + " = " +  this.childBlock();
 						},
-						childBlock: function(cfg) {
-							
+						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationCheckistScores', {" +
 									"margin: '0 0 20 0'" +
 									(cfg ? cfg : '') + 
@@ -1348,21 +1351,30 @@
 					var blockList = record.get('templateBlocks');
 					if (blockList) {
 						try {
-							//restore state and function
-							
+							//restore state and function							
 							var blocks = Ext.decode(blockList);
-							Ext.Array.each(blocks, function(blockConfig) {
-								Ext.Array.each(allBasicBlocks, function(block) {
-									if (blockConfig.name === block.name) {
-										
-										Ext.applyIf(blockConfig, block);				
-										
-										//make sure id are still good
-										blockConfig.blockId = Ext.id().replace('-', '_');																			
-										templateBlocks.push(blockConfig);
+							
+							var restoreBlocks = function(blocks, childblock) {
+								Ext.Array.each(blocks, function(blockConfig) {
+									if (blockConfig.blocks) {
+										//childblocks
+										restoreBlocks(blockConfig.blocks, true);
 									}
-								});						
-							});
+									Ext.Array.each(allBasicBlocks, function(block) {
+										if (blockConfig.name === block.name) {
+
+											Ext.applyIf(blockConfig, block);				
+
+											//make sure ids are still good
+											blockConfig.blockId = Ext.id().replace('-', '_');																			
+											if (!childblock) {
+												templateBlocks.push(blockConfig);
+											}
+										}
+									});						
+								});
+							};
+							restoreBlocks(blocks, false);
 							
 						} catch(e) {
 							Ext.log(e.message);
