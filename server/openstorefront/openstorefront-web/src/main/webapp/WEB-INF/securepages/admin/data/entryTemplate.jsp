@@ -49,29 +49,58 @@
 				var templateBlocks = [];				
 				var allBasicBlocks = [];
 				
+				var commonBlockCode = function() {
+					var block = this;							
+					var code = 'var block_' + block.blockId + " = " +  block.childBlock() + ";";
+					return code;
+				};
+				
+				var commonChildBlock = function(cfg) {
+					var block = this;	
+					
+					var generated = Ext.copy(block.config);
+					Ext.apply(generated, cfg, {
+						xtype: block.xtype
+					});
+					
+					return Ext.encode(generated);
+				};
+				
+				var commonLayoutChildBlock = function(cfg) {
+					
+				};				
+				
+				var commonGenerate = function(entryData, cfg) {
+					var block = this;	
+					
+					var generated = Ext.copy(block.config);
+					Ext.apply(generated, cfg, {
+						xtype: block.xtype
+					});					
+					return generated;
+				};				
+				
 				var predefinedBlocks = [
 					{
 						name: 'Description',
-						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						xtype: 'OSF.component.template.Description',
+						config: {							
+							margin: '0 0 20 0'
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Description', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},							
-						generate: function(entryData) {
-							var description = Ext.create('OSF.component.template.Description', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return description;
+						blockCode: commonBlockCode,
+						childBlock: commonChildBlock,							
+						generate: function(entryData, cfg) {
+							var visualConfig = {
+								title: 'Description'
+							};							
+							Ext.apply(visualConfig, (cfg ? cfg : {}));
+							return commonGenerate(entryData, visualConfig);
 						}
 					},
 					{
 						name: 'Media',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Media', {" +
@@ -79,7 +108,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var media = Ext.create('OSF.component.template.Media', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -89,7 +118,7 @@
 					{
 						name: 'Dependencies',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Dependencies', {" +
@@ -97,7 +126,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},							
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var dependencies = Ext.create('OSF.component.template.Dependencies', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -107,7 +136,7 @@
 					{
 						name: 'DI2E Evaluation Level',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.DI2EEvalLevel', {" +
@@ -115,7 +144,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -125,7 +154,7 @@
 					{
 						name: 'Evaluation Summary (Old)',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationSummary', {" +
@@ -133,7 +162,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -143,7 +172,7 @@
 					{
 						name: 'Resources',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Resources', {" +
@@ -151,7 +180,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var resources = Ext.create('OSF.component.template.Resources', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -161,7 +190,7 @@
 					{
 						name: 'Contacts',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Contacts', {" +
@@ -169,7 +198,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var contacts = Ext.create('OSF.component.template.Contacts', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -179,7 +208,7 @@
 					{
 						name: 'Vitals',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Vitals', {" +
@@ -187,7 +216,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},							
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var vitals = Ext.create('OSF.component.template.Vitals', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -197,7 +226,7 @@
 					{
 						name: 'Relationship',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Relationships', {" +
@@ -205,7 +234,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var relationships = Ext.create('OSF.component.template.Relationships', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -215,7 +244,7 @@
 					{
 						name: 'Reviews',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Reviews', {" +
@@ -223,7 +252,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var reviews = Ext.create('OSF.component.template.Reviews', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -233,7 +262,7 @@
 					{
 						name: 'Questions',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.Questions', {" +
@@ -241,7 +270,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var questions = Ext.create('OSF.component.template.Questions', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -251,7 +280,7 @@
 					{
 						name: 'Related By Attributes',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.RelatedAttributes', {" +
@@ -259,7 +288,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.RelatedAttributes', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -269,7 +298,7 @@
 					{
 						name: 'Related By Organization',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.RelatedOrganization', {" +
@@ -277,7 +306,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.RelatedOrganization', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -287,7 +316,7 @@
 					{
 						name: 'Evaluation Version',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationVersionSelect', {" +
@@ -295,7 +324,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.EvaluationVersionSelect', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -305,7 +334,7 @@
 					{
 						name: 'Evaluation Sections - All',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationSections', {" +
@@ -313,7 +342,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.EvaluationSections', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -335,7 +364,7 @@
 							sectionTitle: ''
 						},
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
@@ -346,6 +375,7 @@
 						},							
 						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', Ext.apply((cfg ? cfg : {}), {
+								title: this.config.sectionTitle,
 								margin: '0 0 20 0',
 								sectionTitle: this.config.sectionTitle 
 							}));
@@ -355,7 +385,7 @@
 					{
 						name: 'Evaluation Recommendations',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {" +
@@ -373,7 +403,7 @@
 					{
 						name: 'Evaluation Checklist Summary',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationCheckistSummary', {" +
@@ -391,7 +421,7 @@
 					{
 						name: 'Evaluation Checklist Details',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationCheckistDetail', {" +
@@ -399,7 +429,7 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},						
-						generate: function(entryData) {
+						generate: function(entryData, cfg) {
 							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
 							}));
@@ -409,7 +439,7 @@
 					{
 						name: 'Evaluation Checklist Scores',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock();
+							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
 						},
 						childBlock: function(cfg) {							
 							return " Ext.create('OSF.component.template.EvaluationCheckistScores', {" +
@@ -429,40 +459,47 @@
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var tabBlock = this;
+							var block = this;							
+							var code = 'var block_' + block.blockId + " = " +  block.childBlock() + ";";
+							return code;
+						},
+						childBlock: function(cfg) {	
+							var block = this;
 							
 							var code = '';
 							var itemsToAdd = [];
-							Ext.Array.each(tabBlock.blocks, function(childBlock){
+							Ext.Array.each(block.blocks, function(childBlock){
 								itemsToAdd.push(childBlock.childBlock());
-							});
+							});							
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutTab', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
+							return  " Ext.create('OSF.component.template.LayoutTab', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
-							return code;
-						},
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
+						},							
 						generate: function(entryData) {
-							var tabBlock = this;
+							var layoutBlock = this;
 							
-							var tabContainer = Ext.create('OSF.component.template.LayoutTab', {
+							var container = Ext.create('OSF.component.template.LayoutTab', {
+								title: 'Tab Container',
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
-							Ext.Array.each(tabBlock.blocks, function(childBlock){
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
 								itemsToAdd.push(childBlock.generate(entryData));
 							});
-							tabContainer.add(itemsToAdd);
+							container.add(itemsToAdd);
 							Ext.defer(function(){
-								tabContainer.setActiveTab(0);
-								tabContainer.updateLayout(true, true);
+								container.setActiveTab(0);
+								container.updateLayout(true, true);
 							}, 200);
 							
-							return tabContainer;							
+							return container;							
 						}
 					},
 					{
@@ -478,21 +515,28 @@
 								itemsToAdd.push(childBlock.childBlock());
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutScroll', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
+						},
+						childBlock: function(cfg, itemsToAdd) {
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];
+							return  " Ext.create('OSF.component.template.LayoutScroll', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var layoutBlock = this;
 							
 							var container = Ext.create('OSF.component.template.LayoutScroll', {
+								title: 'Scroll Container',
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
 								itemsToAdd.push(childBlock.generate(entryData));
@@ -518,14 +562,18 @@
 								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutHbox', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
+						},
+						childBlock: function(cfg, itemsToAdd) {	
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];
+							return  " Ext.create('OSF.component.template.LayoutHbox', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var layoutBlock = this;
@@ -533,6 +581,8 @@
 							var container = Ext.create('OSF.component.template.LayoutHbox', {
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
 								itemsToAdd.push(childBlock.generate(entryData, { 
@@ -560,21 +610,27 @@
 								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutVbox', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						generate: function(entryData) {
+						childBlock: function(cfg, itemsToAdd) {	
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];
+							return  " Ext.create('OSF.component.template.LayoutVbox', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
+						},
+						generate: function(entryData) {							
 							var layoutBlock = this;
 							
 							var container = Ext.create('OSF.component.template.LayoutVbox', {
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
 								itemsToAdd.push(childBlock.generate(entryData, { 
@@ -602,14 +658,18 @@
 								itemsToAdd.push(childBlock.childBlock());
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutAccordion', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
+						},
+						childBlock: function(cfg, itemsToAdd) {
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];
+							return  " Ext.create('OSF.component.template.LayoutAccordion', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var layoutBlock = this;
@@ -617,9 +677,11 @@
 							var container = Ext.create('OSF.component.template.LayoutAccordion', {
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData);
+								itemsToAdd.push(childBlock.generate(entryData));
 							});
 							container.add(itemsToAdd);
 							Ext.defer(function(){								
@@ -642,14 +704,18 @@
 								itemsToAdd.push(childBlock.childBlock());
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutFit', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
+						},
+						childBlock: function(cfg, itemsToAdd) {							
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];
+							return  " Ext.create('OSF.component.template.LayoutFit', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var layoutBlock = this;
@@ -657,9 +723,11 @@
 							var container = Ext.create('OSF.component.template.LayoutFit', {
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData);
+								itemsToAdd.push(childBlock.generate(entryData));
 							});
 							container.add(itemsToAdd);
 							Ext.defer(function(){								
@@ -669,7 +737,8 @@
 							return container;							
 						},
 						acceptCheck: function(info) {
-							if (blocks.length == 0) {
+							var layoutBlock = this;
+							if (layoutBlock.blocks.length == 0) {
 								return true;
 							} else {
 								return false;
@@ -689,14 +758,18 @@
 								itemsToAdd.push(childBlock.childBlock());
 							});
 							
-							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutCenter', {" +
-									"margin: '0 0 20 0', " +
-									"items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"]\n" + 
-									"});";							
-							
+							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
+						},
+						childBlock: function(cfg, itemsToAdd) {			
+							itemsToAdd = itemsToAdd ? itemsToAdd : [];							
+							return  " Ext.create('OSF.component.template.LayoutCenter', {" +
+									" margin: '0 0 20 0', " +
+									" items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"\n]\n" +
+									(cfg ? cfg : '') + 
+									"})";
 						},
 						generate: function(entryData) {
 							var layoutBlock = this;
@@ -704,9 +777,11 @@
 							var container = Ext.create('OSF.component.template.LayoutCenter', {
 								margin: '0 0 20 0'
 							});
+							setupContainerDropTarget(container, layoutBlock);
+							
 							var itemsToAdd = [];
 							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData);
+								itemsToAdd.push(childBlock.generate(entryData));
 							});
 							container.add(itemsToAdd);
 							Ext.defer(function(){								
@@ -716,7 +791,8 @@
 							return container;							
 						},
 						acceptCheck: function(info) {
-							if (blocks.length == 0) {
+							var layoutBlock = this;
+							if (layoutBlock.blocks.length == 0) {
 								return true;
 							} else {
 								return false;
@@ -725,7 +801,44 @@
 					}
 				];
 				
-				
+				var setupContainerDropTarget = function(container, block) {
+					container.on('afterrender', function(blockPanel, opts) {
+						blockPanel.dragTarget =	new Ext.drag.Target(Ext.apply({
+							block: block,
+							element: blockPanel.getHeader().getEl()
+						}, {
+								accepts: function(info) {
+										if (block.acceptCheck) {
+											return block.acceptCheck(info);
+										} else {
+											return true;
+										}
+								},
+								listeners: {												
+									drop: function (target, info) {
+
+										var newBlock = info.source.block;
+										var addChildBlock = function() {
+											target.block.blocks.push(newBlock);
+											updateTemplate();
+										};
+
+										if (newBlock.prompt){
+											newBlock.prompt(addChildBlock);
+										} else {
+											addChildBlock();
+										}
+									}
+								}
+							}));									
+					});
+					container.on('destroy', function(blockPanel, opts) {
+						if (blockPanel.dragTarget) {
+							Ext.destroy(blockPanel.dragTarget);
+						}
+					});
+					
+				};				
 				
 				var getAllDataField = function(data, output, parentLevel) {
 					
@@ -1367,39 +1480,7 @@
 					Ext.Array.each(templateBlocks, function(block, index){
 						if (block) {
 							var templateBlockPanel = block.generate();
-							if (block.layoutBlock) {
-								templateBlockPanel.on('afterrender', function(blockPanel, opts) {
-									blockPanel.dragTarget =	new Ext.drag.Target(Ext.apply({
-										block: block,
-										element: blockPanel.getEl()
-									}, {
-											listeners: {
-												drop: function (target, info) {
-													/*
-													var s = Ext.String.format('Dropped "{0} on "{1}"', 
-																	info.source.block.name, target.block.name);
-
-													Ext.toast({
-														html: s,
-														closable: false,
-														align: 't',
-														slideInDuration: 400,
-														minWidth: 400
-													});
-													*/
-													target.block.blocks.push(info.source.block);
-													updateTemplate();
-												}
-											}
-										}));									
-								});
-								templateBlockPanel.on('destroy', function(blockPanel, opts) {
-									if (blockPanel.dragTarget) {
-										Ext.destroy(blockPanel.dragTarget);
-									}
-								});
-							}
-
+							
 							if (entryData) {
 								if (templateBlockPanel.updateTemplate) {
 									templateBlockPanel.updateTemplate(entryData);
@@ -1477,7 +1558,34 @@
 								tools: tools,							
 								items: [
 									templateBlockPanel
-								]
+								],
+								listeners: {
+									afterrender: function(wPanel, opts) {
+										wPanel.dragTarget =	new Ext.drag.Target(Ext.apply({
+											 block: block
+											}, {
+												accepts: function(info) {
+														if (block.acceptCheck) {
+															return block.acceptCheck(info);
+														} else {
+															return true;
+														}
+												},												
+												element: wPanel.getHeader().getEl(),
+												listeners: {													
+													drop: function (target, info) {
+														return templateBlockPanel.dragTarget.fireEvent('drop', target, info);
+													}
+												}
+											}
+										));												
+									},
+									destroy: function(wPanel, opts) {
+										if (wPanel.dragTarget) {
+											Ext.destroy(wPanel.dragTarget);
+										}
+									}
+								}
 							});
 							visualPanels.push(wrapperPanel);
 						}

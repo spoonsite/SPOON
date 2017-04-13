@@ -2190,7 +2190,7 @@ Ext.define('OSF.component.template.LayoutFit', {
 Ext.define('OSF.component.template.LayoutCenter', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.template.LayoutCenter',
-	
+		
 	layout: {
         type: 'center'
 	},
