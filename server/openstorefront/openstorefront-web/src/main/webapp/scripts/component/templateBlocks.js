@@ -2161,6 +2161,31 @@ Ext.define('OSF.component.template.LayoutAccordion', {
 	
 });
 
+Ext.define('OSF.component.template.LayoutFit', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutFit',
+	
+	layout: {
+        type: 'fit'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
 
 Ext.define('OSF.component.template.LayoutCenter', {
 	extend: 'Ext.panel.Panel',

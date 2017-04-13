@@ -53,210 +53,270 @@
 					{
 						name: 'Description',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Description', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Description', {" +
 									"margin: '0 0 20 0'" +
-									"});";
+									(cfg ? cfg : '') + 
+									"})";
 						},							
 						generate: function(entryData) {
-							var description = Ext.create('OSF.component.template.Description', {
+							var description = Ext.create('OSF.component.template.Description', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return description;
 						}
 					},
 					{
 						name: 'Media',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Media', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Media', {" +
 									"margin: '0 0 20 0'" +
-									"});";
+									(cfg ? cfg : '') + 
+									"})";
 						},						
 						generate: function(entryData) {
-							var media = Ext.create('OSF.component.template.Media', {
+							var media = Ext.create('OSF.component.template.Media', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return media;
 						}
 					},
 					{
 						name: 'Dependencies',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Dependencies', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Dependencies', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},						
+									(cfg ? cfg : '') + 
+									"})";
+						},							
 						generate: function(entryData) {
-							var dependencies = Ext.create('OSF.component.template.Dependencies', {	
+							var dependencies = Ext.create('OSF.component.template.Dependencies', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return dependencies;
 						}
 					},
 					{
 						name: 'DI2E Evaluation Level',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.DI2EEvalLevel', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.DI2EEvalLevel', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', {
+							var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return di2elevel;
 						}
 					},
 					{
 						name: 'Evaluation Summary (Old)',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSummary', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationSummary', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},															
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', {	
+							var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return evaluationSummary;
 						}
 					},
 					{
 						name: 'Resources',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Resources', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Resources', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},																						
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var resources = Ext.create('OSF.component.template.Resources', {
+							var resources = Ext.create('OSF.component.template.Resources', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return resources;
 						}
 					},
 					{
 						name: 'Contacts',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Contacts', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Contacts', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var contacts = Ext.create('OSF.component.template.Contacts', {
+							var contacts = Ext.create('OSF.component.template.Contacts', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return contacts;
 						}
 					},
 					{
 						name: 'Vitals',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Vitals', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Vitals', {" +
 									"margin: '0 0 20 0'" +
-									"});";
+									(cfg ? cfg : '') + 
+									"})";
 						},							
 						generate: function(entryData) {
-							var vitals = Ext.create('OSF.component.template.Vitals', {	
+							var vitals = Ext.create('OSF.component.template.Vitals', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return vitals;
 						}
 					},
 					{
 						name: 'Relationship',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Relationships', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Relationships', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var relationships = Ext.create('OSF.component.template.Relationships', {
+							var relationships = Ext.create('OSF.component.template.Relationships', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return relationships;
 						}
 					},
 					{
 						name: 'Reviews',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Reviews', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Reviews', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var reviews = Ext.create('OSF.component.template.Reviews', {
+							var reviews = Ext.create('OSF.component.template.Reviews', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return reviews;
 						}
 					},
 					{
 						name: 'Questions',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Questions', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.Questions', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var questions = Ext.create('OSF.component.template.Questions', {
+							var questions = Ext.create('OSF.component.template.Questions', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return questions;
 						}				
 					},
 					{
 						name: 'Related By Attributes',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.RelatedAttributes', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.RelatedAttributes', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.RelatedAttributes', {
+							var related = Ext.create('OSF.component.template.RelatedAttributes', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}
 					},
 					{
 						name: 'Related By Organization',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.RelatedOrganization', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.RelatedOrganization', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.RelatedOrganization', {
+							var related = Ext.create('OSF.component.template.RelatedOrganization', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}
 					},
 					{
 						name: 'Evaluation Version',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationVersionSelect', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationVersionSelect', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationVersionSelect', {
+							var related = Ext.create('OSF.component.template.EvaluationVersionSelect', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}						
 					},
 					{
 						name: 'Evaluation Sections - All',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSections', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationSections', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
+									(cfg ? cfg : '') + 
+									"})";
+						},						
 						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationSections', {
+							var related = Ext.create('OSF.component.template.EvaluationSections', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}									
 					},
@@ -275,44 +335,56 @@
 							sectionTitle: ''
 						},
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
 									"margin: '0 0 20 0', " +
 									"sectionTitle: '" + this.config.sectionTitle + "'" + 
-									"});";
-						},								
-						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', {
+									(cfg ? cfg : '') + 
+									"})";
+						},							
+						generate: function(entryData, cfg) {
+							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0',
 								sectionTitle: this.config.sectionTitle 
-							});
+							}));
 							return related;
 						}
 					},
 					{
 						name: 'Evaluation Recommendations',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
-						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {
+									(cfg ? cfg : '') + 
+									"})";
+						},							
+						generate: function(entryData, cfg) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}						
 					},
 					{
 						name: 'Evaluation Checklist Summary',
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationCheckistSummary', {" +
+							return 'var block_' + this.blockId + " = " +  this.childBlock();
+						},
+						childBlock: function(cfg) {							
+							return " Ext.create('OSF.component.template.EvaluationCheckistSummary', {" +
 									"margin: '0 0 20 0'" +
-									"});";
-						},								
-						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistSummary', {
+									(cfg ? cfg : '') + 
+									"})";
+						},						
+						generate: function(entryData, cfg) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistSummary', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}
 					},					
@@ -328,9 +400,9 @@
 									"})";
 						},						
 						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}						
 					},
@@ -345,10 +417,10 @@
 									(cfg ? cfg : '') + 
 									"})";
 						},
-						generate: function(entryData) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistScores', {
+						generate: function(entryData, cfg) {
+							var related = Ext.create('OSF.component.template.EvaluationCheckistScores', Ext.apply((cfg ? cfg : {}), {
 								margin: '0 0 20 0'
-							});
+							}));
 							return related;
 						}					
 					},
@@ -382,7 +454,7 @@
 							});
 							var itemsToAdd = [];
 							Ext.Array.each(tabBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate());
+								itemsToAdd.push(childBlock.generate(entryData));
 							});
 							tabContainer.add(itemsToAdd);
 							Ext.defer(function(){
@@ -392,8 +464,268 @@
 							
 							return tabContainer;							
 						}
+					},
+					{
+						name: 'Layout - Scroll',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock());
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutScroll', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutScroll', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData));
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						}
+					},
+					{
+						name: 'Layout - HBox',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutHbox', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutHbox', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData, { 
+									flex: 1
+								}));
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						}
+					},					
+					{
+						name: 'Layout - VBox',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutVbox', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutVbox', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData, { 
+									flex: 1
+								}));
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						}
+					},				
+					{
+						name: 'Layout - Accordion',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock());
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutAccordion', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutAccordion', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData);
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						}
+					},
+					{
+						name: 'Layout - Fit',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock());
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutFit', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutFit', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData);
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						},
+						acceptCheck: function(info) {
+							if (blocks.length == 0) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					},					
+					{
+						name: 'Layout - Center',
+						layoutBlock: true,
+						blocks: [],
+						blockCode: function(){
+							var layoutBlock = this;
+							
+							var code = '';
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.childBlock());
+							});
+							
+							var code = 'var block_' + this.blockId + " = Ext.create('OSF.component.template.LayoutCenter', {" +
+									"margin: '0 0 20 0', " +
+									"items: [\n" + 
+									itemsToAdd.join(',\n') + 
+									"]\n" + 
+									"});";							
+							
+							return code;
+						},
+						generate: function(entryData) {
+							var layoutBlock = this;
+							
+							var container = Ext.create('OSF.component.template.LayoutCenter', {
+								margin: '0 0 20 0'
+							});
+							var itemsToAdd = [];
+							Ext.Array.each(layoutBlock.blocks, function(childBlock){
+								itemsToAdd.push(childBlock.generate(entryData);
+							});
+							container.add(itemsToAdd);
+							Ext.defer(function(){								
+								container.updateLayout(true, true);
+							}, 200);
+							
+							return container;							
+						},
+						acceptCheck: function(info) {
+							if (blocks.length == 0) {
+								return true;
+							} else {
+								return false;
+							}
+						}
 					}
 				];
+				
+				
 				
 				var getAllDataField = function(data, output, parentLevel) {
 					
