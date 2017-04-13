@@ -68,6 +68,16 @@ public class WebDriverUtil
 		}
 	}
 
+	/**
+	 * This will close the stream when done.
+	 *
+	 * @param in
+	 */
+	public void saveReportArtifact(InputStream in)
+	{
+		//TODO: Save artifact to report directory
+	}
+
 	public String getPage(String page)
 	{
 		return server + page;
