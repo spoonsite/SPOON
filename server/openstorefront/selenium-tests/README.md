@@ -1,12 +1,12 @@
 ## Running Tests
 
-You need to download the following drivers:
+ * Simply build the this (selenium-tests) project to run the Selenium front-end GUI automation tests.  
+ * Which browser(s) is/are used can be set in the testconfig.properties file.
 
-Be sure to download the correct driver for your OS platform.
+### Test scripts are located here:
 
-1.  [Firefox](https://github.com/mozilla/geckodriver)  (see releases ...unzip and copy the exe)
-2.  [Edge](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
-3.  [Chrome](https://sites.google.com/a/chromium.org/chromedriver/)
+../selenium-tests/src/test/java/edu/usu/sdl/openstorefront/ui/test/
 
-Copy to drivers folder under the project:  
-**../selenuim-tests/drivers/< _firefox|edge|chrome_ >**
+### HTML Results are accessible at:
+file:///[local code path]/selenium-tests/target/site/swat_results.html
+
