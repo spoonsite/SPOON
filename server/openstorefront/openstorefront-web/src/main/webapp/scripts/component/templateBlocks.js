@@ -42,7 +42,7 @@ Ext.define('OSF.component.template.BaseBlock', {
 
 Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.Description',	
+	alias: ['widget.templatedescription'],	
 	
 	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(

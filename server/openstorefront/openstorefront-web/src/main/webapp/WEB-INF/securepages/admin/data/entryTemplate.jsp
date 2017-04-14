@@ -55,299 +55,312 @@
 					return code;
 				};
 				
-				var commonChildBlock = function(cfg) {
+				var commonChildBlock = function(childConfig) {
 					var block = this;	
 					
-					var generated = Ext.copy(block.config);
-					Ext.apply(generated, cfg, {
-						xtype: block.xtype
-					});
+					var generated = Ext.clone(block.config);
+					Ext.apply(generated, childConfig);
 					
-					return Ext.encode(generated);
+					return ' Ext.create(\'' + block.className + '\', ' + Ext.encode(generated) + ")";
 				};
 				
-				var commonLayoutChildBlock = function(cfg) {
-					
-				};				
-				
-				var commonGenerate = function(entryData, cfg) {
+				var commonLayoutChildBlock = function(config) {
 					var block = this;	
 					
-					var generated = Ext.copy(block.config);
-					Ext.apply(generated, cfg, {
-						xtype: block.xtype
-					});					
-					return generated;
+					var itemsToAdd = [];
+					Ext.Array.each(block.blocks, function(childBlock){						
+						itemsToAdd.push(childBlock.childBlock(config));
+					});	
+					
+					var generated = Ext.clone(block.config);
+					
+					var configString = '';
+					Ext.Object.each(generated, function(key, value, myself) {
+						if (Ext.isString(value)) {
+							configString += key + ": '" + value + "',\n";
+						} else {
+							configString += key + ": " + value + ",\n";
+						}
+					});
+					configString += 'items: [\n' + itemsToAdd.join(',\n') + '\n]\n';
+					
+					return ' Ext.create(\'' + block.className + '\', {' +
+							configString + "})";
 				};				
+				
+				var commonGenerate = function(entryData, config) {
+					var block = this;	
+					
+					var generated = Ext.clone(block.config);
+					Ext.apply(generated, config);		
+					
+					var comp = Ext.create(block.className, generated);
+					return comp;
+				};
+				
+				var commonLayoutGenerate = function(entryData, config, childConfig) {
+					var layoutBlock = this;
+					var container =  commonGenerate.call(layoutBlock, entryData, config);					
+					setupContainerDropTarget(container, layoutBlock);
+							
+					var itemsToAdd = [];
+					Ext.Array.each(layoutBlock.blocks, function(childBlock){
+						itemsToAdd.push(childBlock.generate(entryData, childConfig));
+					});
+					container.add(itemsToAdd);
+					Ext.defer(function(){
+						container.setActiveTab(0);
+						container.updateLayout(true, true);
+					}, 200);
+
+					return container;
+				};
+				
 				
 				var predefinedBlocks = [
 					{
 						name: 'Description',
-						xtype: 'OSF.component.template.Description',
+						className: 'OSF.component.template.Description',
 						config: {							
 							margin: '0 0 20 0'
 						},
-						blockCode: commonBlockCode,
-						childBlock: commonChildBlock,							
-						generate: function(entryData, cfg) {
+						blockCode: function() {
+							return commonBlockCode.call(this);
+						},
+						childBlock: function(config) {
+							return commonChildBlock.call(this, config);
+						},							
+						generate: function(entryData, config) {
 							var visualConfig = {
-								title: 'Description'
+								//title: 'Description'
 							};							
-							Ext.apply(visualConfig, (cfg ? cfg : {}));
-							return commonGenerate(entryData, visualConfig);
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonGenerate.call(this, entryData, visualConfig);
 						}
 					},
 					{
 						name: 'Media',
+						className: 'OSF.component.template.Media',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Media', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var media = Ext.create('OSF.component.template.Media', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return media;
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
 						}
 					},
 					{
 						name: 'Dependencies',
+						className: 'OSF.component.template.Dependencies',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Dependencies', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},							
-						generate: function(entryData, cfg) {
-							var dependencies = Ext.create('OSF.component.template.Dependencies', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return dependencies;
-						}
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'DI2E Evaluation Level',
+						className: 'OSF.component.template.DI2EEvalLevel',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.DI2EEvalLevel', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return di2elevel;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Evaluation Summary (Old)',
+						className: 'OSF.component.template.EvaluationSummary',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationSummary', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return evaluationSummary;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Resources',
+						className: 'OSF.component.template.Resources',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Resources', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var resources = Ext.create('OSF.component.template.Resources', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return resources;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}							
 					},
 					{
 						name: 'Contacts',
+						className: 'OSF.component.template.Contacts',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Contacts', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var contacts = Ext.create('OSF.component.template.Contacts', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return contacts;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Vitals',
+						className: 'OSF.component.template.Vitals',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Vitals', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},							
-						generate: function(entryData, cfg) {
-							var vitals = Ext.create('OSF.component.template.Vitals', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return vitals;
-						}
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}													
 					},
 					{
 						name: 'Relationship',
+						className: 'OSF.component.template.Relationships',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Relationships', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var relationships = Ext.create('OSF.component.template.Relationships', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return relationships;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Reviews',
+						className: 'OSF.component.template.Reviews',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Reviews', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var reviews = Ext.create('OSF.component.template.Reviews', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return reviews;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Questions',
+						className: 'OSF.component.template.Questions',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.Questions', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var questions = Ext.create('OSF.component.template.Questions', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return questions;
-						}				
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}															
 					},
 					{
 						name: 'Related By Attributes',
+						className: 'OSF.component.template.RelatedAttributes',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.RelatedAttributes', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.RelatedAttributes', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Related By Organization',
+						className: 'OSF.component.template.RelatedOrganization',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.RelatedOrganization', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.RelatedOrganization', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
 					},
 					{
 						name: 'Evaluation Version',
+						className: 'OSF.component.template.EvaluationVersionSelect',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationVersionSelect', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationVersionSelect', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}																		
 					},
 					{
 						name: 'Evaluation Sections - All',
+						className: 'OSF.component.template.EvaluationSections',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationSections', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationSections', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}									
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}																					
 					},
 					{
 						name: 'Evaluation Sections - By Title',
@@ -360,146 +373,109 @@
 								}
 							});
 						},
-						config: {
+						className: 'OSF.component.template.EvaluationSectionByTitle',
+						config: {							
+							margin: '0 0 20 0',
 							sectionTitle: ''
-						},
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationSectionByTitle', {" +
-									"margin: '0 0 20 0', " +
-									"sectionTitle: '" + this.config.sectionTitle + "'" + 
-									(cfg ? cfg : '') + 
-									"})";
-						},							
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationSectionByTitle', Ext.apply((cfg ? cfg : {}), {
-								title: this.config.sectionTitle,
-								margin: '0 0 20 0',
-								sectionTitle: this.config.sectionTitle 
-							}));
-							return related;
-						}
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: this.config.sectionTitle
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonGenerate.call(this, entryData, visualConfig);
+						}													
 					},
 					{
 						name: 'Evaluation Recommendations',
+						className: 'OSF.component.template.EvaluationCheckistRecommendation',
+						config: {							
+							margin: '0 0 20 0'
+						},												
 						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationCheckistRecommendation', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},							
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistRecommendation', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}						
-					},
-					{
-						name: 'Evaluation Checklist Summary',
-						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
-						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationCheckistSummary', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
 						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistSummary', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}
-					},					
-					{
-						name: 'Evaluation Checklist Details',
-						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
-						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationCheckistDetail', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},						
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistDetail', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
-						}						
-					},
-					{
-						name: 'Evaluation Checklist Scores',
-						blockCode: function(){
-							return 'var block_' + this.blockId + " = " +  this.childBlock() + ";";
-						},
-						childBlock: function(cfg) {							
-							return " Ext.create('OSF.component.template.EvaluationCheckistScores', {" +
-									"margin: '0 0 20 0'" +
-									(cfg ? cfg : '') + 
-									"})";
-						},
-						generate: function(entryData, cfg) {
-							var related = Ext.create('OSF.component.template.EvaluationCheckistScores', Ext.apply((cfg ? cfg : {}), {
-								margin: '0 0 20 0'
-							}));
-							return related;
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
 						}					
 					},
 					{
+						name: 'Evaluation Checklist Summary',
+						className: 'OSF.component.template.EvaluationCheckistSummary',
+						config: {							
+							margin: '0 0 20 0'
+						},												
+						blockCode: function(){
+							return commonBlockCode.call(this);
+						},
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}												
+					},					
+					{
+						name: 'Evaluation Checklist Details',
+						className: 'OSF.component.template.EvaluationCheckistDetail',
+						config: {							
+							margin: '0 0 20 0'
+						},												
+						blockCode: function(){
+							return commonBlockCode.call(this);
+						},
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}																		
+					},
+					{
+						name: 'Evaluation Checklist Scores',
+						className: 'OSF.component.template.EvaluationCheckistScores',
+						config: {							
+							margin: '0 0 20 0'
+						},												
+						blockCode: function(){
+							return commonBlockCode.call(this);
+						},
+						childBlock: function(config) {							
+							return commonChildBlock.call(this, config);
+						},						
+						generate: function(entryData, config) {
+							return commonGenerate.call(this, entryData, config);
+						}																	
+					},
+					{
 						name: 'Layout - Tabs',
+						className: 'OSF.component.template.LayoutTab',
+						config: {							
+							margin: '0 0 20 0'
+						},						
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var block = this;							
-							var code = 'var block_' + block.blockId + " = " +  block.childBlock() + ";";
-							return code;
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(cfg) {	
-							var block = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(block.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock());
-							});							
-							
-							return  " Ext.create('OSF.component.template.LayoutTab', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(cfg ? cfg : '') + 
-									"})";
+						childBlock: function(config) {	
+							return commonLayoutChildBlock.call(this, config);
 						},							
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutTab', {
-								title: 'Tab Container',
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){
-								container.setActiveTab(0);
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: 'Tab Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig);							
 						}
 					},
 					{
@@ -518,14 +494,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {
+						childBlock: function(config, itemsToAdd) {
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];
 							return  " Ext.create('OSF.component.template.LayoutScroll', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {
@@ -565,14 +541,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {	
+						childBlock: function(config, itemsToAdd) {	
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];
 							return  " Ext.create('OSF.component.template.LayoutHbox', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {
@@ -613,14 +589,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {	
+						childBlock: function(config, itemsToAdd) {	
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];
 							return  " Ext.create('OSF.component.template.LayoutVbox', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {							
@@ -661,14 +637,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {
+						childBlock: function(config, itemsToAdd) {
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];
 							return  " Ext.create('OSF.component.template.LayoutAccordion', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {
@@ -707,14 +683,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {							
+						childBlock: function(config, itemsToAdd) {							
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];
 							return  " Ext.create('OSF.component.template.LayoutFit', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {
@@ -761,14 +737,14 @@
 							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
 							return code;
 						},
-						childBlock: function(cfg, itemsToAdd) {			
+						childBlock: function(config, itemsToAdd) {			
 							itemsToAdd = itemsToAdd ? itemsToAdd : [];							
 							return  " Ext.create('OSF.component.template.LayoutCenter', {" +
 									" margin: '0 0 20 0', " +
 									" items: [\n" + 
 									itemsToAdd.join(',\n') + 
 									"\n]\n" +
-									(cfg ? cfg : '') + 
+									(config ? config : '') + 
 									"})";
 						},
 						generate: function(entryData) {
@@ -1119,6 +1095,34 @@
 															margin: '0 0 10 0'											
 														}														
 													]
+												},
+												{
+													xtype: 'panel',	
+													itemId: 'blockConfigPanel',
+													title: 'Block Config',
+													scrollable: true,
+													bodyStyle: 'padding: 10px',
+													layout: 'anchor',
+													items: [
+														
+													],
+													dockedItems: [
+														{
+															xtype: 'toolbar',
+															dock: true,
+															items: [
+																{
+																	text: 'Add Property',
+																	itemId: 'addProperty',
+																	disabled: true,
+																	iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+																	handler: function() {
+																		
+																	}
+																}
+															]
+														}
+													]
 												}
 											]
 										}										
@@ -1182,6 +1186,21 @@
 													width: '100%',
 													flex: 1													
 												}												
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'top',
+													items: [
+														{
+															text: 'Update Preview',
+															iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+															handler: function() {
+																updatePreview();
+															}
+														}
+													]
+												}
 											]
 										},
 										{
@@ -1565,11 +1584,14 @@
 											 block: block
 											}, {
 												accepts: function(info) {
-														if (block.acceptCheck) {
-															return block.acceptCheck(info);
-														} else {
-															return true;
-														}
+													if (!block.layoutBlock) {
+														return false;
+													}
+													if (block.acceptCheck) {
+														return block.acceptCheck(info);
+													} else {
+														return true;
+													}
 												},												
 												element: wPanel.getHeader().getEl(),
 												listeners: {													
@@ -1609,7 +1631,9 @@
 				
 				var updatePreview = function() {
 					var viewContent = Ext.getDom('viewContent');
-					viewContent.value = Ext.getCmp('codePanel').getComponent('gencode').getValue();
+					viewContent.value = Ext.getCmp('codePanel').getComponent('precode').getValue() + '\n' +
+										Ext.getCmp('codePanel').getComponent('gencode').getValue() + '\n' +
+										Ext.getCmp('codePanel').getComponent('postcode').getValue() + '\n';
 					
 					if (viewContent.value && 
 							viewContent.value !== '' &&
