@@ -1577,10 +1577,10 @@ Ext.define('OSF.component.template.EvaluationSections', {
 					
 					Ext.defer(function(){	
 						Ext.Array.each(sectionPanel.items.items, function(item){
-							item.updateLayout();						
+						//	item.getEl().repaint();						
 						});
-						
-					}, 3000);
+						sectionPanel.updateLayout();
+					}, 2000);
 				}
 			};
 			updateSection(entry.fullEvaluations[0]);
