@@ -244,6 +244,10 @@
 											});											
 										} else {
 											
+											if (data.userTypeCode === '') {
+												delete data.userTypeCode;
+											}
+											
 											CoreUtil.submitForm({
 												url: 'api/v1/resource/userregistrations',
 												method: 'POST',

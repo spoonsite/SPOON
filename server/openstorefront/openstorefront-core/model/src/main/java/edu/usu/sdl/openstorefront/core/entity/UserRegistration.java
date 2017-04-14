@@ -42,17 +42,17 @@ public class UserRegistration
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String username;	
-	
+	private String username;
+
 	@ConsumeField
 	@Size(min = 8, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")	
-	private transient String password;	
-	
+	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")
+	private transient String password;
+
 	@NotNull
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
 	private String firstName;
 
 	@NotNull
@@ -73,20 +73,20 @@ public class UserRegistration
 	@ConsumeField
 	private String phone;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
 	@FK(UserTypeCode.class)
 	private String userTypeCode;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	@FK(value = Organization.class, softReference = true, referencedField = "name")
 	private String organization;
-	
+
 	@APIDescription("This is used to flag the built in admin account; on first creation")
-	private Boolean usingDefaultPassword;		
+	private Boolean usingDefaultPassword;
 
 	public UserRegistration()
 	{
