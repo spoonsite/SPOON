@@ -24,7 +24,8 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	UserRegistrationTest.class
+    LoginHomePageTest.class
+        
 })
 public class SecurityTestSuite
 {

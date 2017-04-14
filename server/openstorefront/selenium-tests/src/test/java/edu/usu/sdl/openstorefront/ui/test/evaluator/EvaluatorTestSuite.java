@@ -23,7 +23,9 @@ import org.junit.runners.Suite;
  * @author dshurtleff
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({EvaluationToolTest.class})
+@Suite.SuiteClasses({
+    EvaluationToolTest.class
+})
 public class EvaluatorTestSuite
 {
 
