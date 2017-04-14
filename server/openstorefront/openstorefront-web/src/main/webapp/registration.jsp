@@ -80,14 +80,15 @@
 									defaults: {
 										width: 600,
 										labelSeparator: '',
-										labelAlign: 'top'
+										labelAlign: 'top',
+										msgTarget: 'under'
 									},
 									items: [
 										{
 											xtype: 'textfield',
 											fieldLabel: 'Username <span class="field-required" />',
 											name: 'username',
-											allowBlank: false,
+											allowBlank: false,											
 											maxLength: 80
 										},
 										{
@@ -132,7 +133,8 @@
 									defaults: {
 										width: 600,
 										labelSeparator: '',
-										labelAlign: 'top'
+										labelAlign: 'top',
+										msgTarget: 'under'
 									},	
 									items: [
 										{
