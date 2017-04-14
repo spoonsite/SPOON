@@ -443,7 +443,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 		changeWindow.details = Ext.create('Ext.panel.Panel', {
 			bodyStyle: 'padding: 10px;',
 			scrollable: true,
-			tpl: new Ext.XTemplate(
+			tpl: new Ext.XTemplate(				
 				'<tpl for=".">',
 				'	<tpl if="changeTypeDescription">',
 				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
@@ -456,7 +456,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				'</tpl>'
 			)			
 		});
-		changeWindow.add(changeWindow.details);
+		changeWindow.add(changeWindow.details);		
 	},
 	load: function(loadInfo) {
 		var changeWindow = this;
@@ -480,8 +480,13 @@ Ext.define('OSF.component.ChangeLogWindow', {
 		});
 	},
 	updateData: function(data) {
-		var changeWindow = this;		
-		changeWindow.details.update(data);			
+		var changeWindow = this;
+		
+		if (data && data.length > 0){
+			changeWindow.details.update(data);
+		} else {
+			changeWindow.details.update("No Change History");
+		}					
 	},
 	refresh: function() {
 		var changeWindow = this;
