@@ -49,9 +49,9 @@
 				var templateBlocks = [];				
 				var allBasicBlocks = [];
 				
-				var commonBlockCode = function() {
+				var commonBlockCode = function(config) {
 					var block = this;							
-					var code = 'var block_' + block.blockId + " = " +  block.childBlock() + ";";
+					var code = 'var block_' + block.blockId + " = " +  block.childBlock(config) + ";";
 					return code;
 				};
 				
@@ -109,7 +109,9 @@
 					});
 					container.add(itemsToAdd);
 					Ext.defer(function(){
-						container.setActiveTab(0);
+						if (container.setActiveTab) {
+							container.setActiveTab(0);
+						}
 						container.updateLayout(true, true);
 					}, 200);
 
@@ -394,7 +396,7 @@
 					},
 					{
 						name: 'Evaluation Recommendations',
-						className: 'OSF.component.template.EvaluationCheckistRecommendation',
+						className: 'OSF.component.template.EvaluationChecklistRecommendation',
 						config: {							
 							margin: '0 0 20 0'
 						},												
@@ -410,7 +412,7 @@
 					},
 					{
 						name: 'Evaluation Checklist Summary',
-						className: 'OSF.component.template.EvaluationCheckistSummary',
+						className: 'OSF.component.template.EvaluationChecklistSummary',
 						config: {							
 							margin: '0 0 20 0'
 						},												
@@ -426,7 +428,7 @@
 					},					
 					{
 						name: 'Evaluation Checklist Details',
-						className: 'OSF.component.template.EvaluationCheckistDetail',
+						className: 'OSF.component.template.EvaluationChecklistDetail',
 						config: {							
 							margin: '0 0 20 0'
 						},												
@@ -442,7 +444,7 @@
 					},
 					{
 						name: 'Evaluation Checklist Scores',
-						className: 'OSF.component.template.EvaluationCheckistScores',
+						className: 'OSF.component.template.EvaluationChecklistScores',
 						config: {							
 							margin: '0 0 20 0'
 						},												
@@ -480,237 +482,120 @@
 					},
 					{
 						name: 'Layout - Scroll',
-						layoutBlock: true,
+						className: 'OSF.component.template.LayoutScroll',
+						config: {							
+							margin: '0 0 20 0'
+						},							
+						layoutBlock: true,						
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock());
-							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
+							return commonBlockCode.call(this);
 						},
 						childBlock: function(config, itemsToAdd) {
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];
-							return  " Ext.create('OSF.component.template.LayoutScroll', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutScroll', {
-								title: 'Scroll Container',
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: 'Scroll Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig);								
 						}
 					},
 					{
 						name: 'Layout - HBox',
+						className: 'OSF.component.template.LayoutHbox',
+						config: {							
+							margin: '0 0 20 0'
+						},									
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
+							return commonBlockCode.call(this, {
+								flex: 1
 							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
 						},
 						childBlock: function(config, itemsToAdd) {	
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];
-							return  " Ext.create('OSF.component.template.LayoutHbox', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutHbox', {
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData, { 
-									flex: 1
-								}));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData,config) {
+							var visualConfig = {
+								title: 'HBox Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig, {
+								flex: 1
+							});	
 						}
 					},					
 					{
 						name: 'Layout - VBox',
+						className: 'OSF.component.template.LayoutVbox',
+						config: {							
+							margin: '0 0 20 0'
+						},							
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock(', flex: 1'));
+							return commonBlockCode.call(this, {
+								flex: 1
 							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
 						},
 						childBlock: function(config, itemsToAdd) {	
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];
-							return  " Ext.create('OSF.component.template.LayoutVbox', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+							return commonLayoutChildBlock.call(this, config);
 						},
 						generate: function(entryData) {							
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutVbox', {
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData, { 
-									flex: 1
-								}));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+							var visualConfig = {
+								title: 'VBox Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig, {
+								flex: 1
+							});							
 						}
 					},				
 					{
 						name: 'Layout - Accordion',
+						className: 'OSF.component.template.LayoutAccordion',
+						config: {							
+							margin: '0 0 20 0'
+						},								
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock());
-							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
+							return commonBlockCode.call(this);
 						},
 						childBlock: function(config, itemsToAdd) {
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];
-							return  " Ext.create('OSF.component.template.LayoutAccordion', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutAccordion', {
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: 'Accordion Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig);								
 						}
 					},
 					{
 						name: 'Layout - Fit',
+						className: 'OSF.component.template.LayoutFit',
+						config: {							
+							margin: '0 0 20 0'
+						},							
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock());
-							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(config, itemsToAdd) {							
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];
-							return  " Ext.create('OSF.component.template.LayoutFit', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+						childBlock: function(config, itemsToAdd) {
+							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutFit', {
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: 'LayoutFit Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig);								
 						},
 						acceptCheck: function(info) {
 							var layoutBlock = this;
@@ -723,48 +608,24 @@
 					},					
 					{
 						name: 'Layout - Center',
+						className: 'OSF.component.template.LayoutCenter',
+						config: {							
+							margin: '0 0 20 0'
+						},						
 						layoutBlock: true,
 						blocks: [],
 						blockCode: function(){
-							var layoutBlock = this;
-							
-							var code = '';
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.childBlock());
-							});
-							
-							var code = 'var block_' + this.blockId + " = " +  this.childBlock(null, itemsToAdd) + ";";
-							return code;
+							return commonBlockCode.call(this);
 						},
-						childBlock: function(config, itemsToAdd) {			
-							itemsToAdd = itemsToAdd ? itemsToAdd : [];							
-							return  " Ext.create('OSF.component.template.LayoutCenter', {" +
-									" margin: '0 0 20 0', " +
-									" items: [\n" + 
-									itemsToAdd.join(',\n') + 
-									"\n]\n" +
-									(config ? config : '') + 
-									"})";
+						childBlock: function(config, itemsToAdd) {
+							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {
-							var layoutBlock = this;
-							
-							var container = Ext.create('OSF.component.template.LayoutCenter', {
-								margin: '0 0 20 0'
-							});
-							setupContainerDropTarget(container, layoutBlock);
-							
-							var itemsToAdd = [];
-							Ext.Array.each(layoutBlock.blocks, function(childBlock){
-								itemsToAdd.push(childBlock.generate(entryData));
-							});
-							container.add(itemsToAdd);
-							Ext.defer(function(){								
-								container.updateLayout(true, true);
-							}, 200);
-							
-							return container;							
+						generate: function(entryData, config) {
+							var visualConfig = {
+								title: 'LayoutCenter Container'
+							};							
+							Ext.apply(visualConfig, (config ? config : {}));
+							return commonLayoutGenerate.call(this, entryData, visualConfig);								
 						},
 						acceptCheck: function(info) {
 							var layoutBlock = this;
@@ -1099,30 +960,164 @@
 												{
 													xtype: 'panel',	
 													itemId: 'blockConfigPanel',
-													title: 'Block Config',
-													scrollable: true,
+													title: 'Block Config',													
 													bodyStyle: 'padding: 10px',
-													layout: 'anchor',
+													layout: 'fit',
+													reset: function() {
+														this.queryById('grid').getStore().removeAll();
+														this.queryById('blockSelect').clearValue();
+														this.queryById('addProperty').setDisabled(true);
+														this.queryById('apply').setDisabled(true);
+													},
 													items: [
-														
-													],
-													dockedItems: [
 														{
-															xtype: 'toolbar',
-															dock: true,
-															items: [
-																{
-																	text: 'Add Property',
-																	itemId: 'addProperty',
-																	disabled: true,
-																	iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-																	handler: function() {
+															xtype: 'grid',
+															itemId: 'grid',
+															tooltip: 'Block Properties; Click to Edit',
+															columnLines: true,
+															frame: true,
+															selModel: 'cellmodel',
+															plugins: {
+																ptype: 'cellediting',
+																clicksToEdit: 1												
+															},	
+															store: {
+																listeners: {
+																	update: function(store, record, operation, modifiedFieldNames, details, eOpts) {																		
+																		
+																	},
+																	remove: function(store, records, index, isMove, eOpts) {
 																		
 																	}
+																} 																
+															},
+															columns: [
+																{ text: 'Property', dataIndex: 'property', flex: 1,
+																	field: 'textfield'
+																},
+																{ text: 'Value', dataIndex: 'value', flex: 1,
+																	field: 'textfield'
+																},
+																{
+																	text: 'Action', 
+																	dataIndex: '',
+																	sortable: false,
+																	xtype: 'widgetcolumn',
+																	align: 'center',
+																	width: 50,               
+																	widget: {
+																		xtype: 'button',
+																		iconCls: 'fa fa-lg fa-trash',
+																		maxWidth: 25,						   
+																		handler: function() {	
+																			var record = this.getWidgetRecord();
+																			var grid = this.up('grid');
+																			grid.getStore().remove(record);
+																		}
+																	}
 																}
-															]
+															],
+															dockedItems: [
+																{
+																	xtype: 'toolbar',
+																	dock: 'top',
+																	items: [
+																		{
+																			xtype: 'combo',
+																			itemId: 'blockSelect',
+																			emptyText: 'Select block',
+																			editable: false,
+																			forceSelection: true,
+																			valueField: 'blockId',
+																			displayField: 'name',
+																			width: 225,
+																			store: {																				
+																			},
+																			listeners: {
+																				expand: function(field, event, opts) {
+																					var allBlocks = [];
+																					var getBlocks = function(blocks) {
+																						Ext.Array.each(blocks, function(block){
+																							if (block.blocks) {
+																								getBlocks(block.blocks);
+																							}
+																							allBlocks.push(block);
+																						});
+																					};
+																					getBlocks(templateBlocks);
+
+																					field.getStore().loadData(allBlocks);
+																				},
+																				change: function(field, newValue, oldValue, opts) {
+																					var grid = field.up('grid');
+																					var selectedBlock = field.getSelection();
+																					
+																					if (selectedBlock && selectedBlock.data.config) {
+																						var props = [];
+																						Ext.Object.each(selectedBlock.data.config, function(key, value, myself) {
+																							props.push({
+																								property: key,
+																								value: value
+																							});
+																						});
+																						grid.getStore().loadData(props);
+																						grid.selectedBlock = selectedBlock.data;
+																						
+																						grid.queryById('addProperty').setDisabled(false);
+																						grid.queryById('apply').setDisabled(false);																						
+																					} else {
+																						grid.queryById('addProperty').setDisabled(true);
+																						grid.queryById('apply').setDisabled(true);
+																					}
+																				}
+																			}
+																		},
+																		{
+																			text: 'Add Property',
+																			itemId: 'addProperty',
+																			disabled: true,
+																			iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+																			handler: function() {
+																				var grid = this.up('grid');
+																				grid.getStore().add({
+																					property: '',
+																					value: ''
+																				});																				
+																			}
+																		}
+																	]
+																},
+																{
+																	xtype: 'toolbar',
+																	dock: 'bottom',
+																	items: [
+																		{
+																			xtype: 'tbfill'
+																		},
+																		{
+																			text: 'Apply',
+																			itemId: 'apply',
+																			disabled: true,
+																			iconCls: 'fa fl-g fa-check icon-button-color-save',
+																			handler: function() {
+																				var grid = this.up('grid');
+																				
+																				var config = {};
+																				grid.getStore().each(function(record){
+																					config[record.get('property')] = record.get('value');
+																				});
+																				grid.selectedBlock.config = config;																				
+																				updateTemplate();
+																			}
+																		},
+																		{
+																			xtype: 'tbfill'
+																		}
+																	]
+																}
+															]															
 														}
-													]
+													]													
 												}
 											]
 										}										
@@ -1141,8 +1136,7 @@
 										{
 											xtype: 'panel',
 											id: 'visualPanel',
-											layout: 'anchor',											
-											scrollable: true,
+											layout: 'fit',																					
 											title: 'Visual Design'											
 										},
 										{
@@ -1206,7 +1200,7 @@
 										{
 											xtype: 'panel',
 											id: 'previewPanel',
-											scrollable: true,
+											layout: 'fit',
 											bodyStyle: 'padding: 5px;',
 											title: 'Preview'											
 										}										
@@ -1343,7 +1337,9 @@
 										templateBlock: block,										
 										blockCode: function(){
 											return 'var block_' + this.blockId + " = " + block.codeBlock;
-										},								
+										},
+										childBlock: function(config) {											
+										},
 										generate: function(entryData) {
 											var tempBlock = eval(block.codeBlock);														
 											return tempBlock;
@@ -1561,6 +1557,7 @@
 								callback: function(panel, tool, event) {
 									Ext.Array.remove(templateBlocks, panel.block);
 									updateTemplate();
+									addEditWindow.queryById('blockConfigPanel').reset();
 								}							
 							});
 
@@ -1613,7 +1610,7 @@
 						}
 					});					
 					Ext.getCmp('visualPanel').removeAll();
-					Ext.getCmp('visualPanel').add(visualPanels);				
+					Ext.getCmp('visualPanel').add(visualPanels);					
 					
 				};				
 				
@@ -1792,7 +1789,9 @@
 				};
 
 				var actionAdd = function() {
-					addEditWindow.show();		
+					addEditWindow.show();	
+					addEditWindow.queryById('blockConfigPanel').reset();
+					
 					Ext.getCmp('templateTabpanel').getLayout().setActiveItem(0);
 					addEditWindow.editTemplateId = null;
 					Ext.getCmp('codePanel').getComponent('precode').reset();
@@ -1806,6 +1805,7 @@
 					addEditWindow.show();
 					
 					addEditWindow.editTemplateId = record.get('templateId');
+					addEditWindow.queryById('blockConfigPanel').reset();
 					
 					Ext.getCmp('codePanel').getComponent('precode').setValue(record.get('preTemplateCode'));
 					Ext.getCmp('codePanel').getComponent('postcode').setValue(record.get('postTemplateCode'));					

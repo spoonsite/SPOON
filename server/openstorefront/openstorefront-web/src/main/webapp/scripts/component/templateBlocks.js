@@ -938,7 +938,7 @@ Ext.define('OSF.component.template.Questions', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Questions',
+	title: 'Questions & Answers',
 	bodyStyle: 'padding: 10px;',
 	layout: {
 		type: 'vbox',
@@ -1321,7 +1321,9 @@ Ext.define('OSF.component.template.RelatedAttributes', {
 			
 			//load
 			relatedPanel.queryById('attributeSelect').getStore().loadData(attributes);
-			relatedPanel.queryById('attributeSelect').setValue(attributes[0].code);
+			if (attributes.length > 0) {
+				relatedPanel.queryById('attributeSelect').setValue(attributes[0].code);
+			}
 		}		
 		
 		
@@ -1522,14 +1524,9 @@ Ext.define('OSF.component.template.EvaluationSections', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: 'osf.widget.template.EvaluationSections',
 	
-	titleCollapse: true,
-	collapsible: true,
-	title: 'Evaluation Sections',
-	items: [
-		{
-			xtype: 'tabpanel',
-			itemId: 'tabs'
-		}
+	//titleCollapse: true,
+	//collapsible: true,	
+	items: [		
 	],		
 	initComponent: function () {
 		this.callParent();		
@@ -1544,14 +1541,18 @@ Ext.define('OSF.component.template.EvaluationSections', {
 			
 			var updateSection = function(evaluation) {
 				
-				var tabPanel = sectionPanel.queryById('tabs');
-				tabPanel.removeAll();
+				//var tabPanel = sectionPanel.queryById('tabs');
+				sectionPanel.removeAll();
 				
 				var internalPanels = [];
 				Ext.Array.each(evaluation.contentSections, function(section){
 					internalPanels.push({
 						xtype: 'panel',
-						title: section.section.title,					
+						title: section.section.title,
+						titleCollapse: true,
+						collapsible: true,
+						sectionData: section,
+						margin: '0 0 20 0',
 						tpl: new Ext.XTemplate(
 							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
 							'	<tpl if="section.content">{section.content}</tpl>',
@@ -1563,18 +1564,23 @@ Ext.define('OSF.component.template.EvaluationSections', {
 							'		</tpl>',
 							'	</tpl>',
 							'</div>'		
-						),						
-						data: section
-					});					
+						)
+					});	
+					
 				});
 				if (internalPanels.length > 0) {
-					tabPanel.add(internalPanels);	
+					sectionPanel.add(internalPanels);					
 					
-
-					Ext.defer(function(){
-						sectionPanel.updateLayout(true, true);
-						tabPanel.setActiveTab(0);
-					}, 200);
+					Ext.Array.each(sectionPanel.items.items, function(item){
+						item.update(item.sectionData);							
+					});
+					
+					Ext.defer(function(){	
+						Ext.Array.each(sectionPanel.items.items, function(item){
+							item.updateLayout();						
+						});
+						
+					}, 3000);
 				}
 			};
 			updateSection(entry.fullEvaluations[0]);
@@ -1650,9 +1656,9 @@ Ext.define('OSF.component.template.EvaluationSectionByTitle', {
 
 });
 
-Ext.define('OSF.component.template.EvaluationCheckistSummary', {
+Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.EvaluationCheckistSummary',
+	alias: 'osf.widget.template.EvaluationChecklistSummary',
 	
 	titleCollapse: true,
 	collapsible: true,
@@ -1695,9 +1701,9 @@ Ext.define('OSF.component.template.EvaluationCheckistSummary', {
 
 });
 
-Ext.define('OSF.component.template.EvaluationCheckistDetail', {
+Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.EvaluationCheckistDetail',
+	alias: 'osf.widget.template.EvaluationChecklistDetail',
 	
 	titleCollapse: true,
 	collapsible: true,
@@ -1772,6 +1778,11 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 								maximizable: true,
 								scrollable: true,
 								bodyStyle: 'padding: 10px;',
+								listeners: {
+									show: function() {        
+										this.removeCls("x-unselectable");    
+									}
+								},								
 								data: question,
 								tpl: new Ext.XTemplate(
 									'<tpl if="objective"><b>Question Objective:</b> <br><br>',
@@ -1817,6 +1828,11 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 								maximizable: true,
 								scrollable: true,
 								bodyStyle: 'padding: 10px;',
+								listeners: {
+									show: function() {        
+										this.removeCls("x-unselectable");    
+									}
+								},																
 								data: question,
 								tpl: new Ext.XTemplate(
 									'<tpl if="scoreCriteria"><b>Scoring Criteria:</b> <br><br>',
@@ -1867,9 +1883,9 @@ Ext.define('OSF.component.template.EvaluationCheckistDetail', {
 
 });
 
-Ext.define('OSF.component.template.EvaluationCheckistRecommendation', {
+Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.EvaluationCheckistRecommendation',
+	alias: 'osf.widget.template.EvaluationChecklistRecommendation',
 	
 	titleCollapse: true,
 	collapsible: true,
@@ -1917,9 +1933,9 @@ Ext.define('OSF.component.template.EvaluationCheckistRecommendation', {
 
 });
 
-Ext.define('OSF.component.template.EvaluationCheckistScores', {
+Ext.define('OSF.component.template.EvaluationChecklistScores', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.EvaluationCheckistScores',
+	alias: 'osf.widget.template.EvaluationChecklistScores',
 	
 	titleCollapse: true,
 	collapsible: true,
@@ -2035,6 +2051,16 @@ Ext.define('OSF.component.template.LayoutTab', {
 	extend: 'Ext.tab.Panel',
 	alias: 'osf.widget.template.LayoutTab',
 	
+	tabBar: {
+		defaults: {
+			flex: 1
+		},
+		dock: 'top',
+		layout: {
+			pack: 'left'
+		}
+	},	
+	
 	initComponent: function () {
 		this.callParent();
 	},
@@ -2043,8 +2069,18 @@ Ext.define('OSF.component.template.LayoutTab', {
 		var layoutPanel = this;
 		
 		Ext.Array.each(layoutPanel.items.items, function(item){
-			if (item.updateTemplate) {
-				item.updateTemplate(entry);
+			if (item) {
+				var process = true;
+				if (item.evalTopPanel){
+					if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+						process = false;
+						item.close();
+					}
+				} 						
+
+				if (process && item.updateTemplate) {
+					item.updateTemplate(entry);
+				}
 			}
 		});
 		
