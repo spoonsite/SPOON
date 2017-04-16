@@ -849,6 +849,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 	loadContentForm: function(page) {
 		var evalPanel = this;
 		
+		if (evalPanel.currentContentForm && evalPanel.currentContentForm.unsavedChanges) {
+			evalPanel.currentContentForm.saveData();
+		}
+		
 		evalPanel.commentPanel.setHidden(false);
 		evalPanel.contentPanel.removeAll(true);
 		evalPanel.contentPanel.getComponent('tools').getComponent('title').update({
@@ -864,8 +868,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 			hideSecurityMarking: hideSecurityMarking
 		}, page.options)
 		);
-
+		
 		evalPanel.contentPanel.add(contentForm);
+		evalPanel.currentContentForm = contentForm;
 
 		if (contentForm.loadData) {
 			if (page.refreshCallback) {

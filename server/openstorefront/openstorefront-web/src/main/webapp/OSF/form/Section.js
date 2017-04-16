@@ -52,6 +52,14 @@ Ext.define('OSF.form.Section', {
 					xtype: 'tbfill'
 				},
 				{
+					text: 'Save',
+					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+					handler: function() {
+						var questionForm = this.up('panel');
+						questionForm.saveData();
+					}
+				},				
+				{
 					xtype: 'tbtext',
 					itemId: 'status'
 				},				
@@ -301,6 +309,10 @@ Ext.define('OSF.form.Section', {
 		
 		var sectionForm = this;
 		
+		sectionForm.saveTask = new Ext.util.DelayedTask(function(){
+			sectionForm.saveData();
+		});	
+		
 	},
 	loadData: function(evaluationId, componentId, data, opts) {
 	
@@ -395,7 +407,7 @@ Ext.define('OSF.form.Section', {
 								change: {
 									buffer: 2000,
 									fn: function(field, newValue, oldValue) {
-										sectionForm.saveData();
+										sectionForm.markUnsaved();
 									}
 								}
 							}
@@ -433,7 +445,7 @@ Ext.define('OSF.form.Section', {
 									change: {
 										buffer: 2000,
 										fn: function(field, newValue, oldValue) {
-											sectionForm.saveData();
+											sectionForm.markUnsaved();
 										}
 									}
 								}
@@ -453,7 +465,7 @@ Ext.define('OSF.form.Section', {
 										change: {
 											buffer: 2000,
 											fn: function(field, newValue, oldValue) {
-												sectionForm.saveData();
+												sectionForm.markUnsaved();
 											}
 										}
 									}
@@ -482,7 +494,7 @@ Ext.define('OSF.form.Section', {
 											change: {
 												buffer: 2000,
 												fn: function(field, newValue, oldValue) {
-													sectionForm.saveData();
+													sectionForm.markUnsaved();
 												}
 											}
 										}								
@@ -507,7 +519,7 @@ Ext.define('OSF.form.Section', {
 										change: {
 											buffer: 2000,
 											fn: function(field, newValue, oldValue) {
-												sectionForm.saveData();
+												sectionForm.markUnsaved();
 											}
 										}
 									}								
@@ -530,7 +542,7 @@ Ext.define('OSF.form.Section', {
 										change: {
 											buffer: 2000,
 											fn: function(field, newValue, oldValue) {
-												sectionForm.saveData();
+												sectionForm.markUnsaved();
 											}
 										}
 									}								
@@ -546,7 +558,7 @@ Ext.define('OSF.form.Section', {
 										change: {
 											buffer: 2000,
 											fn: function(field, newValue, oldValue) {
-												sectionForm.saveData();
+												sectionForm.markUnsaved();
 											}
 										}
 									}								
@@ -590,7 +602,7 @@ Ext.define('OSF.form.Section', {
 								change: {
 									buffer: 2000,
 									fn: function(field, newValue, oldValue) {
-										sectionForm.saveData();
+										sectionForm.markUnsaved();
 									}
 								}
 							}	
@@ -612,6 +624,12 @@ Ext.define('OSF.form.Section', {
 		
 		opts.commentPanel.loadComments(evaluationId, data.section.title, componentId);
 	},
+	markUnsaved: function () {
+		var sectionForm = this;
+		sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
+		sectionForm.saveTask.delay(1000*60*3);	
+		sectionForm.unsavedChanges = true;
+	},		
 	saveData: function(){
 		
 		var sectionForm = this;
@@ -664,6 +682,7 @@ Ext.define('OSF.form.Section', {
 						
 				});
 			}
+			sectionForm.saveTask.cancel();
 			
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/evaluations/' + 
@@ -677,6 +696,7 @@ Ext.define('OSF.form.Section', {
 				success: function(action, opts) {			
 					Ext.toast('Saved Section');
 					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+					sectionForm.unsavedChanges = false;
 				}	
 			});			
 		

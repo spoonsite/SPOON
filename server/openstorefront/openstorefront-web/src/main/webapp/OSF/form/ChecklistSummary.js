@@ -56,8 +56,8 @@ Ext.define('OSF.form.ChecklistSummary', {
 					text: 'Save',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
 					handler: function() {
-						var summaryWest = this.up('panel');
-						summaryWest.saveData();
+						var summaryForm = this.up('panel');
+						summaryForm.saveData();
 					}
 				},
 				{
@@ -325,6 +325,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 			if (record) {
 				addEditWin.getComponent('form').loadRecord(record);
 			}
+			
 		};
 
 		var actionDelete = function(record) {
@@ -358,6 +359,10 @@ Ext.define('OSF.form.ChecklistSummary', {
 				}
 			});			
 		};
+		
+		summaryForm.saveTask = new Ext.util.DelayedTask(function(){
+			summaryForm.saveData();
+		});
 
 	},
 	loadData: function(evaluationId, componentId, data, opts) {
@@ -388,7 +393,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 				});
 
 				summaryForm.topPanel.getComponent('summary').on('change', function(){
-					summaryForm.saveData();			
+					summaryForm.markUnsaved();			
 				}, undefined, {
 					buffer: 2000
 				});
@@ -397,6 +402,12 @@ Ext.define('OSF.form.ChecklistSummary', {
 				
 		opts.commentPanel.loadComments(evaluationId, "Checklist Summary", data.evaluationChecklist.checklistId);	
 	},
+	markUnsaved: function () {
+		var summaryForm = this;
+		summaryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');				
+		summaryForm.saveTask.delay(1000*60*3);		
+		summaryForm.unsavedChanges = true;
+	},
 	saveData: function() {
 		var summaryForm = this;
 		
@@ -404,6 +415,8 @@ Ext.define('OSF.form.ChecklistSummary', {
 		
 		if (data.summary !== summaryForm.fullEvalData.summary ||
 			data.workflowStatus !== summaryForm.fullEvalData.workflowStatus) {
+				
+				summaryForm.saveTask.cancel();
 				CoreUtil.submitForm({
 					url: 'api/v1/resource/evaluations/' + 
 						summaryForm.evaluationId 
@@ -416,6 +429,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 					success: function(action, opts) {			
 						Ext.toast('Saved Summary');
 						summaryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+						summaryForm.unsavedChanges = false;
 					}	
 				});
 		}

@@ -814,9 +814,10 @@ public class EvaluationResource
 		if (existing != null) {
 			ValidationResult result = evaluationChecklist.validate(true);
 			if (result.valid()) {
-				existing.updateFields(evaluationChecklist);
-				existing = existing.save();
-				return Response.ok(existing).build();
+				evaluationChecklist.setEvaluationId(evaluationId);
+				evaluationChecklist.setChecklistId(checklistId);				
+				evaluationChecklist = evaluationChecklist.save();
+				return Response.ok(evaluationChecklist).build();
 			} else {
 				return Response.ok(result.toRestError()).build();
 			}
