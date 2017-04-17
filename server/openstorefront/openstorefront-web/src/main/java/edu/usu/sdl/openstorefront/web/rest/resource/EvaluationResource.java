@@ -307,6 +307,7 @@ public class EvaluationResource
 				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
+				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
@@ -815,7 +816,7 @@ public class EvaluationResource
 			ValidationResult result = evaluationChecklist.validate(true);
 			if (result.valid()) {
 				evaluationChecklist.setEvaluationId(evaluationId);
-				evaluationChecklist.setChecklistId(checklistId);				
+				evaluationChecklist.setChecklistId(checklistId);
 				evaluationChecklist = evaluationChecklist.save();
 				return Response.ok(evaluationChecklist).build();
 			} else {
