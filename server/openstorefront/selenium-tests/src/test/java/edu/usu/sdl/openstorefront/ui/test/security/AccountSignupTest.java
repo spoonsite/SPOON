@@ -22,11 +22,11 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
  *
  * @author dshurtleff
  */
-public class UserRegistrationTest
+public class AccountSignupTest
 		extends BrowserTestBase
 {
 
-	public UserRegistrationTest()
+	public AccountSignupTest()
 	{
 	}
 

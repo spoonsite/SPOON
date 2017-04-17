@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,5 +25,5 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 public class SecurityTestBase
 		extends BrowserTestBase
 {
-
+         private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 }
