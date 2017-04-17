@@ -45,7 +45,7 @@
 		request.setAttribute("branding", brandingView);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
-		request.setAttribute("admin", SecurityUtil.isAdminUser());
+		request.setAttribute("admin", SecurityUtil.isEntryAdminUser());
 		
 		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
 		request.setAttribute("idlegraceperiod", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));

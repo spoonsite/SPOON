@@ -21,6 +21,11 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +36,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Defines Relationship between components")
 public class ComponentRelationship
 		extends BaseComponent<ComponentRelationship>
+		implements LoggableModel<ComponentRelationship>
 {
 
 	@PK(generated = true)
@@ -68,13 +74,29 @@ public class ComponentRelationship
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentRelationship componentRelationship = (ComponentRelationship) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, componentRelationship);
 		super.updateFields(entity);
 
-		ComponentRelationship componentRelationship = (ComponentRelationship) entity;
 		this.setComponentId(componentRelationship.getComponentId());
 		this.setRelatedComponentId(componentRelationship.getRelatedComponentId());
 		this.setRelationshipType(componentRelationship.getRelationshipType());
 
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentRelationship updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentRelationshipId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(RelationshipType.class, getRelationshipType()) + " - " + ServiceProxyFactory.getServiceProxy().getComponentService().getComponentName(getRelatedComponentId());
 	}
 
 	public String getComponentRelationshipId()

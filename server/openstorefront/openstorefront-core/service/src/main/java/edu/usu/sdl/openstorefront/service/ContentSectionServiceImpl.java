@@ -18,15 +18,15 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -34,9 +34,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -50,20 +52,6 @@ public class ContentSectionServiceImpl
 	private static final Logger LOG = Logger.getLogger(FeedbackServiceImpl.class.getName());
 
 	@Override
-	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute)
-	{
-		ContentSectionAttribute existing = persistenceService.findById(ContentSectionAttribute.class, contentSectionAttribute.getContentSectionAttributePk());
-		if (existing != null) {
-			existing.updateFields(contentSectionAttribute);
-			existing = persistenceService.persist(existing);
-		} else {
-			contentSectionAttribute.populateBaseCreateFields();
-			existing = persistenceService.persist(contentSectionAttribute);
-		}
-		return existing;
-	}
-
-	@Override
 	public String saveAll(ContentSectionAll contentSectionAll)
 	{
 		Objects.requireNonNull(contentSectionAll);
@@ -73,24 +61,36 @@ public class ContentSectionServiceImpl
 
 		ContentSubSection contentSubSectionExample = new ContentSubSection();
 		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
-		persistenceService.deleteByExample(contentSubSectionExample);
+		List<ContentSubSection> subSections = contentSubSectionExample.findByExampleProxy();
+		Map<String, List<ContentSubSection>> subSectionMap = subSections.stream()
+				.collect(Collectors.groupingBy(ContentSubSection::getSubSectionId));
 
 		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
-			subSection.setContentSectionId(contentSection.getContentSectionId());
-			subSection.populateBaseCreateFields();
-			persistenceService.persist(subSection);
+			if (subSection.getSubSectionId() != null && subSectionMap.containsKey(subSection.getSubSectionId())) {
+				ContentSubSection existing = subSectionMap.get(subSection.getSubSectionId()).get(0);
+				existing.updateFields(subSection);
+				persistenceService.persist(existing);
+			} else {
+				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.populateBaseCreateFields();
+				persistenceService.persist(subSection);
+			}
 		}
 
 		return contentSection.getContentSectionId();
 	}
 
 	@Override
-	public ContentSectionAll getContentSectionAll(String contentSectionId)
+	public ContentSectionAll getContentSectionAll(String contentSectionId, boolean publicInformationOnly)
 	{
 		ContentSectionAll contentSectionAll = null;
 
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
+			if (publicInformationOnly && contentSection.getPrivateSection()) {
+				return null;
+			}
+
 			contentSectionAll = new ContentSectionAll();
 			contentSectionAll.setSection(contentSection);
 
@@ -99,7 +99,20 @@ public class ContentSectionServiceImpl
 			contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
 
 			List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
-			contentSectionAll.getSubsections().addAll(subSections);
+			for (ContentSubSection subSection : subSections) {
+				boolean keep = false;
+				if (publicInformationOnly) {
+					if (!subSection.getPrivateSection()) {
+						keep = true;
+					}
+				} else {
+					keep = true;
+				}
+
+				if (keep) {
+					contentSectionAll.getSubsections().add(subSection);
+				}
+			}
 		}
 
 		return contentSectionAll;
@@ -112,6 +125,9 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(in);
 
 		ContentSectionMedia savedMedia = contentSectionMedia.save();
+		if (contentSectionMedia.getContentSectionMediaId() == null) {
+			getChangeLogService().addEntityChange(savedMedia);
+		}
 
 		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
 		try (InputStream fileInput = in) {
@@ -120,12 +136,12 @@ public class ContentSectionServiceImpl
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
-		
+
 		//Note: proxied media caused an overflow on serialization
 		ContentSectionMedia updatedMedia = new ContentSectionMedia();
 		updatedMedia.setContentSectionMediaId(savedMedia.getContentSectionMediaId());
 		updatedMedia = updatedMedia.find();
-		
+
 		return updatedMedia;
 	}
 
@@ -143,6 +159,7 @@ public class ContentSectionServiceImpl
 				}
 			}
 			persistenceService.delete(existing);
+			getChangeLogService().removeEntityChange(ContentSectionMedia.class, existing);
 		}
 	}
 
@@ -176,12 +193,6 @@ public class ContentSectionServiceImpl
 	{
 		Objects.requireNonNull(contentSectionId);
 
-		ContentSectionAttribute attributeExample = new ContentSectionAttribute();
-		ContentSectionAttributePk attributePk = new ContentSectionAttributePk();
-		attributePk.setContentSectionId(contentSectionId);
-		attributeExample.setContentSectionAttributePk(attributePk);
-		persistenceService.deleteByExample(attributeExample);
-
 		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 		contentSectionMedia.setContentSectionId(contentSectionId);
 		persistenceService.deleteByExample(contentSectionMedia);
@@ -193,6 +204,7 @@ public class ContentSectionServiceImpl
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
+			getChangeLogService().removeEntityChange(ContentSection.class, contentSection);
 		}
 	}
 
@@ -233,6 +245,104 @@ public class ContentSectionServiceImpl
 				}
 
 				persistenceService.delete(template);
+			}
+		}
+	}
+
+	@Override
+	public String createSectionFromTemplate(String entity, String entityId, String sectionTemplateId)
+	{
+		Objects.requireNonNull(entity, "Entity Class name required");
+		Objects.requireNonNull(entityId);
+		Objects.requireNonNull(sectionTemplateId);
+
+		ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, sectionTemplateId);
+		if (template != null) {
+
+			ContentSection templateSection = new ContentSection();
+			templateSection.setEntity(ContentSectionTemplate.class.getSimpleName());
+			templateSection.setEntityId(sectionTemplateId);
+			templateSection = templateSection.find();
+
+			WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
+			if (initialStatus == null) {
+				throw new OpenStorefrontRuntimeException("Unable to get initial workflow status", "Add at least one workflow status.");
+			}
+
+			ContentSection contentSection = new ContentSection();
+			contentSection.setContentSectionId(persistenceService.generateId());
+			contentSection.setEntity(entity);
+			contentSection.setEntityId(entityId);
+			contentSection.setTitle(templateSection.getTitle());
+			contentSection.setContent(templateSection.getContent());
+			contentSection.setNoContent(templateSection.getNoContent());
+			contentSection.setPrivateSection(templateSection.getPrivateSection());
+			contentSection.setWorkflowStatus(initialStatus.getCode());
+			contentSection.setTemplateId(sectionTemplateId);
+			contentSection.populateBaseCreateFields();
+			contentSection = persistenceService.persist(contentSection);
+
+			//copy media
+			ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
+			templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
+			List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
+			copySectionMedia(templateMediaRecords, contentSection);
+
+			ContentSubSection templateSubSectionExample = new ContentSubSection();
+			templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
+
+			List<ContentSubSection> templateSubSections = templateSubSectionExample.findByExample();
+			for (ContentSubSection templateSubSection : templateSubSections) {
+
+				ContentSubSection subSection = new ContentSubSection();
+				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.setSubSectionId(persistenceService.generateId());
+				subSection.setTitle(templateSubSection.getTitle());
+				subSection.setContent(templateSubSection.getContent());
+				subSection.setNoContent(templateSubSection.getNoContent());
+				subSection.setHideTitle(templateSubSection.getHideTitle());
+				subSection.setOrder(templateSubSection.getOrder());
+				subSection.setPrivateSection(templateSubSection.getPrivateSection());
+				subSection.setCustomFields(templateSubSection.getCustomFields());
+				subSection.populateBaseCreateFields();
+				persistenceService.persist(subSection);
+
+			}
+
+			return contentSection.getContentSectionId();
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find template", "Check inpute template Id: " + sectionTemplateId);
+		}
+
+	}
+
+	@Override
+	public void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection)
+	{
+		for (ContentSectionMedia templateMedia : originalMedia) {
+			ContentSectionMedia sectionMedia = new ContentSectionMedia();
+			sectionMedia.setContentSectionId(newSection.getContentSectionId());
+			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
+			sectionMedia.setMimeType(templateMedia.getMimeType());
+			sectionMedia.setOriginalName(templateMedia.getOriginalName());
+
+			Path path = templateMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					try (InputStream in = new FileInputStream(path.toFile())) {
+						getContentSectionService().saveMedia(sectionMedia, in);
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
+							path.toString(), templateMedia.getOriginalName()
+						}), ex);
+					}
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
+						path.toString(), templateMedia.getOriginalName()
+					}));
+				}
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
 			}
 		}
 	}

@@ -33,6 +33,8 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
@@ -55,6 +57,7 @@ public abstract class StandardEntity<T>
 	public static final String INACTIVE_STATUS = "I";
 	public static final String PENDING_STATUS = "P";
 
+	public static final String FIELD_ACTIVE_STATUS = "activeStatus";
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
 
@@ -96,6 +99,22 @@ public abstract class StandardEntity<T>
 	{
 	}
 
+	protected Set<String> excludedChangeFields()
+	{
+		Set<String> excludedFields = new HashSet<>();
+
+		excludedFields.add("activeStatus");
+		excludedFields.add("createUser");
+		excludedFields.add("createDts");
+		excludedFields.add("updateUser");
+		excludedFields.add("updateDts");
+		excludedFields.add("adminModified");
+		excludedFields.add("handler");
+		excludedFields.add("storageVersion");
+
+		return excludedFields;
+	}
+
 	@Override
 	public int compareTo(T o)
 	{
@@ -113,7 +132,7 @@ public abstract class StandardEntity<T>
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		this.setSecurityMarkingType(entity.getSecurityMarkingType());
-		this.setDataSensitivity(entity.getDataSensitivity());		
+		this.setDataSensitivity(entity.getDataSensitivity());
 		if (entity.getActiveStatus() != null) {
 			this.setActiveStatus(entity.getActiveStatus());
 		}
@@ -135,7 +154,7 @@ public abstract class StandardEntity<T>
 		setUpdateUser(SecurityUtil.getCurrentUserName());
 
 		if (getAdminModified() == null) {
-			setAdminModified(SecurityUtil.isAdminUser());
+			setAdminModified(SecurityUtil.isEntryAdminUser());
 		}
 	}
 
@@ -154,7 +173,7 @@ public abstract class StandardEntity<T>
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
 		if (getAdminModified() == null) {
-			setAdminModified(SecurityUtil.isAdminUser());
+			setAdminModified(SecurityUtil.isEntryAdminUser());
 		}
 	}
 

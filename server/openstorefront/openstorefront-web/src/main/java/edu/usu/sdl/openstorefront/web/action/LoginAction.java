@@ -48,6 +48,7 @@ import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.Subject;
@@ -130,12 +131,12 @@ public class LoginAction
 	private String startPage()
 	{
 		String startPage = "/";
-		
+
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
 			startPage = userContext.userLandingPage();
 		}
-		
+
 		if (StringUtils.isNotBlank(gotoPage)) {
 			try {
 				startPage = URLDecoder.decode(gotoPage, "UTF-8");
@@ -196,12 +197,17 @@ public class LoginAction
 			}
 			JsonResponse jsonResponse = new JsonResponse();
 			jsonResponse.setMessage(startPage);
-			return streamResults(jsonResponse);		
-		} catch (AuthenticationException uea) {		
+			return streamResults(jsonResponse);
+		} catch (AuthenticationException uea) {
 			//Keep in mind an attacker can create a DOS hitting accounts...ip logging is here to help trace that scenario.
-			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login. ip: {1}", username, NetworkUtil.getClientIp(getContext().getRequest())));			
+			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login. ip: {1}", username, NetworkUtil.getClientIp(getContext().getRequest())));
 			log.log(Level.FINEST, "Failed to login Details: ", uea);
-			errors.put("username", "Unable to login. Check username and password.");
+
+			if (uea instanceof DisabledAccountException) {
+				errors.put("username", uea.getMessage());
+			} else {
+				errors.put("username", "Unable to login. Check username and password.");
+			}
 		}
 		return streamErrorResponse(errors);
 	}

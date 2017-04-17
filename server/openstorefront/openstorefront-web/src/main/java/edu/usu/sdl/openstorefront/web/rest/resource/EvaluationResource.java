@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -307,6 +308,7 @@ public class EvaluationResource
 				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
+				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
@@ -337,6 +339,33 @@ public class EvaluationResource
 			evaluation.setEvaluationId(evaluationId);
 			evaluation = evaluation.find();
 			return Response.ok(evaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Toggles the allow new section flag")
+	@Path("/{evaluationId}/allownewsections")
+	public Response toggleAllowNewSecionEvaluation(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+
+			if (evaluation.getAllowNewSections()) {
+				evaluation.setAllowNewSections(Boolean.FALSE);
+			} else {
+				evaluation.setAllowNewSections(Boolean.TRUE);
+			}
+			evaluation.save();
+
+			return Response.ok().build();
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
@@ -424,11 +453,47 @@ public class EvaluationResource
 		}
 	}
 
+	@POST
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Adds a new section to an evaluation based on a section template. Evaluation must allow adding Sections")
+	@DataType(ContentSectionAll.class)
+	@Path("/{evaluationId}/sections/{sectionTemplateId}")
+	public Response addSection(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionTemplateId") String sectionTemplateId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+
+		ContentSectionTemplate contentSectionTemplate = new ContentSectionTemplate();
+		contentSectionTemplate.setTemplateId(sectionTemplateId);
+		contentSectionTemplate = contentSectionTemplate.find();
+		if (evaluation != null && contentSectionTemplate != null) {
+
+			if (evaluation.getAllowNewSections()) {
+				String sectionId = service.getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluationId, sectionTemplateId);
+				ContentSectionAll contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId, false);
+				return Response.created(URI.create("v1/resource/evaluations/" + evaluationId + "/sections/" + sectionId)).entity(contentSectionAll).build();
+			} else {
+				return Response
+						.status(Response.Status.FORBIDDEN)
+						.type(MediaType.MEDIA_TYPE_WILDCARD)
+						.entity("Evaluation doesn't allow adding sections")
+						.build();
+			}
+		} else {
+			return sendSingleEntityResponse(null);
+		}
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@APIDescription("Save a section and subsections")
+	@APIDescription("Save a section and it's subsections")
 	@DataType(ContentSectionAll.class)
 	@Path("/{evaluationId}/sections/{sectionId}")
 	public Response saveSection(
@@ -454,7 +519,36 @@ public class EvaluationResource
 		}
 	}
 
-	//add section
+	@DELETE
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.WILDCARD})
+	@APIDescription("Deletes a section and it's subsections; Evaluation must allow for adding sections")
+	@DataType(ContentSectionAll.class)
+	@Path("/{evaluationId}/sections/{sectionId}")
+	public Response deleteSection(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			if (evaluation.getAllowNewSections()) {
+				service.getContentSectionService().deleteContentSection(sectionId);
+				return Response.status(Response.Status.NO_CONTENT).build();
+			} else {
+				return Response
+						.status(Response.Status.FORBIDDEN)
+						.type(MediaType.MEDIA_TYPE_WILDCARD)
+						.entity("Evaluation doesn't allow adding sections")
+						.build();
+			}
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
 	//remove section
 	//add sub section to section
 	//remove sub section to section
@@ -770,7 +864,7 @@ public class EvaluationResource
 		section.setContentSectionId(sectionId);
 		section = section.find();
 		if (section != null) {
-			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId);
+			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId, false);
 		}
 		return sendSingleEntityResponse(contentSectionAll);
 	}
@@ -814,9 +908,10 @@ public class EvaluationResource
 		if (existing != null) {
 			ValidationResult result = evaluationChecklist.validate(true);
 			if (result.valid()) {
-				existing.updateFields(evaluationChecklist);
-				existing = existing.save();
-				return Response.ok(existing).build();
+				evaluationChecklist.setEvaluationId(evaluationId);
+				evaluationChecklist.setChecklistId(checklistId);
+				evaluationChecklist = evaluationChecklist.save();
+				return Response.ok(evaluationChecklist).build();
 			} else {
 				return Response.ok(result.toRestError()).build();
 			}

@@ -47,7 +47,7 @@
 			<%
 				BaseToolAction baseToolAction = (BaseToolAction)request.getAttribute("actionBean");
 				for (String key : baseToolAction.getPageMap().keySet()) {
-					out.println("			pageMap['" + key + "'] = '" + baseToolAction.getPageMap().get(key) + "';");
+					out.println("			pageMap['" + key + "'] = '" + baseToolAction.getPageMap().get(key).getPage() + "';");
 				}
 			%>
 
@@ -117,6 +117,7 @@
 								{
 									xtype: 'image',
 									height: 53,
+									alt: 'logo',
 									cls: 'linkItem',
 									title: 'Go back to Home Page',
 									src: '${branding.secondaryLogoUrl}',

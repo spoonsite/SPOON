@@ -37,7 +37,7 @@ public class SecurityPermission
 	public static final String REPORTS_ALL = "REPORTS-ALL";
 	public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 	public static final String EVALUATIONS = "EVALUATIONS";
-		
+
 	public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
 	public static final String ADMIN_SYSTEM_MANAGEMENT = "ADMIN-SYSTEM-MANAGEMENT";
@@ -52,7 +52,7 @@ public class SecurityPermission
 	public static final String ADMIN_USER_MANAGEMENT_PROFILES = "ADMIN-USER-MANAGEMENT-PROFILES";
 	public static final String ADMIN_TEMPMEDIA_MANAGEMENT = "ADMIN-TEMPMEDIA-MANAGEMENT";
 	public static final String ADMIN_ORGANIZATION = "ADMIN-ORGANIZATION";
-	public static final String ADMIN_ORGANIZATION_EXTRACTION = "ADMIN-ORGANIZATION-EXTRACTION";	
+	public static final String ADMIN_ORGANIZATION_EXTRACTION = "ADMIN-ORGANIZATION-EXTRACTION";
 	public static final String ADMIN_LOOKUPS = "ADMIN-LOOKUPS";
 	public static final String ADMIN_HIGHLIGHTS = "ADMIN-HIGHLIGHTS";
 	public static final String ADMIN_MEDIA = "ADMIN-MEDIA";
@@ -73,7 +73,6 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_MANAGEMENT = "ADMIN-EVALUATION-MANAGEMENT";
 	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
-		
 
 	public SecurityPermission()
 	{
@@ -86,11 +85,11 @@ public class SecurityPermission
 		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag"));
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule"));
 		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "Reports"));
-		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All"));
+		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All - Allows viewing reports from all users"));
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions"));
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations"));
 		codeMap.put(RELATIONSHIP_VIEW_TOOL, newLookup(SecurityPermission.class, RELATIONSHIP_VIEW_TOOL, "Relationship View Tool"));
-		
+
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management"));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "Admin system management"));
 		codeMap.put(ADMIN_ENTRY_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_MANAGEMENT, "Admin entry management"));
@@ -104,8 +103,8 @@ public class SecurityPermission
 		codeMap.put(ADMIN_USER_MANAGEMENT_PROFILES, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_PROFILES, "Admin user management profiles"));
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT, "Admin tempmedia management"));
 		codeMap.put(ADMIN_ORGANIZATION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION, "Admin organization"));
-		codeMap.put(ADMIN_ORGANIZATION_EXTRACTION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_EXTRACTION, "Allow running organization extraction"));		
-		codeMap.put(ADMIN_LOOKUPS, newLookup(SecurityPermission.class, ADMIN_LOOKUPS, "Admin lookups"));		
+		codeMap.put(ADMIN_ORGANIZATION_EXTRACTION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_EXTRACTION, "Allow running organization extraction"));
+		codeMap.put(ADMIN_LOOKUPS, newLookup(SecurityPermission.class, ADMIN_LOOKUPS, "Admin lookups"));
 		codeMap.put(ADMIN_HIGHLIGHTS, newLookup(SecurityPermission.class, ADMIN_HIGHLIGHTS, "Admin highlights"));
 		codeMap.put(ADMIN_MEDIA, newLookup(SecurityPermission.class, ADMIN_MEDIA, "Admin media"));
 		codeMap.put(ADMIN_FEEDBACK, newLookup(SecurityPermission.class, ADMIN_FEEDBACK, "Admin feedback"));
@@ -119,13 +118,13 @@ public class SecurityPermission
 		codeMap.put(ADMIN_QUESTIONS, newLookup(SecurityPermission.class, ADMIN_QUESTIONS, "Admin questions"));
 		codeMap.put(ADMIN_REVIEW, newLookup(SecurityPermission.class, ADMIN_REVIEW, "Admin review"));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST, "Admin evalution template checklist"));
-		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question"));		
+		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question"));
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT, "Admin attribute management"));
 		codeMap.put(ADMIN_ALERT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT, "Admin alert management"));
 		codeMap.put(ADMIN_EVALUATION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_MANAGEMENT, "Admin evaluation management"));
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Admin security"));
 		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management"));
-		
+
 		return codeMap;
 	}
 }

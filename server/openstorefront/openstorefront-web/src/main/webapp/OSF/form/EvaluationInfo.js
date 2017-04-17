@@ -73,6 +73,22 @@ Ext.define('OSF.form.EvaluationInfo', {
 				}
 			}			
 		}));
+		formItems.push(Ext.create('OSF.component.SecurityComboBox', {						
+			width: '100%',
+			itemId: 'securityMarking',
+			labelClsExtra: 'eval-form-field-label',
+			fieldCls: 'eval-form-field',
+			labelAlign: 'right',
+			labelWidth: 200,
+			listeners: {
+				change: {
+					buffer: 1000,
+					fn: function(field, newValue, oldValue) {
+						evalForm.saveData();
+					}
+				}
+			}			
+		}));		
 		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {												
 			width: '100%',
 			itemId: 'dataSensitivity',
@@ -118,6 +134,14 @@ Ext.define('OSF.form.EvaluationInfo', {
 					}, 2000);
 				});
 				
+				evalForm.queryById('securityMarking').on('ready', function() {
+					evalForm.loadRecord(record);
+					
+					Ext.defer(function(){
+						evalForm.doneInitialLoad = true;
+					}, 2000);
+				});				
+				
 				evalForm.evaluation = evaluation;
 				if (opts && opts.mainForm) {
 					evalForm.refreshCallback = opts.mainForm.refreshCallback;
@@ -142,11 +166,14 @@ Ext.define('OSF.form.EvaluationInfo', {
 
 				if (evalForm.evaluation.version !== data.version ||
 					evalForm.evaluation.workflowStatus !== data.workflowStatus ||
-					evalForm.evaluation.dataSensitivity !== data.dataSensitivity)
+					evalForm.evaluation.dataSensitivity !== data.dataSensitivity ||
+					evalForm.evaluation.securityMarkingType !== data.securityMarkingType
+					)
 				{			
 					evalForm.evaluation.version = data.version;
 					evalForm.evaluation.workflowStatus = data.workflowStatus;
 					evalForm.evaluation.dataSensitivity = data.dataSensitivity;
+					evalForm.evaluation.securityMarkingType = data.securityMarkingType; 
 					delete evalForm.evaluation.type;
 
 					CoreUtil.submitForm({

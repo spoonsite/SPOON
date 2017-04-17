@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.security;
 
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ public class SecurityUtil
 
 	private static final Logger LOG = Logger.getLogger(SecurityUtil.class.getName());
 
-	public static final String ADMIN_ROLE = "administrator";
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
 	/**
@@ -98,16 +98,15 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Checks the current user to see if they are an admin
+	 * Checks the current user to see if they are an entry admin
 	 *
-	 * @return true if the user is an admin
+	 * @return true if the user is an entry admin
 	 */
-	public static boolean isAdminUser()
+	public static boolean isEntryAdminUser()
 	{
 		boolean admin = false;
-		try {
-			Subject currentUser = SecurityUtils.getSubject();
-			admin = currentUser.hasRole(ADMIN_ROLE);
+		try {			
+			admin = hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		} catch (Exception e) {
 			LOG.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
 		}

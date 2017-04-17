@@ -21,9 +21,13 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,7 +38,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Holds question responses")
 public class ComponentQuestionResponse
 		extends BaseComponent<ComponentQuestionResponse>
-		implements OrganizationModel
+		implements OrganizationModel, LoggableModel<ComponentQuestionResponse>
 {
 
 	@PK(generated = true)
@@ -84,14 +88,31 @@ public class ComponentQuestionResponse
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
+		ComponentQuestionResponse questionResponse = (ComponentQuestionResponse) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, questionResponse);
 		super.updateFields(entity);
 
-		ComponentQuestionResponse questionResponse = (ComponentQuestionResponse) entity;
 		this.setOrganization(questionResponse.getOrganization());
 		this.setQuestionId(questionResponse.getQuestionId());
 		this.setResponse(questionResponse.getResponse());
 		this.setUserTypeCode(questionResponse.getUserTypeCode());
 
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentQuestionResponse updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("responseId");
+		excludeFields.add("questionId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return getResponse();
 	}
 
 	public String getResponseId()

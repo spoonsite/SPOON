@@ -41,7 +41,7 @@
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
-		request.setAttribute("admin", SecurityUtil.isAdminUser());			
+		request.setAttribute("admin", SecurityUtil.isEntryAdminUser());			
 	%>	
 
 	<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>

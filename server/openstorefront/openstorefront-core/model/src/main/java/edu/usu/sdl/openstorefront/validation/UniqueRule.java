@@ -64,9 +64,9 @@ public class UniqueRule
 	{
 		Unique unique = field.getAnnotation(Unique.class);
 		if (unique != null) {
-			return "Field is required to be unique accord to handler: " + unique.value().getSimpleName();
+			return "Field is required to be unique according to handler: " + unique.value().getSimpleName();
 		}
-		return "Field is required to be unique accord to handler.";
+		return "Field is required to be unique according to handler.";
 	}
 
 }

@@ -174,7 +174,7 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 			//only allow deleting of user notifications unless admin
-			if (SecurityUtil.isAdminUser()
+			if (SecurityUtil.isEntryAdminUser()
 					|| (notificationEvent.getUsername() != null
 					&& SecurityUtil.getCurrentUserName().equals(notificationEvent.getUsername()))) {
 				service.getNotificationService().deleteEvent(eventId);

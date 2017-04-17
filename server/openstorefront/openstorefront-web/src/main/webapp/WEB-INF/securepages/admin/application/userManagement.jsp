@@ -520,7 +520,7 @@
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'filterActiveStatus',									
-									emptyText: 'Acivate',
+									emptyText: 'Active',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',									
 									typeAhead: false,
@@ -588,11 +588,11 @@
 												},
 												{
 													code: 'firstName',
-													description: 'Firstname'
+													description: 'First Name'
 												},
 												{
 													code: 'lastName',
-													description: 'lastname'
+													description: 'Last Name'
 												},
 												{
 													code: 'email',
@@ -703,7 +703,7 @@
 									itemId: 'disable',
 									iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
-									tooltip: 'Locks/inactivates user account',
+									tooltip: 'Locks/Inactivates user account',
 									disabled: true,
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
@@ -870,17 +870,36 @@
 				};
 				
 				var actionDisableUser = function(record) {
-					userGrid.setLoading('Disabling user...');								
-					Ext.Ajax.request({
-						url: 'api/v1/resource/users/' + record.get('username') + '/disable',
-						method: 'PUT',
-						callback: function(){
-							userGrid.setLoading(false);
-						},
-						success: function(response, opts) {
-							actionRefreshUsers();
-						}
-					});	
+				
+					var doDisable = function() {
+						userGrid.setLoading('Disabling user...');								
+						Ext.Ajax.request({
+							url: 'api/v1/resource/users/' + record.get('username') + '/disable',
+							method: 'PUT',
+							callback: function(){
+								userGrid.setLoading(false);
+							},
+							success: function(response, opts) {
+								actionRefreshUsers();
+							}
+						});							
+					};
+				
+					if (record.get('username') === currentUser.username) {
+						Ext.Msg.show({
+							title: 'Disable Own Account?',
+							message: '<br>Are you sure you want to disabled your account? <br> <b>You will be unable to relogin.</b>',
+							buttons: Ext.Msg.YESNO,
+							icon: Ext.Msg.WARNING,
+							fn: function(btn) {
+								if (btn === 'yes') {
+									doDisable();
+								}
+							}
+						});
+					} else {
+						doDisable();
+					}
 				};
 				
 				var actionDeleteUser = function(record) {
@@ -1093,7 +1112,9 @@
 				
 				addComponentToMainViewPort(mainPanel);								
 				
+				var currentUser;
 				CoreService.userservice.getCurrentUser().then(function(user){
+					currentUser = user;
 					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ROLE-MANAGEMENT")) {
 						userGrid.getComponent('tools').getComponent('role').setHidden(false);					
 					}									

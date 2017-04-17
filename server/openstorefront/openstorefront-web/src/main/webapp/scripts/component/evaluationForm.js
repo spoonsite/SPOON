@@ -163,6 +163,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 			]
 		});
 		
+		var changeHistory = Ext.create('OSF.component.ChangeLogWindow', {									
+		});
+		
 		evalPanel.contentPanel = Ext.create('Ext.panel.Panel', {
 			region: 'center',			
 			layout: 'fit',
@@ -183,6 +186,38 @@ Ext.define('OSF.component.EvaluationPanel', {
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Change History',
+							itemId: 'changeHistoryBtn',
+							iconCls: 'fa fa-2x fa-history',
+							scale: 'medium',
+							handler: function() {									
+								changeHistory.show();
+								
+								changeHistory.load({
+									entity: 'Component',												
+									entityId: evalPanel.componentId,
+									includeChildren: true,
+									addtionalLoad: function(data, changeWindow) {
+										changeWindow.setLoading(true);
+										Ext.Ajax.request({
+											url: 'api/v1/resource/changelogs/Evaluation/' + evalPanel.evaluationId + '?includeChildren=true',
+											callback: function() {
+												changeWindow.setLoading(false);
+											},
+											success: function(response, opts) {
+												var extraData = Ext.decode(response.responseText);												
+												Ext.Array.push(data, extraData);
+												data.sort(function(a, b){
+													return Ext.Date.parse(b.createDts, 'C') - Ext.Date.parse(a.createDts, 'C');
+												});												
+												changeWindow.updateData(data);
+											}
+										});
+									}
+								});
+							}
 						}
 					]
 				}
@@ -582,6 +617,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 		var evalPanel = this;
 		
 		evalPanel.setLoading(true);
+		evalPanel.evaluationId = evaluationId;
+		evalPanel.componentId = componentId;
 		
 		var entryType = 'COMP';		
 		Ext.Ajax.request({
@@ -669,6 +706,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 					});						
 				}		
 				
+				evalPanel.navigation.getComponent('entrymenu').removeAll();
 				evalPanel.navigation.getComponent('entrymenu').add(menuItems);
 				
 				Ext.Ajax.request({
@@ -783,13 +821,60 @@ Ext.define('OSF.component.EvaluationPanel', {
 									}
 								]							
 							});
-						});	
+						});
+						evalPanel.navigation.getComponent('checklistmenu').removeAll();
 						evalPanel.navigation.getComponent('checklistmenu').add(questions);
 						
 						var sections = [];
 						Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
-							sections.push({							
+							
+							var menu = null;
+							var buttonType = 'button';
+							if (evaluationAll.evaluation.allowNewSections) {
+								
+								buttonType = 'splitbutton';
+								menu = {
+									items: [
+										{
+											text: 'Delete Section',
+											iconCls: 'fa fa-lg fa-trash-o icon-button-color-warning icon-small-vertical-correction-book',
+											handler: function(){
+												Ext.Msg.show({
+													title:'Delete: ' + sectionAll.section.title + '?',													
+													message: 'Are you sure you want to remove this section?',
+													buttons: Ext.Msg.YESNO,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															
+															evalPanel.setLoading('Deleting Section: ' + sectionAll.section.title);
+															Ext.Ajax.request({
+																url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionAll.section.contentSectionId,
+																method: 'DELETE',
+																callback: function() {
+																	evalPanel.setLoading(false);
+																},
+																success: function(response, opts) {
+																	evalPanel.loadContentForm({
+																		form: 'EvaluationInfo',
+																		title: 'Evaluation Info'
+																	});
+																	evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);																		
+																}
+															});
+														}
+													}
+												});												
+											}
+										}
+									]
+								};
+							}
+							
+							sections.push({	
+								xtype: buttonType,
 								text: sectionAll.section.title,
+								menu: menu,
 								handler: function(){
 									evalPanel.loadContentForm({
 										form: 'Section',
@@ -800,7 +885,121 @@ Ext.define('OSF.component.EvaluationPanel', {
 							});							
 						});
 						
+						evalPanel.navigation.getComponent('sectionmenu').removeAll();
 						evalPanel.navigation.getComponent('sectionmenu').add(sections);
+						
+						if (evaluationAll.evaluation.allowNewSections) {
+							var dockedTools = evalPanel.navigation.getComponent('sectionmenu').getDockedComponent('tools');
+							if (!dockedTools) {							
+								evalPanel.navigation.getComponent('sectionmenu').addDocked({
+									xtype: 'toolbar',
+									itemId: 'tools',
+									dock: 'top',
+									items: [
+										{
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+											text: 'Add Section',
+											handler: function() {
+
+												var sectionWindow = Ext.create('Ext.window.Window', {
+													title: 'Add Section',
+													modal: true,
+													closeAction: 'destroy',
+													width: 400,
+													height: 175,
+													layout: 'fit',
+													items: [
+														{
+															xtype: 'form',
+															bodyStyle: 'padding: 10px;',
+															items: [
+																{
+																	xtype: 'combobox',
+																	name: 'templateId',
+																	fieldLabel: 'Section Template',
+																	displayField: 'name',
+																	valueField: 'templateId',								
+																	emptyText: 'Select',
+																	labelAlign: 'top',
+																	width: '100%',
+																	editable: false,
+																	forceSelection: true,
+																	allowBlank: false,
+																	store: {									
+																		autoLoad: true,
+																		proxy: {
+																			type: 'ajax',
+																			url: 'api/v1/resource/contentsectiontemplates'
+																		},
+																		listeners: {
+																			load: function(store, records, opts) {
+																				store.filterBy(function(record){
+																					var keep = true;
+																					Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+																						if (record.get('templateId') === sectionAll.section.templateId) {
+																							keep = false;
+																						}
+																					});
+																					return keep;
+																				});
+																			}
+																		}
+																	}
+																}
+															],
+															dockedItems: [
+																{
+																	xtype: 'toolbar',
+																	dock: 'bottom',
+																	items: [
+																		{
+																			text: 'Add',
+																			iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+																			formBind: true,
+																			handler: function() {
+																				var win = this.up('window');
+																				var form = this.up('form');
+																				var sectionData = form.getValues();
+
+																				evalPanel.setLoading('Adding Section...');
+																				Ext.Ajax.request({
+																					url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionData.templateId,
+																					method: 'POST',
+																					callback: function(response, opts) {
+																						evalPanel.setLoading(false);
+																					},
+																					success: function(response, opts) {
+																						evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
+																						win.close();
+																					}																		
+																				});
+
+																			}
+																		},
+																		{
+																			xtype: 'tbfill'
+																		},
+																		{
+																			text: 'Cancel',
+																			iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																			handler: function() {
+																				this.up('window').close();
+																			}
+																		}																	
+																	]
+																}
+															]
+														}
+													]
+												});
+												sectionWindow.show();
+											}
+										}
+									]
+								});
+							}
+						}
+						
 					}
 				});				
 				
@@ -811,6 +1010,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 	},
 	loadContentForm: function(page) {
 		var evalPanel = this;
+		
+		if (evalPanel.currentContentForm && evalPanel.currentContentForm.unsavedChanges) {
+			evalPanel.currentContentForm.saveData();
+		}
 		
 		evalPanel.commentPanel.setHidden(false);
 		evalPanel.contentPanel.removeAll(true);
@@ -827,8 +1030,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 			hideSecurityMarking: hideSecurityMarking
 		}, page.options)
 		);
-
+		
 		evalPanel.contentPanel.add(contentForm);
+		evalPanel.currentContentForm = contentForm;
 
 		if (contentForm.loadData) {
 			if (page.refreshCallback) {

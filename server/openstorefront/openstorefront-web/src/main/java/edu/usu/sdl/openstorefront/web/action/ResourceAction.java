@@ -147,7 +147,7 @@ public class ResourceAction
 							try {
 								service.getComponentService().saveResourceFile(componentResource, file.getInputStream());
 
-								if (SecurityUtil.isAdminUser() == false) {
+								if (SecurityUtil.isEntryAdminUser() == false) {
 									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
 										service.getComponentService().checkComponentCancelStatus(componentResource.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
 									}

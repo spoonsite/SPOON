@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global CoreService, Ext */
+/* global CoreService, Ext, CoreUtil */
 
 Ext.define('OSF.component.ReviewWindow', {
 	extend: 'Ext.window.Window',
@@ -186,7 +186,7 @@ Ext.define('OSF.component.ReviewWindow', {
 					width: 200,
 					fieldLabel: 'How long have you used it <span class="field-required" />',
 					storeConfig: {
-						url: 'api/v1/resource/lookuptypes/ExperienceTimeType',						
+						url: 'api/v1/resource/lookuptypes/ExperienceTimeType'					
 					}
 				}),
 				{	

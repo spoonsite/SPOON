@@ -82,7 +82,9 @@
 						mainAddEditWin.on('close', mainAddEditWin.changeRequestCloseHandler);
 					}					
 				});
-							
+						
+				var changeHistory = Ext.create('OSF.component.ChangeLogWindow', {
+				});	
 			
 				//Sub Forms
 
@@ -257,6 +259,22 @@
 										xtype: 'tbfill'
 									},
 									{
+										text: 'Change History',
+										itemId: 'changeHistoryBtn',
+										iconCls: 'fa fa-lg fa-history',
+										handler: function() {
+											changeHistory.show();
+											changeHistory.load({
+												entity: 'Component',												
+												entityId: generalForm.componentRecord.get('componentId'),
+												includeChildren: true
+											});
+										}
+									},
+									{
+										xtype: 'tbseparator'										
+									},									
+									{
 										text: 'Message Submitter',
 										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-default',
 										handler: function() {
@@ -319,7 +337,7 @@
 									{
 										text: 'Save',
 										tooltip: 'Save General information and continue.',
-										iconCls: 'fa fa-lg fa-save icon-button-color-add',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function() {
 
@@ -714,6 +732,12 @@
 						iconCls: 'fa fa-lg fa-edit',						
 						closeAction: 'destroy',
 						generalForm: generalForm,
+						listeners:
+						{
+							show: function(){        
+								this.removeCls("x-unselectable");    
+							}
+						},							
 						items: [
 							{
 								xtype: 'tabpanel',	
@@ -2119,7 +2143,8 @@
 							mainAddEditWin.generalForm.loadComponentAttributes();
 						}, 250);
 						
-						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);						
+						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);	
+						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);							
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						
@@ -2128,6 +2153,7 @@
 												
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 
 						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(true);
+						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(true);	
 						
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');

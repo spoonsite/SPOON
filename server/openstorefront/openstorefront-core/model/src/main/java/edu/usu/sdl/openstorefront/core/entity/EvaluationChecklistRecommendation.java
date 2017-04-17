@@ -16,11 +16,16 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +36,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Evalution recommendation")
 public class EvaluationChecklistRecommendation
 		extends StandardEntity<EvaluationChecklistRecommendation>
+		implements LoggableModel<EvaluationChecklistRecommendation>
 {
 
 	@PK(generated = true)
@@ -63,13 +69,43 @@ public class EvaluationChecklistRecommendation
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
+		EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, evaluationChecklistRecommendation);
 		super.updateFields(entity);
 
-		EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) entity;
 		setReason(evaluationChecklistRecommendation.getReason());
 		setRecommendation(evaluationChecklistRecommendation.getRecommendation());
 		setRecommendationType(evaluationChecklistRecommendation.getRecommendationType());
 
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(EvaluationChecklistRecommendation updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("recommendationId");
+		excludeFields.add("checklistId");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return getRecommendation();
+	}
+
+	@Override
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(EvaluationChecklist.class.getSimpleName());
+		changeLog.setParentEntityId(getChecklistId());
+
+		String comment = changeLog.getComment();
+		if (comment != null) {
+			comment = StringProcessor.ellipseString(getRecommendation(), 60);
+		}
+		changeLog.setComment(comment);
 	}
 
 	public String getRecommendationId()

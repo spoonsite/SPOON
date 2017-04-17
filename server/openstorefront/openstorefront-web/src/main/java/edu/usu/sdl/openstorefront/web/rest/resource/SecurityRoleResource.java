@@ -17,9 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
-import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
-import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
@@ -53,8 +50,9 @@ import javax.ws.rs.core.Response;
 @Path("v1/resource/securityroles")
 @APIDescription("Handles security roles")
 public class SecurityRoleResource
-	extends BaseResource
+		extends BaseResource
 {
+
 	private static final Logger LOG = Logger.getLogger(SecurityRoleResource.class.getName());
 
 	@GET
@@ -62,38 +60,38 @@ public class SecurityRoleResource
 	@APIDescription("Gets security roles.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityRole.class)
-	public List<SecurityRole> getRoles() 
+	public List<SecurityRole> getRoles()
 	{
-		SecurityRole securityRole = new SecurityRole();				
+		SecurityRole securityRole = new SecurityRole();
 		List<SecurityRole> securityRoles = securityRole.findByExample();
 		return securityRoles;
-	} 
-	
-	@GET	
+	}
+
+	@GET
 	@APIDescription("Gets security roles for pick list.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
-	public List<LookupModel> getRolesLookup() 
+	public List<LookupModel> getRolesLookup()
 	{
 		List<LookupModel> roles = new ArrayList<>();
-		
-		SecurityRole securityRole = new SecurityRole();				
+
+		SecurityRole securityRole = new SecurityRole();
 		List<SecurityRole> securityRoles = securityRole.findByExample();
 		securityRoles = securityRoles.stream()
-									.filter(r -> !SecurityRole.DEFAULT_GROUP.equals(r.getRoleName()))
-									.collect(Collectors.toList());
-		
+				.filter(r -> !SecurityRole.DEFAULT_GROUP.equals(r.getRoleName()))
+				.collect(Collectors.toList());
+
 		for (SecurityRole role : securityRoles) {
 			LookupModel lookup = new LookupModel();
 			lookup.setCode(role.getRoleName());
-			lookup.setDescription(role.getRoleName());			
+			lookup.setDescription(role.getRoleName());
 			roles.add(lookup);
-		}		
-		
+		}
+
 		return roles;
-	} 		
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@APIDescription("Gets a security role.")
@@ -102,15 +100,14 @@ public class SecurityRoleResource
 	@Path("/{rolename}")
 	public Response getRole(
 			@PathParam("rolename") String rolename
-	) 
+	)
 	{
-		SecurityRole securityRole = new SecurityRole();		
+		SecurityRole securityRole = new SecurityRole();
 		securityRole.setRoleName(rolename);
 		securityRole = securityRole.find();
 		return sendSingleEntityResponse(securityRole);
-	} 	
-	
-	
+	}
+
 	@POST
 	@APIDescription("Create a new security role.")
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
@@ -123,10 +120,10 @@ public class SecurityRoleResource
 	{
 		return handleSaveRole(securityRole, true);
 	}
-	
+
 	@PUT
 	@APIDescription("Update a security role.")
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)	
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserRole.class)
@@ -136,34 +133,26 @@ public class SecurityRoleResource
 			SecurityRole securityRole
 	)
 	{
-		SecurityRole existing = new SecurityRole();		
+		SecurityRole existing = new SecurityRole();
 		existing.setRoleName(rolename);
 		existing = existing.find();
-		if (existing != null) {			
+		if (existing != null) {
 			securityRole.setRoleName(rolename);
 			return handleSaveRole(securityRole, false);
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
-	
+
 	private Response handleSaveRole(SecurityRole securityRole, boolean post)
 	{
 		ValidationResult validationResult = securityRole.validate();
+		if (post) {
+			validationResult.merge(service.getSecurityService().validateSecurityRoleName(securityRole.getRoleName()));
+		}
+
 		if (validationResult.valid()) {
-			if (post) {
-				//check name for uniqueness (case-insensitive)...rare to be case-sensitive in LDAPs
-				SecurityRole existing = new SecurityRole();		
-				existing.setRoleName(securityRole.getRoleName().toLowerCase());	
-				
-				QueryByExample<SecurityRole> example = new QueryByExample<>(existing);
-				example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-				existing = service.getPersistenceService().queryOneByExample(example);
-				if (existing != null) {
-					return Response.status(Response.Status.CONFLICT).build();
-				}
-			}		
 			SecurityRole savedRole = service.getSecurityService().saveSecurityRole(securityRole);
-			
+
 			if (post) {
 				return Response.created(URI.create("v1/resource/securityroles/" + savedRole.getRoleName())).entity(savedRole).build();
 			} else {
@@ -173,7 +162,7 @@ public class SecurityRoleResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@APIDescription("Deletes a security role. Optional moves the users to a new role.")
@@ -181,17 +170,17 @@ public class SecurityRoleResource
 	public Response deleteRole(
 			@PathParam("rolename") String rolename,
 			@QueryParam("movetorole") String moveToRole
-	) 
+	)
 	{
-		SecurityRole securityRole = new SecurityRole();		
+		SecurityRole securityRole = new SecurityRole();
 		securityRole.setRoleName(rolename);
 		securityRole = securityRole.find();
-		if (securityRole != null) {			
-			service.getSecurityService().deleteSecurityRole(rolename, moveToRole);			
+		if (securityRole != null) {
+			service.getSecurityService().deleteSecurityRole(rolename, moveToRole);
 			return Response.noContent().build();
 		}
 		return sendSingleEntityResponse(securityRole);
-	} 		
+	}
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
@@ -201,15 +190,15 @@ public class SecurityRoleResource
 	@Path("/{rolename}/users")
 	public List<UserRole> getUserForRole(
 			@PathParam("rolename") String rolename
-	) 
+	)
 	{
 		UserRole userRole = new UserRole();
 		userRole.setRole(rolename);
 		userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
 		List<UserRole> userRoles = userRole.findByExample();
-		return userRoles;		
-	}	
-	
+		return userRoles;
+	}
+
 	@POST
 	@APIDescription("Adds a user to a security role.")
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
@@ -220,9 +209,9 @@ public class SecurityRoleResource
 	public Response addUserToRole(
 			@PathParam("rolename") String rolename,
 			UserRole userRole
-	) 
+	)
 	{
-		SecurityRole securityRole = new SecurityRole();		
+		SecurityRole securityRole = new SecurityRole();
 		securityRole.setRoleName(rolename);
 		securityRole = securityRole.find();
 		if (securityRole != null) {
@@ -236,12 +225,12 @@ public class SecurityRoleResource
 			} else {
 				LOG.log(Level.FINE, MessageFormat.format("User was not found. User: {0}", userRole.getUsername()));
 				return Response.status(Response.Status.NOT_FOUND).build();
-			}	
-		}	
-		LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));		
+			}
+		}
+		LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));
 		return sendSingleEntityResponse(securityRole);
 	}
-		
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@APIDescription("Removes an user from a security role.")
@@ -249,24 +238,24 @@ public class SecurityRoleResource
 	public Response removeUserFromRole(
 			@PathParam("rolename") String rolename,
 			@PathParam("username") String username
-	) 
+	)
 	{
-		SecurityRole securityRole = new SecurityRole();		
+		SecurityRole securityRole = new SecurityRole();
 		securityRole.setRoleName(rolename);
 		securityRole = securityRole.find();
 		if (securityRole != null) {
 			UserProfile userProfile = new UserProfile();
 			userProfile.setUsername(username);
 			userProfile = userProfile.find();
-			if (userProfile != null) {				
-				service.getSecurityService().removeRoleFromUser(username, rolename);				
+			if (userProfile != null) {
+				service.getSecurityService().removeRoleFromUser(username, rolename);
 			} else {
-				LOG.log(Level.FINE, MessageFormat.format("User was not found. User: {0}", username));				
-			}	
-		} else {	
-			LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));		
+				LOG.log(Level.FINE, MessageFormat.format("User was not found. User: {0}", username));
+			}
+		} else {
+			LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));
 		}
 		return Response.noContent().build();
 	}
-	
+
 }

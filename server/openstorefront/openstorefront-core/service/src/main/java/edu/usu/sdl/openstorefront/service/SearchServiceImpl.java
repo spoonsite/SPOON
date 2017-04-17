@@ -307,11 +307,16 @@ public class SearchServiceImpl
 
 				//get intermediate Results
 				if (!masterResults.isEmpty()) {
+					String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+					if (StringUtils.isNotBlank(dataFilterRestriction)) {
+						dataFilterRestriction += " and ";
+					}
+					
 					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + 
 									Component.class.getSimpleName() + 
 									" where " +
-									FilterEngine.queryComponentRestriction() +
-									" and componentId in :idList";
+									dataFilterRestriction +
+									" componentId in :idList";
 					
 					Map<String, Object> parameterMap = new HashMap<>();
 					parameterMap.put("idList", masterResults);

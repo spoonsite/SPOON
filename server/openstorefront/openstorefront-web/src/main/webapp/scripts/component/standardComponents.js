@@ -391,3 +391,106 @@ Ext.define('OSF.component.UserMenu', {
 	}	
 	
 });
+
+Ext.define('OSF.component.ChangeLogWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.ChangeLogWindow',
+	
+	title: 'Change History',
+	modal: false,	
+	maximizable: true,
+	width: '40%',
+	height: '70%',
+	layout: 'fit',
+	alwaysOnTop: true,
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Refresh',
+					iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+					handler: function() {
+						this.up('window').refresh();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Close',
+					iconCls: 'fa fa-close icon-button-color-warning',
+					handler: function() {
+						this.up('window').close();
+					}
+				}
+			]
+		}
+	],
+	listeners:
+	{
+		show: function()   
+		{        
+			this.removeCls("x-unselectable");    
+		}
+	},	
+	initComponent: function () {
+		this.callParent();
+		
+		var changeWindow = this;		
+
+		changeWindow.details = Ext.create('Ext.panel.Panel', {
+			bodyStyle: 'padding: 10px;',
+			scrollable: true,
+			tpl: new Ext.XTemplate(				
+				'<tpl for=".">',
+				'	<tpl if="changeTypeDescription">',
+				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
+				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment">{comment}</tpl><br>',									
+				'	<tpl if="newValue"><br><b>New Value: </b><br>',
+				'	<b>{newValue}</b><br><br></tpl>',
+				'	<tpl if="oldValue"><b>Old Value:</b> <br>',
+				'	<span style="color: gray">{oldValue}</span></tpl>',
+				'	<hr></tpl>',				
+				'</tpl>'
+			)			
+		});
+		changeWindow.add(changeWindow.details);		
+	},
+	load: function(loadInfo) {
+		var changeWindow = this;
+
+		changeWindow.setLoading(true);
+		changeWindow.loadInfo  = loadInfo;
+		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/changelogs/' + loadInfo.entity + '/' + loadInfo.entityId + '?includeChildren=' + (loadInfo.includeChildren ? true : false),
+			callback: function() {
+				changeWindow.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				if (loadInfo.addtionalLoad) {
+					loadInfo.addtionalLoad(data, changeWindow);
+				} else {
+					changeWindow.updateData(data);
+				}
+			}
+		});
+	},
+	updateData: function(data) {
+		var changeWindow = this;
+		
+		if (data && data.length > 0){
+			changeWindow.details.update(data);
+		} else {
+			changeWindow.details.update("No Change History");
+		}					
+	},
+	refresh: function() {
+		var changeWindow = this;
+		changeWindow.load(changeWindow.loadInfo);
+	}
+	
+});

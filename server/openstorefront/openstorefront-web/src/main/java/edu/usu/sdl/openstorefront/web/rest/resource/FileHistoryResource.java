@@ -87,7 +87,7 @@ public class FileHistoryResource
 
 		FileHistory fileHistoryExample = new FileHistory();
 		fileHistoryExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.isAdminUser() == false) {
+		if (SecurityUtil.isEntryAdminUser() == false) {
 			fileHistoryExample.setCreateUser(SecurityUtil.getCurrentUserName());
 		}
 

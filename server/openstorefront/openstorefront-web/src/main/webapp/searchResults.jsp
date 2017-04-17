@@ -403,8 +403,19 @@
 						displayField: 'label',
 						valueField: 'componentType',
 						storeConfig: {
-							autoLoad: false,
-							url: 'api/v1/resource/componenttypes'
+							autoLoad: true,
+							url: 'api/v1/resource/componenttypes',
+							sorters: [{
+								property: 'label',
+								direction: 'ASC'
+							}],
+							listeners: {
+								
+								load: function(store, records, successful, operation, eOpts) {
+									
+									store.add({label: '*All*', componentType: null});
+								}
+							}
 						},
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
@@ -816,11 +827,7 @@
 				
 				//determine: client filtering or remote
 				if (!filterMode) {
-					if (searchResultsStore.getTotalCount() <= maxPageSize) {
-						filterMode = 'CLIENT';
-					} else {
-						filterMode = 'REMOTE';
-					}										
+					filterMode = 'REMOTE';										
 				}
 								
 				var data = [];
@@ -849,27 +856,6 @@
 					}
 					Ext.getCmp('searchStats').update(statLine);
 				}
-				
-				//add all topics found
-				var entryTypeInResults = [];
-				if (data.length > 0) {
-					entryTypeInResults.push({
-						label: '*All*',
-						componentType: null
-					});
-						
-					var response = opts.getResponse();
-					var dataResponse = Ext.decode(response.responseText);
-						
-					Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-						entryTypeInResults.push({
-							label: stat.componentTypeDescription,
-							componentType: stat.componentType
-						});					
-					});
-				}
-				Ext.getCmp('filterByType').getStore().removeAll();			
-				Ext.getCmp('filterByType').getStore().add(entryTypeInResults);
 				
 				//sorting Attributes
 				Ext.Array.each(data, function(dataItem) {

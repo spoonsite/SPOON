@@ -25,7 +25,7 @@ Ext.define('OSF.component.QuestionWindow', {
 	iconCls: 'fa fa-lg fa-comment',
 	modal: true,
 	width: '70%',
-	height: 400,
+	height: 440,
 	maximizable: true,
 	layout: 'fit',
 	dockedItems: [
@@ -43,6 +43,7 @@ Ext.define('OSF.component.QuestionWindow', {
 		
 		questionWindow.form = Ext.create('Ext.form.Panel', {	
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
+			scrollable: true,
 			items: [
 				{
 					xtype: 'htmleditor',
@@ -193,7 +194,7 @@ Ext.define('OSF.component.ResponseWindow', {
 	modal: true,
 	maximizable: true,
 	width: '70%',
-	height: 400,
+	height: 440,
 	layout: 'fit',
 	dockedItems: [
 		{
@@ -210,6 +211,7 @@ Ext.define('OSF.component.ResponseWindow', {
 				
 		responseWindow.form = Ext.create('Ext.form.Panel', {			
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
+			scrollable: true,
 			items: [
 				{
 					xtype: 'htmleditor',

@@ -15,11 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Handles Content Sections
@@ -29,15 +30,6 @@ import java.io.InputStream;
 public interface ContentSectionService
 		extends AsyncService
 {
-
-	/**
-	 * Saves content Section Attribute
-	 *
-	 * @param contentSectionAttribute
-	 * @return
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute);
 
 	/**
 	 * Save media for a section This doesn't support transactions
@@ -79,9 +71,11 @@ public interface ContentSectionService
 	 * Get the complete model for a section
 	 *
 	 * @param contentSectionId
+	 * @param publicInformationOnly (true to Not include, private sub-sections
+	 * and will return null for private sections)
 	 * @return
 	 */
-	public ContentSectionAll getContentSectionAll(String contentSectionId);
+	public ContentSectionAll getContentSectionAll(String contentSectionId, boolean publicInformationOnly);
 
 	/**
 	 * Saves a template with it's section and subsection
@@ -95,7 +89,7 @@ public interface ContentSectionService
 	/**
 	 * Checks all ties to a content template
 	 *
-	 * @param checklistTemplateId
+	 * @param templateId
 	 * @return
 	 */
 	public boolean isContentTemplateBeingUsed(String templateId);
@@ -108,5 +102,24 @@ public interface ContentSectionService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteContentTemplate(String templateId);
+
+	/**
+	 * This will create and add section to and entity from a section Template
+	 *
+	 * @param entity
+	 * @param entityId
+	 * @param sectionTemplateId
+	 * @return Section Id
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public String createSectionFromTemplate(String entity, String entityId, String sectionTemplateId);
+
+	/**
+	 * Copies media to new section
+	 *
+	 * @param originalMedia
+	 * @param newSection
+	 */
+	public void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection);
 
 }
