@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
@@ -89,6 +90,7 @@ public class ServiceProxy
 	private SecurityService securityService;
 	private ChangeLogService changeLogService;
 	private ChangeLogServicePrivate changeLogServicePrivate;
+	private SystemArchiveService systemArchiveService;
 
 	public ServiceProxy()
 	{
@@ -387,6 +389,15 @@ public class ServiceProxy
 			changeLogServicePrivate = DynamicProxy.newInstance(new ChangeLogServiceImpl());
 		}
 		return changeLogServicePrivate;
+	}
+
+	@Override
+	public SystemArchiveService getSystemArchiveService()
+	{
+		if (systemArchiveService == null) {
+			systemArchiveService = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
+		}
+		return systemArchiveService;
 	}
 
 }
