@@ -80,7 +80,7 @@ Ext.define('OSF.form.Resources', {
 									data: data,
 									form: form,
 									success: function(){
-										Ext.getCmp('resourcesGrid').getStore().reload();
+										resourcePanel.resourcesGrid.getStore().reload();
 										form.reset();
 										form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
 									}

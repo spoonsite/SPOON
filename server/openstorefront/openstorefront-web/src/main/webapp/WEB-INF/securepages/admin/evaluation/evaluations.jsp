@@ -201,12 +201,14 @@
 								xtype: 'checkbox',
 								name: 'allowNewSections',
 								boxLabel: 'Allow Adding Sections'
-							},
+							}
+/*							
 							{
 								xtype: 'checkbox',
 								name: 'allowNewSubSections',
 								boxLabel: 'Allow Adding Sub-Sections'
 							}
+*/							
 						]
 					}
 				]
@@ -261,6 +263,9 @@
 					{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
 					{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },
 					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+						renderer: CoreUtil.renderer.booleanRenderer
+					},
+					{ text: 'Allow New Sections', dataIndex: 'allowNewSections', align: 'center', width: 175, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
@@ -465,7 +470,7 @@
 									},
 									{
 										xtype: 'menuseparator'
-									},
+									},									
 									{
 										text: 'Assign Group',
 										iconCls: 'fa fa-lg fa-users icon-button-color-default icon-small-vertical-correction',
@@ -480,6 +485,14 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
+										}										
+									},
+									{
+										text: 'Toggle Allow New Sections',
+										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionAllowNewSections(record);
 										}										
 									},									
 									{
@@ -737,6 +750,20 @@
 				
 				assignWin.queryById('form').loadRecord(record);		
 		
+			};
+			
+			var actionAllowNewSections = function(record) {
+				evaluationGrid.setLoading('Updating evaluation...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/allownewsections',
+					method: 'PUT',
+					callback: function(){
+						evaluationGrid.setLoading(false);
+					},
+					success: function(response, opts){
+						actionRefresh();
+					}
+				});
 			};
 
 			var copy = function(record) {

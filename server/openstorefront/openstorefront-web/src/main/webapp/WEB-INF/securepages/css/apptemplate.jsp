@@ -329,7 +329,8 @@ limitations under the License.
 
 .details-table {
 	 border-collapse: collapse;
-	 border: 1px solid grey;	 
+	 border: 1px solid grey;
+	table-layout:fixed;
 }
 
 th.details-table {
@@ -354,6 +355,7 @@ td.details-table {
 	border: 1px solid grey;
 	padding: 5px;
 	text-align: left;
+	word-wrap:break-word;
 }
 
 tr.details-table:hover {
@@ -561,6 +563,34 @@ td.info-table {
 
 .entry-template_block {
 	background-color: #45587B;
+}
+
+.entry-template_block-layout {
+	background-color: #c79300;;
+}
+
+.entry-template-drag-proxy {
+    color: #000;
+    padding: 5px;
+    width: 150px;
+    height: 50px;
+    background-color: #ffeb3b;
+    border: 5px dotted #ffeb3b;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.entry-template-drag-proxy-invalid {
+	background-color: #bc0000;
+	color: white;
+}
+
+.entry-template-drag-proxy-valid {
+	background-color: #00bc19;
+	color: white;
 }
 
 .generated-code {

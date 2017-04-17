@@ -23,8 +23,10 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -79,12 +81,16 @@ public class ContentSectionServiceImpl
 	}
 
 	@Override
-	public ContentSectionAll getContentSectionAll(String contentSectionId)
+	public ContentSectionAll getContentSectionAll(String contentSectionId, boolean publicInformationOnly)
 	{
 		ContentSectionAll contentSectionAll = null;
 
 		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
+			if (publicInformationOnly && contentSection.getPrivateSection()) {
+				return null;
+			}
+
 			contentSectionAll = new ContentSectionAll();
 			contentSectionAll.setSection(contentSection);
 
@@ -93,7 +99,20 @@ public class ContentSectionServiceImpl
 			contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
 
 			List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
-			contentSectionAll.getSubsections().addAll(subSections);
+			for (ContentSubSection subSection : subSections) {
+				boolean keep = false;
+				if (publicInformationOnly) {
+					if (!subSection.getPrivateSection()) {
+						keep = true;
+					}
+				} else {
+					keep = true;
+				}
+
+				if (keep) {
+					contentSectionAll.getSubsections().add(subSection);
+				}
+			}
 		}
 
 		return contentSectionAll;
@@ -105,11 +124,10 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(contentSectionMedia);
 		Objects.requireNonNull(in);
 
-		if (contentSectionMedia.getContentSectionMediaId() == null) {
-			getChangeLogService().addEntityChange(contentSectionMedia);
-		}
-
 		ContentSectionMedia savedMedia = contentSectionMedia.save();
+		if (contentSectionMedia.getContentSectionMediaId() == null) {
+			getChangeLogService().addEntityChange(savedMedia);
+		}
 
 		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
 		try (InputStream fileInput = in) {
@@ -227,6 +245,104 @@ public class ContentSectionServiceImpl
 				}
 
 				persistenceService.delete(template);
+			}
+		}
+	}
+
+	@Override
+	public String createSectionFromTemplate(String entity, String entityId, String sectionTemplateId)
+	{
+		Objects.requireNonNull(entity, "Entity Class name required");
+		Objects.requireNonNull(entityId);
+		Objects.requireNonNull(sectionTemplateId);
+
+		ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, sectionTemplateId);
+		if (template != null) {
+
+			ContentSection templateSection = new ContentSection();
+			templateSection.setEntity(ContentSectionTemplate.class.getSimpleName());
+			templateSection.setEntityId(sectionTemplateId);
+			templateSection = templateSection.find();
+
+			WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
+			if (initialStatus == null) {
+				throw new OpenStorefrontRuntimeException("Unable to get initial workflow status", "Add at least one workflow status.");
+			}
+
+			ContentSection contentSection = new ContentSection();
+			contentSection.setContentSectionId(persistenceService.generateId());
+			contentSection.setEntity(entity);
+			contentSection.setEntityId(entityId);
+			contentSection.setTitle(templateSection.getTitle());
+			contentSection.setContent(templateSection.getContent());
+			contentSection.setNoContent(templateSection.getNoContent());
+			contentSection.setPrivateSection(templateSection.getPrivateSection());
+			contentSection.setWorkflowStatus(initialStatus.getCode());
+			contentSection.setTemplateId(sectionTemplateId);
+			contentSection.populateBaseCreateFields();
+			contentSection = persistenceService.persist(contentSection);
+
+			//copy media
+			ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
+			templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
+			List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
+			copySectionMedia(templateMediaRecords, contentSection);
+
+			ContentSubSection templateSubSectionExample = new ContentSubSection();
+			templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
+
+			List<ContentSubSection> templateSubSections = templateSubSectionExample.findByExample();
+			for (ContentSubSection templateSubSection : templateSubSections) {
+
+				ContentSubSection subSection = new ContentSubSection();
+				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.setSubSectionId(persistenceService.generateId());
+				subSection.setTitle(templateSubSection.getTitle());
+				subSection.setContent(templateSubSection.getContent());
+				subSection.setNoContent(templateSubSection.getNoContent());
+				subSection.setHideTitle(templateSubSection.getHideTitle());
+				subSection.setOrder(templateSubSection.getOrder());
+				subSection.setPrivateSection(templateSubSection.getPrivateSection());
+				subSection.setCustomFields(templateSubSection.getCustomFields());
+				subSection.populateBaseCreateFields();
+				persistenceService.persist(subSection);
+
+			}
+
+			return contentSection.getContentSectionId();
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find template", "Check inpute template Id: " + sectionTemplateId);
+		}
+
+	}
+
+	@Override
+	public void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection)
+	{
+		for (ContentSectionMedia templateMedia : originalMedia) {
+			ContentSectionMedia sectionMedia = new ContentSectionMedia();
+			sectionMedia.setContentSectionId(newSection.getContentSectionId());
+			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
+			sectionMedia.setMimeType(templateMedia.getMimeType());
+			sectionMedia.setOriginalName(templateMedia.getOriginalName());
+
+			Path path = templateMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					try (InputStream in = new FileInputStream(path.toFile())) {
+						getContentSectionService().saveMedia(sectionMedia, in);
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
+							path.toString(), templateMedia.getOriginalName()
+						}), ex);
+					}
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
+						path.toString(), templateMedia.getOriginalName()
+					}));
+				}
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
 			}
 		}
 	}

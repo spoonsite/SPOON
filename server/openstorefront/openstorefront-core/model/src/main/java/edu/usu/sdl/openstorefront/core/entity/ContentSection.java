@@ -79,6 +79,10 @@ public class ContentSection
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;
 
+	@APIDescription("Template Id from which this section came from. Keep in mind it may not exist.")
+	@FK(value = ContentSectionTemplate.class, softReference = true)
+	private String templateId;
+
 	public ContentSection()
 	{
 	}
@@ -201,6 +205,16 @@ public class ContentSection
 	public void setNoContent(Boolean noContent)
 	{
 		this.noContent = noContent;
+	}
+
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
 	}
 
 }

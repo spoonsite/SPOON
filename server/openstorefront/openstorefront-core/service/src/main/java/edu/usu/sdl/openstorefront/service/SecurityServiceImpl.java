@@ -209,7 +209,7 @@ public class SecurityServiceImpl
 			RuleResult result = new RuleResult();
 			result.setFieldName(UserSecurity.FIELD_USERNAME);
 			result.setEntityClassName(UserProfile.class.getSimpleName());
-			result.setMessage("Username is already exists");
+			result.setMessage("Username already exists");
 			result.setValidationRule("Username must be unique");
 			validationResult.getRuleResults().add(result);
 		}

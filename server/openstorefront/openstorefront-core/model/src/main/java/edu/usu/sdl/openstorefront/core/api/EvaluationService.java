@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import java.util.List;
 
 /**
  *
@@ -64,6 +65,14 @@ public interface EvaluationService
 	public EvaluationAll getEvaluation(String evaluationId);
 
 	/**
+	 * Gets published evaluations (only public information)
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public List<EvaluationAll> getPublishEvaluations(String componentId);
+
+	/**
 	 * Finds the latest evaluation based on create data
 	 *
 	 * @param componentId
@@ -80,13 +89,13 @@ public interface EvaluationService
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
 	/**
-	 * Make sure the evaluation component change request existing
-	 * if it doesn't create one.
-	 * 
-	 * @param evaluation 
+	 * Make sure the evaluation component change request existing if it doesn't
+	 * create one.
+	 *
+	 * @param evaluation
 	 */
 	public void checkEvaluationComponent(String evaluationId);
-	
+
 	/**
 	 * Deletes an evaluation and all child data
 	 *
@@ -112,12 +121,13 @@ public interface EvaluationService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void unpublishEvaluation(String evaluationId);
-	
+
 	/**
 	 * Creates a full copy of an evaluation with a different change request
+	 *
 	 * @param evaluationId
 	 * @return copy's evaluation Id
 	 */
-	public String copyEvaluation(String evaluationId);	
+	public String copyEvaluation(String evaluationId);
 
 }

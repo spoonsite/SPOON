@@ -51,6 +51,14 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					xtype: 'tbfill'
 				},
 				{
+					text: 'Save',
+					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+					handler: function() {
+						var questionForm = this.up('panel');
+						questionForm.saveData();
+					}
+				},				
+				{
 					xtype: 'tbtext',
 					itemId: 'status'
 				}				
@@ -156,6 +164,10 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		});
 	
 		questionForm.add(questionForm.response);
+		
+		questionForm.saveTask = new Ext.util.DelayedTask(function(){
+			questionForm.saveData();
+		});
 	},
 	loadData: function(evaluationId, componentId, data, opts) {
 		
@@ -195,7 +207,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					});
 
 					questionForm.response.getComponent('score').on('change', function(field, newValue, oldValue){
-						questionForm.saveData();
+						questionForm.markUnsaved();
 					}, undefined, {
 						buffer: 1000
 					});
@@ -207,20 +219,20 @@ Ext.define('OSF.form.ChecklistQuestion', {
 							scoreField.setDisabled(true);
 						} else {
 							scoreField.setDisabled(false);
-							questionForm.saveData();	
+							questionForm.markUnsaved();	
 						}
 					}, undefined, {
 						buffer: 1000
 					});					
 
 					questionForm.response.getComponent('response').on('change', function(field, newValue, oldValue){
-						questionForm.saveData();
+						questionForm.markUnsaved();
 					}, undefined, {
 						buffer: 2000
 					});
 
 					questionForm.response.getComponent('privateNote').on('change', function(field, newValue, oldValue){
-						questionForm.saveData();
+						questionForm.markUnsaved();
 					}, undefined, {
 						buffer: 2000
 					});					
@@ -230,11 +242,18 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				
 		opts.commentPanel.loadComments(evaluationId, "Checklist Question - " + data.question.qid, data.question.questionId);
 	},
+	markUnsaved: function () {
+		var questionForm = this;
+		questionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
+		questionForm.saveTask.delay(1000*60*3);	
+		questionForm.unsavedChanges = true;
+	},	
 	saveData: function() {
 		var questionForm = this;
 		
 		var data = questionForm.getValues();
 		
+		questionForm.saveTask.cancel();
 		CoreUtil.submitForm({
 			url: 'api/v1/resource/evaluations/' + 
 				questionForm.evaluationId 
@@ -251,6 +270,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				
 				Ext.toast('Saved Response');
 				questionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+				questionForm.unsavedChanges = false;
 				
 				if (questionForm.refreshCallback) {
 					questionForm.refreshCallback(chkResponse);

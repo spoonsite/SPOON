@@ -520,7 +520,7 @@
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'filterActiveStatus',									
-									emptyText: 'Acivate',
+									emptyText: 'Active',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',									
 									typeAhead: false,
@@ -588,11 +588,11 @@
 												},
 												{
 													code: 'firstName',
-													description: 'Firstname'
+													description: 'First Name'
 												},
 												{
 													code: 'lastName',
-													description: 'lastname'
+													description: 'Last Name'
 												},
 												{
 													code: 'email',
@@ -703,7 +703,7 @@
 									itemId: 'disable',
 									iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
-									tooltip: 'Locks/inactivates user account',
+									tooltip: 'Locks/Inactivates user account',
 									disabled: true,
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];

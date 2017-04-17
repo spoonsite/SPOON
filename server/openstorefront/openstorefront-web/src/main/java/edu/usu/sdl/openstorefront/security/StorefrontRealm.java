@@ -72,14 +72,6 @@ public class StorefrontRealm
 			throw new UnknownAccountException("Unable to find user.");
 		}
 
-		if (UserSecurity.INACTIVE_STATUS.equals(userSecurity.getActiveStatus())) {
-			throw new DisabledAccountException("Account " + username + " is disabled");
-		}
-
-		if (UserApprovalStatus.PENDING.equals(userSecurity.getApprovalStatus())) {
-			throw new DisabledAccountException("Account " + username + " is not approved");
-		}
-
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();
 		if (userSecurity.getFailedLoginAttempts() == null) {
@@ -94,7 +86,7 @@ public class StorefrontRealm
 				if (securityPolicy.getRequireAdminUnlock() == false) {
 					userSecurity.setFailedLoginAttempts(0);
 				} else {
-					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin unlock.");
+					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin to unlock.");
 				}
 			} else {
 				throw new LockedAccountException("Account is lock due to excessive failed attempts.");
@@ -131,6 +123,14 @@ public class StorefrontRealm
 					&& userSecurity.getFailedLoginAttempts() > 0) {
 				userSecurity.setFailedLoginAttempts(0);
 				userSecurity.save();
+			}
+
+			if (UserSecurity.INACTIVE_STATUS.equals(userSecurity.getActiveStatus())) {
+				throw new DisabledAccountException("User " + usernamePasswordToken.getUsername() + " is disabled. Contact admin.");
+			}
+
+			if (UserApprovalStatus.PENDING.equals(userSecurity.getApprovalStatus())) {
+				throw new DisabledAccountException("User " + usernamePasswordToken.getUsername() + " is not approved");
 			}
 
 		} catch (AuthenticationException authenticationException) {
