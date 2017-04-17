@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Handles Content Sections
@@ -100,5 +102,24 @@ public interface ContentSectionService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteContentTemplate(String templateId);
+
+	/**
+	 * This will create and add section to and entity from a section Template
+	 *
+	 * @param entity
+	 * @param entityId
+	 * @param sectionTemplateId
+	 * @return Section Id
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public String createSectionFromTemplate(String entity, String entityId, String sectionTemplateId);
+
+	/**
+	 * Copies media to new section
+	 *
+	 * @param originalMedia
+	 * @param newSection
+	 */
+	public void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection);
 
 }

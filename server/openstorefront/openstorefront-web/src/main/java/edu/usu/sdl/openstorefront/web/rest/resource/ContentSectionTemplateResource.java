@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
@@ -50,7 +51,10 @@ public class ContentSectionTemplateResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
+	@RequireSecurity(
+			value = {SecurityPermission.EVALUATIONS, SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION},
+			logicOperator = LogicOperation.OR
+	)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplate.class)
 	@APIDescription("Gets sections templates")

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
@@ -23,7 +24,6 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
-import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
@@ -39,16 +39,10 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
@@ -191,8 +185,8 @@ public class EvaluationServiceImpl
 		}
 		evaluation.setEvaluationId(persistenceService.generateId());
 		evaluation.setPublished(Boolean.FALSE);
-		evaluation.setAllowNewSections(Boolean.FALSE);
-		evaluation.setAllowNewSubSections(Boolean.FALSE);
+		evaluation.setAllowNewSections(Convert.toBoolean(evaluation.getAllowNewSections()));
+		evaluation.setAllowNewSubSections(Convert.toBoolean(evaluation.getAllowNewSubSections()));
 		evaluation.populateBaseCreateFields();
 		evaluation = persistenceService.persist(evaluation);
 
@@ -232,49 +226,7 @@ public class EvaluationServiceImpl
 			}
 
 			for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates()) {
-				ContentSection templateSection = new ContentSection();
-				templateSection.setEntity(ContentSectionTemplate.class.getSimpleName());
-				templateSection.setEntityId(sectionTemplate.getSectionTemplateId());
-				templateSection = templateSection.find();
-
-				ContentSection contentSection = new ContentSection();
-				contentSection.setContentSectionId(persistenceService.generateId());
-				contentSection.setEntity(Evaluation.class.getSimpleName());
-				contentSection.setEntityId(evaluation.getEvaluationId());
-				contentSection.setTitle(templateSection.getTitle());
-				contentSection.setContent(templateSection.getContent());
-				contentSection.setNoContent(templateSection.getNoContent());
-				contentSection.setPrivateSection(templateSection.getPrivateSection());
-				contentSection.setWorkflowStatus(initialStatus.getCode());
-				contentSection.populateBaseCreateFields();
-				contentSection = persistenceService.persist(contentSection);
-
-				//copy media
-				ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
-				templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
-				List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
-				copySectionMedia(templateMediaRecords, contentSection);
-
-				ContentSubSection templateSubSectionExample = new ContentSubSection();
-				templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
-
-				List<ContentSubSection> templateSubSections = templateSubSectionExample.findByExample();
-				for (ContentSubSection templateSubSection : templateSubSections) {
-
-					ContentSubSection subSection = new ContentSubSection();
-					subSection.setContentSectionId(contentSection.getContentSectionId());
-					subSection.setSubSectionId(persistenceService.generateId());
-					subSection.setTitle(templateSubSection.getTitle());
-					subSection.setContent(templateSubSection.getContent());
-					subSection.setNoContent(templateSubSection.getNoContent());
-					subSection.setHideTitle(templateSubSection.getHideTitle());
-					subSection.setOrder(templateSubSection.getOrder());
-					subSection.setPrivateSection(templateSubSection.getPrivateSection());
-					subSection.setCustomFields(templateSubSection.getCustomFields());
-					subSection.populateBaseCreateFields();
-					persistenceService.persist(subSection);
-
-				}
+				getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluation.getEvaluationId(), sectionTemplate.getSectionTemplateId());
 
 			}
 
@@ -553,41 +505,11 @@ public class EvaluationServiceImpl
 			ContentSectionMedia existingMedia = new ContentSectionMedia();
 			existingMedia.setContentSectionId(existingSectionId);
 			List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();
-			copySectionMedia(existingMediaRecords, contentSection);
+			getContentSectionService().copySectionMedia(existingMediaRecords, contentSection);
 
 		}
 
 		return evaluation.getEvaluationId();
-	}
-
-	private void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection)
-	{
-		for (ContentSectionMedia templateMedia : originalMedia) {
-			ContentSectionMedia sectionMedia = new ContentSectionMedia();
-			sectionMedia.setContentSectionId(newSection.getContentSectionId());
-			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
-			sectionMedia.setMimeType(templateMedia.getMimeType());
-			sectionMedia.setOriginalName(templateMedia.getOriginalName());
-
-			Path path = templateMedia.pathToMedia();
-			if (path != null) {
-				if (path.toFile().exists()) {
-					try (InputStream in = new FileInputStream(path.toFile())) {
-						getContentSectionService().saveMedia(sectionMedia, in);
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-							path.toString(), templateMedia.getOriginalName()
-						}), ex);
-					}
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-						path.toString(), templateMedia.getOriginalName()
-					}));
-				}
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
-			}
-		}
 	}
 
 }
