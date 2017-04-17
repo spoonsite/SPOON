@@ -64,7 +64,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		maxLevel: -1,
 		nodeData: [],
 		currentLevel: 1,
-		add: function (level, newData) {
+		updateMax: function (level)
+		{
 			if (level > this.maxLevel)
 			{
 				this.maxLevel = level;
@@ -75,8 +76,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				}
 			}
+		},
+		add: function (level, newData) {
+			if (level > this.maxLevel)
+			{
+				this.updateMax(level);
+			}
 			Ext.Array.each(newData, function (item) {
-				if (!this.keys.includes(item.nodeId))
+				if (!Ext.Array.include(this.keys, item.nodeId))
 				{
 					this.nodeData[level].push(item);
 					this.keys.push(item.nodeId);
@@ -139,6 +146,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
+					visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(true);
 					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
 						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
 								visPanel.menus.expand.eventContext.type,
@@ -153,6 +161,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				handler: function () {
 					visPanel.viewData = [];
 					visPanel.viewStack.keys.pop();
+					if (visPanel.viewStack.keys.length === 0 && visPanel.viewType === "RELATION")
+					{
+						visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(false);
+					}
 					visPanel.addViewData(visPanel.viewStack.viewData.pop());
 				}
 			}];
@@ -245,7 +257,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					name: name,
 					detail: sprite.node.detail
 				};
-				if (visPanel.viewStack.keys.includes(key))
+				if (Ext.Array.include(visPanel.viewStack.keys, key))
 				{
 					if (visPanel.menus.collapse.items.length === 1)
 					{
@@ -633,8 +645,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 					if (data.length !== 0)
 					{
+						var childLevel = level + 1;
 						Ext.Array.each(data, function (relationship) {
-							visPanel.layerData.add(level + 1, {
+							var item = {
 								type: 'component',
 								nodeId: relationship.relationshipId,
 								key: relationship.ownerComponentId,
@@ -643,7 +656,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								targetKey: relationship.targetComponentId,
 								targetName: relationship.targetComponentName,
 								targetType: 'component'
-							});
+							};
+							visPanel.layerData.add(childLevel, item);
+							if (childLevel < visPanel.layerData.maxLevel)
+							{
+								var key = (item.targetKey !== undefined) ? item.targetKey : item.key;
+								var label = (item.targetName !== undefined) ? item.targetName : item.label;
+								visPanel.loadRelationships(key, label, childLevel);
+							}
 						});
 					}
 					if (visPanel.pendingAjaxRequests > 0)
@@ -829,7 +849,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								load: function (store, records, successful, operation, eOpts) {
 									var uniqueItems = [];
 									store.each(function (item) {
-										if (uniqueItems.includes(item.data.text))
+										if (Ext.Array.include(uniqueItems, item.data.text))
 										{
 											store.remove(item);
 										} else {
@@ -1131,7 +1151,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 	updateRelationshipLevel: function (newLevel) {
 		var visPanel = this;
-		for (var index = visPanel.layerData.maxLevel; index <= newLevel; index++)
+		var currentMax = visPanel.layerData.maxLevel;
+		visPanel.layerData.updateMax(newLevel);
+		for (var index = currentMax; index <= newLevel; index++)
 		{
 			if (visPanel.layerData.nodeData[index] !== undefined)
 			{
@@ -1607,7 +1629,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							rotationIncroment /= 2;
 						}
 						rotation += rotationIncroment;
-					} while (usedRotations.includes(rotation));
+					} while (Ext.Array.include(usedRotations, rotation));
 					usedRotations.push(rotation);
 
 					renderNodes[edgeNode.targetKey] = true;
@@ -2152,7 +2174,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							var containerPanel = this.up('panel');
 
 							if (newValue) {
-								containerPanel.visualPanel.loadRelationships(newValue, cb.getSelection().getData().description);
+								containerPanel.visualPanel.loadRelationships(newValue, cb.getSelection().getData().description, 0);
 							}
 						}
 					}
