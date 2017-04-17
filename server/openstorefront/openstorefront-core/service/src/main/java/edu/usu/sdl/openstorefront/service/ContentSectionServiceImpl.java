@@ -278,6 +278,7 @@ public class ContentSectionServiceImpl
 			contentSection.setNoContent(templateSection.getNoContent());
 			contentSection.setPrivateSection(templateSection.getPrivateSection());
 			contentSection.setWorkflowStatus(initialStatus.getCode());
+			contentSection.setTemplateId(sectionTemplateId);
 			contentSection.populateBaseCreateFields();
 			contentSection = persistenceService.persist(contentSection);
 

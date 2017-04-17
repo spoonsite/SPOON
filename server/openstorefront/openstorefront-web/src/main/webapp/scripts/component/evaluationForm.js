@@ -933,9 +933,14 @@ Ext.define('OSF.component.EvaluationPanel', {
 																		},
 																		listeners: {
 																			load: function(store, records, opts) {
-																				store.add({
-																					code: null,
-																					description: 'Unassigned'
+																				store.filterBy(function(record){
+																					var keep = true;
+																					Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+																						if (record.get('templateId') === sectionAll.section.templateId) {
+																							keep = false;
+																						}
+																					});
+																					return keep;
 																				});
 																			}
 																		}
