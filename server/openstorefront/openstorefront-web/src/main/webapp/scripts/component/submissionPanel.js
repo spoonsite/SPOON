@@ -613,7 +613,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>',
 				width: '50%',
-				height: 200,
+//				height: '300px',
+				minHeight: 200,
+				maxHeight: 300,
 				layout: 'fit',
 				items: [
 					{
@@ -880,7 +882,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 400,
+				maxHeight: 600,
 				layout: 'fit',
 				items: [
 					{
@@ -1079,7 +1081,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add External Link</span>',
 				width: '50%',
-				height: 465,
+				maxHeight: 600,
 				layout: 'fit',
 				items: [
 					{
@@ -1296,8 +1298,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Media</span>',
 				width: '50%',
-				height: 500,
-				minHeight: 500,
+				maxHeight: 700,
 				layout: 'fit',
 				items: [
 					{
@@ -1780,7 +1781,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Relationship</span>',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 300,
+				minHeight: 300,
+				maxHeight: 450,
 				layout: 'fit',
 				items: [
 					{
@@ -2259,7 +2261,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Edit',
 											itemId: 'editBtn',
 											disabled: true,
-											iconCls: 'fa fa-lg fa-plus icon-button-color-edit',
+											iconCls: 'fa fa-lg fa-pencil-square-o icon-button-color-edit',
 											handler: function(){
 												var grid = this.up('grid');
 												var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -2643,7 +2645,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 													alwaysOnTop: true,
 													title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Tag</span>',
 													width: '40%',
-													height: 200,
+													minHeight: 200,
+													maxHeight: 450,
 													layout: 'fit',
 													items: [
 														{
