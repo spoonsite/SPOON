@@ -142,7 +142,7 @@ public class ScheduledReportResource
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, scheduledReport.getReportType());
 			boolean run = true;
-			if (SecurityUtil.hasPermission(reportType.getRequiredPermission())) {						
+			if (!SecurityUtil.hasPermission(reportType.getRequiredPermission())) {						
 				run = false;
 			}
 			if (run) {
