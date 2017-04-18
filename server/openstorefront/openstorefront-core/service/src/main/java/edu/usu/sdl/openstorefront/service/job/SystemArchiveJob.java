@@ -15,6 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.service.io.archive.AbstractArchiveHandler;
+import java.util.List;
+import java.util.logging.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
@@ -27,10 +34,40 @@ public class SystemArchiveJob
 		extends BaseJob
 {
 
+	private static final Logger log = Logger.getLogger(SystemArchiveJob.class.getName());
+	private static final long DEFAULT_MAX_PROCESSING_MINUTES = 60L;
+
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//check for stuck working archives that exceed processing time limits
+		Long maxWorkingMinutes = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES));
+		if (maxWorkingMinutes == null) {
+			maxWorkingMinutes = DEFAULT_MAX_PROCESSING_MINUTES;
+		}
+
+		SystemArchive systemArchive = new SystemArchive();
+		systemArchive.setRunStatus(RunStatus.WORKING);
+
+		List<SystemArchive> workingArchives = systemArchive.findByExample();
+		for (SystemArchive archive : workingArchives) {
+
+			long timeSinceLastUpdate = System.currentTimeMillis() - archive.getUpdateDts().getTime();
+			if (timeSinceLastUpdate > maxWorkingMinutes) {
+				//fail the archive
+				service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), "Archive failed to make progress; may have been stuck.");
+				archive.setRunStatus(RunStatus.ERROR);
+				archive.save();
+			}
+		}
+		systemArchive = new SystemArchive();
+		systemArchive.setRunStatus(RunStatus.PENDING);
+
+		List<SystemArchive> pendingArchives = systemArchive.findByExample();
+		for (SystemArchive archive : pendingArchives) {
+			//critial loop
+			AbstractArchiveHandler.processArchive(archive);
+		}
 	}
 
 }

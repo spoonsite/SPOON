@@ -53,13 +53,12 @@ public class OSFCacheManager
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
-	private static final ReentrantLock lock = new ReentrantLock();
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	public static void init()
 	{
-		lock.lock();
-		try
-		{
+		LOCK.lock();
+		try {
 			Configuration config = new Configuration();
 			config.setUpdateCheck(false);
 			config.setName("Main");
@@ -121,10 +120,8 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			checklistQuestionCache = singletonManager.getCache("checklistQuestionCache");
 
-		}
-		finally
-		{
-			lock.unlock();
+		} finally {
+			LOCK.unlock();
 		}
 
 	}

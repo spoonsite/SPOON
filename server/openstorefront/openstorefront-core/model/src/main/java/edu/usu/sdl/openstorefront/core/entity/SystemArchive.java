@@ -15,16 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -41,9 +49,15 @@ public class SystemArchive
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
 	private String name;
 
 	private String archiveFilename;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String originalArchiveFilename;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = SystemArchiveType.class)
@@ -60,13 +74,39 @@ public class SystemArchive
 	@FK(RunStatus.class)
 	private String runStatus;
 
+	private String statusDetails;
+	private Integer recordsProcessed;
+	private Integer totalRecords;
+	private Date startDts;
+	private Date completedDts;
+
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = IODirectionType.class)
 	@FK(IODirectionType.class)
-	private String iodirectionType;
+	private String ioDirectionType;
+
+	@ValidValueType(value = {}, lookupClass = ImportModeType.class)
+	@FK(ImportModeType.class)
+	private String importModeType;
 
 	public SystemArchive()
 	{
+	}
+
+	/**
+	 * Get the path to the archive on disk. Note: this may be ran from a proxy
+	 * so don't use fields directly
+	 *
+	 * @return Path or null if archive file doesn't exist.
+	 */
+	public Path pathToArchive()
+	{
+		Path path = null;
+		if (StringUtils.isNotBlank(getArchiveFilename())) {
+			File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
+			path = Paths.get(archiveDir.getPath() + "/" + getArchiveFilename());
+		}
+		return path;
 	}
 
 	public String getArchiveId()
@@ -129,14 +169,84 @@ public class SystemArchive
 		this.runStatus = runStatus;
 	}
 
-	public String getIodirectionType()
+	public String getIoDirectionType()
 	{
-		return iodirectionType;
+		return ioDirectionType;
 	}
 
-	public void setIodirectionType(String iodirectionType)
+	public void setIoDirectionType(String ioDirectionType)
 	{
-		this.iodirectionType = iodirectionType;
+		this.ioDirectionType = ioDirectionType;
+	}
+
+	public String getImportModeType()
+	{
+		return importModeType;
+	}
+
+	public void setImportModeType(String importModeType)
+	{
+		this.importModeType = importModeType;
+	}
+
+	public String getOriginalArchiveFilename()
+	{
+		return originalArchiveFilename;
+	}
+
+	public void setOriginalArchiveFilename(String originalArchiveFilename)
+	{
+		this.originalArchiveFilename = originalArchiveFilename;
+	}
+
+	public String getStatusDetails()
+	{
+		return statusDetails;
+	}
+
+	public void setStatusDetails(String statusDetails)
+	{
+		this.statusDetails = statusDetails;
+	}
+
+	public Integer getRecordsProcessed()
+	{
+		return recordsProcessed;
+	}
+
+	public void setRecordsProcessed(Integer recordsProcessed)
+	{
+		this.recordsProcessed = recordsProcessed;
+	}
+
+	public Integer getTotalRecords()
+	{
+		return totalRecords;
+	}
+
+	public void setTotalRecords(Integer totalRecords)
+	{
+		this.totalRecords = totalRecords;
+	}
+
+	public Date getStartDts()
+	{
+		return startDts;
+	}
+
+	public void setStartDts(Date startDts)
+	{
+		this.startDts = startDts;
+	}
+
+	public Date getCompletedDts()
+	{
+		return completedDts;
+	}
+
+	public void setCompletedDts(Date completedDts)
+	{
+		this.completedDts = completedDts;
 	}
 
 }

@@ -15,8 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchiveError;
+import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
+import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Handles System Archives
@@ -24,19 +32,63 @@ import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
  * @author dshurtleff
  */
 public class SystemArchiveServiceImpl
-		implements SystemArchiveService
+		extends ServiceProxy
+		implements SystemArchiveService, SystemArchiveServicePrivate
 {
+
+	private static final Logger LOG = Logger.getLogger(SystemArchiveServiceImpl.class.getName());
 
 	@Override
 	public void queueArchiveRequest(SystemArchive archive)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		archive.setRunStatus(RunStatus.PENDING);
+
+		//TODO: import need to read manifest for record count
+		archive.save();
 	}
 
 	@Override
 	public void deleteArchive(String archiveId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		SystemArchive archive = persistenceService.findById(SystemArchive.class, archiveId);
+		if (archive != null) {
+
+			if (RunStatus.COMPLETE.equals(archive.getRunStatus())
+					|| RunStatus.ERROR.equals(archive.getRunStatus())) {
+				Path path = archive.pathToArchive();
+				if (path != null) {
+					if (path.toFile().exists()) {
+						path.toFile().delete();
+					}
+				}
+				SystemArchiveError systemArchiveError = new SystemArchiveError();
+				systemArchiveError.setArchiveId(archiveId);
+				persistenceService.deleteByExample(systemArchiveError);
+
+				persistenceService.delete(archive);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable delete system archive that is currently in process.",
+						"Check status on archive.  If the archive is stuck (meaning application was stopped in the middle. Wait for the system to auto-correct after processing timeout has occured)."
+				);
+			}
+		}
+	}
+
+	@Override
+	public void addErrorMessage(String archiveId, String message)
+	{
+		if (StringUtils.isNotBlank(message)) {
+
+			SystemArchiveError systemArchiveError = new SystemArchiveError();
+			systemArchiveError.setArchiveErrorId(persistenceService.generateId());
+			systemArchiveError.setArchiveId(archiveId);
+			systemArchiveError.setMessage(message);
+			systemArchiveError.populateBaseCreateFields();
+			persistenceService.persist(systemArchiveError);
+
+		} else {
+			LOG.log(Level.FINEST, "Unable to add empty error message to system archive. SKIPING");
+		}
 	}
 
 }
