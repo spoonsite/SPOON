@@ -600,7 +600,7 @@
 						
 						// Add CSRF Token To Form
 						userIdInputs += '<input type="hidden" name="X-Csrf-Token" ';
-						userIdInputs += 'value="' + Ext.util.Cookies.get('X-Csrf-Token') + '" />';
+						userIdInputs += 'value="' + token + '" />';
 					}
 					
 					// Set Form
