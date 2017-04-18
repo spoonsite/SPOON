@@ -1319,11 +1319,13 @@
 
 			var actionExportAttribute = function actionExportAttribute(records) {
 				
-				// Initialize Export IDs
+				// Initialize Export Types
 				var attributeTypes = "";
 				
 				// Loop Through Records
 				Ext.Array.each(records, function(record) {
+					
+					// Add Attribute Type To Form
 					attributeTypes += '<input type="hidden" name="type" ';
 					attributeTypes += 'value="' + record.get('attributeType') +'" />';
 				});
@@ -1335,8 +1337,8 @@
 				if (token) {
 
 					// Add CSRF Token To Form
-					userIdInputs += '<input type="hidden" name="X-Csrf-Token" ';
-					userIdInputs += 'value="' + token + '" />';
+					attributeTypes += '<input type="hidden" name="X-Csrf-Token" ';
+					attributeTypes += 'value="' + token + '" />';
 				}
 				
 				// Set Form
