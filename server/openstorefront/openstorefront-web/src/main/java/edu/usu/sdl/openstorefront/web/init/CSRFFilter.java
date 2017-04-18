@@ -96,6 +96,16 @@ public class CSRFFilter
 								valid = true;
 							}
 						}
+						else {
+							String tokenFromParameter = httpRequest.getParameter(X_CSRF_TOKEN);
+							if (StringUtils.isNotBlank(tokenFromParameter)) {
+								if (tokenFromParameter.equals(token)) {
+									valid = true;
+								}
+							}
+						}
+						
+						
 
 						if (!valid) {
 							HttpServletResponse httpResponse = (HttpServletResponse) response;

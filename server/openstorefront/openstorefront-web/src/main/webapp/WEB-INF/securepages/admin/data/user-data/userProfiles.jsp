@@ -580,12 +580,33 @@
 				};
 
 				var actionExportUser = function actionExportUser(records) {
+					
+					// Initialize Export IDs
 					var userIdInputs = "";
+					
+					// Loop Through Records
 					Ext.Array.each(records, function (record) {
+						
+						// Add Username To Form
 						userIdInputs += '<input type="hidden" name="userId" ';
 						userIdInputs += 'value="' + record.get('username') + '" />';
 					});
+					
+					// Get CSRF Token From Cookie
+					var token = Ext.util.Cookies.get('X-Csrf-Token');
+					
+					// Ensure CSRF Token Is Available
+					if (token) {
+						
+						// Add CSRF Token To Form
+						userIdInputs += '<input type="hidden" name="X-Csrf-Token" ';
+						userIdInputs += 'value="' + Ext.util.Cookies.get('X-Csrf-Token') + '" />';
+					}
+					
+					// Set Form
 					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
+					
+					// Submit Form
 					document.exportForm.submit();
 				};
 
