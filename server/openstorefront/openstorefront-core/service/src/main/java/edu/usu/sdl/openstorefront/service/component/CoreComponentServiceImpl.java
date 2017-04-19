@@ -1341,6 +1341,13 @@ public class CoreComponentServiceImpl
 			parameterMap.put("componentIdList", componentIdInResults);
 		}
 
+		if (StringUtils.isNotBlank(filter.getSortField()) && StringUtils.isNotBlank(filter.getSortOrder())) {
+			primaryQuery.append(" ORDER BY ");
+			primaryQuery.append(filter.getSortField());
+			primaryQuery.append(" ");
+			primaryQuery.append(filter.getSortOrder());
+		}
+		
 		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
 
 		result.setCount(componentTrackings.size());
