@@ -15,40 +15,44 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive;
 
-import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
-
 /**
  *
  * @author dshurtleff
  */
-public class GeneralArchiveHandler
-		extends AbstractArchiveHandler
+public class EntityManifestRecord
 {
 
-	public GeneralArchiveHandler(SystemArchive archive)
+	private String entityName;
+	private int recordCount;
+
+	public EntityManifestRecord()
 	{
-		super(archive);
 	}
 
-	@Override
-	protected void generateExport()
+	public EntityManifestRecord(String entityName, int recordCount)
 	{
-		ArchiveManifest manifest = new ArchiveManifest();
-		//look at the entities to be exported
-
-		//component
-		//build export order (archiver)
-		//de-dup
-		//loop through exports
-		//update status
-		createManifest(manifest);
+		this.entityName = entityName;
+		this.recordCount = recordCount;
 	}
 
-	@Override
-	protected void processImport(ArchiveManifest manifest)
+	public String getEntityName()
 	{
-		//use manifest to entity to be export
+		return entityName;
+	}
 
+	public void setEntityName(String entityName)
+	{
+		this.entityName = entityName;
+	}
+
+	public int getRecordCount()
+	{
+		return recordCount;
+	}
+
+	public void setRecordCount(int recordCount)
+	{
+		this.recordCount = recordCount;
 	}
 
 }

@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import com.orientechnologies.orient.core.command.OCommandOutputListener;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.tool.ODatabaseExport;
+import com.orientechnologies.orient.core.db.tool.ODatabaseImport;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.server.OServer;
@@ -24,6 +28,9 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,12 +44,14 @@ public class DBManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(DBManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(DBManager.class.getName());
 
 	public static final String ENTITY_MODEL_PACKAGE = "edu.usu.sdl.openstorefront.core.entity";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static OServer server;
+	private static final String REMOTE_URL = "remote:localhost/openstorefront";
+
 	private static OObjectDatabasePool globalInstance;
 
 	@Override
@@ -64,7 +73,7 @@ public class DBManager
 	{
 
 		try {
-			log.info("Starting Orient DB...");
+			LOG.info("Starting Orient DB...");
 			server = OServerMain.create();
 
 			String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
@@ -77,12 +86,13 @@ public class DBManager
 			String dbFileDir = home + "/databases/openstorefront";
 			File dbFile = new File(dbFileDir);
 			if (dbFile.exists() == false) {
-				log.log(Level.INFO, "Creating DB at {0}", dbFileDir);
+				LOG.log(Level.INFO, "Creating DB at {0}", dbFileDir);
 				OObjectDatabaseTx db = new OObjectDatabaseTx("plocal:" + dbFileDir).create();
 				db.close();
-				log.log(Level.INFO, "Done");
+				LOG.log(Level.INFO, "Done");
 			}
 
+			//TODO: switch OPartitionedDatabasePool	after version 2.3
 			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 			try (OObjectDatabaseTx db = getConnection()) {
@@ -90,9 +100,9 @@ public class DBManager
 			}
 
 			started.set(true);
-			log.info("Finished.");
+			LOG.info("Finished.");
 		} catch (Exception ex) {
-			log.log(Level.SEVERE, "Error occuring starting orient", ex);
+			LOG.log(Level.SEVERE, "Error occuring starting orient", ex);
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -103,7 +113,7 @@ public class DBManager
 	public static void cleanup()
 	{
 
-		log.info("Shutting down Orient DB...");
+		LOG.info("Shutting down Orient DB...");
 		if (globalInstance != null) {
 			globalInstance.close();
 		}
@@ -111,18 +121,51 @@ public class DBManager
 			server.shutdown();
 		}
 		started.set(false);
-		log.info("Finished.");
+		LOG.info("Finished.");
 	}
 
 	public static OObjectDatabaseTx getConnection()
 	{
-		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		return globalInstance.acquire(REMOTE_URL, PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 	}
 
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
+	}
+
+	public static void exportDB(OutputStream out) throws IOException
+	{
+		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
+		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		try (OutputStream closableOut = out) {
+			OCommandOutputListener listener = (String iText) -> {
+				LOG.log(Level.INFO, iText);
+			};
+
+			ODatabaseExport export = new ODatabaseExport(db, closableOut, listener);
+			export.exportDatabase();
+			export.close();
+		} finally {
+			db.close();
+		}
+	}
+
+	public static void importDB(InputStream in) throws IOException
+	{
+		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
+		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		try (InputStream closableIn = in) {
+			OCommandOutputListener listener = (String iText) -> {
+				LOG.log(Level.INFO, iText);
+			};
+			ODatabaseImport dbImport = new ODatabaseImport(db, closableIn, listener);
+			dbImport.importDatabase();
+			dbImport.close();
+		} finally {
+			db.close();
+		}
 	}
 
 }

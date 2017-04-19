@@ -42,8 +42,6 @@ public class SystemArchiveServiceImpl
 	public void queueArchiveRequest(SystemArchive archive)
 	{
 		archive.setRunStatus(RunStatus.PENDING);
-
-		//TODO: import need to read manifest for record count
 		archive.save();
 	}
 

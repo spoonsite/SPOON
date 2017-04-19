@@ -22,6 +22,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
  * @author dshurtleff
  */
 public class SystemArchiveResource
+		extends BaseResource
 {
 	//require system management
 

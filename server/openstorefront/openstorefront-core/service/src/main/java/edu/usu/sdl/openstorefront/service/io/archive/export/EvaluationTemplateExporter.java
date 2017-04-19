@@ -13,42 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.archive;
-
-import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 /**
  *
  * @author dshurtleff
  */
-public class GeneralArchiveHandler
-		extends AbstractArchiveHandler
+public class EvaluationTemplateExporter
 {
-
-	public GeneralArchiveHandler(SystemArchive archive)
-	{
-		super(archive);
-	}
-
-	@Override
-	protected void generateExport()
-	{
-		ArchiveManifest manifest = new ArchiveManifest();
-		//look at the entities to be exported
-
-		//component
-		//build export order (archiver)
-		//de-dup
-		//loop through exports
-		//update status
-		createManifest(manifest);
-	}
-
-	@Override
-	protected void processImport(ArchiveManifest manifest)
-	{
-		//use manifest to entity to be export
-
-	}
 
 }
