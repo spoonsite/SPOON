@@ -177,7 +177,7 @@
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('questionGrid').setLoading("Deleting...");
+								Ext.getCmp('responseGrid').setLoading("Deleting...");
 								Ext.Ajax.request({
 									url: 'api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId') + '/responses/' + record.get('responseId'),
 									method: 'DELETE',
