@@ -22,7 +22,7 @@ var CoreService = {
   
   userservice: {    
     
-    getCurrentUser: function(forceReload = false){
+    getCurrentUser: function(forceReload){
 		var userservice = this;     
 		var deferred = new Ext.Deferred();
 		
