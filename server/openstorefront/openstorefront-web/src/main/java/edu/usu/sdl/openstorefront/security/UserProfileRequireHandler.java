@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.doc.security.CustomRequireHandler;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
+import edu.usu.sdl.openstorefront.doc.security.CustomRequiredHandler;
 
 /**
  * Special handling for user profile checking to make sure the current user can
@@ -27,7 +27,7 @@ import javax.ws.rs.container.ResourceInfo;
  * @author dshurtleff
  */
 public class UserProfileRequireHandler
-		implements CustomRequireHandler
+		implements CustomRequiredHandler
 {
 
 	public static final String USERNAME_ID_PARAM = "id";

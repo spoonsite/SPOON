@@ -23,7 +23,7 @@ import javax.ws.rs.container.ResourceInfo;
  *
  * @author dshurtleff
  */
-public interface CustomRequireHandler
+public interface CustomRequiredHandler
 {
 	/**
 	 * Get the description of the security check for the API doc

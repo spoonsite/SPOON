@@ -37,7 +37,6 @@ import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
 import edu.usu.sdl.openstorefront.doc.model.SecurityRestriction;
-import edu.usu.sdl.openstorefront.doc.security.CustomRequireHandler;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
 import java.lang.annotation.Annotation;
@@ -74,6 +73,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.StringUtils;
+import edu.usu.sdl.openstorefront.doc.security.CustomRequiredHandler;
 
 /**
  *
@@ -271,7 +271,7 @@ public class JaxrsProcessor
 		securityRestriction.setLogicOperation(requireSecurity.logicOperator().name());
 		if (requireSecurity.specialCheck() != null) {
 			try {
-				CustomRequireHandler requireHandler = requireSecurity.specialCheck().newInstance();
+				CustomRequiredHandler requireHandler = requireSecurity.specialCheck().newInstance();
 				securityRestriction.setSpecialCheck(requireHandler.getDescription());
 			} catch (InstantiationException | IllegalAccessException ex) {
 				log.log(Level.WARNING, "Unable to load special check handler. Check code.", ex);

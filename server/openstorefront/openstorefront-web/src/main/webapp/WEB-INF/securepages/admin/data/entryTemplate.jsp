@@ -638,11 +638,17 @@
 					}
 				];
 				
-				var setupContainerDropTarget = function(container, block) {
+				var setupContainerDropTarget = function(container, block) {				
 					container.on('afterrender', function(blockPanel, opts) {
+						var targetElement;
+						if (!blockPanel.getHeader() || blockPanel.getHeader() == false) {
+							targetElement = blockPanel.tab.getEl();
+						} else {
+							targetElement = blockPanel.getHeader().getEl();
+						}
 						blockPanel.dragTarget =	new Ext.drag.Target(Ext.apply({
 							block: block,
-							element: blockPanel.getHeader().getEl()
+							element: targetElement
 						}, {
 								accepts: function(info) {
 										if (block.acceptCheck) {
@@ -1420,7 +1426,7 @@
 									
 									var panel = Ext.create('Ext.panel.Panel', {
 										title: block.name,
-										block: block,										
+										block: Ext.clone(block),										
 										header: {
 											cls: block.layoutBlock ? 'entry-template_block-layout' : 'entry-template_block' 
 										},
