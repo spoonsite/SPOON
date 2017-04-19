@@ -202,7 +202,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 									closeMethod: 'destroy',
 									width: 650,
 									saveCallback: function (response, opts) {
-										CoreService.userservice.getCurrentUser().then(function (usercontext) {											
+										CoreService.userservice.getCurrentUser(true).then(function (usercontext) {											
 											formPanel.getForm().setValues(usercontext);
 										});
 									}

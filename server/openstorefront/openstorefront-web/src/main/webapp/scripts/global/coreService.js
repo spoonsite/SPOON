@@ -22,14 +22,14 @@ var CoreService = {
   
   userservice: {    
     
-    getCurrentUser: function(forceReload){
+    getCurrentUser: function(forceReload = false){
 		var userservice = this;     
 		var deferred = new Ext.Deferred();
 		
 		var haveUser = false;
 		
 		//page level cache (safe but, minimual impact as it only help complex nested components)
-		if (userservice.user) {
+		if (userservice.user && !forceReload) {
 			deferred.resolve(userservice.user);
 			haveUser = true;
 		}
