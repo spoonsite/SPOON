@@ -15,11 +15,31 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive;
 
+import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+
 /**
  *
  * @author dshurtleff
  */
 public class GeneralArchiveHandler
+	extends AbstractArchiveHandler
 {
+
+	public GeneralArchiveHandler(SystemArchive archive)
+	{
+		super(archive);
+	}
+
+	@Override
+	protected void generateExport()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	protected void processImport()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }
