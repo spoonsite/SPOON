@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
+import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.service.io.archive.AbstractArchiveHandler;
 import java.util.List;
 import java.util.logging.Logger;
@@ -34,7 +36,7 @@ public class SystemArchiveJob
 		extends BaseJob
 {
 
-	private static final Logger log = Logger.getLogger(SystemArchiveJob.class.getName());
+	private static final Logger LOG = Logger.getLogger(SystemArchiveJob.class.getName());
 	private static final long DEFAULT_MAX_PROCESSING_MINUTES = 60L;
 
 	@Override
@@ -66,7 +68,16 @@ public class SystemArchiveJob
 		List<SystemArchive> pendingArchives = systemArchive.findByExample();
 		for (SystemArchive archive : pendingArchives) {
 			//critial loop
-			AbstractArchiveHandler.processArchive(archive);
+			try {
+				AbstractArchiveHandler.processArchive(archive);
+			} catch(Exception e) {
+				ErrorInfo errorInfo = new ErrorInfo(e, null);
+				SystemErrorModel errorModel = service.getSystemService().generateErrorTicket(errorInfo);
+				
+				service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), "Archive failed unexpectly see Error ticket:  " + errorModel.getErrorTicketNumber());
+				archive.setRunStatus(RunStatus.ERROR);
+				archive.save();				
+			}
 		}
 	}
 

@@ -93,6 +93,36 @@ public class SystemArchive
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity); 
+		
+		SystemArchive archive = (SystemArchive) entity;
+		
+		//set only non-null values; so just individual field can be set
+		if (archive.getRunStatus() != null) {
+			setRunStatus(archive.getRunStatus());
+		}
+		if (archive.getStatusDetails() != null) {
+			setStatusDetails(archive.getStatusDetails());
+		}
+		if (archive.getRecordsProcessed() != null) {
+			setRecordsProcessed(archive.getRecordsProcessed());
+		}
+		if (archive.getTotalRecords() != null) {
+			setTotalRecords(archive.getTotalRecords());
+		}
+		if (archive.getStartDts() != null) {		
+			setStartDts(archive.getStartDts());
+		}
+		if (archive.getCompletedDts() != null) {
+			setCompletedDts(archive.getCompletedDts());
+		}
+				
+	}
+
+
 	/**
 	 * Get the path to the archive on disk. Note: this may be ran from a proxy
 	 * so don't use fields directly
