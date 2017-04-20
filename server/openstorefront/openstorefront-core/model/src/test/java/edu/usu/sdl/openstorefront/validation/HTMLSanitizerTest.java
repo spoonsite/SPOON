@@ -29,8 +29,8 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class HTMLSanitizerTest
 {
-	private String input;
-	private String expectedOutput;
+	private final String input;
+	private final String expectedOutput;
 
 	public HTMLSanitizerTest(String input, String expectedOutput)
 	{
@@ -49,6 +49,9 @@ public class HTMLSanitizerTest
 			{null, null},
 			{"<html><body><div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
 			{"<html><body><div class=\"box\" style=\"width: 1362px;position:fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position:absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
+			{"<html><body><div class=\"box\" style=\"width: 1362px;position : fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position : absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
+			{"<html><body><div class=\"box\" style=\"width: 1362px;position: fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position: absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
+			{"<html><body><div class=\"box\" style=\"width: 1362px;position :fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position :absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
 		});
 	}
 
