@@ -105,7 +105,7 @@ permissionsQuery,  if needed.
 
 - securityManager.realms = \$realm
 
-####2.1.1.2 OPENAM (Request Header) 
+####2.1.1.2 OPENAM (Request Header)
 -----
 
 >\[main\]
@@ -122,7 +122,7 @@ permissionsQuery,  if needed.
 Configure in: /var/openstorefront/config/openstorefront.properties
 
 ( **Property** -description ( **Default** ))
-  
+
 -  **openam.url**  -http:/.../openam (Full URL to open am instance)              
 
 -  **logout.url** - http:/.../openam/UI/Logout   (Full URL to logout)   
@@ -145,7 +145,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 
 Also, need to adjust the open am agent filter
 
-Change: 
+Change:
 
     <filter-mapping>
         <filter-name>Agent</filter-name>
@@ -156,7 +156,7 @@ Change:
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-To 
+To
 
     <filter-mapping>
         <filter-name>Agent</filter-name>
@@ -172,7 +172,7 @@ To
 The user types are:
 
 Are defined as based on the roles they belong to.  
-If using the built-in security then the system will create default roles for 
+If using the built-in security then the system will create default roles for
 default users, admins and evaluators.  It will create a default admin user: (admin / Secret1@)
 
 **WARNING** You should change the admin password after login in.
@@ -245,7 +245,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
 -  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
--  **test.email** -           Set for automated testing only; the email to use for testing 
+-  **test.email** -           Set for automated testing only; the email to use for testing
 
 ##2.5 Other Application Properties
 ----------------------------
@@ -279,6 +279,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **feedback.email** - Email address to send feedback to
 -  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about their session (Default is the application tries to keep the session alive.)
 -  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the idle timeout. After the message appears.
+- **websockets.enabled** - Enables the use of websockets for server notifications ( **False** )
 
 #3. Database Management
 -----
@@ -326,9 +327,9 @@ the application.
 
 2.  Extract the archive
 
-3.  Run the console ./bin/console.sh 
+3.  Run the console ./bin/console.sh
 
-4.  Connect to the DB: 
+4.  Connect to the DB:
 
 connect remote: localhost/openstorefront (user) (password) (see the
     /var/openstorefront/config/openstorefront.properties for
@@ -348,7 +349,7 @@ functionality on top.
 
 **NOTE** Orient DB includes a web application for viewing the database
 visually, instead of viewing everything from the console. Once installed,
-Orient DB Studio will run with the database itself once OpenStoreFront 
+Orient DB Studio will run with the database itself once OpenStoreFront
 is running, and will not require anything to be run locally
 
 **CAUTION:** Viewing (Querying) information is fine; however, use
@@ -386,5 +387,3 @@ functionality on top.
 
 -   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
     more information about Studio
-
-
