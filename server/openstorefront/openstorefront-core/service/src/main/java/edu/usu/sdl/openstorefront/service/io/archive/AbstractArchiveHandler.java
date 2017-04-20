@@ -143,7 +143,7 @@ public abstract class AbstractArchiveHandler
 			manifest = StringProcessor.defaultObjectMapper().readValue(in, ArchiveManifest.class);
 
 			archive.setTotalRecords(manifest.getTotalRecords());
-			archive.setSystemArchiveType(manifest.getSystemArchiveType());			
+			archive.setSystemArchiveType(manifest.getSystemArchiveType());
 			archive.save();
 
 		} catch (IOException ex) {
@@ -181,6 +181,8 @@ public abstract class AbstractArchiveHandler
 
 	protected void createManifest(ArchiveManifest manifest)
 	{
+		manifest.setSystemArchiveType(archive.getSystemArchiveType());
+
 		File manifestFile = new TFile(fullArchiveName + MANIFEST_FILENAME);
 
 		try (OutputStream out = new TFileOutputStream(manifestFile)) {

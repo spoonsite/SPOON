@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
@@ -441,7 +442,7 @@ public class JobManager
 	{
 		LOG.log(Level.INFO, "Adding Archive Job");
 
-		JobDetail job = JobBuilder.newJob(ImportJob.class)
+		JobDetail job = JobBuilder.newJob(SystemArchiveJob.class)
 				.withIdentity("ArchiveJob", JOB_GROUP_SYSTEM)
 				.withDescription("This batches the archives so they run one at time.")
 				.build();

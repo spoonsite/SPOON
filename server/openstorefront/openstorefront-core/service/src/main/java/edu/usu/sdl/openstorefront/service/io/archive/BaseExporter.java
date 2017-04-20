@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,8 +31,17 @@ public abstract class BaseExporter
 
 	private static final Logger LOG = Logger.getLogger(BaseExporter.class.getName());
 
+	protected SystemArchive archive;
+	protected String archiveBasePath;
+
 	public BaseExporter()
 	{
+	}
+
+	public void init(SystemArchive archive, String archiveBasePath)
+	{
+		this.archive = archive;
+		this.archiveBasePath = archiveBasePath;
 	}
 
 	/**

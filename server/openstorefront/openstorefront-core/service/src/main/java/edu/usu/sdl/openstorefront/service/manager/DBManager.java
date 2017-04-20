@@ -141,7 +141,9 @@ public class DBManager
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (OutputStream closableOut = out) {
 			OCommandOutputListener listener = (String iText) -> {
-				LOG.log(Level.INFO, iText);
+				if (LOG.isLoggable(Level.FINEST)) {
+					LOG.log(Level.FINEST, iText);
+				}
 			};
 
 			ODatabaseExport export = new ODatabaseExport(db, closableOut, listener);
@@ -158,7 +160,9 @@ public class DBManager
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (InputStream closableIn = in) {
 			OCommandOutputListener listener = (String iText) -> {
-				LOG.log(Level.INFO, iText);
+				if (LOG.isLoggable(Level.FINEST)) {
+					LOG.log(Level.FINEST, iText);
+				}
 			};
 			ODatabaseImport dbImport = new ODatabaseImport(db, closableIn, listener);
 			dbImport.importDatabase();

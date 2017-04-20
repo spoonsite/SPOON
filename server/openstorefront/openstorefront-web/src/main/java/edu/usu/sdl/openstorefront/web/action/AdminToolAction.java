@@ -66,12 +66,11 @@ public class AdminToolAction
 		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/admin/data/searches.jsp", new String[]{SecurityPermission.ADMIN_SEARCH}));
 		pageMap.put("Feedback", new PageModel("/WEB-INF/securepages/admin/application/feedback.jsp", new String[]{SecurityPermission.ADMIN_FEEDBACK}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
-		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/data/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
+		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY}));
 		pageMap.put("Security-Roles", new PageModel("/WEB-INF/securepages/admin/application/roleManagement.jsp", new String[]{SecurityPermission.ADMIN_ROLE_MANAGEMENT}));
 		pageMap.put("User-Management", new PageModel("/WEB-INF/securepages/admin/application/userManagement.jsp", new String[]{SecurityPermission.ADMIN_USER_MANAGEMENT}));
-		
 
 		//Evaluation
 		pageMap.put("Evaluations", new PageModel("/WEB-INF/securepages/admin/evaluation/evaluations.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_MANAGEMENT}));

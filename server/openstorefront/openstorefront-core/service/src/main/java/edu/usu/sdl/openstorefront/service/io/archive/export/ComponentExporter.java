@@ -15,11 +15,45 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentExporter
+		extends BaseExporter
 {
+
+	@Override
+	public int getPriority()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getExporterSupportEntity()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<BaseExporter> getAllRequiredExports()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void exportRecords()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void importRecords()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }

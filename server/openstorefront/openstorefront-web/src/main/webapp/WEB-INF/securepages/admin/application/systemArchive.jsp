@@ -30,10 +30,426 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
+				var archiveGrid = Ext.create('Ext.grid.Panel', {
+					title: 'System Archives &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Manage data archives"></i>',
+					columnLines: true,
+					store: {
+						autoLoad: true,
+						fields: [
+							{
+								name: 'createDts',
+								type:	'date',
+								dateFormat: 'c'
+							},
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},
+							{
+								name: 'startDts',
+								type:	'date',
+								dateFormat: 'c'
+							},
+							{
+								name: 'completedDts',
+								type:	'date',
+								dateFormat: 'c'
+							},	
+							{
+								name: 'percentComplete',
+								mapping: function (data) {
+									var percent = 0;
+									if (data.totalRecords > 0) {
+										percent = data.recordsProcessed / data.totalRecords;
+										if (percent === Infinity) percent = 0;
+									}
+									return percent;
+								}
+							}
+						],
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/systemarchives'							
+						}
+					},
+					columns: [
+						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
+						{ text: 'Type', dataIndex: 'systemArchiveType', align: 'center', width: 150,
+							renderer: function(value, meta, record) {
+								return record.get('systemArchiveTypeDescription');
+							}
+						},
+						{ text: 'Import/Export', dataIndex: 'ioDirectionType', align: 'center', width: 150,
+							renderer: function(value, meta, record) {
+								return record.get('systemArchiveTypeDescription');
+							}
+						},	
+						{ text: 'Filename', dataIndex: 'originalArchiveFilename', width: 200, sortable: false,
+							renderer: function(value, meta, record) {
+								if (record.get('originalArchiveFilename')) {
+									return record.get('originalArchiveFilename');
+								} else {
+									return record.get('archiveFilename');
+								}
+							}
+						},						
+						{ text: 'Run Status', dataIndex: 'runStatus', align: 'center', width: 150,							
+							renderer: function(value, meta, record) {
+								return record.get('runStatusDescription');
+							}
+						},
+						{ text: 'Details', 
+						  columns: [
+							{ text: 'Start Date', dataIndex: 'startDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+							{ text: 'Complete Date', dataIndex: 'completedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+							{ text: 'Status', dataIndex: 'statusDetails', width: 200 },
+							{ text: 'recordsProcessed', dataIndex: 'recordsProcessed', width: 200, hidden: true },
+							{ text: 'Total Records', dataIndex: 'totalRecords', width: 200, hidden: true },							
+							{
+								text: 'Progress', dataIndex: 'percentComplete', width: 200,
+								xtype: 'widgetcolumn',
+								widget: {
+									xtype: 'progressbarwidget',
+									textTpl: '{value:percent}'
+								}
+							}
+							]
+						},						
+						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Create User', dataIndex: 'createUser', width: 200 }	
+					],
+					listeners: {
+						selectionchange: function(selModel, selected, opts) {
+							var tools = archiveGrid.queryById('tools');
+							if (selected.length > 0) {
+								var record = selected[0];
+								
+								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
+									tools.getComponent('download').setDisabled(false);
+								}
+								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
+									tools.getComponent('delete').setDisabled(false);
+								}
+								
+							} else {
+								tools.getComponent('download').setDisabled(true);
+								tools.getComponent('delete').setDisabled(true);
+							}
+						}
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							itemId: 'tools',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
+									handler: function () {
+										actionRefresh();
+									}									
+								},
+								{
+									text: 'Generate Archive',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									handler: function () {
+										actionGenerate();
+									}									
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Import Archive',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
+									handler: function () {
+										actionImport();
+									}									
+								},								
+								{
+									xtype: 'tbseparator'
+								},								
+								{
+									text: 'Download',
+									itemId: 'download',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
+									handler: function () {
+										var record = archiveGrid.getSelection()[0];
+										actionDownload(record);
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
+									itemId: 'delete',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+									handler: function () {
+										var record = archiveGrid.getSelection()[0];
+										actionDelete(record);
+									}									
+								}
+							]
+							
+						}
+					]
+					
+				});				
+				addComponentToMainViewPort(archiveGrid);
 				
+				var actionRefresh = function() {
+					archiveGrid.getStore().reload();
+				};
+				
+				var actionGenerate = function() {
+					
+					var generateWin = Ext.create('Ext.window.Window', {
+						title: 'Generate Archive',
+						modal: true,
+						closeAction: 'destroy',
+						width: 500,
+						height: 310,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								scollable: true,
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								defaults: {
+									labelAlign: 'top',
+									labelSeparator: '',
+									width: '100%'
+								},
+								items: [
+									{
+										xtype: 'textfield',
+										name: 'name',
+										fieldLabel: 'Name<span class="field-required" />',
+										allowBlank: false,
+										maxLength: 255
+									},
+									Ext.create('OSF.component.StandardComboBox', {
+										name: 'systemArchiveType',	
+										width: '100%',
+										margin: '0 0 0 0',
+										fieldLabel: 'Archive Type<span class="field-required" />',	
+										allowBlank: false,
+										editable: false,
+										typeAhead: false,
+										storeConfig: {
+											url: 'api/v1/resource/lookuptypes/SystemArchiveType'
+										},
+										listeners: {
+											change: function(field, newValue, oldValue, opts) {
+												var form = field.up('form');
+												if (newValue === 'DBEXPORT') {
+													form.queryById('component').setDisabled(true);
+													form.queryById('highlight').setDisabled(true);													
+												} else if (newValue === 'GENERAL') {
+													form.queryById('component').setDisabled(false);
+													form.queryById('highlight').setDisabled(false);																										
+												}
+ 											}
+										}
+									}),									
+									{
+										xtype: 'checkbox',
+										itemId: 'component',
+										name: 'component',
+										margin: '0 0 0 0',
+										disabled: true,
+										boxLabel: 'Entries (Related Data)'
+									},
+									{
+										xtype: 'checkbox',
+										itemId: 'highlight',
+										name: 'highlight',
+										disabled: true,
+										boxLabel: 'Highlights (Related Data)'										
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Generate',
+												iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+												formBind: true,
+												handler: function() {
+													var win = this.up('window');
+													var form = this.up('form');
+													var data = form.getValues();
+													
+													var archiveOptions = [];
+													if (data.component) {
+														archiveOptions.push({
+															primaryEntity: 'Component'
+														});
+													}
+													
+													if (data.highlight) {
+														archiveOptions.push({
+															primaryEntity: 'Highlight'
+														});
+													}												
+													
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/systemarchives',
+														method: 'POST',
+														form: form,
+														data: data,
+														loadingText: 'Generating...',
+														success: function(action, opt) {
+															actionRefresh();
+															win.close();
+														}
+													});
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',												
+												handler: function() {
+													this.up('window').close();
+												}												
+											}
+										]
+									}
+								]
+							}
+						]
+					});
+					generateWin.show();
+										
+				};				
+				
+				var actionImport = function() {
+					
+					var importWin = Ext.create('Ext.window.Window', {
+						title: 'Import Archive',
+						modal: true,
+						closeAction: 'destroy',
+						width: 500,
+						height: 260,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								scollable: true,
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								defaults: {
+									labelAlign: 'top',
+									labelSeparator: '',
+									width: '100%'
+								},
+								items: [
+									Ext.create('OSF.component.StandardComboBox', {
+										name: 'importModeType',																												
+										margin: '0 0 0 0',
+										width: '100%',
+										fieldLabel: 'Import Mode<span class="field-required" />',	
+										allowBlank: false,
+										editable: false,
+										typeAhead: false,
+										storeConfig: {
+											url: 'api/v1/resource/lookuptypes/ImportModeType'
+										},
+										listeners: {
+											change: function(field, newValue, oldValue, opts) {
+												
+											}
+										}
+									}),
+									{
+										xtype: 'filefield',
+										name: 'uploadFile',
+										width: '100%',
+										allowBlank: false,
+										fieldLabel: 'Import',
+										buttonText: 'Select Archive...'
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Import',
+												iconCls: 'fa fa-lg fa-upload icon-button-color-save',
+												formBind: true,
+												handler: function() {
+													
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',											
+												handler: function() {
+													this.up('window').close();
+												}												
+											}
+										]
+									}
+								]
+							}							
+						]
+					});
+					importWin.show();		
+					
+				};				
+				
+				var actionDownload = function(record) {
+					window.location.href = 'api/v1/resource/systemarchives/' + record.get('archiveId') + '/download';					
+				};	
+				
+				var actionDelete = function(record) {
+					
+					Ext.Msg.show({
+						title: 'Delete Archive?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete this archive? <br> This will NOT affect imported data.',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								archiveGrid.setLoading('Deleting Archive...');
+								Ext.Ajax.request({
+									url: 'api/v1/resource/systemarchives/' + record.get('archiveId'),
+									method: 'DELETE',
+									callback: function(){
+										archiveGrid.setLoading(false);
+									},
+									success: function(response, opts) {
+										actionRefresh();
+									}
+								});
 
-
-				//addComponentToMainViewPort(systemMainPanel);
+							}	
+						}
+					});						
+					
+				};				
 			
 			});
 

@@ -46,6 +46,9 @@ public class DBArchiveHandler
 	protected void generateExport()
 	{
 		File exportFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
+		archive.setTotalRecords(1);
+		archive.setStatusDetails("Exporting...");
+		archive.save();
 
 		try {
 			DBManager.exportDB(new TFileOutputStream(exportFile));
@@ -53,6 +56,10 @@ public class DBArchiveHandler
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
 		}
+		archive.setRecordsProcessed(1);
+		archive.setStatusDetails("Done");
+		archive.save();
+
 		ArchiveManifest manifest = new ArchiveManifest();
 		manifest.setTotalRecords(1);
 		createManifest(manifest);
@@ -62,6 +69,8 @@ public class DBArchiveHandler
 	protected void processImport(ArchiveManifest manifest)
 	{
 		File importFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
+		archive.setStatusDetails("Importing...");
+		archive.save();
 
 		try {
 			DBManager.importDB(new TFileInputStream(importFile));
@@ -70,6 +79,7 @@ public class DBArchiveHandler
 			addError("Fail to create export. See log for more details.");
 		}
 		archive.setRecordsProcessed(1);
+		archive.setStatusDetails("Done");
 		archive.save();
 	}
 

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
@@ -65,6 +66,7 @@ public class SystemArchive
 	private String systemArchiveType;
 
 	@ConsumeField
+	@DataType(SystemArchiveOption.class)
 	@Embedded
 	@OneToMany(orphanRemoval = true)
 	private List<SystemArchiveOption> archiveOptions;
@@ -101,9 +103,9 @@ public class SystemArchive
 		SystemArchive archive = (SystemArchive) entity;
 
 		//set only non-null values; so just individual field can be set
-		if (archive.getSystemArchiveType()!= null) {
+		if (archive.getSystemArchiveType() != null) {
 			setSystemArchiveType(archive.getSystemArchiveType());
-		}		
+		}
 		if (archive.getArchiveFilename() != null) {
 			setArchiveFilename(archive.getArchiveFilename());
 		}

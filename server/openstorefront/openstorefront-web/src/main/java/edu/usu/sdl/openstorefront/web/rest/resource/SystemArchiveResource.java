@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.IODirectionType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveError;
@@ -55,17 +56,17 @@ public class SystemArchiveResource
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets system archives.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(SystemArchive.class)
+	@DataType(SystemArchiveView.class)
 	public List<SystemArchiveView> getArchives()
 	{
 		SystemArchive archiveExample = new SystemArchive();
 		archiveExample.setActiveStatus(SystemArchive.ACTIVE_STATUS);
-		
-		List<SystemArchive> archives = archiveExample.findByExample();		
+
+		List<SystemArchive> archives = archiveExample.findByExample();
 		List<SystemArchiveView> views = SystemArchiveView.toView(archives);
 		return views;
-	}	
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets system archives")
@@ -76,11 +77,11 @@ public class SystemArchiveResource
 			@PathParam("archiveId") String archiveId
 	)
 	{
-		SystemArchive systemArchive = new SystemArchive();		
-		systemArchive.setArchiveId(archiveId);		
+		SystemArchive systemArchive = new SystemArchive();
+		systemArchive.setArchiveId(archiveId);
 		return sendSingleEntityResponse(systemArchive.find());
-	}	
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets system archives errors.")
@@ -92,11 +93,11 @@ public class SystemArchiveResource
 	)
 	{
 		SystemArchiveError systemArchiveError = new SystemArchiveError();
-		systemArchiveError.setActiveStatus(SystemArchive.ACTIVE_STATUS);		
-		systemArchiveError.setArchiveId(archiveId);		
+		systemArchiveError.setActiveStatus(SystemArchive.ACTIVE_STATUS);
+		systemArchiveError.setArchiveId(archiveId);
 		return systemArchiveError.findByExample();
-	}	
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Downloads the archive")
@@ -107,57 +108,60 @@ public class SystemArchiveResource
 	)
 	{
 		SystemArchive systemArchive = new SystemArchive();
-		systemArchive.setArchiveId(archiveId);		
+		systemArchive.setArchiveId(archiveId);
 		systemArchive = systemArchive.find();
 		if (systemArchive != null) {
-			String archiveName = systemArchive.pathToArchive().toString();
-			Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
-				Files.copy(Paths.get(archiveName), output);
-			});
-			response.header("Content-Type", "application/zip");
-			response.header("Content-Disposition", "attachment; filename=\"" + systemArchive.getName() + ".zip\"");
-			return response.build();	
-		} 
+			java.nio.file.Path path = systemArchive.pathToArchive();
+			if (path != null) {
+				String archiveName = path.toString();
+				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
+					Files.copy(Paths.get(archiveName), output);
+				});
+				response.header("Content-Type", "application/zip");
+				response.header("Content-Disposition", "attachment; filename=\"" + systemArchive.getName() + ".zip\"");
+				return response.build();
+			} else {
+				return sendSingleEntityResponse(null);
+			}
+		}
 		return sendSingleEntityResponse(null);
-	}		
-	
+	}
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@APIDescription("Create a new Archive")	
+	@APIDescription("Create a new Archive")
 	@DataType(SystemArchive.class)
 	public Response createArchive(
 			SystemArchive archive
 	)
 	{
+		archive.setIoDirectionType(IODirectionType.EXPORT);
 		ValidationResult validationResult = archive.validate();
-		if (validationResult.valid()) {			
+		if (validationResult.valid()) {
 			String archiveId = service.getSystemArchiveService().queueArchiveRequest(archive);
-			return Response.created(URI.create("v1/resource/systemarchives/" + archiveId)).entity(archive).build();			
-		} else {				
+			return Response.created(URI.create("v1/resource/systemarchives/" + archiveId)).entity(archive).build();
+		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
-	}	
-	
-	
-	//(Upload Action to import archive)
+		}
+	}
 
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
-	@APIDescription("Delete a system archive")	
+	@APIDescription("Delete a system archive")
 	@Path("/{archiveId}")
 	public Response deleteArchive(
 			@PathParam("archiveId") String archiveId
 	)
 	{
 		SystemArchive systemArchive = new SystemArchive();
-		systemArchive.setArchiveId(archiveId);		
+		systemArchive.setArchiveId(archiveId);
 		systemArchive = systemArchive.find();
 		if (systemArchive != null) {
-			service.getSystemArchiveService().deleteArchive(archiveId);			
-		} 
+			service.getSystemArchiveService().deleteArchive(archiveId);
+		}
 		return Response.status(Response.Status.NO_CONTENT).build();
-	}	
-	
+	}
+
 }
