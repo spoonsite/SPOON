@@ -734,11 +734,11 @@ use the default.
 
 Evaluations are accessed by going to your user name in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
-### 2.5.1 Dashboard
+### 2.5.1 Dashboard @EVALUATIONS 
 
 The dashboard can be customized with various widgets to be displayed.  Individual widgets can be configured to show pertinent information such as assigned user, status, and if the evaluation has been published.
 
-### 2.5.2 Evaluations
+### 2.5.2 Evaluations @EVALUATIONS 
 
 The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
 
@@ -1815,8 +1815,8 @@ This contains the documentation for the Application Programming Interface, or AP
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @ADMIN-SYSTEM-MANGEMENT
-----------
+# 4.  Evaluator Tools @ADMIN-SYSTEM-MANAGEMENT 
+------
 
 **NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
 
@@ -1825,28 +1825,28 @@ This section covers Evaluation Management as it exists in Admin Tools.  For eval
 **Evaluation Management within Admin Tools**
 The Evaluation Management menu consists of Evaluations and Templates.
 
-## 4.1 Evaluations
+## 4.1 Evaluations @ADMIN-SYSTEM-MANAGEMENT 
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
 
-## 4.2 Templates
+## 4.2 Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 The templates section lets you manipulate various templates for evaluation input and disply.
 
-### 4.2.1 Evaluation Templates
+### 4.2.1 Evaluation Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
 
-### 4.2.2 Checklist Templates
+### 4.2.2 Checklist Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 A checklist template lets you add various questions as a checklist.
 
-### 4.2.3 Checklist Questions
+### 4.2.3 Checklist Questions @ADMIN-SYSTEM-MANAGEMENT 
 
 Here you formulate the questions to be asked on a template.
 
-### 4.2.4 Section Templates
+### 4.2.4 Section Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 Section templates can be created for further customization.
 
