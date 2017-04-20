@@ -28,9 +28,16 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
 	customActions: [],
+	pendingAjaxRequests: 0,
 	viewStack: {
 		keys: [],
-		data: []
+		viewData: [],
+		layerData: {},
+		clear: function () {
+			this.keys = [];
+			this.viewData = [];
+			this.layerData = {};
+		}
 	},
 	menus: {
 		collapse: {},
@@ -50,6 +57,56 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		mouseleave: 'spritemouseup',
 		mousewheel: 'zoom',
 		DOMMouseScroll: 'zoom'
+	},
+
+	layerData: {
+		keys: [],
+		maxLevel: -1,
+		nodeData: [],
+		currentLevel: 1,
+		updateMax: function (level)
+		{
+			if (level > this.maxLevel)
+			{
+				this.maxLevel = level;
+				for (var i = 0; i <= this.maxLevel; i++)
+				{
+					if (this.nodeData[i] === undefined) {
+						this.nodeData[i] = [];
+					}
+				}
+			}
+		},
+		add: function (level, newData) {
+			if (level > this.maxLevel)
+			{
+				this.updateMax(level);
+			}
+			Ext.Array.each(newData, function (item) {
+				if (!Ext.Array.include(this.keys, item.nodeId))
+				{
+					this.nodeData[level].push(item);
+					this.keys.push(item.nodeId);
+				}
+			}, this);
+		},
+		getData: function () {
+			var newData = [];
+			for (var i = 0; i <= this.currentLevel; i++)
+			{
+				if (this.nodeData[i] !== undefined)
+				{
+					newData = newData.concat(this.nodeData[i]);
+				}
+			}
+			return newData;
+		},
+		clear: function () {
+			this.keys = [];
+			this.maxLevel = -1;
+			this.nodeData = [];
+			this.currentLevel = 1;
+		}
 	},
 
 	initComponent: function () {
@@ -89,8 +146,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
-					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE"
-							&& !(visPanel.menus.expand.eventContext.isTagView && visPanel.menus.expand.eventContext.type === 'tag')) {
+					visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(true);
+					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
 						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
 								visPanel.menus.expand.eventContext.type,
 								visPanel.menus.expand.eventContext.name
@@ -104,7 +161,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				handler: function () {
 					visPanel.viewData = [];
 					visPanel.viewStack.keys.pop();
-					visPanel.addViewData(visPanel.viewStack.data.pop());
+					if (visPanel.viewStack.keys.length === 0 && visPanel.viewType === "RELATION")
+					{
+						visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(false);
+					}
+					visPanel.addViewData(visPanel.viewStack.viewData.pop());
 				}
 			}];
 
@@ -186,34 +247,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var name = undefined;
 			var eventContext = undefined;
 			if (sprite.node && !sprite.nodeText) {
-				if (item.sprite.node.isTagView)
-				{
-					key = item.sprite.node.ownerKey ? item.sprite.node.ownerKey : item.sprite.node.key;
-					type = item.sprite.node.ownerType ? item.sprite.node.ownerType : item.sprite.node.type;
-					name = item.sprite.node.name;
-					eventContext = {
-						sprite: item.sprite,
-						key: key,
-						type: type,
-						name: name,
-						detail: sprite.node.detail,
-						isTagView: item.sprite.node.isTagView
-					};
-				} else
-				{
-					key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
-					type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
-					name = item.sprite.node.name;
-					eventContext = {
-						sprite: item.sprite,
-						key: key,
-						type: type,
-						name: name,
-						detail: sprite.node.detail,
-						isTagView: item.sprite.node.isTagView
-					};
-				}
-				if (visPanel.viewStack.keys.includes(key))
+				key = item.sprite.node.key ? item.sprite.node.key : item.sprite.node.targetKey;
+				type = item.sprite.node.type ? item.sprite.node.type : item.sprite.node.targetType;
+				name = item.sprite.node.name;
+				eventContext = {
+					sprite: item.sprite,
+					key: key,
+					type: type,
+					name: name,
+					detail: sprite.node.detail
+				};
+				if (Ext.Array.include(visPanel.viewStack.keys, key))
 				{
 					if (visPanel.menus.collapse.items.length === 1)
 					{
@@ -447,10 +491,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		if (!Ext.isIE) {
 			visPanel.update();
 		}
-		visPanel.viewStack.data = [];
-		visPanel.viewStack.keys = [];
+		visPanel.viewStack.clear();
+		visPanel.layerData.clear();
+		visPanel.pendingAjaxRequests = 0;
 		visPanel.viewData = [];
 		if (visPanel.viewType === "RELATION") {
+			var containerPanel = this.up('panel');
+			containerPanel.getComponent('tools').getComponent('entryLevel').reset();
 			visPanel.loadRelationships();
 		} else if (visPanel.viewType === "TAGS") {
 			visPanel.loadTags();
@@ -486,22 +533,30 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					itemViewData.push(data);
 				});
 				visPanel.viewStack.keys.push(key);
-				visPanel.viewStack.data.push(itemViewData);
+				visPanel.viewStack.viewData.push(itemViewData);
 				visPanel.viewData = [];
 
 				var viewData = [];
-				Ext.Array.each(data, function (relationship) {
-					viewData.push({
-						type: relationship.entityType,
-						key: relationship.key,
-						label: relationship.name,
-						relationshipLabel: relationship.relationshipLabel,
-						targetKey: relationship.targetKey,
-						targetName: relationship.targetName,
-						targetType: relationship.targetEntityType,
-						isTagView: (entityType === 'tag')
-					});
+
+				viewData.push({
+					type: entityType,
+					key: key,
+					label: nodeName,
+					isHub: true
 				});
+				if (data.length !== 0) {
+					Ext.Array.each(data, function (relationship) {
+						viewData.push({
+							type: relationship.entityType,
+							key: relationship.key,
+							label: relationship.name,
+							relationshipLabel: relationship.relationshipLabel,
+							targetKey: relationship.targetKey,
+							targetName: relationship.targetName,
+							targetType: relationship.targetEntityType
+						});
+					});
+				}
 
 				visPanel.addViewData(viewData, entityType);
 			}
@@ -561,10 +616,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.initVisual(visPanel.viewData);
 	},
 
-	loadRelationships: function (relationshipId, componentName = "") {
+	loadRelationships: function (relationshipId, componentName, level) {
 		var visPanel = this;
 
-		var relationshipLoad = function (componentId, componentName) {
+		var relationshipLoad = function (componentId, componentName, level) {
 
 			visPanel.setLoading("Loading Initial Relationships for the selected component ...");
 			Ext.Ajax.request({
@@ -574,19 +629,25 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				},
 				success: function (response, opts) {
 					var data = Ext.decode(response.responseText);
-
-					var viewData = [];
-					if (data.length === 0)
-					{
-						viewData.push({
-							type: 'component',
-							key: componentId,
-							label: componentName
+					if (level === 0) {
+						var foundNode = Ext.Array.findBy(visPanel.layerData.getData(), function (node) {
+							return (componentId === node.key || componentId === node.targetKey || componentId === node.nodeId);
 						});
-					} else
+						if (!foundNode) {
+							visPanel.layerData.add(level, {
+								type: 'component',
+								nodeId: componentId,
+								key: componentId,
+								label: componentName,
+								isHub: true
+							});
+						}
+					}
+					if (data.length !== 0)
 					{
+						var childLevel = level + 1;
 						Ext.Array.each(data, function (relationship) {
-							viewData.push({
+							var item = {
 								type: 'component',
 								nodeId: relationship.relationshipId,
 								key: relationship.ownerComponentId,
@@ -595,18 +656,31 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								targetKey: relationship.targetComponentId,
 								targetName: relationship.targetComponentName,
 								targetType: 'component'
-							});
+							};
+							visPanel.layerData.add(childLevel, item);
+							if (childLevel < visPanel.layerData.maxLevel)
+							{
+								var key = (item.targetKey !== undefined) ? item.targetKey : item.key;
+								var label = (item.targetName !== undefined) ? item.targetName : item.label;
+								visPanel.loadRelationships(key, label, childLevel);
+							}
 						});
 					}
-					visPanel.viewData = visPanel.viewData.concat(viewData);
-					visPanel.initVisual(visPanel.viewData);
+					if (visPanel.pendingAjaxRequests > 0)
+					{
+						visPanel.pendingAjaxRequests--;
+					}
+					if (visPanel.pendingAjaxRequests === 0) {
+						visPanel.viewData = visPanel.layerData.getData();
+						visPanel.initVisual(visPanel.viewData);
+					}
 				}
 			});
 
 		};
 
 		if (relationshipId) {
-			relationshipLoad(relationshipId, componentName);
+			relationshipLoad(relationshipId, componentName, level);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -662,7 +736,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									var promptWindow = this.up('window');
 									var relCb = promptWindow.getComponent('component');
 									if (relCb.getSelection().getData().code) {
-										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description);
+										relationshipLoad(relCb.getSelection().getData().code, relCb.getSelection().getData().description, 0);
 										promptWindow.close();
 									} else {
 										Ext.Msg.show({
@@ -684,7 +758,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				]
 			});
 			prompt.show();
-	}
+		}
 	},
 
 	loadTags: function (tag) {
@@ -701,15 +775,18 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					if (data.length === 0)
-					{
+					var foundNode = Ext.Array.findBy(visPanel.viewData, function (node) {
+						return (tag === node.key || tag === node.targetKey || tag === node.nodeId);
+					});
+					if (!foundNode) {
 						viewData.push({
 							type: 'tag',
 							key: tag,
-							label: tag
+							label: tag,
+							isHub: true
 						});
-					} else
-					{
+					}
+					if (data.length !== 0) {
 						Ext.Array.each(data, function (tagview) {
 							viewData.push({
 								type: 'component',
@@ -719,8 +796,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								relationshipLabel: '',
 								targetKey: tagview.text,
 								targetName: tagview.text,
-								targetType: 'tag',
-								isTagView: true
+								targetType: 'tag'
 							});
 						});
 					}
@@ -773,7 +849,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								load: function (store, records, successful, operation, eOpts) {
 									var uniqueItems = [];
 									store.each(function (item) {
-										if (uniqueItems.includes(item.data.text))
+										if (Ext.Array.include(uniqueItems, item.data.text))
 										{
 											store.remove(item);
 										} else {
@@ -839,15 +915,19 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					if (data.length === 0)
-					{
+					var foundNode = Ext.Array.findBy(visPanel.viewData, function (node) {
+						return (organizationId === node.key || organizationId === node.targetKey || organizationId === node.nodeId);
+					});
+					if (!foundNode) {
 						viewData.push({
 							type: 'organization',
+							nodeId: organizationId,
 							key: organizationId,
-							label: corganizationName
+							label: corganizationName,
+							isHub: true
 						});
-					} else
-					{
+					}
+					if (data.length !== 0) {
 						Ext.Array.each(data, function (tagview) {
 							viewData.push({
 								type: 'organization',
@@ -955,15 +1035,18 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var data = Ext.decode(response.responseText);
 
 					var viewData = [];
-					if (data.length === 0)
-					{
+					var foundNode = Ext.Array.findBy(visPanel.viewData, function (node) {
+						return (attributeType === node.key || attributeType === node.targetKey || attributeType === node.nodeId);
+					});
+					if (!foundNode) {
 						viewData.push({
 							type: 'attribute',
 							key: attributeType,
-							label: attributeName
+							label: attributeName,
+							isHub: true
 						});
-					} else
-					{
+					}
+					if (data.length !== 0) {
 						Ext.Array.each(data, function (attributeRelationship) {
 							viewData.push({
 								type: 'attribute',
@@ -1064,7 +1147,29 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			});
 			prompt.show();
 		}
-	},	
+	},
+
+	updateRelationshipLevel: function (newLevel) {
+		var visPanel = this;
+		var currentMax = visPanel.layerData.maxLevel;
+		visPanel.layerData.updateMax(newLevel);
+		for (var index = currentMax; index <= newLevel; index++)
+		{
+			if (visPanel.layerData.nodeData[index] !== undefined)
+			{
+				visPanel.pendingAjaxRequests += visPanel.layerData.nodeData[index].length;
+				Ext.Array.each(visPanel.layerData.nodeData[index], function (item) {
+					var key = (item.targetKey !== undefined) ? item.targetKey : item.key;
+					var label = (item.targetName !== undefined) ? item.targetName : item.label;
+					visPanel.loadRelationships(key, label, index);
+				});
+			}
+		}
+		visPanel.layerData.currentLevel = newLevel;
+		visPanel.viewData = visPanel.layerData.getData();
+		visPanel.initVisual(visPanel.viewData);
+	},
+
 	initVisual: function (viewData) {
 		var visPanel = this;
 
@@ -1079,8 +1184,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					name: node.label,
 					type: node.type,
 					detail: node.relationType === "ATTRIBUTE_CODE" && node.type === "attribute" ? "ATTRIBUTE_TYPE" : undefined,
-					isHub: false,
-					isTagView: node.isTagView,
+					isHub: node.isHub,
 					edges: []
 				});
 				nodeKeys[node.key] = true;
@@ -1092,7 +1196,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: node.targetType,
 					detail: node.relationType,
 					isHub: false,
-					isTagView: node.isTagView,
 					edges: []
 				});
 				nodeKeys[node.targetKey] = true;
@@ -1100,18 +1203,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		});
 		Ext.Array.each(viewData, function (relationship) {
 			var targetNode = Ext.Array.findBy(nodes, function (node) {
-				if (node.isTagView) {
-					if (node.key === relationship.key) {
-						return true;
-					} else {
-						return false;
-					}
+				if (node.key === relationship.targetKey) {
+					return true;
 				} else {
-					if (node.key === relationship.targetKey) {
-						return true;
-					} else {
-						return false;
-					}
+					return false;
 				}
 			});
 
@@ -1128,25 +1223,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 
 			var ownerNode = Ext.Array.findBy(nodes, function (node) {
-				if (node.isTagView) {
-					if (node.key === relationship.targetKey) {
-						return true;
-					} else {
-						return false;
-					}
+				if (node.key === relationship.key) {
+					return true;
 				} else {
-					if (node.key === relationship.key) {
-						return true;
-					} else {
-						return false;
-					}
-
+					return false;
 				}
 			});
-			if (ownerNode)
-			{
-				ownerNode.isHub = true;
-			}
+
 			if (targetNode) {
 				if (relationship.targetType === 'attribute'
 						&& ownerNode.type !== 'attribute') {
@@ -1157,8 +1240,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: relationship.relationshipLabel,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType: targetNode.type,
-						isTagView: ownerNode.isTagView
+						ownerType: targetNode.type
 					});
 					targetNode.name = relationship.relationshipLabel;
 				} else if (relationship.targetType === 'organization') {
@@ -1169,21 +1251,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						name: targetNode.name,
 						type: relationship.targetType,
 						hoverText: targetNode.name,
-						ownerType: targetNode.type,
-						isTagView: ownerNode.isTagView
+						ownerType: targetNode.type
 					});
 					targetNode.name = 'organization';
-				} else if (ownerNode.isTagView && relationship.targetType === 'tag') {
-					ownerNode.edges.push({
-						targetKey: relationship.targetKey,
-						ownerKey: relationship.key,
-						relationshipLabel: relationship.relationshipLabel,
-						name: targetNode.name,
-						type: relationship.targetType,
-						ownerType: targetNode.type,
-						hoverText: targetNode.type,
-						isTagView: ownerNode.isTagView
-					});
 				} else
 				{
 					ownerNode.edges.push({
@@ -1192,8 +1262,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						relationshipLabel: relationship.relationshipLabel,
 						name: targetNode.name,
 						type: relationship.targetType,
-						ownerType: targetNode.type,
-						isTagView: ownerNode.isTagView
+						ownerType: targetNode.type
 					});
 				}
 			}
@@ -1451,7 +1520,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				hubs.push(hub);
 			}
 
-			var hubNodeRadius = nodeRadius * 2;
+			var hubNodeRadius = nodeRadius;
+			if (node.isHub)
+			{
+				hubNodeRadius *= 2;
+			}
 
 			var baseNode = componentNode;
 			if (node.type === 'tag') {
@@ -1493,22 +1566,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var generation = 1;
 			Ext.Array.each(node.edges, function (edgeNode) {
 
-				if ((edgeNode.isTagView && !renderNodes[edgeNode.ownerKey]) || !renderNodes[edgeNode.targetKey]) {
+				if (!renderNodes[edgeNode.targetKey]) {
 
 					var targetNode = Ext.Array.findBy(nodes, function (item) {
-						if (edgeNode.isTagView)
-						{
-							if (item.key === edgeNode.ownerKey) {
-								return true;
-							} else {
-								return false;
-							}
+						if (item.key === edgeNode.targetKey) {
+							return true;
 						} else {
-							if (item.key === edgeNode.targetKey) {
-								return true;
-							} else {
-								return false;
-							}
+							return false;
 						}
 					});
 
@@ -1523,7 +1587,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					targetNode.positionY = point.y;
 
 					var baseNode = componentNode;
-					var nodeType = edgeNode.isTagView ? edgeNode.ownerType : edgeNode.type;
+					var nodeType = edgeNode.type;
 					if (nodeType === 'tag') {
 						baseNode = tagNode;
 						targetNode.nodeSize = baseNode.size;
@@ -1547,26 +1611,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					hub.addNode(targetNodeSprite);
 
 					var targetNodeTextSprite;
-					if (edgeNode.isTagView)
-					{
-						targetNodeTextSprite = Ext.apply({}, {
-							x: targetNode.positionX,
-							y: targetNode.positionY + nodeRadius + 20,
-							text: Ext.util.Format.ellipsis(targetNode.name, 20),
-							node: targetNode,
-							targetNode: edgeNode,
-							nodeText: true
-						}, textNode);
-					} else {
-						targetNodeTextSprite = Ext.apply({}, {
-							x: targetNode.positionX,
-							y: targetNode.positionY + nodeRadius + 20,
-							text: Ext.util.Format.ellipsis(targetNode.name, 20),
-							node: edgeNode,
-							targetNode: targetNode,
-							nodeText: true
-						}, textNode);
-					}
+					targetNodeTextSprite = Ext.apply({}, {
+						x: targetNode.positionX,
+						y: targetNode.positionY + nodeRadius + 20,
+						text: Ext.util.Format.ellipsis(targetNode.name, 20),
+						node: edgeNode,
+						targetNode: targetNode,
+						nodeText: true
+					}, textNode);
 					sprites.push(targetNodeTextSprite);
 					hub.addNode(targetNodeTextSprite);
 					do
@@ -1577,16 +1629,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							rotationIncroment /= 2;
 						}
 						rotation += rotationIncroment;
-					} while (usedRotations.includes(rotation));
+					} while (Ext.Array.include(usedRotations, rotation));
 					usedRotations.push(rotation);
 
-					if (edgeNode.isTagView)
-					{
-						renderNodes[edgeNode.ownerKey] = true;
-					} else
-					{
-						renderNodes[edgeNode.targetKey] = true;
-					}
+					renderNodes[edgeNode.targetKey] = true;
 				}
 			});
 
@@ -1977,10 +2023,13 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 
 							containerPanel.getComponent('tools').getComponent('entry').reset();
+							containerPanel.getComponent('tools').getComponent('entryLevel').reset();
 							if (newValue === 'RELATION') {
 								containerPanel.getComponent('tools').getComponent('entry').setHidden(false);
+								containerPanel.getComponent('tools').getComponent('entryLevel').setHidden(false);
 							} else {
 								containerPanel.getComponent('tools').getComponent('entry').setHidden(true);
+								containerPanel.getComponent('tools').getComponent('entryLevel').setHidden(true);
 							}
 
 							containerPanel.getComponent('tools').getComponent('tag').reset();
@@ -2125,11 +2174,40 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							var containerPanel = this.up('panel');
 
 							if (newValue) {
-								containerPanel.visualPanel.loadRelationships(newValue, cb.getSelection().getData().description);
+								containerPanel.visualPanel.loadRelationships(newValue, cb.getSelection().getData().description, 0);
 							}
 						}
 					}
 				}, // Add Entry
+				{
+					xtype: 'combo',
+					fieldLabel: 'Levels',
+					labelAlign: 'right',
+					itemId: 'entryLevel',
+					valueField: 'code',
+					width: 200,
+					labelWidth: 100,
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,
+					value: 1,
+					store: {
+						data: [
+							{code: 1, description: 'One'},
+							{code: 2, description: 'Two'},
+							{code: 3, description: 'Three'}
+						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+
+							if (newValue) {
+								containerPanel.visualPanel.updateRelationshipLevel(newValue);
+							}
+						}
+					}
+				}, // entity levels
 				{
 					xtype: 'combo',
 					fieldLabel: 'Add Tag',
