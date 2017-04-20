@@ -111,6 +111,19 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 		// This is the results Grid panel in the bottom right of the layout.
 		//
 		searchContentPanel.resultsGridPanel = Ext.create('Ext.grid.Panel', {
+			listeners:{
+				cellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts)  
+				{
+					if(cellIndex === 0)
+					{
+						var theStore = grid.getStore();
+						var newUrl = 'searchResults.jsp?showcomponent=' + theStore.getAt(rowIndex).data.componentId;
+						window.location.href = newUrl;
+						var win = this.up('window');
+						win.close();
+					}
+				}
+			},
 			region: 'center',
 			title: 'Search Results',
 			split: true,
