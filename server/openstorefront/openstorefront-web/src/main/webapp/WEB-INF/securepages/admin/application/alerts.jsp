@@ -111,36 +111,30 @@
 									if (option.alertOnUserAttributeCodes) {
 										listOfOptions.push('<span class="alerts-option-items"> User-Created Attribute Codes </span>');
 									}
-									return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
 								} else if (record.get('systemErrorAlertOption')) {
 									option = record.get('systemErrorAlertOption');
-									var listOfOptions = '<ul>';
 									if (option.alertOnSystem) {
-										listOfOptions += '<li>System Errors</li>';
+										listOfOptions.push('<span class="alerts-option-items"> System Errors </span>');
 									}
 									if (option.alertOnREST) {
-										listOfOptions += '<li>API Errors</li>';
+										listOfOptions.push('<span class="alerts-option-items"> API Errors </span>');
 									}
 									if (option.alertOnIntegration) {
-										listOfOptions += '<li>Integration Errors</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Integration Errors </span>');
 									}
 									if (option.alertOnReport) {
-										listOfOptions += '<li>Report Errors</li>';
+										listOfOptions.push('<span class="alerts-option-items"> Report Errors </span>');
 									}
-									listOfOptions += '</ul>';
-									return listOfOptions;
 								} else if (record.get('userManagementAlertOption')) {
 									option = record.get('userManagementAlertOption');
-									var listOfOptions = '<ul>';
 									if (option.alertOnUserRegistration) {
-										listOfOptions += '<li>User Registration</li>';
+										listOfOptions.push('<span class="alerts-option-items"> User Registration </span>');
 									}
 									if (option.alertOnUserNeedsApproval) {
-										listOfOptions += '<li>User Need Approval</li>';
+										listOfOptions.push('<span class="alerts-option-items"> User Need Approval </span>');
 									}
-									listOfOptions += '</ul>';
-									return listOfOptions;
 								}
+								return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
 							}
 						},
 						{
