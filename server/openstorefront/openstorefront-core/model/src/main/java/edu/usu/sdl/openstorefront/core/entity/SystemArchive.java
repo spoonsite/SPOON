@@ -59,7 +59,7 @@ public class SystemArchive
 	@Sanitize(TextSanitizer.class)
 	private String originalArchiveFilename;
 
-	@NotNull
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SystemArchiveType.class)
 	@FK(SystemArchiveType.class)
 	private String systemArchiveType;
@@ -101,8 +101,11 @@ public class SystemArchive
 		SystemArchive archive = (SystemArchive) entity;
 
 		//set only non-null values; so just individual field can be set
+		if (archive.getSystemArchiveType()!= null) {
+			setSystemArchiveType(archive.getSystemArchiveType());
+		}		
 		if (archive.getArchiveFilename() != null) {
-			setRunStatus(archive.getArchiveFilename());
+			setArchiveFilename(archive.getArchiveFilename());
 		}
 		if (archive.getRunStatus() != null) {
 			setRunStatus(archive.getRunStatus());

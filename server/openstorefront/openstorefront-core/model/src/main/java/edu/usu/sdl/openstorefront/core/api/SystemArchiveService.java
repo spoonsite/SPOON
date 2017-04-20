@@ -30,8 +30,9 @@ public interface SystemArchiveService
 	 * This should handled both export and import
 	 *
 	 * @param archive
+	 * @return archiveId;
 	 */
-	public void queueArchiveRequest(SystemArchive archive);
+	public String queueArchiveRequest(SystemArchive archive);
 
 	/**
 	 * Hard deletes archive record and archive file

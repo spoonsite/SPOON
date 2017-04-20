@@ -26,6 +26,7 @@ public class ArchiveManifest
 {
 
 	private int totalRecords;
+	private String systemArchiveType;
 	private List<EntityManifestRecord> entityRecords = new ArrayList<>();
 
 	public ArchiveManifest()
@@ -50,6 +51,16 @@ public class ArchiveManifest
 	public void setEntityRecords(List<EntityManifestRecord> entityRecords)
 	{
 		this.entityRecords = entityRecords;
+	}
+
+	public String getSystemArchiveType()
+	{
+		return systemArchiveType;
+	}
+
+	public void setSystemArchiveType(String systemArchiveType)
+	{
+		this.systemArchiveType = systemArchiveType;
 	}
 
 }

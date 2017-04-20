@@ -39,10 +39,11 @@ public class SystemArchiveServiceImpl
 	private static final Logger LOG = Logger.getLogger(SystemArchiveServiceImpl.class.getName());
 
 	@Override
-	public void queueArchiveRequest(SystemArchive archive)
+	public String queueArchiveRequest(SystemArchive archive)
 	{
 		archive.setRunStatus(RunStatus.PENDING);
-		archive.save();
+		archive = archive.save();
+		return archive.getArchiveId();
 	}
 
 	@Override

@@ -143,11 +143,12 @@ public abstract class AbstractArchiveHandler
 			manifest = StringProcessor.defaultObjectMapper().readValue(in, ArchiveManifest.class);
 
 			archive.setTotalRecords(manifest.getTotalRecords());
+			archive.setSystemArchiveType(manifest.getSystemArchiveType());			
 			archive.save();
 
 		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, "Failed to create archive manifest.", ex);
-			addError("Unable to add manifest to archive. The archive may not be valid.");
+			LOG.log(Level.SEVERE, "Failed to read archive manifest.", ex);
+			addError("Unable to read manifest. The archive may not be valid.");
 		}
 		return manifest;
 	}
