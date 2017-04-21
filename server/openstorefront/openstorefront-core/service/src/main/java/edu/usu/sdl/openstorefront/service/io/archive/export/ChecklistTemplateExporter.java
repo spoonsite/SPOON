@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
-import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,20 +24,20 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class EvaluationTemplateExporter
+public class ChecklistTemplateExporter
 		extends BaseExporter		
 {
 
 	@Override
 	public int getPriority()
 	{
-		return 10;
+		return 8;
 	}
 
 	@Override
 	public String getExporterSupportEntity()
 	{
-		return EvaluationTemplate.class.getSimpleName();
+		return ChecklistTemplate.class.getSimpleName();
 	}
 
 	@Override
@@ -59,5 +59,5 @@ public class EvaluationTemplateExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 }

@@ -35,6 +35,10 @@ public class GeneralArchiveHandler
 	{
 		ArchiveManifest manifest = new ArchiveManifest();
 		//look at the entities to be exported
+		archive.setTotalRecords(0);
+		archive.setRecordsProcessed(0);
+		archive.save();
+		
 
 		//component
 		//build export order (archiver)

@@ -41,6 +41,10 @@ public class SystemArchiveOption
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	private String primaryEntity;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String entityId;	
 
 	@Version
 	private String storageVersion;
@@ -67,6 +71,16 @@ public class SystemArchiveOption
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public String getEntityId()
+	{
+		return entityId;
+	}
+
+	public void setEntityId(String entityId)
+	{
+		this.entityId = entityId;
 	}
 
 }

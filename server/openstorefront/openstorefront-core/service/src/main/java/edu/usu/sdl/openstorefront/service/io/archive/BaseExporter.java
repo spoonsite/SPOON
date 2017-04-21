@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,7 @@ public abstract class BaseExporter
 
 	private static final Logger LOG = Logger.getLogger(BaseExporter.class.getName());
 
+	protected ServiceProxy service = new ServiceProxy();
 	protected SystemArchive archive;
 	protected String archiveBasePath;
 
@@ -85,4 +87,9 @@ public abstract class BaseExporter
 
 	public abstract void importRecords();
 
+	protected void addError(String message)
+	{
+		service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), message);
+	}
+	
 }

@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,24 +31,43 @@ public class ComponentExporter
 	@Override
 	public int getPriority()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return 6;
 	}
 
 	@Override
 	public String getExporterSupportEntity()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return Component.class.getSimpleName();
 	}
 
 	@Override
 	public List<BaseExporter> getAllRequiredExports()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<BaseExporter> exporters = new ArrayList<>();
+				
+		exporters.add(new UserLookupTypeExporter());
+		exporters.add(new GeneralMediaExporter());		
+		exporters.add(new AttributeExporter());		
+		
+		exporters.add(new EntryTypeExporter());	
+		exporters.add(new EntryTemplateExporter());	
+		exporters.add(new ComponentExporter());	
+		
+		exporters.add(new ChecklistQuestionExporter());
+		exporters.add(new ChecklistTemplateExporter());
+		exporters.add(new SectionTemplateExporter());
+		
+		exporters.add(new EvaluationTemplateExporter());		
+		exporters.add(new EvaluationExporter());
+		
+		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
+		//look options to see which or all entry to export
+		
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
