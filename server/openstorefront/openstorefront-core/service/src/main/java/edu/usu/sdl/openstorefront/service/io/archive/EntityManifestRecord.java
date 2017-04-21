@@ -23,13 +23,13 @@ public class EntityManifestRecord
 {
 
 	private String entityName;
-	private int recordCount;
+	private long recordCount;
 
 	public EntityManifestRecord()
 	{
 	}
 
-	public EntityManifestRecord(String entityName, int recordCount)
+	public EntityManifestRecord(String entityName, long recordCount)
 	{
 		this.entityName = entityName;
 		this.recordCount = recordCount;
@@ -45,12 +45,12 @@ public class EntityManifestRecord
 		this.entityName = entityName;
 	}
 
-	public int getRecordCount()
+	public long getRecordCount()
 	{
 		return recordCount;
 	}
 
-	public void setRecordCount(int recordCount)
+	public void setRecordCount(long recordCount)
 	{
 		this.recordCount = recordCount;
 	}

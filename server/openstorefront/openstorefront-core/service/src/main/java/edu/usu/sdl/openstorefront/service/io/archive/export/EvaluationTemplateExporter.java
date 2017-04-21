@@ -15,18 +15,29 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
  * @author dshurtleff
  */
 public class EvaluationTemplateExporter
-		extends BaseExporter		
+		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(EvaluationTemplateExporter.class.getName());
+	private static final String DATA_DIR = "/evaluationtemplates/";
 
 	@Override
 	public int getPriority()
@@ -44,20 +55,46 @@ public class EvaluationTemplateExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(new ChecklistQuestionExporter());
+		exporters.add(new ChecklistTemplateExporter());
+		exporters.add(new SectionTemplateExporter());
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
+		evaluationTemplate.setActiveStatus(Highlight.ACTIVE_STATUS);
+		List<EvaluationTemplate> evaluationTemplates = evaluationTemplate.findByExample();
+
+		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(highlightFile, evaluationTemplates);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export eval templates.{0}", ex));
+			addError("Unable to export eval templates");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + evaluationTemplates.size());
+		archive.setStatusDetails("Exported " + evaluationTemplates.size() + " eval templates");
+		archive.save();
 	}
 
 	@Override
 	public void importRecords()
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public long getTotalRecords()
+	{
+		EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
+		evaluationTemplate.setActiveStatus(Highlight.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(evaluationTemplate);
 	}
 
 }

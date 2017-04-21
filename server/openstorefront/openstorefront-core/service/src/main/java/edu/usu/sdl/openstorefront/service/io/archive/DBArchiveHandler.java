@@ -46,7 +46,7 @@ public class DBArchiveHandler
 	protected void generateExport()
 	{
 		File exportFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
-		archive.setTotalRecords(1);
+		archive.setTotalRecords(1L);
 		archive.setStatusDetails("Exporting...");
 		archive.save();
 
@@ -56,7 +56,7 @@ public class DBArchiveHandler
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
 		}
-		archive.setRecordsProcessed(1);
+		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
 		archive.save();
 
@@ -78,7 +78,7 @@ public class DBArchiveHandler
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
 		}
-		archive.setRecordsProcessed(1);
+		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
 		archive.save();
 	}

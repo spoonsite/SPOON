@@ -15,18 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
  * @author dshurtleff
  */
 public class ChecklistTemplateExporter
-		extends BaseExporter		
+		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(ChecklistTemplateExporter.class.getName());
+	private static final String DATA_DIR = "/chktemplate/";
 
 	@Override
 	public int getPriority()
@@ -44,14 +54,30 @@ public class ChecklistTemplateExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(new ChecklistQuestionExporter());
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ChecklistTemplate checklistTemplate = new ChecklistTemplate();
+		checklistTemplate.setActiveStatus(ChecklistTemplate.ACTIVE_STATUS);
+		List<ChecklistTemplate> templates = checklistTemplate.findByExample();
+
+		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(dataFile, templates);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export templates.{0}", ex));
+			addError("Unable to export templates");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
+		archive.setStatusDetails("Exported " + templates.size() + " checklist templates");
+		archive.save();
 	}
 
 	@Override
@@ -59,5 +85,13 @@ public class ChecklistTemplateExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
+	@Override
+	public long getTotalRecords()
+	{
+		ChecklistTemplate checklistTemplate = new ChecklistTemplate();
+		checklistTemplate.setActiveStatus(ChecklistTemplate.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(checklistTemplate);
+	}
+
 }

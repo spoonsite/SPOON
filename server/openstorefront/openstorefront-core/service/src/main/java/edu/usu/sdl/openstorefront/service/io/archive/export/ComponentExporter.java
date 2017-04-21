@@ -16,9 +16,12 @@
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,6 +30,12 @@ import java.util.List;
 public class ComponentExporter
 		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(ComponentExporter.class.getName());
+
+	private static final String DATA_DIR = "/component/";
+	private static final String DATA_MEDIA_DIR = "/component/media/";
+	private static final String DATA_RESOURCE_DIR = "/component/resources/";
 
 	@Override
 	public int getPriority()
@@ -44,37 +53,92 @@ public class ComponentExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-				
+
 		exporters.add(new UserLookupTypeExporter());
-		exporters.add(new GeneralMediaExporter());		
-		exporters.add(new AttributeExporter());		
-		
-		exporters.add(new EntryTypeExporter());	
-		exporters.add(new EntryTemplateExporter());	
-		exporters.add(new ComponentExporter());	
-		
+		exporters.add(new GeneralMediaExporter());
+		exporters.add(new EntryTypeExporter());
+		exporters.add(new EntryTemplateExporter());
+		exporters.add(new AttributeExporter());
+
+		exporters.add(this);
+
 		exporters.add(new ChecklistQuestionExporter());
 		exporters.add(new ChecklistTemplateExporter());
 		exporters.add(new SectionTemplateExporter());
-		
-		exporters.add(new EvaluationTemplateExporter());		
+
+		exporters.add(new EvaluationTemplateExporter());
 		exporters.add(new EvaluationExporter());
-		
+
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		//look options to see which or all entry to export
-		
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		for (SystemArchiveOption option : archive.getArchiveOptions()) {
+			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
+				ComponentAll componentAll = service.getComponentService().getFullComponent(option.getEntityId());
+
+//				File entry = new TFile(archiveName + "/components.json");
+//				try (Writer writer = new TFileWriter(entry)) {
+//					writer.write(componentJson);
+//				} catch (IOException io) {
+//					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
+//				}
+//				//media
+//				for (ComponentMedia componentMedia : componentAll.getMedia()) {
+//					java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+//					if (mediaPath != null) {
+//						if (mediaPath.toFile().exists()) {
+//							String name = mediaPath.getFileName().toString();
+//							if (fileNameMediaSet.contains(name) == false) {
+//								java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
+//								Files.copy(mediaPath, archiveMediaPath);
+//								fileNameMediaSet.add(name);
+//							}
+//						} else {
+//							LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+//						}
+//					}
+//				}
+//
+//				//localreources
+//				for (ComponentResource componentResource : componentAll.getResources()) {
+//					java.nio.file.Path resourcePath = componentResource.pathToResource();
+//					if (resourcePath != null) {
+//						if (resourcePath.toFile().exists()) {
+//							String name = resourcePath.getFileName().toString();
+//							if (fileNameResourceSet.contains(name) == false) {
+//								java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
+//								Files.copy(resourcePath, archiveResourcePath);
+//								fileNameResourceSet.add(name);
+//							}
+//						} else {
+//							LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+//						}
+//					}
+//				}
+			}
+		}
+
 	}
 
 	@Override
 	public void importRecords()
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public long getTotalRecords()
+	{
+		long records = 0;
+		for (SystemArchiveOption option : archive.getArchiveOptions()) {
+			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
+				records++;
+			}
+		}
+		return records;
 	}
 
 }

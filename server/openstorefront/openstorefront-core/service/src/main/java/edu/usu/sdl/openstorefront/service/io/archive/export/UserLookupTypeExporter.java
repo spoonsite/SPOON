@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
 
 /**
@@ -33,8 +35,13 @@ import net.java.truevfs.access.TFile;
  * @author dshurtleff
  */
 public class UserLookupTypeExporter
-	extends BaseExporter	
+		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(UserLookupTypeExporter.class.getName());
+	private static final String LOOKUP_DIR = "/lookup/";
+
+	private final List<Class> lookupsToExport = new ArrayList<>();
 
 	@Override
 	public int getPriority()
@@ -49,60 +56,88 @@ public class UserLookupTypeExporter
 	}
 
 	@Override
-	public List<BaseExporter> getAllRequiredExports()
+	public void exporterInit()
 	{
-		List<BaseExporter> exporters = new ArrayList<>();
-		exporters.add(this);		
-		return exporters;
-	}
+		super.exporterInit();
 
-	@Override
-	public void exportRecords()
-	{
-		//export all user lookups
-		List<Class> lookups = new ArrayList<>();
-		
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 					SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 					if (systemTable == null) {
-						lookups.add(entityClass);
+						lookupsToExport.add(entityClass);
 					}
 				}
 			}
 		}
-		
-		archive.setTotalRecords(archive.getTotalRecords() + lookups.size());
-		archive.setStatusDetails("Exporting Lookups...");
-		archive.save();
-		
-		for (Class lookup : lookups) {
-			
-			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup);			
-			File lookupFile = new TFile(archiveBasePath + "/lookup/" + lookup.getSimpleName());
-			
-			try
-			{
+	}
+
+	@Override
+	public List<BaseExporter> getAllRequiredExports()
+	{
+		List<BaseExporter> exporters = new ArrayList<>();
+		exporters.add(this);
+		return exporters;
+	}
+
+	@Override
+	public void exportRecords()
+	{
+		for (Class lookup : lookupsToExport) {
+
+			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup);
+			File lookupFile = new TFile(archiveBasePath + LOOKUP_DIR + lookup.getSimpleName());
+
+			try {
 				StringProcessor.defaultObjectMapper().writeValue(lookupFile, lookupData);
-			}
-			catch (IOException ex)
-			{
+			} catch (IOException ex) {
 				addError("Unable to export: " + lookup.getSimpleName());
 			}
-					
+
 			archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 			archive.setStatusDetails("Exported " + lookup.getSimpleName());
-			archive.save();					
+			archive.save();
 		}
-		
+
 	}
 
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//this doesn't support replace as that could cause issues.
+//		if (archive.getImportModeType().equals(ImportModeType.REPLACE)) {
+//			LOG.log(Level.FINE, "Lookup import doesn't support replace...continuing as merge");
+//		}
+
+		File lookupDir = new TFile(archiveBasePath + LOOKUP_DIR);
+		File files[] = lookupDir.listFiles();
+		for (File lookupFile : files) {
+			try {
+				archive.setStatusDetails("Importing: " + lookupFile.getName());
+				archive.save();
+
+				Class lookupClass = Class.forName(lookupFile.getName());
+				List<LookupEntity> lookupData = StringProcessor.defaultObjectMapper().readValue(lookupFile, new TypeReference<List<LookupEntity>>()
+				{
+				});
+				service.getLookupService().syncLookupImport(lookupClass, lookupData);
+
+				archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+				archive.save();
+
+			} catch (ClassNotFoundException | IOException ex) {
+				addError("Unable to load lookup: " + lookupFile.getName());
+			}
+		}
+		archive.setStatusDetails("Done");
+		archive.save();
+	}
+
+	@Override
+	public long getTotalRecords()
+	{
+		return lookupsToExport.size();
 	}
 
 }

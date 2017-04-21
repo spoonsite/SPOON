@@ -15,10 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
@@ -27,6 +34,9 @@ import java.util.List;
 public class ChecklistQuestionExporter
 		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(ChecklistQuestionExporter.class.getName());
+	private static final String DATA_DIR = "/chkquestions/";
 
 	@Override
 	public int getPriority()
@@ -44,14 +54,30 @@ public class ChecklistQuestionExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ChecklistQuestion checklistQuestionExample = new ChecklistQuestion();
+		checklistQuestionExample.setActiveStatus(ChecklistQuestion.ACTIVE_STATUS);
+		List<ChecklistQuestion> questions = checklistQuestionExample.findByExample();
+
+		File questionFile = new TFile(archiveBasePath + DATA_DIR + "questions.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(questionFile, questions);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export questions.{0}", ex));
+			addError("Unable to export questions");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + questions.size());
+		archive.setStatusDetails("Exported " + questions.size() + " questions");
+		archive.save();
+
 	}
 
 	@Override
@@ -59,5 +85,13 @@ public class ChecklistQuestionExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
+	@Override
+	public long getTotalRecords()
+	{
+		ChecklistQuestion checklistQuestionExample = new ChecklistQuestion();
+		checklistQuestionExample.setActiveStatus(ChecklistQuestion.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(checklistQuestionExample);
+	}
+
 }

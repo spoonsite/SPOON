@@ -15,10 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
@@ -28,10 +35,13 @@ public class EntryTemplateExporter
 		extends BaseExporter
 {
 
+	private static final Logger LOG = Logger.getLogger(EntryTemplateExporter.class.getName());
+	private static final String DATA_DIR = "/entrytemplate/";
+
 	@Override
 	public int getPriority()
 	{
-		return 5;
+		return 3;
 	}
 
 	@Override
@@ -44,14 +54,29 @@ public class EntryTemplateExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ComponentTypeTemplate componentTypeTemplate = new ComponentTypeTemplate();
+		componentTypeTemplate.setActiveStatus(ComponentTypeTemplate.ACTIVE_STATUS);
+		List<ComponentTypeTemplate> templates = componentTypeTemplate.findByExample();
+
+		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(dataFile, templates);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export templates.{0}", ex));
+			addError("Unable to export templates");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
+		archive.setStatusDetails("Exported " + templates.size() + " entry templates");
+		archive.save();
 	}
 
 	@Override
@@ -59,5 +84,13 @@ public class EntryTemplateExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
+	@Override
+	public long getTotalRecords()
+	{
+		ComponentTypeTemplate componentTypeTemplate = new ComponentTypeTemplate();
+		componentTypeTemplate.setActiveStatus(ComponentTypeTemplate.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(componentTypeTemplate);
+	}
+
 }

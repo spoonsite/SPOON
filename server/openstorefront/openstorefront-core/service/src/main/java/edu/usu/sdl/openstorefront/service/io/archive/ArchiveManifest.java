@@ -25,7 +25,7 @@ import java.util.List;
 public class ArchiveManifest
 {
 
-	private int totalRecords;
+	private long totalRecords;
 	private String systemArchiveType;
 	private List<EntityManifestRecord> entityRecords = new ArrayList<>();
 
@@ -33,12 +33,12 @@ public class ArchiveManifest
 	{
 	}
 
-	public int getTotalRecords()
+	public long getTotalRecords()
 	{
 		return totalRecords;
 	}
 
-	public void setTotalRecords(int totalRecords)
+	public void setTotalRecords(long totalRecords)
 	{
 		this.totalRecords = totalRecords;
 	}

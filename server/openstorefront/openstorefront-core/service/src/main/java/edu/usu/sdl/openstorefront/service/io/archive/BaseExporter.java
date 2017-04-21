@@ -46,6 +46,10 @@ public abstract class BaseExporter
 		this.archiveBasePath = archiveBasePath;
 	}
 
+	public void exporterInit()
+	{
+	}
+
 	/**
 	 * This should be unique between export so order is maintain no matter where
 	 * the user starts
@@ -83,6 +87,8 @@ public abstract class BaseExporter
 
 	public abstract List<BaseExporter> getAllRequiredExports();
 
+	public abstract long getTotalRecords();
+
 	public abstract void exportRecords();
 
 	public abstract void importRecords();
@@ -91,5 +97,5 @@ public abstract class BaseExporter
 	{
 		service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), message);
 	}
-	
+
 }

@@ -15,18 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
  * @author dshurtleff
  */
 public class SectionTemplateExporter
-		extends BaseExporter	
+		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(SectionTemplateExporter.class.getName());
+	private static final String DATA_DIR = "/sectiontemplates/";
 
 	@Override
 	public int getPriority()
@@ -44,14 +54,29 @@ public class SectionTemplateExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ContentSectionTemplate sectionTemplate = new ContentSectionTemplate();
+		sectionTemplate.setActiveStatus(ContentSectionTemplate.ACTIVE_STATUS);
+		List<ContentSectionTemplate> templates = sectionTemplate.findByExample();
+
+		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(dataFile, templates);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export section templates.", ex));
+			addError("Unable to export section templates");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
+		archive.setStatusDetails("Exported " + templates.size() + " section templates");
+		archive.save();
 	}
 
 	@Override
@@ -59,5 +84,13 @@ public class SectionTemplateExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
+	@Override
+	public long getTotalRecords()
+	{
+		ContentSectionTemplate sectionTemplate = new ContentSectionTemplate();
+		sectionTemplate.setActiveStatus(ContentSectionTemplate.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(sectionTemplate);
+	}
+
 }

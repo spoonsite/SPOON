@@ -15,22 +15,33 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
 
 /**
  *
  * @author dshurtleff
  */
 public class HighlightExporter
-		extends BaseExporter	
+		extends BaseExporter
 {
+
+	private static final Logger LOG = Logger.getLogger(HighlightExporter.class.getName());
+	private static final String DATA_DIR = "/highlights/";
 
 	@Override
 	public int getPriority()
 	{
-		return 12;
+		return 13;
 	}
 
 	@Override
@@ -43,14 +54,31 @@ public class HighlightExporter
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		
+		exporters.add(new GeneralMediaExporter());
+		exporters.add(new SavedSearchExporter());
+		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
 	public void exportRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Highlight highlightExample = new Highlight();
+		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		List<Highlight> highlights = highlightExample.findByExample();
+
+		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "highlights.json");
+
+		try {
+			StringProcessor.defaultObjectMapper().writeValue(highlightFile, highlights);
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, MessageFormat.format("Unable to export highlights.{0}", ex));
+			addError("Unable to export highlights");
+		}
+
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
+		archive.setStatusDetails("Exported " + highlights.size() + " highlights");
+		archive.save();
 	}
 
 	@Override
@@ -58,5 +86,13 @@ public class HighlightExporter
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
+	@Override
+	public long getTotalRecords()
+	{
+		Highlight highlightExample = new Highlight();
+		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(highlightExample);
+	}
+
 }

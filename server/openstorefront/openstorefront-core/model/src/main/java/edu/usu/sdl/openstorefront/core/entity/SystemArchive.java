@@ -77,8 +77,8 @@ public class SystemArchive
 	private String runStatus;
 
 	private String statusDetails;
-	private Integer recordsProcessed;
-	private Integer totalRecords;
+	private Long recordsProcessed;
+	private Long totalRecords;
 	private Date startDts;
 	private Date completedDts;
 
@@ -246,22 +246,22 @@ public class SystemArchive
 		this.statusDetails = statusDetails;
 	}
 
-	public Integer getRecordsProcessed()
+	public Long getRecordsProcessed()
 	{
 		return recordsProcessed;
 	}
 
-	public void setRecordsProcessed(Integer recordsProcessed)
+	public void setRecordsProcessed(Long recordsProcessed)
 	{
 		this.recordsProcessed = recordsProcessed;
 	}
 
-	public Integer getTotalRecords()
+	public Long getTotalRecords()
 	{
 		return totalRecords;
 	}
 
-	public void setTotalRecords(Integer totalRecords)
+	public void setTotalRecords(Long totalRecords)
 	{
 		this.totalRecords = totalRecords;
 	}

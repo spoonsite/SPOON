@@ -32,7 +32,7 @@ public class ImportModeType
 {
 
 	public static final String MERGE = "MERGE";
-	public static final String REPLACE = "REPLACE";
+	//public static final String REPLACE = "REPLACE";
 
 	public ImportModeType()
 	{
@@ -43,7 +43,7 @@ public class ImportModeType
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(MERGE, newLookup(ImportModeType.class, MERGE, "Merge"));
-		codeMap.put(REPLACE, newLookup(ImportModeType.class, REPLACE, "Replace"));
+		//codeMap.put(REPLACE, newLookup(ImportModeType.class, REPLACE, "Replace"));
 		return codeMap;
 	}
 
