@@ -96,6 +96,12 @@
 						},						
 						{ text: 'Run Status', dataIndex: 'runStatus', align: 'center', width: 150,							
 							renderer: function(value, meta, record) {
+								if (value === 'E') {
+									meta.tdCls = 'alert-danger';
+								}
+								if (value === 'P') {
+									meta.tdCls =  'alert-info';
+								}								
 								return record.get('runStatusDescription');
 							}
 						},
@@ -122,6 +128,10 @@
 					listeners: {
 						selectionchange: function(selModel, selected, opts) {
 							var tools = archiveGrid.queryById('tools');
+							tools.getComponent('download').setDisabled(true);
+							tools.getComponent('delete').setDisabled(true);
+							tools.getComponent('view').setDisabled(true);
+								
 							if (selected.length > 0) {
 								var record = selected[0];
 								
@@ -130,11 +140,11 @@
 								}
 								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
 									tools.getComponent('delete').setDisabled(false);
-								}
+								} 
 								
-							} else {
-								tools.getComponent('download').setDisabled(true);
-								tools.getComponent('delete').setDisabled(true);
+								if (record.get('runStatus') === 'E') {
+									tools.getComponent('view').setDisabled(false);
+								}								
 							}
 						}
 					},
@@ -173,6 +183,17 @@
 								},								
 								{
 									xtype: 'tbseparator'
+								},								
+								{
+									text: 'View Errors',
+									itemId: 'view',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
+									handler: function () {
+										var record = archiveGrid.getSelection()[0];
+										actionView(record);
+									}									
 								},								
 								{
 									text: 'Download',
@@ -217,8 +238,8 @@
 						title: 'Generate Archive',
 						modal: true,
 						closeAction: 'destroy',
-						width: 500,
-						height: 310,
+						width: 700,
+						height: 560,
 						layout: 'fit',
 						items: [
 							{
@@ -258,7 +279,7 @@
 													form.queryById('highlight').setDisabled(true);													
 												} else if (newValue === 'GENERAL') {
 													form.queryById('component').setDisabled(false);
-													form.queryById('highlight').setDisabled(false);																										
+													form.queryById('highlight').setDisabled(false);													
 												}
  											}
 										}
@@ -269,8 +290,68 @@
 										name: 'component',
 										margin: '0 0 0 0',
 										disabled: true,
-										boxLabel: 'Entries (Related Data)'
+										boxLabel: 'Entries (Related Data)',
+										listeners: {
+											change: function(field, newValue, oldValue, opts) {
+												var form = field.up('form');
+												if (newValue) {
+													form.queryById('entrySelectGrid').setDisabled(false);		
+												} else {
+													form.queryById('entrySelectGrid').setDisabled(true);		
+												}
+											}
+										}
 									},
+									{
+										xtype: 'grid',
+										itemId: 'entrySelectGrid',
+										title: 'Select By Entry',
+										maxHeight: 250,
+										disabled: true,
+										columnLines: true,
+										selModel: {
+											selType: 'checkboxmodel'
+										},
+										store: {
+											autoLoad: true,
+											sorters: [
+												new Ext.util.Sorter({
+													property: 'description',
+													direction: 'ASC'
+												})
+											],
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/components/lookup?approvalState=ALL'							
+											}											
+										},
+										columns: [
+											{text: 'Entry Name', dataIndex: 'description', flex: 1,
+												filter: {
+													type: 'string'
+												}
+											}
+										],										
+										dockedItems: [
+											{
+												xtype: 'textfield',
+												dock: 'top',
+												name: 'filterForEntries',																					
+												emptyText: 'Filter entries by name',
+												width: '100%',
+												maxLength: 30,
+												listeners: {
+													change: function (field, newVal, oldVal, opts) {
+														var grid = field.up('grid');
+														grid.getStore().filter([{
+																property: 'description',
+																value: newVal
+														}]);
+													}
+												}
+											}
+										]
+									},									
 									{
 										xtype: 'checkbox',
 										itemId: 'highlight',
@@ -295,8 +376,11 @@
 													
 													var archiveOptions = [];
 													if (data.component) {
-														archiveOptions.push({
-															primaryEntity: 'Component'
+														Ext.Array.each(generateWin.queryById('entrySelectGrid').getSelection(), function(record){
+															archiveOptions.push({
+																primaryEntity: 'Component',
+																entityId: record.get('code')
+															});	
 														});
 													}
 													
@@ -304,7 +388,8 @@
 														archiveOptions.push({
 															primaryEntity: 'Highlight'
 														});
-													}												
+													}
+													data.archiveOptions = archiveOptions;
 													
 													CoreUtil.submitForm({
 														url: 'api/v1/resource/systemarchives',
@@ -422,6 +507,63 @@
 				var actionDownload = function(record) {
 					window.location.href = 'api/v1/resource/systemarchives/' + record.get('archiveId') + '/download';					
 				};	
+				
+				var actionView = function(record) {
+					
+					var errorWin = Ext.create('Ext.window.Window', {
+						title: 'Errors',
+						iconCls: 'fa fa-lg fa-info-circle icon-small-vertical-correction',
+						closeAction: 'destroy',
+						modal: true,
+						layout: 'fit',
+						width: '60%',
+						height: '40%',
+						maximizable: true,
+						items: [
+							{
+								xtype: 'grid',
+								itemId: 'detailGrid',
+								columnLines: true,
+								store: {									
+									autoLoad: false,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/systemarchives/{archiveId}/errors'
+									}
+								}, 								
+								columns: [
+									{ text: 'Message', dataIndex: 'message', flex: 1 }
+								]
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [								
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+										handler: function() {
+											this.up('window').hide();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									}
+								]
+							}
+						]						
+					});
+					errorWin.show();
+					errorWin.queryById('detailGrid').getStore().load({
+						url: 'api/v1/resource/systemarchives/' + record.get('archiveId') + '/errors'
+					});
+					
+				};
 				
 				var actionDelete = function(record) {
 					

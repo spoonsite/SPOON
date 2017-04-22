@@ -20,12 +20,14 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -67,8 +69,8 @@ public class ChecklistQuestionExporter
 
 		File questionFile = new TFile(archiveBasePath + DATA_DIR + "questions.json");
 
-		try {
-			StringProcessor.defaultObjectMapper().writeValue(questionFile, questions);
+		try (OutputStream out = new TFileOutputStream(questionFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, questions);
 		} catch (IOException ex) {
 			LOG.log(Level.FINE, MessageFormat.format("Unable to export questions.{0}", ex));
 			addError("Unable to export questions");

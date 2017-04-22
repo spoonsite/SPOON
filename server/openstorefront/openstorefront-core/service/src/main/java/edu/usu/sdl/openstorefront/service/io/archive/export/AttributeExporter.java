@@ -21,9 +21,11 @@ import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -77,8 +79,8 @@ public class AttributeExporter
 			attributeAll.setAttributeCodes(service.getAttributeService().findCodesForType(attributeType.getAttributeType()));
 			File attributeFile = new TFile(archiveBasePath + DATA_DIR + attributeType.getAttributeType());
 
-			try {
-				StringProcessor.defaultObjectMapper().writeValue(attributeFile, attributeAll);
+			try (OutputStream out = new TFileOutputStream(attributeFile)) {
+				StringProcessor.defaultObjectMapper().writeValue(out, attributeAll);
 			} catch (IOException ex) {
 				addError("Unable to export: " + attributeType.getDescription());
 			}

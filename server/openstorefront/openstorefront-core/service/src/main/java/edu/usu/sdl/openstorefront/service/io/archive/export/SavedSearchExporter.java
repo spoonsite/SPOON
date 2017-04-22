@@ -21,12 +21,14 @@ import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -68,8 +70,8 @@ public class SavedSearchExporter
 
 		File dataFile = new TFile(archiveBasePath + DATA_DIR + "searches.json");
 
-		try {
-			StringProcessor.defaultObjectMapper().writeValue(dataFile, searches);
+		try (OutputStream out = new TFileOutputStream(dataFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, searches);
 		} catch (IOException ex) {
 			LOG.log(Level.FINE, MessageFormat.format("Unable to export searches.", ex));
 			addError("Unable to export searches");

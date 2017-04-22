@@ -52,6 +52,7 @@ public class GeneralArchiveHandler
 			manifest.getEntityRecords().add(new EntityManifestRecord(exporter.getExporterSupportEntity(), entityRecords));
 			totalRecords += entityRecords;
 		}
+		manifest.setTotalRecords(totalRecords);		
 		archive.setTotalRecords(totalRecords);
 		archive.setRecordsProcessed(0L);
 		archive.save();
@@ -102,7 +103,6 @@ public class GeneralArchiveHandler
 
 		for (BaseExporter exporter : allExporters) {
 			exporter.init(archive, fullArchiveName);
-
 		}
 
 		return allExporters;

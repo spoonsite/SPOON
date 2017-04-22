@@ -15,13 +15,25 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
+import net.java.truevfs.access.TPath;
 
 /**
  *
@@ -33,9 +45,9 @@ public class ComponentExporter
 
 	private static final Logger LOG = Logger.getLogger(ComponentExporter.class.getName());
 
-	private static final String DATA_DIR = "/component/";
-	private static final String DATA_MEDIA_DIR = "/component/media/";
-	private static final String DATA_RESOURCE_DIR = "/component/resources/";
+	private static final String DATA_DIR = "/components/";
+	private static final String DATA_MEDIA_DIR = "/components/media/";
+	private static final String DATA_RESOURCE_DIR = "/components/resources/";
 
 	@Override
 	public int getPriority()
@@ -79,45 +91,63 @@ public class ComponentExporter
 			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
 				ComponentAll componentAll = service.getComponentService().getFullComponent(option.getEntityId());
 
-//				File entry = new TFile(archiveName + "/components.json");
-//				try (Writer writer = new TFileWriter(entry)) {
-//					writer.write(componentJson);
-//				} catch (IOException io) {
-//					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
-//				}
-//				//media
-//				for (ComponentMedia componentMedia : componentAll.getMedia()) {
-//					java.nio.file.Path mediaPath = componentMedia.pathToMedia();
-//					if (mediaPath != null) {
-//						if (mediaPath.toFile().exists()) {
-//							String name = mediaPath.getFileName().toString();
-//							if (fileNameMediaSet.contains(name) == false) {
-//								java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
-//								Files.copy(mediaPath, archiveMediaPath);
-//								fileNameMediaSet.add(name);
-//							}
-//						} else {
-//							LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
-//						}
-//					}
-//				}
-//
-//				//localreources
-//				for (ComponentResource componentResource : componentAll.getResources()) {
-//					java.nio.file.Path resourcePath = componentResource.pathToResource();
-//					if (resourcePath != null) {
-//						if (resourcePath.toFile().exists()) {
-//							String name = resourcePath.getFileName().toString();
-//							if (fileNameResourceSet.contains(name) == false) {
-//								java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
-//								Files.copy(resourcePath, archiveResourcePath);
-//								fileNameResourceSet.add(name);
-//							}
-//						} else {
-//							LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
-//						}
-//					}
-//				}
+				File entryFile = new TFile(archiveBasePath + DATA_DIR + "/comp-" + option.getEntityId() + ".json");
+				try (OutputStream out = new TFileOutputStream(entryFile)) {
+					StringProcessor.defaultObjectMapper().writeValue(out, componentAll);
+				} catch (IOException ex) {
+					LOG.log(Level.FINE, MessageFormat.format("Unable to export templates.{0}", ex));
+					addError("Unable to export templates");
+				}				
+				
+				for (ComponentMedia componentMedia : componentAll.getMedia()) {
+					java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+					if (mediaPath != null) {
+						if (mediaPath.toFile().exists()) {
+							String name = mediaPath.getFileName().toString();
+							
+							java.nio.file.Path archiveMediaPath = new TPath(archiveBasePath + DATA_MEDIA_DIR + name);
+							try (OutputStream out = new TFileOutputStream(archiveMediaPath.toFile())) {
+								Files.copy(mediaPath, out);								
+							}
+							catch (IOException ex)
+							{
+								LOG.log(Level.SEVERE, null, ex);
+								addError("Unable to copy media for entry: " + componentAll.getComponent().getName());								
+							}
+							
+						} else {
+							LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+							addError("Media not found (Not included in export) filename: " + componentMedia.getFileName());
+						}
+					}
+				}
+				
+				for (ComponentResource componentResource : componentAll.getResources()) {
+					java.nio.file.Path resourcePath = componentResource.pathToResource();
+					if (resourcePath != null) {
+						if (resourcePath.toFile().exists()) {
+							String name = resourcePath.getFileName().toString();
+							
+							java.nio.file.Path archiveResourcePath = new TPath(archiveBasePath + DATA_RESOURCE_DIR + name);
+							try (OutputStream out = new TFileOutputStream(archiveResourcePath.toFile())) {
+								Files.copy(resourcePath, out);
+							}
+							catch (IOException ex)
+							{
+								LOG.log(Level.SEVERE, null, ex);
+								addError("Unable to copy resources for entry: " + componentAll.getComponent().getName());
+							}
+							
+						} else {
+							LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+							addError("Resource not found (Not included in export) filename: " + componentResource.getFileName());
+						}
+					}
+				}
+				
+				archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+				archive.setStatusDetails("Exported entry " + componentAll.getComponent().getName());
+				archive.save();
 			}
 		}
 

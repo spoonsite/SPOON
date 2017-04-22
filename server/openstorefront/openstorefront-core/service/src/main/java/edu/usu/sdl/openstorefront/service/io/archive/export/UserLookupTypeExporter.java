@@ -24,11 +24,13 @@ import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -89,8 +91,8 @@ public class UserLookupTypeExporter
 			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup);
 			File lookupFile = new TFile(archiveBasePath + LOOKUP_DIR + lookup.getSimpleName());
 
-			try {
-				StringProcessor.defaultObjectMapper().writeValue(lookupFile, lookupData);
+			try (OutputStream out = new TFileOutputStream(lookupFile)) {
+				StringProcessor.defaultObjectMapper().writeValue(out, lookupData);
 			} catch (IOException ex) {
 				addError("Unable to export: " + lookup.getSimpleName());
 			}

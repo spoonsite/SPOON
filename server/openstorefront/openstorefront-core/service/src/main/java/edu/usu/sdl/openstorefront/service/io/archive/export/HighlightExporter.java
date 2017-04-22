@@ -20,12 +20,14 @@ import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -69,8 +71,8 @@ public class HighlightExporter
 
 		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "highlights.json");
 
-		try {
-			StringProcessor.defaultObjectMapper().writeValue(highlightFile, highlights);
+		try (OutputStream out = new TFileOutputStream(highlightFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, highlights);
 		} catch (IOException ex) {
 			LOG.log(Level.FINE, MessageFormat.format("Unable to export highlights.{0}", ex));
 			addError("Unable to export highlights");

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileOutputStream;
 
 /**
  *
@@ -77,8 +79,8 @@ public class GeneralMediaExporter
 	public void exportRecords()
 	{
 		File mediaRecordFile = new TFile(archiveBasePath + GENERAL_MEDIA_DIR + "records.json");
-		try {
-			StringProcessor.defaultObjectMapper().writeValue(mediaRecordFile, generalMediaRecords);
+		try (OutputStream out = new TFileOutputStream(mediaRecordFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, generalMediaRecords);
 		} catch (IOException ex) {
 			LOG.log(Level.FINE, "Unable to export Media Records.", ex);
 			addError("Unable to export Media Records.");
