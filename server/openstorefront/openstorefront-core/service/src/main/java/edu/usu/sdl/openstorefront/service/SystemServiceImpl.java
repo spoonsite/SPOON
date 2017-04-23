@@ -187,7 +187,9 @@ public class SystemServiceImpl
 		}
 		else
 		{
-			highlight.setHighlightId(persistenceService.generateId());
+			if (StringUtils.isBlank(highlight.getHighlightId())) {
+				highlight.setHighlightId(persistenceService.generateId());
+			}
 			highlight.populateBaseCreateFields();
 			persistenceService.persist(highlight);
 		}

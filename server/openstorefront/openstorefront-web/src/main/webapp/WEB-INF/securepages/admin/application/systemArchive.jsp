@@ -82,7 +82,7 @@
 						},
 						{ text: 'Import/Export', dataIndex: 'ioDirectionType', align: 'center', width: 150,
 							renderer: function(value, meta, record) {
-								return record.get('systemArchiveTypeDescription');
+								return record.get('ioDirectionTypeDescription');
 							}
 						},	
 						{ text: 'Filename', dataIndex: 'originalArchiveFilename', width: 200, sortable: false,
@@ -453,14 +453,10 @@
 										allowBlank: false,
 										editable: false,
 										typeAhead: false,
+										value: 'MERGE',
 										storeConfig: {
 											url: 'api/v1/resource/lookuptypes/ImportModeType'
-										},
-										listeners: {
-											change: function(field, newValue, oldValue, opts) {
-												
-											}
-										}
+										}										
 									}),
 									{
 										xtype: 'filefield',
@@ -482,6 +478,17 @@
 												formBind: true,
 												handler: function() {
 													
+													var uploadForm = this.up('form');
+													//var data = uploadForm.getValues();													
+													uploadForm.submit({
+														submitEmptyText: false,
+														url: 'Upload.action?ImportArchive',														
+														success: function(form, action) {
+															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
+															actionRefresh();
+															importWin.close();
+														}
+													});	
 												}
 											},
 											{

@@ -73,6 +73,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.helper.StringUtil;
 
 /**
  * Handles Searching the data set and sync the indexes
@@ -431,12 +432,16 @@ public class SearchServiceImpl
 	@Override
 	public SystemSearch saveSearch(SystemSearch systemSearch)
 	{
+		Objects.requireNonNull(systemSearch);
+		
 		SystemSearch existing = persistenceService.findById(SystemSearch.class, systemSearch.getSearchId());
 		if (existing != null) {
 			existing.updateFields(systemSearch);
 			systemSearch = persistenceService.persist(existing);
 		} else {
-			systemSearch.setSearchId(persistenceService.generateId());
+			if (StringUtil.isBlank(systemSearch.getSearchId())) {
+				systemSearch.setSearchId(persistenceService.generateId());
+			}
 			systemSearch.populateBaseCreateFields();
 			systemSearch = persistenceService.persist(systemSearch);
 		}

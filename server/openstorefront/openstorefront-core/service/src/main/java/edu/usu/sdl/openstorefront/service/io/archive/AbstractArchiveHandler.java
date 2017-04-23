@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.IODirectionType;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +64,23 @@ public abstract class AbstractArchiveHandler
 	{
 		AbstractArchiveHandler handler;
 
+		if (archive.getSystemArchiveType() == null) {
+			Path path = archive.pathToArchive();
+			if (path != null) {
+				try (InputStream in = new TFileInputStream(path.toString() + MANIFEST_FILENAME)) {
+					ArchiveManifest manifest = StringProcessor.defaultObjectMapper().readValue(in, ArchiveManifest.class);
+
+					archive.setRecordsProcessed(0L);
+					archive.setTotalRecords(manifest.getTotalRecords());
+					archive.setSystemArchiveType(manifest.getSystemArchiveType());			
+					archive.save();
+
+				} catch (IOException ex) {					
+					throw new OpenStorefrontRuntimeException("Failed to read archive manifest.", "Make sure file is a valid archive", ex);
+				}				
+			}
+		}
+		
 		//determine handler
 		switch (archive.getSystemArchiveType()) {
 			case SystemArchiveType.DBEXPORT:
@@ -142,8 +161,9 @@ public abstract class AbstractArchiveHandler
 		try (InputStream in = new TFileInputStream(manifestFile)) {
 			manifest = StringProcessor.defaultObjectMapper().readValue(in, ArchiveManifest.class);
 
+			archive.setRecordsProcessed(0L);			
 			archive.setTotalRecords(manifest.getTotalRecords());
-			archive.setSystemArchiveType(manifest.getSystemArchiveType());
+			archive.setSystemArchiveType(manifest.getSystemArchiveType());			
 			archive.save();
 
 		} catch (IOException ex) {
@@ -182,7 +202,8 @@ public abstract class AbstractArchiveHandler
 	protected void createManifest(ArchiveManifest manifest)
 	{
 		manifest.setSystemArchiveType(archive.getSystemArchiveType());
-
+		manifest.setApplicationVersion(PropertiesManager.getApplicationVersion());
+		
 		File manifestFile = new TFile(fullArchiveName + MANIFEST_FILENAME);
 
 		try (OutputStream out = new TFileOutputStream(manifestFile)) {

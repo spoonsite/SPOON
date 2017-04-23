@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -76,7 +79,7 @@ public class EvaluationTemplateExporter
 		try (OutputStream out = new TFileOutputStream(dateFile)) {
 			StringProcessor.defaultObjectMapper().writeValue(out, evaluationTemplates);
 		} catch (IOException ex) {
-			LOG.log(Level.FINE, MessageFormat.format("Unable to export eval templates.{0}", ex));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export eval templates.{0}", ex));
 			addError("Unable to export eval templates");
 		}
 
@@ -88,7 +91,32 @@ public class EvaluationTemplateExporter
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File dataDir = new TFile(archiveBasePath + DATA_DIR);
+		File files[] = dataDir.listFiles();
+		if (files != null) {
+			for (File dataFile : files) {
+				try (InputStream in = new TFileInputStream(dataFile)) {
+					archive.setStatusDetails("Importing: " + dataFile.getName());
+					archive.save();
+
+					List<EvaluationTemplate> templates = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<EvaluationTemplate>>()
+					{
+					});
+					for (EvaluationTemplate template : templates) {
+						template.save();
+					}
+
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
+
+				} catch (Exception ex) {
+					LOG.log(Level.WARNING, "Failed to Load eval templates", ex);
+					addError("Unable to load eval templates: " + dataFile.getName());
+				}
+			}
+		} else {
+			LOG.log(Level.FINE, "No eval templates to load.");
+		}
 	}
 
 	@Override

@@ -15,20 +15,27 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -42,7 +49,7 @@ public class GeneralMediaExporter
 	private static final Logger LOG = Logger.getLogger(GeneralMediaExporter.class.getName());
 
 	private List<GeneralMedia> generalMediaRecords = new ArrayList<>();
-	private static final String GENERAL_MEDIA_DIR = "/generalmedia/";
+	private static final String DATA_DIR = "/generalmedia/";
 	private static final String MEDIA_DIR = "/generalmedia/media/";
 
 	@Override
@@ -78,11 +85,11 @@ public class GeneralMediaExporter
 	@Override
 	public void exportRecords()
 	{
-		File mediaRecordFile = new TFile(archiveBasePath + GENERAL_MEDIA_DIR + "records.json");
+		File mediaRecordFile = new TFile(archiveBasePath + DATA_DIR + "records.json");
 		try (OutputStream out = new TFileOutputStream(mediaRecordFile)) {
 			StringProcessor.defaultObjectMapper().writeValue(out, generalMediaRecords);
 		} catch (IOException ex) {
-			LOG.log(Level.FINE, "Unable to export Media Records.", ex);
+			LOG.log(Level.WARNING, "Unable to export Media Records.", ex);
 			addError("Unable to export Media Records.");
 		}
 
@@ -93,7 +100,7 @@ public class GeneralMediaExporter
 			try {
 				Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException ex) {
-				LOG.log(Level.FINE, "Unable to copy media file: " + media.getName(), ex);
+				LOG.log(Level.WARNING, "Unable to copy media file: " + media.getName(), ex);
 				addError("Unable to copy media file: " + media.getName());
 			}
 
@@ -106,7 +113,46 @@ public class GeneralMediaExporter
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File dataFile = new TFile(archiveBasePath + DATA_DIR + "records.json");		
+		try (InputStream in = new TFileInputStream(dataFile))	{	
+			archive.setStatusDetails("Importing: " + dataFile.getName());
+			archive.save();
+
+			List<GeneralMedia> generalMedia = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<GeneralMedia>>()
+			{
+			});			
+			GeneralMedia generalMediaExample = new GeneralMedia();
+			List<GeneralMedia> existingMedia = generalMediaExample.findByExample();
+			Map<String, List<GeneralMedia>> mediaMap = existingMedia.stream()
+														.collect(Collectors.groupingBy(GeneralMedia::getName));
+			
+			for (GeneralMedia generalMediaRecord : generalMedia) {
+				if (mediaMap.containsKey(generalMediaRecord.getName())) {
+					service.getSystemService().removeGeneralMedia(generalMediaRecord.getName());					
+				} 
+				generalMediaRecord.save();				
+			}
+						
+			TFile mediaDir = new TFile(archiveBasePath + MEDIA_DIR);	
+			TFile media[] = mediaDir.listFiles();
+			if (media != null) {
+				for (TFile mediaFile : media) {
+					try {
+						Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.GENERAL_MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+						
+						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						archive.save();						
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+						addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));						
+					}
+				}
+			}
+		} catch (Exception ex) {
+			LOG.log(Level.WARNING, "Failed to Load general media", ex);				
+			addError("Unable to load general media: " + dataFile.getName());
+		}		
+		
 	}
 
 	@Override

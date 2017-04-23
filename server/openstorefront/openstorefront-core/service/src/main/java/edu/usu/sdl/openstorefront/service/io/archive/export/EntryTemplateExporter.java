@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -72,7 +75,7 @@ public class EntryTemplateExporter
 		try (OutputStream out = new TFileOutputStream(dataFile)) {
 			StringProcessor.defaultObjectMapper().writeValue(out, templates);
 		} catch (IOException ex) {
-			LOG.log(Level.FINE, MessageFormat.format("Unable to export templates.{0}", ex));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export templates.{0}", ex));
 			addError("Unable to export templates");
 		}
 
@@ -84,7 +87,32 @@ public class EntryTemplateExporter
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File dataDir = new TFile(archiveBasePath + DATA_DIR);
+		File files[] = dataDir.listFiles();
+		if (files != null) {
+			for (File dataFile : files) {
+				try (InputStream in = new TFileInputStream(dataFile)) {
+					archive.setStatusDetails("Importing: " + dataFile.getName());
+					archive.save();
+
+					List<ComponentTypeTemplate> templates = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentTypeTemplate>>()
+					{
+					});
+					for (ComponentTypeTemplate template : templates) {
+						service.getComponentService().saveComponentTemplate(template);
+					}
+
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
+
+				} catch (Exception ex) {
+					LOG.log(Level.WARNING, "Failed to Load templates", ex);
+					addError("Unable to load templates: " + dataFile.getName());
+				}
+			}
+		} else {
+			LOG.log(Level.FINE, "No templates to load.");
+		}
 	}
 
 	@Override

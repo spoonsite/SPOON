@@ -63,7 +63,7 @@ public class GeneralArchiveHandler
 				archive.save();
 				exporters.exportRecords();
 			} catch (Exception e) {
-				LOG.log(Level.FINE, "Unable to complete exporter: " + exporters.getExporterSupportEntity(), e);
+				LOG.log(Level.WARNING, "Unable to complete exporter: " + exporters.getExporterSupportEntity(), e);
 				addError("Unable to complete exporter (May not have all records): " + exporters.getExporterSupportEntity());
 			}
 		}
@@ -76,8 +76,45 @@ public class GeneralArchiveHandler
 	@Override
 	protected void processImport(ArchiveManifest manifest)
 	{
-		//use manifest to get entities to be imported
+		List<BaseExporter> allExporters = new ArrayList<>();
+		Map<String, BaseExporter> exporterMap = new HashMap<>();
 
+		for (EntityManifestRecord record : manifest.getEntityRecords()) {
+			BaseExporter exporter = BaseExporter.getExporter(record.getEntityName());
+			if (exporter != null) {
+				List<BaseExporter> dependantExports = exporter.getAllRequiredExports();
+				for (BaseExporter dependantExport : dependantExports) {
+					exporterMap.put(dependantExport.getExporterSupportEntity(), dependantExport);
+				}
+			} else {
+				addError("Entity not supported: " + record.getEntityName());
+			}
+		}
+		allExporters.addAll(exporterMap.values());
+		allExporters.sort((o1, o2) -> {
+			return Integer.compare(o1.getPriority(), o2.getPriority());
+		});
+		for (BaseExporter exporter : allExporters) {
+			exporter.init(archive, fullArchiveName);
+		}		
+
+		for (BaseExporter exporters : allExporters) {
+			try {
+				archive.setStatusDetails("Importing: " + exporters.getExporterSupportEntity() + "...");
+				archive.save();
+				
+				exporters.importRecords();				
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "Unable to complete importing: " + exporters.getExporterSupportEntity(), e);
+				addError("Unable to complete importing (May not have all records): " + exporters.getExporterSupportEntity());
+			}
+		}			
+		//TODO: See why import records are not matching export	
+		//Either counting difference or not processing all files
+		archive.setRecordsProcessed(archive.getTotalRecords());		
+		
+		archive.setStatusDetails("Done");
+		archive.save();
 	}
 
 	private List<BaseExporter> getExporters()
@@ -93,7 +130,7 @@ public class GeneralArchiveHandler
 					exporterMap.put(dependantExport.getExporterSupportEntity(), dependantExport);
 				}
 			} else {
-				addError("Entity no supported: " + option.getPrimaryEntity());
+				addError("Entity not supported: " + option.getPrimaryEntity());
 			}
 		}
 		allExporters.addAll(exporterMap.values());

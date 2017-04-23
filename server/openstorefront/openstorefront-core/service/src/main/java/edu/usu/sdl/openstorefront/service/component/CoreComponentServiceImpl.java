@@ -148,6 +148,7 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -2369,12 +2370,16 @@ public class CoreComponentServiceImpl
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
+		Objects.requireNonNull(componentTypeTemplate);
+		
 		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
 		} else {
-			componentTypeTemplate.setTemplateId(persistenceService.generateId());
+			if (StringUtil.isBlank(componentTypeTemplate.getTemplateId())) {
+				componentTypeTemplate.setTemplateId(persistenceService.generateId());
+			}
 			componentTypeTemplate.populateBaseCreateFields();
 			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
 		}

@@ -117,7 +117,7 @@ public class UploadAction
 	private AttributeCode attributeCode;
 
 	@Validate(required = true, on = {"ImportArchive"})
-	private String inputMode;
+	private String importModeType;
 
 	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@HandlesEvent("UploadLookup")
@@ -581,7 +581,7 @@ public class UploadAction
 		SystemArchive systemArchive = new SystemArchive();
 		systemArchive.setName(StringProcessor.getJustFileName(uploadFile.getFileName()));
 		systemArchive.setOriginalArchiveFilename(uploadFile.getFileName());
-		systemArchive.setImportModeType(inputMode);
+		systemArchive.setImportModeType(importModeType);
 		systemArchive.setIoDirectionType(IODirectionType.IMPORT);
 		
 		systemArchive.setArchiveFilename("import-" + service.getPersistenceService().generateId() + ".zip");		
@@ -706,14 +706,14 @@ public class UploadAction
 		}
 	}
 
-	public String getInputMode()
+	public String getImportModeType()
 	{
-		return inputMode;
+		return importModeType;
 	}
 
-	public void setInputMode(String inputMode)
+	public void setImportModeType(String importModeType)
 	{
-		this.inputMode = inputMode;
+		this.importModeType = importModeType;
 	}
 
 }

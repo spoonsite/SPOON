@@ -318,7 +318,7 @@
 					title: 'Add/Edit Highlight',
 					minHeight: 750,
 					minWidth: 700,
-//					modal: true,
+					modal: true,
 					scrollable: true,
 					maximizable: true,
 					y: '10em',

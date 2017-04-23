@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
@@ -25,9 +27,11 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,6 +40,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -48,7 +53,8 @@ public class EvaluationExporter
 
 	private static final Logger LOG = Logger.getLogger(EvaluationExporter.class.getName());
 	private static final String DATA_DIR = "/evaluations/";
-	private static final String DATA_SECTION_MEDIA_DIR = "/evaluations/sectionmedia/";
+	private static final String DATA_SECTION_DIR = "/evaluations/sections/";
+	private static final String DATA_SECTION_MEDIA_DIR = "/evaluations/sections/media/";
 
 	@Override
 	public int getPriority()
@@ -100,33 +106,44 @@ public class EvaluationExporter
 				
 		for (Evaluation evaluation : evaluations) {
 			if (componentIdSet.contains(evaluation.getComponentId())) {
-				File dataFile = new TFile(archiveBasePath + DATA_DIR + "eval-" + evaluation.getEvaluationId() + ".json");
+				File dataFile = new TFile(archiveBasePath + DATA_DIR + "eval_" + evaluation.getEvaluationId() + ".json");
 
 				EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluation.getEvaluationId());
 
 				try (OutputStream out = new TFileOutputStream(dataFile)) {
 					StringProcessor.defaultObjectMapper().writeValue(out, evaluationAll);
 				} catch (IOException ex) {
-					LOG.log(Level.FINE, MessageFormat.format("Unable to export eval: {0}", evaluation.getEvaluationId()), ex);
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to export eval: {0}", evaluation.getEvaluationId()), ex);
 					addError("Unable to export eval");
 				}
 
+				List<ContentSectionMedia> allMediaRecords = new ArrayList<>();
 				for (ContentSectionAll section : evaluationAll.getContentSections()) {
 					ContentSectionMedia mediaExample = new ContentSectionMedia();
 					mediaExample.setContentSectionId(section.getSection().getContentSectionId());
 
 					List<ContentSectionMedia> sectionMedia = new ArrayList<>();
+					allMediaRecords.addAll(sectionMedia);
 					for (ContentSectionMedia media : sectionMedia) {
 						Path sourceMedia = media.pathToMedia();
 						File mediaFile = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR + media.getFileName());
 						try (OutputStream out = new TFileOutputStream(mediaFile)) {
 							Files.copy(sourceMedia, out);
 						} catch (IOException ex) {
-							LOG.log(Level.FINE, "Unable to copy media file: " + media.getFileName(), ex);
+							LOG.log(Level.WARNING, "Unable to copy media file: " + media.getFileName(), ex);
 							addError("Unable to copy media file: " + media.getFileName());
 						}
 					}
 				}
+				
+				//save secion media records
+				dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sectionmedia_" + evaluation.getEvaluationId() + ".json");
+				try (OutputStream out = new TFileOutputStream(dataFile)) {
+					StringProcessor.defaultObjectMapper().writeValue(out, allMediaRecords);
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to export section media.", ex));
+					addError("Unable to export section media");
+				}	
 
 				archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 				archive.setStatusDetails("Exported eval " + evaluation.getEvaluationId());
@@ -138,7 +155,66 @@ public class EvaluationExporter
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//load all evals
+		TFile dataDir = new TFile(archiveBasePath + DATA_DIR);
+		TFile files[] = dataDir.listFiles();
+		if (files != null) {
+			int importedCount = 0;
+			for (TFile dataFile : files) {
+				try (InputStream in = new TFileInputStream(dataFile)) {
+					archive.setStatusDetails("Importing: " + dataFile.getName());
+					archive.save();
+
+					EvaluationAll evaluationAll = StringProcessor.defaultObjectMapper().readValue(in, EvaluationAll.class);
+					service.getEvaluationService().saveEvaluationAll(evaluationAll);
+					importedCount++;
+				} catch (Exception ex) {
+					LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
+					addError("Unable to load evaluation: " + dataFile.getName());
+				}
+			}
+
+			//load all eval media records
+			dataDir = new TFile(archiveBasePath + DATA_SECTION_DIR);
+			files = dataDir.listFiles();
+			if (files != null) {
+				for (TFile dataFile : files) {
+					try (InputStream in = new TFileInputStream(dataFile)) {
+						archive.setStatusDetails("Importing: " + dataFile.getName());
+						archive.save();
+
+						List<ContentSectionMedia> allMediaRecords = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionMedia>>()
+						{
+						});
+						for (ContentSectionMedia media : allMediaRecords) {
+							media.save();
+						}
+
+						TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);
+						TFile media[] = mediaDir.listFiles();
+						if (media != null) {
+							for (TFile mediaFile : media) {
+								try {
+									Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+
+								} catch (IOException ex) {
+									LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
+								}
+							}
+						}
+					} catch (Exception ex) {
+						LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
+						addError("Unable to load evaluation: " + dataFile.getName());
+					}
+				}
+			}
+
+			archive.setRecordsProcessed(archive.getRecordsProcessed() + importedCount);
+			archive.save();
+		} else {
+			LOG.log(Level.FINE, "No evaluations to load.");
+		}
 	}
 
 	@Override

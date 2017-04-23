@@ -24,12 +24,15 @@ import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -114,26 +117,29 @@ public class UserLookupTypeExporter
 
 		File lookupDir = new TFile(archiveBasePath + LOOKUP_DIR);
 		File files[] = lookupDir.listFiles();
-		for (File lookupFile : files) {
-			try {
-				archive.setStatusDetails("Importing: " + lookupFile.getName());
-				archive.save();
+		if (files != null) {
+			for (File lookupFile : files) {
+				try (InputStream in = new TFileInputStream(lookupFile))	{		
+					archive.setStatusDetails("Importing: " + lookupFile.getName());
+					archive.save();
 
-				Class lookupClass = Class.forName(lookupFile.getName());
-				List<LookupEntity> lookupData = StringProcessor.defaultObjectMapper().readValue(lookupFile, new TypeReference<List<LookupEntity>>()
-				{
-				});
-				service.getLookupService().syncLookupImport(lookupClass, lookupData);
+					Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.core.entity." + lookupFile.getName());
+					List<LookupEntity> lookupData = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<LookupEntity>>()
+					{
+					});
+					service.getLookupService().syncLookupImport(lookupClass, lookupData);
 
-				archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
-				archive.save();
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
 
-			} catch (ClassNotFoundException | IOException ex) {
-				addError("Unable to load lookup: " + lookupFile.getName());
+				} catch (ClassNotFoundException | IOException ex) {
+					LOG.log(Level.WARNING, "Failed to Load loookup", ex);	
+					addError("Unable to load lookup: " + lookupFile.getName());
+				}
 			}
+		} else {
+			LOG.log(Level.FINE, "No Lookups to load.");
 		}
-		archive.setStatusDetails("Done");
-		archive.save();
 	}
 
 	@Override

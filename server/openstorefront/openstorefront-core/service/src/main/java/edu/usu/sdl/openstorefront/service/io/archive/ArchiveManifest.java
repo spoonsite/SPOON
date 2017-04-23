@@ -27,6 +27,7 @@ public class ArchiveManifest
 
 	private long totalRecords;
 	private String systemArchiveType;
+	private String applicationVersion;
 	private List<EntityManifestRecord> entityRecords = new ArrayList<>();
 
 	public ArchiveManifest()
@@ -61,6 +62,16 @@ public class ArchiveManifest
 	public void setSystemArchiveType(String systemArchiveType)
 	{
 		this.systemArchiveType = systemArchiveType;
+	}
+
+	public String getApplicationVersion()
+	{
+		return applicationVersion;
+	}
+
+	public void setApplicationVersion(String applicationVersion)
+	{
+		this.applicationVersion = applicationVersion;
 	}
 
 }

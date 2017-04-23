@@ -17,14 +17,19 @@ package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
 
 /**
@@ -34,7 +39,7 @@ import net.java.truevfs.access.TFileOutputStream;
 public class AttributeExporter
 		extends BaseExporter
 {
-
+	private static final Logger LOG = Logger.getLogger(AttributeExporter.class.getName());
 	private List<AttributeType> attributesToExport = new ArrayList<>();
 	private static final String DATA_DIR = "/attribute/";
 
@@ -95,7 +100,32 @@ public class AttributeExporter
 	@Override
 	public void importRecords()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File dataDir = new TFile(archiveBasePath + DATA_DIR);
+		File files[] = dataDir.listFiles();
+		if (files != null) {
+			for (File dataFile : files) {
+				try (InputStream in = new TFileInputStream(dataFile))	{	
+					archive.setStatusDetails("Importing: " + dataFile.getName());
+					archive.save();
+
+					AttributeAll attributeAll = StringProcessor.defaultObjectMapper().readValue(in, AttributeAll.class);
+									
+					List<AttributeAll> attributeAlls = new ArrayList<>();
+					attributeAlls.add(attributeAll);
+					FileHistoryOption options = new FileHistoryOption();				
+					service.getAttributeService().importAttributes(attributeAlls, options);
+
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
+
+				} catch (Exception ex) {
+					LOG.log(Level.WARNING, "Failed to Load attibutes", ex);	
+					addError("Unable to load attributes: " + dataFile.getName());
+				}
+			}	
+		} else {
+			LOG.log(Level.FINE, "No attibutes to load.");
+		}
 	}
 
 	@Override

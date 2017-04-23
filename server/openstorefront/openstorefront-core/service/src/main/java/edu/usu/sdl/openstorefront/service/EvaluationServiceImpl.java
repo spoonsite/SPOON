@@ -80,7 +80,9 @@ public class EvaluationServiceImpl
 				persistenceService.persist(existing);
 			} else {
 				recommendation.setChecklistId(evaluationChecklist.getChecklistId());
-				recommendation.setRecommendationId(persistenceService.generateId());
+				if (StringUtils.isBlank(recommendation.getRecommendationId())) {
+					recommendation.setRecommendationId(persistenceService.generateId());
+				}
 				recommendation.populateBaseCreateFields();
 				persistenceService.persist(recommendation);
 			}
@@ -101,7 +103,9 @@ public class EvaluationServiceImpl
 				persistenceService.persist(existing);
 			} else {
 				response.setChecklistId(evaluationChecklist.getChecklistId());
-				response.setResponseId(persistenceService.generateId());
+				if (StringUtils.isBlank(response.getResponseId())) {
+					response.setResponseId(persistenceService.generateId());
+				}
 				response.populateBaseCreateFields();
 				persistenceService.persist(response);
 			}
