@@ -1318,12 +1318,33 @@
 			};
 
 			var actionExportAttribute = function actionExportAttribute(records) {
+				
+				// Initialize Export Types
 				var attributeTypes = "";
+				
+				// Loop Through Records
 				Ext.Array.each(records, function(record) {
+					
+					// Add Attribute Type To Form
 					attributeTypes += '<input type="hidden" name="type" ';
 					attributeTypes += 'value="' + record.get('attributeType') +'" />';
 				});
+				
+				// Get CSRF Token From Cookie
+				var token = Ext.util.Cookies.get('X-Csrf-Token');
+
+				// Ensure CSRF Token Is Available
+				if (token) {
+
+					// Add CSRF Token To Form
+					attributeTypes += '<input type="hidden" name="X-Csrf-Token" ';
+					attributeTypes += 'value="' + token + '" />';
+				}
+				
+				// Set Form
 				document.getElementById('exportFormAttributeTypes').innerHTML = attributeTypes;
+				
+				// Submit Form
 				document.exportForm.submit();
 			};
 

@@ -2445,13 +2445,32 @@
 				
 				var actionExportComponents = function(exportForm) {
 					
+					// Initialize Export IDs
 					var ids = "";
-					Ext.Array.each(componentGrid.getSelection(), function(record){
+					
+					// Loop Through Records
+					Ext.Array.each(componentGrid.getSelection(), function(record) {
 						
-						ids = ids + '<input type="hidden" name="id" value="' + record.get('componentId') +'" />';
-						
+						// Add Component ID To Form
+						ids += '<input type="hidden" name="id" ';
+						ids += 'value="' + record.get('componentId') +'" />';
 					});
-					document.getElementById(exportForm + 'Ids').innerHTML = ids;					
+					
+					// Get CSRF Token From Cookie
+					var token = Ext.util.Cookies.get('X-Csrf-Token');
+
+					// Ensure CSRF Token Is Available
+					if (token) {
+
+						// Add CSRF Token To Form
+						ids += '<input type="hidden" name="X-Csrf-Token" ';
+						ids += 'value="' + token + '" />';
+					}
+					
+					// Set Form
+					document.getElementById(exportForm + 'Ids').innerHTML = ids;
+					
+					// Submit Form
 					document[exportForm].submit();
 				};
 				

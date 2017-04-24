@@ -16,10 +16,11 @@
 package edu.usu.sdl.openstorefront.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
@@ -86,16 +87,21 @@ public class HTMLSanitizer
 	private String removeBadStyles(String html)
 	{
 		String safe;
-		List<String> badStyles = getBadStyles();
+		Map<String, List<String>> badStyles = getBadStyles();
 		if (!badStyles.isEmpty()) {
 			Document doc = Jsoup.parse(html);
-			for (String styleToRemove : badStyles) {
-				Elements tags = doc.select(String.format("[style*=\"%s\"]", styleToRemove));
-				for (Element element : tags) {
-					String elementStyles = element.attr("style");
-					element.attr("style", elementStyles.replace(styleToRemove, ""));
-				}
-			}
+			badStyles.forEach((key, value) -> {
+				value.forEach(styleValue -> {
+					List<String> styleList = getStyleVariations(key, styleValue);
+					styleList.forEach(styleToRemove -> {
+						Elements tags = doc.select(String.format("[style*=\"%s\"]", styleToRemove));
+						tags.forEach((element) -> {
+							String elementStyles = element.attr("style");
+							element.attr("style", elementStyles.replace(styleToRemove, ""));
+						});
+					});
+				});
+			});
 			safe = doc.body().html();
 		} else {
 			safe = html;
@@ -103,12 +109,24 @@ public class HTMLSanitizer
 		return safe;
 	}
 
-	private List<String> getBadStyles()
+	private List<String> getStyleVariations(String styleName, String styleValue)
 	{
-		List<String> badStyles = new ArrayList();
-		badStyles.add("position:static;");
-		badStyles.add("position:absolute;");
-		badStyles.add("position:fixed;");
+		List<String> styleList = new ArrayList();
+		styleList.add(String.format("%s:%s", styleName, styleValue));
+		styleList.add(String.format("%s :%s", styleName, styleValue));
+		styleList.add(String.format("%s: %s", styleName, styleValue));
+		styleList.add(String.format("%s : %s", styleName, styleValue));
+		return styleList;
+	}
+
+	private Map<String, List<String>> getBadStyles()
+	{
+		Map<String, List<String>> badStyles = new HashMap<>();
+		List<String> positionValues = new ArrayList();
+		positionValues.add("absolute;");
+		positionValues.add("fixed;");
+		positionValues.add("static;");
+		badStyles.put("position", positionValues);
 		return badStyles;
 	}
 }

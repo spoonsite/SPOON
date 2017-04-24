@@ -49,6 +49,8 @@ public class PropertiesManager
 
 	public static final String PW_PROPERTY = ".pw";
 
+	public static final String KEY_ENABLE_WEBSOCKETS = "websockets.enabled";
+	
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";

@@ -33,30 +33,31 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles contacts
+ *
  * @author dshurtleff
  */
 public class ContactServiceImpl
-	extends ServiceProxy
-	implements ContactService
+		extends ServiceProxy
+		implements ContactService
 {
 
 	@Override
 	public Contact findContact(String contactId)
 	{
 		Contact contact = null;
-		
+
 		Element element = OSFCacheManager.getContactCache().get(contactId);
 		if (element != null) {
 			contact = (Contact) element.getObjectValue();
 		} else {
 			contact = persistenceService.findById(Contact.class, contactId);
-			
+
 			if (contact != null) {
 				element = new Element(contactId, contact);
 				OSFCacheManager.getContactCache().put(element);
 			}
 		}
-		
+
 		return contact;
 	}
 
@@ -64,38 +65,48 @@ public class ContactServiceImpl
 	public Contact saveContact(Contact contact)
 	{
 		Objects.requireNonNull(contact, "Contact required");
-		
+
 		Contact existing = persistenceService.findById(Contact.class, contact.getContactId());
-		if (existing == null) {					
-			
+		if (existing == null) {
+
 			existing = new Contact();
 			existing.setEmail(contact.getEmail());
 			existing = existing.findProxy();
-			
-			if (existing == null) {	
+
+			if (existing == null) {
 				existing = new Contact();
 				existing.setFirstName(contact.getFirstName());
 				existing.setLastName(contact.getLastName());
-				existing = existing.findProxy();				
-			}			
+				existing = existing.findProxy();
+			}
 		}
-		
+
+		// Check For Existing Contact
 		if (existing != null) {
+
+			// Check If Contact Actually Changed
+			if (!existing.findChanges(contact).isEmpty()) {
+
+				// Configure Alert Notifying Of Changes
+				AlertContext alertContext = new AlertContext();
+				alertContext.setAlertType(AlertType.USER_DATA);
+				alertContext.setDataTrigger(existing);
+				getAlertService().checkAlert(alertContext);
+			}
+			
+			// Update Existing Contact With New Values
 			existing.updateFields(contact);
-			contact = persistenceService.persist(existing);	
-			
-			AlertContext alertContext = new AlertContext();
-			alertContext.setAlertType(AlertType.USER_DATA);
-			alertContext.setDataTrigger(contact);
-			getAlertService().checkAlert(alertContext);			
-			
+
+			// Store Changes & Return New Version
+			contact = persistenceService.persist(existing);
+				
 		} else {
 			contact.setContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			contact = persistenceService.persist(contact);
 		}
 		OSFCacheManager.getContactCache().remove(contact.getContactId());
-		
+
 		return contact;
 	}
 
@@ -106,18 +117,18 @@ public class ContactServiceImpl
 		if (contact != null) {
 			List<ComponentContact> references = getComponentContacts(contactId);
 			if (references.isEmpty()) {
-				persistenceService.delete(contact);				
+				persistenceService.delete(contact);
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to delete contact; references attached. Contact: " + contact.getFirstName() + " " + contact.getLastName(), "Remove reference and try again.");
 			}
 			OSFCacheManager.getContactCache().remove(contactId);
-		}		
+		}
 	}
 
 	@Override
 	public void inactiveContact(String contactId, boolean cascadeComponents)
 	{
-		handleStatusUpdate(contactId, cascadeComponents, Contact.INACTIVE_STATUS);		
+		handleStatusUpdate(contactId, cascadeComponents, Contact.INACTIVE_STATUS);
 	}
 
 	@Override
@@ -125,7 +136,7 @@ public class ContactServiceImpl
 	{
 		handleStatusUpdate(contactId, cascadeComponents, Contact.ACTIVE_STATUS);
 	}
-	
+
 	private void handleStatusUpdate(String contactId, boolean cascadeComponents, String activeStatus)
 	{
 		Contact contact = persistenceService.findById(Contact.class, contactId);
@@ -133,11 +144,10 @@ public class ContactServiceImpl
 			contact.setActiveStatus(activeStatus);
 			contact.populateBaseUpdateFields();
 			persistenceService.persist(contact);
-			
+
 			if (cascadeComponents) {
 				List<ComponentContact> referencedContacts = getComponentContacts(contactId);
-				for (ComponentContact refContact : referencedContacts) 
-				{
+				for (ComponentContact refContact : referencedContacts) {
 					if (Contact.ACTIVE_STATUS.equals(activeStatus)) {
 						getComponentService().activateBaseComponent(ComponentContact.class, refContact.getComponentContactId());
 					} else {
@@ -145,11 +155,11 @@ public class ContactServiceImpl
 					}
 				}
 			}
-			OSFCacheManager.getContactCache().remove(contactId);			
-			
+			OSFCacheManager.getContactCache().remove(contactId);
+
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find contact", "Check input; id not set or doesn't exist. Id: " + contactId);
-		}		
+		}
 	}
 
 	@Override
@@ -157,7 +167,7 @@ public class ContactServiceImpl
 	{
 		Objects.requireNonNull(targetContactId);
 		Objects.requireNonNull(mergeContactId);
-		
+
 		Contact target = persistenceService.findById(Contact.class, targetContactId);
 		Contact merge = persistenceService.findById(Contact.class, mergeContactId);
 		if (target != null) {
@@ -185,7 +195,7 @@ public class ContactServiceImpl
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find target Contact", "Check data. Id: " + targetContactId);
-		}			
+		}
 	}
 
 	@Override
@@ -194,20 +204,19 @@ public class ContactServiceImpl
 		List<ContactReference> references = new ArrayList<>();
 		ComponentContact componentContact = new ComponentContact();
 		componentContact.setContactId(contactId);
-				
+
 		List<ComponentContact> referencedContacts = componentContact.findByExample();
-		for (ComponentContact refContact : referencedContacts) 
-		{
+		for (ComponentContact refContact : referencedContacts) {
 			ContactReference reference = new ContactReference();
 			reference.setContactId(refContact.getContactId());
 			reference.setComponentId(refContact.getComponentId());
 			reference.setComponentName(getComponentService().getComponentName(refContact.getComponentId()));
 			references.add(reference);
-		}		
-		
-		return references;		
+		}
+
+		return references;
 	}
-	
+
 	private List<ComponentContact> getComponentContacts(String contactId)
 	{
 		ComponentContact componentContact = new ComponentContact();
@@ -220,26 +229,26 @@ public class ContactServiceImpl
 	{
 		ComponentContact contactExample = new ComponentContact();
 		List<ComponentContact> contacts = contactExample.findByExampleProxy();
-		
+
 		Map<String, List<ComponentContact>> contactMap = contacts.stream()
 				.collect(Collectors.groupingBy(ComponentContact::uniqueKey));
-		
+
 		for (String key : contactMap.keySet()) {
 			List<ComponentContact> componentContacts = contactMap.get(key);
 			ComponentContact componentContact = componentContacts.get(0);
-						
+
 			Contact contact = componentContact.toContact();
-			contact.setContactId(null);			
-			contact.setCreateUser(componentContact.getCreateUser());					
-			contact = saveContact(contact);			
+			contact.setContactId(null);
+			contact.setCreateUser(componentContact.getCreateUser());
+			contact = saveContact(contact);
 			for (ComponentContact oldContact : componentContacts) {
 				if (StringUtils.isBlank(oldContact.getComponentContactId())) {
 					oldContact.setComponentContactId(persistenceService.generateId());
-				}				
+				}
 				oldContact.setContactId(contact.getContactId());
 				persistenceService.persist(oldContact);
 			}
-		}	
+		}
 	}
-	
+
 }

@@ -48,7 +48,6 @@ public class FileSystemManager
 	public static final String IMPORT_DIR = MAIN_DIR + "/import";
 	public static final String IMPORT_HISTORY_DIR = MAIN_DIR + "/import/history";
 	public static final String IMPORT_LOOKUP_DIR = MAIN_DIR + "/import/lookup";
-	public static final String IMPORT_ATTRIBUTE_DIR = MAIN_DIR + "/import/attribute";
 	public static final String IMPORT_ARTICLE_DIR = MAIN_DIR + "/import/article";
 	public static final String IMPORT_HIGHLIGHT_DIR = MAIN_DIR + "/import/highlights";
 	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
@@ -93,16 +92,6 @@ public class FileSystemManager
 	public static File getImportLookup(String configFilename, NewFileHandler newFileHandler)
 	{
 		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/", newFileHandler);
-	}
-
-	public static File getImportAttribute(String configFilename)
-	{
-		return getImportAttribute(configFilename, null);
-	}
-
-	public static File getImportAttribute(String configFilename, NewFileHandler newFileHandler)
-	{
-		return getFileDir(configFilename, IMPORT_ATTRIBUTE_DIR, "/data/attribute/");
 	}
 
 	private static File getFileDir(String configFilename, String directory, String resourceDir)

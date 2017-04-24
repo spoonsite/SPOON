@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
@@ -94,7 +93,6 @@ public class JobManager
 	{
 		LOG.log(Level.FINEST, "Setting up Import Jobs...");
 		addImportJob(new LookupImporter(), FileSystemManager.IMPORT_LOOKUP_DIR);
-		addImportJob(new AttributeImporter(), FileSystemManager.IMPORT_ATTRIBUTE_DIR);
 		addImportJob(new HighlightImporter(), FileSystemManager.IMPORT_HIGHLIGHT_DIR);
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 

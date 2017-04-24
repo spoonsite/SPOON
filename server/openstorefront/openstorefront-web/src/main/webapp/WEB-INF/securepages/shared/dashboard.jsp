@@ -148,7 +148,21 @@
 						refresh: function(widget) {
 							widget.refresh();
 						}						
-					},					
+					},
+					{
+						name: 'Questions',
+						code: 'QUESTIONS',
+						description: 'Shows your questions and allows for viewing responses.',
+						iconCls: 'fa fa-2x fa-question',
+						jsClass: 'OSF.widget.Questions',						
+						height: 400,
+						permissions: null,
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}
+					},
 					{
 						name: 'Pending Approval Requests',
 						code: 'APPROVEREQ',
@@ -236,20 +250,6 @@
 						jsClass: 'OSF.widget.Reports',						
 						height: 400,
 						permissions: "REPORTS",
-						adminOnly: false,
-						allowMultiples: false,
-						refresh: function(widget) {
-							widget.refresh();
-						}
-					},
-					{
-						name: 'Questions',
-						code: 'QUESTIONS',
-						description: 'Shows your questions and allows for viewing responses.',
-						iconCls: 'fa fa-2x fa-question',
-						jsClass: 'OSF.widget.Questions',						
-						height: 400,
-						permissions: null,
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {

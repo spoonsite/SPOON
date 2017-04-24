@@ -49,6 +49,7 @@
 		
 		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
 		request.setAttribute("idlegraceperiod", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));
+		request.setAttribute("enableWebsocket", PropertiesManager.getValue(PropertiesManager.KEY_ENABLE_WEBSOCKETS, "false"));
 		
 	%>	
 
@@ -154,7 +155,7 @@
 				});				
 			};
 			
-			if (!Ext.isIE9m || Ext.isIE9m === false) {			
+			if (${enableWebsocket} === true && (!Ext.isIE9m || Ext.isIE9m === false)) {			
 				var contextPath = "${pageContext.request.contextPath}";
 				contextPath = contextPath.replace('/', '');
 				var socket = io.connect('', {

@@ -33,24 +33,22 @@ licensed under GPL V3.**
 
 Version 2.3 incorporates:
 
- * Fixes several small bugs
+ * Fixes for several small bugs.
+ * Password management, new user sign up management.
+ * New tools for evaluators.
+ * New administrative tools, including the introduction of roles and permissions.
+
 
 ### 1.1.1 Administrator Release Notes, v2.3 @ADMIN-SYSTEM-MANAGEMENT
-=======
- * Evaluator Tools added
- * Admin- System Export/Import
- * Admin- Adding Roles and Permissions to Users
-
+-----
 
 *What's new in v2.3*
 
-**Users, Roles, and Permissions**
-
-**Evaluator Tools**
+ * Forgot password, password management, and sign up management.
+ * Evaluator Tools added
+ * Admin- Adding Roles and Permissions to Users
+ * Admin- System Export/Import
  
-**System Export/Import**
-  
-  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
@@ -620,7 +618,7 @@ notification or not. The tools also allow for manually processing the
 queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
-A watch is set on a entry to allow for a user to be notified of
+A watch is set on an entry to allow for a user to be notified of
 changes to an entry. There are two ways notifications occur in the
 application, and there is no limit to the amount of watches a user may
 place.
@@ -698,7 +696,7 @@ To remove a tag, click on the tag's drop-down arrow and select **Delete**.
 ### 2.4.4  Add/Delete an Entry to Watch List
 --------
 
-Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
+Click on an entry to view it's **Details** page.  From the **Details** page, click on the **Watch** icon
 in the right upper corner (eye icon).  To remove an entry from your watch list, click on the **Watch** icon.
 
 ### 2.4.5  Submit Correction and/or Request Ownership
@@ -732,9 +730,26 @@ of the displayed information.  From the entry **Details** page, click on the **P
 in the top right corner.  A window will pop-up where you can either customize the template or
 use the default.
 
+## 2.5 Evaluation Tools @EVALUATIONS 
+
+Evaluations are accessed by going to your user name in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
+
+### 2.5.1 Dashboard @EVALUATIONS 
+
+The dashboard can be customized with various widgets to be displayed.  Individual widgets can be configured to show pertinent information such as assigned user, status, and if the evaluation has been published.
+
+### 2.5.2 Evaluations @EVALUATIONS 
+
+The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
+
+Selecting an evaluation allows you to Assign it to another user or to Edit the evaluation.
+
+When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
+
+
 
 # 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
-----------
+--------
 
 Admin tools allow for the management of all data in the system.
  
@@ -1225,7 +1240,7 @@ is resolved.
 -------
 
 This allows for data imports and mappings.  This is done by importing a file.
-Various file formats can be imported such as .csv, .xlsx, JSON, .tsv, .xml, and .zip.  
+Various file formats can be imported such as .csv, .xlsx, JSON, .csv, .xml, and .zip.  
 Once imported warnings and/or errors can be viewed, the data can be reprocessed 
 or rolled back.
 
@@ -1259,13 +1274,13 @@ Parser - Record Structure handled
 	
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
-- Record (Component) per line;  It can map SubComponent Entities as well.
+- Record (Component) per line;  It can map Subcomponent Entities as well.
 - Header line not support (Delete before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	
 
-- Nested record (Component/Contact/etc)
+- Nested record (Component/Contact/etc.)
 - Does not support attachments (Local resources or media)
 
 **Creating a data map**
@@ -1291,7 +1306,7 @@ imported or exported as .csv files.
 **To add/delete/edit codes:** 
 
 * Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+* To add a code, click on the **Add** button and fill out the form.  When you are done, click **Save**.
 * To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
 click **Save** at the bottom.
 * To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
@@ -1495,14 +1510,14 @@ at first login will contain the information gathered from the external security 
 
 The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
-security utility (Open AM, LDAP, Database?etc.) to define the users.
+security utility (Open AM, LDAP, Database, etc.) to define the users.
 
 An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
 activate the user's existing watches, but it won't send any previous
-messages ? just messages going forward.
+messages, just messages going forward.
 
 **To toggle active status:**
 
@@ -1755,7 +1770,32 @@ System Tools and their Purpose:
 -  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
 
 
-### 3.3.8 Tracking @ADMIN-TRACKING
+### 3.3.8 Security @ADMIN-TRACKING
+
+The Security Management area consists of the Security Policy and the Shiro Config.
+
+The security policy controls the how the application handles security related items.    Such as adding CORS support.
+Some policies only apply to the built-in security realm.
+
+Shiro Config is used for troubleshoot security realm configuration as well as making it easier to update URL policies.  The application will need to be restarted to apply the changes.  
+Also, note the application will create a backup file of the current policy so an admin can roll it back, if needed.   Only the previous version is backed up.
+
+### 3.3.9 Security Roles @ADMIN-TRACKING
+
+This section is used to match up Roles with Users, Permissions, and Data Restrictions.
+
+A table is shown of all of the Security Roles which can be edited and managed.
+ 
+ * Within each role a list of users can be assigned using the **Manage Users** button.  A user can be assigned to more than one role.
+ 
+ * The **Manage Permissions** button is used to assign specific permissions to each role.  Permissions include areas such as various ADMIN permissions, Evaluator, Reports, and API documentation permissions.
+ 
+ * Finally, the **Manage Data Restrictions** section is used to determine what data each Role can access.  Two tabs exist for Data Sources (ER2 and DI2E) and for Data Sensitivity which incorporates Distribution A - F, ITAR, Public, and Sensitive data.
+ 
+**NOTE:**  Data Sources and Data Sensitivity values can be managed from the Data Management->Lookups, see section 3.2.9.
+
+
+### 3.3.10 Tracking @ADMIN-TRACKING
 
 The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
@@ -1768,19 +1808,55 @@ The events are also aggregated into various system generated reports which
 are accessible via the Reports Admin Tool.
 
 
-### 3.3.9 API Documentation @API-DOCS
+### 3.3.11 API Documentation @API-DOCS
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Glossary
+# 4.  Evaluator Tools @ADMIN-SYSTEM-MANAGEMENT 
+------
+
+**NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
+
+This section covers Evaluation Management as it exists in Admin Tools.  For evaluator (user) information please see section 2.5.
+
+**Evaluation Management within Admin Tools**
+The Evaluation Management menu consists of Evaluations and Templates.
+
+## 4.1 Evaluations @ADMIN-SYSTEM-MANAGEMENT 
+
+This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
+
+
+## 4.2 Templates @ADMIN-SYSTEM-MANAGEMENT 
+
+The templates section lets you manipulate various templates for evaluation input and display.
+
+### 4.2.1 Evaluation Templates @ADMIN-SYSTEM-MANAGEMENT 
+
+This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
+
+### 4.2.2 Checklist Templates @ADMIN-SYSTEM-MANAGEMENT 
+
+A checklist template lets you add various questions as a checklist.
+
+### 4.2.3 Checklist Questions @ADMIN-SYSTEM-MANAGEMENT 
+
+Here you formulate the questions to be asked on a template.
+
+### 4.2.4 Section Templates @ADMIN-SYSTEM-MANAGEMENT 
+
+Section templates can be created for further customization.
+
+
+# 5.  Glossary
 ----------
 
 Contains definitions of terms used in the application and in the help documentation (see the sub-sections). 
 
-##  4.1  User Terminology
+##  5.1  User Terminology
 ----------------
 
 -  **Article (Topic Landing Page)** -   An article is a central information page that contains information on a specific topic relating to an attribute.
@@ -1789,7 +1865,7 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Highlight**                    -   A news item shown on the home page.
 -  **Watch**                        -   A way to track changes on a listing.
 
-## 4.2 Admin Terminology @ADMIN-ENTRY-MANAGEMENT
+## 5.2 Admin Terminology @ADMIN-ENTRY-MANAGEMENT
 -----------------
 
 -  **Attribute Type**   -  A related group of specific categories representing a single attribute of a listing (eg. "Funded" would be a type with the corresponding value "Yes" or "No").
