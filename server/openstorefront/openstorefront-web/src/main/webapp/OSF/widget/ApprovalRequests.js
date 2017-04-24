@@ -32,7 +32,7 @@ Ext.define('OSF.widget.ApprovalRequests', {
 		approvalPanel.grid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: {
-				autoLoad: true,
+				autoLoad: false,
 				fields: [
 					{
 						name: 'submittedDts',
@@ -102,44 +102,13 @@ Ext.define('OSF.widget.ApprovalRequests', {
 							}							
 						}
 					}					
-				],
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/components/filterable',					
-					reader: {
-						type: 'json',
-						rootProperty: 'components',
-						totalProperty: 'totalNumber'
-					}
-				},
-				listeners: {											
-					beforeLoad: function(store, operation, eOpts){
-						store.getProxy().extraParams = {							
-							approvalState: 'ALL'
-						};
-					},					
-					load: function(store, records, successful, opts) {
-						//filter pending and pending changes
-						store.filterBy(function(record){
-							if (record.get('approvalState') === 'P') {
-								return true;
-							} else {
-								if (record.get('numberOfPendingChanges') && record.get('numberOfPendingChanges') > 0) {
-									if (record.get('statusOfPendingChange') === 'Pending') {
-										return true;
-									}
-								}
-							}
-							return false;
-						});						
-					}
-				}				
+				]
 			},
 			columns: [
 				{ text: 'Request Type', dataIndex: 'requestType', width: 150 },
-				{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 175 },
-				{ text: 'User', dataIndex: 'updateUser', width: 175 },
-				{ text: 'Submission Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+				{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
+				{ text: 'User', dataIndex: 'updateUser', width: 200 },
+				{ text: 'Submission Date', dataIndex: 'submittedDts', width: 180, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 			],
 			listeners: {
 				selectionchange: function(selModel, selected, opts) {
@@ -241,12 +210,46 @@ Ext.define('OSF.widget.ApprovalRequests', {
 			]
 		});
 		
-		approvalPanel.add(approvalPanel.grid);
+		approvalPanel.add(approvalPanel.grid);	
 		
-	},	
+		approvalPanel.reloadRequests = function() {
+			
+			approvalPanel.grid.setLoading(true);
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/components/filterable?approvalState=ALL',
+				callback: function(){
+					approvalPanel.grid.setLoading(false);
+				},
+				success: function(response, opts) {
+					var record = Ext.decode(response.responseText);
+				
+					var filterResults = [];
+					var pendingEntries = [];
+					filterResults = record.components;
+					Ext.Array.each(filterResults, function(result){
+						if (result.component.approvalState === 'P') {
+							pendingEntries.push(result);
+						} else {
+							if (result.component.numberOfPendingChanges && result.component.numberOfPendingChanges > 0) {
+								if (result.component.statusOfPendingChange === 'Pending') {
+									pendingEntries.push(result);
+								}
+							}
+						}
+					});
+					
+					approvalPanel.grid.getStore().loadRawData(pendingEntries);
+				}
+			});
+			
+		}
+		approvalPanel.reloadRequests();
+	},
+	
 	refresh: function() {
 		var approvalPanel = this;
-		approvalPanel.grid.getStore().reload();
+		approvalPanel.reloadRequests();
 	}
 	
 });
