@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
-import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
@@ -76,7 +75,6 @@ public class CoreSystem
 			new JiraManager(),
 			new ConfluenceManager(),
 			new LookupImporter(),
-			new AttributeImporter(),
 			new MailManager(),
 			new JobManager(),
 			new UserAgentManager(),
