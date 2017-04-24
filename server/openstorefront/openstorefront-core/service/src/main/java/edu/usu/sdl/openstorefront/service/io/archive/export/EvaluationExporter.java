@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
@@ -42,6 +43,7 @@ import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -101,11 +103,14 @@ public class EvaluationExporter
 		for (SystemArchiveOption option : archive.getArchiveOptions()) {
 			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
 				componentIdSet.add(option.getEntityId());
-			}	
+			}
 		}
-				
+
+		ComponentExporter componentExporter = new ComponentExporter();
+		componentExporter.init(archive, archiveBasePath);
+
 		for (Evaluation evaluation : evaluations) {
-			if (componentIdSet.contains(evaluation.getComponentId())) {
+			if (componentIdSet.contains(evaluation.getOriginComponentId())) {
 				File dataFile = new TFile(archiveBasePath + DATA_DIR + "eval_" + evaluation.getEvaluationId() + ".json");
 
 				EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluation.getEvaluationId());
@@ -117,12 +122,20 @@ public class EvaluationExporter
 					addError("Unable to export eval");
 				}
 
+				//change request
+				if (StringUtils.isNotBlank(evaluationAll.getEvaluation().getComponentId())) {
+					ComponentAll componentAll = service.getComponentService().getFullComponent(evaluationAll.getEvaluation().getComponentId());
+					if (componentAll != null) {
+						componentExporter.exportComponent(componentAll);
+					}
+				}
+
 				List<ContentSectionMedia> allMediaRecords = new ArrayList<>();
 				for (ContentSectionAll section : evaluationAll.getContentSections()) {
 					ContentSectionMedia mediaExample = new ContentSectionMedia();
 					mediaExample.setContentSectionId(section.getSection().getContentSectionId());
 
-					List<ContentSectionMedia> sectionMedia = new ArrayList<>();
+					List<ContentSectionMedia> sectionMedia = mediaExample.findByExample();
 					allMediaRecords.addAll(sectionMedia);
 					for (ContentSectionMedia media : sectionMedia) {
 						Path sourceMedia = media.pathToMedia();
@@ -135,7 +148,7 @@ public class EvaluationExporter
 						}
 					}
 				}
-				
+
 				//save secion media records
 				dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sectionmedia_" + evaluation.getEvaluationId() + ".json");
 				try (OutputStream out = new TFileOutputStream(dataFile)) {
@@ -143,7 +156,7 @@ public class EvaluationExporter
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to export section media.", ex));
 					addError("Unable to export section media");
-				}	
+				}
 
 				archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 				archive.setStatusDetails("Exported eval " + evaluation.getEvaluationId());
@@ -190,22 +203,22 @@ public class EvaluationExporter
 							media.save();
 						}
 
-						TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);
-						TFile media[] = mediaDir.listFiles();
-						if (media != null) {
-							for (TFile mediaFile : media) {
-								try {
-									Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-
-								} catch (IOException ex) {
-									LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
-									addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
-								}
-							}
-						}
 					} catch (Exception ex) {
 						LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
 						addError("Unable to load evaluation: " + dataFile.getName());
+					}
+				}
+				TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);
+				TFile media[] = mediaDir.listFiles();
+				if (media != null) {
+					for (TFile mediaFile : media) {
+						try {
+							Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+
+						} catch (IOException ex) {
+							LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+							addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
+						}
 					}
 				}
 			}
@@ -229,11 +242,11 @@ public class EvaluationExporter
 		for (SystemArchiveOption option : archive.getArchiveOptions()) {
 			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
 				componentIdSet.add(option.getEntityId());
-			}	
+			}
 		}
-				
+
 		for (Evaluation evaluation : evaluations) {
-			if (componentIdSet.contains(evaluation.getComponentId())) {
+			if (componentIdSet.contains(evaluation.getOriginComponentId())) {
 				count++;
 			}
 		}

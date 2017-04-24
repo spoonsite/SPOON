@@ -1240,7 +1240,7 @@ is resolved.
 -------
 
 This allows for data imports and mappings.  This is done by importing a file.
-Various file formats can be imported such as .csv, .xlsx, JSON, .csv, .xml, and .zip.  
+Various file formats can be imported such as .csv, .xlsx, JSON, .tsv, .xml, and .zip.  
 Once imported warnings and/or errors can be viewed, the data can be reprocessed 
 or rolled back.
 

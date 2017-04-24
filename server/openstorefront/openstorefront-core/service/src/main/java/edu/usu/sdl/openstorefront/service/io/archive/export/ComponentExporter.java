@@ -96,55 +96,7 @@ public class ComponentExporter
 			if (Component.class.getSimpleName().equals(option.getPrimaryEntity())) {
 				ComponentAll componentAll = service.getComponentService().getFullComponent(option.getEntityId());
 				if (componentAll != null) {
-					File entryFile = new TFile(archiveBasePath + DATA_DIR + "/comp-" + option.getEntityId() + ".json");
-					try (OutputStream out = new TFileOutputStream(entryFile)) {
-						StringProcessor.defaultObjectMapper().writeValue(out, componentAll);
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to export entry. {0}", componentAll.getComponent().getName()), ex);
-						addError("Unable to export entry: " + componentAll.getComponent().getName());
-					}
-
-					for (ComponentMedia componentMedia : componentAll.getMedia()) {
-						java.nio.file.Path mediaPath = componentMedia.pathToMedia();
-						if (mediaPath != null) {
-							if (mediaPath.toFile().exists()) {
-								String name = mediaPath.getFileName().toString();
-
-								java.nio.file.Path archiveMediaPath = new TPath(archiveBasePath + DATA_MEDIA_DIR + name);
-								try (OutputStream out = new TFileOutputStream(archiveMediaPath.toFile())) {
-									Files.copy(mediaPath, out);
-								} catch (IOException ex) {
-									LOG.log(Level.WARNING, null, ex);
-									addError("Unable to copy media for entry: " + componentAll.getComponent().getName());
-								}
-
-							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
-								addError("Media not found (Not included in export) filename: " + componentMedia.getFileName());
-							}
-						}
-					}
-
-					for (ComponentResource componentResource : componentAll.getResources()) {
-						java.nio.file.Path resourcePath = componentResource.pathToResource();
-						if (resourcePath != null) {
-							if (resourcePath.toFile().exists()) {
-								String name = resourcePath.getFileName().toString();
-
-								java.nio.file.Path archiveResourcePath = new TPath(archiveBasePath + DATA_RESOURCE_DIR + name);
-								try (OutputStream out = new TFileOutputStream(archiveResourcePath.toFile())) {
-									Files.copy(resourcePath, out);
-								} catch (IOException ex) {
-									LOG.log(Level.SEVERE, null, ex);
-									addError("Unable to copy resources for entry: " + componentAll.getComponent().getName());
-								}
-
-							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
-								addError("Resource not found (Not included in export) filename: " + componentResource.getFileName());
-							}
-						}
-					}
+					exportComponent(componentAll);
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.setStatusDetails("Exported entry " + componentAll.getComponent().getName());
@@ -155,6 +107,59 @@ public class ComponentExporter
 			}
 		}
 
+	}
+
+	public void exportComponent(ComponentAll componentAll)
+	{
+		File entryFile = new TFile(archiveBasePath + DATA_DIR + "/comp-" + componentAll.getComponent().getComponentId() + ".json");
+		try (OutputStream out = new TFileOutputStream(entryFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, componentAll);
+		} catch (IOException ex) {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export entry. {0}", componentAll.getComponent().getName()), ex);
+			addError("Unable to export entry: " + componentAll.getComponent().getName());
+		}
+
+		for (ComponentMedia componentMedia : componentAll.getMedia()) {
+			java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+			if (mediaPath != null) {
+				if (mediaPath.toFile().exists()) {
+					String name = mediaPath.getFileName().toString();
+
+					java.nio.file.Path archiveMediaPath = new TPath(archiveBasePath + DATA_MEDIA_DIR + name);
+					try (OutputStream out = new TFileOutputStream(archiveMediaPath.toFile())) {
+						Files.copy(mediaPath, out);
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, null, ex);
+						addError("Unable to copy media for entry: " + componentAll.getComponent().getName());
+					}
+
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+					addError("Media not found (Not included in export) filename: " + componentMedia.getFileName());
+				}
+			}
+		}
+
+		for (ComponentResource componentResource : componentAll.getResources()) {
+			java.nio.file.Path resourcePath = componentResource.pathToResource();
+			if (resourcePath != null) {
+				if (resourcePath.toFile().exists()) {
+					String name = resourcePath.getFileName().toString();
+
+					java.nio.file.Path archiveResourcePath = new TPath(archiveBasePath + DATA_RESOURCE_DIR + name);
+					try (OutputStream out = new TFileOutputStream(archiveResourcePath.toFile())) {
+						Files.copy(resourcePath, out);
+					} catch (IOException ex) {
+						LOG.log(Level.SEVERE, null, ex);
+						addError("Unable to copy resources for entry: " + componentAll.getComponent().getName());
+					}
+
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+					addError("Resource not found (Not included in export) filename: " + componentResource.getFileName());
+				}
+			}
+		}
 	}
 
 	@Override

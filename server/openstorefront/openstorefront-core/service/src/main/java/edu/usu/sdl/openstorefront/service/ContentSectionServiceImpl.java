@@ -85,7 +85,10 @@ public class ContentSectionServiceImpl
 	{
 		ContentSectionAll contentSectionAll = null;
 
-		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
+		//Non-proxy version
+		ContentSection contentSection = new ContentSection();
+		contentSection.setContentSectionId(contentSectionId);
+		contentSection = contentSection.find();
 		if (contentSection != null) {
 			if (publicInformationOnly && contentSection.getPrivateSection()) {
 				return null;
