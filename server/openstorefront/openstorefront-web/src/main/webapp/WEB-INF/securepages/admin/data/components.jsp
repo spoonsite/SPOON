@@ -667,12 +667,22 @@
 										name: 'guid'																		
 									},
 									Ext.create('OSF.component.DataSensitivityComboBox', {												
-										width: '100%'
+										width: '100%',
+										listeners: {
+											ready: function(combo) {
+												combo.setValue(generalForm.componentRecord.get('dataSensitivity'));												
+											}
+										}
 									}),								
 									Ext.create('OSF.component.DataSourceComboBox', {			
 										name: 'dataSource',
 										hideOnNoData: true,
-										width: '100%'
+										width: '100%',
+										listeners: {
+											ready: function(combo) {
+												combo.setValue(generalForm.componentRecord.get('dataSource'));												
+											}
+										}
 									}),																
 									Ext.create('OSF.component.SecurityComboBox', {	
 									})

@@ -111,7 +111,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 			type: 'ajax',
 			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
 		}
-	},	
+	},		
 	initComponent: function() {
 		var combo = this;	
 		combo.callParent();
@@ -152,7 +152,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 					}
 
 					combo.getStore().loadData(data);
-					combo.fireEvent('ready');
+					combo.fireEvent('ready', combo);
 				}
 			});						
 		});	
@@ -226,6 +226,7 @@ Ext.define('OSF.component.DataSourceComboBox', {
 					}
 
 					combo.getStore().loadData(data);
+					combo.fireEvent('ready', combo);
 				}
 			});			
 		});		
