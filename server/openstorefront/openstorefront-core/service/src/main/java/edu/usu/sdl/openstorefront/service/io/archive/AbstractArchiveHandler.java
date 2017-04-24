@@ -21,9 +21,13 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.IODirectionType;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchiveError;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +55,7 @@ public abstract class AbstractArchiveHandler
 	private static final String MANIFEST_FILENAME = "/manifest.json";
 
 	protected SystemArchive archive;
-	private boolean addedError = false;
+	protected boolean addedError = false;
 	protected ServiceProxy service = new ServiceProxy();
 	protected String fullArchiveName;
 
@@ -72,15 +76,15 @@ public abstract class AbstractArchiveHandler
 
 					archive.setRecordsProcessed(0L);
 					archive.setTotalRecords(manifest.getTotalRecords());
-					archive.setSystemArchiveType(manifest.getSystemArchiveType());			
+					archive.setSystemArchiveType(manifest.getSystemArchiveType());
 					archive.save();
 
-				} catch (IOException ex) {					
+				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Failed to read archive manifest.", "Make sure file is a valid archive", ex);
-				}				
+				}
 			}
 		}
-		
+
 		//determine handler
 		switch (archive.getSystemArchiveType()) {
 			case SystemArchiveType.DBEXPORT:
@@ -161,9 +165,9 @@ public abstract class AbstractArchiveHandler
 		try (InputStream in = new TFileInputStream(manifestFile)) {
 			manifest = StringProcessor.defaultObjectMapper().readValue(in, ArchiveManifest.class);
 
-			archive.setRecordsProcessed(0L);			
+			archive.setRecordsProcessed(0L);
 			archive.setTotalRecords(manifest.getTotalRecords());
-			archive.setSystemArchiveType(manifest.getSystemArchiveType());			
+			archive.setSystemArchiveType(manifest.getSystemArchiveType());
 			archive.save();
 
 		} catch (IOException ex) {
@@ -187,10 +191,24 @@ public abstract class AbstractArchiveHandler
 		if (addedError) {
 			archive.setRunStatus(RunStatus.ERROR);
 		} else {
+			SystemArchiveError errorExample = new SystemArchiveError();
+			errorExample.setArchiveId(archive.getArchiveId());
+			long countExample = service.getPersistenceService().countByExample(errorExample);
+			if (countExample > 0) {
+				archive.setRunStatus(RunStatus.ERROR);
+			}
 			archive.setRunStatus(RunStatus.COMPLETE);
 		}
 		archive.setCompletedDts(TimeUtil.currentDate());
 		archive.save();
+
+		NotificationEvent event = new NotificationEvent();
+		event.setEventType(NotificationEventType.TASK);
+		event.setUsername(archive.getCreateUser());
+		event.setMessage("System archive " + archive.getName() + " completed with status: " + TranslateUtil.translate(RunStatus.class, archive.getRunStatus()));
+		event.setEntityName(SystemArchive.class.getSimpleName());
+		event.setEntityId(archive.getArchiveId());
+		service.getNotificationService().postEvent(event);
 	}
 
 	protected void addError(String message)
@@ -203,7 +221,7 @@ public abstract class AbstractArchiveHandler
 	{
 		manifest.setSystemArchiveType(archive.getSystemArchiveType());
 		manifest.setApplicationVersion(PropertiesManager.getApplicationVersion());
-		
+
 		File manifestFile = new TFile(fullArchiveName + MANIFEST_FILENAME);
 
 		try (OutputStream out = new TFileOutputStream(manifestFile)) {

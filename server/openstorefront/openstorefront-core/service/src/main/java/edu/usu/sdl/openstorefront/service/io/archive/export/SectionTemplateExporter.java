@@ -81,7 +81,7 @@ public class SectionTemplateExporter
 
 		archive.setStatusDetails("Exporting section templates...");
 		archive.save();
-		
+
 		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
 
 		try (OutputStream out = new TFileOutputStream(dataFile)) {
@@ -90,20 +90,20 @@ public class SectionTemplateExporter
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to export section templates.", ex));
 			addError("Unable to export section templates");
 		}
-		
+
 		//save sections and section media
 		List<ContentSectionAll> sections = new ArrayList<>();
 		for (ContentSectionTemplate template : templates) {
 			ContentSection contentSection = new ContentSection();
 			contentSection.setEntity(ContentSectionTemplate.class.getSimpleName());
 			contentSection.setEntityId(template.getTemplateId());
-						
+
 			contentSection = contentSection.find();
-			
+
 			ContentSectionAll sectionAll = service.getContentSectionService().getContentSectionAll(contentSection.getContentSectionId(), false);
 			sections.add(sectionAll);
 		}
-		
+
 		archive.setStatusDetails("Exporting template sections...");
 		archive.save();
 
@@ -113,11 +113,11 @@ public class SectionTemplateExporter
 		} catch (IOException ex) {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to export section templates.", ex));
 			addError("Unable to export section templates");
-		}		
-		
+		}
+
 		archive.setStatusDetails("Exporting template sections media...");
 		archive.save();
-		
+
 		List<ContentSectionMedia> allMediaRecord = new ArrayList<>();
 		for (ContentSectionAll section : sections) {
 			ContentSectionMedia mediaExample = new ContentSectionMedia();
@@ -125,7 +125,7 @@ public class SectionTemplateExporter
 
 			List<ContentSectionMedia> sectionMedia = new ArrayList<>();
 			allMediaRecord.addAll(sectionMedia);
-			
+
 			for (ContentSectionMedia media : sectionMedia) {
 				Path sourceMedia = media.pathToMedia();
 				File mediaFile = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR + media.getFileName());
@@ -136,7 +136,7 @@ public class SectionTemplateExporter
 					addError("Unable to copy media file: " + media.getFileName());
 				}
 			}
-		}				
+		}
 		//save media records
 		dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sectionmedia.json");
 		try (OutputStream out = new TFileOutputStream(dataFile)) {
@@ -144,7 +144,7 @@ public class SectionTemplateExporter
 		} catch (IOException ex) {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to export section media.", ex));
 			addError("Unable to export section media");
-		}		
+		}
 
 		archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
 		archive.setStatusDetails("Exported " + templates.size() + " section templates");
@@ -156,81 +156,80 @@ public class SectionTemplateExporter
 	{
 		//restore templates
 		boolean continueProcessing = true;
-		int recordCount = 0;		
-		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");	
-		try (InputStream in = new TFileInputStream(dataFile))	{	
+		int recordCount = 0;
+		File dataFile = new TFile(archiveBasePath + DATA_DIR + "templates.json");
+		try (InputStream in = new TFileInputStream(dataFile)) {
 			archive.setStatusDetails("Importing section templates: " + dataFile.getName());
 			archive.save();
 
 			List<ContentSectionTemplate> sectionTemplates = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionTemplate>>()
 			{
-			});		
-			recordCount	= sectionTemplates.size();
+			});
+			recordCount = sectionTemplates.size();
 			for (ContentSectionTemplate sectionTemplate : sectionTemplates) {
 				sectionTemplate.save();
 			}
 		} catch (Exception ex) {
-			LOG.log(Level.WARNING, "Failed to Load templates", ex);				
+			LOG.log(Level.WARNING, "Failed to Load templates", ex);
 			addError("Unable to load section templates: " + dataFile.getName());
 			continueProcessing = false;
-		}				
-			
+		}
+
 		if (continueProcessing) {
-			dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sections.json");	
-			try (InputStream in = new TFileInputStream(dataFile))	{	
+			dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sections.json");
+			try (InputStream in = new TFileInputStream(dataFile)) {
 				archive.setStatusDetails("Importing sections for templates: " + dataFile.getName());
 				archive.save();
 
 				List<ContentSectionAll> sections = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionAll>>()
 				{
-				});					
+				});
 				for (ContentSectionAll section : sections) {
 					service.getContentSectionService().saveAll(section);
 				}
 			} catch (Exception ex) {
-				LOG.log(Level.FINE, "Failed to Load sections", ex);				
+				LOG.log(Level.FINE, "Failed to Load sections", ex);
 				addError("Unable to load sections: " + dataFile.getName());
 				continueProcessing = false;
-			}				
+			}
 		}
-		
+
 		if (continueProcessing) {
 			dataFile = new TFile(archiveBasePath + DATA_SECTION_DIR + "sectionmedia.json");
-			try (InputStream in = new TFileInputStream(dataFile))	{	
+			try (InputStream in = new TFileInputStream(dataFile)) {
 				archive.setStatusDetails("Importing section Media: " + dataFile.getName());
 				archive.save();
 
 				List<ContentSectionMedia> sectionMedia = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionMedia>>()
 				{
-				});					
+				});
 				for (ContentSectionMedia media : sectionMedia) {
 					media.save();
 				}
-				
-				TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);	
+
+				TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);
 				TFile media[] = mediaDir.listFiles();
 				if (media != null) {
 					for (TFile mediaFile : media) {
 						try {
 							Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 
-					
 						} catch (IOException ex) {
 							LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
-							addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));						
+							addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
 						}
 					}
-				}					
+				}
 			} catch (Exception ex) {
-				LOG.log(Level.WARNING, "Failed to Load sections media", ex);				
-				addError("Unable to load sections media: " + dataFile.getName());				
-			}	
-			
+				LOG.log(Level.WARNING, "Failed to Load sections media", ex);
+				addError("Unable to load sections media: " + dataFile.getName());
+			}
+
 			archive.setRecordsProcessed(archive.getRecordsProcessed() + recordCount);
 			archive.setStatusDetails("Imported " + recordCount + " section templates");
-			archive.save();			
-		}		
-		
+			archive.save();
+		}
+
 	}
 
 	@Override

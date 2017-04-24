@@ -35,6 +35,7 @@ public abstract class BaseExporter
 	protected ServiceProxy service = new ServiceProxy();
 	protected SystemArchive archive;
 	protected String archiveBasePath;
+	private boolean addedError = false;
 
 	public BaseExporter()
 	{
@@ -95,7 +96,13 @@ public abstract class BaseExporter
 
 	protected void addError(String message)
 	{
+		addedError = true;
 		service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), message);
+	}
+
+	public boolean addedError()
+	{
+		return addedError;
 	}
 
 }

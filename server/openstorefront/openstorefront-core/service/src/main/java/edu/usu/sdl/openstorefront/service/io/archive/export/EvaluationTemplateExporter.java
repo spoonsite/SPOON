@@ -106,7 +106,7 @@ public class EvaluationTemplateExporter
 						template.save();
 					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
 					archive.save();
 
 				} catch (Exception ex) {

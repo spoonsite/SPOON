@@ -52,19 +52,19 @@ public class GeneralArchiveHandler
 			manifest.getEntityRecords().add(new EntityManifestRecord(exporter.getExporterSupportEntity(), entityRecords));
 			totalRecords += entityRecords;
 		}
-		manifest.setTotalRecords(totalRecords);		
+		manifest.setTotalRecords(totalRecords);
 		archive.setTotalRecords(totalRecords);
 		archive.setRecordsProcessed(0L);
 		archive.save();
 
-		for (BaseExporter exporters : allExporters) {
+		for (BaseExporter exporter : allExporters) {
 			try {
-				archive.setStatusDetails("Exporting: " + exporters.getExporterSupportEntity() + "...");
+				archive.setStatusDetails("Exporting: " + exporter.getExporterSupportEntity() + "...");
 				archive.save();
-				exporters.exportRecords();
+				exporter.exportRecords();
 			} catch (Exception e) {
-				LOG.log(Level.WARNING, "Unable to complete exporter: " + exporters.getExporterSupportEntity(), e);
-				addError("Unable to complete exporter (May not have all records): " + exporters.getExporterSupportEntity());
+				LOG.log(Level.WARNING, "Unable to complete exporter: " + exporter.getExporterSupportEntity(), e);
+				addError("Unable to complete exporter (May not have all records): " + exporter.getExporterSupportEntity());
 			}
 		}
 		createManifest(manifest);
@@ -96,23 +96,23 @@ public class GeneralArchiveHandler
 		});
 		for (BaseExporter exporter : allExporters) {
 			exporter.init(archive, fullArchiveName);
-		}		
+		}
 
-		for (BaseExporter exporters : allExporters) {
+		for (BaseExporter exporter : allExporters) {
 			try {
-				archive.setStatusDetails("Importing: " + exporters.getExporterSupportEntity() + "...");
+				archive.setStatusDetails("Importing: " + exporter.getExporterSupportEntity() + "...");
 				archive.save();
-				
-				exporters.importRecords();				
+
+				exporter.importRecords();
 			} catch (Exception e) {
-				LOG.log(Level.WARNING, "Unable to complete importing: " + exporters.getExporterSupportEntity(), e);
-				addError("Unable to complete importing (May not have all records): " + exporters.getExporterSupportEntity());
+				LOG.log(Level.WARNING, "Unable to complete importing: " + exporter.getExporterSupportEntity(), e);
+				addError("Unable to complete importing (May not have all records): " + exporter.getExporterSupportEntity());
 			}
-		}			
-		//TODO: See why import records are not matching export	
+		}
+		//TODO: See why import records are not matching export
 		//Either counting difference or not processing all files
-		archive.setRecordsProcessed(archive.getTotalRecords());		
-		
+		archive.setRecordsProcessed(archive.getTotalRecords());
+
 		archive.setStatusDetails("Done");
 		archive.save();
 	}

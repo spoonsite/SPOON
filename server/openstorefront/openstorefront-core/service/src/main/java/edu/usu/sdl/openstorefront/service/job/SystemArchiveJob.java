@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.service.job;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchiveType;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.service.io.archive.AbstractArchiveHandler;
@@ -53,13 +55,20 @@ public class SystemArchiveJob
 
 		List<SystemArchive> workingArchives = systemArchive.findByExample();
 		for (SystemArchive archive : workingArchives) {
-
-			long timeSinceLastUpdate = System.currentTimeMillis() - archive.getUpdateDts().getTime();
-			if (timeSinceLastUpdate > maxWorkingMinutes) {
-				//fail the archive
-				service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), "Archive failed to make progress; may have been stuck.");
-				archive.setRunStatus(RunStatus.ERROR);
+			if (SystemArchiveType.DBEXPORT.equals(archive.getSystemArchiveType())) {
+				//likely the archive that was exported at the time the db was exporting
+				archive.setRunStatus(RunStatus.COMPLETE);
+				archive.setStatusDetails("Original archive; It may not exist on this system.");
+				archive.setRecordsProcessed(archive.getTotalRecords());
 				archive.save();
+			} else {
+				long timeSinceLastUpdate = System.currentTimeMillis() - archive.getUpdateDts().getTime();
+				if (timeSinceLastUpdate > TimeUtil.minutesToMillis(maxWorkingMinutes)) {
+					//fail the archive
+					service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), "Archive failed to make progress; may have been stuck.");
+					archive.setRunStatus(RunStatus.ERROR);
+					archive.save();
+				}
 			}
 		}
 		systemArchive = new SystemArchive();
@@ -70,13 +79,13 @@ public class SystemArchiveJob
 			//critial loop
 			try {
 				AbstractArchiveHandler.processArchive(archive);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				ErrorInfo errorInfo = new ErrorInfo(e, null);
 				SystemErrorModel errorModel = service.getSystemService().generateErrorTicket(errorInfo);
-				
+
 				service.getSystemArchiveServicePrivate().addErrorMessage(archive.getArchiveId(), "Archive failed unexpectly see Error ticket:  " + errorModel.getErrorTicketNumber());
 				archive.setRunStatus(RunStatus.ERROR);
-				archive.save();				
+				archive.save();
 			}
 		}
 	}

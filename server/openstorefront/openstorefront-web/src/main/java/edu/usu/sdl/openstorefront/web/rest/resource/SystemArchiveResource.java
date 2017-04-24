@@ -41,6 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -51,6 +52,8 @@ import javax.ws.rs.core.StreamingOutput;
 public class SystemArchiveResource
 		extends BaseResource
 {
+
+	private static final int MAX_FILENAME = 80;
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
@@ -117,8 +120,11 @@ public class SystemArchiveResource
 				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
 					Files.copy(Paths.get(archiveName), output);
 				});
+
+				String filename = StringUtils.left(systemArchive.getName().replace(" ", "_"), MAX_FILENAME);
+
 				response.header("Content-Type", "application/zip");
-				response.header("Content-Disposition", "attachment; filename=\"" + systemArchive.getName() + ".zip\"");
+				response.header("Content-Disposition", "attachment; filename=\"" + filename + ".zip\"");
 				return response.build();
 			} else {
 				return sendSingleEntityResponse(null);

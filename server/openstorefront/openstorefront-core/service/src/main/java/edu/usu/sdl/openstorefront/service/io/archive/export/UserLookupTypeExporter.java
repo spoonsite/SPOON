@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
@@ -26,14 +26,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -119,21 +122,42 @@ public class UserLookupTypeExporter
 		File files[] = lookupDir.listFiles();
 		if (files != null) {
 			for (File lookupFile : files) {
-				try (InputStream in = new TFileInputStream(lookupFile))	{		
+				try (InputStream in = new TFileInputStream(lookupFile)) {
 					archive.setStatusDetails("Importing: " + lookupFile.getName());
 					archive.save();
 
 					Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.core.entity." + lookupFile.getName());
-					List<LookupEntity> lookupData = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<LookupEntity>>()
-					{
-					});
+
+					List<LookupEntity> lookupData = new ArrayList<>();
+					JsonNode nodeArray = StringProcessor.defaultObjectMapper().readTree(in);
+
+					Iterator<JsonNode> nodes = nodeArray.elements();
+					while (nodes.hasNext()) {
+						JsonNode node = nodes.next();
+						LookupEntity lookup = (LookupEntity) lookupClass.newInstance();
+
+						Iterator<String> fieldNames = node.fieldNames();
+						while (fieldNames.hasNext()) {
+							String fieldName = fieldNames.next();
+
+							if (node.get(fieldName).isTextual()) {
+								BeanUtils.setProperty(lookup, fieldName, node.get(fieldName).asText());
+							} else if (node.get(fieldName).isNumber()) {
+								if (node.get(fieldName).canConvertToInt()) {
+									BeanUtils.setProperty(lookup, fieldName, node.get(fieldName).asInt());
+								}
+							}
+						}
+						lookupData.add(lookup);
+					}
+
 					service.getLookupService().syncLookupImport(lookupClass, lookupData);
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();
 
-				} catch (ClassNotFoundException | IOException ex) {
-					LOG.log(Level.WARNING, "Failed to Load loookup", ex);	
+				} catch (InvocationTargetException | IllegalAccessException | InstantiationException | ClassNotFoundException | IOException ex) {
+					LOG.log(Level.WARNING, "Failed to Load loookup", ex);
 					addError("Unable to load lookup: " + lookupFile.getName());
 				}
 			}

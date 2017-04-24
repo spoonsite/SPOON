@@ -39,6 +39,7 @@ import net.java.truevfs.access.TFileOutputStream;
 public class AttributeExporter
 		extends BaseExporter
 {
+
 	private static final Logger LOG = Logger.getLogger(AttributeExporter.class.getName());
 	private List<AttributeType> attributesToExport = new ArrayList<>();
 	private static final String DATA_DIR = "/attribute/";
@@ -87,6 +88,7 @@ public class AttributeExporter
 			try (OutputStream out = new TFileOutputStream(attributeFile)) {
 				StringProcessor.defaultObjectMapper().writeValue(out, attributeAll);
 			} catch (IOException ex) {
+				LOG.log(Level.WARNING, "Failed to export attibute", ex);
 				addError("Unable to export: " + attributeType.getDescription());
 			}
 
@@ -104,25 +106,25 @@ public class AttributeExporter
 		File files[] = dataDir.listFiles();
 		if (files != null) {
 			for (File dataFile : files) {
-				try (InputStream in = new TFileInputStream(dataFile))	{	
+				try (InputStream in = new TFileInputStream(dataFile)) {
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
 					AttributeAll attributeAll = StringProcessor.defaultObjectMapper().readValue(in, AttributeAll.class);
-									
+
 					List<AttributeAll> attributeAlls = new ArrayList<>();
 					attributeAlls.add(attributeAll);
-					FileHistoryOption options = new FileHistoryOption();				
+					FileHistoryOption options = new FileHistoryOption();
 					service.getAttributeService().importAttributes(attributeAlls, options);
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load attibutes", ex);	
+					LOG.log(Level.WARNING, "Failed to Load attibutes", ex);
 					addError("Unable to load attributes: " + dataFile.getName());
 				}
-			}	
+			}
 		} else {
 			LOG.log(Level.FINE, "No attibutes to load.");
 		}

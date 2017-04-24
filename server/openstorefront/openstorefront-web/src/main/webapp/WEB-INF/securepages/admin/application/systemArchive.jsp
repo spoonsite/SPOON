@@ -431,7 +431,7 @@
 						modal: true,
 						closeAction: 'destroy',
 						width: 500,
-						height: 260,
+						height: 360,
 						layout: 'fit',
 						items: [
 							{
@@ -465,6 +465,10 @@
 										allowBlank: false,
 										fieldLabel: 'Import',
 										buttonText: 'Select Archive...'
+									},
+									{
+										xtype: 'panel',
+										html: '<i class="fa fa-lg fa-warning icon-button-color-warning"></i><b>Warning:</b><br><br>Importing database archives will temporarily interrupt the application and may cause some jobs to fail.<br>Please wait a few minutes after import for the database to stabilize.'
 									}
 								],
 								dockedItems: [

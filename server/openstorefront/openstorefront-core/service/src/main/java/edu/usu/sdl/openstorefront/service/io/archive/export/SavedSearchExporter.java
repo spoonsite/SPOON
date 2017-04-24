@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
@@ -92,22 +91,22 @@ public class SavedSearchExporter
 		File files[] = dataDir.listFiles();
 		if (files != null) {
 			for (File dataFile : files) {
-				try (InputStream in = new TFileInputStream(dataFile))	{	
+				try (InputStream in = new TFileInputStream(dataFile)) {
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
 					List<SystemSearch> searches = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<SystemSearch>>()
 					{
-					});							
+					});
 					for (SystemSearch search : searches) {
 						service.getSearchService().saveSearch(search);
-					}		
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + searches.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load searches", ex);				
+					LOG.log(Level.WARNING, "Failed to Load searches", ex);
 					addError("Unable to load searches: " + dataFile.getName());
 				}
 			}
@@ -120,7 +119,7 @@ public class SavedSearchExporter
 	public long getTotalRecords()
 	{
 		SystemSearch systemSearch = new SystemSearch();
-		systemSearch.setActiveStatus(Highlight.ACTIVE_STATUS);
+		systemSearch.setActiveStatus(SystemSearch.ACTIVE_STATUS);
 		return service.getPersistenceService().countByExample(systemSearch);
 	}
 

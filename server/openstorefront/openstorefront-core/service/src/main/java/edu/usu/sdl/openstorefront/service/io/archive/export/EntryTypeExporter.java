@@ -92,22 +92,22 @@ public class EntryTypeExporter
 		File files[] = dataDir.listFiles();
 		if (files != null) {
 			for (File dataFile : files) {
-				try (InputStream in = new TFileInputStream(dataFile))	{	
+				try (InputStream in = new TFileInputStream(dataFile)) {
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
 					List<ComponentType> types = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentType>>()
 					{
-					});							
+					});
 					for (ComponentType type : types) {
 						service.getComponentService().saveComponentType(type);
-					}		
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + types.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load entry types", ex);				
+					LOG.log(Level.WARNING, "Failed to Load entry types", ex);
 					addError("Unable to load entry type: " + dataFile.getName());
 				}
 			}

@@ -150,7 +150,7 @@ public class ComponentExporter
 					archive.setStatusDetails("Exported entry " + componentAll.getComponent().getName());
 					archive.save();
 				} else {
-					LOG.log(Level.WARNING, "Unable to find component: " + option.getEntityId());
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find component: {0}", option.getEntityId()));
 				}
 			}
 		}
@@ -220,7 +220,7 @@ public class ComponentExporter
 		} else {
 			LOG.log(Level.FINE, "No components to load.");
 		}
-		
+
 	}
 
 	@Override

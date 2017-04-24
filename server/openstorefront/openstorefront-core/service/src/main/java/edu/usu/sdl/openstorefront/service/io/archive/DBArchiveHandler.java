@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -73,10 +74,22 @@ public class DBArchiveHandler
 		archive.save();
 
 		try {
+			JobManager.pauseScheduler();
+			try {
+				//Give the application a bit of time to complete any running job
+				//Obvisiously this will not catch every thing. This is expected.
+				//The user has been warned.
+				Thread.sleep(2000);
+			} catch (InterruptedException ex) {
+				//ignore and continue
+			}
+
 			DBManager.importDB(new TFileInputStream(importFile));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
+		} finally {
+			JobManager.resumeScheduler();
 		}
 		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");

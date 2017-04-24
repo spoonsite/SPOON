@@ -90,24 +90,24 @@ public class ChecklistTemplateExporter
 	{
 		File dataDir = new TFile(archiveBasePath + DATA_DIR);
 		File files[] = dataDir.listFiles();
-		if (files != null) {		
+		if (files != null) {
 			for (File dataFile : files) {
-				try (InputStream in = new TFileInputStream(dataFile))	{	
+				try (InputStream in = new TFileInputStream(dataFile)) {
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
 					List<ChecklistTemplate> templates = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ChecklistTemplate>>()
 					{
-					});							
+					});
 					for (ChecklistTemplate checklistTemplate : templates) {
 						checklistTemplate.save();
-					}		
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + templates.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load templates", ex);				
+					LOG.log(Level.WARNING, "Failed to Load templates", ex);
 					addError("Unable to load templates: " + dataFile.getName());
 				}
 			}

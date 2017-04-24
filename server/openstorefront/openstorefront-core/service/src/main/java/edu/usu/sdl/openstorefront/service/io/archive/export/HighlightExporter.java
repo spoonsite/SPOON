@@ -102,7 +102,7 @@ public class HighlightExporter
 					});
 					service.getSystemService().saveHighlight(highlights);
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
 					archive.save();
 
 				} catch (Exception ex) {
