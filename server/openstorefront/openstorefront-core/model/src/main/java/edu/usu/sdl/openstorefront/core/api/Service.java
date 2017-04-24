@@ -177,12 +177,19 @@ public interface Service
 	 * @return
 	 */
 	public ChecklistService getChecklistService();
-	
+
 	/**
-	 * Handles logging entity changes 
-	 * 
-	 * @return 
+	 * Handles logging entity changes
+	 *
+	 * @return
 	 */
 	public ChangeLogService getChangeLogService();
+
+	/**
+	 * System archive service
+	 *
+	 * @return
+	 */
+	public SystemArchiveService getSystemArchiveService();
 
 }

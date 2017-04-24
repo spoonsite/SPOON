@@ -26,6 +26,7 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -59,6 +60,9 @@ public class CustomField
 	@OneToMany(orphanRemoval = true)
 	@DataType(CustomFieldValidValue.class)
 	private List<CustomFieldValidValue> validValues;
+
+	@Version
+	private String storageVersion;
 
 	public CustomField()
 	{
@@ -102,6 +106,16 @@ public class CustomField
 	public void setValidValues(List<CustomFieldValidValue> validValues)
 	{
 		this.validValues = validValues;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

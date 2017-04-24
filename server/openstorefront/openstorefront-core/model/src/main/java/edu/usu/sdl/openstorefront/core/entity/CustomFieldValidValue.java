@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -41,6 +42,9 @@ public class CustomFieldValidValue
 	@Sanitize(TextSanitizer.class)
 	private String value;
 
+	@Version
+	private String storageVersion;
+
 	public CustomFieldValidValue()
 	{
 	}
@@ -53,6 +57,16 @@ public class CustomFieldValidValue
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

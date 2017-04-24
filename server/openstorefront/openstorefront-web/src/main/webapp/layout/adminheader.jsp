@@ -291,6 +291,20 @@
 				}				
 			});
 			appMenu.push({
+				text: 'Security',
+				permission: 'ADMIN-SECURITY',
+				handler: function(){
+					actionLoadContent('Security');
+				}				
+			});
+			appMenu.push({
+				text: 'Security Roles',
+				permission: 'ADMIN-ROLE-MANAGEMENT',
+				handler: function(){
+					actionLoadContent('Security-Roles');
+				}				
+			});		
+			appMenu.push({
 				text: 'System',
 				permission: 'ADMIN-SYSTEM-MANAGEMENT',
 				handler: function(){
@@ -298,19 +312,12 @@
 				}				
 			});
 			appMenu.push({
-				text: 'Security',
-				//permission: 'ADMIN-SECURITY',
+				text: 'System Archives',
+				permission: 'ADMIN-SYSTEM-MANAGEMENT',
 				handler: function(){
-					actionLoadContent('Security');
+					actionLoadContent('System-Archives');
 				}				
-			});
-			appMenu.push({
-				text: 'Security Roles',
-				//permission: 'ADMIN-ROLE-MANAGEMENT',
-				handler: function(){
-					actionLoadContent('Security-Roles');
-				}				
-			});				
+			});			
 			appMenu.push({
 				text: 'Tracking',
 				permission: 'ADMIN-TRACKING',

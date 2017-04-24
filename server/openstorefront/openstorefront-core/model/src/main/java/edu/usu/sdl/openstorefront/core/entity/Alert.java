@@ -72,11 +72,11 @@ public class Alert
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private SystemErrorAlertOption systemErrorAlertOption;
-	
+
 	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
-	private UserManagementAlertOption userManagementAlertOption;	
+	private UserManagementAlertOption userManagementAlertOption;
 
 	public Alert()
 	{

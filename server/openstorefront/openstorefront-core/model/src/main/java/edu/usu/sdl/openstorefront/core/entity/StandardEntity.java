@@ -195,7 +195,11 @@ public abstract class StandardEntity<T>
 			Field pkField = EntityUtil.getPKField(this);
 			PK pk = pkField.getAnnotation(PK.class);
 			if (pk != null && pk.generated()) {
-				EntityUtil.updatePKFieldValue(this, service.getPersistenceService().generateId());
+				//perserve id if already set
+				String idValue = EntityUtil.getPKFieldValue(this);
+				if (StringUtils.isBlank(idValue)) {
+					EntityUtil.updatePKFieldValue(this, service.getPersistenceService().generateId());
+				}
 			}
 			this.populateBaseCreateFields();
 			existing = (T) service.getPersistenceService().persist(this);

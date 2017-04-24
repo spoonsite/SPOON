@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
@@ -46,6 +47,7 @@ import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
 
@@ -89,6 +91,8 @@ public class ServiceProxy
 	private SecurityService securityService;
 	private ChangeLogService changeLogService;
 	private ChangeLogServicePrivate changeLogServicePrivate;
+	private SystemArchiveService systemArchiveService;
+	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 
 	public ServiceProxy()
 	{
@@ -387,6 +391,23 @@ public class ServiceProxy
 			changeLogServicePrivate = DynamicProxy.newInstance(new ChangeLogServiceImpl());
 		}
 		return changeLogServicePrivate;
+	}
+
+	@Override
+	public SystemArchiveService getSystemArchiveService()
+	{
+		if (systemArchiveService == null) {
+			systemArchiveService = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
+		}
+		return systemArchiveService;
+	}
+
+	public SystemArchiveServicePrivate getSystemArchiveServicePrivate()
+	{
+		if (systemArchiveServicePrivate == null) {
+			systemArchiveServicePrivate = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
+		}
+		return systemArchiveServicePrivate;
 	}
 
 }

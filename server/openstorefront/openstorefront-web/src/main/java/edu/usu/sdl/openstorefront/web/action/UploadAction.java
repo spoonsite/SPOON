@@ -26,8 +26,10 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.IODirectionType;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
@@ -48,6 +50,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -111,6 +115,9 @@ public class UploadAction
 	private String attributeTypeName;
 	private String attributeCodeName;
 	private AttributeCode attributeCode;
+
+	@Validate(required = true, on = {"ImportArchive"})
+	private String importModeType;
 
 	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@HandlesEvent("UploadLookup")
@@ -563,6 +570,43 @@ public class UploadAction
 
 		return streamErrorResponse(errors, true);
 	}
+	
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@HandlesEvent("ImportArchive")
+	public Resolution importArchive()
+	{
+		Map<String, String> errors = new HashMap<>();
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+		SystemArchive systemArchive = new SystemArchive();
+		systemArchive.setName(StringProcessor.getJustFileName(uploadFile.getFileName()));
+		systemArchive.setOriginalArchiveFilename(uploadFile.getFileName());
+		systemArchive.setImportModeType(importModeType);
+		systemArchive.setIoDirectionType(IODirectionType.IMPORT);
+		
+		systemArchive.setArchiveFilename("import-" + service.getPersistenceService().generateId() + ".zip");		
+		File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
+		Path path = Paths.get(archiveDir.getPath() + "/" + systemArchive.getArchiveFilename());
+		File fullArchive = path.toFile();
+				
+		try {
+
+			uploadFile.save(fullArchive);
+			service.getSystemArchiveService().queueArchiveRequest(systemArchive);
+
+		} catch (IOException ex) {
+			LOG.log(Level.FINEST, "Failed to read file.", ex);
+			errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+		} finally {
+			try {
+				uploadFile.delete();
+			} catch (IOException ex) {
+				LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+			}
+		}
+
+		return streamErrorResponse(errors, true);
+	}	
 
 	public FileBean getUploadFile()
 	{
@@ -660,6 +704,16 @@ public class UploadAction
 			
 			super(message);
 		}
+	}
+
+	public String getImportModeType()
+	{
+		return importModeType;
+	}
+
+	public void setImportModeType(String importModeType)
+	{
+		this.importModeType = importModeType;
 	}
 
 }

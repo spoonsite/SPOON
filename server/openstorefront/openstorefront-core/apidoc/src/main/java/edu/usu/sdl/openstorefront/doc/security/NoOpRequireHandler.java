@@ -24,7 +24,7 @@ import javax.ws.rs.container.ResourceInfo;
  * @author dshurtleff
  */
 public class NoOpRequireHandler
-		implements CustomRequireHandler
+		implements CustomRequiredHandler
 {
 	
 	@Override

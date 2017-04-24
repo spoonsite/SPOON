@@ -74,6 +74,7 @@ public class PropertiesManager
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
 	public static final String KEY_TEST_EMAIL = "test.email";
+	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
@@ -91,7 +92,7 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
 
 	public static final String KEY_SECURITY_DEFAULT_ADMIN_GROUP = "role.admin";
-	
+
 	public static final String KEY_TOOLS_USER = "tools.login.user";
 	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
 
@@ -146,6 +147,7 @@ public class PropertiesManager
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
 	private static SortedProperties defaults = new SortedProperties();
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	private static String getDefault(String key)
 	{
@@ -183,7 +185,7 @@ public class PropertiesManager
 	{
 		return getProperties().getProperty(key, getDefault(key));
 	}
-	
+
 	public static String getValueDefinedDefault(String key, String defaultValue)
 	{
 		return getProperties().getProperty(key, getDefault(key, defaultValue));
@@ -244,8 +246,7 @@ public class PropertiesManager
 
 	private static void init()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
+		LOCK.lock();
 		try {
 			//Set defaults
 			defaults.put(KEY_NOTIFICATION_MAX_DAYS, "7");
@@ -259,6 +260,7 @@ public class PropertiesManager
 			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
+			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
 				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
@@ -281,20 +283,19 @@ public class PropertiesManager
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
 	}
 
 	private static void saveProperties()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
+		LOCK.lock();
 		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(PROPERTIES_FILENAME))) {
 			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
 	}
 

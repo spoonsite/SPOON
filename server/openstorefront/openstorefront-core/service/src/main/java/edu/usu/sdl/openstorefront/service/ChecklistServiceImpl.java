@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.List;
 import java.util.Objects;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -88,7 +89,9 @@ public class ChecklistServiceImpl
 			questionExisting.updateFields(checklistQuestion);
 			questionExisting = persistenceService.persist(questionExisting);
 		} else {
-			checklistQuestion.setQuestionId(persistenceService.generateId());
+			if (StringUtils.isBlank(checklistQuestion.getQuestionId())) {
+				checklistQuestion.setQuestionId(persistenceService.generateId());
+			}
 			checklistQuestion.populateBaseCreateFields();
 			questionExisting = persistenceService.persist(checklistQuestion);
 		}

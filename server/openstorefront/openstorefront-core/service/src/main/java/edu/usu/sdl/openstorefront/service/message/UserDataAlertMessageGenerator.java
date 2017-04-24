@@ -104,7 +104,7 @@ public class UserDataAlertMessageGenerator
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
 			Contact contactExample = new Contact();
 			contactExample.setActiveStatus(Contact.ACTIVE_STATUS);
-			
+
 			Contact contactSartExample = new Contact();
 			contactSartExample.setUpdateDts(checkDate);
 
@@ -116,7 +116,7 @@ public class UserDataAlertMessageGenerator
 
 			List<Contact> contacts = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			contacts = contacts.stream()
-					.filter(review -> Convert.toBoolean(review.getAdminModified()) == false)
+					.filter(contact -> Convert.toBoolean(contact.getAdminModified()) == false)
 					.collect(Collectors.toList());
 
 			if (!contacts.isEmpty()) {
@@ -132,7 +132,7 @@ public class UserDataAlertMessageGenerator
 				message.append("</ul><br>");
 			}
 		}
-		
+
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnReviews())) {
 			ComponentReview componentReviewExample = new ComponentReview();
 			componentReviewExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
@@ -164,7 +164,7 @@ public class UserDataAlertMessageGenerator
 			if (!reviews.isEmpty()) {
 				message.append("</ul><br>");
 			}
-		}			
+		}
 
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
 			ComponentQuestion componentQuestionExample = new ComponentQuestion();
@@ -230,7 +230,6 @@ public class UserDataAlertMessageGenerator
 			}
 		}
 
-
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnUserAttributeCodes())) {
 			AttributeCode attributeCodeExample = new AttributeCode();
 
@@ -252,7 +251,7 @@ public class UserDataAlertMessageGenerator
 			if (!attributeCodes.isEmpty()) {
 				message.append("</ul><br>");
 			}
-		}	
+		}
 
 		return message.toString();
 	}

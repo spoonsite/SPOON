@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
@@ -70,7 +71,7 @@ public class JobManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(JobManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(JobManager.class.getName());
 
 	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
 	private static Scheduler scheduler;
@@ -90,7 +91,7 @@ public class JobManager
 
 	private static void initSystemJobs() throws SchedulerException
 	{
-		log.log(Level.FINEST, "Setting up Import Jobs...");
+		LOG.log(Level.FINEST, "Setting up Import Jobs...");
 		addImportJob(new LookupImporter(), FileSystemManager.IMPORT_LOOKUP_DIR);
 		addImportJob(new HighlightImporter(), FileSystemManager.IMPORT_HIGHLIGHT_DIR);
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
@@ -104,11 +105,12 @@ public class JobManager
 		addComponentIntegrationJobs();
 		addUserProfileSyncjob();
 		addImportJob();
+		addArchiveJob();
 	}
 
 	private static void addComponentIntegrationJobs() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Integration Jobs");
+		LOG.log(Level.INFO, "Adding Integration Jobs");
 
 		ServiceProxy serviceProxy = new ServiceProxy();
 		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
@@ -124,7 +126,7 @@ public class JobManager
 
 		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_SYSTEM);
 		if (scheduler.checkExists(jobKey)) {
-			log.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
+			LOG.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
 		} else {
 			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
@@ -202,7 +204,7 @@ public class JobManager
 
 	private static void addComponentUpdate() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Component Update Job");
+		LOG.log(Level.INFO, "Adding Component Update Job");
 
 		JobDetail job = JobBuilder.newJob(ComponentUpdateJob.class)
 				.withIdentity("ComponentUpdateJob", JOB_GROUP_SYSTEM)
@@ -222,7 +224,7 @@ public class JobManager
 
 	private static void addImportJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding ImportJob");
+		LOG.log(Level.INFO, "Adding ImportJob");
 
 		JobDetail job = JobBuilder.newJob(ImportJob.class)
 				.withIdentity("ImportJob", JOB_GROUP_SYSTEM)
@@ -242,7 +244,7 @@ public class JobManager
 
 	private static void addScheduledReportJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Scheduled Job");
+		LOG.log(Level.INFO, "Adding Scheduled Job");
 
 		JobDetail job = JobBuilder.newJob(ScheduledReportJob.class)
 				.withIdentity("ScheduledReportJob", JOB_GROUP_SYSTEM)
@@ -262,7 +264,7 @@ public class JobManager
 
 	private static void addUserProfileSyncjob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding User Profile Sync Job");
+		LOG.log(Level.INFO, "Adding User Profile Sync Job");
 
 		JobDetail job = JobBuilder.newJob(UserProfileSyncJob.class)
 				.withIdentity("UserProfileSyncJob", JOB_GROUP_SYSTEM)
@@ -282,7 +284,7 @@ public class JobManager
 
 	private static void addCleanUpErrorsJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding System Clean up Job");
+		LOG.log(Level.INFO, "Adding System Clean up Job");
 
 		JobDetail job = JobBuilder.newJob(SystemCleanupJob.class)
 				.withIdentity("SystemCleanupJob", JOB_GROUP_SYSTEM)
@@ -302,7 +304,7 @@ public class JobManager
 
 	private static void addTrackingCleanUpJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Tracking Cleanup Job");
+		LOG.log(Level.INFO, "Adding Tracking Cleanup Job");
 
 		JobDetail job = JobBuilder.newJob(TrackingCleanupJob.class)
 				.withIdentity("TrackingCleanupJob", JOB_GROUP_SYSTEM)
@@ -322,7 +324,7 @@ public class JobManager
 
 	public static void addJob(AddJobModel addjob)
 	{
-		log.log(Level.FINE, MessageFormat.format("Adding Job: {0}", addjob.getJobName()));
+		LOG.log(Level.FINE, MessageFormat.format("Adding Job: {0}", addjob.getJobName()));
 		try {
 			JobDetail job = JobBuilder.newJob(addjob.getJobClass())
 					.withIdentity(addjob.getJobName(), addjob.getJobGroup())
@@ -364,7 +366,7 @@ public class JobManager
 
 	private static void addNotificationJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Notification Job");
+		LOG.log(Level.INFO, "Adding Notification Job");
 
 		JobDetail job = JobBuilder.newJob(NotificationJob.class)
 				.withIdentity("NotificationJob", JOB_GROUP_SYSTEM)
@@ -384,7 +386,7 @@ public class JobManager
 
 	private static void addRecentChangeNotifyJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Recent Change Job");
+		LOG.log(Level.INFO, "Adding Recent Change Job");
 
 		JobDetail job = JobBuilder.newJob(RecentChangeNotifyJob.class)
 				.withIdentity("RecentChangeJob", JOB_GROUP_SYSTEM)
@@ -410,7 +412,7 @@ public class JobManager
 	public static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch, boolean activateJob) throws SchedulerException
 	{
 		String jobName = directoryScanListener.getClass().getName();
-		log.log(Level.INFO, MessageFormat.format("Adding DIRWatch Job: {0}", directoryScanListener.getClass().getName()));
+		LOG.log(Level.INFO, MessageFormat.format("Adding DIRWatch Job: {0}", directoryScanListener.getClass().getName()));
 
 		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
 				.withIdentity(jobName, JOB_GROUP_SYSTEM)
@@ -432,6 +434,26 @@ public class JobManager
 		if (activateJob == false) {
 			scheduler.pauseTrigger(trigger.getKey());
 		}
+	}
+
+	private static void addArchiveJob() throws SchedulerException
+	{
+		LOG.log(Level.INFO, "Adding Archive Job");
+
+		JobDetail job = JobBuilder.newJob(SystemArchiveJob.class)
+				.withIdentity("ArchiveJob", JOB_GROUP_SYSTEM)
+				.withDescription("This batches the archives so they run one at time.")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("ArchiveJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
 	}
 
 	public static void runJobNow(String jobName, String groupName)
@@ -465,7 +487,7 @@ public class JobManager
 	{
 		try {
 			scheduler.standby();
-			log.info("Job Manager in Standby");
+			LOG.info("Job Manager in Standby");
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to pause scheduler", ex);
 		}
@@ -475,7 +497,7 @@ public class JobManager
 	{
 		try {
 			scheduler.start();
-			log.info("Job Manager restarted");
+			LOG.info("Job Manager restarted");
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to resume scheduler", ex);
 		}
@@ -569,7 +591,7 @@ public class JobManager
 	public void initialize()
 	{
 		JobManager.init();
-		started.set(true);		
+		started.set(true);
 	}
 
 	@Override
@@ -583,6 +605,6 @@ public class JobManager
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
-	
+	}
+
 }

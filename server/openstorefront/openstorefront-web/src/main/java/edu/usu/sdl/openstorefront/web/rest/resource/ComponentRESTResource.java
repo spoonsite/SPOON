@@ -550,7 +550,7 @@ public class ComponentRESTResource
 		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Get a list of components tags")
 	@Produces(MediaType.APPLICATION_JSON)
