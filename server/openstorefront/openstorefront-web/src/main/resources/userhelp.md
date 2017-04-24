@@ -618,7 +618,7 @@ notification or not. The tools also allow for manually processing the
 queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
-A watch is set on a entry to allow for a user to be notified of
+A watch is set on an entry to allow for a user to be notified of
 changes to an entry. There are two ways notifications occur in the
 application, and there is no limit to the amount of watches a user may
 place.
@@ -696,7 +696,7 @@ To remove a tag, click on the tag's drop-down arrow and select **Delete**.
 ### 2.4.4  Add/Delete an Entry to Watch List
 --------
 
-Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
+Click on an entry to view it's **Details** page.  From the **Details** page, click on the **Watch** icon
 in the right upper corner (eye icon).  To remove an entry from your watch list, click on the **Watch** icon.
 
 ### 2.4.5  Submit Correction and/or Request Ownership
@@ -730,15 +730,15 @@ of the displayed information.  From the entry **Details** page, click on the **P
 in the top right corner.  A window will pop-up where you can either customize the template or
 use the default.
 
-## 2.5 Evaluaton Tools @EVALUATIONS 
+## 2.5 Evaluation Tools @EVALUATIONS 
 
 Evaluations are accessed by going to your user name in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
-### 2.5.1 Dashboard
+### 2.5.1 Dashboard @EVALUATIONS 
 
 The dashboard can be customized with various widgets to be displayed.  Individual widgets can be configured to show pertinent information such as assigned user, status, and if the evaluation has been published.
 
-### 2.5.2 Evaluations
+### 2.5.2 Evaluations @EVALUATIONS 
 
 The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
 
@@ -749,7 +749,7 @@ When Editing the evaluation the status can be changed and the various forms, que
 
 
 # 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
-----------
+--------
 
 Admin tools allow for the management of all data in the system.
  
@@ -1240,7 +1240,7 @@ is resolved.
 -------
 
 This allows for data imports and mappings.  This is done by importing a file.
-Various file formats can be imported such as .csv, .xlsx, JSON, .tsv, .xml, and .zip.  
+Various file formats can be imported such as .csv, .xlsx, JSON, .csv, .xml, and .zip.  
 Once imported warnings and/or errors can be viewed, the data can be reprocessed 
 or rolled back.
 
@@ -1274,13 +1274,13 @@ Parser - Record Structure handled
 	
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
-- Record (Component) per line;  It can map SubComponent Entities as well.
+- Record (Component) per line;  It can map Subcomponent Entities as well.
 - Header line not support (Delete before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	
 
-- Nested record (Component/Contact/etc)
+- Nested record (Component/Contact/etc.)
 - Does not support attachments (Local resources or media)
 
 **Creating a data map**
@@ -1306,7 +1306,7 @@ imported or exported as .csv files.
 **To add/delete/edit codes:** 
 
 * Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+* To add a code, click on the **Add** button and fill out the form.  When you are done, click **Save**.
 * To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
 click **Save** at the bottom.
 * To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
@@ -1510,7 +1510,7 @@ at first login will contain the information gathered from the external security 
 
 The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
-security utility (Open AM, LDAP, Database?etc.) to define the users.
+security utility (Open AM, LDAP, Database, etc.) to define the users.
 
 An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
@@ -1786,11 +1786,11 @@ This section is used to match up Roles with Users, Permissions, and Data Restric
 
 A table is shown of all of the Security Roles which can be edited and managed.
  
- * Within each role a list of users can be assigned using the **Mangae Users** button.  A user can be assigned to more than one role.
+ * Within each role a list of users can be assigned using the **Manage Users** button.  A user can be assigned to more than one role.
  
  * The **Manage Permissions** button is used to assign specific permissions to each role.  Permissions include areas such as various ADMIN permissions, Evaluator, Reports, and API documentation permissions.
  
- * Finally, the **Manage Data Restrictions** section is used to determine what data each Role can access.  Two tabs exist for Data Sources (ER2 and DI2E) and for Data Sensitivity which incorporates Distribution A - F, ITAR, Public, ans Sensitive data.
+ * Finally, the **Manage Data Restrictions** section is used to determine what data each Role can access.  Two tabs exist for Data Sources (ER2 and DI2E) and for Data Sensitivity which incorporates Distribution A - F, ITAR, Public, and Sensitive data.
  
 **NOTE:**  Data Sources and Data Sensitivity values can be managed from the Data Management->Lookups, see section 3.2.9.
 
@@ -1815,8 +1815,8 @@ This contains the documentation for the Application Programming Interface, or AP
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @ADMIN-SYSTEM-MANGEMENT
-----------
+# 4.  Evaluator Tools @ADMIN-SYSTEM-MANAGEMENT 
+------
 
 **NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
 
@@ -1825,28 +1825,28 @@ This section covers Evaluation Management as it exists in Admin Tools.  For eval
 **Evaluation Management within Admin Tools**
 The Evaluation Management menu consists of Evaluations and Templates.
 
-## 4.1 Evaluations
+## 4.1 Evaluations @ADMIN-SYSTEM-MANAGEMENT 
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
 
-## 4.2 Templates
+## 4.2 Templates @ADMIN-SYSTEM-MANAGEMENT 
 
-The templates section lets you manipulate various templates for evaluation input and disply.
+The templates section lets you manipulate various templates for evaluation input and display.
 
-### 4.2.1 Evaluation Templates
+### 4.2.1 Evaluation Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
 
-### 4.2.2 Checklist Templates
+### 4.2.2 Checklist Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 A checklist template lets you add various questions as a checklist.
 
-### 4.2.3 Checklist Questions
+### 4.2.3 Checklist Questions @ADMIN-SYSTEM-MANAGEMENT 
 
 Here you formulate the questions to be asked on a template.
 
-### 4.2.4 Section Templates
+### 4.2.4 Section Templates @ADMIN-SYSTEM-MANAGEMENT 
 
 Section templates can be created for further customization.
 
