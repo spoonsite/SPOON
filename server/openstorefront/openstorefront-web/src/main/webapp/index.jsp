@@ -78,7 +78,7 @@
 										},
 										{
 											text: 'Close',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function() {
 												this.up('window').close();
 											}

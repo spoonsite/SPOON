@@ -648,7 +648,7 @@
 									
 									var setupWin = Ext.create('Ext.window.Window', {
 										title: 'Configure',										
-										iconCls: 'fa fa-gear',
+										iconCls: 'fa fa-lg fa-gear',
 										closeMode: 'destroy',
 										modal: true,
 										width: 350,
@@ -685,7 +685,7 @@
 												items: [
 													{
 														text: 'Apply',
-														iconCls: 'fa fa-check',
+														iconCls: 'fa fa-lg fa-check icon-button-color-save',
 														handler: function(){
 															var win = this.up('window');
 															var headerColor = win.getComponent('headerColor').getValue();
@@ -707,7 +707,7 @@
 													},
 													{
 														text: 'Cancel',
-														iconCls: 'fa fa-close',
+														iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 														handler: function(){
 															this.up('window').close();
 														}														
