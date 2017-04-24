@@ -377,11 +377,17 @@ Ext.define('OSF.component.UserMenu', {
 				];
 				
 				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
-					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
+					var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
+					if (adminmenu) {
+						adminmenu.setHidden(false);
+					}
 				}				
 				
 				if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
-					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+					var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
+					if (evalmenu) {
+						userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+					}
 				}					
 				
 				if (userMenu.initCallBack) {
