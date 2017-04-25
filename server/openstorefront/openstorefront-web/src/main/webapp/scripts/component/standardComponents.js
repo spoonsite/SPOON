@@ -64,16 +64,28 @@ Ext.define('OSF.component.SecurityComboBox', {
 	hidden: true,
 	queryMode: 'local',
 	labelAlign: 'top',
+	addSelect: true,
 	store: {
 		autoLoad: true,
 		proxy: {
 			type: 'ajax',
 			url: 'api/v1/resource/lookuptypes/SecurityMarkingType'			
+		},
+		listeners: {
+			load: function(store, records, opts) {
+				if (store.addSelect) {
+					store.add({
+						code: null,
+						description: 'Select'
+					});
+				}				
+			}
 		}
 	},	
 	initComponent: function() {
 		var combo = this;	
 		combo.callParent();
+		combo.getStore().addSelect = combo.addSelect;
 		
 		//check branding to see it should show
 		
