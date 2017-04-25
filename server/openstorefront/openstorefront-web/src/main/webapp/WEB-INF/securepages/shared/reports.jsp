@@ -128,8 +128,8 @@
 
 									}
 								},
-								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-								{text: 'Email Addresses', dataIndex: 'emailAddresses', width: 150, flex: 1,
+								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+								{text: 'Email Addresses', dataIndex: 'emailAddresses', width: 200, flex: 1,
 									renderer: function (v, meta) {
 										var emailStr = '';
 										if (v && v.length) {

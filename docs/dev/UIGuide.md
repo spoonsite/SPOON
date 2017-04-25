@@ -122,10 +122,10 @@ This section is a guide to the naming convention of buttons, icons used with the
     * Icon: upload/export (class = "fa fa-upload")  
 
 4. **Export Button**  
-    * Icon: upload/export (class = "fa fa-upload")   
+    * Icon: download/import (class = "fa fa-download")
 
 5. **Import Button**  
-    * Icon: download/import (class = "fa fa-download")  
+    * Icon: upload/export (class = "fa fa-upload")  
 
 6. **Stop Button**  
     * Icon: square in circle (class = "fa fa-stop-circle")  
