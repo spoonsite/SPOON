@@ -344,6 +344,10 @@ public class ContentSectionServiceImpl
 			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
 			sectionMedia.setMimeType(templateMedia.getMimeType());
 			sectionMedia.setOriginalName(templateMedia.getOriginalName());
+			sectionMedia.setPrivateMedia(templateMedia.getPrivateMedia());
+			if (sectionMedia.getPrivateMedia() == null) {
+				sectionMedia.setPrivateMedia(Boolean.FALSE);
+			}
 
 			Path path = templateMedia.pathToMedia();
 			if (path != null) {
