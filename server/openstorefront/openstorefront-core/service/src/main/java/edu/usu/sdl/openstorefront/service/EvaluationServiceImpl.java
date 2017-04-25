@@ -464,10 +464,12 @@ public class EvaluationServiceImpl
 			evaluation.populateBaseCreateFields();
 			evaluation = persistenceService.persist(evaluation);
 
+			String copyEvaluationId = evaluation.getEvaluationId();
+
 			EvaluationChecklist checklist = existing.getCheckListAll().getEvaluationChecklist();
 			checklist.setChecklistId(persistenceService.generateId());
 			checklist.setWorkflowStatus(initial.getCode());
-			checklist.setEvaluationId(evaluationId);
+			checklist.setEvaluationId(copyEvaluationId);
 			checklist.populateBaseCreateFields();
 			checklist = persistenceService.persist(checklist);
 
@@ -498,7 +500,7 @@ public class EvaluationServiceImpl
 
 				sectionAll.getSection().setContentSectionId(persistenceService.generateId());
 				sectionAll.getSection().setEntity(Evaluation.class.getSimpleName());
-				sectionAll.getSection().setEntityId(evaluationId);
+				sectionAll.getSection().setEntityId(copyEvaluationId);
 				sectionAll.getSection().setWorkflowStatus(initial.getCode());
 				sectionAll.getSection().populateBaseCreateFields();
 				ContentSection contentSection = persistenceService.persist(sectionAll.getSection());
