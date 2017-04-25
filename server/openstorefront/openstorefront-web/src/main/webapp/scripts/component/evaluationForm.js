@@ -628,6 +628,17 @@ Ext.define('OSF.component.EvaluationPanel', {
 			success: function(response, opts) {
 				var entryType = Ext.decode(response.responseText);
 				var menuItems = [];
+				menuItems.push(
+					{							
+						text: 'Summary',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'EntrySummary',
+								title: 'Entry Summary'
+							});								
+						}							
+					}					
+				);
 				if (entryType.dataEntryAttributes){
 					menuItems.push({						
 						text: 'Attributes',							
