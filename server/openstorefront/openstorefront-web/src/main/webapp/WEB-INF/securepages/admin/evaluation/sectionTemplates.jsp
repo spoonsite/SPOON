@@ -67,7 +67,7 @@
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',																			
 											handler: function(){
 												Ext.getCmp('sectionPanel').expand();
-												addSubSecion(Ext.getCmp('sectionPanel'));
+												addSubSection(Ext.getCmp('sectionPanel'));
 											}										
 										}
 									]
@@ -134,6 +134,7 @@
 														
 														packedView.subSections.push({
 															order: sectionOrder,
+															subSectionId: subFormData.subsectionId,
 															title: subFormData.subsectionTitle,
 															content: subFormData.subsectionContent,
 															privateSection: subFormData.subsectionPrivateSection ? subFormData.subsectionPrivateSection : false,
@@ -299,7 +300,7 @@
 				});
 
 
-				var addSubSecion = function(parentComponent) {
+				var addSubSection = function(parentComponent) {
 
 					var subSectionCmp = Ext.create('Ext.form.Panel',{
 						title: 'Sub-Section',
@@ -309,9 +310,27 @@
 						collapsible: true,
 						titleCollapse: true,
 						closable: true,
+						trackResetOnLoad: true,
 						listeners: {
 							beforeclose: function(panel, opt) {								
 								//prompt
+								if (!panel.forceClose) {
+									Ext.Msg.show({
+										title:'Close SubSection?',
+										message: 'Are you want to remove sub-section?',
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+										fn: function(btn) {
+											if (btn === 'yes') {
+												panel.forceClose = true;
+												panel.close();
+											} 
+										}
+									});	
+									return false;
+								} else {
+									return true;
+								}
 							}
 						},						
 						layout: 'anchor',
@@ -609,14 +628,13 @@
 								noContent: data.contentSection.noContent
 							});
 							
-							addEditWindow.getComponent('templateForm').loadRecord(model);
-							
 							Ext.Array.each(data.subSections, function(section){								
-								var subSection = addSubSecion(Ext.getCmp('sectionPanel'));
+								var subSection = addSubSection(Ext.getCmp('sectionPanel'));
 								
 								var subModel = Ext.create('Ext.data.Model', {								
 								});
 								subModel.set({
+									subsectionId: section.subSectionId,
 									subsectionTitle: section.title,
 									subsectionPrivateSection: section.privateSection,
 									subsectionHideTitle: section.hideTitle,
@@ -624,6 +642,9 @@
 									subsectionContent: section.content
 								});
 								subSection.loadRecord(subModel);
+								if (section.title) {
+									subSection.setTitle(section.title);
+								}
 								
 								var customFields = [];
 								Ext.Array.each(section.customFields, function(field){
@@ -643,6 +664,7 @@
 								subSection.getComponent('customFieldGrid').getStore().loadData(customFields);
 							});
 							
+							addEditWindow.getComponent('templateForm').loadRecord(model);							
 						}
 						
 					});					

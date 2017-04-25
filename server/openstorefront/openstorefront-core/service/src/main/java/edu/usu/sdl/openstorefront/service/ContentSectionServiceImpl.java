@@ -179,6 +179,22 @@ public class ContentSectionServiceImpl
 			template = persistenceService.persist(templateView.getContentSectionTemplate());
 		}
 
+		//for this case we need to do full refresh of sub-sections only
+		//Since the input contain adds and removes
+		ContentSection contentSectionExisting = new ContentSection();
+		contentSectionExisting.setEntity(ContentSectionTemplate.class.getSimpleName());
+		contentSectionExisting.setEntityId(template.getTemplateId());
+		contentSectionExisting = contentSectionExisting.find();
+		if (contentSectionExisting != null) {
+			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+			contentSectionMedia.setContentSectionId(contentSectionExisting.getContentSectionId());
+			persistenceService.deleteByExample(contentSectionMedia);
+
+			ContentSubSection contentSubSection = new ContentSubSection();
+			contentSubSection.setContentSectionId(contentSectionExisting.getContentSectionId());
+			persistenceService.deleteByExample(contentSubSection);
+		}
+
 		ContentSectionAll contentSectionAll = new ContentSectionAll();
 		templateView.getContentSection().setEntity(ContentSectionTemplate.class.getSimpleName());
 		templateView.getContentSection().setEntityId(template.getTemplateId());
