@@ -2255,9 +2255,16 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					handler: function () {
 						var containerPanel = this.up('panel');
 						var data = containerPanel.visualPanel.getImage('png');
+						
+						var token = Ext.util.Cookies.get('X-Csrf-Token');						
+						if (!token) {
+							token ='';							
+						}						
+						
 						Ext.DomHelper.append(Ext.getBody(),
 								"<form id='visual-download' method='POST' action='Media.action?DataImage'>" +
 								"<input type='hidden' name='imageData' value='" + data.data + "' /> " +
+								"<input type='hidden' name='X-Csrf-Token' value='" + token + "' />" + 
 								"<input type='hidden' name='imageType' value='" + data.type + "' /> ");
 						var form = Ext.get("visual-download");
 						form.dom.submit();
