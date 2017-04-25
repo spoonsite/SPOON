@@ -21,6 +21,13 @@ Ext.define('OSF.form.Section', {
 	alias: 'osf.form.Section',
 
 	layout: 'fit',	
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -489,8 +496,7 @@ Ext.define('OSF.form.Section', {
 												mediaUploadHandler: mediaUploadHandler
 										}),
 										listeners: {
-											change: {
-												buffer: 2000,
+											change: {												
 												fn: function(field, newValue, oldValue) {
 													sectionForm.markUnsaved();
 												}
@@ -620,9 +626,12 @@ Ext.define('OSF.form.Section', {
 	},
 	markUnsaved: function () {
 		var sectionForm = this;
-		sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 		sectionForm.saveTask.delay(1000*60*3);	
-		sectionForm.unsavedChanges = true;
+		
+		if (!sectionForm.unsavedChanges) {
+			sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');		
+			sectionForm.unsavedChanges = true;
+		}
 	},		
 	saveData: function(){
 		

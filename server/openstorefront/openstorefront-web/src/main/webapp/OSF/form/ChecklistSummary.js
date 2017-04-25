@@ -21,7 +21,13 @@ Ext.define('OSF.form.ChecklistSummary', {
 	alias: 'osf.form.ChecklistSummary',
 
 	layout: 'border',
-
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -403,9 +409,12 @@ Ext.define('OSF.form.ChecklistSummary', {
 	},
 	markUnsaved: function () {
 		var summaryForm = this;
-		summaryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');				
 		summaryForm.saveTask.delay(1000*60*3);		
-		summaryForm.unsavedChanges = true;
+		
+		if (!summaryForm.unsavedChanges) {
+			summaryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');						
+			summaryForm.unsavedChanges = true;
+		}
 	},
 	saveData: function() {
 		var summaryForm = this;

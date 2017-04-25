@@ -518,7 +518,7 @@
 						childBlock: function(config, itemsToAdd) {	
 							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData,config) {
+						generate: function(entryData, config) {
 							var visualConfig = {
 								title: 'HBox Container'
 							};							
@@ -544,7 +544,7 @@
 						childBlock: function(config, itemsToAdd) {	
 							return commonLayoutChildBlock.call(this, config);
 						},
-						generate: function(entryData) {							
+						generate: function(entryData, config) {							
 							var visualConfig = {
 								title: 'VBox Container'
 							};							

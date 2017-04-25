@@ -21,6 +21,13 @@ Ext.define('OSF.form.EntrySummary', {
 	alias: 'osf.form.EntrySummary',
 
 	layout: 'fit',
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	bodyStyle: 'padding: 20px',
 	dockedItems: [
 		{
@@ -183,9 +190,12 @@ Ext.define('OSF.form.EntrySummary', {
 	},
 	markUnsaved: function () {
 		var entryForm = this;
-		entryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 		entryForm.saveTask.delay(1000*60*3);	
-		entryForm.unsavedChanges = true;
+		
+		if (!entryForm.unsavedChanges) {
+			entryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
+			entryForm.unsavedChanges = true;
+		}
 	},	
 	saveData: function() {		
 		var entryForm = this;

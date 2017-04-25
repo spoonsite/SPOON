@@ -20,6 +20,13 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	alias: 'osf.form.ChecklistQuestion',
 
 	scrollable: true,
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},	
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -245,9 +252,13 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	},
 	markUnsaved: function () {
 		var questionForm = this;
-		questionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 		questionForm.saveTask.delay(1000*60*3);	
-		questionForm.unsavedChanges = true;
+		
+		if (!questionForm.unsavedChanges) {
+			questionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');		
+			questionForm.unsavedChanges = true;
+		}
+		
 	},	
 	saveData: function() {
 		var questionForm = this;
