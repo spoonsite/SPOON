@@ -92,6 +92,15 @@ Ext.define('OSF.form.EntrySummary', {
 					xtype: 'tbfill'
 				},
 				{
+					text: 'Save',
+					itemId: 'saveBtn',
+					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+					handler: function() {										
+						var entryForm = this.up('panel');
+						entryForm.saveData();
+					}
+				},				
+				{
 					xtype: 'tbtext',
 					itemId: 'status'
 				}				
@@ -122,7 +131,10 @@ Ext.define('OSF.form.EntrySummary', {
 				})			
 			}				
 		);
-		
+
+		entryForm.saveTask = new Ext.util.DelayedTask(function(){
+			entryForm.saveData();
+		});	
 	},
 	
 	loadData: function(evaluationId, componentId, data, opts) {
@@ -149,36 +161,32 @@ Ext.define('OSF.form.EntrySummary', {
 				
 				//set change event
 				entryForm.getComponent('description').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});
+					entryForm.markUnsaved();
+				}, undefined);
 				entryForm.getComponent('topform').getComponent('name').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});
+					entryForm.markUnsaved();
+				}, undefined);
 				entryForm.getComponent('topform').getComponent('organization').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});				
+					entryForm.markUnsaved();
+				}, undefined);				
 				entryForm.getComponent('topform').getComponent('releaseDate').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});	
+					entryForm.markUnsaved();
+				}, undefined);	
 				entryForm.getComponent('topform').getComponent('version').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});					
+					entryForm.markUnsaved();
+				}, undefined);					
 				
 			}
 		});	
 		
 		opts.commentPanel.loadComments(evaluationId, "Entry Summmary", componentId);
 	},
+	markUnsaved: function () {
+		var entryForm = this;
+		entryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
+		entryForm.saveTask.delay(1000*60*3);	
+		entryForm.unsavedChanges = true;
+	},	
 	saveData: function() {		
 		var entryForm = this;
 		
@@ -359,8 +367,10 @@ Ext.define('OSF.form.EntrySummary', {
 							} else {
 								hasAllRequiredAttributes = true;
 							}
-
+							entryForm.saveTask.cancel();
+							
 							if (hasAllRequiredAttributes) {
+								entryForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 								CoreUtil.submitForm({
 									url: 'api/v1/resource/components/' + 
 										entryForm.componentId,
@@ -370,12 +380,14 @@ Ext.define('OSF.form.EntrySummary', {
 									noLoadmask: true,
 									callback: function() {
 										entryForm.saving = false;
+										entryForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
 									},
 									success: function(action, opts) {							
 
 										Ext.toast('Saved Entry Summary');
 										entryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
-
+										entryForm.unsavedChanges = false;
+										
 										if (entryForm.refreshCallback) {
 											entryForm.refreshCallback();
 										}

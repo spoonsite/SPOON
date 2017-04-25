@@ -53,10 +53,11 @@ Ext.define('OSF.form.Section', {
 				},
 				{
 					text: 'Save',
+					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
-					handler: function() {
-						var questionForm = this.up('panel');
-						questionForm.saveData();
+					handler: function() {										
+						var sectionForm = this.up('panel');
+						sectionForm.saveData();
 					}
 				},				
 				{
@@ -64,7 +65,7 @@ Ext.define('OSF.form.Section', {
 					itemId: 'status'
 				},				
 				{
-					text: 'Manage Media',					
+					text: '&nbsp;Manage Media',					
 					iconCls: 'fa fa-2x fa-image',
 					scale: 'medium',
 					handler: function(){
@@ -200,7 +201,7 @@ Ext.define('OSF.form.Section', {
 																								record.get('contentSectionMediaId'),
 																							method: 'PUT',
 																							form: form,
-																							data: recordData,
+																							data: recordData,																							
 																							success: function(form, action) {
 																								grid.getStore().load();
 																								editWindow.close();
@@ -404,8 +405,7 @@ Ext.define('OSF.form.Section', {
 									mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {
-									buffer: 2000,
+								change: {									
 									fn: function(field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
@@ -442,8 +442,7 @@ Ext.define('OSF.form.Section', {
 										mediaUploadHandler: mediaUploadHandler
 								}),
 								listeners: {
-									change: {
-										buffer: 2000,
+									change: {										
 										fn: function(field, newValue, oldValue) {
 											sectionForm.markUnsaved();
 										}
@@ -462,8 +461,7 @@ Ext.define('OSF.form.Section', {
 									fieldLabel: field.label,
 									value: field.value,
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -516,8 +514,7 @@ Ext.define('OSF.form.Section', {
 										data: field.validValues
 									},
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -539,8 +536,7 @@ Ext.define('OSF.form.Section', {
 										data: field.validValues
 									},
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -555,8 +551,7 @@ Ext.define('OSF.form.Section', {
 									boxLabel: field.label,
 									value: field.value,
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -599,8 +594,7 @@ Ext.define('OSF.form.Section', {
 									mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {
-									buffer: 2000,
+								change: {									
 									fn: function(field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
@@ -684,6 +678,7 @@ Ext.define('OSF.form.Section', {
 			}
 			sectionForm.saveTask.cancel();
 			
+			sectionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/evaluations/' + 
 					sectionForm.evaluationId
@@ -693,9 +688,12 @@ Ext.define('OSF.form.Section', {
 				data: contentSectionAll,
 				form: sectionForm,
 				noLoadmask: true,
+				callback: function(form, action) {
+					sectionForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
+				},
 				success: function(action, opts) {			
 					Ext.toast('Saved Section');
-					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));					
 					sectionForm.unsavedChanges = false;
 				}	
 			});			

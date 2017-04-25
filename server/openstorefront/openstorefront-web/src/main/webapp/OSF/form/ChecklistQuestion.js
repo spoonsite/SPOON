@@ -52,6 +52,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				},
 				{
 					text: 'Save',
+					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
 					handler: function() {
 						var questionForm = this.up('panel');
@@ -254,6 +255,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		var data = questionForm.getValues();
 		
 		questionForm.saveTask.cancel();
+		questionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 		CoreUtil.submitForm({
 			url: 'api/v1/resource/evaluations/' + 
 				questionForm.evaluationId 
@@ -265,6 +267,9 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			data: data,
 			form: questionForm,
 			noLoadmask: true,
+			callback: function(form, action) {
+				questionForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
+			},			
 			success: function(action, opts) {
 				var chkResponse = Ext.decode(action.responseText);
 				
