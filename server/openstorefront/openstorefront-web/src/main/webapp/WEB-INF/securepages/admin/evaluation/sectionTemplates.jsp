@@ -28,12 +28,35 @@
 					height: '75%',
 					maximizable: true,
 					layout: 'fit',
+					listeners: {
+						beforeclose: function(win, opts) {
+							var form = win.queryById('templateForm');
+							if (form.isDirty() && !win.forceClose) {
+								Ext.Msg.show({
+									title:'Discard Changes?',
+									message: 'You have unsaved changes. Discard Changes?',
+									buttons: Ext.Msg.YESNO,
+									icon: Ext.Msg.QUESTION,
+									fn: function(btn) {
+										if (btn === 'yes') {
+											win.forceClose = true;
+											win.close();
+										} 
+									}
+								});								
+								return false;
+							} else {
+								return true;
+							}
+						}
+					},
 					items: [
 						{
 							xtype: 'form',
 							itemId: 'templateForm',
 							bodyStyle: 'padding: 10px;',
 							scrollable: true,
+							trackResetOnLoad: true,
 							dockedItems: [	
 								{
 									xtype: 'toolbar',
@@ -140,10 +163,11 @@
 													form: form,
 													success: function(){
 														Ext.toast("Saved Successfully");
-														actionRefresh();		
+														actionRefresh();														
 														
 														var saveContinue = form.getComponent('bottomTools').getComponent('saveContinue').getValue();
 														if (!saveContinue) {
+															addEditWindow.forceClose = true;
 															addEditWindow.close();
 														}
 													}
@@ -154,7 +178,8 @@
 										{
 											xtype: 'checkbox',
 											itemId: 'saveContinue',
-											checked: true,
+											checked: false,
+											hidden: true,
 											boxLabel: 'Save and Continue'
 										},
 										{
