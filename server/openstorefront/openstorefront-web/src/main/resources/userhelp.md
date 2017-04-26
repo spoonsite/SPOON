@@ -1056,14 +1056,14 @@ Inactive entries are not visible to or searchable by users.
 
 **Version and Change History:**
 
-Entry Versions (Snapshots) hold a copy of an entry that can later be used to restore
-and entry to specific version.  Snapshots are created only when importing a record 
-of the same entry.  Otherwise snapshots can be created manually using the entry version tool.
+Entry Versions(Snapshots) hold a copy of an entry that can later be used to restore
+an entry to specific version.  Snapshots are created only when importing a record 
+of the same entry.  Also, snapshots can be created manually using the entry version tool.
 
-Change history records all changes that occur to an entry (2.3+ only).  This is 
+Change history logs all changes that occur to an entry (2.3+ only).  This is 
 a running history that stays with the entry.  It records add/edits/remove of entry details.
-Note: Some changes/actions trigger many change on an entry and the application will create 
-records for each change.  The history is provided for auditing and conflict resolutions.
+Note: Some changes/actions trigger many changes on an entry and the application will create 
+records for each change.  The history is provided for auditing and conflict resolution.
 
 
 #### 3.2.3.2 Approval @ADMIN-ENTRY-MANAGEMENT
