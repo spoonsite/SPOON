@@ -68,8 +68,8 @@ Ext.define('OSF.component.template.Description', {
 		if (links && links.length > 0) {
 
 			// Set targets
-			Ext.Array.each(links, function(item){ 
-				if (item.getAttribute('href')) {
+			Ext.Array.each(links, function(item){ 				
+				if (item.getAttribute && item.getAttribute('href')) {
 					item.set({target: '_blank'});
 				}
 			});
