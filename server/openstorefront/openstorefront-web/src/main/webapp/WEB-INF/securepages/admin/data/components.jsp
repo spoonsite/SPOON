@@ -171,7 +171,7 @@
 					requiredStore.loadData(requiredAttributes);
 					
 					//Ext.getCmp('attributeGrid').down('form').getComponent('attributeTypeCB').getStore().loadData(optionalAttributes);
-					//loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+					//loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());				
 				};
 			
 			
@@ -2151,7 +2151,7 @@
 						handleAttributes(record.get('componentType'));
 						Ext.defer(function(){
 							mainAddEditWin.generalForm.loadComponentAttributes();
-						}, 250);
+						}, 1000);
 						
 						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);	
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);							
