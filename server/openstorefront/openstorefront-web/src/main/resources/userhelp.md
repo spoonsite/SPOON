@@ -1054,6 +1054,17 @@ Inactive entries are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
+**Version and Change History:**
+
+Entry Versions (Snapshots) hold a copy of an entry that can later be used to restore
+and entry to specific version.  Snapshots are created only when importing a record 
+of the same entry.  Otherwise snapshots can be created manually using the entry version tool.
+
+Change history records all changes that occur to an entry (2.3+ only).  This is 
+a running history that stays with the entry.  It records add/edits/remove of entry details.
+Note: Some changes/actions trigger many change on an entry and the application will create 
+records for each change.  The history is provided for auditing and conflict resolutions.
+
 
 #### 3.2.3.2 Approval @ADMIN-ENTRY-MANAGEMENT
 ------
