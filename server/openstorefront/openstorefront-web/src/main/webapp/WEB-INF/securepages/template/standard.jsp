@@ -132,9 +132,11 @@
 				});				
 				
 				var reviewsPanel = Ext.create('OSF.component.template.Reviews', {
+					scrollable: true
 				});	
 				
 				var questionPanel = Ext.create('OSF.component.template.Questions', {
+					scrollable: true
 				});				
 				
 				var tabPanel = Ext.create('OSF.component.template.LayoutTab', {

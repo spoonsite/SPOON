@@ -700,7 +700,7 @@ Ext.define('OSF.component.template.Reviews', {
 				'<tpl for=".">',	
 				'<table style="width:100%"><tr>',
 				'	<td valign="top">',
-				'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
+				'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br><br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
 				'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
 				'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
 				'		</div><br>',
@@ -762,12 +762,12 @@ Ext.define('OSF.component.template.Reviews', {
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
 						if (btn === 'yes') {
-							Ext.getCmp('reviewPanel').setLoading("Deleting...");
+							reviewPanel.setLoading("Deleting...");
 							Ext.Ajax.request({
 								url: 'api/v1/resource/components/'+ componentId+'/reviews/'+reviewId,
 								method: 'DELETE',
 								callback: function(){
-									Ext.getCmp('reviewPanel').setLoading(false);
+									reviewPanel.setLoading(false);
 								},
 								success: function(){
 									reviewActions.refreshReviews();
@@ -778,17 +778,17 @@ Ext.define('OSF.component.template.Reviews', {
 				});				
 			},
 			refreshReviews: function() {
-				Ext.getCmp('reviewPanel').setLoading('Refreshing...');
+				reviewPanel.setLoading('Refreshing...');
 				Ext.Ajax.request({
 					url: 'api/v1/resource/components/' + entry.componentId + '/reviews/view',
 					callback: function(){
-						Ext.getCmp('reviewPanel').setLoading(false);
+						reviewPanel.setLoading(false);
 					}, 						
 					success: function(response, opts){
 						var reviews = Ext.decode(response.responseText);
 						var entryLocal = {};
 						entryLocal.reviews = reviews;
-						processReviews(entryLocal);							
+						processReviews(entryLocal, reviewPanel.user);							
 					}
 				});				
 			},
@@ -924,6 +924,7 @@ Ext.define('OSF.component.template.Reviews', {
 			};		
 		
 		CoreService.userservice.getCurrentUser().then(function(user){			
+			reviewPanel.user = user;
 			processReviews(entry, user);
 		});		
 		
@@ -970,17 +971,17 @@ Ext.define('OSF.component.template.Questions', {
 		var questionActions = {
 			
 			refreshQuestions: function(){
-				Ext.getCmp('questionPanel').setLoading('Refreshing...');
+				questionPanel.setLoading('Refreshing...');
 				Ext.Ajax.request({
 					url: 'api/v1/resource/components/' + entry.componentId + '/questions/view',
 					callback: function(){
-						Ext.getCmp('questionPanel').setLoading(false);
+						questionPanel.setLoading(false);
 					}, 						
 					success: function(response, opts){
 						var questions = Ext.decode(response.responseText);
 						var entryLocal = {};
 						entryLocal.questions = questions;
-						processQuestions(entryLocal);							
+						processQuestions(entryLocal, questionPanel.user);							
 					}
 				});
 			},
@@ -1011,12 +1012,12 @@ Ext.define('OSF.component.template.Questions', {
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
 						if (btn === 'yes') {
-							Ext.getCmp('questionPanel').setLoading("Deleting...");
+							questionPanel.setLoading("Deleting...");
 							Ext.Ajax.request({
 								url: 'api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
 								method: 'DELETE',
 								callback: function(){
-									Ext.getCmp('questionPanel').setLoading(false);
+									questionPanel.setLoading(false);
 								},
 								success: function(){
 									questionActions.refreshQuestions();
@@ -1092,9 +1093,9 @@ Ext.define('OSF.component.template.Questions', {
 							margin: 10,
 							iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
 							handler: function(){
+								questionActions.responseWindow.refresh();
 								questionActions.responseWindow.questionId = question.questionId;
 								questionActions.responseWindow.show();
-								questionActions.responseWindow.refresh();
 							}
 						}
 					]				
@@ -1132,12 +1133,12 @@ Ext.define('OSF.component.template.Questions', {
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
 												if (btn === 'yes') {
-													Ext.getCmp('questionPanel').setLoading("Deleting...");
+													questionPanel.setLoading("Deleting...");
 													Ext.Ajax.request({
-														url: 'api/v1/resource/components/' + entryLocal.componentId + '/questions/' + question.questionId,
+														url: 'api/v1/resource/components/' + questionPanel.componentId + '/questions/' + question.questionId,
 														method: 'DELETE',
 														callback: function(){
-															Ext.getCmp('questionPanel').setLoading(false);
+															questionPanel.setLoading(false);
 														},
 														success: function(){
 															questionActions.refreshQuestions();
@@ -1160,8 +1161,9 @@ Ext.define('OSF.component.template.Questions', {
 			questionPanel.add(questionPanels);
 
 		};		
-		
+		questionPanel.componentId = entry.componentId;
 		CoreService.userservice.getCurrentUser().then(function(user){			
+			questionPanel.user = user;
 			processQuestions(entry, user);
 		});	
 		
@@ -1917,8 +1919,12 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 			recomendationPanel.setHidden(true);
 		} else {
 			
-			var updateSection = function(evaluation) {			
-				recomendationPanel.update(evaluation);
+			var updateSection = function(evaluation) {
+				if (!evaluation.checkListAll.recommendations || evaluation.checkListAll.recommendations.length === 0) {
+					recomendationPanel.setHidden(true);
+				} else {
+					recomendationPanel.update(evaluation);
+				}
 			};
 			updateSection(entry.fullEvaluations[0]);
 			if (!entry.evalListeners) {
@@ -1997,7 +2003,7 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 								groupStatus[response.question.evaluationSection] = {
 									title: response.question.evaluationSectionDescription,
 									sectionDescription: findSectionDesc(response.question.evaluationSection),
-									count: 1,
+									count: 1,									
 									totalScore: response.score ? response.score : 0
 								};
 							}
@@ -2006,6 +2012,9 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 						//average and add dots
 						var sections = [];
 						Ext.Object.eachValue(groupStatus, function(section) {
+							if (isNaN(section.count)) {
+								section.count = 0;
+							}
 							if (section.count > 0) {
 								section.average = Math.round((section.totalScore/section.count)*10) / 10;
 								
@@ -2017,7 +2026,8 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 							} else {
 								section.average = 0;								
 							}
-							if (section.average === 0) {
+							if (isNaN(section.average) || section.average < 1) {
+								section.average = 0;
 								section.display = 'N/A';
 							}
 							
@@ -2068,13 +2078,14 @@ Ext.define('OSF.component.template.LayoutTab', {
 	updateTemplate: function (entry) {
 		var layoutPanel = this;
 		
+		var itemsToClose = [];
 		Ext.Array.each(layoutPanel.items.items, function(item){
 			if (item) {
 				var process = true;
 				if (item.evalTopPanel){
 					if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
 						process = false;
-						item.close();
+						itemsToClose.push(item);
 					}
 				} 						
 
@@ -2082,6 +2093,10 @@ Ext.define('OSF.component.template.LayoutTab', {
 					item.updateTemplate(entry);
 				}
 			}
+		});
+		
+		Ext.Array.each(itemsToClose, function(item) {
+			item.close();
 		});
 		
 		return null;

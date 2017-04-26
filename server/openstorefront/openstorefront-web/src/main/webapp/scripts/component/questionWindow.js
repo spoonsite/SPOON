@@ -344,7 +344,10 @@ Ext.define('OSF.component.ResponseWindow', {
 	},
 	
 	refresh: function(){
-		this.form.reset();
+		var responseWindow = this;
+		responseWindow.questionId = null;
+		responseWindow.responseId = null;
+		responseWindow.form.reset();
 	},
 	
 	edit: function(reponseRecord) {
