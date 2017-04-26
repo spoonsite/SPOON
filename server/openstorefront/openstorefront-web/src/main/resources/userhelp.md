@@ -48,14 +48,16 @@ Version 2.3 incorporates:
  * Evaluator Tools added
  * Admin- Adding Roles and Permissions to Users
  * Admin- System Export/Import
+ * IE9 is now not officially supported.  A warning will come up for IE9 users, advising them to upgrade their browser.
  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
-## 1.2 Known Issues, v2.2 @ADMIN-SYSTEM-MANAGEMENT 
+## 1.2 Known Issues, v2.3 @ADMIN-SYSTEM-MANAGEMENT 
  
- * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
-  attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
+ * 
+ 
+
 
 # 2. User Features
 ------
