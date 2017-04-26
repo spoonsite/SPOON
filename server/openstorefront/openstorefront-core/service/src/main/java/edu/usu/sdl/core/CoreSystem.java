@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
+import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,9 +58,10 @@ import net.sourceforge.stripes.util.ResolverUtil;
 public class CoreSystem
 {
 
-	private static final Logger log = Logger.getLogger(CoreSystem.class.getName());
+	private static final Logger LOG = Logger.getLogger(CoreSystem.class.getName());
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
+	private static String systemStatus = "Starting application...";
 
 	private CoreSystem()
 	{
@@ -86,50 +89,60 @@ public class CoreSystem
 			new PluginManager()
 	);
 
-	public static void startup()
+	public static CompletableFuture startup()
 	{
-		managers.forEach(manager -> {
-			startupManager(manager);
-		});
+		started.set(false);
+		systemStatus = "Starting application...";
+		CompletableFuture future = CompletableFuture.supplyAsync(() -> {
+			managers.forEach(manager -> {
+				startupManager(manager);
+			});
 
-		//Apply any Inits
-		ResolverUtil resolverUtil = new ResolverUtil();
-		resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
-		for (Object testObject : resolverUtil.getClasses()) {
-			Class testClass = (Class) testObject;
-			try {
-				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
-					((ApplyOnceInit) testClass.newInstance()).applyChanges();
+			//Apply any Inits
+			ResolverUtil resolverUtil = new ResolverUtil();
+			resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
+			for (Object testObject : resolverUtil.getClasses()) {
+				Class testClass = (Class) testObject;
+				try {
+					if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
+						systemStatus = "Checking data init: " + testClass.getSimpleName();
+						((ApplyOnceInit) testClass.newInstance()).applyChanges();
+					}
+				} catch (InstantiationException | IllegalAccessException ex) {
+					throw new OpenStorefrontRuntimeException(ex);
 				}
-			} catch (InstantiationException | IllegalAccessException ex) {
-				throw new OpenStorefrontRuntimeException(ex);
 			}
-		}
-
-		started.set(true);
+			return "done";
+		}).thenAccept((result) -> {
+			systemStatus = "Application is Ready";
+			started.set(true);
+		});
+		return future;
 	}
 
 	private static void startupManager(Initializable initializable)
 	{
-		log.log(Level.INFO, MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName()));
+		LOG.log(Level.INFO, MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName()));
+		systemStatus = MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName());
 		initializable.initialize();
 	}
 
 	private static void shutdownManager(Initializable initializable)
 	{
 		//On shutdown we want it to roll through
-		log.log(Level.INFO, MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName()));
+		LOG.log(Level.INFO, MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName()));
+		systemStatus = MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName());
 		try {
 			initializable.shutdown();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
+			LOG.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
 		}
 	}
-	
-	public static List<ManagerView> getManagersView() 
+
+	public static List<ManagerView> getManagersView()
 	{
 		List<ManagerView> views = new ArrayList<>();
-		
+
 		int order = 1;
 		for (Initializable manager : managers) {
 			ManagerView view = new ManagerView();
@@ -139,19 +152,20 @@ public class CoreSystem
 			view.setStarted(manager.isStarted());
 			views.add(view);
 		}
-		
+
 		return views;
 	}
-	
+
 	public static void startManager(String managerClassName)
 	{
 		Initializable manager = findManager(managerClassName, false);
 		if (manager.isStarted() == false) {
+			systemStatus = MessageFormat.format("Starting up:{0}", managerClassName);
 			manager.initialize();
-		} 
+		}
 	}
-	
-	public static Initializable findManager(String managerClassName, boolean skipFoundCheck) 
+
+	public static Initializable findManager(String managerClassName, boolean skipFoundCheck)
 	{
 		Initializable foundManger = null;
 		for (Initializable manager : managers) {
@@ -159,52 +173,57 @@ public class CoreSystem
 				foundManger = manager;
 				break;
 			}
-		}		
-		
+		}
+
 		if (foundManger == null && !skipFoundCheck) {
 			throw new OpenStorefrontRuntimeException("Unable to find manger: " + managerClassName, "Check input");
 		}
-		
+
 		return foundManger;
 	}
-	
+
 	public static void stopManager(String managerClassName)
-	{		
-		Initializable manager = findManager(managerClassName, false);		
+	{
+		Initializable manager = findManager(managerClassName, false);
 		if (manager.isStarted()) {
+			systemStatus = MessageFormat.format("Shutting down:{0}", managerClassName);
 			manager.shutdown();
-		} 		
+		}
 	}
 
 	public static void restartManager(String managerClassName)
-	{		
+	{
 		//pause scheduler reduce auto process interference
 		Initializable jobManager = findManager(JobManager.class.getName(), false);
 		started.set(false);
-		
+
 		if (jobManager.isStarted()) {
 			JobManager.pauseScheduler();
-		}		
+		}
 		try {
 			stopManager(managerClassName);
-			startManager(managerClassName);		
-		} catch (Exception e) {			
+			startManager(managerClassName);
+		} catch (Exception e) {
 			throw new OpenStorefrontRuntimeException("Unable to restart manager: " + managerClassName, "Confirm application state and try or if system is in a bad state. Restart application.");
 		}
-				
+
 		if (jobManager.isStarted()) {
 			JobManager.resumeScheduler();
 		}
 		started.set(true);
 	}
 
+	@SuppressWarnings("UseSpecificCatch")
 	public static void shutdown()
 	{
+		started.set(false);
+		systemStatus = "Application is shutting down...";
 		try {
-			log.log(Level.INFO, "Unmount Truevfs");
+			LOG.log(Level.INFO, "Unmount Truevfs");
 			TVFS.umount();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
+			//Critical section
+			LOG.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
 		}
 
 		//Shutdown in reverse order to make sure the dependancies are good.
@@ -213,8 +232,7 @@ public class CoreSystem
 			shutdownManager(manager);
 		});
 		Collections.reverse(managers);
-
-		started.set(false);
+		systemStatus = "Application is shutdown";
 	}
 
 	public static boolean isStarted()
@@ -232,6 +250,26 @@ public class CoreSystem
 			shutdown();
 		}
 		startup();
+	}
+
+	public static void standby()
+	{
+		started.set(false);
+		systemStatus = "Standby...";
+	}
+
+	public static void resume()
+	{
+		started.set(true);
+		systemStatus = "Application is Ready";
+	}
+
+	public static SystemStatusView getStatus()
+	{
+		SystemStatusView view = new SystemStatusView();
+		view.setStarted(started.get());
+		view.setSystemStatus(systemStatus);
+		return view;
 	}
 
 }

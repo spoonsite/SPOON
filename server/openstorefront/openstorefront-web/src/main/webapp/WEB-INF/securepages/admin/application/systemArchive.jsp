@@ -247,7 +247,14 @@
 				addComponentToMainViewPort(archiveGrid);
 				
 				var actionRefresh = function() {
-					archiveGrid.getStore().reload();
+					archiveGrid.getStore().reload({
+						callback: function(records, operation, success) {
+							if (!success) {
+								//system may not be available
+								window.location.reload();
+							}
+						}
+					});
 				};
 				
 				var actionGenerate = function() {

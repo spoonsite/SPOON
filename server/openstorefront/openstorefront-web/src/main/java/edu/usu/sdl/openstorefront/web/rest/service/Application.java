@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.MediaRetrieveRequestModel;
 import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -667,6 +668,15 @@ public class Application
 			key = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 		}
 		return Response.ok(key).build();
+	}
+
+	@GET
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Get the current status of the system")
+	@Path("/systemstatus")
+	public SystemStatusView getSystemStatus()
+	{
+		return CoreSystem.getStatus();
 	}
 
 }

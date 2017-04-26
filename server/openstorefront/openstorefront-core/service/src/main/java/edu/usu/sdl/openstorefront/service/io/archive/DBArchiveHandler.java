@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive;
 
+import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
@@ -74,6 +75,7 @@ public class DBArchiveHandler
 		archive.save();
 
 		try {
+			CoreSystem.standby();
 			JobManager.pauseScheduler();
 			try {
 				//Give the application a bit of time to complete any running job
@@ -86,10 +88,11 @@ public class DBArchiveHandler
 
 			DBManager.importDB(new TFileInputStream(importFile));
 		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, "DB Export failed", ex);
-			addError("Fail to create export. See log for more details.");
+			LOG.log(Level.SEVERE, "DB Import failed", ex);
+			addError("Failed to import database. See log for more details.");
 		} finally {
 			JobManager.resumeScheduler();
+			CoreSystem.resume();
 		}
 		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
