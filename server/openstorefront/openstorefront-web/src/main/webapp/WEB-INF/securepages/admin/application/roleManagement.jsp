@@ -279,6 +279,7 @@
 								items: [
 									{
 										xtype: 'textfield',
+										itemId: 'roleName',
 										name: 'roleName',
 										fieldLabel: 'Role Name <span class="field-required" /> (Must be unique)',
 										maxLength: 255,
@@ -382,7 +383,8 @@
 					
 					if (record) {
 						addEditWin.getComponent('form').loadRecord(record);
-					}					
+						addEditWin.queryById('roleName').setReadOnly(true);
+					}				
 				};
 				
 				var actionManageDelete = function(record) {
