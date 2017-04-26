@@ -136,7 +136,9 @@
 								var record = selected[0];
 								
 								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
-									tools.getComponent('download').setDisabled(false);
+									if (record.get('archiveFilename') && record.get('archiveFilename') !== "") {									
+										tools.getComponent('download').setDisabled(false);
+									}
 								}
 								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
 									tools.getComponent('delete').setDisabled(false);
