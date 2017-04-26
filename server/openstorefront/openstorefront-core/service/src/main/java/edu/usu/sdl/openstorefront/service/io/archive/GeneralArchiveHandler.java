@@ -109,8 +109,7 @@ public class GeneralArchiveHandler
 				addError("Unable to complete importing (May not have all records): " + exporter.getExporterSupportEntity());
 			}
 		}
-		//TODO: See why import records are not matching export
-		//Either counting difference or not processing all files
+
 		archive.setRecordsProcessed(archive.getTotalRecords());
 
 		archive.setStatusDetails("Done");
