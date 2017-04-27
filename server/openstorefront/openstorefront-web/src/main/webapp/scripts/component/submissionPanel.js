@@ -646,7 +646,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 									sorters: [
 										{
 											property: 'description',
-											direction: 'ASC'
+											direction: 'ASC',
+											transform: function(item) {
+												if (item) {
+													item = item.toLowerCase();
+												}
+												return item;
+											}
 										}
 									],
 									fields: [
@@ -722,7 +728,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 									sorters: [
 										{
 											property: 'label',
-											direction: 'ASC'
+											direction: 'ASC',
+											transform: function(item) {
+												if (item) {
+													item = item.toLowerCase();
+												}
+												return item;
+											}
 										}
 									],
 									fields: [
