@@ -246,19 +246,31 @@
 					}					
 				});
 				
+				var component_sorter_ascending = new Ext.util.Sorter({
+					
+					sorterFn: function (one, two) {
+
+						// Sort Records
+						return (one.data.component.name > two.data.component.name) ? 1 : (one.data.component.name === two.data.component.name ? 0 : -1);
+					}
+				});
+				
+				var component_sorter_descending = new Ext.util.Sorter({
+					
+					sorterFn: function (one, two) {
+
+						// Sort Records
+						return (two.data.component.name > one.data.component.name) ? 1 : (two.data.component.name === one.data.component.name ? 0 : -1);
+					}
+				});
+				
 				var store_components_local = Ext.create('Ext.data.Store', {
 					storeId: 'store_components_local',
 					autoLoad: true,
 					fields: [
 						'component'
 					],
-					sorters: new Ext.util.Sorter({
-						sorterFn: function (one, two) {
-							
-							// Sort Records
-							return (one.data.component.name > two.data.component.name) ? 1 : (one.data.component.name === two.data.component.name ? 0 : -1);
-						}
-					})
+					sorters: component_sorter_ascending
 				});
 				
 				var store_componentTypes_remote = Ext.create('Ext.data.Store', {
@@ -554,7 +566,7 @@
 					fields: [
 						'component'
 					],
-					sorters: 'name',
+					sorters: component_sorter_ascending,
 					listeners: {
 						
 						refresh: {
@@ -1216,6 +1228,31 @@
 							}
 						}
 					},
+					listeners: {
+
+						sortchange: function (grid, column, direction, eOpts) {
+
+							// Check Descending
+							switch (direction) {
+								
+								case 'DESC':
+
+									// Sort Descending
+									store_components_local.setSorters(component_sorter_descending);
+
+									// Exit Switch
+									break;
+
+								case 'ASC':
+
+									// Sort Ascending
+									store_components_local.setSorters(component_sorter_ascending);
+
+									// Exit Switch
+									break;
+							}
+						}
+					},
 					columns: [
 						{ 
 							text: 'Entries',
@@ -1231,7 +1268,6 @@
 								
 								return html;
 							}
-
 						}
 					],
 					dockedItems: [
@@ -1506,6 +1542,31 @@
 									// Focus On Label
 									labelAssociationGrid.getView().focusRow(copiedComponent);
 								}
+							}
+						}
+					},
+					listeners: {
+
+						sortchange: function (grid, column, direction, eOpts) {
+
+							// Check Descending
+							switch (direction) {
+								
+								case 'DESC':
+
+									// Sort Descending
+									store_labelComponents_local.setSorters(component_sorter_descending);
+
+									// Exit Switch
+									break;
+
+								case 'ASC':
+
+									// Sort Ascending
+									store_labelComponents_local.setSorters(component_sorter_ascending);
+
+									// Exit Switch
+									break;
 							}
 						}
 					},
