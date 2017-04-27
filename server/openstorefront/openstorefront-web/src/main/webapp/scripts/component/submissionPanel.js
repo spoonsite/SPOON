@@ -3066,7 +3066,53 @@ Ext.define('OSF.component.SubmissionPanel', {
 						else {
 							
 							// Save Data From Step 2
-							submissionPanel.handleRequiredFormSave();
+							submissionPanel.handleRequiredFormSave(function(){
+								// Get Panel
+								var reviewEntryPanel = submissionPanel.reviewPanel.getComponent('reviewEntryPanel');
+
+								// Mask Panel
+								reviewEntryPanel.setLoading('Loading preview...');
+
+								// Request From Server
+								Ext.Ajax.request({
+
+									url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
+									callback: function(){
+
+										// Remove Panel Mask
+										reviewEntryPanel.setLoading(false);
+									},
+									success: function(response, opts){
+
+										// Get Response Data
+										var data = Ext.decode(response.responseText);
+
+										// Initialize Empty Attribute Array
+										var attributesToShow = [];
+
+										// Loop Through Attributes
+										Ext.Array.each(data.attributes, function(item) {
+
+											// Check If Attribute Should Be Shown
+											if (!item.hideOnSubmission) {
+
+												// Add Shown Attribute To Array
+												attributesToShow.push(item);
+											}
+										});
+
+										// Remove Hidden Attributes
+										data.attributes = attributesToShow;	
+
+										// Process Complete Record Data
+										data = CoreUtil.processEntry(data);
+
+										// Display Complete Record Data
+										reviewEntryPanel.update(data);
+									}
+								});
+														
+							});
 							
 							// Proceed
 							proceed = true;
@@ -3197,55 +3243,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					tools.getComponent('SaveLater').setHidden(false);
 					tools.getComponent('Submit').setHidden(false);
 					
-					// Get Panel
-					var reviewEntryPanel = submissionPanel.reviewPanel.getComponent('reviewEntryPanel');
-					
-					// Mask Panel
-					reviewEntryPanel.setLoading('Loading preview...');
-					
-					// Pause Briefly
-					Ext.defer(function() {
-					
-						// Request From Server
-						Ext.Ajax.request({
 
-							url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
-							callback: function(){
-
-								// Remove Panel Mask
-								reviewEntryPanel.setLoading(false);
-							},
-							success: function(response, opts){
-
-								// Get Response Data
-								var data = Ext.decode(response.responseText);
-
-								// Initialize Empty Attribute Array
-								var attributesToShow = [];
-
-								// Loop Through Attributes
-								Ext.Array.each(data.attributes, function(item) {
-
-									// Check If Attribute Should Be Shown
-									if (!item.hideOnSubmission) {
-
-										// Add Shown Attribute To Array
-										attributesToShow.push(item);
-									}
-								});
-
-								// Remove Hidden Attributes
-								data.attributes = attributesToShow;	
-
-								// Process Complete Record Data
-								data = CoreUtil.processEntry(data);
-
-								// Display Complete Record Data
-								reviewEntryPanel.update(data);
-							}
-						});
-					}
-					, 200);
 					
 					// Set Button Styles & Enable Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
