@@ -2939,152 +2939,315 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		
 		submissionPanel.currentStep = 1;
-		submissionPanel.changeSteps = function(forceProceed) {						
+		submissionPanel.changeSteps = function(forceProceed) {	
+			
+			// Get Tools
 			var tools = submissionPanel.mainPanel.getComponent('tools');
 					
-			//confirm pervious steps validation and saving
+			// Initialize Proceed Flag
 			var proceed = false;
-			if (forceProceed) {				
+			
+			// Check If Proceeding Is Forced
+			if (forceProceed) {
+				
+				// Proceed
 				proceed = true;
-			} else {
+			}
+			else {
+				
+				// Check Current Step
 				if (submissionPanel.currentStep === 2) {
-				//vaildation contact info
-				if (submissionPanel.submitterForm.isValid()) {
-					proceed = true;
-				} else {
-					Ext.Msg.show({
-						title: 'Validation',
-						message: 'All required fields must be filled in with valid values.  (See Step 1)',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {
-						}
-					});
-					submissionPanel.currentStep=1;
-				}
-				
-			} else if (submissionPanel.currentStep === 3) {
-				
-				if (!submissionPanel.requiredForm.isValid()) {
-					Ext.Msg.show({
-						title: 'Validation',
-						message: 'All required fields must be filled in with valid values.  (See Step 2)',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {
-						}
-					});	
-					var form = submissionPanel.requiredForm;
-					var data = form.getValues();
 					
-					if (!data.description) {
-						form.getForm().markInvalid({
-								description: 'Required'
-						});
+					// Validate Step 1
+					if (submissionPanel.submitterForm.isValid()) {
+						
+						// Proceed
+						proceed = true;
 					}
+					else {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 1)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});
+						
+						// Return To Step 1
+						submissionPanel.currentStep = 1;
+					}
+				}
+				else if (submissionPanel.currentStep === 3) {
+
+					// Validate Step 2
+					if (!submissionPanel.requiredForm.isValid()) {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 2)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});	
+						
+						// Get Form
+						var form = submissionPanel.requiredForm;
+						
+						// Get Form Data
+						var data = form.getValues();
+						
+						// Ensure Description Is Filled In
+						if (!data.description) {
+							
+							// Mark Field As Invalid
+							form.getForm().markInvalid({
+								
+								description: 'Required'
+							});
+						}
+
+						// Return To Step 2
+						submissionPanel.currentStep = 2;
+					}
+					else {
+
+//						// Return To Step 2
+//						submissionPanel.currentStep = 2;
+						
+						// Save Data From Step 2
+						submissionPanel.handleRequiredFormSave();
+						
+						// Proceed
+						proceed = true;
+					}
+				}
+				else if (submissionPanel.currentStep === 4) {
+
+					// Validate Step 1
+					if (submissionPanel.submitterForm.isValid()) {
+
+						// Validate Step 2
+						if (!submissionPanel.requiredForm.isValid()) {
+							
+							// Provide Error Feedback
+							Ext.Msg.show({
+								
+								title: 'Validation',
+								message: 'All required fields must be filled in with valid values.  (See Step 2)',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) { }
+							});
+							
+							// Get Form
+							var form = submissionPanel.requiredForm;
+							
+							// Get Form Data
+							var data = form.getValues();
+
+							// Ensure Description Is Filled In
+							if (!data.description) {
+								
+								// Mark Field As Invalid
+								form.getForm().markInvalid({
+									
+									description: 'Required'
+								});
+							}
+
+							// Return To Step 2
+							submissionPanel.currentStep = 2;
+						}
+						else {
+							
+							// Save Data From Step 2
+							submissionPanel.handleRequiredFormSave();
+							
+							// Proceed
+							proceed = true;
+						}
+					}
+					else {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 1)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});
+						
+						// Return To Step 1
+						submissionPanel.currentStep = 1;
+					}
+				}
+				else {
 					
-					submissionPanel.currentStep=2;
-				} else {
-					
-					submissionPanel.currentStep=2;					
-					submissionPanel.handleRequiredFormSave();
-				}				
-			} else {
+					// Proceed
 					proceed = true;
 				}
 			}
-				
+			
+			// Check If User Can Proceed
 			if (proceed) {
+				
+				// Get Tools
 				tools.getComponent('Submit').setHidden(true);
 
+				// Check If Form Is In Edit Mode
 				if (submissionPanel.editMode) {
+					
+					// Enable All Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
-				} else {
+				}
+				else {
+					
+					// Enable One Button
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(true);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(true);
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);					
 				}
 
+				// Clear Button Styling
 				submissionPanel.navigation.getComponent('step1Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step2Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step3Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step4Btn').setIconCls('');
 
-				//if  already save or editing show "Save and Exit"
-
+				// Hide Save Buttons
 				tools.getComponent('SaveAndExit').setHidden(true);
 				tools.getComponent('SaveLater').setHidden(true);
 
-				if (submissionPanel.currentStep === 1) {			
+				// Check Current Step
+				if (submissionPanel.currentStep === 1) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(true);
 					tools.getComponent('Next').setDisabled(false);				
 
-					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.submitterForm);				
-
-				} else if (submissionPanel.currentStep === 2) {
+					// Activate Form
+					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.submitterForm);
+				}
+				else if (submissionPanel.currentStep === 2) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(false);	
+					
+					// Indicate Step 1 Complete
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
+					
+					// Prohibit Reloading Same Step
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 
-
+					// Activate Required Panel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.requiredForm);
-					Ext.defer(function(){
-						submissionPanel.mainPanel.updateLayout(true, true);
-					}, 200);					
 					
+					// Pause Briefly
+					Ext.defer(function() {
+						
+						// Update Panel
+						submissionPanel.mainPanel.updateLayout(true, true);
+					}
+					, 200);					
+					
+					// Display Save Later Button
 					tools.getComponent('SaveLater').setHidden(false);
 					
-				} else if (submissionPanel.currentStep === 3) {
+				}
+				else if (submissionPanel.currentStep === 3) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(false);
 
+					// Set Button Styling & Enable Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
 
-
+					// Enable Save Later Button
 					tools.getComponent('SaveLater').setHidden(false);
 					
+					// Activate Details Panel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.detailsPanel);
+					
+					// Update Panel
 					submissionPanel.detailsPanel.updateLayout(true, true);
-
-				} else if (submissionPanel.currentStep === 4) {
+				}
+				else if (submissionPanel.currentStep === 4) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(true);
 
+					// Enable Save Later & Submit Buttons
 					tools.getComponent('SaveLater').setHidden(false);
 					tools.getComponent('Submit').setHidden(false);
 					
+					// Get Panel
 					var reviewEntryPanel = submissionPanel.reviewPanel.getComponent('reviewEntryPanel');
-					reviewEntryPanel.setLoading('Loading preview...');
-					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
-						callback: function(){
-							reviewEntryPanel.setLoading(false);
-						},
-						success: function(response, opts){
-							var data = Ext.decode(response.responseText);
-							
-							//remove attribute that should be hidden
-							var attributesToShow = [];
-							Ext.Array.each(data.attributes, function(item){
-								if (!item.hideOnSubmission) {
-									attributesToShow.push(item);
-								}
-							});
-							data.attributes = attributesToShow;	
-							data = CoreUtil.processEntry(data);
-							reviewEntryPanel.update(data);
-						}
-					});
 					
+					// Mask Panel
+					reviewEntryPanel.setLoading('Loading preview...');
+					
+					// Pause Briefly
+					Ext.defer(function() {
+					
+						// Request From Server
+						Ext.Ajax.request({
 
+							url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
+							callback: function(){
+
+								// Remove Panel Mask
+								reviewEntryPanel.setLoading(false);
+							},
+							success: function(response, opts){
+
+								// Get Response Data
+								var data = Ext.decode(response.responseText);
+
+								// Initialize Empty Attribute Array
+								var attributesToShow = [];
+
+								// Loop Through Attributes
+								Ext.Array.each(data.attributes, function(item) {
+
+									// Check If Attribute Should Be Shown
+									if (!item.hideOnSubmission) {
+
+										// Add Shown Attribute To Array
+										attributesToShow.push(item);
+									}
+								});
+
+								// Remove Hidden Attributes
+								data.attributes = attributesToShow;	
+
+								// Process Complete Record Data
+								data = CoreUtil.processEntry(data);
+
+								// Display Complete Record Data
+								reviewEntryPanel.update(data);
+							}
+						});
+					}
+					, 200);
+					
+					// Set Button Styles & Enable Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setIconCls('fa fa-check');
@@ -3092,6 +3255,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.navigation.getComponent('step3Btn').setIconCls('fa fa-check');				
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
 
+					// Activate Review PAnel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.reviewPanel);
 				}				
 			}
@@ -3235,8 +3399,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 											if (successCallback) {
 												successCallback(response, opts);
 											} else {
-												submissionPanel.currentStep=3;	
-												submissionPanel.changeSteps(true);
 												contactStore.load({
 													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'		
 												});
