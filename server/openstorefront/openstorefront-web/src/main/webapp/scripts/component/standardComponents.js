@@ -439,7 +439,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				},
 				{
 					text: 'Close',
-					iconCls: 'fa fa-close icon-button-color-warning',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function() {
 						this.up('window').close();
 					}

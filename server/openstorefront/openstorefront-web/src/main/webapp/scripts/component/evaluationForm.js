@@ -190,7 +190,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 						{
 							text: 'Change History',
 							itemId: 'changeHistoryBtn',
-							iconCls: 'fa fa-2x fa-history',
+							iconCls: 'fa fa-2x fa-history icon-button-color-default icon-vertical-correction',
 							scale: 'medium',
 							handler: function() {									
 								changeHistory.show();
@@ -226,7 +226,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 		
 		evalPanel.commentPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Comments',
-			iconCls: 'fa fa-comment',
+			iconCls: 'fa fa-lg fa-comment',
 			region: 'east',			
 			collapsed: true,
 			collapsible: true,

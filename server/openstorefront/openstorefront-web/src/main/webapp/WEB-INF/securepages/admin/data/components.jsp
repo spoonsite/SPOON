@@ -261,7 +261,7 @@
 									{
 										text: 'Change History',
 										itemId: 'changeHistoryBtn',
-										iconCls: 'fa fa-lg fa-history',
+										iconCls: 'fa fa-lg fa-history icon-button-color-default icon-top-padding',
 										handler: function() {
 											changeHistory.show();
 											changeHistory.load({
@@ -321,7 +321,7 @@
 									{
 										text: 'Integration',
 										itemId: 'integrationBtn',
-										iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction icon-button-color-default',
+										iconCls: 'fa fa-lg fa-gear icon-button-color-default icon-top-padding',
 										disabled: true,
 										handler: function() {
 											integrationWindow.show();

@@ -16,12 +16,13 @@
 		Ext.onReady(function(){	
 			
 			var addEditWindow = Ext.create('Ext.window.Window', {
-				title: 'Add/Edit Checkist Template',
+				title: 'Add/Edit Checklist Template',
 				iconCls: 'fa fa-edit',
 				modal: true,
 				width: '75%',
 				height: '75%',
 				maximizable: true,
+				scrollable: true,
 				layout: 'fit',
 				items: [
 					{
