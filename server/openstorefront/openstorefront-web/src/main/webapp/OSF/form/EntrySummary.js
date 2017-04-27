@@ -83,7 +83,7 @@ Ext.define('OSF.form.EntrySummary', {
 					itemId: 'version',
 					fieldLabel: 'Version',
 					name: 'version'																		
-				},
+				},										
 				{
 					xtype: 'panel',
 					html: '<b>Description</b> <span class="field-required" />'
@@ -223,7 +223,16 @@ Ext.define('OSF.form.EntrySummary', {
 							var missingAttributes = [];
 							
 							data.componentType = entryForm.componentData.componentType;
-							data.approvalState = entryForm.componentData.approvalState;
+							data.approvalState = entryForm.componentData.approvalState;							
+							if (entryForm.componentData.dataSource) {
+								data.dataSource = entryForm.componentData.dataSource;
+							}
+							if (entryForm.componentData.securityMarkingType) {
+								data.securityMarkingType = entryForm.componentData.securityMarkingType;
+							}							
+							if (entryForm.componentData.dataSensitivity) {
+								data.dataSensitivity = entryForm.componentData.dataSensitivity;
+							}							
 							
 							var requiredForComponent = {
 								component: data,

@@ -43,7 +43,7 @@ public abstract class BaseRule
 		RuleResult validationResult = new RuleResult();
 		validationResult.setEntityClassName(dataObject.getClass().getSimpleName());
 		validationResult.setFieldName(field.getName());
-		validationResult.setMessage(getMessage());
+		validationResult.setMessage(getMessage(field));
 		validationResult.setValidationRule(getValidationRule(field));
 		try {
 			validationResult.setInvalidData(BeanUtils.getProperty(dataObject, field.getName()));
@@ -56,7 +56,7 @@ public abstract class BaseRule
 
 	protected abstract boolean validate(Field field, Object dataObject);
 
-	protected abstract String getMessage();
+	protected abstract String getMessage(Field field);
 
 	protected abstract String getValidationRule(Field field);
 }

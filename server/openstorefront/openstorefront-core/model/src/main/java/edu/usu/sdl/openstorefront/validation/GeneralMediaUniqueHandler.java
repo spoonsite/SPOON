@@ -25,11 +25,11 @@ import java.lang.reflect.Field;
  * @author dshurtleff
  */
 public class GeneralMediaUniqueHandler
-		implements UniqueHandler
+		implements UniqueHandler<GeneralMedia>
 {
 
 	@Override
-	public boolean isUnique(Field field, Object value)
+	public boolean isUnique(Field field, Object value, GeneralMedia fullDataObject)
 	{
 		boolean unique = true;
 		Service serviceProxy = ServiceProxyFactory.getServiceProxy();
@@ -43,6 +43,12 @@ public class GeneralMediaUniqueHandler
 		}
 
 		return unique;
+	}
+
+	@Override
+	public String getMessage()
+	{
+		return "Provided name already exists, and duplication is not permitted.  Please choose another name.";
 	}
 
 }

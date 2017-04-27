@@ -361,7 +361,20 @@ Ext.onReady(function() {
 			requestUrl = '<br><hr> ('+ response.request.url + ' <b>' + response.request.requestOptions.method + '</b>)'; 
 		}
 		
-		if (response.status === 403) {
+		if (response.status === 400) {
+			Ext.Msg.show({
+				title: 'Bad Client Request (400)',
+				message: 'Check request. ' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}					
+				}
+			});			
+		} else if (response.status === 403) {
 			Ext.Msg.show({
 				title: 'Forbidden (403)',
 				message: 'Check request.  User may not have access or the request is invalid.' + requestUrl,
@@ -393,10 +406,22 @@ Ext.onReady(function() {
 					}
 				}
 			});			
-		} else if (response.status === 415) {
+		} else if (response.status === 409) {
+			var message = "Resource conflict. Check data.";
+			try {
+				var responseText = Ext.decode(response.responseText);
+				for (i = 0; i < responseText.errors.entry.length; i++) {
+					message += responseText.errors.entry[i].value;
+					if ((i + 1) < responseText.errors.entry.length) {
+						message += "<br /><br />";
+					}
+				}
+			} catch (e) {
+				//ignore; just use default message.
+			}				
 			Ext.Msg.show({
-				title: 'Bad Client Request (415)',
-				message: 'Unsupported content type on the request.  Check request.' + requestUrl,
+				title: 'Conflict (409)',
+				message: message,
 				buttons: Ext.MessageBox.YESNO,
 				buttonText: feedbackButtonConfig,
 				icon: Ext.Msg.Error,
@@ -406,10 +431,10 @@ Ext.onReady(function() {
 					}					
 				}
 			});			
-		} else if (response.status === 400) {
+		} else if (response.status === 415) {
 			Ext.Msg.show({
-				title: 'Bad Client Request (400)',
-				message: 'Check request. ' + requestUrl,
+				title: 'Unsupported Content Type (415)',
+				message: 'Unsupported content type on the request.  Check request.' + requestUrl,
 				buttons: Ext.MessageBox.YESNO,
 				buttonText: feedbackButtonConfig,
 				icon: Ext.Msg.Error,

@@ -42,7 +42,7 @@ public class UniqueRule
 					String value = BeanUtils.getProperty(dataObject, field.getName());
 					if (value != null) {
 						UniqueHandler handler = unique.value().newInstance();
-						valid = handler.isUnique(field, value);
+						valid = handler.isUnique(field, value, dataObject);
 					}
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 					throw new OpenStorefrontRuntimeException("Unexpected error occur trying open the handler.", ex);
@@ -54,8 +54,17 @@ public class UniqueRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
+		Unique unique = field.getAnnotation(Unique.class);
+
+		if (unique != null) {
+			try {
+				return unique.value().newInstance().getMessage();
+			} catch (InstantiationException | IllegalAccessException e) {
+				//ignore
+			}
+		}
 		return "Value is not unique";
 	}
 

@@ -688,6 +688,15 @@ public class ComponentRESTResource
 			attribute.setComponentId(componentId);
 			attributeKeySet.add(attribute.getComponentAttributePk().pkValue());
 		});
+
+		//pull existing for pending id; need it for validation
+		Component existingRecord = new Component();
+		existingRecord.setComponentId(componentId);
+		existingRecord = existingRecord.find();
+		if (existingRecord != null) {
+			component.getComponent().setPendingChangeId(existingRecord.getPendingChangeId());
+		}
+
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);

@@ -52,7 +52,7 @@ public class RequiredRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value is required";
 	}

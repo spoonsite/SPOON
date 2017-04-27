@@ -453,9 +453,18 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
+	/**
+	 * This skips the external component duplication check. Don't use for
+	 * External Data Imports
+	 *
+	 * @param component
+	 * @return
+	 */
 	public RequiredForComponent doSaveComponent(RequiredForComponent component)
 	{
-		return doSaveComponent(component, new FileHistoryOption());
+		FileHistoryOption option = new FileHistoryOption();
+		option.setSkipDuplicationCheck(Boolean.TRUE);
+		return doSaveComponent(component, option);
 	}
 
 	/**
@@ -489,6 +498,9 @@ public class CoreComponentServiceImpl
 		Component oldComponent = null;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
+		} else {
+			//our id lookup only
+			oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 		}
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
@@ -1348,7 +1360,7 @@ public class CoreComponentServiceImpl
 			primaryQuery.append(" ");
 			primaryQuery.append(filter.getSortOrder());
 		}
-		
+
 		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
 
 		result.setCount(componentTrackings.size());
@@ -2106,6 +2118,7 @@ public class CoreComponentServiceImpl
 				mergeComponent.getComponent().setApprovedDts(targetComponent.getComponent().getApprovedDts());
 				mergeComponent.getComponent().setRecordVersion(targetComponent.getComponent().getRecordVersion());
 				mergeComponent.getComponent().setLastModificationType(ModificationType.MERGE);
+				componentService.setModificationType(ModificationType.MERGE);
 
 				targetComponent.getComponent().updateFields(mergeComponent.getComponent());
 
@@ -2378,7 +2391,7 @@ public class CoreComponentServiceImpl
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
 		Objects.requireNonNull(componentTypeTemplate);
-		
+
 		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);
