@@ -702,9 +702,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						displayField: 'description',
 						typeAhead: true,
 						editable: true,
-						allowBlank: false,
-						queryMode: 'remote',
+						forceSelection: true,
+						allowBlank: false,					
 						store: {
+							autoLoad: true,
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL'
@@ -829,9 +830,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						displayField: 'text',
 						typeAhead: true,
 						editable: true,
-						allowBlank: false,
-						queryMode: 'remote',
+						forceSelection: true,
+						allowBlank: false,						
 						store: {
+							autoLoad: true,
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/components/tagviews?approvedOnly=true'
@@ -969,11 +971,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						valueField: 'code',
 						width: '100%',
 						displayField: 'description',
-						typeAhead: true,
+						typeAhead: true,						
 						editable: true,
-						allowBlank: false,
-						queryMode: 'remote',
+						forceSelection: true,
+						allowBlank: false,						
 						store: {
+							autoLoad: true,
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/organizations/lookup?approvedComponentsOnly=true'
@@ -1091,9 +1094,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						displayField: 'description',
 						typeAhead: true,
 						editable: true,
-						allowBlank: false,
-						queryMode: 'remote',
+						forceSelection: true,
+						allowBlank: false,						
 						store: {
+							autoLoad: true,
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/attributes/attributetypes',
