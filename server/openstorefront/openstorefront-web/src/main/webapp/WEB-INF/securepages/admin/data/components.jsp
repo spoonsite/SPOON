@@ -236,7 +236,8 @@
 									record.formField = field;
 									panel.add(field);
 								});
-								panel.updateLayout(true, true);					
+								panel.updateLayout(true, true);	
+								panel.fireEvent('ready');
 							},
 							update: function(store, record, operation, modifiedFieldNames, details, opts) {
 								if (record.formField) {
@@ -2138,7 +2139,7 @@
 				var actionAddEditComponent = function(record) {
 					
 					var mainAddEditWin = createAddEditWin();					
-					mainAddEditWin.show();		
+					mainAddEditWin.show();							
 					
 					mainAddEditWin.generalForm.componentRecord = record;
 					
@@ -2149,9 +2150,13 @@
 						checkFormTabs(mainAddEditWin, record);
 						mainAddEditWin.generalForm.loadRecord(record);
 						handleAttributes(record.get('componentType'));
-						Ext.defer(function(){
-							mainAddEditWin.generalForm.loadComponentAttributes();
-						}, 1000);
+						//Ext.defer(function(){
+					//		mainAddEditWin.generalForm.loadComponentAttributes();
+					//	}, 1000);
+						mainAddEditWin.generalForm.queryById('requiredAttributePanel').on('ready', function(){
+							mainAddEditWin.generalForm.loadComponentAttributes();							
+						});
+						
 						
 						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);	
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);							

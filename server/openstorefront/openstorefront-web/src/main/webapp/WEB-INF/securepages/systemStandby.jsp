@@ -161,9 +161,9 @@
 			.status-text {
 				position: absolute;
 				left: 50%;
-				margin-top: 300px;
+				top: 100px;				
 				font-size: 24px;
-				margin-left: -175px;
+				margin-left: -200px;
 			}
 			.version {
 				position: absolute;
