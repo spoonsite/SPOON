@@ -653,35 +653,37 @@ Ext.define('OSF.form.Section', {
 			if (contentPanel) {
 				Ext.Array.each(contentPanel.items.items, function(subsectionPanel){
 					
-					//find the matching original data
-					var originalSubSection = null;
-					Ext.Array.each(sectionForm.originalData.subsections, function(subSection){
-						if (subsectionPanel.subsection.subSectionId === subSection.subSectionId) {
-							originalSubSection = subSection;
-						}
-					});
-					
-					//update data
-					if (originalSubSection) {
-						
-						Ext.Array.each(subsectionPanel.items.items, function(formItem){
-							if (formItem.name === 'subcontent') {
-								originalSubSection.content = formItem.getValue();
+					if (subsectionPanel.subsection) {
+						//find the matching original data
+						var originalSubSection = null;
+						Ext.Array.each(sectionForm.originalData.subsections, function(subSection){
+							if (subsectionPanel.subsection.subSectionId === subSection.subSectionId) {
+								originalSubSection = subSection;
 							}
-						});	
+						});
 
-						
-						if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {						
-							var customFieldIndex = 0;
+						//update data
+						if (originalSubSection) {
+
 							Ext.Array.each(subsectionPanel.items.items, function(formItem){
-								if (formItem.name !== 'subcontent') {
-									originalSubSection.customFields[customFieldIndex].value = formItem.getValue();
-									customFieldIndex++;
-								}								
-							});						
-						}						
-						contentSectionAll.subsections.push(originalSubSection);
-					}	
+								if (formItem.name === 'subcontent') {
+									originalSubSection.content = formItem.getValue();
+								}
+							});	
+
+
+							if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {						
+								var customFieldIndex = 0;
+								Ext.Array.each(subsectionPanel.items.items, function(formItem){
+									if (formItem.name !== 'subcontent') {
+										originalSubSection.customFields[customFieldIndex].value = formItem.getValue();
+										customFieldIndex++;
+									}								
+								});						
+							}						
+							contentSectionAll.subsections.push(originalSubSection);
+						}	
+					}
 						
 				});
 			}
