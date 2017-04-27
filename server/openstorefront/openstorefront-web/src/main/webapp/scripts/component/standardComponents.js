@@ -143,15 +143,23 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 										return true;
 									}
 								});
-
-								data.push({
-									dataSensitivity: item.dataSensitivity,
-									dataSensitivityDesc: found.description
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSensitivity === item.dataSensitivity) {
+										add = false;
+									}
 								});
+								
+								if (add) {
+									data.push({
+										dataSensitivity: item.dataSensitivity,
+										dataSensitivityDesc: found.description
+									});
+								}
 							}
 						});						
 					});
-
+					
 					if (data.length > 0) {
 						combo.setHidden(false);
 					}
@@ -219,10 +227,19 @@ Ext.define('OSF.component.DataSourceComboBox', {
 									}
 								});
 
-								data.push({
-									dataSource: item.dataSource,
-									dataSourceDesc: found.description
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSource === item.dataSource) {
+										add = false;
+									}
 								});
+								
+								if (add) {
+									data.push({
+										dataSource: item.dataSource,
+										dataSourceDesc: found.description
+									});
+								}
 							}
 						});
 					});
