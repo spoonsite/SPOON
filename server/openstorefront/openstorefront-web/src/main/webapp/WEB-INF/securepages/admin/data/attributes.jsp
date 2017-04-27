@@ -130,6 +130,20 @@
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
 				autoLoad: true,
+				fields: [
+					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
+						if (data.defaultAttributeCode) {
+							return data.defaultAttributeCode;
+						}
+						return '';	
+					}},
+					{ name: 'allowUserGeneratedCodesDisplay', mapping: function(data) {
+						if (data.allowUserGeneratedCodes) {
+							return data.allowUserGeneratedCodes;
+						}
+						return false;
+					}}
+				],
 				sorters: [
 					new Ext.util.Sorter({
 						property: 'description',
@@ -393,7 +407,7 @@
 					},
 					{
 						text: 'Allow User Codes',
-						dataIndex: 'allowUserGeneratedCodes',
+						dataIndex: 'allowUserGeneratedCodesDisplay',
 						flex: 1,
 						tooltip: 'Should users be able to generate codes for this attribute?',
 						align: 'center',
@@ -409,7 +423,7 @@
 					},
 					{
 						text: 'Default Code',
-						dataIndex: 'defaultAttributeCode',
+						dataIndex: 'defaultAttributeCodeDisplay',
 						flex: 1
 					},
 					{
