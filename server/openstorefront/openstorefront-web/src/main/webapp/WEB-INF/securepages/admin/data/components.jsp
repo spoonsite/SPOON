@@ -2145,9 +2145,11 @@
 					
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').suspendEvent('change');
 					
-					if (record) {						
+					if (record) {							
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
+					
 						checkFormTabs(mainAddEditWin, record);
+						
 						mainAddEditWin.generalForm.loadRecord(record);
 						handleAttributes(record.get('componentType'));
 						//Ext.defer(function(){
@@ -2189,20 +2191,23 @@
 						}
 						
 						//remove all extra tabs
-						var tabpanel = mainAddEditWin.getComponent('tabpanel');
+						var tabpanel = mainAddEditWin.getComponent('tabpanel');				
 						tabpanel.items.each(function(panel) {
 							if (panel.subPanel) {
 								panel.subPanel.close();
 							}
 						});
+										
 						
+						var panelsToAdd = [];
 						var addSubTab = function(panelName, title, tooltip) {
 							var subTab = Ext.create(panelName, {
 								title: title,
 								tooltip: tooltip
 							});
-							tabpanel.add(subTab);
-							subTab.loadData(null, componentId, null, null);
+							//tabpanel.add(subTab);
+							panelsToAdd.push(subTab);
+							//subTab.loadData(null, componentId, null, null);
 						};
 						
 						Ext.Array.each(allComponentTypes, function(type){
@@ -2240,7 +2245,10 @@
 								addSubTab('OSF.form.Tags', 'Tags', 'Searchable Labels');
 							}
 						});
-
+						tabpanel.add(panelsToAdd);
+						Ext.Array.each(panelsToAdd, function(subTab){
+							subTab.loadData(null, componentId, null, null);
+						});
 					}
 					
 				};
