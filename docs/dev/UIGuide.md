@@ -1,6 +1,6 @@
-#User Interface Guide
+# User Interface Guide
 
-##General Items
+## General Items
 1. Remember this is a guide there can be variations as appropriate to the feature.  Focus on the usability and having a clear workflow.
 2. Dialog bodies should be padded 10px
 3. Use toolbars for actions and enable/disable buttons to guide the user to valid actions.
@@ -16,9 +16,9 @@
 
 ---    
 
-##Buttons and Icons
+## Buttons and Icons
 This section is a guide to the naming convention of buttons, icons used with the buttons, and the colors associated with those icons.  Each button belongs to a category based on action and CSS properties.  Icons used in this application come from Font Awesome 4.7.0.
-###Category 1: Warning
+### Category 1: Warning
 **Note:** All icons in this category have the CSS class *icon-button-color-warning*.  
 
 1. **Delete Button**  
@@ -43,7 +43,7 @@ This section is a guide to the naming convention of buttons, icons used with the
     * Returns the database to its previous state.
     * Icon: 'X' (class = "fa fa-close").
     
-###Category 2: Save  
+### Category 2: Save  
 **Note:** All icons in this category have the CSS class *icon-button-color-save*.  
 
 1. **Add Button**  
@@ -71,7 +71,7 @@ This section is a guide to the naming convention of buttons, icons used with the
     * Icon: box with check mark (class = "fa fa-check-square-o")  
 
 
-###Category 3: Refresh  
+### Category 3: Refresh  
 **Note:** All icons in this category have the CSS class *icon-button-color-refresh*.  
 
 1. **Refresh Button**  
@@ -83,21 +83,21 @@ This section is a guide to the naming convention of buttons, icons used with the
 3. **Reprocess Button**  
     * Icon: undo arrow (class = "fa fa-undo")  
 
-###Category 4: View  
+### Category 4: View  
 **Note:** All icons in this category have the CSS class *icon-button-color-view*.  
 
 1. **View/Preview Button**  
     
     * Icon: eye (class = "fa fa-eye")  
 
-###Category 5: Edit  
+### Category 5: Edit  
 **Note:** All icons in this category have the CSS class *icon-button-color-edit*.  
 
 1. **Edit Button**  
 
     * Icon: pencil in square (class = "fa fa-edit")
 
-###Category 6: Run  
+### Category 6: Run  
 **Note:** All icons in this category have the CSS class *icon-button-color-run*.  
 
 1. **Run Button**  
@@ -109,7 +109,7 @@ This section is a guide to the naming convention of buttons, icons used with the
 3. **Process Messages**  
     * Icon: lightning bolt (class = "fa fa-bolt")   
 
-###Category 7: Default  
+### Category 7: Default  
 **Note:** All icons in this category have the CSS class *icon-button-color-default*.  
 
 1. **Toggle Status Button**  
@@ -148,11 +148,11 @@ This section is a guide to the naming convention of buttons, icons used with the
 12. **References**  
     * Icon: chain links (class = "fa fa-link")
 
-###Icon Sizes  
+### Icon Sizes  
 * For large buttons, icons are given Font Awesome size of&nbsp; *fa-2x*.  
 * For all other buttons, icons are given Font Awesome size of&nbsp; *fa-lg*.  
 
-###Available Icon Alignments  
+### Available Icon Alignments  
   
 **Available alignment corrections for Font Awesome icons of size *fa-2x*:**
 
