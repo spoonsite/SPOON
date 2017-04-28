@@ -220,6 +220,11 @@
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
+						{ text: 'Type', dataIndex: 'componentType', align: 'center', width: 200,
+							renderer: function(value, meta, record) {
+								return record.get('componentTypeLabel');
+							}
+						},
 						{ text: 'Status', align: 'center', dataIndex: 'approvalState', width: 200,
 							renderer: function(value, metaData){
 								var text = value;

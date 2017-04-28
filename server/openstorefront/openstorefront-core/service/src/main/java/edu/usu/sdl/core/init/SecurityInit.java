@@ -86,8 +86,8 @@ public class SecurityInit
 		//Admin Role
 		String adminRoleName = PropertiesManager.getValue(
 				PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP,
-						"STOREFRONT-Admin"
-				);
+				"STOREFRONT-Admin"
+		);
 
 		securityRole = new SecurityRole();
 		securityRole.setRoleName(adminRoleName);
@@ -184,6 +184,7 @@ public class SecurityInit
 
 		permissions = new ArrayList<>();
 		permissionsToAdd = Arrays.asList(
+				SecurityPermission.ADMIN_ALERT_MANAGEMENT,
 				SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT,
 				SecurityPermission.ADMIN_CONTACT_MANAGEMENT,
 				SecurityPermission.ADMIN_DATA_IMPORT_EXPORT,

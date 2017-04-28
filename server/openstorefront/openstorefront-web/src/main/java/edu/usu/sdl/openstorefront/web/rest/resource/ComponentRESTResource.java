@@ -4199,13 +4199,13 @@ public class ComponentRESTResource
 			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
 
 			QueryByExample configQueryExample = new QueryByExample();
-			configQueryExample.getFieldOptions().put("issueNumber", option);
+			configQueryExample.getFieldOptions().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, option);
 			configQueryExample.setExample(configExample);
 
 			long count = service.getPersistenceService().countByExample(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
-				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+				restErrorModel.getErrors().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, "Issue number needs to be unique per project.");
 				return Response.status(Response.Status.CONFLICT).entity(restErrorModel).build();
 			} else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
