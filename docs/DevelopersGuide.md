@@ -2,12 +2,12 @@
 # Developer Guide
 -------
 
-#1. Internal Development
+# 1. Internal Development
 
 See documents under /dev for Coding and Style guides.
 
-##1.1 Key Components Used
-
+## 1.1 Key Components Used
+ 
 The following components were used in the development:
 
 -   JDK 8
@@ -21,7 +21,7 @@ compliant server should work with some server configuration. The current
 deployment target is Tomcat 7.
 
 
-##1.2 Key Libraries Used
+## 1.2 Key Libraries Used
 
 The following key libraries were used in the development:
 
@@ -38,7 +38,7 @@ The following key libraries were used in the development:
 
 -   Ext.js and tinymce
 
-##1.3 Dev Environment with NetBeans
+## 1.3 Dev Environment with NetBeans
 
 1. **NetBeans Install/configuration**
   * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
@@ -61,7 +61,7 @@ The following key libraries were used in the development:
   * if you want to use the Tomcat manager-gui you will need to configuring manager application access -  https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access
     * make sure you have RW access to $Tomcat_HOME/bin/felix-cache
 
-##1.4 Building with Maven CLI
+## 1.4 Building with Maven CLI
 
 Install Maven if not installed by your IDE - http://maven.apache.org/install.html
 
@@ -70,13 +70,13 @@ run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 (Skip tests) mvn -Dmaven.test.skip=true or -DskipTests=true install
 
 
-##1.5 Deploying
+## 1.5 Deploying
 
 Copy the war artifact to the webapp directory for Tomcat. Some IDEs can
 handle this for you. See application server documentation for other deployment
 mechanisms.
 
-##1.6  Running
+## 1.6  Running
 
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
@@ -85,7 +85,7 @@ other compatible containers with little or no changes.
 See [Setup](Setup.md)
 
 
-##1.7 Testing
+## 1.7 Testing
 
 -   Unit tests
   * run as part of the Maven install.
@@ -97,7 +97,7 @@ See [Setup](Setup.md)
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
 
 
-##1.8  Contributing Patches
+## 1.8  Contributing Patches
 
 The code is hosted on the public GitHub
 [https://github.com/di2e/openstorefront](<https://github.com/di2e/openstorefront>). Create a pull request to the
@@ -109,7 +109,7 @@ Please file bugs or enhancement by submitting a ticket to:
 If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
-##1.9 Versioning Strategy
+## 1.9 Versioning Strategy
 
 The software is versioned based on the following:
 
@@ -126,11 +126,11 @@ version number which represents the major version. The version in the
 URL doesn't change with minor versions. However, the API follows with
 the version of the application.
 
-##1.10 Licensing
+## 1.10 Licensing
 
 The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
 
-##1.11 Security
+## 1.11 Security
 -----------------
 
 Openstorefront support several environments each have different security needs.
@@ -138,7 +138,7 @@ It also support a built in user management.  Regardless of the authentication me
 
 The granularity of the permissions is mostly feature/tool based.  
 
-###1.11.1 Adding Permissions
+### 1.11.1 Adding Permissions
 
 1. Add Permission to SecurityPermission entity in code.
 
@@ -157,7 +157,7 @@ Use caution in marking APIs as there may be other features that rely a shared AP
 Also, keep in mind there may be special handling for "owners" of the data beyond a permission.
 
 
-###1.11.2 Data Restriction
+### 1.11.2 Data Restriction
 
 Data may be restricted by source and/or data sensitivity.  Data sensitivity may 
 be marked at a entity-level however, not all entity need to be marked. Marking
@@ -166,7 +166,7 @@ support on the UI may be set according to needs.
 All Data-based API need to handling filtering data.
 
 
-#2. External Developers
+# 2. External Developers
 
 This guide is targeted at external developers who want to extend the application.
 
@@ -176,7 +176,7 @@ The API document is directly reflected from the live code so it is always curren
 The API documentation can be accessed by logging in as an admin and following the link from the admin tools see application management.
 A print view of the API can be generated form there as well.
 
-##2.2 Adding Custom Parser (Plugin)
+## 2.2 Adding Custom Parser (Plugin)
 
 A custom parser may be needed for handling complex formats that can't be support via data mapping.
 In some cases, both a custom parser and data mapping may be required.
@@ -208,7 +208,7 @@ or copy jar to /var/openstorefront/perm/plugins and the application will auto-de
 **Note:**  Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
 All other third-party libraries must be included with your JAR.
 
-###2.2.2 Parser Workflow
+### 2.2.2 Parser Workflow
 
 (Default flow but it can be overridden)
 1 - Check Format (On Web Upload)
@@ -230,7 +230,7 @@ All other third-party libraries must be included with your JAR.
 > g) Finish Processing (Override for special handling; Eg Media and Relationships)
 
 
-###2.2.3 Parser Class
+### 2.2.3 Parser Class
 
 1 - Extend Either the Component or Attribute Base Parser
 
@@ -245,7 +245,7 @@ If the method return null it will skip the record.
 
 **See:** spoon importer plugin as a example.
 
-#3. Database Management
+# 3. Database Management
 -----
 
 The application handles all database interaction transparently, so
@@ -254,7 +254,7 @@ direct database access and manipulation is not needed.
 See the following for information on outside control (should rarely be
 needed/used).
 
-##3.1 Refreshing the Database
+## 3.1 Refreshing the Database
 -----------------------
 
 **CAUTION:** This will wipe out all data in the application. Data, such
@@ -279,7 +279,7 @@ The initial load of the application may take a few minutes. If the
 import directories are empty, the application will load default lookup
 files that are packaged with the application.
 
-##3.2 Installing Database Console
+## 3.2 Installing Database Console
 ----------------------------
 
 **CAUTION:** Viewing (Querying) information is fine; however, use
@@ -308,7 +308,7 @@ functionality on top.
 -   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
     export and imports.
 
-##3.3 Installing Database Studio
+## 3.3 Installing Database Studio
 ----------------------------
 
 **NOTE** Orient DB includes a web application for viewing the database
