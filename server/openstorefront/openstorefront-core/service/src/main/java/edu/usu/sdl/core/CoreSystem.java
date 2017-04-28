@@ -248,16 +248,16 @@ public class CoreSystem
 		startup();
 	}
 
-	public static void standby()
+	public static void standby(String message)
 	{
 		started.set(false);
-		systemStatus = "Standby...";
+		systemStatus = message != null ? message : "Standby...";
 	}
 
-	public static void resume()
+	public static void resume(String message)
 	{
 		started.set(true);
-		systemStatus = "Application is Ready";
+		systemStatus = message != null ? message : "Application is Ready";
 	}
 
 	public static SystemStatusView getStatus()

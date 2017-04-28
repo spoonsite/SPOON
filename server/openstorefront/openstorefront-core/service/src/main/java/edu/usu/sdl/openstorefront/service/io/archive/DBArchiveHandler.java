@@ -75,7 +75,7 @@ public class DBArchiveHandler
 		archive.save();
 
 		try {
-			CoreSystem.standby();
+			CoreSystem.standby("Importing Database...");
 			JobManager.pauseScheduler();
 			try {
 				//Give the application a bit of time to complete any running job
@@ -92,7 +92,7 @@ public class DBArchiveHandler
 			addError("Failed to import database. See log for more details.");
 		} finally {
 			JobManager.resumeScheduler();
-			CoreSystem.resume();
+			CoreSystem.resume("Completed Import Database");
 		}
 		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
