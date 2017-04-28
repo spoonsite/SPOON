@@ -66,7 +66,8 @@ public class ResourceAction
 	private String resourceId;
 
 	@ValidateNestedProperties({
-		@Validate(required = true, field = "resourceType", on = "UploadResource"),
+		@Validate(required = true, field = "resourceType", on = "UploadResource")
+		,
 		@Validate(required = true, field = "componentId", on = "UploadResource")
 	})
 	private ComponentResource componentResource;
@@ -124,6 +125,10 @@ public class ResourceAction
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+						allow = true;
+					}
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
