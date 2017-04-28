@@ -52,7 +52,7 @@ public class ReportServiceImpl
 	private static final Logger log = Logger.getLogger(OrientPersistenceService.class.getName());
 
 	private static final int MAX_RETRIES = 3;
-	
+
 	@Override
 	public Report queueReport(Report report)
 	{
@@ -75,6 +75,7 @@ public class ReportServiceImpl
 		Report managedReport;
 		if (StringUtils.isBlank(report.getReportId())) {
 			managedReport = queueReport(report);
+			managedReport = persistenceService.findById(Report.class, report.getReportId());
 		} else {
 			managedReport = persistenceService.findById(Report.class, report.getReportId());
 		}
@@ -93,9 +94,8 @@ public class ReportServiceImpl
 			reportGenerator.generateReport();
 
 			//retry if out of date (for some reason DB may not be in sync at this point...find pulls an old record; cache delay?)
-			for (int i=0; i<MAX_RETRIES; i++) {
-				try 
-				{
+			for (int i = 0; i < MAX_RETRIES; i++) {
+				try {
 					managedReport = persistenceService.findById(Report.class, report.getReportId());
 					managedReport.setRunStatus(RunStatus.COMPLETE);
 					managedReport.setUpdateDts(TimeUtil.currentDate());
@@ -103,7 +103,7 @@ public class ReportServiceImpl
 					persistenceService.persist(managedReport);
 					break;
 				} catch (Exception e) {
-					if (i == (MAX_RETRIES-1)) {
+					if (i == (MAX_RETRIES - 1)) {
 						throw e;
 					}
 				}
