@@ -69,7 +69,7 @@ The server build environment relies on the following platforms/tools:
 
 Figure 3 . Runtime Environment diagram
 
-##3.2 Runtime Details
+## 3.2 Runtime Details
 -----
 
 The runtime environment relies upon the following applications:
