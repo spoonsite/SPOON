@@ -398,7 +398,7 @@ library is old and doesn't work with JDK1.8 ; however, this is easily
 corrected. Download 7.0.54 from apache.org and replace ecj-xxx.jar in
 tomcat/lib directory with ecj-xxx.jar from the 7.0.54 version.
 
-###1.5.4 Server Control
+### 1.5.4 Server Control
 ----
 
 Use the following commands to control the server.
