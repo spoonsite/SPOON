@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,35 +88,32 @@ public class CoreSystem
 			new PluginManager()
 	);
 
-	public static CompletableFuture startup()
+	public static void startup()
 	{
 		started.set(false);
 		systemStatus = "Starting application...";
-		CompletableFuture future = CompletableFuture.supplyAsync(() -> {
-			managers.forEach(manager -> {
-				startupManager(manager);
-			});
 
-			//Apply any Inits
-			ResolverUtil resolverUtil = new ResolverUtil();
-			resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
-			for (Object testObject : resolverUtil.getClasses()) {
-				Class testClass = (Class) testObject;
-				try {
-					if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
-						systemStatus = "Checking data init: " + testClass.getSimpleName();
-						((ApplyOnceInit) testClass.newInstance()).applyChanges();
-					}
-				} catch (InstantiationException | IllegalAccessException ex) {
-					throw new OpenStorefrontRuntimeException(ex);
-				}
-			}
-			return "done";
-		}).thenAccept((result) -> {
-			systemStatus = "Application is Ready";
-			started.set(true);
+		managers.forEach(manager -> {
+			startupManager(manager);
 		});
-		return future;
+
+		//Apply any Inits
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
+		for (Object testObject : resolverUtil.getClasses()) {
+			Class testClass = (Class) testObject;
+			try {
+				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
+					systemStatus = "Checking data init: " + testClass.getSimpleName();
+					((ApplyOnceInit) testClass.newInstance()).applyChanges();
+				}
+			} catch (InstantiationException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException(ex);
+			}
+		}
+
+		systemStatus = "Application is Ready";
+		started.set(true);
 	}
 
 	private static void startupManager(Initializable initializable)

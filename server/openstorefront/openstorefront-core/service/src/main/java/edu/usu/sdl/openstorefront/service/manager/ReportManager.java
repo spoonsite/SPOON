@@ -75,7 +75,7 @@ public class ReportManager
 				}
 
 				if (restartReport) {
-					LOG.log(Level.INFO, "Restatring report: " + report.getReportType() + " for user " + report.getCreateUser());
+					LOG.log(Level.INFO, "Restarting report: " + report.getReportType() + " for user " + report.getCreateUser());
 					TaskRequest taskRequest = new TaskRequest();
 					taskRequest.setAllowMultiple(true);
 					taskRequest.setName(TaskRequest.TASKNAME_REPORT);

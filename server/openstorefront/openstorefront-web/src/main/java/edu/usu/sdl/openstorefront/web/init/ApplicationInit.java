@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.init;
 import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.web.atmosphere.AtmosphereNotificationListerner;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
@@ -47,12 +46,12 @@ public class ApplicationInit
 			atmospshereLog.setLevel(Level.OFF);
 		}
 
-		CompletableFuture future = CoreSystem.startup();
-		future.thenAccept((result) -> {
-			AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
-			AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
-			ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
-		});
+		CoreSystem.startup();
+
+		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
+		AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
+		ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
+
 	}
 
 	@Override
