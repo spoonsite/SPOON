@@ -131,7 +131,7 @@ public class ReportServiceImpl
 			errorInfo.setInputData("Report: " + report.getReportType() + " Format: " + report.getReportFormat() + " Report Id: " + report.getReportId() + " Create Date: " + report.getCreateDts());
 			getSystemService().generateErrorTicket(errorInfo);
 
-			//Note: we don't need to rethrow as we want to track report error separatly.
+			//Note: we don't need to rethrow as we want to track report error separately.
 		}
 
 		return managedReport;
