@@ -88,7 +88,7 @@ The runtime environment relies upon the following applications:
 
 Figure 4. Runtime Component Integration Vectors
 
-##3.4 Component Integration Vectors Details
+## 3.4 Component Integration Vectors Details
 -----
 
 The component integration vectors (CIV) are show below.
