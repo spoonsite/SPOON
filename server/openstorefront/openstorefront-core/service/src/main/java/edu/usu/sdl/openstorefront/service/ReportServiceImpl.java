@@ -90,13 +90,13 @@ public class ReportServiceImpl
 
 		//run report
 		try {
-			BaseReport reportGenerator = BaseReport.getReport(report);
+			BaseReport reportGenerator = BaseReport.getReport(managedReport);
 			reportGenerator.generateReport();
 
 			//retry if out of date (for some reason DB may not be in sync at this point...find pulls an old record; cache delay?)
 			for (int i = 0; i < MAX_RETRIES; i++) {
 				try {
-					managedReport = persistenceService.findById(Report.class, report.getReportId());
+					managedReport = persistenceService.findById(Report.class, managedReport.getReportId());
 					managedReport.setRunStatus(RunStatus.COMPLETE);
 					managedReport.setUpdateDts(TimeUtil.currentDate());
 					managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
@@ -120,7 +120,7 @@ public class ReportServiceImpl
 			}
 
 		} catch (Exception e) {
-			managedReport = persistenceService.findById(Report.class, report.getReportId());
+			managedReport = persistenceService.findById(Report.class, managedReport.getReportId());
 			managedReport.setRunStatus(RunStatus.ERROR);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
@@ -128,7 +128,7 @@ public class ReportServiceImpl
 
 			ErrorInfo errorInfo = new ErrorInfo(e, null);
 			errorInfo.setErrorTypeCode(ErrorTypeCode.REPORT);
-			errorInfo.setInputData("Report: " + report.getReportType() + " Format: " + report.getReportFormat() + " Report Id: " + report.getReportId() + " Create Date: " + report.getCreateDts());
+			errorInfo.setInputData("Report: " + managedReport.getReportType() + " Format: " + managedReport.getReportFormat() + " Report Id: " + managedReport.getReportId() + " Create Date: " + managedReport.getCreateDts());
 			getSystemService().generateErrorTicket(errorInfo);
 
 			//Note: we don't need to rethrow as we want to track report error separately.
