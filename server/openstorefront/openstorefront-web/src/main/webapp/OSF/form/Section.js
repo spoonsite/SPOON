@@ -403,7 +403,7 @@ Ext.define('OSF.form.Section', {
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
 							style: { border: border },					
 							name: 'content',			
-							maxLength: 32000,
+							maxLength: 1048576,
 							height: 400,
 							width: '100%',
 							value: originalData.section.content,
@@ -441,7 +441,7 @@ Ext.define('OSF.form.Section', {
 								fieldStyle: 'font-family: Courier New; font-size: 12px;',
 								style: { border: border },								
 								name: 'subcontent',			
-								maxLength: 32000,
+								maxLength: 1048576,
 								height: 400,
 								value: subsection.content,
 								tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
@@ -467,6 +467,7 @@ Ext.define('OSF.form.Section', {
 									customField: field,
 									fieldLabel: field.label,
 									value: field.value,
+									maxLength: 1048576,
 									listeners: {
 										change: {											
 											fn: function(field, newValue, oldValue) {
@@ -487,7 +488,7 @@ Ext.define('OSF.form.Section', {
 										style: { border: border },					
 										name: 'customValue',			
 										customField: field,
-										maxLength: 32000,
+										maxLength: 1048576,
 										height: 250,
 										width: '100%',
 										value: field.value,
@@ -593,7 +594,7 @@ Ext.define('OSF.form.Section', {
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
 							style: { border: '0' },					
 							name: 'content',			
-							maxLength: 32000,
+							maxLength: 1048576,
 							value: originalData.section.content,
 							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
 									mediaSelectionUrl: mediaSelectionUrl,

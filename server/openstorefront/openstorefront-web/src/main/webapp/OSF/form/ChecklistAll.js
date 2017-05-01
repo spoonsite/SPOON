@@ -66,6 +66,10 @@ Ext.define('OSF.form.ChecklistAll', {
 					actionEdit(record);
 				} 
 			},
+			bufferedRenderer: false,
+			viewConfig: {
+				enableTextSelection: true
+			},				
 			columns: [
 				{ text: 'QID', dataIndex: 'qid', align: 'center', width: 100 },
 				{ text: 'Status', dataIndex: 'workflowStatus', align: 'center',

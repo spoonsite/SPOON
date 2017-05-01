@@ -1901,7 +1901,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 		'				<tpl if="recommendation">{recommendation}</tpl>',				
 		'			</td>',		
 		'			<tpl if="reason"><td class="details-table">',
-		'				<{reason}',						
+		'				{reason}',						
 		'			</td></tpl>',
 		'		</tr>',
 		'	</tpl>',

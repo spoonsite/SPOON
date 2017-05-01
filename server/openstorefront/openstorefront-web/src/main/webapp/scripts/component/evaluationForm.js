@@ -1072,6 +1072,11 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	modal: true,
 	maximizable: true,
 	layout: 'fit',
+	listeners: {
+		show: function() {        
+			this.removeCls("x-unselectable");    
+		}
+	},	
 	initComponent: function () {
 		this.callParent();
 		

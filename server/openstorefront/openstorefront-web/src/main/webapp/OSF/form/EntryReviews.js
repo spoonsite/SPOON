@@ -31,6 +31,7 @@ Ext.define('OSF.form.EntryReviews', {
 			title: 'Reviews',
 			tooltip: 'User Reviews',
 			columnLines: true,
+			bufferedRenderer: false,			
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					{

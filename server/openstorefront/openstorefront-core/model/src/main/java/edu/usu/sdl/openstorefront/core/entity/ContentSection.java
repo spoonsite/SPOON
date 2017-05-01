@@ -62,7 +62,7 @@ public class ContentSection
 	private String title;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_64K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@Sanitize(HTMLSanitizer.class)
 	private String content;
 

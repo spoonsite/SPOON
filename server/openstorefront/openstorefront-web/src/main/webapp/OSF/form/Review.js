@@ -28,6 +28,10 @@ Ext.define('OSF.form.Review', {
 		
 		reviewForm.grid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			bufferedRenderer: false,
+			viewConfig: {
+				enableTextSelection: true
+			},				
 			store: {
 				fields: [
 					{
