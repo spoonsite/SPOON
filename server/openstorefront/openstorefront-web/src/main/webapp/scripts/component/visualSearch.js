@@ -28,6 +28,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
 	customActions: [],
+	allowExpand: false,
 	pendingAjaxRequests: 0,
 	viewStack: {
 		keys: [],
@@ -83,7 +84,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				this.updateMax(level);
 			}
 			Ext.Array.each(newData, function (item) {
-				if (!Ext.Array.include(this.keys, item.nodeId))
+				if (!Ext.Array.contains(this.keys, item.nodeId))
 				{
 					this.nodeData[level].push(item);
 					this.keys.push(item.nodeId);
@@ -142,33 +143,46 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		};
 
-		var expandMenu = [{
-				text: 'Expand',
-				iconCls: 'fa fa-expand',
-				handler: function () {
-					visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(true);
-					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
-						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
-								visPanel.menus.expand.eventContext.type,
-								visPanel.menus.expand.eventContext.name
-								);
+		var expandMenu = [];
+		var collapseMenu = [];
+		if (visPanel.allowExpand === true)
+		{
+			expandMenu = [{
+					text: 'Expand',
+					iconCls: 'fa fa-expand',
+					handler: function () {
+						var toolBar = visPanel.up('panel').getComponent('tools');
+						if (toolBar !== undefined)
+						{
+							toolBar.getComponent('entryLevel').setHidden(true);
+						}
+						if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
+							visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
+									visPanel.menus.expand.eventContext.type,
+									visPanel.menus.expand.eventContext.name
+									);
+						}
 					}
-				}
-			}];
-		var collapseMenu = [{
-				text: 'Collapse',
-				iconCls: 'fa fa-compress',
-				handler: function () {
-					visPanel.viewData = [];
-					visPanel.viewStack.keys.pop();
-					if (visPanel.viewStack.keys.length === 0 && visPanel.viewType === "RELATION")
-					{
-						visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(false);
+				}];
+			collapseMenu = [{
+					text: 'Collapse',
+					iconCls: 'fa fa-compress',
+					handler: function () {
+						visPanel.viewData = [];
+						visPanel.viewStack.keys.pop();
+						if (visPanel.viewStack.keys.length === 0 && visPanel.viewType === "RELATION")
+						{
+							var toolBar = visPanel.up('panel').getComponent('tools');
+							if (toolBar !== undefined)
+							{
+								toolBar.getComponent('entryLevel').setHidden(false);
+							}
+						}
+						visPanel.addViewData(visPanel.viewStack.viewData.pop());
 					}
-					visPanel.addViewData(visPanel.viewStack.viewData.pop());
-				}
-			}];
+				}];
 
+		}
 		visPanel.menus.collapse = Ext.create('Ext.menu.Menu', {
 			items: Ext.Array.merge(collapseMenu, visPanel.customActions)
 		});
@@ -257,13 +271,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					name: name,
 					detail: sprite.node.detail
 				};
-				if (Ext.Array.include(visPanel.viewStack.keys, key))
+				if (Ext.Array.contains(visPanel.viewStack.keys, key))
 				{
 					if (visPanel.menus.collapse.items.length === 1)
 					{
 						visPanel.menus.collapse.eventContext = eventContext;
 						visPanel.menus.collapse.items.items[0].handler();
-					} else
+					} else if (visPanel.menus.collapse.items.length > 1)
 					{
 						visPanel.menus.collapse.eventContext = eventContext;
 						visPanel.menus.collapse.showAt(event.xy);
@@ -274,7 +288,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					{
 						visPanel.menus.expand.eventContext = eventContext;
 						visPanel.menus.expand.items.items[0].handler();
-					} else
+					} else if (visPanel.menus.expand.items.length > 1)
 					{
 						visPanel.menus.expand.eventContext = eventContext;
 						visPanel.menus.expand.showAt(event.xy);
@@ -703,7 +717,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						typeAhead: true,
 						editable: true,
 						forceSelection: true,
-						allowBlank: false,					
+						allowBlank: false,
 						store: {
 							autoLoad: true,
 							proxy: {
@@ -831,7 +845,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						typeAhead: true,
 						editable: true,
 						forceSelection: true,
-						allowBlank: false,						
+						allowBlank: false,
 						store: {
 							autoLoad: true,
 							proxy: {
@@ -851,7 +865,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								load: function (store, records, successful, operation, eOpts) {
 									var uniqueItems = [];
 									store.each(function (item) {
-										if (Ext.Array.include(uniqueItems, item.data.text))
+										if (Ext.Array.contains(uniqueItems, item.data.text))
 										{
 											store.remove(item);
 										} else {
@@ -971,10 +985,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						valueField: 'code',
 						width: '100%',
 						displayField: 'description',
-						typeAhead: true,						
+						typeAhead: true,
 						editable: true,
 						forceSelection: true,
-						allowBlank: false,						
+						allowBlank: false,
 						store: {
 							autoLoad: true,
 							proxy: {
@@ -1095,7 +1109,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						typeAhead: true,
 						editable: true,
 						forceSelection: true,
-						allowBlank: false,						
+						allowBlank: false,
 						store: {
 							autoLoad: true,
 							proxy: {
@@ -1633,7 +1647,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							rotationIncroment /= 2;
 						}
 						rotation += rotationIncroment;
-					} while (Ext.Array.include(usedRotations, rotation));
+					} while (Ext.Array.contains(usedRotations, rotation));
 					usedRotations.push(rotation);
 
 					renderNodes[edgeNode.targetKey] = true;
@@ -2259,16 +2273,16 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					handler: function () {
 						var containerPanel = this.up('panel');
 						var data = containerPanel.visualPanel.getImage('png');
-						
-						var token = Ext.util.Cookies.get('X-Csrf-Token');						
+
+						var token = Ext.util.Cookies.get('X-Csrf-Token');
 						if (!token) {
-							token ='';							
-						}						
-						
+							token = '';
+						}
+
 						Ext.DomHelper.append(Ext.getBody(),
 								"<form id='visual-download' method='POST' action='Media.action?DataImage'>" +
 								"<input type='hidden' name='imageData' value='" + data.data + "' /> " +
-								"<input type='hidden' name='X-Csrf-Token' value='" + token + "' />" + 
+								"<input type='hidden' name='X-Csrf-Token' value='" + token + "' />" +
 								"<input type='hidden' name='imageType' value='" + data.type + "' /> ");
 						var form = Ext.get("visual-download");
 						form.dom.submit();
@@ -2307,7 +2321,8 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			completedInit: function (nodes) {
 				var findCB = containerPanel.getComponent('tools').getComponent('find');
 				findCB.getStore().setData(nodes);
-			}
+			},
+			allowExpand: true
 		});
 
 		containerPanel.add(containerPanel.visualPanel);
