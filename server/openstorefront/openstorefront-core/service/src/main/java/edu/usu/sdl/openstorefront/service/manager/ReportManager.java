@@ -48,7 +48,7 @@ public class ReportManager
 	{
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		//Restart any pending or working reports
-		List<Report> allReports = getInprogessReports();
+		List<Report> allReports = getInprogessReports(serviceProxy);
 
 		if (!allReports.isEmpty()) {
 			LOG.log(Level.INFO, MessageFormat.format("Resuming pending and working reports. (Running in the Background)  Reports to run:  {0}", allReports.size()));
@@ -88,9 +88,8 @@ public class ReportManager
 
 	}
 
-	private static List<Report> getInprogessReports()
+	private static List<Report> getInprogessReports(ServiceProxy serviceProxy)
 	{
-		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 
 		List<Report> allReports = new ArrayList<>();
 		Report reportExample = new Report();
@@ -110,7 +109,7 @@ public class ReportManager
 	public static void cleanup()
 	{
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
-		List<Report> allReports = getInprogessReports();
+		List<Report> allReports = getInprogessReports(serviceProxy);
 		if (!allReports.isEmpty()) {
 			LOG.log(Level.WARNING, MessageFormat.format("Reports are currently in progress.  Attempting to cancel and put back on queue.   Reports in progress:  {0}", allReports.size()));
 
