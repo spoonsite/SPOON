@@ -75,7 +75,7 @@ public class DBArchiveHandler
 		archive.save();
 
 		try {
-			CoreSystem.standby("Importing Database...");
+			CoreSystem.standby("Importing Database...(This may take several minutes)");
 			JobManager.pauseScheduler();
 			try {
 				//Give the application a bit of time to complete any running job
