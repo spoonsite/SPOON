@@ -83,7 +83,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				this.updateMax(level);
 			}
 			Ext.Array.each(newData, function (item) {
-				if (!Ext.Array.include(this.keys, item.nodeId))
+				if (!Ext.Array.contains(this.keys, item.nodeId))
 				{
 					this.nodeData[level].push(item);
 					this.keys.push(item.nodeId);
@@ -257,7 +257,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					name: name,
 					detail: sprite.node.detail
 				};
-				if (Ext.Array.include(visPanel.viewStack.keys, key))
+				if (Ext.Array.contains(visPanel.viewStack.keys, key))
 				{
 					if (visPanel.menus.collapse.items.length === 1)
 					{
@@ -851,7 +851,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								load: function (store, records, successful, operation, eOpts) {
 									var uniqueItems = [];
 									store.each(function (item) {
-										if (Ext.Array.include(uniqueItems, item.data.text))
+										if (Ext.Array.contains(uniqueItems, item.data.text))
 										{
 											store.remove(item);
 										} else {
@@ -1633,7 +1633,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							rotationIncroment /= 2;
 						}
 						rotation += rotationIncroment;
-					} while (Ext.Array.include(usedRotations, rotation));
+					} while (Ext.Array.contains(usedRotations, rotation));
 					usedRotations.push(rotation);
 
 					renderNodes[edgeNode.targetKey] = true;
