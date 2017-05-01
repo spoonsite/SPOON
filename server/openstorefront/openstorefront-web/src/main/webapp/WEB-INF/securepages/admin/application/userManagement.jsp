@@ -202,8 +202,8 @@
 						iconCls: 'fa fa-user-plus',
 						closeAction: 'destroy',
 						modal: true,
-						width: '700px',
-						minHeight: '75%',
+						width: 700,
+						height: '85%',
 						maximizable: true,
 						layout: 'fit',
 						items: [
@@ -220,7 +220,8 @@
 										defaults: {
 											width: '75%',
 											labelSeparator: '',
-											labelAlign: 'top'
+											labelAlign: 'top',
+											msgTarget: 'under'
 										},
 										items: [
 											{
