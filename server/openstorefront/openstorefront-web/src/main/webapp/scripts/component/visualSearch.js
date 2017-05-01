@@ -146,7 +146,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				text: 'Expand',
 				iconCls: 'fa fa-expand',
 				handler: function () {
-					visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(true);
+					var toolBar = visPanel.up('panel').getComponent('tools');
+					if(toolBar !== undefined)
+					{
+						toolBar.getComponent('entryLevel').setHidden(true);
+					}
 					if (visPanel.menus.expand.eventContext.detail !== "ATTRIBUTE_TYPE") {
 						visPanel.loadNextLevel(visPanel.menus.expand.eventContext.key,
 								visPanel.menus.expand.eventContext.type,
@@ -163,7 +167,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					visPanel.viewStack.keys.pop();
 					if (visPanel.viewStack.keys.length === 0 && visPanel.viewType === "RELATION")
 					{
-						visPanel.up('panel').getComponent('tools').getComponent('entryLevel').setHidden(false);
+						var toolBar = visPanel.up('panel').getComponent('tools');
+						if(toolBar !== undefined)
+						{
+							toolBar.getComponent('entryLevel').setHidden(false);
+						}
 					}
 					visPanel.addViewData(visPanel.viewStack.viewData.pop());
 				}
