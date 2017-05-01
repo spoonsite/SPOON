@@ -30,61 +30,7 @@
 
 			Ext.onReady(function () {
 				
-				Ext.override(Ext.view.DragZone, {
-					
-				    getDragText: function() {
-					
-				        if (this.dragTextField) {
-					
-							// Check For Dot In Text Field
-							if (this.dragTextField.indexOf('.') !== -1) {
-								
-								// Get Text Field Split
-								var dragTextFieldSplit = this.dragTextField.split('.')
-								
-								// Get Parent (Permits Only A Single Parent)
-								var fieldParent = this.dragData.records[0].get(dragTextFieldSplit[0]);
-								
-								// Set Field Value
-								var fieldValue = fieldParent[dragTextFieldSplit[1]];
-							}
-							else {
-							
-								var fieldValue = this.dragData.records[0].get(this.dragTextField);
-							}
-							
-				            return Ext.String.format(this.dragText, fieldValue);
-				        }
-						else {
-							
-				            var count = this.dragData.records.length;
-				            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
-				        }
-				    }
-				});
-				
-				Ext.override(Ext.grid.plugin.DragDrop, {
-				    onViewRender : function(view) {
-				        var me = this;
-
-				        if (me.enableDrag) {
-				            me.dragZone = Ext.create('Ext.view.DragZone', {
-				                view: view,
-				                ddGroup: me.dragGroup || me.ddGroup,
-				                dragText: me.dragText,
-				                dragTextField: me.dragTextField
-				            });
-				        }
-
-				        if (me.enableDrop) {
-				            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
-				                view: view,
-				                ddGroup: me.dropGroup || me.ddGroup
-				            });
-				        }
-				    }
-				});
-				
+			
 				var roleGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Security Role Management <i class="fa fa-question-circle"  data-qtip="Manage security roles that allow access to features in the application."></i>',
 					columnLines: true,
@@ -513,17 +459,25 @@
 									listeners: {
 										load: function(store, records, opts) {
 											var permissionsInList = [];
-											Ext.Array.each(record.data.permissions, function(inListPermission){
-												permissionWin.getComponent('availableGrid').getStore().filterBy(function(item){
-													var include = true;
-													if (item.get('code') === inListPermission.permission) {
-														permissionsInList.push(item);
-														include = false;
-													}
-													return include;
+											var permissionsAvailable = [];
+											
+											permissionWin.getComponent('availableGrid').getStore().each(function(item){
+												var roleHasPermission = false;
+												Ext.Array.each(record.data.permissions, function(inListPermission){													
+													if (item.get('code') === inListPermission.permission) {														roleHasPermission = true;
+														roleHasPermission = true;
+													} 
 												});
+												if (roleHasPermission) {
+													permissionsInList.push(item);
+												} else {
+													permissionsAvailable.push(item);
+												}
 											});
-											permissionWin.getComponent('rolePermissionsGrid').getStore().loadRecords (permissionsInList);
+											
+											permissionWin.getComponent('availableGrid').getStore().removeAll();
+											permissionWin.getComponent('availableGrid').getStore().loadRecords(permissionsAvailable);
+											permissionWin.getComponent('rolePermissionsGrid').getStore().loadRecords(permissionsInList);
 										}
 									}
 								},
@@ -659,16 +613,23 @@
 														load: function(store, records, opts) {
 															
 															var sourcesInList = [];
-															Ext.Array.each(record.data.dataSecurity, function(inListSource){
-																Ext.getCmp('dataSourcesGrid').getStore().filterBy(function(item){
-																	var include = true;
-																	if (item.get('code') === inListSource.dataSource) {
-																		sourcesInList.push(item);
-																		include = false;
+															var sourcesAvaliable = [];
+															Ext.getCmp('dataSourcesGrid').getStore().each(function(item){
+																var include = false;
+																Ext.Array.each(record.data.dataSecurity, function(inListSource){
+																
+																	if (item.get('code') === inListSource.dataSource) {																		
+																		include = true;
 																	}
-																	return include;
 																});
+																if (include) {
+																	sourcesInList.push(item);
+																} else {
+																	sourcesAvaliable.push(item);
+																}
 															});
+															Ext.getCmp('dataSourcesGrid').getStore().removeAll();
+															Ext.getCmp('dataSourcesGrid').getStore().loadRecords(sourcesAvaliable);
 															Ext.getCmp('dataSourcesInRoleGrid').getStore().loadRecords(sourcesInList);
 															
 														}
@@ -736,16 +697,23 @@
 														load: function(store, records, opts) {
 															
 															var sourcesInList = [];
-															Ext.Array.each(record.data.dataSecurity, function(inListSource){
-																Ext.getCmp('dataSensitivityGrid').getStore().filterBy(function(item){
-																	var include = true;
-																	if (item.get('code') === inListSource.dataSensitivity) {
-																		sourcesInList.push(item);
-																		include = false;
+															var sourcesAvaliable = [];
+															Ext.getCmp('dataSensitivityGrid').getStore().each(function(item){
+																var include = false;
+																Ext.Array.each(record.data.dataSecurity, function(inListSource){
+																
+																	if (item.get('code') === inListSource.dataSensitivity) {																		
+																		include = true;
 																	}
-																	return include;
 																});
+																if (include) {
+																	sourcesInList.push(item);
+																} else {
+																	sourcesAvaliable.push(item);
+																}
 															});
+															Ext.getCmp('dataSensitivityGrid').getStore().removeAll();
+															Ext.getCmp('dataSensitivityGrid').getStore().loadRecords(sourcesAvaliable);
 															Ext.getCmp('dataSensitivitiesInRoleGrid').getStore().loadRecords(sourcesInList);
 														}
 													}											
