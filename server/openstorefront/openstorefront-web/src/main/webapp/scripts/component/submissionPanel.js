@@ -3020,10 +3020,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 //						submissionPanel.currentStep = 2;
 						
 						// Save Data From Step 2
-						submissionPanel.handleRequiredFormSave();
+						submissionPanel.handleRequiredFormSave(function(){																	
+							submissionPanel.currentStep = 3;
+							submissionPanel.changeSteps(3);		
+						});
 						
 						// Proceed
-						proceed = true;
+						proceed = false;
+						submissionPanel.currentStep = 2;						
 					}
 				}
 				else if (submissionPanel.currentStep === 4) {
@@ -3062,8 +3066,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 							// Return To Step 2
 							submissionPanel.currentStep = 2;
-						}
-						else {
+						} else {
 							
 							// Save Data From Step 2
 							submissionPanel.handleRequiredFormSave(function(){
@@ -3109,16 +3112,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 										// Display Complete Record Data
 										reviewEntryPanel.update(data);
+								
 									}
 								});
 														
 							});
 							
 							// Proceed
-							proceed = true;
+							proceed = true;							
 						}
-					}
-					else {
+					} else {
 						
 						// Provide Error Feedback
 						Ext.Msg.show({
@@ -3259,223 +3262,244 @@ Ext.define('OSF.component.SubmissionPanel', {
 			}
 		};	
 		
-		submissionPanel.handleRequiredFormSave = function(successCallback){
-			var form = submissionPanel.requiredForm;
-			var data = form.getValues();
-			var componentId = '';
-			var method = 'POST';
-			var update = '';
-
-			data.approvalState = 'N';
-
-			if (submissionPanel.componentId){
-				componentId = submissionPanel.componentId;											
-				update = '/' + componentId;
-				method = 'PUT';					
-			}												
-
-			var requireComponent = {
-				component: data,
-				attributes: []
-			};
-
-			submissionPanel.requiredAttributeStore.each(function(record){
-
-				requireComponent.attributes.push({
-					componentAttributePk: {
-						attributeType: record.get('attributeType'),
-						attributeCode: record.get('attributeCode')
-					}
-				});
-			});
-
-			if (!data.description) {
-				form.getForm().markInvalid({
-					description: 'Required'
-				});
-			} else {
-				//make sure required 
-				var validAttributes=true;
-				Ext.Array.each(requireComponent.attributes, function(attribute){
-					if (!attribute.componentAttributePk.attributeCode){
-						validAttributes = false;
-					}
-				});
-
-				if (!validAttributes) {
-
-					submissionPanel.requiredAttributeStore.each(function(record){
-						if (!record.get('attributeCode')) {
-							record.formField.markInvalid('Required');
-						}
-					});							
-
-					Ext.Msg.show({
-						title:'Validation Check',
-						message: 'Missing Required Attributes',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {													 
-						}
-					});
-
-				} else {	
-					
-					var handleMainFormSave = function() {
-						CoreUtil.removeBlankDataItem(requireComponent.component);												
-						CoreUtil.submitForm({
-						url: 'api/v1/resource/components' + update,
-						method: method,
-						data: requireComponent,
-						loadingText: 'Saving Entry...',
-						removeBlankDataItems: true,
-						form: form,
-						success: function(response, opt){
-							Ext.toast('Successfully Saved Record', '', 'tr');
-
-							var data = Ext.decode(response.responseText);
-							if (data.componentId) {
-								submissionPanel.componentId = data.componentId;
-							} else {
-								submissionPanel.componentId = data.component.componentId;
-							}
-
-							//save profile updates
-							submissionPanel.setLoading('Updating Profile...');								
-							var userProfile = Ext.apply(submissionPanel.usercontext, submissionPanel.submitterForm.getValues());
-							userProfile.externalGuid = userProfile.guid;
-
-							Ext.Ajax.request({
-								url: 'api/v1/resource/userprofiles/' + userProfile.username,
-								method: 'PUT',
-								jsonData: userProfile,
-								callback: function() {
-									submissionPanel.setLoading(false);
-								},
-								success: function (response, opts) {
-									Ext.toast('Updated User Profile', '', 'tr');
-
-									//save submitter (if it exist than update)										
-									submissionPanel.setLoading('Updating Submitter...');
-
-									//check for submitter
-									var contactStore = submissionPanel.detailsPanel.getComponent('detailSections').getComponent('contactGrid').getStore();
-									var submitterRecord = contactStore.findRecord('contactType', 'SUB');
-									var contactData = {
-										contactType: 'SUB',
-										firstName: userProfile.firstName,
-										lastName: userProfile.lastName,
-										email: userProfile.email,
-										phone: userProfile.phone,
-										organization: userProfile.organization												
-									};
-									var submitterData = null;
-									if (submitterRecord) {
-										submitterData = submitterRecord.getData();
-										contactData = Ext.apply(submitterData, contactData);
-									} 
-
-									var contactMethod = 'POST';
-									var update = '';
-									if (submitterData) {
-										update = '/' + submitterData.componentContactId;
-										contactMethod = 'PUT';
-									}
-
-									if (contactData.type){
-										delete contactData.type;
-									}
-
-									Ext.Ajax.request({
-										url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts' + update,
-										method:  contactMethod,
-										jsonData: contactData,
-										callback: function(){
-											submissionPanel.setLoading(false);
-										},
-										success: function(response, opts) {
-											if (successCallback) {
-												successCallback(response, opts);
-											} else {
-												contactStore.load({
-													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'		
-												});
-											}
-										}												
-									});																						
-
-								}
-							});								
-						},
-						failure: function(response, opt){
-						}
-					});
-					};
-					
-					var saveUserCodes = false;
-					var userCodesToSave = [];
-					submissionPanel.requiredAttributeStore.each(function(record) {
-						if (record.get('allowUserGeneratedCodes')) {
-							saveUserCodes = true;
-							
-							var currentCode = record.formField.getSelection();
-							var codeLabel;
-							if (currentCode) {
-								codeLabel = currentCode.get('label');
-							} else {
-								codeLabel = record.formField.getValue();
-							}
-							userCodesToSave.push({
-								attributeCodeLabel: codeLabel,
-								attributeType: record.get('attributeType')
-							});														
-						}
-					});
-					
-					if (saveUserCodes) {										
-						var newAttributes = {
-							userAttributes: userCodesToSave
-						};	
-						form.setLoading('Saving New Attributes...');
-						Ext.Ajax.request({
-							url: 'api/v1/resource/attributes/attributetypes/usercodes',
-							method: 'POST',
-							jsonData: newAttributes,
-							callback: function() {
-								form.setLoading(false);
-							},
-							success: function(response, opts) {	
-								
-								//update the codes
-								var savedAttributes = Ext.decode(response.responseText);
-								Ext.Array.each(requireComponent.attributes, function(attribute){
-									Ext.Array.each(savedAttributes, function(newAttributes) {
-										if (attribute.componentAttributePk.attributeType === newAttributes.attributeCodePk.attributeType &&
-											attribute.componentAttributePk.attributeCode === newAttributes.label) {
-											attribute.componentAttributePk.attributeCode = newAttributes.attributeCodePk.attributeCode;									
-										}
-									});									
-								});
-																
-								handleMainFormSave();
-								loadAllAttributes();
-							},
-							failure: function(response, opts) {
-								Ext.MessageBox.show({
-									title:'Failed to Save',
-									message: 'Failed adding the new attribute code. Try again or use an existing attribute code.',
-									buttons: Ext.Msg.OK,
-									icon: Ext.Msg.ERROR										
-								});
-							}
-						});						
-					} else {
-						handleMainFormSave();
-					}
-				}
-			}				
-		};
+		submissionPanel.saveReady = true;
+		submissionPanel.saveRequiredFormTask = new Ext.util.DelayedTask();
 		
+		submissionPanel.handleRequiredFormSave = function(successCallback){
+			submissionPanel.saveRequiredFormTask.delay(500, function(){
+				if (!submissionPanel.saveReady) {
+					return;
+				}
+
+				var form = submissionPanel.requiredForm;
+				var data = form.getValues();
+				var componentId = '';
+				var method = 'POST';
+				var update = '';
+
+				data.approvalState = 'N';
+
+				if (submissionPanel.componentId){
+					componentId = submissionPanel.componentId;											
+					update = '/' + componentId;
+					method = 'PUT';					
+				}												
+
+				var requireComponent = {
+					component: data,
+					attributes: []
+				};
+
+				submissionPanel.requiredAttributeStore.each(function(record){
+
+					requireComponent.attributes.push({
+						componentAttributePk: {
+							attributeType: record.get('attributeType'),
+							attributeCode: record.get('attributeCode')
+						}
+					});
+				});
+
+				if (!data.description) {
+					form.getForm().markInvalid({
+						description: 'Required'
+					});
+				} 
+				else {
+					//make sure required 
+					var validAttributes=true;
+					Ext.Array.each(requireComponent.attributes, function(attribute){
+						if (!attribute.componentAttributePk.attributeCode){
+							validAttributes = false;
+						}
+					});
+
+					if (!validAttributes) {
+
+						submissionPanel.requiredAttributeStore.each(function(record){
+							if (!record.get('attributeCode')) {
+								record.formField.markInvalid('Required');
+							}
+						});							
+
+						Ext.Msg.show({
+							title:'Validation Check',
+							message: 'Missing Required Attributes',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) {													 
+							}
+						});
+
+					} else {	
+						submissionPanel.saveReady = false;
+
+						var handleMainFormSave = function() {
+							CoreUtil.removeBlankDataItem(requireComponent.component);												
+							CoreUtil.submitForm({
+							url: 'api/v1/resource/components' + update,
+							method: method,
+							data: requireComponent,
+							loadingText: 'Saving Entry...',
+							removeBlankDataItems: true,
+							form: form,
+							success: function(response, opt){
+								Ext.toast('Successfully Saved Record', '', 'tr');
+
+								var data = Ext.decode(response.responseText);
+								if (data.componentId) {
+									submissionPanel.componentId = data.componentId;
+								} else {
+									submissionPanel.componentId = data.component.componentId;
+								}
+
+								//save profile updates
+								submissionPanel.setLoading('Updating Profile...');								
+								var userProfile = Ext.apply(submissionPanel.usercontext, submissionPanel.submitterForm.getValues());
+								userProfile.externalGuid = userProfile.guid;
+
+								Ext.Ajax.request({
+									url: 'api/v1/resource/userprofiles/' + userProfile.username,
+									method: 'PUT',
+									jsonData: userProfile,
+									callback: function() {
+										submissionPanel.setLoading(false);
+									},
+									success: function (response, opts) {
+										Ext.toast('Updated User Profile', '', 'tr');
+
+										//save submitter (if it exist than update)										
+										submissionPanel.setLoading('Updating Submitter...');
+
+										//check for submitter
+										var contactStore = submissionPanel.detailsPanel.getComponent('detailSections').getComponent('contactGrid').getStore();
+										var submitterRecord = contactStore.findRecord('contactType', 'SUB');
+										var contactData = {
+											contactType: 'SUB',
+											firstName: userProfile.firstName,
+											lastName: userProfile.lastName,
+											email: userProfile.email,
+											phone: userProfile.phone,
+											organization: userProfile.organization												
+										};
+										var submitterData = null;
+										if (submitterRecord) {
+											submitterData = submitterRecord.getData();
+											contactData = Ext.apply(submitterData, contactData);
+										} 
+
+										var contactMethod = 'POST';
+										var update = '';
+										if (submitterData) {
+											update = '/' + submitterData.componentContactId;
+											contactMethod = 'PUT';
+										}
+
+										if (contactData.type){
+											delete contactData.type;
+										}
+
+										Ext.Ajax.request({
+											url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts' + update,
+											method:  contactMethod,
+											jsonData: contactData,
+											callback: function(){
+												submissionPanel.setLoading(false);
+											},
+											success: function(response, opts) {
+												contactStore.load({
+													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view',
+													callback: function() {
+														submissionPanel.saveReady = true;
+														if (successCallback) {
+															successCallback(response, opts);
+														}	
+													}
+												});
+
+											}												
+										});																						
+
+									},
+									failure: function() {
+										submissionPanel.saveReady = true;
+									}
+								});								
+							},
+							failure: function(response, opt){
+								submissionPanel.saveReady = true;
+								submissionPanel.currentStep = 2;
+								submissionPanel.changeSteps(2);
+							}
+							});
+						};
+
+						var saveUserCodes = false;
+						var userCodesToSave = [];
+						submissionPanel.requiredAttributeStore.each(function(record) {
+							if (record.get('allowUserGeneratedCodes')) {
+								saveUserCodes = true;
+
+								var currentCode = record.formField.getSelection();
+								var codeLabel;
+								if (currentCode) {
+									codeLabel = currentCode.get('label');
+								} else {
+									codeLabel = record.formField.getValue();
+								}
+								userCodesToSave.push({
+									attributeCodeLabel: codeLabel,
+									attributeType: record.get('attributeType')
+								});														
+							}
+						});
+
+						if (saveUserCodes) {										
+							var newAttributes = {
+								userAttributes: userCodesToSave
+							};	
+							form.setLoading('Saving New Attributes...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/attributes/attributetypes/usercodes',
+								method: 'POST',
+								jsonData: newAttributes,
+								callback: function() {
+									form.setLoading(false);
+								},
+								success: function(response, opts) {	
+
+									//update the codes
+									var savedAttributes = Ext.decode(response.responseText);
+									Ext.Array.each(requireComponent.attributes, function(attribute){
+										Ext.Array.each(savedAttributes, function(newAttributes) {
+											if (attribute.componentAttributePk.attributeType === newAttributes.attributeCodePk.attributeType &&
+												attribute.componentAttributePk.attributeCode === newAttributes.label) {
+												attribute.componentAttributePk.attributeCode = newAttributes.attributeCodePk.attributeCode;									
+											}
+										});									
+									});
+
+									handleMainFormSave();
+									loadAllAttributes();
+								},
+								failure: function(response, opts) {
+									submissionPanel.saveReady = true;
+									Ext.MessageBox.show({
+										title:'Failed to Save',
+										message: 'Failed adding the new attribute code. Try again or use an existing attribute code.',
+										buttons: Ext.Msg.OK,
+										icon: Ext.Msg.ERROR										
+									});
+								}
+							});						
+						} else {
+							handleMainFormSave();
+						}
+					}
+				}				
+
+			});
+		};		
 		
 		submissionPanel.add(submissionPanel.mainPanel);
 		submissionPanel.add(submissionPanel.navigation);

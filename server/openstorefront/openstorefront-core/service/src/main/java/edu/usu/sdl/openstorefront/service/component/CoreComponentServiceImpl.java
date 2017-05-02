@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
@@ -1737,8 +1738,34 @@ public class CoreComponentServiceImpl
 			cleanupCache(orignalComponentId);
 			ComponentAll componentAll = getFullComponent(orignalComponentId);
 			if (componentAll != null) {
+
+				//check the copy name it should be unique
+				String newName = componentAll.getComponent().getName() + COPY_MARKER;
+
+				String validNewName = newName;
+				boolean nameIsUnique = false;
+				int count = 1;
+				while (nameIsUnique == false) {
+					Component componentSearch = new Component();
+					componentSearch.setName(validNewName.toLowerCase());
+
+					QueryByExample queryByExample = new QueryByExample(componentSearch);
+					queryByExample.getFieldOptions().put(Component.FIELD_NAME,
+							new GenerateStatementOptionBuilder()
+									.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
+									.build());
+
+					Component existing = persistenceService.queryOneByExample(queryByExample);
+					if (existing == null) {
+						nameIsUnique = true;
+					} else {
+						validNewName = newName + count;
+						count++;
+					}
+				}
+
 				componentAll.getComponent().setComponentId(null);
-				componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
+				componentAll.getComponent().setName(validNewName);
 				componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 				componentAll.getComponent().setApprovedDts(null);
 				componentAll.getComponent().setApprovedUser(null);
