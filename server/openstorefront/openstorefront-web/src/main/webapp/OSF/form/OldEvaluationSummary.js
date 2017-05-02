@@ -46,7 +46,7 @@ Ext.define('OSF.form.OldEvaluationSummary', {
 					"existing",
 					"name"
 				],
-				autoLoad: true,
+				autoLoad: false,
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/lookuptypes/EvaluationSection'
@@ -213,36 +213,41 @@ Ext.define('OSF.form.OldEvaluationSummary', {
 		evalPanel.loadEvalationData = function(componentId){
 			evalPanel.evaluationGrid.setLoading(true);
 
-			//clear data
-			evalPanel.evaluationGrid.getStore().each(function(record){
-				record.set('notAvailable', null, { dirty: false });
-				record.set('actualScore', null, { dirty: false });
-				record.set('existing', null, { dirty: false });
-				if (record.actualScoreField)
-				{
-					record.actualScoreField.setDisabled(false);
-				}
-			});
-
-			Ext.Ajax.request({
-				url: 'api/v1/resource/components/' + componentId + '/sections',
-				callback: function(){
-					evalPanel.evaluationGrid.setLoading(false);
-				},
-				success: function(response, opt){
-					var data = Ext.decode(response.responseText);
-
+			evalPanel.evaluationGrid.getStore().load({
+				callback: function(store) {
+					//clear data
 					evalPanel.evaluationGrid.getStore().each(function(record){
-						Ext.Array.each(data, function(section){
-							if (section.componentEvaluationSectionPk.evaluationSection === record.get('code')) {
-								record.set('notAvailable', section.notAvailable, { dirty: false });
-								record.set('actualScore', section.actualScore, { dirty: false });
-								record.set('existing', true, { dirty: false });										
-							}	
-						});							
+						record.set('notAvailable', null, { dirty: false });
+						record.set('actualScore', null, { dirty: false });
+						record.set('existing', null, { dirty: false });
+						if (record.actualScoreField)
+						{
+							record.actualScoreField.setDisabled(false);
+						}
+					});
+
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/sections',
+						callback: function(){
+							evalPanel.evaluationGrid.setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+
+							evalPanel.evaluationGrid.getStore().each(function(record){
+								Ext.Array.each(data, function(section) {
+									if (section.componentEvaluationSectionPk.evaluationSection === record.get('code')) {
+										record.set('notAvailable', section.notAvailable, { dirty: false });
+										record.set('actualScore', section.actualScore, { dirty: false });
+										record.set('existing', true, { dirty: false });										
+									}	
+								});							
+							});
+						}
 					});
 				}
 			});
+
 		};
 		
 		evalPanel.add(evalPanel.evaluationGrid);
