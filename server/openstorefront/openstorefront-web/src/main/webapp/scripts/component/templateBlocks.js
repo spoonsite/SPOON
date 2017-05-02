@@ -1469,7 +1469,8 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 			valueField: 'code',
 			displayField: 'description',			
 			editable: false,
-			forceSelection: true,			
+			forceSelection: true,
+			width: 300,
 			store: {},
 			listeners: {
 				change: function(field, newValue, oldValue, opts) {
@@ -1480,7 +1481,7 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 					//update all registered blocks on switch
 					if (versionSelect.entry.evalListeners) {
 						Ext.Array.each(versionSelect.entry.evalListeners, function(callback){
-							Ext.Function.defer(callback, 0, this, versionSelect.entry.currentEval);
+							callback.call(this, versionSelect.entry.currentEval);
 						});
 					}					
 				}	
@@ -1509,8 +1510,11 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 						description: "Version: " + eval.evaluation.version
 					});
 				});
-
+				
 				versionSelect.queryById('versions').getStore().loadData(versions);
+				versionSelect.queryById('versions').suspendEvents(false);
+				versionSelect.queryById('versions').setValue(entry.fullEvaluations[0].evaluation.evaluationId);
+				versionSelect.queryById('versions').resumeEvents();
 				entry.currentEval = entry.fullEvaluations[0];
 				entry.evalListeners = [];
 				versionSelect.entry = entry;
