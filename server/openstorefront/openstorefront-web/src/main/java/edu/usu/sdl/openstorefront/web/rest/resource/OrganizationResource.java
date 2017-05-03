@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -150,6 +151,7 @@ public class OrganizationResource
 		}
 
 		List<Component> components = componentExample.findByExample();
+		components = FilterEngine.filter(components);
 
 		List<OrganizationRelationView> views = new ArrayList<>();
 		for (Component component : components) {
@@ -252,6 +254,8 @@ public class OrganizationResource
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
+			components = FilterEngine.filter(components);
+
 			Set<String> uniqueOrganization = new HashSet<>();
 			for (Component component : components) {
 				uniqueOrganization.add(component.getOrganization());

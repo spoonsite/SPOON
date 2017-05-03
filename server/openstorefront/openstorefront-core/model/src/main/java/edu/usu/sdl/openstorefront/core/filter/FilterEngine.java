@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.filter;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
@@ -127,33 +128,34 @@ public class FilterEngine
 					}
 				}
 
+			} else if (data instanceof ComponentRelationship) {
+				//look at both sides of relationship
+				ComponentRelationship componentRelationship = (ComponentRelationship) data;
+
+				boolean keepData = false;
+				keepData = keepComponent(acceptedDataSources, acceptedDataSensitivity, userContext, componentRelationship.getComponentId());
+
+				//check target
+				if (keepData) {
+					keepData = keepComponent(acceptedDataSources, acceptedDataSensitivity, userContext, componentRelationship.getRelatedComponentId());
+				}
+
+				//check itself
+				if (keepData) {
+					StandardEntity standardEntity = (StandardEntity) data;
+					if (standardEntity.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
+						returnValue = data;
+					} else if (acceptedDataSensitivity.contains(standardEntity.getDataSensitivity())) {
+						returnValue = data;
+					}
+				}
 			} else if (data instanceof BaseComponent) {
 
 				boolean keepData = false;
 				if (checkParentComponent) {
 					//if base component - check component data restrictions
 					BaseComponent baseComponent = (BaseComponent) data;
-
-					ComponentSensitivityModel componentSensitivityModel = ServiceProxyFactory.getServiceProxy().getComponentService().getComponentSensitivity(baseComponent.getComponentId());
-					if (componentSensitivityModel != null) {
-						boolean keepSource = false;
-						if ((componentSensitivityModel.getDataSource() == null && userContext.allowUnspecifiedDataSources())) {
-							keepSource = true;
-						} else if (acceptedDataSources.contains(componentSensitivityModel.getDataSource())) {
-							keepSource = true;
-						}
-
-						if (keepSource) {
-							if (componentSensitivityModel.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
-								keepData = true;
-							} else if (acceptedDataSensitivity.contains(componentSensitivityModel.getDataSensitivity())) {
-								keepData = true;
-							}
-						}
-					} else {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to find base component - during filtering. Filtering data out. Component Id: {0}", baseComponent.getComponentId()));
-					}
-
+					keepData = keepComponent(acceptedDataSources, acceptedDataSensitivity, userContext, baseComponent.getComponentId());
 				} else {
 					keepData = true;
 				}
@@ -181,6 +183,33 @@ public class FilterEngine
 			returnValue = data;
 		}
 		return returnValue;
+	}
+
+	private static boolean keepComponent(Set<String> acceptedDataSources, Set<String> acceptedDataSensitivity, UserContext userContext, String componentId)
+	{
+		boolean keepData = false;
+
+		ComponentSensitivityModel componentSensitivityModel = ServiceProxyFactory.getServiceProxy().getComponentService().getComponentSensitivity(componentId);
+		if (componentSensitivityModel != null) {
+			boolean keepSource = false;
+			if ((componentSensitivityModel.getDataSource() == null && userContext.allowUnspecifiedDataSources())) {
+				keepSource = true;
+			} else if (acceptedDataSources.contains(componentSensitivityModel.getDataSource())) {
+				keepSource = true;
+			}
+
+			if (keepSource) {
+				if (componentSensitivityModel.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
+					keepData = true;
+				} else if (acceptedDataSensitivity.contains(componentSensitivityModel.getDataSensitivity())) {
+					keepData = true;
+				}
+			}
+		} else {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find component - during filtering. Filtering data out. Component Id: {0}", componentId));
+		}
+
+		return keepData;
 	}
 
 	/**

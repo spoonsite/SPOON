@@ -211,6 +211,7 @@ public class ComponentRESTResource
 				componentExample.setComponentType(null);
 			}
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -229,6 +230,7 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -536,6 +538,7 @@ public class ComponentRESTResource
 		componentTagExample.setText(tagText);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
+		tags = FilterEngine.filter(tags, true);
 
 		if (approvedOnly) {
 			tags = tags.stream()

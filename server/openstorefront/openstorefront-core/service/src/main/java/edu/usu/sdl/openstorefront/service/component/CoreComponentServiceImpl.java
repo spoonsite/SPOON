@@ -1702,6 +1702,7 @@ public class CoreComponentServiceImpl
 	public ComponentSensitivityModel getComponentSensitivity(String componentId)
 	{
 		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
+		componentSensitivityModel.setComponentId(componentId);
 
 		Element element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
 		if (element != null) {
@@ -1717,7 +1718,7 @@ public class CoreComponentServiceImpl
 				cacheSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
 				cacheSensitivityModel.setDataSource(document.field("dataSource"));
 
-				Element newElement = new Element(document.field("componentId"), componentSensitivityModel);
+				Element newElement = new Element(document.field("componentId"), cacheSensitivityModel);
 				if (document.field("componentId").equals(componentId)) {
 					componentSensitivityModel.setComponentId(document.field("componentId"));
 					componentSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
