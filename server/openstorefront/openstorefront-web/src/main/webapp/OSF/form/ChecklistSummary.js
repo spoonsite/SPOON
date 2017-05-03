@@ -20,7 +20,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 	extend: 'Ext.form.Panel',
 	alias: 'osf.form.ChecklistSummary',
 
-	layout: 'border',
+	scrollable: true,
 	listeners: {
 		close: function(panel, opts) {
 			if (panel.saveTask) {
@@ -80,7 +80,6 @@ Ext.define('OSF.form.ChecklistSummary', {
 		var summaryForm = this;
 				
 		summaryForm.topPanel = Ext.create('Ext.panel.Panel', {
-			region: 'north',
 			items: [
 				{
 					xtype: 'panel',	
@@ -100,12 +99,13 @@ Ext.define('OSF.form.ChecklistSummary', {
 					tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()			
 				}
 			]
-		});	
+		});
 				
 		summaryForm.recommendations = Ext.create('Ext.grid.Panel', {
 			title: 'Recommendations',
-			region: 'center',
 			columnLines: true,
+			margin: '0 0 5 0',
+			scrollable: false,
 			store: {	
 				proxy: {
 					type: 'ajax',
