@@ -662,6 +662,7 @@
 
 										var newBlock = info.source.block;
 										var addChildBlock = function() {
+											newBlock.blockId = Ext.id().replace('-', '_');
 											target.block.blocks.push(newBlock);
 											updateTemplate();
 										};
@@ -1039,21 +1040,7 @@
 																			width: 225,
 																			store: {																				
 																			},
-																			listeners: {
-																				expand: function(field, event, opts) {
-																					var allBlocks = [];
-																					var getBlocks = function(blocks) {
-																						Ext.Array.each(blocks, function(block){
-																							if (block.blocks) {
-																								getBlocks(block.blocks);
-																							}
-																							allBlocks.push(block);
-																						});
-																					};
-																					getBlocks(templateBlocks);
-
-																					field.getStore().loadData(allBlocks);
-																				},
+																			listeners: {																			
 																				change: function(field, newValue, oldValue, opts) {
 																					var grid = field.up('grid');
 																					var selectedBlock = field.getSelection();
@@ -1493,6 +1480,29 @@
 					updateVisual();
 					updateCode();
 					updatePreview();
+					updateBlockConfig();
+				};
+				
+				var updateBlockConfig = function() {
+					var allBlocks = [];
+					var getBlocks = function(blocks) {
+						Ext.Array.each(blocks, function(block){
+							if (block.blocks) {
+								getBlocks(block.blocks);
+							}
+							allBlocks.push(block);
+						});
+					};
+					getBlocks(templateBlocks);
+					
+					var blockConfigPanel = addEditWindow.queryById('blockConfigPanel');
+					var blockSelect = blockConfigPanel.queryById('blockSelect');
+					var configGrid = blockConfigPanel.queryById('grid');
+					
+					blockSelect.getStore().loadData(allBlocks);			
+					blockSelect.clearValue();
+					configGrid.getStore().removeAll();					
+					
 				};
 				
 				var updateVisual = function() {
