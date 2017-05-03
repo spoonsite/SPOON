@@ -55,6 +55,22 @@ public class ReportManager
 			for (Report report : allReports) {
 				// if older that a day on working...cancel it.
 				boolean restartReport = true;
+				Report duplicateReport = new Report();
+				duplicateReport.setReportId(report.getReportId());
+				List<Report> duplicateReports = duplicateReport.findByExampleProxy();
+				if(duplicateReports.size() > 1)
+				{
+					for(Report duplicate : duplicateReports)
+					{
+						if (!RunStatus.COMPLETE.equals(duplicate.getRunStatus())
+								&& !RunStatus.ERROR.equals(duplicate.getRunStatus())) {
+							duplicate.setRunStatus(RunStatus.ERROR);
+							duplicate.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							serviceProxy.getPersistenceService().persist(duplicate);	
+						}
+					}
+				}
+				
 				if (RunStatus.WORKING.equals(report.getRunStatus())) {
 					long runtime = System.currentTimeMillis() - report.getCreateDts().getTime();
 					if (runtime > MAX_WORKING_RETRY_TIME_MILLIS) {
