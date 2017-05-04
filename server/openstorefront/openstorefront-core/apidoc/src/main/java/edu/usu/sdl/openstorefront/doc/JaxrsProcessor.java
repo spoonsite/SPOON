@@ -36,7 +36,8 @@ import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
 import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.model.SecurityRestriction;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -72,6 +73,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.StringUtils;
+import edu.usu.sdl.openstorefront.doc.security.CustomRequiredHandler;
 
 /**
  *
@@ -103,9 +105,10 @@ public class JaxrsProcessor
 			resourceModel.setResourcePath(rootPath + "/" + path.value());
 		}
 
-		RequireAdmin requireAdmin = (RequireAdmin) resource.getAnnotation(RequireAdmin.class);
-		if (requireAdmin != null) {
-			resourceModel.setRequireAdmin(true);
+		RequireSecurity requireSecurity = (RequireSecurity) resource.getAnnotation(RequireSecurity.class);
+		if (requireSecurity != null) {
+			SecurityRestriction securityRestriction = getSecurityRestrictions(requireSecurity);
+			resourceModel.setSecurityRestriction(securityRestriction);			
 		}
 
 		//class parameters
@@ -168,9 +171,10 @@ public class JaxrsProcessor
 				methodModel.setMethodPath(path.value());
 			}
 
-			requireAdmin = (RequireAdmin) method.getAnnotation(RequireAdmin.class);
-			if (requireAdmin != null) {
-				methodModel.setRequireAdmin(true);
+			requireSecurity = (RequireSecurity) method.getAnnotation(RequireSecurity.class);
+			if (requireSecurity != null) {
+				SecurityRestriction securityRestriction = getSecurityRestrictions(requireSecurity);
+				methodModel.setSecurityRestriction(securityRestriction);				
 			}
 
 			try {
@@ -250,6 +254,31 @@ public class JaxrsProcessor
 		Collections.sort(resourceModel.getMethods(), new ApiMethodComparator<>());
 		return resourceModel;
 	}
+	
+	private static SecurityRestriction getSecurityRestrictions(RequireSecurity requireSecurity)
+	{
+		SecurityRestriction securityRestriction = new SecurityRestriction();
+		if (requireSecurity.value() != null) {
+			for (String permission : requireSecurity.value()) {			
+				securityRestriction.getPermissions().add(permission);
+			}
+		}
+		if (requireSecurity.roles() != null) {
+			for (String role : requireSecurity.roles()) {			
+				securityRestriction.getRoles().add(role);
+			}
+		}
+		securityRestriction.setLogicOperation(requireSecurity.logicOperator().name());
+		if (requireSecurity.specialCheck() != null) {
+			try {
+				CustomRequiredHandler requireHandler = requireSecurity.specialCheck().newInstance();
+				securityRestriction.setSpecialCheck(requireHandler.getDescription());
+			} catch (InstantiationException | IllegalAccessException ex) {
+				log.log(Level.WARNING, "Unable to load special check handler. Check code.", ex);
+			}
+		}
+		return securityRestriction;
+	}
 
 	private static void mapConsumedObjects(APIMethodModel methodModel, Parameter parameters[])
 	{
@@ -301,7 +330,7 @@ public class JaxrsProcessor
 							}
 
 						} catch (InstantiationException iex) {
-							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract. Name: {1}", parameter.getType(), parameter.getName()));
 						}
 					} else {
 						try {
@@ -317,7 +346,7 @@ public class JaxrsProcessor
 							}
 
 						} catch (InstantiationException iex) {
-							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract. Name: {1}", parameter.getType(), parameter.getName()));
 						}
 					}
 				} catch (IllegalAccessException | JsonProcessingException ex) {
@@ -373,22 +402,20 @@ public class JaxrsProcessor
 					Set<String> fieldList = mapValueField(typeModel.getFields(), ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
-					} else {
-						if (fieldClass.isInterface() == false) {
-							try {
-								if (fieldClass.isMemberClass()) {
-									typeModel.setObject("{ See Parent Object }");
-								} else {
-									typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
-									String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
-									typeModel.setObject(cleanUpJson);
-								}
-							} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
-								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
-								typeModel.setObject("{ Unable to view }");
+					} else if (fieldClass.isInterface() == false) {
+						try {
+							if (fieldClass.isMemberClass()) {
+								typeModel.setObject("{ See Parent Object }");
+							} else {
+								typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+								String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
+								typeModel.setObject(cleanUpJson);
 							}
-							mapComplexTypes(typeModels, ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
+						} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
+							log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
+							typeModel.setObject("{ Unable to view }");
 						}
+						mapComplexTypes(typeModels, ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 					}
 					typeModels.add(typeModel);
 					typesInList.add(typeModel.getName());

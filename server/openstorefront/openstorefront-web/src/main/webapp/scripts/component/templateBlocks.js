@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, MediaViewer */
+/* global Ext, MediaViewer, CoreService, CoreUtil, relatedStore */
 
 Ext.define('OSF.component.template.BaseBlock', {
 	extend: 'Ext.panel.Panel',
@@ -42,7 +42,7 @@ Ext.define('OSF.component.template.BaseBlock', {
 
 Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.Description',	
+	alias: ['widget.templatedescription'],	
 	
 	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
@@ -68,8 +68,8 @@ Ext.define('OSF.component.template.Description', {
 		if (links && links.length > 0) {
 
 			// Set targets
-			Ext.Array.each(links, function(item){ 
-				if (item.getAttribute('href')) {
+			Ext.Array.each(links, function(item){ 				
+				if (item.getAttribute && item.getAttribute('href')) {
 					item.set({target: '_blank'});
 				}
 			});
@@ -624,3 +624,1646 @@ Ext.define('OSF.component.template.Relationships', {
 	
 });
 
+Ext.define('OSF.component.template.Reviews', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.Reviews',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Reviews',
+	bodyStyle: 'padding: 10px;',
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	dockedItems: [
+		{
+			xtype: 'button',
+			text: 'Write a Review',
+			maxWidth: 200,
+			scale: 'medium',
+			margin: 10,
+			iconCls: 'fa fa-lg fa-star-half-o icon-small-vertical-correction',
+			handler: function(){	
+				var reviewPanel = this.up('panel');
+				reviewPanel.reviewActions.reviewWindow.refresh();
+				reviewPanel.reviewActions.reviewWindow.show();
+			}
+		}
+	],		
+	items: [
+		{
+			xtype: 'panel',
+			itemId: 'summary',
+			title: 'Review Summary',
+			titleCollapse: true,
+			collapsible: true,
+			hidden: true,
+			margin: '0 0 1 0',
+			bodyStyle: 'padding: 10px;',
+			tpl: new Ext.XTemplate(
+				'<table style="width:100%"><tr>',
+				'	<td valign="top">',
+				'		<tpl if="totalReviews && totalReviews &gt; 0">',
+				'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',							
+				'			<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
+				'		</tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="pros.length &gt; 0">',
+				'			<div class="review-pro-con-header">Pros</div>',
+				'			<tpl for="pros">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',	
+				'			</tpl>',
+				'		</tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="cons.length &gt; 0">',
+				'			<div class="review-pro-con-header">Cons</div>',							
+				'			<tpl for="cons">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',	
+				'			</tpl>',
+				'		</tpl>',
+				'   <td>',
+				'</tr></table>'
+			)						
+		},
+		{
+			xtype: 'panel',
+			itemId: 'reviews',
+			title: 'User Reviews',
+			hidden: true,						
+			titleCollapse: true,
+			collapsible: true,
+			bodyStyle: 'padding: 10px;',
+			tpl: new Ext.XTemplate(
+				'<tpl for=".">',	
+				'<table style="width:100%"><tr>',
+				'	<td valign="top">',
+				'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br><br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
+				'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
+				'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
+				'		</div><br>',
+				'		<b>Organization:</b> {organization}<br>',
+				'		<b>Experience:</b> {userTimeDescription}<br>',							
+				'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="pros.length &gt; 0">',									
+				'		<div class="review-pro-con-header">Pros</div>',
+				'		<tpl for="pros">',
+				'			- {text}<br>',	
+				'		</tpl></tpl>',
+				'   <td>',
+				'	<td valign="top" width="20%">',
+				'		<tpl if="cons.length &gt; 0">',
+				'		<div class="review-pro-con-header">Cons</div>',
+				'		<tpl for="cons">',
+				'			- {text}<br>',	
+				'		</tpl></tpl>',
+				'   <td>',
+				'</tr></table>',
+				'<br><b>Comments:</b><br>{comment}',
+				' <br><br><hr>',
+				'</tpl>'
+			)						
+		}
+	],	
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var reviewPanel = this;
+		
+		var reviewActions = {
+			editReview: function(reviewId) {
+				var reviewData;
+				Ext.Array.each(reviewActions.reviews, function(review){
+					if (review.reviewId === reviewId) {
+						reviewData = review;
+					}
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(reviewData);
+				
+				reviewActions.reviewWindow.show();
+				reviewActions.reviewWindow.editReview(record);
+			},
+			
+			deleteReview: function(reviewId, componentId) {
+				Ext.Msg.show({
+					title:'Delete Review?',
+					message: 'Are you sure you want to delete this review?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							reviewPanel.setLoading("Deleting...");
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/'+ componentId+'/reviews/'+reviewId,
+								method: 'DELETE',
+								callback: function(){
+									reviewPanel.setLoading(false);
+								},
+								success: function(){
+									reviewActions.refreshReviews();
+								}
+							});
+						} 
+					}
+				});				
+			},
+			refreshReviews: function() {
+				reviewPanel.setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + entry.componentId + '/reviews/view',
+					callback: function(){
+						reviewPanel.setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var reviews = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.reviews = reviews;
+						processReviews(entryLocal, reviewPanel.user);							
+					}
+				});				
+			},
+			reviewWindow: Ext.create('OSF.component.ReviewWindow', {	
+				componentId: entry.componentId,
+				postHandler: function(reviewWin, response) {
+					reviewActions.refreshReviews();
+				}
+			})			
+		};
+		reviewPanel.reviewActions = reviewActions;
+		CoreUtil.pageActions.reviewActions = reviewActions;
+		
+		var processReviews = function(entryLocal, user) {
+				
+				//gather summary
+				var summaryData = {					
+					totalRatings: 0,
+					averageRatingStars: [],
+					pros: [],
+					cons: [],
+					totalReviews: entryLocal.reviews.length,
+					recommended: 0
+				};
+				
+				Ext.Array.each(entryLocal.reviews, function(review){
+					summaryData.totalRatings += review.rating;
+					if (review.recommend) {					
+						summaryData.recommended++;
+					}
+					
+					Ext.Array.each(review.pros, function(pro) {
+						var found = false;
+					
+						Ext.Array.each(summaryData.pros, function(sumpro){
+							if (sumpro.text === pro.text) {
+								sumpro.count++;
+								found = true;
+							}
+						});
+						
+						if (!found) {
+							summaryData.pros.push({
+								text: pro.text,
+								count: 1
+							});
+						}
+					});
+					
+					Ext.Array.each(review.cons, function(con) {
+						var found = false;
+					
+						Ext.Array.each(summaryData.cons, function(sumpro){
+							if (sumpro.text === con.text) {
+								sumpro.count++;
+								found = true;
+							}
+						});
+						
+						if (!found) {
+							summaryData.cons.push({
+								text: con.text,
+								count: 1
+							});
+						}
+					});	
+					
+					Ext.Array.sort(review.pros, function(a, b){
+						return a.text.localeCompare(b.text);	
+					});
+					Ext.Array.sort(review.cons, function(a, b){
+						return a.text.localeCompare(b.text);	
+					});	
+					
+					review.ratingStars = [];
+					for (var i=0; i<5; i++){					
+						review.ratingStars.push({						
+							star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+						});
+					}
+					
+					if (review.username === user.username || 
+							CoreService.userservice.userHasPermisson(user, ['ADMIN-REVIEW'])
+						) {
+						review.owner = true;
+					}
+					
+				});
+				
+				reviewActions.reviews = entryLocal.reviews;
+				
+				var reviewPanelReviews = reviewPanel.getComponent('reviews');
+				var reviewPanelSummary = reviewPanel.getComponent('summary');
+				
+				Ext.Array.sort(summaryData.pros, function(a, b){
+					return a.text.localeCompare(b.text);	
+				});
+				Ext.Array.sort(summaryData.cons, function(a, b){
+					return a.text.localeCompare(b.text);	
+				});				
+				var averageRating = summaryData.totalRatings / summaryData.totalReviews;
+				summaryData.averageRating = averageRating;
+
+				var fullStars = Math.floor(averageRating);
+				for (var i=1; i<=fullStars; i++) {
+					summaryData.averageRatingStars.push({star: 'star'});
+				}
+
+				// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
+				var halfStar = Math.abs(fullStars - averageRating) >= 0.5;
+				if (halfStar) {
+					summaryData.averageRatingStars.push({star: 'star-half-o'});
+				}
+
+				// Add empty stars until there are 5 stars total.
+				while (summaryData.averageRatingStars.length < 5) {
+					summaryData.averageRatingStars.push({star: 'star-o'});
+				}
+
+								
+				if (entryLocal.reviews.length > 0) {
+					reviewPanelSummary.setHidden(false);
+					reviewPanelSummary.update(summaryData);
+					reviewPanelReviews.setHidden(false);
+					reviewPanelReviews.update(entryLocal.reviews);					
+				} else {					
+					reviewPanelSummary.update(summaryData);					
+					reviewPanelReviews.update(entryLocal.reviews);	
+					reviewPanelSummary.setHidden(true);
+					reviewPanelReviews.setHidden(true);
+				}
+				
+			};		
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			reviewPanel.user = user;
+			processReviews(entry, user);
+		});		
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.Questions', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.Questions',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Questions & Answers',
+	bodyStyle: 'padding: 10px;',
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	dockedItems: [
+		{
+			xtype: 'button',
+			text: 'Ask a Question',
+			maxWidth: 200,
+			scale: 'medium',
+			margin: 10,
+			iconCls: 'fa  fa-lg fa-comment icon-small-vertical-correction',
+			handler: function(){	
+				var questionPanel = this.up('panel');
+				questionPanel.questionActions.questionWindow.show();
+				questionPanel.questionActions.questionWindow.refresh();
+			}
+		}
+	],	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var questionPanel = this;
+		
+		var questionActions = {
+			
+			refreshQuestions: function(){
+				questionPanel.setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + entry.componentId + '/questions/view',
+					callback: function(){
+						questionPanel.setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var questions = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.questions = questions;
+						processQuestions(entryLocal, questionPanel.user);							
+					}
+				});
+			},
+			editResponse: function(responseId) {
+				var responseData;
+				Ext.Array.each(questionActions.questions, function(question){
+					Ext.Array.each(question.responses, function(response){
+						if (response.responseId === responseId) {
+							responseData = response;							
+						}						
+					});
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(responseData);
+				
+				questionActions.responseWindow.show();
+				questionActions.responseWindow.edit(record);				
+				
+			},
+			deleteResponse: function(responseId, questionId, componentId){
+				
+				Ext.Msg.show({
+					title:'Delete Answer?',
+					message: 'Are you sure you want to delete this answer?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							questionPanel.setLoading("Deleting...");
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
+								method: 'DELETE',
+								callback: function(){
+									questionPanel.setLoading(false);
+								},
+								success: function(){
+									questionActions.refreshQuestions();
+								}
+							});
+						} 
+					}
+				});				
+			},			
+			questionWindow: Ext.create('OSF.component.QuestionWindow', {
+				componentId: entry.componentId,
+				postHandler: function(questionWin, response) {
+					questionActions.refreshQuestions();
+				}				
+			}),
+			responseWindow: Ext.create('OSF.component.ResponseWindow', {
+				componentId: entry.componentId,
+				postHandler: function(responseWin, response) {
+					questionActions.refreshQuestions();
+				}
+			})
+		};
+		
+		questionPanel.questionActions = questionActions;
+		CoreUtil.pageActions.questionActions = questionActions;		
+		
+		var processQuestions = function(entryLocal, user) {
+
+			var questionPanels = [];
+			questionActions.questions = entryLocal.questions;
+			Ext.Array.each(entryLocal.questions, function(question){
+
+				var questionSecurity = '';
+				if (question.securityMarkingType) {
+					questionSecurity = '(' + question.securityMarkingType + ') '; 
+				}
+
+				var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
+				text += '<div class="question-info">' +
+						question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
+						'</div>';
+
+				Ext.Array.each(question.responses, function(response){
+					response.questionId = question.questionId;
+					response.componentId = question.componentId;
+					response.owner = (question.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
+				});
+
+
+				var panel = Ext.create('Ext.panel.Panel', {
+					titleCollapse: true,
+					collapsible: true,
+					title: text,
+					bodyStyle: 'padding: 10px;',
+					data: question.responses,
+					tpl: new Ext.XTemplate(							
+						'<tpl for=".">',
+						'	<tpl if="activeStatus === \'A\'">',
+						'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
+						'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
+						'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
+						'		<hr>',
+						'	</tpl>',
+						'</tpl>'
+					),
+					dockedItems: [
+						{
+							xtype: 'button',
+							dock: 'bottom',
+							text: 'Answer',
+							maxWidth: 150,
+							scale: 'medium',								
+							margin: 10,
+							iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
+							handler: function(){
+								questionActions.responseWindow.refresh();
+								questionActions.responseWindow.questionId = question.questionId;
+								questionActions.responseWindow.show();
+							}
+						}
+					]				
+				});
+				if (question.username === user.username || 
+						CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS'])
+					) 
+				{
+					panel.addDocked(
+						{
+							xtype: 'toolbar',
+							dock: 'top',								
+							items: [
+								{
+									text: 'Edit',
+									tooltip: 'Edit Question',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function(){
+										questionActions.questionWindow.show();
+
+										var record = Ext.create('Ext.data.Model');
+										record.set(question);											
+										questionActions.questionWindow.edit(record);
+									}
+								},
+								{	
+									text: 'Delete',
+									tooltip: 'Delete Question',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+									handler: function(){
+										Ext.Msg.show({
+											title:'Delete Question?',
+											message: 'Are you sure you want to delete this Question?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													questionPanel.setLoading("Deleting...");
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/' + questionPanel.componentId + '/questions/' + question.questionId,
+														method: 'DELETE',
+														callback: function(){
+															questionPanel.setLoading(false);
+														},
+														success: function(){
+															questionActions.refreshQuestions();
+														}
+													});
+												} 
+											}
+										});
+									}										
+								}
+							]
+						}
+					);
+				}											
+
+				questionPanels.push(panel);				
+
+			});
+			questionPanel.removeAll();
+			questionPanel.add(questionPanels);
+
+		};		
+		questionPanel.componentId = entry.componentId;
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			questionPanel.user = user;
+			processQuestions(entry, user);
+		});	
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.RelatedAttributes', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.RelatedAttributes',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Related Entries',
+	layout: 'fit',
+	dockedItems: [
+		{
+			xtype: 'combobox',
+			itemId: 'attributeSelect',
+			valueField: 'code',
+			displayField: 'description',
+			fieldLabel: 'Related to',
+			editable: false,
+			forceSelection: true,			
+			store: {},
+			listeners: {
+				change: function(field, newValue, oldValue, opts) {
+					var relatedPanel = field.up('panel');
+					
+					var record = field.getSelection();
+					
+					var searchObj = {
+						"sortField": "name",
+						"sortDirection": "ASC",
+						"searchElements": [{
+								"searchType": "ATTRIBUTE",
+								"keyField": record.get('type'),
+								"keyValue": record.get('code'),
+								"caseInsensitive": true,
+								"numberOperation": "EQUALS",
+								"stringOperation": "EQUALS",
+								"mergeCondition": "OR"
+							}]
+					};
+					 
+					var store = relatedPanel.getComponent('grid').getStore();
+					store.getProxy().buildRequest = function (operation) {
+						var initialParams = Ext.apply({
+							paging: true,
+							sortField: operation.getSorters()[0].getProperty(),
+							sortOrder: operation.getSorters()[0].getDirection(),
+							offset: operation.getStart(),
+							max: operation.getLimit()
+						}, operation.getParams());
+						params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+						var request = new Ext.data.Request({
+							url: 'api/v1/service/search/advance',
+							params: params,
+							operation: operation,
+							action: operation.getAction(),
+							jsonData: Ext.util.JSON.encode(searchObj)
+						});
+						operation.setRequest(request);
+
+						return request;
+					};
+					store.loadPage(1);						 
+					
+				}
+			}
+		}
+	],		
+	initComponent: function () {
+		this.callParent();
+		var relatedPanel = this;
+		
+		relatedPanel.relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'name',
+					direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== relatedPanel.componentId;
+					});
+				}
+			}			
+		});
+		
+		relatedPanel.add({
+			xtype: 'grid',
+			itemId: 'grid',
+			height: 300,
+			columnLines: true,
+			store: relatedPanel.relatedStore,
+			columns: [
+				{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+					renderer: function (value, meta, record) {
+						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
+					}
+				},
+				{ text: 'Description', dataIndex: 'description', flex: 2,
+					cellWrap: true,
+					renderer: function (value) {
+						value = Ext.util.Format.stripTags(value);
+						return Ext.String.ellipsis(value, 300);
+					}
+				},							
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }				
+			],
+			dockedItems: [
+				{
+					xtype: 'pagingtoolbar',							
+					dock: 'bottom',
+					store: relatedPanel.relatedStore,
+					displayInfo: true
+				}				
+			]
+		});		
+		
+	},
+	
+	updateHandler: function(entry){
+		var relatedPanel = this;
+				
+		if ((!entry.attributes || entry.attributes.length === 0)) {
+			this.setHidden(true);
+		}
+		
+		relatedPanel.componentId = entry.componentId;
+
+		if (entry.attributes) {
+			var attributes = [];	
+			Ext.Array.each(entry.attributes, function(item){
+				attributes.push({
+					code: item.code,
+					type: item.type,
+					description: item.typeDescription + ": " + item.codeDescription
+				});
+			});
+			
+			//load
+			relatedPanel.queryById('attributeSelect').getStore().loadData(attributes);
+			if (attributes.length > 0) {
+				relatedPanel.queryById('attributeSelect').setValue(attributes[0].code);
+			}
+		}		
+		
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.RelatedOrganization', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.RelatedOrganization',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Related Organization Entries',
+	layout: 'fit',
+
+	initComponent: function () {
+		this.callParent();
+		
+		var relatedPanel = this;
+		
+		relatedPanel.relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'name',
+					direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== relatedPanel.componentId;
+					});
+				}
+			}			
+		});
+		
+		relatedPanel.add({
+			xtype: 'grid',
+			itemId: 'grid',
+			height: 300,
+			columnLines: true,
+			store: relatedPanel.relatedStore,
+			columns: [
+				{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+					renderer: function (value, meta, record) {
+						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
+					}
+				},
+				{ text: 'Description', dataIndex: 'description', flex: 2,
+					cellWrap: true,
+					renderer: function (value) {
+						value = Ext.util.Format.stripTags(value);
+						return Ext.String.ellipsis(value, 300);
+					}
+				},							
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }				
+			],
+			dockedItems: [
+				{
+					xtype: 'pagingtoolbar',							
+					dock: 'bottom',
+					store: relatedPanel.relatedStore,
+					displayInfo: true
+				}				
+			]
+		});				
+	},
+	
+	updateHandler: function(entry){
+		var relatedPanel = this;
+	
+		relatedPanel.componentId = entry.componentId;
+	
+		var searchObj = {
+			"sortField": "name",
+			"sortDirection": "ASC",				
+			"searchElements": [{
+					"searchType": 'COMPONENT',
+					"field": 'organization',
+					"value": entry.organization,
+					"caseInsensitive": true,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR" 
+			}]
+		 };
+
+		var store = relatedPanel.getComponent('grid').getStore();
+		store.getProxy().buildRequest = function (operation) {
+			var initialParams = Ext.apply({
+				paging: true,
+				sortField: operation.getSorters()[0].getProperty(),
+				sortOrder: operation.getSorters()[0].getDirection(),
+				offset: operation.getStart(),
+				max: operation.getLimit()
+			}, operation.getParams());
+			params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+			var request = new Ext.data.Request({
+				url: 'api/v1/service/search/advance',
+				params: params,
+				operation: operation,
+				action: operation.getAction(),
+				jsonData: Ext.util.JSON.encode(searchObj)
+			});
+			operation.setRequest(request);
+
+			return request;
+		};
+		store.loadPage(1);	
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationVersionSelect', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationVersionSelect',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Versions',	
+	items: [
+		{
+			xtype: 'combo',
+			itemId: 'versions',
+			valueField: 'code',
+			displayField: 'description',			
+			editable: false,
+			forceSelection: true,
+			width: 300,
+			store: {},
+			listeners: {
+				change: function(field, newValue, oldValue, opts) {
+					var versionSelect = field.up('panel');
+					
+					versionSelect.entry.currentEval = field.getSelection().data.eval;
+					
+					//update all registered blocks on switch
+					if (versionSelect.entry.evalListeners) {
+						Ext.Array.each(versionSelect.entry.evalListeners, function(callback){
+							callback.call(this, versionSelect.entry.currentEval);
+						});
+					}					
+				}	
+			}
+		}
+	],
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var versionSelect = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length <= 1) {
+			versionSelect.setHidden(true);
+		} else {
+
+			if (entry.fullEvaluations.length > 0) {
+				//populate combo
+				var versions = [];
+				Ext.Array.each(entry.fullEvaluations, function(eval){
+					versions.push({
+						code: eval.evaluation.evaluationId,
+						eval: eval,
+						description: "Version: " + eval.evaluation.version
+					});
+				});
+				
+				versionSelect.queryById('versions').getStore().loadData(versions);
+				versionSelect.queryById('versions').suspendEvents(false);
+				versionSelect.queryById('versions').setValue(entry.fullEvaluations[0].evaluation.evaluationId);
+				versionSelect.queryById('versions').resumeEvents();
+				entry.currentEval = entry.fullEvaluations[0];
+				entry.evalListeners = [];
+				versionSelect.entry = entry;
+			}
+		}
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationSections', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationSections',
+	
+	//titleCollapse: true,
+	//collapsible: true,	
+	items: [		
+	],		
+	initComponent: function () {
+		this.callParent();		
+	},
+	
+	updateHandler: function(entry){
+		var sectionPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length <= 0) {
+			sectionPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				
+				//var tabPanel = sectionPanel.queryById('tabs');
+				sectionPanel.removeAll();
+				
+				var internalPanels = [];
+				Ext.Array.each(evaluation.contentSections, function(section){
+					internalPanels.push({
+						xtype: 'panel',
+						title: section.section.title,
+						titleCollapse: true,
+						collapsible: true,
+						sectionData: section,
+						margin: '0 0 20 0',
+						tpl: new Ext.XTemplate(
+							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
+							'	<tpl if="section.content">{section.content}</tpl>',
+							'	<tpl for="subsections">',
+							'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+							'		<tpl if="content">{content}</tpl>',
+							'		<tpl for="customFields">',
+							'			<b>{label}:</b> {value}',
+							'		</tpl>',
+							'	</tpl>',
+							'</div>'		
+						)
+					});	
+					
+				});
+				if (internalPanels.length > 0) {
+					sectionPanel.add(internalPanels);					
+					
+					Ext.Array.each(sectionPanel.items.items, function(item){
+						item.update(item.sectionData);							
+					});
+					
+					Ext.defer(function(){	
+						Ext.Array.each(sectionPanel.items.items, function(item){
+						//	item.getEl().repaint();						
+						});
+						sectionPanel.updateLayout();
+					}, 2000);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);			
+			
+		}	
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationSectionByTitle', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationSectionByTitle',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: '',
+	sectionTitle: '',
+	tpl: new Ext.XTemplate(
+		'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
+		'	<tpl if="section.content">{section.content}</tpl>',
+		'	<tpl for="subsections">',
+		'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+		'		<tpl if="content">{content}</tpl>',
+		'		<tpl for="customFields">',
+		'			<b>{label}:</b> {value}',
+		'		</tpl>',
+		'	</tpl>',
+		'</div>'		
+	),
+		
+	initComponent: function () {
+		this.callParent();
+		var sectionPanel = this;
+	},
+	
+	updateHandler: function(entry){
+		var sectionPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			sectionPanel.setHidden(true);
+		} else {			
+			
+			var updateSection = function(evaluation) {			
+				var sectionFound = null;
+				Ext.Array.each(evaluation.contentSections, function(section){
+					if (sectionPanel.sectionTitle === section.section.title) {
+						sectionFound = section;
+					}	
+				});
+				if (sectionFound) {
+					sectionPanel.setTitle(sectionFound.section.title);
+					sectionPanel.update(sectionFound);
+					Ext.defer(function(){
+						sectionPanel.updateLayout(true, true);						
+					}, 200);					
+				} else {
+					sectionPanel.setHidden(true);
+				}	
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+		}
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationChecklistSummary', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationChecklistSummary',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Summary',
+	tpl: new Ext.XTemplate(
+		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
+		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
+		'</div>'		
+	),	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var checklistPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			checklistPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				if (evaluation.checkListAll.evaluationChecklist.summary) {
+					checklistPanel.setHidden(false);
+					checklistPanel.update(evaluation);
+				} else {
+					checklistPanel.setHidden(true);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;		
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationChecklistDetail', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationChecklistDetail',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Checklist Details',
+	tpl: new Ext.XTemplate(
+		' <table class="details-table" width="100%">',	
+		'	<th class="details-table" style="text-align: center; width: 75px;">QID</th><th class="details-table" style="text-align: center; width: 125px;">Section</th><th class="details-table">Question</th><th class="details-table" style="text-align: center; width: 75px;">Score</th><th class="details-table">Response</th>',
+		'	<tpl for="checkListAll.responses">',	
+		'		<tr class="details-table">',
+		'			<td class="details-table" style="text-align: center; width: 75px;">',
+		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'{questionId}\')">',
+		'					<b>{question.qid}</b>',
+		'				</a>',
+		'			</td>',
+		'			<td class="details-table" style="text-align: center; width: 125px;">',
+		'				{question.evaluationSectionDescription}',
+		'			</td>',		
+		'			<td class="details-table">',
+		'				{question.question}',				
+		'			</td>',	
+		'			<td class="details-table" style="text-align: center; width: 75px;" >',
+		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'{questionId}\')">',		
+		'					<tpl if="notApplicable"><span style="font-weight: bold;">N/A</span></tpl>',	
+		'					<tpl if="score"><span style="font-weight: bold;">{score}</span></tpl>',	
+		'				</a>',
+		'			</td>',		
+		'			<td class="details-table">',
+		'				{response}',						
+		'			</td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'		
+	),	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var checklistPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			checklistPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				if (evaluation.checkListAll.evaluationChecklist.summary) {
+					checklistPanel.setHidden(false);
+					checklistPanel.update(evaluation);
+					
+					var findQuestion = function(questionId) {
+						var question;
+						Ext.Array.each(evaluation.checkListAll.responses, function(response){
+							if (response.question.questionId === questionId) {
+								question = response.question;
+							}
+						});
+						return question;
+					};
+					
+					CoreUtil.pageActions.checklistDetail = {
+						showQuestionDetails: function(questionId) {
+							var question = findQuestion(questionId);
+							
+							var detailWin = Ext.create('Ext.window.Window', {
+								title: 'Question Details',
+								closeAction: 'destroy',
+								modal: true,
+								width: '95%',
+								height: '60%',							
+								draggable: false,
+								maximizable: true,
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								listeners: {
+									show: function() {        
+										this.removeCls("x-unselectable");    
+									}
+								},								
+								data: question,
+								tpl: new Ext.XTemplate(
+									'<tpl if="objective"><b>Question Objective:</b> <br><br>',
+									'{objective}<br><br></tpl>',
+									'<tpl if="narrative"><b>Narrative:</b><br><br>',
+									'{narrative}</tpl>',
+									'<tpl if="!objective && !narrative">No addtional details</tpl>'
+								),
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close',
+												handler: function() {
+													detailWin.close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											}
+										]
+									}
+								]								
+							});
+							detailWin.show();
+						},
+						showScoreDetails: function(questionId) {
+							var question = findQuestion(questionId);
+							
+							var detailWin = Ext.create('Ext.window.Window', {
+								title: 'Scoring Details',
+								closeAction: 'destroy',
+								modal: true,
+								width: '95%',
+								height: '60%',							
+								draggable: false,
+								maximizable: true,
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								listeners: {
+									show: function() {        
+										this.removeCls("x-unselectable");    
+									}
+								},																
+								data: question,
+								tpl: new Ext.XTemplate(
+									'<tpl if="scoreCriteria"><b>Scoring Criteria:</b> <br><br>',
+									'{scoreCriteria}<br><br></tpl>',
+									'<tpl if="!scoreCriteria">No addtional details</tpl>'
+								),
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close',
+												handler: function() {
+													detailWin.close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											}
+										]
+									}
+								]								
+							});
+							detailWin.show();
+						}
+					};
+				} else {
+					checklistPanel.setHidden(true);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+			
+			
+		}
+		
+		return null;		
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationChecklistRecommendation',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Evaluation Recommendations',
+	tpl: new Ext.XTemplate(
+		' <table class="details-table" width="100%">',			
+		'	<tpl for="checkListAll.recommendations">',	
+		'		<tr class="details-table">',
+		'			<td class="details-table" width="150"><b>{recommendationTypeDescription}</b></td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+		'				<tpl if="recommendation">{recommendation}</tpl>',				
+		'			</td>',		
+		'			<tpl if="reason"><td class="details-table">',
+		'				{reason}',						
+		'			</td></tpl>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'				
+	),	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var recomendationPanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			recomendationPanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {
+				if (!evaluation.checkListAll.recommendations || evaluation.checkListAll.recommendations.length === 0) {
+					recomendationPanel.setHidden(true);
+				} else {
+					recomendationPanel.update(evaluation);
+				}
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.EvaluationChecklistScores', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.EvaluationChecklistScores',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Reusability Factors (5=best)',
+	tpl: new Ext.XTemplate(
+		'<div class="rolling-container">',			
+		'	<div class="rolling-container-row">',
+		'		<tpl for=".">',	
+		'			<div class="rolling-container-block">',
+		'				<div class="detail-eval-item ">',
+		'					<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
+		'					<span class="detail-eval-score" data-qtip="{average}">{display}</span>',	
+		'				</div>',	
+		'			</div>',
+		'		</tpl>',
+		'	</div>',
+		'</div>'
+	),	
+	
+		
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateHandler: function(entry){
+		var scorePanel = this;
+		
+		if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+			scorePanel.setHidden(true);
+		} else {
+			
+			var updateSection = function(evaluation) {			
+				
+				Ext.Ajax.request({
+					url: 'api/v1/resource/lookuptypes/EvaluationSection',
+					success: function(response, opts){
+						var sectionLookup = Ext.decode(response.responseText);
+						
+						var findSectionDesc = function(sectionKey) {
+							var desc = null;
+							Ext.Array.each(sectionLookup, function(lookup) {
+								if (lookup.code === sectionKey) {
+									desc = lookup.detailedDescription;
+								}
+							});
+							return desc;
+						};
+						
+						//group by section
+						var groupStatus = {};				
+						Ext.Array.each(evaluation.checkListAll.responses, function(response){
+							if (groupStatus[response.question.evaluationSection]) {
+								var stat = groupStatus[response.question.evaluationSection];						
+								if (!response.notApplicable) {
+									stat.count++;
+									stat.totalScore += response.score;
+								}
+							} else {
+								groupStatus[response.question.evaluationSection] = {
+									title: response.question.evaluationSectionDescription,
+									sectionDescription: findSectionDesc(response.question.evaluationSection),
+									count: 1,									
+									totalScore: response.score ? response.score : 0
+								};
+							}
+						});		
+
+						//average and add dots
+						var sections = [];
+						Ext.Object.eachValue(groupStatus, function(section) {
+							if (isNaN(section.count)) {
+								section.count = 0;
+							}
+							if (section.count > 0) {
+								section.average = Math.round((section.totalScore/section.count)*10) / 10;
+								
+								var score = Math.round(section.average);
+								section.display = "";
+								for (var i= 0; i<score; i++){
+									section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+								}								
+							} else {
+								section.average = 0;								
+							}
+							if (isNaN(section.average) || section.average < 1) {
+								section.average = 0;
+								section.display = 'N/A';
+							}
+							
+							sections.push(section);
+						});
+						Ext.Array.sort(sections, function(a, b){
+							return a.title.localeCompare(b.title);
+						});
+
+						scorePanel.update(sections);
+					}
+				});
+				
+
+				
+			};
+			updateSection(entry.fullEvaluations[0]);
+			if (!entry.evalListeners) {
+				entry.evalListeners = [];
+			} 
+			entry.evalListeners.push(updateSection);
+			
+		}
+		
+		return null;
+	}
+
+});
+
+Ext.define('OSF.component.template.LayoutTab', {
+	extend: 'Ext.tab.Panel',
+	alias: 'osf.widget.template.LayoutTab',
+	
+	tabBar: {
+		defaults: {
+			flex: 1
+		},
+		dock: 'top',
+		layout: {
+			pack: 'left'
+		}
+	},	
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		var itemsToClose = [];
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item) {
+				var process = true;
+				if (item.evalTopPanel){
+					if (!entry.fullEvaluations || entry.fullEvaluations.length === 0) {
+						process = false;
+						itemsToClose.push(item);
+					}
+				} 						
+
+				if (process && item.updateTemplate) {
+					item.updateTemplate(entry);
+				}
+			}
+		});
+		
+		Ext.Array.each(itemsToClose, function(item) {
+			item.close();
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutScroll', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutScroll',
+	
+	scrollable: true,
+	layout: 'anchor',
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutHbox', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutHbox',
+	
+	layout: {
+		type: 'hbox',
+		align: 'stretch'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutVbox', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutVbox',
+	
+	layout: {
+		type: 'vbox',
+		align: 'stretch'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutAccordion', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutAccordion',
+	
+	layout: {
+        type: 'accordion',
+        titleCollapse: true,
+        animate: true,
+        activeOnTop: false
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutFit', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutFit',
+	
+	layout: {
+        type: 'fit'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});
+
+Ext.define('OSF.component.template.LayoutCenter', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.template.LayoutCenter',
+		
+	layout: {
+        type: 'center'
+	},
+	
+	initComponent: function () {
+		this.callParent();
+	},
+	
+	updateTemplate: function (entry) {
+		var layoutPanel = this;
+		
+		Ext.Array.each(layoutPanel.items.items, function(item){
+			if (item.updateTemplate) {
+				item.updateTemplate(entry);
+			}
+		});
+		
+		return null;
+	}
+	
+});

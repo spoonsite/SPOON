@@ -53,7 +53,7 @@ public abstract class BaseAction
 
 	private static final long MAX_UPLOAD_SIZE = 1048576000L;
 
-	private static final Logger log = Logger.getLogger(BaseAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(BaseAction.class.getName());
 
 	protected ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 
@@ -100,12 +100,12 @@ public abstract class BaseAction
 		return exceeds;
 	}
 
-	protected void deleteTempFile(FileBean fileBean)
+	protected void deleteUploadFile(FileBean fileBean)
 	{
 		try {
 			fileBean.delete();
 		} catch (IOException ex) {
-			log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+			LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 		}
 	}
 
@@ -119,7 +119,7 @@ public abstract class BaseAction
 				}
 			}
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -255,7 +255,7 @@ public abstract class BaseAction
 			for (String errorkey : ve.keySet()) {
 				List<ValidationError> validationErrors = ve.get(errorkey);
 				for (ValidationError validationError : validationErrors) {
-					log.log(Level.INFO, "(Validation) Global Error Key: {0} Message: {1} Action Path: {2}", new Object[]{errorkey, validationError.toString(), validationError.getActionPath()});
+					LOG.log(Level.INFO, "(Validation) Global Error Key: {0} Message: {1} Action Path: {2}", new Object[]{errorkey, validationError.toString(), validationError.getActionPath()});
 				}
 			}
 		}

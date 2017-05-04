@@ -168,10 +168,10 @@ public interface UserService
 	 *
 	 * @param userprofile
 	 * @param request
-	 * @param admin (pass null if login in to shiro already
+	 * @param allowSync allow Sync if external management policy is activated
 	 * @return
 	 */
-	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin);
+	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean allowSync);
 
 	/**
 	 * This will send a test email to the address on the user profile. or to

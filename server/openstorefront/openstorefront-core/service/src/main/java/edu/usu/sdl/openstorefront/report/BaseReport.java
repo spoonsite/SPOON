@@ -85,6 +85,9 @@ public abstract class BaseReport
 				case ReportType.COMPONENT_DETAIL:
 					baseReport = new ComponentDetailReport(report);
 					break;
+				case ReportType.EVALUATION_STATUS:
+					baseReport = new EvaluationStatusReport(report);
+					break;
 				default:
 					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type: " + report.getReportType(), ErrorTypeCode.REPORT);
 			}

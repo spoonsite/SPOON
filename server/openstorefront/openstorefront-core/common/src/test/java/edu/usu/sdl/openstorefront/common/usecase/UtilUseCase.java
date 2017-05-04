@@ -15,11 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.common.usecase;
 
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 /**
@@ -28,25 +28,34 @@ import org.junit.Test;
  */
 public class UtilUseCase
 {
-	
+
 	@Test
 	public void testConverting()
 	{
-		
-		System.out.println("0029 = " + Convert.toInteger("0029"));
-		
-		Charset utf8charset = Charset.forName("UTF-8");
-		ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[]{(byte)29});
-		CharBuffer data = utf8charset.decode(inputBuffer);
-		
-		
-		System.out.println("0029 = " + ((char)33));
-		
-		System.out.println(StringProcessor.decodeHexCharEscapes("x0029"));
-		System.out.println(StringProcessor.decodeHexCharEscapes("x0020"));
-		System.out.println(StringProcessor.decodeHexCharEscapes("x0028"));
-		System.out.println(StringProcessor.decodeHexCharEscapes("x0065"));
-		
+
+//		System.out.println("0029 = " + Convert.toInteger("0029"));
+//
+//		Charset utf8charset = Charset.forName("UTF-8");
+//		ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[]{(byte)29});
+//		CharBuffer data = utf8charset.decode(inputBuffer);
+//
+//
+//		System.out.println("0029 = " + ((char)33));
+//
+//		System.out.println(StringProcessor.decodeHexCharEscapes("x0029"));
+//		System.out.println(StringProcessor.decodeHexCharEscapes("x0020"));
+//		System.out.println(StringProcessor.decodeHexCharEscapes("x0028"));
+//		System.out.println(StringProcessor.decodeHexCharEscapes("x0065"));
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream("c:\\temp\\components.json")))) {
+
+			String fileData = reader.lines().collect(Collectors.joining("<br>"));
+			System.out.println(fileData);
+
+		} catch (IOException ex) {
+
+		}
+
 	}
-	
+
 }

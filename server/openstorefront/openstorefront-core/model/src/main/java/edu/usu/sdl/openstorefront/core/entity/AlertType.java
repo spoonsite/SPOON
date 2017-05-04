@@ -34,6 +34,7 @@ public class AlertType
 	public static final String SYSTEM_ERROR = "SYSERROR";
 	public static final String COMPONENT_SUBMISSION = "CMPSUB";
 	public static final String CHANGE_REQUEST = "CHGREQ";
+	public static final String USER_MANAGEMENT = "USERMANG";
 
 	public AlertType()
 	{
@@ -47,6 +48,7 @@ public class AlertType
 		codeMap.put(SYSTEM_ERROR, newLookup(AlertType.class, SYSTEM_ERROR, "System Error"));
 		codeMap.put(COMPONENT_SUBMISSION, newLookup(AlertType.class, COMPONENT_SUBMISSION, "Component Submission"));
 		codeMap.put(CHANGE_REQUEST, newLookup(AlertType.class, CHANGE_REQUEST, "Change Request"));
+		codeMap.put(USER_MANAGEMENT, newLookup(AlertType.class, USER_MANAGEMENT, "User Management"));
 		return codeMap;
 	}
 

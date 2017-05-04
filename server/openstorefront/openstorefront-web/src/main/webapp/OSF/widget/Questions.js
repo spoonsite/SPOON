@@ -84,8 +84,9 @@ Ext.define('OSF.widget.Questions', {
 							text: 'View Responses',
 							itemId: 'view',
 							scale: 'medium',
+							width: '170px',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-binoculars',
+							iconCls: 'fa fa-2x fa-eye icon-vertical-correction-view icon-button-color-view',
 							handler: function () {
 								var record = this.up('grid').getSelectionModel().getSelection()[0];								
 								viewResponse(record);
@@ -156,8 +157,7 @@ Ext.define('OSF.widget.Questions', {
 		
 		questionPanel.add(questionPanel.grid);
 		
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			var userProfile = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(userProfile){			
 			questionPanel.grid.getStore().load({
 				url: 'api/v1/resource/componentquestions/' + userProfile.username
 			});

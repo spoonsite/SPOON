@@ -71,7 +71,9 @@ public class ValidationResult
 				restErrorModel.getErrors().put(ruleResult.getFieldName(), ruleResult.getMessage());
 			}
 		}
-
+		if (valid()) {
+			restErrorModel.setSuccess(true);			
+		}
 		return restErrorModel;
 	}
 	

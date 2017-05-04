@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import javax.ws.rs.core.MediaType;
@@ -49,10 +51,30 @@ public abstract class BaseResource
 		}
 	}
 
-	protected Response ownerCheck(StandardEntity entity)
+	protected Response ownerCheck(StandardEntity entity, String permission)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
-				|| SecurityUtil.isAdminUser()) {
+				|| SecurityUtil.hasPermission(permission)) {
+			return null;
+		} else {
+			Response response = Response.status(Response.Status.FORBIDDEN)
+					.type(MediaType.TEXT_PLAIN)
+					.entity("User cannot modify resource.")
+					.build();
+
+			//Coming from component check
+			if (entity instanceof Component) {
+				response = checkEvaluator((Component) entity);
+			}
+			return response;
+		}
+	}
+
+	private Response checkEvaluator(Component component)
+	{
+		//Evaluator should be able to modify change requests on evaluations
+		if (component.getPendingChangeId() != null
+				&& SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 			return null;
 		} else {
 			return Response.status(Response.Status.FORBIDDEN)

@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
@@ -67,12 +68,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -155,10 +159,22 @@ public class SystemServiceImpl
 			existing = persistenceService.findById(Highlight.class, highlight.getHighlightId());
 		}
 		if (existing != null) {
+			Date existingUpdateDts = existing.getUpdateDts();
+			boolean useOldUpdateDts = false;
+			if (existing.hasChange(highlight) == false) {
+				useOldUpdateDts = true;
+			}
 			existing.updateFields(highlight);
+
+			if (useOldUpdateDts) {
+				existing.setUpdateDts(existingUpdateDts);
+			}
+
 			persistenceService.persist(existing);
 		} else {
-			highlight.setHighlightId(persistenceService.generateId());
+			if (StringUtils.isBlank(highlight.getHighlightId())) {
+				highlight.setHighlightId(persistenceService.generateId());
+			}
 			highlight.populateBaseCreateFields();
 			persistenceService.persist(highlight);
 		}
@@ -241,6 +257,7 @@ public class SystemServiceImpl
 			ticket.append("TicketNumber: ").append(ticketNumber).append("\n");
 			ticket.append("Client IP: ").append(errorInfo.getClientIp()).append("\n");
 			ticket.append("User: ").append(SecurityUtil.getCurrentUserName()).append("\n");
+			ticket.append("Application Version: ").append(PropertiesManager.getApplicationVersion()).append("\n");
 			ticket.append("Message: ").append(systemErrorModel.getMessage()).append("\n");
 			ticket.append("Potential Resolution: ").append(StringProcessor.blankIfNull(systemErrorModel.getPotentialResolution())).append("\n");
 			ticket.append("Request: ").append(errorInfo.getRequestUrl()).append("\n");
@@ -337,7 +354,8 @@ public class SystemServiceImpl
 
 	private void performDelete(List<ErrorTicket> errorTickets)
 	{
-		errorTickets.stream().forEach((errorTicket) -> {
+		errorTickets.stream().forEach((errorTicket)
+				-> {
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
 				if (!path.toFile().delete()) {
@@ -580,7 +598,8 @@ public class SystemServiceImpl
 			}
 			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
 			List<DBLogRecord> logRecords = persistenceService.query(query, null);
-			logRecords.stream().forEach((record) -> {
+			logRecords.stream().forEach((record)
+					-> {
 				persistenceService.delete(record);
 			});
 		}
@@ -616,7 +635,25 @@ public class SystemServiceImpl
 		HelpSection helpSectionExample = new HelpSection();
 		helpSectionExample.setAdminSection(includeAdmin);
 
-		List<HelpSection> helpSections = persistenceService.queryByExample(HelpSection.class, helpSectionExample);
+		List<HelpSection> helpSections = persistenceService.queryByExample(helpSectionExample);
+
+		UserContext userContext = SecurityUtil.getUserContext();
+
+		if (userContext != null) {
+			final Set<String> permissions = userContext.permissions();
+			helpSections = helpSections.stream().filter(help
+					-> {
+				if (StringUtils.isNotBlank(help.getPermission())) {
+					if (permissions.contains(help.getPermission())) {
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
+			}).collect(Collectors.toList());
+		}
 
 		if (helpSections.isEmpty() == false) {
 

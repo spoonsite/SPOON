@@ -158,7 +158,7 @@ public class QuestionSearchHandler
 					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
 				}
 
-				List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(ComponentQuestion.class, queryByExample);
+				List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 				List<String> results = new ArrayList<>();
 				for (ComponentQuestion question : questions) {
 					results.add(question.getComponentId());

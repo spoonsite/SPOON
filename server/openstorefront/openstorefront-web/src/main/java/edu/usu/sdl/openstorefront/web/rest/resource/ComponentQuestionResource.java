@@ -39,9 +39,10 @@ import javax.ws.rs.core.Response;
 @Path("v1/resource/componentquestions")
 @APIDescription("Questions and Answers on entries/components")
 public class ComponentQuestionResource
-	extends BaseResource	
+		extends BaseResource
 {
-	private static final Logger log = Logger.getLogger(ComponentQuestionResource.class.getSimpleName());
+
+	private static final Logger LOG = Logger.getLogger(ComponentQuestionResource.class.getSimpleName());
 
 	@GET
 	@APIDescription("Gets all active questions posed by a user")
@@ -50,41 +51,41 @@ public class ComponentQuestionResource
 	@Path("/{username}")
 	public Response getQuestionsForUser(
 			@PathParam("username") String username
-	) 
+	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
 		componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 		componentQuestionExample.setCreateUser(username);
-		
+
 		List<ComponentQuestion> questions = componentQuestionExample.findByExample();
-		
+
 		GenericEntity<List<ComponentQuestionView>> entity = new GenericEntity<List<ComponentQuestionView>>(ComponentQuestionView.toViewList(questions, new HashMap<>()))
 		{
-		};		
+		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets all active answers for a user.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponseView.class)
 	@Path("/responses/{username}")
 	public Response getResponseForUser(
-		@PathParam("username") String username
-	) 
+			@PathParam("username") String username
+	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
 		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 		componentQuestionResponseExample.setCreateUser(username);
-		
+
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
-				
+
 		GenericEntity<List<ComponentQuestionResponseView>> entity = new GenericEntity<List<ComponentQuestionResponseView>>(ComponentQuestionResponseView.toViewList(responses))
 		{
-		};		
+		};
 		return sendSingleEntityResponse(entity);
-	}	
-	
+	}
+
 	@GET
 	@APIDescription("Gets all responses for a question")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -92,18 +93,18 @@ public class ComponentQuestionResource
 	@Path("/{questionId}/responses")
 	public Response getResponseForQuestion(
 			@PathParam("questionId") String questionId
-	) 
+	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
 		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 		componentQuestionResponseExample.setQuestionId(questionId);
 
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
-				
+
 		GenericEntity<List<ComponentQuestionResponseView>> entity = new GenericEntity<List<ComponentQuestionResponseView>>(ComponentQuestionResponseView.toViewList(responses))
 		{
-		};		
+		};
 		return sendSingleEntityResponse(entity);
-	}	
-	
+	}
+
 }

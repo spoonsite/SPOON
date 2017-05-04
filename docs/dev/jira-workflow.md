@@ -1,7 +1,7 @@
-#JIRA - Issue Tracking  Workflow
+# JIRA - Issue Tracking  Workflow
 ----
 
-##Ticket Types
+## Ticket Types
 
 -  New Features, Improvements, Bugs
 
@@ -9,43 +9,40 @@
 
 -  Build
 
-##New Features, Improvements, Bugs
+## New Features, Improvements, Bugs Stages
 
-1. Pending Review (sometimes refer to as backlog)
+1. Pending Review - Ticket in product backlog.
 
-2. Review - This where a developer would review the ticket and add more details such as:
-Implementation plan, Estimate, Sub-tasks, and what needs to change.  
+2. Review - Ticket reviewed by developer. Developer adds details such as
+implementation plan, time estimate, sub-tasks, and other relevant changes.
 
-3. Approve - This would where Business owner or PM would approve. 
- (Typically, we approve via sprint planning for the next release or on sprint reviews)
+3. Approval - Business owner or Project Manager approves/rejects an issue.
+ (Typically during sprint planning or sprint review)
 
-4. Schedule - Waiting to be scheduled for a release version
+4. Schedule - Waiting to be scheduled for a release version.
 
-5. Working - currently in development
+5. Working - Currently in development. Refer to the Git Workflow guide for more information on branching style.
 
-6. Ready for Development Move - development is complete but it has not moved to the Integration environment.
+6. Ready for Development Move - Development is complete but ticket not moved to the Integration environment.
 
-7. Integration - In Integration environment where auto tests are being ran.
+7. Integration - In Integration environment, subjected to automated testing.
 
-8. Ready for Acceptance Move - Passed integration and is wait for the next move to acceptance.
+8. Ready for Acceptance Move - Passed integration testing and waiting to be moved to the acceptance state.
 
-9. Acceptance Test - The ticket is now in acceptance and is ready for QA to test.
+9. Acceptance Test - Ticket ready for QA to test.
 
-10. Ready for Staging - Ticket has passed QA and is now ready to move to stagging. 
+10. Ready for Staging - Ticket has passed QA and is now ready to move to staging.
 
-11. In Staging - Ticket are getting a final look in staging before production.
+11. In Staging - Ticket subject to final review and testing in staging environment before being moved to production.
 
-12. Close - Tickets have moved to production. If there any new changes then a new ticket should be created.
-
-
-##Task
-
-A task ticket is creating to represent a general task that doesn't need to be flow through the more main workflow.  
-An Example is: updating development documentation.
-
-##Build
-A build ticket is created for each release.  It contains all move instruction, environment changes, and configure changes needed for the release.
+12. Close - Ticket moved to production. Any new changes require creation of a new ticket.
 
 
+## Task
 
+A task ticket is created to represent a general task that isn't subject to the workflow above.
 
+Example: Updating development documentation.
+
+## Build
+A build ticket is created for each release.  It contains all move instructions, environment changes, and configuration changes needed for the release.

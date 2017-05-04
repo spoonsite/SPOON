@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class FileSystemManager
 		implements Initializable
 {
-	
+
 	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
 
 	public static final String MAIN_DIR = System.getProperty("application.datadir", "/var/openstorefront");
@@ -48,13 +48,13 @@ public class FileSystemManager
 	public static final String IMPORT_DIR = MAIN_DIR + "/import";
 	public static final String IMPORT_HISTORY_DIR = MAIN_DIR + "/import/history";
 	public static final String IMPORT_LOOKUP_DIR = MAIN_DIR + "/import/lookup";
-	public static final String IMPORT_ATTRIBUTE_DIR = MAIN_DIR + "/import/attribute";
 	public static final String IMPORT_ARTICLE_DIR = MAIN_DIR + "/import/article";
 	public static final String IMPORT_HIGHLIGHT_DIR = MAIN_DIR + "/import/highlights";
 	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
 	public static final String ATTACHMENT_DIR = MAIN_PERM_DIR + "/attachment";
+	public static final String ARCHIVE_DIR = MAIN_PERM_DIR + "/archive";
 	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
 	public static final String TEMPORARY_MEDIA_DIR = MAIN_PERM_DIR + "/temporarymedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
@@ -63,11 +63,11 @@ public class FileSystemManager
 	public static final String PLUGIN_DIR = MAIN_PERM_DIR + "/plugins";
 	public static final String COMPONENT_VERSION_DIR = MAIN_PERM_DIR + "/componentversion";
 	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
-        public static final String PLUGIN_FAILED_DIR = MAIN_PERM_DIR + "/plugins/failed";
+	public static final String PLUGIN_FAILED_DIR = MAIN_PERM_DIR + "/plugins/failed";
 	public static final String DB_DIR = MAIN_DIR + "/db";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
-	
+
 	private static final int BUFFER_SIZE = 8192;
 
 	public static File getDir(String directory)
@@ -92,16 +92,6 @@ public class FileSystemManager
 	public static File getImportLookup(String configFilename, NewFileHandler newFileHandler)
 	{
 		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/", newFileHandler);
-	}
-
-	public static File getImportAttribute(String configFilename)
-	{
-		return getImportAttribute(configFilename, null);
-	}
-
-	public static File getImportAttribute(String configFilename, NewFileHandler newFileHandler)
-	{
-		return getFileDir(configFilename, IMPORT_ATTRIBUTE_DIR, "/data/attribute/");
 	}
 
 	private static File getFileDir(String configFilename, String directory, String resourceDir)
@@ -182,8 +172,8 @@ public class FileSystemManager
 		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
 		FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
-		
-		started.set(true);		
+
+		started.set(true);
 	}
 
 	public static void cleanup()

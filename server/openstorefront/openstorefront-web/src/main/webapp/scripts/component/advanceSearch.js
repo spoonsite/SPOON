@@ -1462,7 +1462,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							formBind: true,
 							text: 'Add Criteria',
 							minWidth: 175,
-							iconCls: 'fa fa-plus',
+							iconCls: 'fa fa-lg fa-plus',
 							handler: function() {
 								var saveButton = this;
 								
@@ -1532,7 +1532,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						{
 							xtype: 'button',
 							text: 'Cancel',							
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close',
 							margin: '0 0 0 20',
 							handler: function() {
 								advancePanel.resetEntryForm();
@@ -1603,7 +1603,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: 70,
 							items: [
 								{
-									iconCls: 'fa fa-edit action-icon',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit action-icon icon-small-horizontal-correction-right',
 									tooltip: 'Edit',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
@@ -1717,14 +1717,14 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									}									
 								},
 								{
-									iconCls: 'fa fa-trash action-icon',
-									tooltip: 'Remove',									
+									iconCls: 'fa fa-lg fa-trash action-icon icon-button-color-warning icon-small-horizontal-correction-right',
+									tooltip: 'Delete',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
 										
 										Ext.Msg.show({
-											title:'Remove?',
-											message: 'Remove search criteria?',
+											title:'Delete?',
+											message: 'Delete search criteria?',
 											buttons: Ext.Msg.YESNO,
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
@@ -1830,7 +1830,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){			
 											var win = this.up('window');
 											var form  = this.up('form');											
@@ -1862,7 +1862,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{
 										text: 'Cancel',
 										formBind: true,
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}										
@@ -1908,6 +1908,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			
 			var previewWin = Ext.create('Ext.window.Window', {
 				title: 'Search Results',
+				iconCls: 'fa fa-lg fa-search icon-small-vertical-correction',
 				modal: true,
 				width: '70%',
 				height: '50%',

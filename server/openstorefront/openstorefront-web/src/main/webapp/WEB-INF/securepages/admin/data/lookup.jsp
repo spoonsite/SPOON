@@ -88,8 +88,9 @@
 						items: [
 							{
 								text: 'Refresh',
-								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-refresh',
+								scale: 'medium',
+								width: '130px',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									Ext.getCmp('lookupGrid').getStore().load();
 								}
@@ -100,8 +101,9 @@
 							{
 								text: 'Edit Codes',
 								id: 'lookupGrid-tools-edit',
-								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-edit',
+								scale: 'medium',
+								width: '130px',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								disabled: true,
 								handler: function () {
 									actionEditCodes(Ext.getCmp('lookupGrid').getSelection()[0]);
@@ -146,11 +148,14 @@
 						items: [
 							{
 								text: 'Refresh',																
-								iconCls: 'fa  fa-refresh',
+								iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionLoadCodes(Ext.getCmp('editCodeFilterStatus').getValue());
 								}	
-							}, 
+							},
+							{
+								xtype: 'tbseparator'
+							},
 							{
 								xtype: 'combobox',
 								id: 'editCodeFilterStatus',
@@ -171,28 +176,28 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa  fa-plus',
+								iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionEditCodeForm(null);
 								}									
 							},
 							{
-								xtype: 'tbseparator'								
-							},
-							{
 								text: 'Edit',
 								id: 'codeGrid-tools-edit',
 								disabled: true,
-								iconCls: 'fa  fa-edit',
+								iconCls: 'fa fa-lg fa-edit icon-button-color-edit icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionEditCodeForm(Ext.getCmp('codeGrid').getSelection()[0]);
 								}								
 							},
 							{
+								xtype: 'tbseparator'								
+							},
+							{
 								text: 'Toggle Status',
 								id: 'codeGrid-tools-status',
 								disabled: true,
-								iconCls: 'fa  fa-power-off',
+								iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionToggleStatus(Ext.getCmp('codeGrid').getSelection()[0]);
 								}								
@@ -202,14 +207,14 @@
 							},
 							{
 								text: 'Import',																
-								iconCls: 'fa  fa-upload',
+								iconCls: 'fa fa-lg fa-upload icon-button-color-default icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionImport();
 								}
 							},
 							{
 								text: 'Export',																
-								iconCls: 'fa  fa-download',								
+								iconCls: 'fa fa-lg fa-download icon-button-color-default icon-small-vertical-correction-media-table',								
 								handler: function () {
 									window.location.href = "api/v1/resource/lookuptypes/" + selectedTable.get('code') + "/export";
 								}
@@ -235,7 +240,7 @@
 				width: '80%',
 				height: '70%',
 				layout: 'fit',
-				iconCls: 'fa fa-lg fa-edit',
+				iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 				items: [
 					codeGrid
 				]
@@ -251,7 +256,7 @@
 				modal: true,
 				alwaysOnTop: true,
 				layout: 'fit',
-				iconCls: 'fa fa-lg fa-edit',				
+				iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',				
 				items: [
 					{
 						xtype: 'form',
@@ -270,7 +275,7 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function() {
 											var method = edit ? 'PUT' : 'POST'; 
 											var url = edit ? 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : 'api/v1/resource/lookuptypes/' + selectedTable.get('code');       
@@ -296,7 +301,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function() {
 											Ext.getCmp('editCodeFormWin').hide();
 										}
@@ -350,12 +355,12 @@
 			var importWin = Ext.create('Ext.window.Window', {
 				title: 'Import',
 				width: '40%',
-				height: 175,
+				height: 200,
 				closeAction: 'hide',
 				modal: true,
 				layout: 'fit',
 				alwaysOnTop: true,
-				iconCls: 'fa fa-lg fa-upload',				
+				iconCls: 'fa fa-lg fa-upload icon-button-color-default',				
 				y: 100,
 				items: [
 					{
@@ -373,7 +378,7 @@
 								items: [
 									{
 										text: 'Upload',
-										iconCls: 'fa fa-upload',
+										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
 										handler: function(){
 											Ext.getCmp('uploadForm').submit({
@@ -418,7 +423,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-upload',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											importWin.hide();
 										}																				

@@ -23,12 +23,17 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
 		extends BaseComponent<ComponentMedia>
+		implements LoggableModel<ComponentMedia>
 {
 
 	@PK(generated = true)
@@ -95,15 +101,15 @@ public class ComponentMedia
 	public String uniqueKey()
 	{
 		String key = getMediaTypeCode()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getCaption()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getHideInDisplay()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getUsedInline()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
 		return key;
 	}
@@ -117,9 +123,10 @@ public class ComponentMedia
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
-		super.updateFields(entity);
-
 		ComponentMedia media = (ComponentMedia) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, media);
+
+		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(media.getLink())) {
 			this.setFileName(null);
@@ -146,7 +153,7 @@ public class ComponentMedia
 
 	/**
 	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use variable directly
+	 * don't use fields directly
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
@@ -158,6 +165,22 @@ public class ComponentMedia
 			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
 		}
 		return path;
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentMedia updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentMediaId");
+		excludeFields.add("fileName");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getLink() != null ? getLink() : getOriginalName());
 	}
 
 	public String getComponentMediaId()

@@ -39,6 +39,7 @@
 		
 	<form id="printForm" action="Router.action?Echo&print=true"  method="POST">		
 		<input type="hidden" name="content" id="printContent" />
+		<input type="hidden" name="X-Csrf-Token" id="xtoken" />
 	</form>
 	
 	<script type="text/javascript">
@@ -75,6 +76,14 @@
 									if (Ext.isIE) {
 										var printForm = Ext.getDom('printForm');
 										var printContent = Ext.getDom('printContent');
+										var xtoken = Ext.getDom('xtoken');
+										
+										var token = Ext.util.Cookies.get('X-Csrf-Token');						
+										if (!token) {
+											token ='';							
+										}	
+										xtoken.value = token;
+										
 										var completeHtml = '<!DOCTYPE html> ' + html;
 										
 										printContent.value = completeHtml;										
@@ -113,8 +122,7 @@
 				]
 			});
 
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText

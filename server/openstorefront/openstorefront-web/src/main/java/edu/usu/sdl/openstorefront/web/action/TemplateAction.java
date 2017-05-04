@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
-import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -75,6 +74,5 @@ public class TemplateAction
 	{
 		this.templateContents = templateContents;
 	}
-	
-	
+
 }

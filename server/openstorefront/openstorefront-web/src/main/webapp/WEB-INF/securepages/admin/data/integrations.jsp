@@ -126,7 +126,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									componentConfigStore.load();
 									componentConfigGrid.getSelectionModel().deselectAll();
@@ -139,9 +139,21 @@
 								text: 'Add New Configuration',
 								id: 'componentConfigGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
 									actionAddNewConfiguration();
+								}
+							},
+							{
+								text: 'Edit',
+								id: 'componentConfigGrid-tools-edit',
+								scale: 'medium',
+								width: '100px',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+								disabled: true,
+								handler: function () {
+									var record = componentConfigGrid.getSelection()[0];
+									actionEditIntegration(record);
 								}
 							},
 							{
@@ -151,7 +163,7 @@
 								text: 'Run Job',
 								id: 'componentConfigGrid-tools-run',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-bolt',
+								iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 								disabled: true,
 								handler: function () {
 //									
@@ -159,21 +171,10 @@
 								}
 							},
 							{
-								text: 'Edit',
-								id: 'componentConfigGrid-tools-edit',
-								scale: 'medium',
-								iconCls: 'fa fa-2x fa-edit',
-								disabled: true,
-								handler: function () {
-									var record = componentConfigGrid.getSelection()[0];
-									actionEditIntegration(record);
-								}
-							},
-							{
 								text: 'Toggle Status',
 								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-power-off',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								disabled: true,
 								handler: function () {
 									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
@@ -187,40 +188,45 @@
 								}
 							},
 							{
-								text: 'Delete',
-								id: 'componentConfigGrid-tools-delete',
-								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash',
-								disabled: true,
-								handler: function () {
-									var title = 'Delete Configuration';
-									
-									var ending = componentConfigGrid.getSelection().length > 1 ? "s" : "";
-									
-									var msg = 'Are you sure you want to delete ' + componentConfigGrid.getSelection().length + ' configuration' + ending + '?';
-									
-									Ext.MessageBox.confirm(title, msg, function (btn) {
-										if (btn === 'yes') {
-											actionDeleteIntegration();
-										}
-									});
-								}
-							},
-							{
 								xtype: 'tbfill'
 							},
 							{
 								text: 'Run All Jobs',
 								id: 'componentConfigGrid-tools-runAll',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-bolt',
+								iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 								tooltip: 'Run all jobs with an active component configuration.',
 								handler: function () {
 									actionRunAllJobs();
 								}
-							}
-
-
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Delete',
+								id: 'componentConfigGrid-tools-delete',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning icon-vertical-correction',
+								disabled: true,
+								handler: function () {
+									var ending = componentConfigGrid.getSelection().length > 1 ? "s" : "";
+									var msg = 'Are you sure you want to delete ' + componentConfigGrid.getSelection().length + ' configuration' + ending + '?';
+									Ext.Msg.show({
+										title: 'Delete Configuration?',
+										iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+										message: msg,
+										closeAction: 'destroy',
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+										fn: function(btn) {
+												if (btn === 'yes') {
+													actionDeleteIntegration();
+											} 
+										}
+									});
+								}
+							}							
 						]
 					}
 				]
@@ -228,7 +234,8 @@
 
 			var entryPickWindow = Ext.create('Ext.window.Window' , {
 				id: 'entryPickWindow',
-				title: 'Choose Entry',
+				title: 'Add New Configuration',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 				modal: true,
 				width: '40%',
 				y: '10em',
@@ -241,11 +248,9 @@
 						width: '100%',
 						items: [
 							{
-								xtype: 'label',
-								text: 'Choose an entry for integration configuration:'
-							},
-							{
 								xtype: 'combobox',
+								fieldLabel: 'Choose an entry for integration configuration',
+								labelAlign: 'top',
 								displayField: 'description',
 								valueField: 'code',
 								width: '100%',
@@ -347,7 +352,7 @@
 			var actionEditIntegration = function actionEditIntegration(record) {
 				integrationWindow.show();
 				integrationWindow.loadConfigs(record.getData().componentId);
-				integrationWindow.setTitle('Integration: ' + record.getData().componentName);
+				integrationWindow.setTitle('Edit Integration: ' + record.getData().componentName);
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
@@ -464,7 +469,7 @@
 
 			var addEditMappingWin = Ext.create('Ext.window.Window', {
 				id: 'addEditMappingWin',
-				iconCls: 'fa fa-lg fa-edit',
+				iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 				title: 'Add/Edit Mapping',
 				modal: true,
 				width: '60%',
@@ -674,6 +679,7 @@
 													{ xtype: 'tbfill' },
 													{
 														text: 'Reset',
+														iconCls: 'fa fa-lg fa-undo icon-button-color-refresh',
 														handler: function() {
 															var jfs = Ext.getCmp('jiraFieldSelection');
 															var ats = Ext.getCmp('attributeTypeSelection');
@@ -705,6 +711,7 @@
 						items: [
 							{
 								text: 'Save',
+								iconCls: 'fa fa-lg fa-save icon-button-color-save',
 								handler: function() {
 									var fields = Ext.getCmp('fieldAssignmentForm').getForm().getValues();
 									var form = Ext.getCmp('addEditMappingForm').getForm().getValues();
@@ -752,6 +759,7 @@
 							},
 							{
 								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								id: 'cancelAddWindow',
 								handler: function() {
 									Ext.getCmp('addEditMappingForm').reset();
@@ -816,7 +824,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									jiraConfigStore.load();
 									jiraConfigGrid.getSelectionModel().deselectAll();
@@ -829,7 +837,7 @@
 								text: 'Add New Mapping',
 								id: 'jiraConfigGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
 									actionAddMapping();
 								}
@@ -838,7 +846,8 @@
 								text: 'Edit',
 								id: 'jiraConfigGrid-tools-edit',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-edit',
+								width: '100px',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								disabled: true,
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];
@@ -846,10 +855,13 @@
 								}
 							},
 							{
+								xtype: 'tbfill'
+							},
+							{
 								text: 'Delete',
 								id: 'jiraConfigGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning',
 								disabled: true,
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];

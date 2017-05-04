@@ -145,6 +145,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'firstName',
 					name: 'firstName',
 					fieldLabel: 'First Name <span class="field-required" />',
 					labelSeparator: '',
@@ -154,6 +155,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'lastName',
 					name: 'lastName',
 					fieldLabel: 'Last Name <span class="field-required" />',
 					labelSeparator: '',
@@ -163,6 +165,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'email',
 					name: 'email',
 					inputType: 'email',						
 					fieldLabel: 'Email <span class="field-required" />',
@@ -173,6 +176,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},				
 				{
 					xtype: 'textfield',
+					itemId: 'phone',
 					name: 'phone',
 					fieldLabel: 'Phone <span class="field-required" />',
 					labelSeparator: '',
@@ -181,6 +185,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					maxLength: 80
 				},
 				Ext.create('OSF.component.StandardComboBox', {
+					itemId: 'organization',
 					name: 'organization',
 					allowBlank: false,
 					margin: '0 0 5 0',
@@ -193,6 +198,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 						url: 'api/v1/resource/organizations/lookup'
 					}
 				}),	
+				{
+					xtype: 'panel',
+					itemId: 'externalManagementMessage',
+					html: ''					
+				},
 				{
 					xtype: 'panel',					
 					frame: true,
@@ -552,6 +562,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {			
+					width: '100%'
+				}),				
+				Ext.create('OSF.component.DataSourceComboBox', {			
+					name: 'dataSource',
+					hideOnNoData: true,
+					width: '100%'
 				}),				
 				{
 					xtype: 'panel',
@@ -593,13 +611,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Attribute',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>',
 				width: '50%',
-				height: 200,
+//				height: '300px',
+				minHeight: 200,
+				maxHeight: 300,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'attributeForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -625,7 +646,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 									sorters: [
 										{
 											property: 'description',
-											direction: 'ASC'
+											direction: 'ASC',
+											transform: function(item) {
+												if (item) {
+													item = item.toLowerCase();
+												}
+												return item;
+											}
 										}
 									],
 									fields: [
@@ -701,7 +728,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 									sorters: [
 										{
 											property: 'label',
-											direction: 'ASC'
+											direction: 'ASC',
+											transform: function(item) {
+												if (item) {
+													item = item.toLowerCase();
+												}
+												return item;
+											}
 										}
 									],
 									fields: [
@@ -720,7 +753,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										text: 'Save',
 										itemId: 'saveButton',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function () {
 											var attributeWindow = this.up('window');
 											var form = this.up('form');
@@ -836,7 +869,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											this.up('window').close();
 										}
@@ -858,14 +891,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var addWindow = Ext.create('Ext.window.Window', {
 				closeAction: 'destory',
 				modal: true,
-				title: 'Add Contact',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 350,
+				maxHeight: 600,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'contactForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -989,6 +1023,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -999,7 +1036,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var form = this.up('form');
 											var formWindow = this.up('window');
@@ -1032,7 +1069,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1054,13 +1091,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add External Link',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add External Link</span>',
 				width: '50%',
-				height: 410,
+				maxHeight: 600,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'resourceForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1154,7 +1192,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
-							})							
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
+							})
 						],
 						dockedItems: [
 							{
@@ -1164,7 +1205,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var resourceWindow = this.up('window');
 											var form = this.up('form');
@@ -1245,7 +1286,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1267,10 +1308,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Media',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Media</span>',
 				width: '50%',
-				height: 500,
-				minHeight: 500,
+				maxHeight: 700,
 				layout: 'fit',
 				items: [
 					{
@@ -1375,6 +1415,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -1385,7 +1428,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var mediaWindow = this.up('window');
 											var form = this.up('form');
@@ -1467,7 +1510,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1491,13 +1534,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destory',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Dependency',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Dependency</span>',
 				width: '50%',
-				height: 420,
+				height: 470,
 				layout: 'fit',				
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'depForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1540,7 +1584,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
-							})
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
+							})							
 						],
 						dockedItems: [
 							{
@@ -1550,7 +1597,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var depWindow = this.up('window');
 											var form = this.up('form');
@@ -1583,7 +1630,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1605,13 +1652,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
-				title: 'Add Metadata',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Metadata</span>',
 				width: '50%',
-				height: 300,
+				height: 350,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'metaForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1673,6 +1721,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
 								hidden: submissionPanel.hideSecurityMarkings
+							}),
+							Ext.create('OSF.component.DataSensitivityComboBox', {			
+								width: '100%'
 							})							
 						],
 						dockedItems: [
@@ -1683,7 +1734,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var metaWindow = this.up('window');
 											var form = this.up('form');
@@ -1717,7 +1768,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1739,14 +1790,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var addWindow = Ext.create('Ext.window.Window', {
 				closeAction: 'destory',
 				modal: true,
-				title: 'Add Relationship',
+				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Relationship</span>',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 300,
+				minHeight: 300,
+				maxHeight: 450,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						itemId: 'relationshipForm',
 						bodyStyle: 'padding: 10px;',
 						defaults: {
@@ -1825,7 +1878,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											var relationShipWindow = this.up('window');
 											var form = this.up('form');
@@ -1858,7 +1911,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									},
 									{
 										text: 'Cancel',										
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1939,7 +1992,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												addEditAttribute();
 											}
@@ -1947,7 +2000,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){												
 												var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -1958,9 +2011,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											disabled: true,
 											handler: function(){
 												actionSubComponentRemove({
@@ -2031,7 +2084,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditContact(null, grid);
@@ -2040,7 +2093,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2052,10 +2105,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2121,7 +2174,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditResource(null, grid);
@@ -2130,7 +2183,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2142,10 +2195,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2210,7 +2263,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditMedia(null, grid);
@@ -2220,7 +2273,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Edit',
 											itemId: 'editBtn',
 											disabled: true,
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-pencil-square-o icon-button-color-edit',
 											handler: function(){
 												var grid = this.up('grid');
 												var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -2231,10 +2284,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												var record = this.up('grid').getSelection()[0];
 												var neededGrid = this.up('grid');
@@ -2316,7 +2369,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditDependency(null, grid);
@@ -2325,7 +2378,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2337,10 +2390,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2402,7 +2455,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												addEditMetadata(null, grid);
@@ -2411,7 +2464,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){
 												var grid = this.up('grid');
@@ -2423,10 +2476,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2491,7 +2544,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');												
 												addEditRelationship(null, grid);
@@ -2501,7 +2554,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 											disabled: true,
 											handler: function(){	
 												var grid = this.up('grid');	
@@ -2513,10 +2566,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2575,7 +2628,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									items: [
 										{
 											text: 'Add',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function(){
 												var grid = this.up('grid');
 												
@@ -2602,13 +2655,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 													closeAction: 'destory',
 													modal: true,
 													alwaysOnTop: true,
-													title: 'Add Tag',
+													title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Tag</span>',
 													width: '40%',
-													height: 200,
+													minHeight: 200,
+													maxHeight: 450,
 													layout: 'fit',
 													items: [
 														{
 															xtype: 'form',
+															scrollable: true,
 															bodyStyle: 'padding: 10px',
 															defaults: {
 																labelAlign: 'top'
@@ -2641,7 +2696,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		{
 																			text: 'Add',
 																			formBind: true,
-																			iconCls: 'fa fa-plus',
+																			iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 																			handler: function(){																				
 																				addTag(this.up('window'));
 																			}
@@ -2651,7 +2706,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		},
 																		{
 																			text: 'Cancel',										
-																			iconCls: 'fa fa-close',
+																			iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 																			handler: function(){
 																				this.up('window').close();
 																			}
@@ -2668,10 +2723,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
@@ -2762,7 +2817,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'Previous',
 							disabled: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-left icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-left icon-button-color-default icon-top-padding-2',
 							handler: function () {
 								submissionPanel.currentStep--;
 								submissionPanel.changeSteps();
@@ -2776,7 +2831,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveAndExit',
 							hidden: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-save icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-top-padding-2',
 							handler: function () {
 																
 																
@@ -2787,7 +2842,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'Submit',
 							hidden: true,
 							scale: 'large',							
-							iconCls: 'fa fa-2x fa-check icon-top-padding-2 highlight-success',														
+							iconCls: 'fa fa-2x fa-check icon-top-padding-2 icon-button-color-refresh',														
 							handler: function () {
 								
 								submissionPanel.setLoading('Submitting Entry...');
@@ -2832,7 +2887,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveLater',
 							scale: 'large',
 							hidden: true,
-							iconCls: 'fa fa-2x fa-save icon-top-padding-2',							
+							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-top-padding-2',							
 							handler: function () {					
 								var promptForSave = false;
 								submissionPanel.cancelSubmissionHandler(promptForSave);																								
@@ -2845,7 +2900,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Next',
 							itemId: 'Next',
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-right icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default icon-top-padding-2',
 							iconAlign: 'right',
 							handler: function () {
 								submissionPanel.currentStep++;
@@ -2858,8 +2913,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		});
 		
 		//Query Branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 			if (branding.userInputWarning) {
 				submissionPanel.mainPanel.getComponent('userInputWarning').update('<div class="alert-warning" style="text-align: center">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -2885,152 +2939,316 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		
 		submissionPanel.currentStep = 1;
-		submissionPanel.changeSteps = function(forceProceed) {						
+		submissionPanel.changeSteps = function(forceProceed) {	
+			
+			// Get Tools
 			var tools = submissionPanel.mainPanel.getComponent('tools');
 					
-			//confirm pervious steps validation and saving
+			// Initialize Proceed Flag
 			var proceed = false;
-			if (forceProceed) {				
+			
+			// Check If Proceeding Is Forced
+			if (forceProceed) {
+				
+				// Proceed
 				proceed = true;
-			} else {
+			}
+			else {
+				
+				// Check Current Step
 				if (submissionPanel.currentStep === 2) {
-				//vaildation contact info
-				if (submissionPanel.submitterForm.isValid()) {
-					proceed = true;
-				} else {
-					Ext.Msg.show({
-						title: 'Validation',
-						message: 'All required fields must be filled in with valid values.  (See Step 1)',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {
-						}
-					});
-					submissionPanel.currentStep=1;
-				}
-				
-			} else if (submissionPanel.currentStep === 3) {
-				
-				if (!submissionPanel.requiredForm.isValid()) {
-					Ext.Msg.show({
-						title: 'Validation',
-						message: 'All required fields must be filled in with valid values.  (See Step 2)',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {
-						}
-					});	
-					var form = submissionPanel.requiredForm;
-					var data = form.getValues();
 					
-					if (!data.description) {
-						form.getForm().markInvalid({
-								description: 'Required'
-						});
+					// Validate Step 1
+					if (submissionPanel.submitterForm.isValid()) {
+						
+						// Proceed
+						proceed = true;
 					}
+					else {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 1)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});
+						
+						// Return To Step 1
+						submissionPanel.currentStep = 1;
+					}
+				}
+				else if (submissionPanel.currentStep === 3) {
+
+					// Validate Step 2
+					if (!submissionPanel.requiredForm.isValid()) {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 2)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});	
+						
+						// Get Form
+						var form = submissionPanel.requiredForm;
+						
+						// Get Form Data
+						var data = form.getValues();
+						
+						// Ensure Description Is Filled In
+						if (!data.description) {
+							
+							// Mark Field As Invalid
+							form.getForm().markInvalid({
+								
+								description: 'Required'
+							});
+						}
+
+						// Return To Step 2
+						submissionPanel.currentStep = 2;
+					}
+					else {
+
+//						// Return To Step 2
+//						submissionPanel.currentStep = 2;
+						
+						// Save Data From Step 2
+						submissionPanel.handleRequiredFormSave(function(){																	
+							submissionPanel.currentStep = 3;
+							submissionPanel.changeSteps(3);		
+						});
+						
+						// Proceed
+						proceed = false;
+						submissionPanel.currentStep = 2;						
+					}
+				}
+				else if (submissionPanel.currentStep === 4) {
+
+					// Validate Step 1
+					if (submissionPanel.submitterForm.isValid()) {
+
+						// Validate Step 2
+						if (!submissionPanel.requiredForm.isValid()) {
+							
+							// Provide Error Feedback
+							Ext.Msg.show({
+								
+								title: 'Validation',
+								message: 'All required fields must be filled in with valid values.  (See Step 2)',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) { }
+							});
+							
+							// Get Form
+							var form = submissionPanel.requiredForm;
+							
+							// Get Form Data
+							var data = form.getValues();
+
+							// Ensure Description Is Filled In
+							if (!data.description) {
+								
+								// Mark Field As Invalid
+								form.getForm().markInvalid({
+									
+									description: 'Required'
+								});
+							}
+
+							// Return To Step 2
+							submissionPanel.currentStep = 2;
+						} else {
+							
+							// Save Data From Step 2
+							submissionPanel.handleRequiredFormSave(function(){
+								// Get Panel
+								var reviewEntryPanel = submissionPanel.reviewPanel.getComponent('reviewEntryPanel');
+
+								// Mask Panel
+								reviewEntryPanel.setLoading('Loading preview...');
+
+								// Request From Server
+								Ext.Ajax.request({
+
+									url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
+									callback: function(){
+
+										// Remove Panel Mask
+										reviewEntryPanel.setLoading(false);
+									},
+									success: function(response, opts){
+
+										// Get Response Data
+										var data = Ext.decode(response.responseText);
+
+										// Initialize Empty Attribute Array
+										var attributesToShow = [];
+
+										// Loop Through Attributes
+										Ext.Array.each(data.attributes, function(item) {
+
+											// Check If Attribute Should Be Shown
+											if (!item.hideOnSubmission) {
+
+												// Add Shown Attribute To Array
+												attributesToShow.push(item);
+											}
+										});
+
+										// Remove Hidden Attributes
+										data.attributes = attributesToShow;	
+
+										// Process Complete Record Data
+										data = CoreUtil.processEntry(data);
+
+										// Display Complete Record Data
+										reviewEntryPanel.update(data);
+								
+									}
+								});
+														
+							});
+							
+							// Proceed
+							proceed = true;							
+						}
+					} else {
+						
+						// Provide Error Feedback
+						Ext.Msg.show({
+							
+							title: 'Validation',
+							message: 'All required fields must be filled in with valid values.  (See Step 1)',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) { }
+						});
+						
+						// Return To Step 1
+						submissionPanel.currentStep = 1;
+					}
+				}
+				else {
 					
-					submissionPanel.currentStep=2;
-				} else {
-					
-					submissionPanel.currentStep=2;					
-					submissionPanel.handleRequiredFormSave();
-				}				
-			} else {
+					// Proceed
 					proceed = true;
 				}
 			}
-				
+			
+			// Check If User Can Proceed
 			if (proceed) {
+				
+				// Get Tools
 				tools.getComponent('Submit').setHidden(true);
 
+				// Check If Form Is In Edit Mode
 				if (submissionPanel.editMode) {
+					
+					// Enable All Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
-				} else {
+				}
+				else {
+					
+					// Enable One Button
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(true);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(true);
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);					
 				}
 
+				// Clear Button Styling
 				submissionPanel.navigation.getComponent('step1Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step2Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step3Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step4Btn').setIconCls('');
 
-				//if  already save or editing show "Save and Exit"
-
+				// Hide Save Buttons
 				tools.getComponent('SaveAndExit').setHidden(true);
 				tools.getComponent('SaveLater').setHidden(true);
 
-				if (submissionPanel.currentStep === 1) {			
+				// Check Current Step
+				if (submissionPanel.currentStep === 1) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(true);
 					tools.getComponent('Next').setDisabled(false);				
 
-					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.submitterForm);				
-
-				} else if (submissionPanel.currentStep === 2) {
+					// Activate Form
+					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.submitterForm);
+				}
+				else if (submissionPanel.currentStep === 2) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(false);	
+					
+					// Indicate Step 1 Complete
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
+					
+					// Prohibit Reloading Same Step
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 
-
+					// Activate Required Panel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.requiredForm);
-					Ext.defer(function(){
-						submissionPanel.mainPanel.updateLayout(true, true);
-					}, 200);					
 					
+					// Pause Briefly
+					Ext.defer(function() {
+						
+						// Update Panel
+						submissionPanel.mainPanel.updateLayout(true, true);
+					}
+					, 200);					
+					
+					// Display Save Later Button
 					tools.getComponent('SaveLater').setHidden(false);
 					
-				} else if (submissionPanel.currentStep === 3) {
+				}
+				else if (submissionPanel.currentStep === 3) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(false);
 
+					// Set Button Styling & Enable Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
 
-
+					// Enable Save Later Button
 					tools.getComponent('SaveLater').setHidden(false);
 					
+					// Activate Details Panel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.detailsPanel);
+					
+					// Update Panel
 					submissionPanel.detailsPanel.updateLayout(true, true);
-
-				} else if (submissionPanel.currentStep === 4) {
+				}
+				else if (submissionPanel.currentStep === 4) {
+					
+					// Handle Next/Previous Buttons
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(true);
 
+					// Enable Save Later & Submit Buttons
 					tools.getComponent('SaveLater').setHidden(false);
 					tools.getComponent('Submit').setHidden(false);
 					
-					var reviewEntryPanel = submissionPanel.reviewPanel.getComponent('reviewEntryPanel');
-					reviewEntryPanel.setLoading('Loading preview...');
-					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + submissionPanel.componentId + '/detail',
-						callback: function(){
-							reviewEntryPanel.setLoading(false);
-						},
-						success: function(response, opts){
-							var data = Ext.decode(response.responseText);
-							
-							//remove attribute that should be hidden
-							var attributesToShow = [];
-							Ext.Array.each(data.attributes, function(item){
-								if (!item.hideOnSubmission) {
-									attributesToShow.push(item);
-								}
-							});
-							data.attributes = attributesToShow;	
-							data = CoreUtil.processEntry(data);
-							reviewEntryPanel.update(data);
-						}
-					});
-					
 
+					
+					// Set Button Styles & Enable Buttons
 					submissionPanel.navigation.getComponent('step1Btn').setIconCls('fa fa-check');
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setIconCls('fa fa-check');
@@ -3038,230 +3256,250 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.navigation.getComponent('step3Btn').setIconCls('fa fa-check');				
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
 
+					// Activate Review PAnel
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.reviewPanel);
 				}				
 			}
 		};	
 		
-		submissionPanel.handleRequiredFormSave = function(successCallback){
-			var form = submissionPanel.requiredForm;
-			var data = form.getValues();
-			var componentId = '';
-			var method = 'POST';
-			var update = '';
-
-			data.approvalState = 'N';
-
-			if (submissionPanel.componentId){
-				componentId = submissionPanel.componentId;											
-				update = '/' + componentId;
-				method = 'PUT';					
-			}												
-
-			var requireComponent = {
-				component: data,
-				attributes: []
-			};
-
-			submissionPanel.requiredAttributeStore.each(function(record){
-
-				requireComponent.attributes.push({
-					componentAttributePk: {
-						attributeType: record.get('attributeType'),
-						attributeCode: record.get('attributeCode')
-					}
-				});
-			});
-
-			if (!data.description) {
-				form.getForm().markInvalid({
-					description: 'Required'
-				});
-			} else {
-				//make sure required 
-				var validAttributes=true;
-				Ext.Array.each(requireComponent.attributes, function(attribute){
-					if (!attribute.componentAttributePk.attributeCode){
-						validAttributes = false;
-					}
-				});
-
-				if (!validAttributes) {
-
-					submissionPanel.requiredAttributeStore.each(function(record){
-						if (!record.get('attributeCode')) {
-							record.formField.markInvalid('Required');
-						}
-					});							
-
-					Ext.Msg.show({
-						title:'Validation Check',
-						message: 'Missing Required Attributes',
-						buttons: Ext.Msg.OK,
-						icon: Ext.Msg.ERROR,
-						fn: function(btn) {													 
-						}
-					});
-
-				} else {	
-					
-					var handleMainFormSave = function() {
-						CoreUtil.removeBlankDataItem(requireComponent.component);												
-						CoreUtil.submitForm({
-						url: 'api/v1/resource/components' + update,
-						method: method,
-						data: requireComponent,
-						loadingText: 'Saving Entry...',
-						removeBlankDataItems: true,
-						form: form,
-						success: function(response, opt){
-							Ext.toast('Successfully Saved Record', '', 'tr');
-
-							var data = Ext.decode(response.responseText);
-							if (data.componentId) {
-								submissionPanel.componentId = data.componentId;
-							} else {
-								submissionPanel.componentId = data.component.componentId;
-							}
-
-							//save profile updates
-							submissionPanel.setLoading('Updating Profile...');								
-							var userProfile = Ext.apply(submissionPanel.usercontext, submissionPanel.submitterForm.getValues());
-							userProfile.externalGuid = userProfile.guid;
-
-							Ext.Ajax.request({
-								url: 'api/v1/resource/userprofiles/' + userProfile.username,
-								method: 'PUT',
-								jsonData: userProfile,
-								callback: function() {
-									submissionPanel.setLoading(false);
-								},
-								success: function (response, opts) {
-									Ext.toast('Updated User Profile', '', 'tr');
-
-									//save submitter (if it exist than update)										
-									submissionPanel.setLoading('Updating Submitter...');
-
-									//check for submitter
-									var contactStore = submissionPanel.detailsPanel.getComponent('detailSections').getComponent('contactGrid').getStore();
-									var submitterRecord = contactStore.findRecord('contactType', 'SUB');
-									var contactData = {
-										contactType: 'SUB',
-										firstName: userProfile.firstName,
-										lastName: userProfile.lastName,
-										email: userProfile.email,
-										phone: userProfile.phone,
-										organization: userProfile.organization												
-									};
-									var submitterData = null;
-									if (submitterRecord) {
-										submitterData = submitterRecord.getData();
-										contactData = Ext.apply(submitterData, contactData);
-									} 
-
-									var contactMethod = 'POST';
-									var update = '';
-									if (submitterData) {
-										update = '/' + submitterData.componentContactId;
-										contactMethod = 'PUT';
-									}
-
-									if (contactData.type){
-										delete contactData.type;
-									}
-
-									Ext.Ajax.request({
-										url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts' + update,
-										method:  contactMethod,
-										jsonData: contactData,
-										callback: function(){
-											submissionPanel.setLoading(false);
-										},
-										success: function(response, opts) {
-											if (successCallback) {
-												successCallback(response, opts);
-											} else {
-												submissionPanel.currentStep=3;	
-												submissionPanel.changeSteps(true);
-												contactStore.load({
-													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'		
-												});
-											}
-										}												
-									});																						
-
-								}
-							});								
-						},
-						failure: function(response, opt){
-						}
-					});
-					};
-					
-					var saveUserCodes = false;
-					var userCodesToSave = [];
-					submissionPanel.requiredAttributeStore.each(function(record) {
-						if (record.get('allowUserGeneratedCodes')) {
-							saveUserCodes = true;
-							
-							var currentCode = record.formField.getSelection();
-							var codeLabel;
-							if (currentCode) {
-								codeLabel = currentCode.get('label');
-							} else {
-								codeLabel = record.formField.getValue();
-							}
-							userCodesToSave.push({
-								attributeCodeLabel: codeLabel,
-								attributeType: record.get('attributeType')
-							});														
-						}
-					});
-					
-					if (saveUserCodes) {										
-						var newAttributes = {
-							userAttributes: userCodesToSave
-						};	
-						form.setLoading('Saving New Attributes...');
-						Ext.Ajax.request({
-							url: 'api/v1/resource/attributes/attributetypes/usercodes',
-							method: 'POST',
-							jsonData: newAttributes,
-							callback: function() {
-								form.setLoading(false);
-							},
-							success: function(response, opts) {	
-								
-								//update the codes
-								var savedAttributes = Ext.decode(response.responseText);
-								Ext.Array.each(requireComponent.attributes, function(attribute){
-									Ext.Array.each(savedAttributes, function(newAttributes) {
-										if (attribute.componentAttributePk.attributeType === newAttributes.attributeCodePk.attributeType &&
-											attribute.componentAttributePk.attributeCode === newAttributes.label) {
-											attribute.componentAttributePk.attributeCode = newAttributes.attributeCodePk.attributeCode;									
-										}
-									});									
-								});
-																
-								handleMainFormSave();
-								loadAllAttributes();
-							},
-							failure: function(response, opts) {
-								Ext.MessageBox.show({
-									title:'Failed to Save',
-									message: 'Failed adding the new attribute code. Try again or use an existing attribute code.',
-									buttons: Ext.Msg.OK,
-									icon: Ext.Msg.ERROR										
-								});
-							}
-						});						
-					} else {
-						handleMainFormSave();
-					}
-				}
-			}				
-		};
+		submissionPanel.saveReady = true;
+		submissionPanel.saveRequiredFormTask = new Ext.util.DelayedTask();
 		
+		submissionPanel.handleRequiredFormSave = function(successCallback){
+			submissionPanel.saveRequiredFormTask.delay(500, function(){
+				if (!submissionPanel.saveReady) {
+					return;
+				}
+
+				var form = submissionPanel.requiredForm;
+				var data = form.getValues();
+				var componentId = '';
+				var method = 'POST';
+				var update = '';
+
+				data.approvalState = 'N';
+
+				if (submissionPanel.componentId){
+					componentId = submissionPanel.componentId;											
+					update = '/' + componentId;
+					method = 'PUT';					
+				}												
+
+				var requireComponent = {
+					component: data,
+					attributes: []
+				};
+
+				submissionPanel.requiredAttributeStore.each(function(record){
+
+					requireComponent.attributes.push({
+						componentAttributePk: {
+							attributeType: record.get('attributeType'),
+							attributeCode: record.get('attributeCode')
+						}
+					});
+				});
+
+				if (!data.description) {
+					form.getForm().markInvalid({
+						description: 'Required'
+					});
+				} 
+				else {
+					//make sure required 
+					var validAttributes=true;
+					Ext.Array.each(requireComponent.attributes, function(attribute){
+						if (!attribute.componentAttributePk.attributeCode){
+							validAttributes = false;
+						}
+					});
+
+					if (!validAttributes) {
+
+						submissionPanel.requiredAttributeStore.each(function(record){
+							if (!record.get('attributeCode')) {
+								record.formField.markInvalid('Required');
+							}
+						});							
+
+						Ext.Msg.show({
+							title:'Validation Check',
+							message: 'Missing Required Attributes',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) {													 
+							}
+						});
+
+					} else {	
+						submissionPanel.saveReady = false;
+
+						var handleMainFormSave = function() {
+							CoreUtil.removeBlankDataItem(requireComponent.component);												
+							CoreUtil.submitForm({
+							url: 'api/v1/resource/components' + update,
+							method: method,
+							data: requireComponent,
+							loadingText: 'Saving Entry...',
+							removeBlankDataItems: true,
+							form: form,
+							success: function(response, opt){
+								Ext.toast('Successfully Saved Record', '', 'tr');
+
+								var data = Ext.decode(response.responseText);
+								if (data.componentId) {
+									submissionPanel.componentId = data.componentId;
+								} else {
+									submissionPanel.componentId = data.component.componentId;
+								}
+
+								//save profile updates
+								submissionPanel.setLoading('Updating Profile...');								
+								var userProfile = Ext.apply(submissionPanel.usercontext, submissionPanel.submitterForm.getValues());
+								userProfile.externalGuid = userProfile.guid;
+
+								Ext.Ajax.request({
+									url: 'api/v1/resource/userprofiles/' + userProfile.username,
+									method: 'PUT',
+									jsonData: userProfile,
+									callback: function() {
+										submissionPanel.setLoading(false);
+									},
+									success: function (response, opts) {
+										Ext.toast('Updated User Profile', '', 'tr');
+
+										//save submitter (if it exist than update)										
+										submissionPanel.setLoading('Updating Submitter...');
+
+										//check for submitter
+										var contactStore = submissionPanel.detailsPanel.getComponent('detailSections').getComponent('contactGrid').getStore();
+										var submitterRecord = contactStore.findRecord('contactType', 'SUB');
+										var contactData = {
+											contactType: 'SUB',
+											firstName: userProfile.firstName,
+											lastName: userProfile.lastName,
+											email: userProfile.email,
+											phone: userProfile.phone,
+											organization: userProfile.organization												
+										};
+										var submitterData = null;
+										if (submitterRecord) {
+											submitterData = submitterRecord.getData();
+											contactData = Ext.apply(submitterData, contactData);
+										} 
+
+										var contactMethod = 'POST';
+										var update = '';
+										if (submitterData) {
+											update = '/' + submitterData.componentContactId;
+											contactMethod = 'PUT';
+										}
+
+										if (contactData.type){
+											delete contactData.type;
+										}
+
+										Ext.Ajax.request({
+											url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts' + update,
+											method:  contactMethod,
+											jsonData: contactData,
+											callback: function(){
+												submissionPanel.setLoading(false);
+											},
+											success: function(response, opts) {
+												contactStore.load({
+													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view',
+													callback: function() {
+														submissionPanel.saveReady = true;
+														if (successCallback) {
+															successCallback(response, opts);
+														}	
+													}
+												});
+
+											}												
+										});																						
+
+									},
+									failure: function() {
+										submissionPanel.saveReady = true;
+									}
+								});								
+							},
+							failure: function(response, opt){
+								submissionPanel.saveReady = true;
+								submissionPanel.currentStep = 2;
+								submissionPanel.changeSteps(2);
+							}
+							});
+						};
+
+						var saveUserCodes = false;
+						var userCodesToSave = [];
+						submissionPanel.requiredAttributeStore.each(function(record) {
+							if (record.get('allowUserGeneratedCodes')) {
+								saveUserCodes = true;
+
+								var currentCode = record.formField.getSelection();
+								var codeLabel;
+								if (currentCode) {
+									codeLabel = currentCode.get('label');
+								} else {
+									codeLabel = record.formField.getValue();
+								}
+								userCodesToSave.push({
+									attributeCodeLabel: codeLabel,
+									attributeType: record.get('attributeType')
+								});														
+							}
+						});
+
+						if (saveUserCodes) {										
+							var newAttributes = {
+								userAttributes: userCodesToSave
+							};	
+							form.setLoading('Saving New Attributes...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/attributes/attributetypes/usercodes',
+								method: 'POST',
+								jsonData: newAttributes,
+								callback: function() {
+									form.setLoading(false);
+								},
+								success: function(response, opts) {	
+
+									//update the codes
+									var savedAttributes = Ext.decode(response.responseText);
+									Ext.Array.each(requireComponent.attributes, function(attribute){
+										Ext.Array.each(savedAttributes, function(newAttributes) {
+											if (attribute.componentAttributePk.attributeType === newAttributes.attributeCodePk.attributeType &&
+												attribute.componentAttributePk.attributeCode === newAttributes.label) {
+												attribute.componentAttributePk.attributeCode = newAttributes.attributeCodePk.attributeCode;									
+											}
+										});									
+									});
+
+									handleMainFormSave();
+									loadAllAttributes();
+								},
+								failure: function(response, opts) {
+									submissionPanel.saveReady = true;
+									Ext.MessageBox.show({
+										title:'Failed to Save',
+										message: 'Failed adding the new attribute code. Try again or use an existing attribute code.',
+										buttons: Ext.Msg.OK,
+										icon: Ext.Msg.ERROR										
+									});
+								}
+							});						
+						} else {
+							handleMainFormSave();
+						}
+					}
+				}				
+
+			});
+		};		
 		
 		submissionPanel.add(submissionPanel.mainPanel);
 		submissionPanel.add(submissionPanel.navigation);
@@ -3337,10 +3575,25 @@ Ext.define('OSF.component.SubmissionPanel', {
 		submissionPanel.componentId = null;
 		submissionPanel.editMode = editMode;
 		
-		CoreService.usersevice.getCurrentUser().then(function (response) {
-			var usercontext = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function (usercontext) {			
 			submissionPanel.submitterForm.getForm().setValues(usercontext);
 			submissionPanel.usercontext = usercontext;
+			
+			CoreService.systemservice.getSecurityPolicy().then(function(policy){
+				if (policy.disableUserInfoEdit) {
+					
+					submissionPanel.submitterForm.queryById('firstName').setDisabled(true);
+					submissionPanel.submitterForm.queryById('lastName').setDisabled(true);
+					submissionPanel.submitterForm.queryById('email').setDisabled(true);				
+					submissionPanel.submitterForm.queryById('phone').setDisabled(true);
+					submissionPanel.submitterForm.queryById('organization').setDisabled(true);
+
+					if (policy.externalUserManagementText) {
+						submissionPanel.submitterForm.queryById('externalManagementMessage').update('<br><br><i class="fa fa-2x fa-warning text-warning"></i> ' + policy.externalUserManagementText);
+					}
+				}
+			});				
+			
 		});
 		
 		submissionPanel.currentStep = 1;

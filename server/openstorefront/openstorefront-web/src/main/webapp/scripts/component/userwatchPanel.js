@@ -55,10 +55,9 @@ Ext.define('OSF.component.UserWatchPanel', {
 		{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 			renderer: function(value, meta, record) {
 				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-					meta.tdCls = 'alert-success';
-					return '<h2>' + value + '</h2><br>*Updated';
+					return '<span class="label-text-bold">' + value + '</span><span class="updated-watch text-success"> UPDATED </span>';
 				} else {
-					return '<h2>' + value + '</h2>';
+					return '<span class="label-text-bold">' + value + '</span>';
 				}
 			}
 		},	
@@ -72,9 +71,6 @@ Ext.define('OSF.component.UserWatchPanel', {
 		},
 		{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
 			renderer: function(value, meta, record) {
-				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-					meta.tdCls = 'alert-success';
-				}
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}			
 		},
@@ -82,10 +78,10 @@ Ext.define('OSF.component.UserWatchPanel', {
 			renderer: function(value, meta, record) {
 				if (value) {
 					meta.tdCls = 'alert-success';
-					return '<i class="fa fa-4x fa-check"></i>';
+					return '<i class="fa fa-lg fa-check"></i>';
 				} else {
 					meta.tdCls = 'alert-danger';
-					return '<i class="fa fa-4x fa-close"></i>';
+					return '<i class="fa fa-lg fa-close"></i>';
 				}
 			}
 		},
@@ -100,7 +96,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 				{
 					text: 'Refresh',
 					scale: 'medium',								
-					iconCls: 'fa fa-2x fa-refresh',
+					iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 					handler: function () {
 						this.up('grid').actionRefresh();
 					}
@@ -113,7 +109,8 @@ Ext.define('OSF.component.UserWatchPanel', {
 					itemId: 'view',
 					scale: 'medium',
 					disabled: true,
-					iconCls: 'fa fa-2x fa-binoculars',
+					width: '150px',
+					iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 					handler: function () {
 						var grid = this.up('grid');
 						var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
@@ -121,7 +118,8 @@ Ext.define('OSF.component.UserWatchPanel', {
 						});
 
 						var entryViewWindow = Ext.create('Ext.window.Window', {
-							title: 'Entry',
+							title: 'View Entry',
+							iconCls: 'fa fa-lg fa-eye',
 							maximizable: true,
 							modal: true,
 							closeMode: 'destroy',
@@ -150,7 +148,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					itemId: 'toggle',
 					scale: 'medium',
 					disabled: true,
-					iconCls: 'fa fa-2x fa-toggle-on',
+					iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -177,23 +175,24 @@ Ext.define('OSF.component.UserWatchPanel', {
 					xtype: 'tbfill'
 				},
 				{
-					text: 'Remove Watch',
+					text: 'Delete',
 					itemId: 'delete',
 					scale: 'medium',
 					disabled: true,
-					iconCls: 'fa fa-2x fa-trash-o',
+					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];
 						
 						Ext.Msg.show({
-							title:'Remove Watch?',
-							message: 'Are you sure you want to remove this Watch?',
+							title:'Delete Watch?',
+							iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+							message: 'Are you sure you want to delete this watch?',
 							buttons: Ext.Msg.YESNO,
 							icon: Ext.Msg.QUESTION,
 							fn: function(btn) {
 								if (btn === 'yes') {
-									grid.setLoading("Removing...");
+									grid.setLoading("Deleting...");
 									Ext.Ajax.request({
 										url: 'api/v1/resource/userprofiles/'+grid.user+'/watches/'+record.get('watchId'),
 										method: 'DELETE',
@@ -233,8 +232,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 
 		var watchPanel = this;	
 		
-		CoreService.usersevice.getCurrentUser().then(function(response) {
-			var userProfile = Ext.decode(response.responseText);			
+		CoreService.userservice.getCurrentUser().then(function(userProfile) {					
 			watchPanel.user = userProfile.username;
 			watchPanel.getStore().load({
 				url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'

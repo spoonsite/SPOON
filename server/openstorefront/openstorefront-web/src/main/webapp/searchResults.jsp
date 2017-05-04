@@ -52,7 +52,7 @@
 				var label = Ext.get(labelId);
 				var componentNameElm = Ext.get(nameId);
 				if (chk.checked) {
-					label.setHtml("Remove from Compare");
+					label.setHtml("Delete from Compare");
 					
 					Ext.getCmp('compareBtn').getMenu().add({
 						componentId: componentId,
@@ -93,14 +93,8 @@
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
-
-			var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {				
-			});
 			
 			var searchtoolsWin;
-			
-			var helpWin = Ext.create('OSF.component.HelpWindow', {				
-			});												
 			
 			var compareViewTemplate = new Ext.XTemplate(						
 			);
@@ -409,8 +403,19 @@
 						displayField: 'label',
 						valueField: 'componentType',
 						storeConfig: {
-							autoLoad: false,
-							url: 'api/v1/resource/componenttypes'
+							autoLoad: true,
+							url: 'api/v1/resource/componenttypes',
+							sorters: [{
+								property: 'label',
+								direction: 'ASC'
+							}],
+							listeners: {
+								
+								load: function(store, records, successful, operation, eOpts) {
+									
+									store.add({label: '*All*', componentType: null});
+								}
+							}
 						},
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
@@ -822,11 +827,7 @@
 				
 				//determine: client filtering or remote
 				if (!filterMode) {
-					if (searchResultsStore.getTotalCount() <= maxPageSize) {
-						filterMode = 'CLIENT';
-					} else {
-						filterMode = 'REMOTE';
-					}										
+					filterMode = 'REMOTE';										
 				}
 								
 				var data = [];
@@ -855,27 +856,6 @@
 					}
 					Ext.getCmp('searchStats').update(statLine);
 				}
-				
-				//add all topics found
-				var entryTypeInResults = [];
-				if (data.length > 0) {
-					entryTypeInResults.push({
-						label: '*All*',
-						componentType: null
-					});
-						
-					var response = opts.getResponse();
-					var dataResponse = Ext.decode(response.responseText);
-						
-					Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-						entryTypeInResults.push({
-							label: stat.componentTypeDescription,
-							componentType: stat.componentType
-						});					
-					});
-				}
-				Ext.getCmp('filterByType').getStore().removeAll();			
-				Ext.getCmp('filterByType').getStore().add(entryTypeInResults);
 				
 				//sorting Attributes
 				Ext.Array.each(data, function(dataItem) {
@@ -1398,7 +1378,7 @@
 									{
 										text: 'Export',					
 										tooltip: 'Exports records in current view',
-										iconCls: 'fa fa fa-download',																			
+										iconCls: 'fa fa fa-download icon-button-color-default',																			
 										handler: function () {
 											var exportForm = Ext.getDom('exportForm');
 											var exportFormIds = Ext.getDom('exportFormIds');
@@ -1621,12 +1601,11 @@
 										},
 										{
 											xtype: 'button',
-											text: '<span style="font-size: 10px;">Search Tools</span>',																		
-											iconCls: 'fa fa-2x fa-search-plus',
-											iconAlign: 'top',
+											text: '<span style="font-size: 12px; margin-left: 2px;">Search Tools</span>',																		
+											iconCls: 'fa fa-2x fa-search-plus icon-vertical-correction-search-tools',
 											margin: '0 0 0 10',
 											style: 'border-radius: 3px 0px 0px 3px;',											
-											width: 100,
+											width: 130,
 											handler: function(){
 												searchtoolsWin.show();
 											}
@@ -1641,7 +1620,7 @@
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -1663,8 +1642,7 @@
 				]
 			});
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText

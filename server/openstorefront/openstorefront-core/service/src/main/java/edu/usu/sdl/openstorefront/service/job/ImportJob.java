@@ -54,7 +54,7 @@ public class ImportJob
 
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<FileHistory> fileHistories = service.getPersistenceService().queryByExample(FileHistory.class, queryByExample);
+		List<FileHistory> fileHistories = service.getPersistenceService().queryByExample(queryByExample);
 
 		if (fileHistories.isEmpty() == false) {
 			log.log(Level.FINE, MessageFormat.format("Found {0} pending uploads", fileHistories.size()));

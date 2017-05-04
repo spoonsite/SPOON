@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.DataSensitivity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.List;
 
 /**
@@ -32,6 +34,8 @@ public abstract class StandardEntityView
 	private String securityMarkingDescription;
 	private Integer securityMarkingRank;
 	private String securityMarkingStyle;
+	private String dataSensitivity;
+	private String dataSensitivityDescription;
 
 	public StandardEntityView()
 	{
@@ -63,6 +67,9 @@ public abstract class StandardEntityView
 						securityMarkingStyle = marking.getHighlightStyle();
 					}
 				}
+				
+				dataSensitivity = entity.getDataSensitivity();
+				dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);				
 			}
 		}
 	}
@@ -93,6 +100,9 @@ public abstract class StandardEntityView
 						securityMarkingStyle = marking.getHighlightStyle();
 					}
 				}
+				
+				dataSensitivity = entity.getDataSensitivity();
+				dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);				
 			}
 		}
 	}
@@ -135,6 +145,26 @@ public abstract class StandardEntityView
 	public void setSecurityMarkingStyle(String securityMarkingStyle)
 	{
 		this.securityMarkingStyle = securityMarkingStyle;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
+	}
+
+	public String getDataSensitivityDescription()
+	{
+		return dataSensitivityDescription;
+	}
+
+	public void setDataSensitivityDescription(String dataSensitivityDescription)
+	{
+		this.dataSensitivityDescription = dataSensitivityDescription;
 	}
 
 }

@@ -23,12 +23,17 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent<ComponentResource>
+		implements LoggableModel<ComponentResource>
 {
 
 	@PK(generated = true)
@@ -79,7 +85,7 @@ public class ComponentResource
 	@ConsumeField
 	@APIDescription("This is used to indentify if a resource requires a login or CAC")
 	private Boolean restricted;
-	
+
 	public ComponentResource()
 	{
 	}
@@ -87,14 +93,14 @@ public class ComponentResource
 	@Override
 	public String uniqueKey()
 	{
-		String key = getResourceType() 
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+		String key = getResourceType()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getDescription()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getRestricted()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
 		return key;
 	}
@@ -108,9 +114,9 @@ public class ComponentResource
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
-		super.updateFields(entity);
-
 		ComponentResource resource = (ComponentResource) entity;
+		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, resource);
+		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(resource.getLink())) {
 			this.setFileName(null);
@@ -126,9 +132,7 @@ public class ComponentResource
 		this.setResourceType(resource.getResourceType());
 		this.setRestricted(resource.getRestricted());
 
-		
 	}
-	
 
 	@Override
 	public int customCompareTo(ComponentResource o)
@@ -155,6 +159,22 @@ public class ComponentResource
 			path = Paths.get(resourceDir.getPath() + "/" + getFileName());
 		}
 		return path;
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentResource updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("resourceId");
+		excludeFields.add("fileName");
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		return TranslateUtil.translate(ResourceType.class, getResourceType()) + " - " + (getLink() != null ? getLink() : getOriginalName());
 	}
 
 	public String getResourceId()

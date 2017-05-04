@@ -23,12 +23,13 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.LookupComparator;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GenericLookupEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -66,7 +67,7 @@ public class LookupTypeResource
 		extends BaseResource
 {
 
-	private static final Logger log = Logger.getLogger(LookupTypeResource.class.getName());
+	private static final Logger LOG = Logger.getLogger(LookupTypeResource.class.getName());
 
 	@GET
 	@APIDescription("Get a list of available lookup entities")
@@ -146,7 +147,7 @@ public class LookupTypeResource
 
 	@GET
 	@APIDescription("Exports codes in csv formt. POST to Upload.action?UploadLookup&entityName=entity and then the file to import codes (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@Produces("text/csv")
 	@Path("/{entity}/export")
 	public Response exportEntityValues(
@@ -221,7 +222,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@APIDescription("Adds a new code to a given entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}")
@@ -290,7 +291,7 @@ public class LookupTypeResource
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 			Object value = persistenceService.findById(lookupClass, code);
 			if (value != null) {
-				lookupEntity = (LookupEntity) persistenceService.unwrapProxyObject(lookupClass, value);
+				lookupEntity = (LookupEntity) persistenceService.unwrapProxyObject(value);
 			}
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -305,7 +306,7 @@ public class LookupTypeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@APIDescription("Updates descriptions for a given entity and code.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
@@ -327,7 +328,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@APIDescription("Activates a given entity code.")
 	@Path("/{entity}/{code}/activate")
 	public Response activeEntityCode(
@@ -341,7 +342,7 @@ public class LookupTypeResource
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 			Object value = service.getPersistenceService().findById(lookupClass, code);
 			if (value != null) {
-				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(lookupClass, value);
+				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(value);
 			}
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -355,7 +356,7 @@ public class LookupTypeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@APIDescription("Remove a code from the entity")
 	@Path("/{entity}/{code}")
 	public void deleteEntityValue(

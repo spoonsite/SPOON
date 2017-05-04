@@ -39,14 +39,14 @@ public interface NotificationService
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams);
 
 	/**
-	 * Adds a new Listerner to be able to handle events
+	 * Adds a new Listener to be able to handle events
 	 *
 	 * @param notificationEventListerner
 	 */
 	public void registerNotificationListerner(NotificationEventListerner notificationEventListerner);
 
 	/**
-	 * Save a new Notification event and notify Listerner
+	 * Save a new Notification event and notify Listener
 	 *
 	 * @param notificationEvent
 	 * @return NotificationEvent posted

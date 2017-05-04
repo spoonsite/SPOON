@@ -4,13 +4,13 @@
 ## 1.  Client Architecture
 ------
 
-##1.1 Client Architecture Diagram
+## 1.1 Client Architecture Diagram
 
 ![clientarch](images/client-archtechture-new.png)
 
 Figure 1. Client Architecture Diagram
 
-##1.2 Client Details
+## 1.2 Client Details
 -----
 
 The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies significantly which in turn reduce maintenance, learning curve and improves quality and consistency.
@@ -21,13 +21,13 @@ The application is composed by stripes layouts with a top-level page and fragmen
 ## 2.  Server Architecture
 ------
 
-##2.1 Server Architecture Diagram
+## 2.1 Server Architecture Diagram
 
 ![serverarch](images/serverarch.png)
 
 Figure 2. Server Architecture Diagram
 
-##2.2 Server Details
+## 2.2 Server Details
 -----
 
 Component definitions are as shown below:
@@ -48,7 +48,7 @@ The server build environment relies on the following platforms/tools:
   -  **Java**     -            Core language and platform
   -  **Maven**   -            Used for the project structure, building and dependency management
 
-##2.3 Storage Details
+## 2.3 Storage Details
 -----
 
 ![storage](images/storage.png)
@@ -60,16 +60,16 @@ The server build environment relies on the following platforms/tools:
 **Database** - Holds all entry data and application data. 
 
 
-#3. Runtime Environment
+# 3. Runtime Environment
 -----
 
-##3.1 Runtime Environment Diagram
+## 3.1 Runtime Environment Diagram
 
 ![deployarch](images/deployarch.png)
 
 Figure 3 . Runtime Environment diagram
 
-##3.2 Runtime Details
+## 3.2 Runtime Details
 -----
 
 The runtime environment relies upon the following applications:
@@ -81,14 +81,14 @@ The runtime environment relies upon the following applications:
 -  **Solr**          -    Enterprise search appliance that runs externally
 -  **OpenAM**    -        OpenAM runs externally and a policy agent in Tomcat make sure the site is secure.
 
-##3.3 Runtime Component Integration Vectors
+## 3.3 Runtime Component Integration Vectors
 ----
 
 ![component vectors](images/civarch.png)
 
 Figure 4. Runtime Component Integration Vectors
 
-##3.4 Component Integration Vectors Details
+## 3.4 Component Integration Vectors Details
 -----
 
 The component integration vectors (CIV) are show below.
@@ -144,7 +144,7 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     (e.g. subscriber/publisher relationship; A integrates with another
     component that offers data from B).
 
-##3.5 Ports
+## 3.5 Ports
 -----
 
 The applicable ports are shown below:

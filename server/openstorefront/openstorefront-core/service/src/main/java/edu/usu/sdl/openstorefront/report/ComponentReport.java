@@ -28,6 +28,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
@@ -55,10 +57,12 @@ public class ComponentReport
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		components = service.getPersistenceService().queryByExample(componentExample);
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
+		components = FilterEngine.filter(components);
+		
 	}
 
 	@Override
@@ -91,6 +95,8 @@ public class ComponentReport
 			header.add("Security Marking");
 		}		
 		cvsGenerator.addLine(header.toArray());		
+		
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));		
 		
 		//write Body
 		for (Component component : components) {
@@ -137,7 +143,7 @@ public class ComponentReport
 			queryByExample.setOrderBy(componentTrackingOrderExample);
 			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
 
-			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, queryByExample);
+			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(queryByExample);
 			String lastViewed = "";
 			if (componentTracking != null) {
 				lastViewed = sdf.format(componentTracking.getEventDts());

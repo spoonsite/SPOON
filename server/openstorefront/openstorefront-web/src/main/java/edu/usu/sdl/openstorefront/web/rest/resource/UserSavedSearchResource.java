@@ -22,10 +22,11 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserSavedSearchWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -58,7 +59,7 @@ public class UserSavedSearchResource
 	
 	@GET
 	@APIDescription("Get a list of saved searches")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearchWrapper.class)
 	public Response getAllSearches(@BeanParam FilterQueryParams filterQueryParams)
@@ -103,7 +104,7 @@ public class UserSavedSearchResource
 			queryByExample.setOrderBy(userSearchSortExample);
 		}
 
-		List<UserSavedSearch> userSavedSearches = service.getPersistenceService().queryByExample(UserSavedSearch.class, queryByExample);
+		List<UserSavedSearch> userSavedSearches = service.getPersistenceService().queryByExample(queryByExample);
 
 		UserSavedSearchWrapper userSavedSearchWrapper = new UserSavedSearchWrapper();
 		userSavedSearchWrapper.getData().addAll(userSavedSearches);
@@ -127,7 +128,7 @@ public class UserSavedSearchResource
 	
 	@GET
 	@APIDescription("Get saved searches for a user")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/user/{username}")
@@ -154,7 +155,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 		
-		Response response = ownerCheck(userSavedSearch);
+		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
 		if (response == null)
 		{
 			response = sendSingleEntityResponse(userSavedSearch);
@@ -192,7 +193,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(searchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 		if (userSavedSearch != null) {
-			response = ownerCheck(userSavedSearch);
+			response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
 			if (response == null) {
 				search.setUserSearchId(searchId);			
 				
@@ -235,7 +236,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 		
-		Response response = ownerCheck(userSavedSearch);
+		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
 		if (response == null)
 		{
 			service.getUserService().deleteUserSearch(userSearchId);			

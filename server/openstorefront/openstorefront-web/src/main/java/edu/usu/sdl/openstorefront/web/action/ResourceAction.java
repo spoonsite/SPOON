@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -64,7 +66,8 @@ public class ResourceAction
 	private String resourceId;
 
 	@ValidateNestedProperties({
-		@Validate(required = true, field = "resourceType", on = "UploadResource"),
+		@Validate(required = true, field = "resourceType", on = "UploadResource")
+		,
 		@Validate(required = true, field = "componentId", on = "UploadResource")
 	})
 	private ComponentResource componentResource;
@@ -82,6 +85,7 @@ public class ResourceAction
 	public Resolution loadResource() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+		componentResource = FilterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
@@ -118,9 +122,13 @@ public class ResourceAction
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.isAdminUser()) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+						allow = true;
+					}
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -128,7 +136,7 @@ public class ResourceAction
 				}
 				if (allow) {
 					if (doesFileExceedLimit(file)) {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 						errors.put("file", "File size exceeds max allowed.");
 					} else {
 						componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
@@ -144,7 +152,7 @@ public class ResourceAction
 							try {
 								service.getComponentService().saveResourceFile(componentResource, file.getInputStream());
 
-								if (SecurityUtil.isAdminUser() == false) {
+								if (SecurityUtil.isEntryAdminUser() == false) {
 									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
 										service.getComponentService().checkComponentCancelStatus(componentResource.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
 									}
@@ -152,7 +160,7 @@ public class ResourceAction
 							} catch (IOException ex) {
 								throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
 							} finally {
-								deleteTempFile(file);
+								deleteUploadFile(file);
 							}
 						} else {
 							errors.put("file", validationResult.toHtmlString());
@@ -177,6 +185,7 @@ public class ResourceAction
 	public Resolution redirect() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+		componentResource = FilterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}

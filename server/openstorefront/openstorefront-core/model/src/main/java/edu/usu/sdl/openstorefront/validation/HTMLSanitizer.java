@@ -15,8 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 /**
  * The sanitizes HTML to prevent XSS attacks This will allow structure....but no
@@ -70,12 +76,57 @@ public class HTMLSanitizer
 					.addTags("component-list")
 					.addTags("span")
 					.addAttributes("component-list", "hide-more", "click-callback", "class-list", "title", "data", "cols", "type", "filters", "set-filters", "code")
-					.addAttributes("a", "ng-click", "id")
+					//.addAttributes("a", "ng-click", "id")
 					.addAttributes(":all", "style")
 					.addEnforcedAttribute("a", "rel", "nofollow")
 			);
-			return safe;
+			return removeBadStyles(safe);
 		}
 	}
 
+	private String removeBadStyles(String html)
+	{
+		String safe;
+		Map<String, List<String>> badStyles = getBadStyles();
+		if (!badStyles.isEmpty()) {
+			Document doc = Jsoup.parse(html);
+			badStyles.forEach((key, value) -> {
+				value.forEach(styleValue -> {
+					List<String> styleList = getStyleVariations(key, styleValue);
+					styleList.forEach(styleToRemove -> {
+						Elements tags = doc.select(String.format("[style*=\"%s\"]", styleToRemove));
+						tags.forEach((element) -> {
+							String elementStyles = element.attr("style");
+							element.attr("style", elementStyles.replace(styleToRemove, ""));
+						});
+					});
+				});
+			});
+			safe = doc.body().html();
+		} else {
+			safe = html;
+		}
+		return safe;
+	}
+
+	private List<String> getStyleVariations(String styleName, String styleValue)
+	{
+		List<String> styleList = new ArrayList();
+		styleList.add(String.format("%s:%s", styleName, styleValue));
+		styleList.add(String.format("%s :%s", styleName, styleValue));
+		styleList.add(String.format("%s: %s", styleName, styleValue));
+		styleList.add(String.format("%s : %s", styleName, styleValue));
+		return styleList;
+	}
+
+	private Map<String, List<String>> getBadStyles()
+	{
+		Map<String, List<String>> badStyles = new HashMap<>();
+		List<String> positionValues = new ArrayList();
+		positionValues.add("absolute;");
+		positionValues.add("fixed;");
+		positionValues.add("static;");
+		badStyles.put("position", positionValues);
+		return badStyles;
+	}
 }

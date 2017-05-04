@@ -98,7 +98,7 @@ public class LookupServiceImpl
 				return testExample.systemValues();
 			} else {
 				testExample.setActiveStatus(activeStatus);
-				return persistenceService.queryByExample(lookTableClass, new QueryByExample(testExample));
+				return persistenceService.queryByExample(new QueryByExample(testExample));
 			}
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -221,7 +221,7 @@ public class LookupServiceImpl
 					} else {
 						example.setCode(code);
 						example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-						lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+						lookupEntity = persistenceService.queryOneByExample(new QueryByExample(example));
 					}
 					if (lookupEntity != null) {
 						lookupCacheMap.put(code, lookupEntity);
@@ -264,7 +264,7 @@ public class LookupServiceImpl
 				} else {
 					example.setDescription(description);
 					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+					lookupEntity = persistenceService.queryOneByExample(new QueryByExample(example));
 				}
 
 			} catch (InstantiationException | IllegalAccessException e) {

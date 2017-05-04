@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global CoreService, Ext */
+/* global CoreService, Ext, CoreUtil */
 
 Ext.define('OSF.component.ReviewWindow', {
 	extend: 'Ext.window.Window',
@@ -48,9 +48,9 @@ Ext.define('OSF.component.ReviewWindow', {
 					dock: 'bottom',
 					items: [
 						{
-							text: 'Post Review',
+							text: 'Save',
 							formBind: true,
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -124,7 +124,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								this.up('window').close();
 							}
@@ -186,7 +186,7 @@ Ext.define('OSF.component.ReviewWindow', {
 					width: 200,
 					fieldLabel: 'How long have you used it <span class="field-required" />',
 					storeConfig: {
-						url: 'api/v1/resource/lookuptypes/ExperienceTimeType',						
+						url: 'api/v1/resource/lookuptypes/ExperienceTimeType'					
 					}
 				}),
 				{	
@@ -234,6 +234,9 @@ Ext.define('OSF.component.ReviewWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})
 
 			]
@@ -242,8 +245,7 @@ Ext.define('OSF.component.ReviewWindow', {
 		reviewWindow.add(reviewWindow.formPanel);
 		
 		//Query Branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){		
 			if (branding.userInputWarning) {
 				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -255,8 +257,8 @@ Ext.define('OSF.component.ReviewWindow', {
 		});
 		
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			reviewWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			reviewWindow.user = user;
 						
 			//confirm that they have the required info
 			reviewWindow.on('show', function(){
@@ -264,8 +266,8 @@ Ext.define('OSF.component.ReviewWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								reviewWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								reviewWindow.user = user;
 								
 							});
 						}

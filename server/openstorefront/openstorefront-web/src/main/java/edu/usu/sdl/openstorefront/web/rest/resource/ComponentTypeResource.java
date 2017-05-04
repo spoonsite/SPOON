@@ -19,11 +19,12 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -163,7 +164,7 @@ public class ComponentTypeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Adds a new component type")
 	@Produces(
 	{
@@ -181,7 +182,7 @@ public class ComponentTypeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Updates a component type")
 	@Produces(
 	{
@@ -231,7 +232,7 @@ public class ComponentTypeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Activates a component type")
 	@Path("/{type}/activate")
 	public Response activateComponentType(
@@ -253,7 +254,7 @@ public class ComponentTypeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Inactivates a component type unless new type is specified then it moves the data and deletes the type")
 	@Path("/{type}")
 	public void deleteComponentType(

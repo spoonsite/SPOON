@@ -40,43 +40,83 @@ public class ReportManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(ReportManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(ReportManager.class.getName());
 	private static AtomicBoolean started = new AtomicBoolean(false);
+	private static final long MAX_WORKING_RETRY_TIME_MILLIS = 1440 * 60 * 1000;
 
 	public static void init()
 	{
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		//Restart any pending or working reports
-		List<Report> allReports = getInprogessReports();
+		List<Report> allReports = getInprogessReports(serviceProxy);
 
 		if (!allReports.isEmpty()) {
-			log.log(Level.INFO, MessageFormat.format("Resuming pending and working reports. (Running in the Background)  Reports to run:  {0}", allReports.size()));
+			LOG.log(Level.INFO, MessageFormat.format("Resuming pending and working reports. (Running in the Background)  Reports to run:  {0}", allReports.size()));
 			for (Report report : allReports) {
-				TaskRequest taskRequest = new TaskRequest();
-				taskRequest.setAllowMultiple(true);
-				taskRequest.setName(TaskRequest.TASKNAME_REPORT);
-				taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
-				taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
-				serviceProxy.getAsyncProxy(serviceProxy.getReportService(), taskRequest).generateReport(report);
+				// if older that a day on working...cancel it.
+				boolean restartReport = true;
+				Report duplicateReport = new Report();
+				duplicateReport.setReportId(report.getReportId());
+				List<Report> duplicateReports = duplicateReport.findByExampleProxy();
+				if(duplicateReports.size() > 1)
+				{
+					for(Report duplicate : duplicateReports)
+					{
+						if (!RunStatus.COMPLETE.equals(duplicate.getRunStatus())
+								&& !RunStatus.ERROR.equals(duplicate.getRunStatus())) {
+							duplicate.setRunStatus(RunStatus.ERROR);
+							duplicate.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							serviceProxy.getPersistenceService().persist(duplicate);	
+						}
+					}
+				}
+				
+				if (RunStatus.WORKING.equals(report.getRunStatus())) {
+					long runtime = System.currentTimeMillis() - report.getCreateDts().getTime();
+					if (runtime > MAX_WORKING_RETRY_TIME_MILLIS) {
+
+						Report existingReport = serviceProxy.getPersistenceService().findById(Report.class, report.getReportId());
+						existingReport.setRunStatus(RunStatus.ERROR);
+						existingReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+						existingReport.populateBaseUpdateFields();
+						serviceProxy.getPersistenceService().persist(existingReport);
+
+						restartReport = false;
+						LOG.log(Level.INFO, "Failing report: "
+								+ report.getReportType()
+								+ " for user "
+								+ report.getCreateUser()
+								+ ". Report exceeded max runtime.");
+					}
+				}
+
+				if (restartReport) {
+					LOG.log(Level.INFO, "Restarting report: " + report.getReportType() + " for user " + report.getCreateUser());
+					TaskRequest taskRequest = new TaskRequest();
+					taskRequest.setAllowMultiple(true);
+					taskRequest.setName(TaskRequest.TASKNAME_REPORT);
+					taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
+					taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
+					serviceProxy.getAsyncProxy(serviceProxy.getReportService(), taskRequest).generateReport(report);
+				}
 			}
 		}
 
 	}
 
-	private static List<Report> getInprogessReports()
+	private static List<Report> getInprogessReports(ServiceProxy serviceProxy)
 	{
-		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 
 		List<Report> allReports = new ArrayList<>();
 		Report reportExample = new Report();
 		reportExample.setActiveStatus(Report.ACTIVE_STATUS);
 		reportExample.setRunStatus(RunStatus.PENDING);
 
-		List<Report> reports = serviceProxy.getPersistenceService().queryByExample(Report.class, reportExample);
+		List<Report> reports = serviceProxy.getPersistenceService().queryByExample(reportExample);
 		allReports.addAll(reports);
 
 		reportExample.setRunStatus(RunStatus.WORKING);
-		reports = serviceProxy.getPersistenceService().queryByExample(Report.class, reportExample);
+		reports = serviceProxy.getPersistenceService().queryByExample(reportExample);
 		allReports.addAll(reports);
 
 		return allReports;
@@ -85,9 +125,9 @@ public class ReportManager
 	public static void cleanup()
 	{
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
-		List<Report> allReports = getInprogessReports();
+		List<Report> allReports = getInprogessReports(serviceProxy);
 		if (!allReports.isEmpty()) {
-			log.log(Level.WARNING, MessageFormat.format("Reports are currently in progress.  Attempting to cancel and put back on queue.   Reports in progress:  {0}", allReports.size()));
+			LOG.log(Level.WARNING, MessageFormat.format("Reports are currently in progress.  Attempting to cancel and put back on queue.   Reports in progress:  {0}", allReports.size()));
 
 			List<TaskFuture> taskFutures = AsyncTaskManager.getTasksByName(TaskRequest.TASKNAME_REPORT);
 			for (TaskFuture taskFuture : taskFutures) {
@@ -100,10 +140,10 @@ public class ReportManager
 						report.populateBaseUpdateFields();
 						serviceProxy.getPersistenceService().persist(report);
 					} else {
-						log.log(Level.WARNING, MessageFormat.format("Unable to cancel report id: {0} it likely be in a fail state upon restart.  It can be safely deleted.", reportId));
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to cancel report id: {0} it likely be in a fail state upon restart.  It can be safely deleted.", reportId));
 					}
 				} else {
-					log.log(Level.WARNING, "Unable to find report id for a report task.  Unable to cleanly cancel.  Report can be clean up upon restart.");
+					LOG.log(Level.WARNING, "Unable to find report id for a report task.  Unable to cleanly cancel.  Report can be clean up upon restart.");
 				}
 			}
 		}
@@ -122,11 +162,11 @@ public class ReportManager
 		ReportManager.cleanup();
 		started.set(false);
 	}
-	
+
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
+	}
 
 }

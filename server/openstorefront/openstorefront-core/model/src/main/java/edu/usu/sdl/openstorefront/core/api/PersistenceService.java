@@ -32,8 +32,8 @@ public interface PersistenceService
 	 * Detaches the whole object tree and removes the proxy object
 	 *
 	 * @param <T>
-	 * @param entity
-	 * @return
+	 * @param entity object to detach
+	 * @return detached version of the object
 	 */
 	<T> T deattachAll(T entity);
 
@@ -49,8 +49,8 @@ public interface PersistenceService
 	 * Detaches and removes the proxy object
 	 *
 	 * @param <T>
-	 * @param entity
-	 * @return
+	 * @param entity object to detach
+	 * @return detached version of the object
 	 */
 	<T> T detach(T entity);
 
@@ -71,7 +71,9 @@ public interface PersistenceService
 
 	String generateId();
 
-	boolean isAttached(BaseEntity baseEntity);
+	boolean isManaged(BaseEntity baseEntity);
+
+	boolean isProxy(BaseEntity baseEntity);
 
 	boolean isTransactionActive();
 
@@ -80,49 +82,66 @@ public interface PersistenceService
 	/**
 	 * This will run the query and returns the Proxy Objects
 	 *
-	 * @param <T>
-	 * @param query
-	 * @param parameterMap
-	 * @return
+	 * @param <T> Type of results expected
+	 * @param query SQL query for selecting items
+	 * <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE
+	 * activeStatus &lt;&gt; :selectedStatus)</div>
+	 * @param parameterMap Values to use in the Query
+	 * <div style="font-size:.9 em; left: 10px">map with key "selectedStatus"
+	 * and value 'A' </div>
+	 * @return List of results of the given type
 	 */
 	<T> List<T> query(String query, Map<String, Object> parameterMap);
 
 	/**
 	 * This will run the query and then unwrap if desired
 	 *
-	 * @param <T>
-	 * @param query
-	 * @param parameterMap
-	 * @param dataClass
-	 * @param unwrap
-	 * @return
+	 * @param <T> Type of results expected
+	 * @param query SQL query for selecting items
+	 * <div style="font-size:.9 em">(e.g. SELECT FROM Component WHERE
+	 * activeStatus &lt;&gt; :selectedStatus)</div>
+	 * @param parameterMap Values to use in the Query
+	 * <div style="font-size:.9 em; left: 10px">map with key "selectedStatus"
+	 * and value 'A' </div>
+	 * @param unwrap detach objects from the database backed objects
+	 * @return List of results of the given type
 	 */
-	<T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap);
+	<T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap);
 
 	/**
 	 * This will run the example with the default options
 	 *
-	 * @param <T>
-	 * @param exampleClass
-	 * @param baseEntity
-	 * @return
+	 * @param <T> type of object to return
+	 * @param baseEntity class containing the criteria for the query
+	 * @return List of results of the given type
 	 */
-	<T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity);
+	<T> List<T> queryByExample(BaseEntity baseEntity);
 
-	<T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample);
+	/**
+	 *
+	 * @param <T> type of object to return
+	 * @param queryByExample Query object with the criteria for the query
+	 * @return List of results of the given type
+	 */
+	<T> List<T> queryByExample(QueryByExample queryByExample);
 
 	/**
 	 * This just returns one result. Typically the query results in only one
 	 * entity.
 	 *
-	 * @param <T>
-	 * @param exampleClass
-	 * @param baseEnity
+	 * @param <T> type of object to return
+	 * @param baseEntity class containing the criteria for the query
 	 * @return the entity or null if not found
 	 */
-	<T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity);
+	<T> T queryOneByExample(BaseEntity baseEntity);
 
-	<T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample);
+	/**
+	 *
+	 * @param <T> type of object to return
+	 * @param queryByExample Query object with the criteria for the query
+	 * @return the entity or null if not found
+	 */
+	<T> T queryOneByExample(QueryByExample queryByExample);
 
 	void rollback();
 
@@ -142,9 +161,23 @@ public interface PersistenceService
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 
-	<T> List<T> unwrapProxy(Class<T> origClass, List<T> data);
+	/**
+	 * Detach a list of objects from the database backed objects
+	 *
+	 * @param <T> type of object
+	 * @param data data that needs detached
+	 * @return list of detached objects
+	 */
+	<T> List<T> unwrapProxy(List<T> data);
 
-	<T> T unwrapProxyObject(Class<T> origClass, T data);
+	/**
+	 * Detach a single object from the database backed object
+	 *
+	 * @param <T> type of object
+	 * @param data data that needs detached
+	 * @return a detached version of the object
+	 */
+	<T> T unwrapProxyObject(T data);
 
 	<T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere);
 

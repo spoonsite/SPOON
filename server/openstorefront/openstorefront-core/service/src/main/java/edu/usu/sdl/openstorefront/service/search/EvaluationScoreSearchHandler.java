@@ -74,7 +74,7 @@ public class EvaluationScoreSearchHandler
 				
 				QueryByExample queryByExample = new QueryByExample(evaluationSection);
 
-				List<ComponentEvaluationSection> sections = serviceProxy.getPersistenceService().queryByExample(ComponentEvaluationSection.class, queryByExample);
+				List<ComponentEvaluationSection> sections = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 				List<String> results = new ArrayList<>();
 				for (ComponentEvaluationSection section : sections) {
 					if (Convert.toBoolean(section.getNotAvailable()) == false) {

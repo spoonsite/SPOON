@@ -78,38 +78,33 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '115px',
+									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction-edit icon-button-color-refresh',
 									tooltip: 'Refresh Grid',
 									handler: function () {
 										refreshGrid();
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-plus icon-vertical-correction-edit icon-button-color-save',
 									tooltip: 'Upload media file',
 									handler: function () {
 										addRecord();
 									}
-								}, 								
-								{
-									text: 'Download',
-									id: 'downloadButton',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-download',
-									disabled: true,
-									tooltip: 'Download media file',
-									handler: function () {
-										downloadRecord();
-									}								
-								},							
+								}, 															
 								{
 									text: 'View',
 									id: 'viewButton',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-eye',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-eye icon-vertical-correction-view icon-button-color-view',
 									disabled: true,
 									tooltip: 'View media file in a viewer',
 									handler: function () {
@@ -117,20 +112,40 @@
 									}								
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'Copy URL',
 									id: 'copyButton',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-clipboard',
+									scale: 'medium',
+									width: '150px',
+									iconCls: 'fa fa-2x fa-clone icon-vertical-correction-edit icon-button-color-default',
 									disabled: true,
 									tooltip: 'Copy URL location of the media file',
 									handler: function () {
 										copyURL();
 									}								
 								},
+								'->',{
+									text: 'Download',
+									id: 'downloadButton',
+									scale: 'medium',
+									width: '150px',
+									iconCls: 'fa fa-2x fa-download icon-vertical-correction-edit icon-button-color-default',
+									disabled: true,
+									tooltip: 'Download media file',
+									handler: function () {
+										downloadRecord();
+									}								
+								},
+								{
+									xtype: 'tbseparator'
+								},
 								{	text: 'Delete',
 									id: 'deleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction-edit icon-button-color-warning',
 									disabled: true,
 									tooltip: 'Delete media',
 									handler: function () {
@@ -221,8 +236,8 @@
 								type.match('.*png.*') || 
 								type.match('.*gif.*') || 
 								type.match('.*svg.*') ) {
-								viewMediaWin.setTitle('Image Preview');
-								viewMediaWin.update('<img src="'+ selectedObj.mediaLink+'" width="100%"/>');
+								viewMediaWin.setTitle('<i class="fa fa-lg fa-eye small-vertical-correction"></i>' + ' ' + 'Image Preview');
+								viewMediaWin.update('<img src="' + selectedObj.mediaLink + '" width="100%"/>');
 							}
 							else {
 								Ext.Msg.show({
@@ -321,6 +336,7 @@
 				
 					Ext.Msg.show({
 						title: 'Delete Media?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the selected media?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -378,6 +394,7 @@
 				var addMediaWin = Ext.create('Ext.window.Window', {
 					id: 'addMediaWin',
 					title: 'Add Media',
+					iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 					modal: true,
 					width: '40%',
 					height: 260,
@@ -427,7 +444,7 @@
 								items: [
 									{
 										text: 'Upload',
-										iconCls: 'fa fa-upload',
+										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
 										handler: function(){     
 											Ext.getCmp('addMediaForm').setLoading(true);
@@ -471,7 +488,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											Ext.getCmp('addMediaWin').close();
 										}											

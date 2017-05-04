@@ -26,7 +26,7 @@
       
     </head>
     <body>
-        <h1>Security</h1>
+        <h1 style="padding-bottom: 10px;">Security</h1>
 	<hr>
         Currently requires a login.  Routed through a external auth system or though a login form.<br>
     </body>

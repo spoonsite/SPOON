@@ -16,6 +16,8 @@
 
 package edu.usu.sdl.openstorefront.web.rest;
 
+import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -26,7 +28,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Adds Jsonp Support  to any REST request
+ * Adds Jsonp Support to any GET REST request;
  * @author dshurtleff
  */
 @Provider
@@ -45,7 +47,10 @@ public class JsonpInterceptor implements WriterInterceptor, ContainerResponseFil
 	public void aroundWriteTo(WriterInterceptorContext responseContext) throws IOException			
 	{	
 		String callback = (String) responseContext.getProperty(CALLBACK);
-		if (StringUtils.isNotBlank(callback))
+		
+		ServiceProxy service = ServiceProxy.getProxy();
+		SecurityPolicy securityPolicy = service.getSecurityService().getSecurityPolicy();		
+		if (StringUtils.isNotBlank(callback) && securityPolicy.getAllowJSONPSupport())
 		{			
 			responseContext.getOutputStream().write((callback + "(").getBytes());
 			responseContext.proceed();

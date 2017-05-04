@@ -5,6 +5,7 @@
     Author     : dshurtleff
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.core.entity.SecurityPolicy"%>
 <%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -12,6 +13,10 @@
 <%
 	Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 	request.setAttribute("branding", branding);
+	
+	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
+	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
+	
 %>
 <html>
 	<head>
@@ -48,7 +53,7 @@
 				color: white;
 			}			
 			.auth-forms {
-				background: white;
+				background: rgba(255,255,255,.7);
 				width: 80%;
 				border: 1px solid rgb(169, 169, 169);
 				border-image-source: initial;
@@ -91,8 +96,9 @@
 			.btn-primary {
 				color: white;
 				background-color: rgb(85, 85, 85);
-				border-color: rgb(72, 72, 72);
+				border-color: rgb(72, 72, 72);				
 			}
+			
 			.btn {
 				display: inline-block;
 				margin-bottom: 0px;
@@ -157,6 +163,12 @@
 			}
 			body{
 				background-color: beige;
+				background-image: url(images/grid.png);
+				background-repeat: repeat;
+			}
+			.hidden {
+				display: none; 
+				visibility: hidden;
 			}
 		</style>
 	</head>
@@ -177,20 +189,39 @@
 				
 				
 				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
+				Username <br>
 				<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
 				<p id="usernameError" class="clearError"></p> 				
 				<br>
+				<br>
+				Password <br>
 				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ submitForm(); } ">
 				<p id="passwordError" class="clearError"></p>					
 				<br>
 				<br>
-				<input type="button" value="Log in" style="width: auto;" class="btn btn-primary" onclick="submitForm();" />									
+				<input type="button" value="Log in" style="width: 100px;" class="btn btn-primary" onclick="submitForm();" />									
+				
+				<br>
+				<br>
+				<br>
+				<br>
+				<span id="registration" class="hidden"><a href="registration.jsp">Sign up</a> |</span> <a href="resetPassword.jsp">Forgot Password</a> 
+				
 			</div>
 		  </form>
 		</div>
 	  </div>
     	</div>	
 		<script type="text/javascript">
+			
+			sessionStorage.clear();
+			
+			$(document).ready(function(){
+				if (${allowRegistration}) {
+					$('#registration').removeClass('hidden');
+				}
+			});
+			
 			var QueryString = function () {				
 				  var query_string = {};
 				  var query = window.location.search.substring(1);
@@ -249,7 +280,7 @@
 								$("#usernameError").addClass("showError");
 								$("#usernameError").html(data.errors.username);
 							}							
-						 } else {
+						 } else {							
 							if (window.location.href.indexOf("login.jsp") > -1) {
 								window.location.href = data.message; 
 							} else {					

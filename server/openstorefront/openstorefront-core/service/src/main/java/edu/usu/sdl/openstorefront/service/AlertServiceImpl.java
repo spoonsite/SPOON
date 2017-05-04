@@ -36,6 +36,8 @@ import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
+import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -90,7 +92,7 @@ public class AlertServiceImpl
 		Alert alertExample = new Alert();
 		alertExample.setAlertType(alertContext.getAlertType());
 		alertExample.setActiveStatus(Alert.ACTIVE_STATUS);
-		List<Alert> alerts = persistenceService.queryByExample(Alert.class, alertExample);
+		List<Alert> alerts = persistenceService.queryByExample(alertExample);
 
 		for (Alert alert : alerts) {
 			boolean createUserMessage = false;
@@ -170,6 +172,21 @@ public class AlertServiceImpl
 				case AlertType.CHANGE_REQUEST:
 					userMessageType = UserMessageType.CHANGE_REQUEST_ALERT;
 					createUserMessage = true;
+					break;
+				case AlertType.USER_MANAGEMENT: 
+					if (alert.getUserManagementAlertOption() != null) {
+						if (alertContext.getDataTrigger() instanceof UserRegistration) {
+							if (alert.getUserManagementAlertOption().getAlertOnUserRegistration()) {
+								userMessageType = UserMessageType.USER_REGISTRATION;
+								createUserMessage = true;
+							}
+						} else if (alertContext.getDataTrigger() instanceof UserSecurity) {
+							if (alert.getUserManagementAlertOption().getAlertOnUserNeedsApproval()) {
+								userMessageType = UserMessageType.USER_NEED_APPROVAL;
+								createUserMessage = true;
+							}
+						}
+					}
 					break;
 			}
 

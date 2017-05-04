@@ -36,7 +36,7 @@ public class ServiceProxyFactory
 	public static Service getServiceProxy()
 	{
 		if (context == null) {
-			throw new OpenStorefrontRuntimeException("Unable to look up service context is null");
+			throw new OpenStorefrontRuntimeException("Unable to look up service; context is null");
 		}
 
 		Service service = context.getService(context.getServiceReference(Service.class));

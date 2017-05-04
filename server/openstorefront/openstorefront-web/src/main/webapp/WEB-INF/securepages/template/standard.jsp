@@ -29,7 +29,7 @@
 				refresh: function(container, entry) {
 					container.removeAll();
 					
-					Ext.Array.each(template.blocks, function(block){
+					Ext.Array.each(template.blocks, function(block){						
 						block.updateTemplate(entry);	
 					});
 					
@@ -46,47 +46,109 @@
 				var description = Ext.create('OSF.component.template.Description', {
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(description);
 				
 				var media = Ext.create('OSF.component.template.Media', {
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(media);				
-								
+												
 				var dependencies = Ext.create('OSF.component.template.Dependencies', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(dependencies);		
-				
+								
 				var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(di2elevel);	
-
+				
 				var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(evaluationSummary);	
-				
+								
 				var resources = Ext.create('OSF.component.template.Resources', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(resources);
-				
+								
 				var contacts = Ext.create('OSF.component.template.Contacts', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(contacts);				
 				
 				var vitals = Ext.create('OSF.component.template.Vitals', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(vitals);					
 				
 				var relationships = Ext.create('OSF.component.template.Relationships', {					
 					margin: '0 0 20 0'
-				});								
-				template.blocks.push(relationships);					
+				});					
+				
+				var detailPanel = Ext.create('OSF.component.template.LayoutScroll', {
+					title: 'Details',
+					items: [
+						description,
+						media,
+						dependencies,
+						di2elevel,
+						evaluationSummary,
+						resources,
+						contacts,
+						vitals,						
+						relationships
+					]
+				});			
+				
+				var evalVersions = Ext.create('OSF.component.template.EvaluationVersionSelect', {					
+					margin: '0 0 20 0'
+				});
+								
+				var sections = Ext.create('OSF.component.template.EvaluationSections', {					
+					margin: '0 0 20 0'
+				});					
+				
+				var checklistScores = Ext.create('OSF.component.template.EvaluationChecklistScores', {					
+					margin: '0 0 20 0'
+				});					
+				
+				var checklistSummary = Ext.create('OSF.component.template.EvaluationChecklistSummary', {					
+					margin: '0 0 20 0'
+				});					
+				
+				var evalRecommendations = Ext.create('OSF.component.template.EvaluationChecklistRecommendation', {					
+					margin: '0 0 20 0'
+				});					
+				
+				var evalChecklistDetails = Ext.create('OSF.component.template.EvaluationChecklistDetail', {					
+					margin: '0 0 20 0'
+				});					
+				
+				var evalPanel = Ext.create('OSF.component.template.LayoutScroll', {
+					title: 'Evaluation',
+					evalTopPanel: true,
+					items: [
+						evalVersions,
+						checklistScores,
+						checklistSummary,						
+						evalRecommendations,						
+						sections,
+						evalChecklistDetails
+					]
+				});				
+				
+				var reviewsPanel = Ext.create('OSF.component.template.Reviews', {
+					scrollable: true
+				});	
+				
+				var questionPanel = Ext.create('OSF.component.template.Questions', {
+					scrollable: true
+				});				
+				
+				var tabPanel = Ext.create('OSF.component.template.LayoutTab', {
+					items: [
+						detailPanel,
+						evalPanel,
+						reviewsPanel,
+						questionPanel
+					]
+				});
+				
+				template.blocks.push(tabPanel);					
 								
 				
 			});

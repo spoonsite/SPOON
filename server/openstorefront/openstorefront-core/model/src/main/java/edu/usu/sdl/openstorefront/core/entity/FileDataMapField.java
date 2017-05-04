@@ -21,6 +21,8 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -31,6 +33,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Hold an external field to internal entity field mapping")
+@Embeddable
 public class FileDataMapField
 	implements Serializable
 {
@@ -65,11 +68,13 @@ public class FileDataMapField
 	private String pathToEnityField;
 
 	@ConsumeField
+	@Embedded
 	@DataType(DataMapTransform.class)
 	@OneToMany(orphanRemoval = true)	
 	private List<DataMapTransform> transforms;
 	
 	@ConsumeField
+	@Embedded
 	@DataType(DataMapTransform.class)
 	@OneToMany(orphanRemoval = true)
 	private List<DataMapTransform> pathTransforms;

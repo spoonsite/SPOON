@@ -33,7 +33,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 		
 		var formItems = [
 			{
-				xtype: 'displayfield',
+				xtype: 'displayfield',				
 				fieldLabel: 'Username',
 				name: 'username',
 				submitValue: true
@@ -44,6 +44,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			},
 			{
 				xtype: 'textfield',
+				itemId: 'firstName',
 				name: 'firstName',
 				fieldLabel: 'First Name <span class="field-required" />',
 				labelSeparator: '',
@@ -53,6 +54,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			},
 			{
 				xtype: 'textfield',
+				itemId: 'lastName',
 				name: 'lastName',
 				fieldLabel: 'Last Name <span class="field-required" />',
 				labelSeparator: '',
@@ -68,6 +70,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				items: [
 					{
 						xtype: 'textfield',
+						itemId: 'email',
 						name: 'email',
 						inputType: 'email',
 						vtype: 'email',
@@ -79,10 +82,11 @@ Ext.define('OSF.component.UserProfilePanel', {
 					},
 					{
 						xtype: 'button',
+						itemId: 'emailSendBtn',
 						width: '175',
 						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
-						iconCls: 'fa fa-envelope',
+						iconCls: 'fa fa-lg fa-envelope-o',
 						maxWidth: 175,
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
@@ -112,12 +116,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 			},
 			{
 				xtype: 'textfield',
+				itemId: 'phone',
 				name: 'phone',
 				fieldLabel: 'Phone',
 				width: '100%',
 				maxLength: 80
 			},
 			Ext.create('OSF.component.StandardComboBox', {
+				itemId: 'organization',
 				name: 'organization',
 				allowBlank: false,
 				margin: '0 0 5 0',
@@ -162,10 +168,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				text: 'Save',
 				formBind: true,
-				iconCls: 'fa fa-save',
+				iconCls: 'fa fa-lg fa-save icon-button-color-save',
 				handler: function () {
 					var data = profileForm.getValues();
 					data.externalGuid = data.guid;
+					
+					if (profileForm.existingUser) {
+						 Ext.applyIf(data, profileForm.existingUser);
+					}
 
 					//update user profile  
 					profileForm.setLoading("Saving...");
@@ -194,6 +204,12 @@ Ext.define('OSF.component.UserProfilePanel', {
 
 		var dockedItems = [
 			{
+				xtype: 'panel',
+				itemId: 'externalManagementMessage',
+				dock: 'top',				
+				html: ''
+			},
+			{
 				xtype: 'toolbar',
 				dock: 'bottom',
 				style: 'background-color: transparent !important;',
@@ -209,19 +225,39 @@ Ext.define('OSF.component.UserProfilePanel', {
 			if (profileForm.profileWindow && profileForm.profileWindow.loadUser) {
 				profileForm.loadUser = profileForm.profileWindow.loadUser;
 			}
+			
+			var checkForEditing = function() {
+				CoreService.systemservice.getSecurityPolicy().then(function(policy){
+					if (policy.disableUserInfoEdit) {
+						profileForm.existingUser = profileForm.getForm().getValues();
+						
+						profileForm.queryById('firstName').setDisabled(true);
+						profileForm.queryById('lastName').setDisabled(true);
+						profileForm.queryById('email').setDisabled(true);
+						profileForm.queryById('emailSendBtn').setDisabled(true);
+						profileForm.queryById('phone').setDisabled(true);
+						profileForm.queryById('organization').setDisabled(true);
+						
+						if (policy.externalUserManagementText) {
+							profileForm.queryById('externalManagementMessage').update('<br><br><i class="fa fa-2x fa-warning text-warning"></i> ' + policy.externalUserManagementText);
+						}
+					}
+				});			
+			};
 
 			if (profileForm.loadUser){
 				Ext.Ajax.request({
 					url: 'api/v1/resource/userprofiles/' + profileForm.loadUser,
 					success: function(response, opts) {
 						var usercontext = Ext.decode(response.responseText);
-						profileForm.getForm().setValues(usercontext);						
+						profileForm.getForm().setValues(usercontext);	
+						checkForEditing();
 					}
 				});
 			} else {
-				CoreService.usersevice.getCurrentUser().then(function (response) {
-					var usercontext = Ext.decode(response.responseText);
+				CoreService.userservice.getCurrentUser().then(function (usercontext) {					
 					profileForm.getForm().setValues(usercontext);
+					checkForEditing();
 				});
 			}
 		});
@@ -239,7 +275,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 	modal: true,
 	width: '50%',
 	alwaysOnTop: true,
-	height: 425,
+	height: 525,
 	initComponent: function () {
 		this.callParent();
 
@@ -255,7 +291,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 				},
 				{
 					text: 'Cancel',
-					iconCls: 'fa fa-close',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function () {
 						profileWindow.close();
 					}

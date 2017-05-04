@@ -22,11 +22,12 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -52,7 +53,7 @@ public class ErrorTicketResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ErrorTicketWrapper.class)
@@ -98,15 +99,16 @@ public class ErrorTicketResource
 			queryByExample.setOrderBy(errorTicketSortExample);
 		}
 
-		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
+		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets an error ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ErrorTicket.class)
 	@Path("/{id}")
 	public Response getErrorTicket(
 			@PathParam("id")
@@ -117,7 +119,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets error ticket info")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{id}/ticket")
@@ -134,15 +136,14 @@ public class ErrorTicketResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Deletes error tickets")
 	@Consumes({MediaType.APPLICATION_JSON})	
 	@DataType(MultipleIds.class)
-	public Response deleteErrorTickets(			
+	public void deleteErrorTickets(			
 			@RequiredParam MultipleIds multipleIds)
 	{
-		service.getSystemService().deleteErrorTickets(multipleIds.getIds());				
-		return Response.ok().build();
+		service.getSystemService().deleteErrorTickets(multipleIds.getIds());						
 	}
 
 }

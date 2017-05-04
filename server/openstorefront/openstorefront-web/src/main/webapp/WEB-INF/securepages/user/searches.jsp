@@ -43,7 +43,7 @@
 				var searchWindow = Ext.create('Ext.window.Window', {
 					id: 'searchWindow',
 					title: 'Add/Edit Search',
-					iconCls: 'fa fa-search-plus',
+					iconCls: 'fa fa-lg fa-search-plus',
 					modal: true,
 					width: '80%',
 					hieght: '80%',
@@ -83,7 +83,7 @@
 							items: [
 								{
 									text: 'Save',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										actionSaveSearch();										
 									}
@@ -93,7 +93,7 @@
 								},								
 								{
 									text: 'Preview Results',
-									iconCls: 'fa fa-eye',
+									iconCls: 'fa fa-lg fa-eye icon-button-color-view',
 									handler: function(){
 										Ext.getCmp('advanceSearch').previewResults();
 									}							
@@ -104,7 +104,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function () {
 										if (advanceSearch.changed) {
 											Ext.Msg.show({
@@ -192,7 +192,7 @@
 				
 				var searchGrid = Ext.create('Ext.grid.Panel', {					
 					id: 'searchgrid',
-					title: 'Saved Searches <i class="fa fa-question-circle"  data-qtip="Allows for managing saved searches" ></i>',
+					title: 'Saved Searches <i class="fa fa-lg fa-question-circle"  data-qtip="Allows for managing saved searches" ></i>',
 					columnLines: true,
 					store: {
 						autoLoad: true,
@@ -233,8 +233,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',				
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -246,8 +247,8 @@
 									text: 'Add',
 									itemId: 'add',
 									scale: 'medium',
-									
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -257,7 +258,8 @@
 									itemId: 'edit',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEdit(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -270,7 +272,7 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
 									}
@@ -301,8 +303,9 @@
 
 				var actionDelete = function(record) {
 					Ext.Msg.show({
-						title:'Remove Search?',
-						message: 'Are you sure you want to remove this search?',
+						title:'Delete Search?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete this search?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {

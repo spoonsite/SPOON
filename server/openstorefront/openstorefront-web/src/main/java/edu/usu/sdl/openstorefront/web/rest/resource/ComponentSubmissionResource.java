@@ -27,12 +27,14 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
@@ -68,6 +70,7 @@ public class ComponentSubmissionResource
 	//  This is so that a user may edit an approved component. If the desire for behavior changes, the code is still
 	//  there, you just need to remove the '|| true'
 	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
 	@DataType(ComponentView.class)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -78,7 +81,7 @@ public class ComponentSubmissionResource
 			componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
 
@@ -92,7 +95,7 @@ public class ComponentSubmissionResource
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<Component> pendingChanges = service.getPersistenceService().queryByExample(Component.class, queryPendingChanges);
+			List<Component> pendingChanges = service.getPersistenceService().queryByExample(queryPendingChanges);
 			Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
 			for (ComponentView componentView : views) {
 				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
@@ -115,6 +118,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Creates a new Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -130,6 +134,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Updates Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -154,6 +159,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Updates Component Submission Notification Email")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.TEXT_PLAIN})
@@ -187,6 +193,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Submits Component Submission for approval.")
 	@Path("/{componentId}/submit")
 	public Response submitComponent(
@@ -214,6 +221,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Submits a change request for approval.")
 	@Path("/{componentId}/submitchangerequest")
 	public Response submitChangeRequest(
@@ -241,6 +249,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Unsubmits Component Submission for approval.")
 	@Path("/{componentId}/unsubmit")
 	public Response unsubmitComponent(
@@ -261,6 +270,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Unsubmits Change Request for approval.")
 	@Path("/{componentId}/unsubmitchangerequest")
 	public Response unsubmitChangeRequest(
@@ -281,6 +291,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Inactivates an incomplete Component Submission.")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
@@ -332,7 +343,7 @@ public class ComponentSubmissionResource
 							ComponentMedia componentMediaExample = new ComponentMedia();
 							componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 							componentMediaExample.setComponentId(exstingComponent.getComponentId());
-							List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
+							List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(componentMediaExample);
 							componentAll.getMedia().addAll(componentMedia);
 
 							//clean out duplicate media
@@ -352,7 +363,7 @@ public class ComponentSubmissionResource
 							ComponentResource componentResourceExample = new ComponentResource();
 							componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 							componentResourceExample.setComponentId(exstingComponent.getComponentId());
-							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 							componentAll.getResources().addAll(componentResources);
 
 							//clean out duplicate resouces
@@ -396,6 +407,7 @@ public class ComponentSubmissionResource
 	}
 
 	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Get a component submission. Must be the owner of the submission or submission must be anonymous")
 	@DataType(ComponentAll.class)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -414,6 +426,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
@@ -438,6 +451,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Removes media from the specified component")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
@@ -451,7 +465,7 @@ public class ComponentSubmissionResource
 		componentMediaExample.setComponentMediaId(mediaId);
 		componentMediaExample.setComponentId(componentId);
 
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		if (componentMedia != null) {
 			response = ownerAnonymousCheck(componentMedia);
 			if (response == null) {
@@ -472,6 +486,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Remove a given resource from the specified component")
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(
@@ -485,7 +500,7 @@ public class ComponentSubmissionResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			response = ownerAnonymousCheck(componentResource);
 			if (response == null) {

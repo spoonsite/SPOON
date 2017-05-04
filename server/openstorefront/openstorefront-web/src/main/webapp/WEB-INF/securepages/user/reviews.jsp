@@ -36,7 +36,7 @@
 			Ext.onReady(function () {
 				
 				var reviewGrid = Ext.create('Ext.grid.Panel', {	
-					title: 'Reviews <i class="fa fa-question-circle"  data-qtip="Inspect and manage the reviews you\'ve given here"></i>',
+					title: 'Reviews <i class="fa fa-lg fa-question-circle"  data-qtip="Inspect and manage the reviews you\'ve given here"></i>',
 					id: 'reviewGrid',
 					columnLines: true,
 					store: {
@@ -92,7 +92,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -105,7 +106,8 @@
 									itemId: 'edit',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEdit(Ext.getCmp('reviewGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -118,7 +120,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash-o',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDelete(Ext.getCmp('reviewGrid').getSelectionModel().getSelection()[0]);
 									}									
@@ -149,7 +151,8 @@
 				};
 						
 				var reviewWindow = Ext.create('OSF.component.ReviewWindow', {
-					title: 'Edit Review',						
+					title: 'Edit Review',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					postHandler: function(reviewWin, response) {
 						actionRefresh();
 					}
@@ -161,8 +164,8 @@
 				
 				var actionDelete = function(record) {
 					Ext.Msg.show({
-						title:'Remove Review?',
-						message: 'Are you sure you want to remove this review?',
+						title:'Delete Review?',
+						message: 'Are you sure you want to delete this review?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {

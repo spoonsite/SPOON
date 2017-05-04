@@ -19,6 +19,12 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 
 /**
@@ -28,10 +34,12 @@ import javax.persistence.OneToOne;
 @APIDescription("Referenced Metadata Attribute")
 public class ComponentAttribute
 		extends BaseComponent<ComponentAttribute>
+		implements LoggableModel<ComponentAttribute>
 {
 
 	@PK
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ComponentAttributePk componentAttributePk;
 
@@ -53,6 +61,32 @@ public class ComponentAttribute
 		//Leave the other key items
 		if (getComponentAttributePk() != null) {
 			getComponentAttributePk().setComponentId(null);
+		}
+	}
+
+	@Override
+	public List<FieldChangeModel> findChanges(ComponentAttribute updated)
+	{
+		Set<String> excludeFields = excludedChangeFields();
+		excludeFields.add("componentAttributePk");
+
+		List<FieldChangeModel> changes = FieldChangeModel.allChangedFields(excludeFields, this, updated);
+		return changes;
+	}
+
+	@Override
+	public String addRemoveComment()
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(getComponentAttributePk().getAttributeCode());
+		pk.setAttributeType(getComponentAttributePk().getAttributeType());
+		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		AttributeType type = service.getAttributeService().findType(getComponentAttributePk().getAttributeType());
+		if (code != null && type != null) {
+			return type.getDescription() + ": " + code.getLabel();
+		} else {
+			return "Missing Attribute code or Type";
 		}
 	}
 

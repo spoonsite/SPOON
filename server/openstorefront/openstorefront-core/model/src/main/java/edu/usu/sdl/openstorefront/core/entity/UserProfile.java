@@ -25,12 +25,11 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author jlaw, dshurtleff
  */
 @APIDescription("Holds user information and preferences")
 public class UserProfile
@@ -42,7 +41,7 @@ public class UserProfile
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String username;
-
+	
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
@@ -96,6 +95,14 @@ public class UserProfile
 	private Boolean notifyOfNew;
 
 	private Date lastLoginDts;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String landingPage;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	private String searchResultView;
 
 	public UserProfile()
 	{
@@ -221,6 +228,26 @@ public class UserProfile
 	public void setLastLoginDts(Date lastLoginDts)
 	{
 		this.lastLoginDts = lastLoginDts;
+	}
+
+	public String getLandingPage()
+	{
+		return landingPage;
+	}
+
+	public void setLandingPage(String landingPage)
+	{
+		this.landingPage = landingPage;
+	}
+
+	public String getSearchResultView()
+	{
+		return searchResultView;
+	}
+
+	public void setSearchResultView(String searchResultView)
+	{
+		this.searchResultView = searchResultView;
 	}
 
 }

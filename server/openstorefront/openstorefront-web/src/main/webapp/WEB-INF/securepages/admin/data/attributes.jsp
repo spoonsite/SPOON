@@ -30,8 +30,99 @@
 	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
 	</form>
+	
+	<style type="text/css">
+		
+		.attribute-button-inactive,
+		.attribute-button-active {
+
+			width: 100%;
+			border: 2px solid #E7E7E7;
+			text-align: left;
+			transition-duration: 0.4s;
+			cursor: pointer;
+			outline: none;
+			color: #000000;
+		}
+		
+		.attribute-button-inactive:hover,
+		.attribute-button-active:hover {
+			
+			border-color: #B2B2B2;
+		}
+
+		.attribute-button-inactive span,
+		.attribute-button-active span {
+
+			display: inline-block;
+			float: right;
+			transition-duration: 0.4s;
+		}
+
+		.attribute-button-inactive span:before {
+
+			content: '\02C3';
+		}
+
+		.attribute-button-active span:before {
+
+			content: '\02C5';
+		}
+
+		.attribute-button-inactive {
+
+			background-color: #FFFFFF;
+		}
+
+		.attribute-button-active {
+
+			background-color: #EEEEEE;
+		}
+
+		.emboldened {
+
+			font-weight: bold;
+		}
+
+		.attributes-visible,
+		.attributes-hidden {
+
+			margin: 0;
+			padding: 2px 2px 2px 20px;
+		}
+
+		.attributes-visible {
+
+			display: block;
+		}
+
+		.attributes-hidden {
+
+			display: none;
+		}
+		
+	</style>
 
 	<script type="text/javascript">
+		
+		var displayAttributeList = function displayAttributeList(button, listId) {
+				
+			var attributes = document.getElementById(listId);
+
+			if (button.className != "attribute-button-active")  {
+
+				button.className = "attribute-button-active";
+
+				attributes.className = "attributes-visible";
+			}
+			else {
+
+				button.className = "attribute-button-inactive";
+
+				attributes.className = "attributes-hidden";
+			}
+		};
+		
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
 	
@@ -39,6 +130,20 @@
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
 				autoLoad: true,
+				fields: [
+					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
+						if (data.defaultAttributeCode) {
+							return data.defaultAttributeCode;
+						}
+						return '';	
+					}},
+					{ name: 'allowUserGeneratedCodesDisplay', mapping: function(data) {
+						if (data.allowUserGeneratedCodes) {
+							return data.allowUserGeneratedCodes;
+						}
+						return false;
+					}}
+				],
 				sorters: [
 					new Ext.util.Sorter({
 						property: 'description',
@@ -98,8 +203,27 @@
 
 									name: store.getAt(i).data.componentTypeDescription,
 									code: store.getAt(i).data.componentType
-								}
+								},
+								
+								// Initialize Attributes Array
+								attributes: []
 							};
+							
+							// Loop Through Component's Existing Attributes
+							for (var j = 0; j < store.getAt(i).data.attributes.length; j++) {
+								
+								// Store Attribute
+								currentComponent.attributes[j] = {
+									
+									// Store Attribute Name
+									name: store.getAt(i).data.attributes[j].typeLabel,
+									
+									// Store Attribute Value
+									value: store.getAt(i).data.attributes[j].label
+								};
+							}
+							
+//							console.log(store.getAt(i).data);
 
 							// Store Component
 							localComponents.push(currentComponent);
@@ -198,7 +322,7 @@
 
 			var attributeGrid = Ext.create('Ext.grid.Panel', {
 				id: 'attributeGrid',
-				title: 'Manage Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
+				title: 'Manage Attributes <i class="fa fa-lg fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
 				store: 'attributeStore',
 				selModel: {
 					selType: 'checkboxmodel'        
@@ -246,53 +370,60 @@
 						dataIndex: 'requiredFlg',
 						flex: 1, 
 						tooltip: 'Is the attribute required upon adding a new component?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Visible', 
 						dataIndex: 'visibleFlg', 
 						flex: 1, 
 						tooltip: 'Show in the list of filters?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},					
 					{
 						text: 'Important',
 						dataIndex: 'importantFlg',
 						flex: 1, 
 						tooltip: 'This shows on the summary page.',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Architecture',
 						dataIndex: 'architectureFlg',
 						flex: 1, 
 						tooltip: 'Is the attribute an architecture?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Allow Multiple',
 						dataIndex: 'allowMultipleFlg',
 						flex: 1, 
 						tooltip: 'Should a component be allowed to have more than one code for this attribute?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Allow User Codes',
-						dataIndex: 'allowUserGeneratedCodes',
+						dataIndex: 'allowUserGeneratedCodesDisplay',
 						flex: 1,
 						tooltip: 'Should users be able to generate codes for this attribute?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Hide On Submission',
 						dataIndex: 'hideOnSubmission',
 						flex: 1, 
 						tooltip: 'Should the attribute type show on the submission form?',
-						renderer: gridColorRenderer
+						align: 'center',
+						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
 						text: 'Default Code',
-						dataIndex: 'defaultAttributeCode',
+						dataIndex: 'defaultAttributeCodeDisplay',
 						flex: 1
 					},
 					{
@@ -350,7 +481,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									attributeStore.load();
 								}
@@ -362,7 +493,7 @@
 								text: 'Add New Type',
 								id: 'attributeGrid-tools-add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function() {
 									actionAddAttribute();
 								}
@@ -371,8 +502,9 @@
 								text: 'Edit Attribute',
 								id: 'attributeGrid-tools-edit',
 								scale: 'medium',
+								width: '150px',
 								disabled: true,
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
 									actionEditAttribute(record);
@@ -382,8 +514,9 @@
 								text: 'Manage Codes',
 								id: 'attributeGrid-tools-manageCodes',
 								scale: 'medium',
+								width: '160px',
 								disabled: true,
-								iconCls: 'fa fa-2x fa-list-alt',
+								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
 									actionManageCodes(record);
@@ -395,8 +528,9 @@
 							{
 								text: 'Entry Assignment',
 								id: 'attributeGrid-tools-assign',
+								hidden: true,
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-list-alt',
+								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
 									actionManageAssignments();
 								}
@@ -406,12 +540,12 @@
 								id: 'attributeGrid-tools-action',
 								scale: 'medium',																	
 								disabled: true,
-								iconCls: 'fa fa-2x fa-gear',
+								iconCls: 'fa fa-2x fa-gear icon-vertical-correction icon-button-color-default',
 								menu: [
 									{
 										text: 'Set Flags',
 										id: 'attributeGrid-tools-action-flags',
-										iconCls: 'fa fa-gear',
+										iconCls: 'fa fa-lg fa-flag icon-small-vertical-correction icon-button-color-default',
 										handler: function() {
 											
 											// Check If Only One Record Selected
@@ -437,7 +571,7 @@
 									{
 										text: 'Toggle Status',
 										id: 'attributeGrid-tools-action-toggle',
-										iconCls: 'fa fa-power-off',
+										iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
 										handler: function() {
 											
 											actionToggleAttributeStatus();
@@ -447,7 +581,7 @@
 										text: 'Delete',
 										id: 'attributeGrid-tools-action-delete',
 										cls: 'alert-danger',
-										iconCls: 'fa fa-trash',
+										iconCls: 'fa fa-lg fa-trash icon-button-color-default icon-small-vertical-correction',
 										handler: function() {
 											
 											actionDeleteAttribute();
@@ -461,8 +595,9 @@
 							{
 								text: 'Import',
 								id: 'attributeGrid-tools-import',
+								hidden: true,
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-upload',
+								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								handler: function() {
 									actionImportAttribute();
 								}
@@ -470,9 +605,10 @@
 							{
 								text: 'Export',
 								id: 'attributeGrid-tools-export',
+								hidden: true,
 								scale: 'medium',
 								disabled: true,
-								iconCls: 'fa fa-2x fa-download',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								handler: function() {
 									var records = attributeGrid.getSelection();
 									actionExportAttribute(records);
@@ -482,11 +618,22 @@
 					}
 				]
 			});
+			
+			CoreService.userservice.getCurrentUser().then(function(user){
+				if (CoreService.userservice.userHasPermisson(user, "ADMIN-ENTRY-MANAGEMENT")) {
+					Ext.getCmp('attributeGrid-tools-assign').setHidden(false);					
+				}
+				if (CoreService.userservice.userHasPermisson(user, "ADMIN-DATA-IMPORT-EXPORT")) {
+					Ext.getCmp('attributeGrid-tools-import').setHidden(false);
+					Ext.getCmp('attributeGrid-tools-export').setHidden(false);
+				}				
+			});			
+			
 
 			var actionAddAttribute = function actionAddAttribute() {
 				Ext.getCmp('editAttributeForm').reset();
 				editAttributeWin.edit = false;
-				editAttributeWin.setTitle('Add Attribute');
+				editAttributeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
@@ -505,7 +652,7 @@
 
 			var actionEditAttribute = function(record) {
 				editAttributeWin.edit = true;
-				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
+				editAttributeWin.setTitle('<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType);
 				editAttributeWin.show();
 				
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
@@ -628,7 +775,7 @@
 				
 				id: 'setFlagsWin',
 				title: 'Set Flags - ',
-				iconCls: 'fa fa-user',
+				iconCls: 'fa fa-lg fa-flag',
 				width: '35%',
 				y: 200,
 				modal: true,
@@ -715,7 +862,7 @@
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-multiples-group',
-								fieldLabel: 'Allow Multiples <i class="fa fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Remove the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
+								fieldLabel: 'Allow Multiples <i class="fa fa-lg fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Delete the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
 								labelAlign: 'top',
 								width: '100%',
 								columns: 3,
@@ -773,10 +920,10 @@
 								dock: 'bottom',
 								items: [
 									{
-										text: 'Update',
+										text: 'Save',
 										id: 'set-flags-update-button',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										disabled: true,
 										handler: function() {
 
@@ -939,7 +1086,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}
@@ -1103,8 +1250,10 @@
 				
 				// Confirm Delete Operation
 				Ext.Msg.show({
-					title: 'Delete?',
-					message: 'Are you sure you want to delete ' + name + '?',
+					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+					title: 'Delete Attribute?',
+					minHeight: 180,
+					message: '<b>Are you sure you want to delete attribute - ' + name + '?</b><br /><br /><b>Note:</b> This will remove the attribute from ALL entries approved and <br />&emsp;&emsp;&emsp;not approved.',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -1183,12 +1332,33 @@
 			};
 
 			var actionExportAttribute = function actionExportAttribute(records) {
+				
+				// Initialize Export Types
 				var attributeTypes = "";
+				
+				// Loop Through Records
 				Ext.Array.each(records, function(record) {
+					
+					// Add Attribute Type To Form
 					attributeTypes += '<input type="hidden" name="type" ';
 					attributeTypes += 'value="' + record.get('attributeType') +'" />';
 				});
+				
+				// Get CSRF Token From Cookie
+				var token = Ext.util.Cookies.get('X-Csrf-Token');
+
+				// Ensure CSRF Token Is Available
+				if (token) {
+
+					// Add CSRF Token To Form
+					attributeTypes += '<input type="hidden" name="X-Csrf-Token" ';
+					attributeTypes += 'value="' + token + '" />';
+				}
+				
+				// Set Form
 				document.getElementById('exportFormAttributeTypes').innerHTML = attributeTypes;
+				
+				// Submit Form
 				document.exportForm.submit();
 			};
 
@@ -1222,8 +1392,8 @@
 
 			var attachmentUploadWindow = Ext.create('Ext.window.Window', {
 				id: 'attachmentUploadWindow',
-				title: 'Upload Attachment',
-				iconCls: 'fa fa-info-circle',
+				title: 'Add Attachment',
+				iconCls: 'fa fa-lg fa-paperclip',
 				width: '40%',
 				height: 175,
 				y: 60,
@@ -1262,7 +1432,7 @@
 						items: [
 							{
 								text: 'Upload Attachment',
-								iconCls: 'fa fa-save',
+								iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 								formBind: true,	
 								handler: function() {
 									var record = Ext.getCmp('codesGrid').getSelection()[0];
@@ -1294,7 +1464,7 @@
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function () {
 									Ext.getCmp('attachmentUploadWindow').hide();
 								}
@@ -1323,10 +1493,10 @@
 							Ext.getCmp('codesGrid-tools-delete').enable();
 							Ext.getCmp('codesToolbarAddAttachment').enable();
 							if (record[0].data.activeStatus === 'A') {
-								Ext.getCmp('codesGrid-tools-toggle').setText('Deactivate');
+								Ext.getCmp('codesGrid-tools-toggle').setText('Toggle Status');
 							}
 							else {
-								Ext.getCmp('codesGrid-tools-toggle').setText('Activate');
+								Ext.getCmp('codesGrid-tools-toggle').setText('Toggle Status');
 							}
 							var attachment = record[0].get('attachmentFileName');
 							if (!attachment) {
@@ -1401,7 +1571,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									codesStore.load();
 								}
@@ -1412,20 +1582,18 @@
 							{
 								text: 'Add New Code',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function () {
 									var parentAttributeRecord = attributeGrid.getSelection()[0];
 									actionAddCode(parentAttributeRecord);
 								}
 							},
 							{
-								xtype: 'tbseparator'
-							},
-							{
 								text: 'Edit Code',
 								id: 'codesGrid-tools-edit',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-edit',
+								width: '140px',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-view',
 								disabled: true,
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
@@ -1433,10 +1601,13 @@
 								}
 							},
 							{
-								text: 'Deactivate',
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Toggle Status',
 								id: 'codesGrid-tools-toggle',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-power-off',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 								disabled: true,
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
@@ -1447,12 +1618,12 @@
 								text: 'Delete',
 								id: 'codesGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								disabled: true,
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
-									var title = 'Delete Code';
-									var msg = 'Are you sure you want to delete this code?';
+									var title = 'Delete Attribute Code?';
+									var msg = '<b>Are you sure you want to delete this attribute code?</b><br /><br /><b>Note: </b>This will delete ALL attributes with this code from all<br />&emsp;&emsp;&emsp; approved and not approved entries.';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteCode(record);
@@ -1468,7 +1639,7 @@
 								disabled: true,
 								id: 'codesToolbarAddAttachment',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-paperclip',
+								iconCls: 'fa fa-2x fa-paperclip icon-vertical-correction icon-button-color-default',
 								handler: function() {
 									Ext.getCmp('attachmentUploadWindow').show();
 								}
@@ -1478,7 +1649,7 @@
 								disabled: true,
 								id: 'codesToolbarDownloadAttachment',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-download',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								handler: function() {
 									var codeRecord = codesGrid.getSelection()[0];
 									var typeRecord = attributeGrid.getSelection()[0];
@@ -1492,14 +1663,17 @@
 								}
 							},
 							{
+								xtype: 'tbseparator'
+							},
+							{
 								text: 'Delete Attachment',
 								disabled: true,
 								id: 'codesToolbarDeleteAttachment',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								handler: function() {
 									var record = codesGrid.getSelection()[0];
-									var title = 'Delete Attachment';
+									var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Attachment?</span>';
 									var msg = 'Are you sure you want to delete the attachment for this code?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
@@ -1653,7 +1827,7 @@
 									{
 										text: 'Save',
 										id: 'editCodeWin-save',
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
 											var form = Ext.getCmp('editCodeForm');
@@ -1705,7 +1879,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											Ext.getCmp('editCodeForm').reset();
 											editCodeWin.close();
@@ -1720,7 +1894,7 @@
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
-				editCodeWin.setTitle('Add New Code');
+				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
 				editCodeWin.show();
 			};
@@ -1730,7 +1904,7 @@
 				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
-				editCodeWin.setTitle('Edit Code - ' + record.data.code);
+				editCodeWin.setTitle('<i class="fa fa-edit"></i>' + '<span class="shift-window-text-right">Edit Code - </span>' + record.data.code);
 				Ext.getCmp('editCodeForm-code').setEditable(false);
 				editCodeWin.show();
 			};
@@ -1803,7 +1977,9 @@
 
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
+				iconCls: 'fa fa-2x fa-list-alt',
 				title: 'Manage Codes',
+				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
 				modal: true,
 				width: '90%',
 				height: '90%',
@@ -1954,12 +2130,12 @@
 
 														var mult = Ext.getCmp('multipleFlagCheckBox');
 														if (mult.getValue() == true) {
-															var msg = 'Attributes that allow multiple codes cannot be required. You may remove the';
+															var msg = 'Attributes that allow multiple codes cannot be required. You may delete the';
 															msg += " 'allow multiple' flag, or keep the multiple codes flag and not set the required flag.";
 															Ext.MessageBox.show({
 																title: 'Attributes Allowing Multiple Codes Cannot Be Required',
 																msg: msg,
-																buttonText: {yes: "Remove 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
+																buttonText: {yes: "Delete 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
 																fn: function(btn) {
 																	if (btn === 'yes') {
 																		mult.setValue('false');
@@ -2002,11 +2178,11 @@
 													var rf = Ext.getCmp('requiredFlagCheckBox')
 													if (rf.getValue() == true) {
 														var msg = 'Attributes that are required are not allowed to have multiple codes. You may either';
-														msg += ' remove the required flag, or keep the required flag and not allow multiple codes.'
+														msg += ' delete the required flag, or keep the required flag and not allow multiple codes.'
 														Ext.MessageBox.show({
 															title: 'Required Attributes Cannot Have Multiple Codes',
 															msg: msg,
-															buttonText: {yes: "Remove Required Flag", no: "Keep Required Flag"},
+															buttonText: {yes: "Delete Required Flag", no: "Keep Required Flag"},
 															fn: function(btn) {
 																if (btn === 'yes') {
 																	rf.setValue('false');
@@ -2082,7 +2258,7 @@
 									{
 										text: 'Save',
 										id: 'editAttributeWin-save',
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
 											var form = Ext.getCmp('editAttributeForm');
@@ -2160,7 +2336,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											Ext.getCmp('editAttributeForm').reset();
 											Ext.getCmp('editAttributeWin').hide();
@@ -2206,27 +2382,9 @@
 						// Loop Through Components
 						for (i = 0; i < components.length; i++) {
 
-							// Save Component Data
-							var data = {
-
-								id: components[i].componentId,
-								name: components[i].name,
-								type: {
-
-									name: components[i].componentTypeLabel,
-									code: components[i].componentType
-								}
-							};
-
 							// Add Component ID To Array
-							componentIds.push(data.id);
-
-							// Add Component Data To Array
-							componentData.push(data);
+							componentIds.push(components[i].componentId);
 						}
-
-						// Add Component Data To Assigned Component Store
-						store_assignedComponents_local.setData(componentData);
 						
 						// Load Remote Components Store
 						store_components_remote.load(function(records, operation, success) {
@@ -2239,6 +2397,23 @@
 
 								return !Ext.Array.contains(componentIds, record.get('id'));
 							});
+							
+							// Loop Through Assigned Component IDs
+							for (i = 0; i < componentIds.length; i++) {
+								
+								// Locate & Store Component With Matching ID
+								var component = store_components_local.getById(componentIds[i]);
+								
+								// Check For Match
+								if (component != null) {
+								
+									// Add Matching Component's Data To Array
+									componentData.push(component.getData());
+								}
+							}
+
+							// Add Assigned Component Data To Assigned Component Store
+							store_assignedComponents_local.setData(componentData);
 
 							// Unmask Component Grids (Loading)
 							Ext.getCmp('unassignedComponentGrid').getView().unmask();
@@ -2291,9 +2466,11 @@
 							
 							// Store Attribute Type
 							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
 
 							// Store Attribute Code
 							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
 
 							// Make Request
 							Ext.Ajax.request({
@@ -2301,14 +2478,54 @@
 								url: 'api/v1/resource/components/' + componentData.id + '/attributes/' + type + '/' + code,
 								method: 'DELETE',
 								success: function (response, opts) {
+									
+									// Loop Through Component Attributes
+									for (i = 0; i < componentData.attributes.length; i++) {
+										
+										// Look For Matching Attribute
+										if (componentData.attributes[i].name === name &&
+												componentData.attributes[i].value === value) {
+											
+											// Delete Attribute
+											componentData.attributes.splice(i, 1);
+											
+											// Stop Looping
+											break;
+										}
+									}
+									
+									// Update Data Display
+									unassignedComponentGrid.getView().refresh();
+									
+									// Clear Filters
+									store_components_local.clearFilter();
+									
+									// Get Assigned Components
+									var assignedComponents = store_assignedComponents_local.getData();
+									
+									// Initialize Assigned Component ID Array
+									var assignedComponentIDs = [];
+									
+									// Loop Through Assigned Components
+									for (i = 0; i < assignedComponents.length; i++) {
+										
+										// Add ID To Array
+										assignedComponentIDs.push(assignedComponents.items[i].id);
+									}
+									
+									// Filter Unassigned Components Store
+									store_components_local.filterBy(function(record) {
 
+										return !Ext.Array.contains(assignedComponentIDs, record.get('id'));
+									});
+									
 									// Indicate Successful Removal
-									Ext.toast("Attribute Removed From " + componentData.name, '', 'tr');
+									Ext.toast("Attribute Deleted From " + componentData.name, '', 'tr');
 								},
 								failure: function (response, opts) {
 
 									// Provide An Error Message
-									Ext.toast("Error Removing Attribute From " + componentData.name, '', 'tr');
+									Ext.toast("Error Deleting Attribute From " + componentData.name, '', 'tr');
 									
 									// Log Error
 									console.log("Error Removing Attribute. See Response:");
@@ -2339,13 +2556,28 @@
 						dataIndex: 'name',
 						flex: 1,
 						renderer: function (value, metaData, record) {
-
-							var html = "<strong>" + value + "</strong>";
+							
+							var html = '<span style="font-weight: bold;">' + value + "</span>";
 							html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-							html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+							html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 							html += '<span style="float: left;">' + record.get('type').name + '</span>';
 							html += "</div>";
-
+							
+							html += '<div>';
+							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
+							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
+							
+							for (var i = 0; i < record.get('attributes').length; i++) {
+								
+								html += '		<li>';
+								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
+								html += '			' + record.get('attributes')[i].value;
+								html += '		</li>';
+							}
+							
+							html += '	</ul>';
+							html += '</div>';
+							
 							return html;
 						}
 
@@ -2359,7 +2591,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 
 									// Refresh Entry Grid Panels
@@ -2488,7 +2720,7 @@
 						dropGroup: 'componentAssignment-add-drag-drop-group',
 						enableDrag: true,
 						enableDrop: true,
-						dragText: 'Remove: {0}',
+						dragText: 'Delete: {0}',
 						dragTextField: 'name'
 					},
 					listeners: {
@@ -2501,9 +2733,11 @@
 							
 							// Store Attribute Type
 							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
 
 							// Store Attribute Code
 							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
 
 							// Build New Component Attribute Data
 							var attributeData = {
@@ -2522,7 +2756,17 @@
 								method: 'POST',
 								jsonData: attributeData,
 								success: function (response, opts) {
-
+									
+									// Add Attribute & Code To Component
+									componentData.attributes.push({
+										
+										name: name,
+										value: value
+									});
+									
+									// Update Data Display
+									assignedComponentGrid.getView().refresh();
+									
 									// Indicate Successful Removal
 									Ext.toast("Attribute Added To " + componentData.name, '', 'tr');
 								},
@@ -2569,20 +2813,35 @@
 
 								// Build Component Without Record Type
 								var html = '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += "<strong>" + value + "</strong>";
+								html += '<span style="font-weight: bold;">' + value + "</span>";
 								html += "</div>";
-								return html;
 							}
 							else {
 
 								// Build Component With Record Type
-								var html = "<strong>" + value + "</strong>";
+								var html = '<span style="font-weight: bold;">' + value + "</span>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + recordType.name + '</span>';
 								html += "</div>";
-								return html;
 							}
+							
+							html += '<div>';
+							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
+							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
+							
+							for (var i = 0; i < record.get('attributes').length; i++) {
+								
+								html += '		<li>';
+								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
+								html += '			' + record.get('attributes')[i].value;
+								html += '		</li>';
+							}
+							
+							html += '	</ul>';
+							html += '</div>';
+							
+							return html;
 						}
 					}
 				]
@@ -2592,6 +2851,7 @@
 			var manageAssignmentsWin = Ext.create('Ext.window.Window', {
 				id: 'manageAssignmentsWin',
 				title: 'Manage Assignments',
+				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
 				modal: true,
 				width: '60%',
 				height: '80%',
@@ -2764,7 +3024,7 @@
 							},
 							{
 								text: 'Close',
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function () {
 									
 									// Hide Attribute Management Window

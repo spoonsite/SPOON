@@ -113,91 +113,6 @@
 			}
 		};
 		
-		var ViewPage = {
-			editReview: function(reviewId) {
-				var reviewData;
-				Ext.Array.each(ViewPage.reviews, function(review){
-					if (review.reviewId === reviewId) {
-						reviewData = review;
-					}
-				});
-				
-				var record = Ext.create('Ext.data.Model', {					
-				});
-				record.set(reviewData);
-				
-				ViewPage.reviewWindow.show();
-				ViewPage.reviewWindow.editReview(record);
-			},
-			
-			deleteReview: function(reviewId, componentId) {
-				Ext.Msg.show({
-					title:'Remove Review?',
-					message: 'Are you sure you want to remove this review?',
-					buttons: Ext.Msg.YESNO,
-					icon: Ext.Msg.QUESTION,
-					fn: function(btn) {
-						if (btn === 'yes') {
-							Ext.getCmp('reviewPanel').setLoading("Removing...");
-							Ext.Ajax.request({
-								url: 'api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
-								method: 'DELETE',
-								callback: function(){
-									Ext.getCmp('reviewPanel').setLoading(false);
-								},
-								success: function(){
-									ViewPage.refreshReviews();
-								}
-							});
-						} 
-					}
-				});				
-			},
-			editResponse: function(responseId) {
-				var responseData;
-				Ext.Array.each(ViewPage.questions, function(question){
-					Ext.Array.each(question.responses, function(response){
-						if (response.responseId === responseId) {
-							responseData = response;							
-						}						
-					});
-				});
-				
-				var record = Ext.create('Ext.data.Model', {					
-				});
-				record.set(responseData);
-				
-				ViewPage.responseWindow.show();
-				ViewPage.responseWindow.edit(record);				
-				
-			},
-			deleteResponse: function(responseId, questionId, componentId){
-				
-				Ext.Msg.show({
-					title:'Remove Answer?',
-					message: 'Are you sure you want to remove this answer?',
-					buttons: Ext.Msg.YESNO,
-					icon: Ext.Msg.QUESTION,
-					fn: function(btn) {
-						if (btn === 'yes') {
-							Ext.getCmp('questionPanel').setLoading("Removing...");
-							Ext.Ajax.request({
-								url: 'api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
-								method: 'DELETE',
-								callback: function(){
-									Ext.getCmp('questionPanel').setLoading(false);
-								},
-								success: function(){
-									ViewPage.refreshQuestions();
-								}
-							});
-						} 
-					}
-				});				
-			}			
-			
-		};	
-					
 		
 		
 		Ext.onReady(function(){		
@@ -252,7 +167,7 @@
 						columns: [
 							{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
 								renderer: function (value, meta, record) {
-									return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
+									return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
 								}
 							},
 							{ text: 'Description', dataIndex: 'description', flex: 2,
@@ -342,10 +257,11 @@
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-eye',
+								iconCls: 'fa fa-2x fa-binoculars style="position: relative; left: -10px;"',
 								id: 'watchBtn',
 								tooltip: 'Watch',
 								scale: 'large',
+								width: '58px',
 								margin: '0 10 0 0',
 								handler: function(){
 									var watch = {
@@ -368,10 +284,11 @@
 							},
 							{
 								xtype: 'button',								
-								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px; margin-bottom: -10px;"><i class="fa fa-eye fa-stack-1x" style="top: -5px;"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger"  style="top: -5px;"></i></span>',
+								text: '<span class="fa-stack fa-lg"><i class="fa fa-binoculars fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span>',
 								id: 'watchRemoveBtn',
-								tooltip: 'Remove Watch',
-								scale: 'large',								
+								tooltip: 'Delete Watch',
+								scale: 'small',	
+								height: '44px',
 								margin: '0 10 0 0',
 								hidden: true,
 								handler: function(){
@@ -421,7 +338,7 @@
 									items: [
 										{
 											text: 'Submit Correction',
-											iconCls: 'fa fa-comment-o',
+											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction',
 											handler: function() {
 												Ext.Msg.show({
 													title:'Submit Correction?',
@@ -450,7 +367,7 @@
 									items: [										
 										{
 											text: 'Submit Correction',
-											iconCls: 'fa fa-comment-o',
+											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -471,7 +388,7 @@
 										},
 										{
 											text: 'Request Ownership',
-											iconCls: 'fa fa-envelope-square',
+											iconCls: 'fa fa-lg fa-envelope-square icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -548,8 +465,7 @@
 			});
 			
 			if (fullPage && !hideSecurityBanner) {
-				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-					var branding = Ext.decode(response.responseText);
+				CoreService.brandingservice.getCurrentBranding().then(function(branding){					
 					if (branding.securityBannerText && branding.securityBannerText !== '') {
 						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 							securityBannerText: branding.securityBannerText
@@ -588,217 +504,19 @@
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
 				id: 'detailPanel',
-				title: 'Details',
+				region: 'center',				
 				bodyStyle: 'padding: 10px;',
-				scrollable: true
+				layout: 'fit'
 			});
 			
-			ViewPage.refreshReviews = function() {
-				Ext.getCmp('reviewPanel').setLoading('Refreshing...');
-				Ext.Ajax.request({
-					url: 'api/v1/resource/components/' + componentId + '/reviews/view',
-					callback: function(){
-						Ext.getCmp('reviewPanel').setLoading(false);
-					}, 						
-					success: function(response, opts){
-						var reviews = Ext.decode(response.responseText);
-						var entryLocal = {};
-						entryLocal.reviews = reviews;
-						processReviews(entryLocal);							
-					}
-				});				
-			};
 			
-			ViewPage.reviewWindow = Ext.create('OSF.component.ReviewWindow', {	
-				componentId: componentId,
-				postHandler: function(reviewWin, response) {
-					ViewPage.refreshReviews();
-				}
-			});			
-			
-			var reviews = Ext.create('Ext.panel.Panel', {				
-				id: 'reviewPanel',		
-				title: 'Reviews',
-				bodyStyle: 'padding: 10px;',
-				scrollable: true,
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-				dockedItems: [
-					{
-						xtype: 'button',
-						text: 'Write a Review',
-						maxWidth: 200,
-						scale: 'medium',
-						margin: 10,
-						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
-						handler: function(){							
-							ViewPage.reviewWindow.refresh();
-							ViewPage.reviewWindow.show();
-						}
-					}
-				],				
-				items: [
-					{
-						xtype: 'panel',
-						itemId: 'summary',
-						title: 'Review Summary',
-						titleCollapse: true,
-						collapsible: true,
-						hidden: true,
-						margin: '0 0 1 0',
-						bodyStyle: 'padding: 10px;',
-						tpl: new Ext.XTemplate(
-							'<table style="width:100%"><tr>',
-							'	<td valign="top">',
-							'		<tpl if="totalReviews && totalReviews &gt; 0">',
-							'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',							
-							'			<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
-							'		</tpl>',
-							'   <td>',
-							'	<td valign="top" width="20%">',
-							'		<tpl if="pros.length &gt; 0">',
-							'			<div class="review-pro-con-header">Pros</div>',
-							'			<tpl for="pros">',
-							'				- {text} <span class="review-summary-count">({count})</span><br>',	
-							'			</tpl>',
-							'		</tpl>',
-							'   <td>',
-							'	<td valign="top" width="20%">',
-							'		<tpl if="cons.length &gt; 0">',
-							'			<div class="review-pro-con-header">Cons</div>',							
-							'			<tpl for="cons">',
-							'				- {text} <span class="review-summary-count">({count})</span><br>',	
-							'			</tpl>',
-							'		</tpl>',
-							'   <td>',
-							'</tr></table>'
-						)						
-					},
-					{
-						xtype: 'panel',
-						itemId: 'reviews',
-						title: 'User Reviews',
-						hidden: true,						
-						titleCollapse: true,
-						collapsible: true,
-						bodyStyle: 'padding: 10px;',
-						tpl: new Ext.XTemplate(
-							'<tpl for=".">',	
-							'<table style="width:100%"><tr>',
-							'	<td valign="top">',
-							'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
-							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
-							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Remove</i></tpl>',			
-							'		</div><br>',
-							'		<b>Organization:</b> {organization}<br>',
-							'		<b>Experience:</b> {userTimeDescription}<br>',							
-							'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
-							'   <td>',
-							'	<td valign="top" width="20%">',
-							'		<tpl if="pros.length &gt; 0">',									
-							'		<div class="review-pro-con-header">Pros</div>',
-							'		<tpl for="pros">',
-							'			- {text}<br>',	
-							'		</tpl></tpl>',
-							'   <td>',
-							'	<td valign="top" width="20%">',
-							'		<tpl if="cons.length &gt; 0">',
-							'		<div class="review-pro-con-header">Cons</div>',
-							'		<tpl for="cons">',
-							'			- {text}<br>',	
-							'		</tpl></tpl>',
-							'   <td>',
-							'</tr></table>',
-							'<br><b>Comments:</b><br>{comment}',
-							' <br><br><hr>',
-							'</tpl>'
-						)						
-					}
-				]
-			});
-			
-			ViewPage.refreshQuestions = function(){
-				Ext.getCmp('questionPanel').setLoading('Refreshing...');
-				Ext.Ajax.request({
-					url: 'api/v1/resource/components/' + componentId + '/questions/view',
-					callback: function(){
-						Ext.getCmp('questionPanel').setLoading(false);
-					}, 						
-					success: function(response, opts){
-						var questions = Ext.decode(response.responseText);
-						var entryLocal = {};
-						entryLocal.questions = questions;
-						processQuestions(entryLocal);							
-					}
-				});
-			};
-			
-			ViewPage.questionWindow = Ext.create('OSF.component.QuestionWindow', {
-				componentId: componentId,
-				postHandler: function(questionWin, response) {
-					ViewPage.refreshQuestions();
-				}				
-			});		
-			
-			ViewPage.responseWindow = Ext.create('OSF.component.ResponseWindow', {
-				componentId: componentId,
-				postHandler: function(responseWin, response) {
-					ViewPage.refreshQuestions();
-				}
-			});			
-			
-			var questionPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Questions & Answers',
-				id: 'questionPanel',
-				bodyStyle: 'padding: 10px;',
-				scrollable: true,
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-				dockedItems: [
-					{
-						xtype: 'button',
-						text: 'Ask a Question',
-						maxWidth: 200,
-						scale: 'medium',
-						margin: 10,
-						iconCls: 'fa  fa-lg fa-comment icon-top-padding-5',
-						handler: function(){							
-							ViewPage.questionWindow.show();
-							ViewPage.questionWindow.refresh();
-						}
-					}
-				]
-				
-			});			
 			
 			var contentPanel = Ext.create('Ext.panel.Panel', {
 				region: 'center',
 				bodyStyle: 'background: white; padding: 5px;',
 				layout: 'border',
-				items: [				
-					{
-						region: 'center',
-						xtype: 'tabpanel',						
-						tabBar: {
-							defaults: {
-								width: '33%'
-							},
-							dock: 'top',
-							layout: {
-								pack: 'left'
-							}
-						},						
-						items: [
-							
-							detailPanel,
-							reviews,
-							questionPanel
-						]
-					}
+				items: [
+					detailPanel					
 				]
 			});			
 			
@@ -873,17 +591,7 @@
 								url: 'api/v1/resource/componenttypes/' + entry.componentType,								
 								success: function(response, opts) {
 									componentTypeDetail = Ext.decode(response.responseText);
-									
-									if (componentTypeDetail.dataEntryReviews) {
-										processReviews(entry);
-									} else {
-										Ext.getCmp('reviewPanel').close();
-									}
-									if (componentTypeDetail.dataEntryQuestions) {
-										processQuestions(entry);
-									} else {
-										Ext.getCmp('questionPanel').close();
-									}
+																		
 									processTags(entry.tags);
 									
 									var templateUrl;
@@ -1019,12 +727,12 @@
 										}
 									},
 									{
-										text: 'Remove',
+										text: 'Delete',
 										iconCls: 'fa fa-close',
 										handler: function(){
 											var tagButton = this.up('button');
 											var tag = tagButton.entryTag;
-											Ext.getCmp('tagPanel').setLoading('Removing Tag...');
+											Ext.getCmp('tagPanel').setLoading('Deleting Tag...');
 											Ext.Ajax.request({
 												url: 'api/v1/resource/components/' + componentId + '/tags/' + tag.tagId,
 												method: 'DELETE',
@@ -1059,239 +767,6 @@
 			
 				Ext.getCmp('tagPanel').add(tags);
 				
-			};
-			
-			var processReviews = function(entryLocal) {
-				
-				//gather summary
-				var summaryData = {					
-					totalRatings: 0,
-					averageRatingStars: [],
-					pros: [],
-					cons: [],
-					totalReviews: entryLocal.reviews.length,
-					recommended: 0
-				};
-				
-				Ext.Array.each(entryLocal.reviews, function(review){
-					summaryData.totalRatings += review.rating;
-					if (review.recommend) {					
-						summaryData.recommended++;
-					}
-					
-					Ext.Array.each(review.pros, function(pro) {
-						var found = false;
-					
-						Ext.Array.each(summaryData.pros, function(sumpro){
-							if (sumpro.text === pro.text) {
-								sumpro.count++;
-								found = true;
-							}
-						});
-						
-						if (!found) {
-							summaryData.pros.push({
-								text: pro.text,
-								count: 1
-							});
-						}
-					});
-					
-					Ext.Array.each(review.cons, function(con) {
-						var found = false;
-					
-						Ext.Array.each(summaryData.cons, function(sumpro){
-							if (sumpro.text === con.text) {
-								sumpro.count++;
-								found = true;
-							}
-						});
-						
-						if (!found) {
-							summaryData.cons.push({
-								text: con.text,
-								count: 1
-							});
-						}
-					});	
-					
-					Ext.Array.sort(review.pros, function(a, b){
-						return a.text.localeCompare(b.text);	
-					});
-					Ext.Array.sort(review.cons, function(a, b){
-						return a.text.localeCompare(b.text);	
-					});	
-					
-					review.ratingStars = [];
-					for (var i=0; i<5; i++){					
-						review.ratingStars.push({						
-							star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
-						});
-					}
-					
-					if (review.username === '${user}' || ${admin}) {
-						review.owner = true;
-					}
-					
-				});
-				ViewPage.reviews = entryLocal.reviews;
-				
-				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
-				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
-				
-				Ext.Array.sort(summaryData.pros, function(a, b){
-					return a.text.localeCompare(b.text);	
-				});
-				Ext.Array.sort(summaryData.cons, function(a, b){
-					return a.text.localeCompare(b.text);	
-				});				
-				var averageRating = summaryData.totalRatings / summaryData.totalReviews;
-				summaryData.averageRating = averageRating;
-
-				var fullStars = Math.floor(averageRating);
-				for (var i=1; i<=fullStars; i++) {
-					summaryData.averageRatingStars.push({star: 'star'})
-				}
-
-				// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
-				var halfStar = Math.abs(fullStars - averageRating) >= 0.5;
-				if (halfStar) {
-					summaryData.averageRatingStars.push({star: 'star-half-o'});
-				}
-
-				// Add empty stars until there are 5 stars total.
-				while (summaryData.averageRatingStars.length < 5) {
-					summaryData.averageRatingStars.push({star: 'star-o'})
-				}
-
-								
-				if (entryLocal.reviews.length > 0) {
-					reviewPanelSummary.setHidden(false);
-					reviewPanelSummary.update(summaryData);
-					reviewPanelReviews.setHidden(false);
-					reviewPanelReviews.update(entryLocal.reviews);					
-				} else {					
-					reviewPanelSummary.update(summaryData);					
-					reviewPanelReviews.update(entryLocal.reviews);	
-					reviewPanelSummary.setHidden(true);
-					reviewPanelReviews.setHidden(true);
-				}
-				
-				
-			};
-		
-			var processQuestions = function(entryLocal) {
-				
-				var questionPanels = [];
-				ViewPage.questions = entryLocal.questions;
-				Ext.Array.each(entryLocal.questions, function(question){
-					
-					var questionSecurity = '';
-					if (question.securityMarkingType) {
-						questionSecurity = '(' + question.securityMarkingType + ') '; 
-					}
-					
-					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
-					text += '<div class="question-info">' +
-							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
-							'</div>';
-					
-					Ext.Array.each(question.responses, function(response){
-						response.questionId = question.questionId;
-						response.componentId = question.componentId;
-					});
-					
-				
-					var panel = Ext.create('Ext.panel.Panel', {
-						titleCollapse: true,
-						collapsible: true,
-						title: text,
-						bodyStyle: 'padding: 10px;',
-						data: question.responses,
-						tpl: new Ext.XTemplate(							
-							'<tpl for=".">',
-							'	<tpl if="activeStatus === \'A\'">',
-							'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
-							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Remove</i></tpl>',
-							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
-							'		<hr>',
-							'	</tpl>',
-							'</tpl>'
-						),
-						dockedItems: [
-							{
-								xtype: 'button',
-								dock: 'bottom',
-								text: 'Answer',
-								maxWidth: 150,
-								scale: 'medium',								
-								margin: 10,
-								iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
-								handler: function(){
-									ViewPage.responseWindow.questionId = question.questionId;
-									ViewPage.responseWindow.show();
-									ViewPage.responseWindow.refresh();
-								}
-							}
-						]				
-					});
-					if (question.username === '${user}' || ${admin}) {
-						panel.addDocked(
-							{
-								xtype: 'toolbar',
-								dock: 'top',								
-								items: [
-									{
-										text: 'Edit',
-										tooltip: 'Edit Question',
-										iconCls: 'fa fa-edit',
-										handler: function(){
-											ViewPage.questionWindow.show();
-											
-											var record = Ext.create('Ext.data.Model');
-											record.set(question);											
-											ViewPage.questionWindow.edit(record);
-										}
-									},
-									{	
-										text: 'Delete',
-										tooltip: 'Delete Question',
-										iconCls: 'fa fa-trash-o',
-										handler: function(){
-											Ext.Msg.show({
-												title:'Remove Question?',
-												message: 'Are you sure you want to review this Question?',
-												buttons: Ext.Msg.YESNO,
-												icon: Ext.Msg.QUESTION,
-												fn: function(btn) {
-													if (btn === 'yes') {
-														Ext.getCmp('questionPanel').setLoading("Removing...");
-														Ext.Ajax.request({
-															url: 'api/v1/resource/components/' + componentId + '/questions/' + question.questionId,
-															method: 'DELETE',
-															callback: function(){
-																Ext.getCmp('questionPanel').setLoading(false);
-															},
-															success: function(){
-																ViewPage.refreshQuestions();
-															}
-														});
-													} 
-												}
-											});
-										}										
-									}
-								]
-							}
-						);
-					}											
-					
-					questionPanels.push(panel);				
-					
-				});
-				Ext.getCmp('questionPanel').removeAll();
-				Ext.getCmp('questionPanel').add(questionPanels);
-		
 			};
 		
 		});

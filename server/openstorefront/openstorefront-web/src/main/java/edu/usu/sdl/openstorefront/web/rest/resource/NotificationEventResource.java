@@ -20,10 +20,11 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -52,7 +53,7 @@ public class NotificationEventResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@APIDescription("Gets notification event records for all users.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(NotificationEventWrapper.class)
@@ -95,7 +96,7 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 
-			response = ownerCheck(notificationEvent);
+			response = ownerCheck(notificationEvent, SecurityPermission.ADMIN_MESSAGE_MANAGEMENT);
 			if (response == null) {
 				return sendSingleEntityResponse(notificationEvent);
 			}
@@ -139,7 +140,7 @@ public class NotificationEventResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@APIDescription("Posts a new notification event")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -173,7 +174,7 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 			//only allow deleting of user notifications unless admin
-			if (SecurityUtil.isAdminUser()
+			if (SecurityUtil.isEntryAdminUser()
 					|| (notificationEvent.getUsername() != null
 					&& SecurityUtil.getCurrentUserName().equals(notificationEvent.getUsername()))) {
 				service.getNotificationService().deleteEvent(eventId);

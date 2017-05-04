@@ -56,7 +56,7 @@ public class SizeRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value is out of range";
 	}

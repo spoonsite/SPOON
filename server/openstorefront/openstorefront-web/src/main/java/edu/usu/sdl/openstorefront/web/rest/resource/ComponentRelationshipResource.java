@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 /**
  *
  * @author dshurtleff
@@ -36,32 +36,33 @@ import javax.ws.rs.core.Response;
 @Path("v1/resource/componentrelationship")
 @APIDescription("Provides access to relationships across components")
 public class ComponentRelationshipResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@APIDescription("Gets active, target approved and owner approved relationships")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentRelationshipView.class)
-	public Response getRelationships(			
-	){
+	public Response getRelationships()
+	{
 		ComponentRelationship componentRelationship = new ComponentRelationship();
 		componentRelationship.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
-		
+
 		List<ComponentRelationship> relationships = componentRelationship.findByExample();
-		
+		relationships = FilterEngine.filter(relationships, true);
+
 		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
 		views = views.stream()
 				.filter(r -> r.getOwnerApproved() && r.getTargetApproved())
 				.collect(Collectors.toList());
-				
+
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
 		{
 		};
-		return sendSingleEntityResponse(entity);				
+		return sendSingleEntityResponse(entity);
 	}
-	
+
 }

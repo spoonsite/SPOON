@@ -19,8 +19,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -42,7 +43,7 @@ public class ApplicationPropertyResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets all active properties in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -50,12 +51,12 @@ public class ApplicationPropertyResource
 	{
 		ApplicationProperty applicationPropertyExample = new ApplicationProperty();
 		applicationPropertyExample.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
-		List<ApplicationProperty> applicationProperties = service.getPersistenceService().queryByExample(ApplicationProperty.class, new QueryByExample(applicationPropertyExample));
+		List<ApplicationProperty> applicationProperties = service.getPersistenceService().queryByExample(new QueryByExample(applicationPropertyExample));
 		return applicationProperties;
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets a property in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -65,12 +66,12 @@ public class ApplicationPropertyResource
 			@RequiredParam String key)
 	{
 		ApplicationProperty applicationProperty = service.getSystemService().getProperty(key);
-		applicationProperty = service.getPersistenceService().unwrapProxyObject(ApplicationProperty.class, applicationProperty);
+		applicationProperty = service.getPersistenceService().unwrapProxyObject(applicationProperty);
 		return sendSingleEntityResponse(applicationProperty);
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Updates a property in the system. NOTE: data may need to be formatted specifically according to the property.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})

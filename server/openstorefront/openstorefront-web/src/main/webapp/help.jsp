@@ -63,7 +63,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
+									iconCls: 'fa fa-2x fa-envelope-o icon-top-padding',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -96,8 +96,7 @@
 				}]
 			});
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText

@@ -30,6 +30,7 @@ public class APIResourceModel
 	private String className;
 	private String resourcePath;
 	private boolean requireAdmin;
+	private SecurityRestriction	securityRestriction;
 	private List<APIParamModel> resourceParams = new ArrayList<>();
 	private List<APIMethodModel> methods = new ArrayList<>();
 
@@ -105,6 +106,16 @@ public class APIResourceModel
 	public void setMethods(List<APIMethodModel> methods)
 	{
 		this.methods = methods;
+	}
+
+	public SecurityRestriction getSecurityRestriction()
+	{
+		return securityRestriction;
+	}
+
+	public void setSecurityRestriction(SecurityRestriction securityRestriction)
+	{
+		this.securityRestriction = securityRestriction;
 	}
 
 }

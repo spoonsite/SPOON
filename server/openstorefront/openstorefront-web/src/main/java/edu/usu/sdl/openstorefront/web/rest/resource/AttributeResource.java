@@ -38,7 +38,9 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -61,7 +63,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -70,6 +72,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,8 +110,9 @@ import org.apache.commons.lang.StringUtils;
 public class AttributeResource
 		extends BaseResource
 {
+
 	private static final Logger LOG = Logger.getLogger(AttributeResource.class.getName());
-	
+
 	@Context
 	HttpServletRequest request;
 
@@ -127,7 +131,7 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, attributeTypeExample);
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 
 		String codeStatus = null;
 		if (!all) {
@@ -175,15 +179,15 @@ public class AttributeResource
 	@DataType(RelationshipView.class)
 	@Path("/relationships")
 	public Response getAttributeRelationships(
-		@QueryParam("attributeType") String filterAttributeType 
-	) 
+			@QueryParam("attributeType") String filterAttributeType
+	)
 	{
 		List<RelationshipView> relationships = new ArrayList<>();
-				
+
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		attributeTypeExample.setAttributeType(filterAttributeType);
-						
+
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
 		for (AttributeType attributeType : attributeTypes) {
 			if (attributeType.getArchitectureFlg()) {
@@ -201,25 +205,25 @@ public class AttributeResource
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
-										
+
 					relationships.add(relationship);
-				}				
+				}
 			}
-		}		
-		
+		}
+
 		GenericEntity<List<RelationshipView>> entity = new GenericEntity<List<RelationshipView>>(relationships)
 		{
 		};
 		return sendSingleEntityResponse(entity);
 	}
 
-	public void buildRelations(List<RelationshipView> relationships, Architecture architecture,  Architecture parent) 
+	public void buildRelations(List<RelationshipView> relationships, Architecture architecture, Architecture parent)
 	{
 		if (parent != null) {
 			RelationshipView relationship = new RelationshipView();
 			String key = architecture.getAttributeType() + "-" + architecture.getAttributeCode();
 			String keyParent = parent.getAttributeType() + "-" + parent.getAttributeCode();
-			
+
 			relationship.setKey(key);
 			relationship.setName(architecture.getName());
 			relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
@@ -228,18 +232,18 @@ public class AttributeResource
 			relationship.setTargetName(parent.getName());
 			relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
-			relationships.add(relationship);			
+			relationships.add(relationship);
 		}
-		
+
 		for (Architecture child : architecture.getChildren()) {
 			buildRelations(relationships, child, architecture);
-		}		
-		
-	}	
-	
+		}
+
+	}
+
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity(value = {SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT, SecurityPermission.ADMIN_DATA_IMPORT_EXPORT})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportAttributes(
@@ -258,7 +262,7 @@ public class AttributeResource
 			typeSet.addAll(types);
 		}
 
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
 				AttributeAll attributeAll = new AttributeAll();
@@ -295,7 +299,9 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
-	public Response getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAttributeTypes(
+			@BeanParam FilterQueryParams filterQueryParams
+	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -303,6 +309,56 @@ public class AttributeResource
 		}
 
 		AttributeTypeWrapper entity = service.getAttributeService().getFilteredTypes(filterQueryParams);
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets attribute types based on filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/required")
+	public Response getRequiredAttributeTypes(
+			@QueryParam("componentType") String componentType
+	)
+	{
+		List<AttributeType> requiredAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		for (AttributeType attributeType : attributeTypes) {
+
+			boolean keep = true;
+
+			if (attributeType.getAssociatedComponentTypes() != null) {
+				keep = false;
+				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						keep = true;
+					}
+				}
+			}
+
+			//check required
+			if (keep) {
+				if (attributeType.getRequiredRestrictions() != null) {
+					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+						if (restriction.getComponentType().equals(componentType)) {
+							requiredAttributes.add(attributeType);
+						}
+					}
+				} else {
+					requiredAttributes.add(attributeType);
+				}
+			}
+
+		}
+
+		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(requiredAttributes)
+		{
+		};
 		return sendSingleEntityResponse(entity);
 	}
 
@@ -371,7 +427,7 @@ public class AttributeResource
 			return Response.ok(attributeCode).build();
 		}
 	}
-	
+
 	@GET
 	@APIDescription("Gets attribute code details")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -392,7 +448,7 @@ public class AttributeResource
 		} else {
 			return Response.ok(AttributeDetail.toView(attributeCode)).build();
 		}
-	}	
+	}
 
 	@GET
 	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
@@ -443,7 +499,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		attributeCodeExample.setAttributeCodePk(attributeCodePk);
 
-		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
 		return attributeCodes;
@@ -484,7 +540,7 @@ public class AttributeResource
 
 		return sendSingleEntityResponse(attributeCode);
 	}
-	
+
 	@GET
 	@APIDescription("Get the components which contain a specified attribute type and code")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -504,15 +560,15 @@ public class AttributeResource
 		componentAttributePk.setAttributeCode(code);
 		componentAttributeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		for (ComponentAttribute attributeComponent : attributeComponents) {
-			
+
 			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
-			
+
 			ComponentView view = ComponentView.toView(component);
-			
+
 			if (view != null) {
-				
+
 				components.add(view);
 			}
 		}
@@ -520,7 +576,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
@@ -545,7 +601,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -579,7 +635,7 @@ public class AttributeResource
 	private Response handleAttributePostPutType(AttributeType attributeType, boolean post)
 	{
 		attributeType.updateNullFlags();
-		
+
 		ValidationModel validationModel = new ValidationModel(attributeType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -602,7 +658,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
@@ -642,7 +698,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete a type and all attribute type associations (codes, component attributes).  Runs in a background task.")
 	@Path("/attributetypes/{type}/force")
 	public void hardDeleteAttributeType(
@@ -682,7 +738,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -722,7 +778,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/sortorder")
@@ -743,7 +799,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes")
@@ -764,10 +820,10 @@ public class AttributeResource
 	@Path("/attributetypes/usercodes")
 	public Response postUserAttributeCode(
 			AttributeCodeSave attributeCodeSave)
-	{		
-		List<AttributeCode> updatedCodes = new ArrayList<>();		
+	{
+		List<AttributeCode> updatedCodes = new ArrayList<>();
 		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
-		
+
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 
@@ -778,36 +834,35 @@ public class AttributeResource
 			newAttributeCodePk.setAttributeCode(key);
 			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
 			updatedCodes.add(newAttributeCode);
-			
+
 			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
 			if (attributeType != null) {
 				// The attribute type must allow user-generated codes to continue
 				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
 
-					//see if it already exist...if so do nothing. So we don't alert.				
-					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);				
+					//see if it already exist...if so do nothing. So we don't alert.
+					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);
 					if (existing == null) {
 						ValidationModel validationModel = new ValidationModel(newAttributeCode);
 						validationModel.setConsumeFieldsOnly(true);
 						ValidationResult validationResult = ValidationUtil.validate(validationModel);
 						if (validationResult.valid()) {
 							service.getAttributeService().saveAttributeCode(newAttributeCode, false);
-							
-							
+
 							AlertContext alertContext = new AlertContext();
 							alertContext.setAlertType(AlertType.USER_DATA);
 							alertContext.setDataTrigger(newAttributeCode);
 							service.getAlertService().checkAlert(alertContext);
 						} else {
 							LOG.log(Level.WARNING, validationResult.toString());
-						}						
-					}		
+						}
+					}
 				} else {
-					LOG.log(Level.WARNING, "Attribute type doesn't support user codes Type: " + saveCode.getAttributeType());
+					LOG.log(Level.WARNING, MessageFormat.format("Attribute type doesn''t support user codes Type: {0}", saveCode.getAttributeType()));
 				}
 			} else {
-				LOG.log(Level.WARNING, "Unable to find attribute type: " + saveCode.getAttributeType());
-			}		
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
+			}
 		}
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
 		{
@@ -816,7 +871,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -839,7 +894,8 @@ public class AttributeResource
 		}
 	}
 
-	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post) {
+	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post)
+	{
 		ValidationModel validationModel = new ValidationModel(attributeCode);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -860,7 +916,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
@@ -911,7 +967,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete a Code and all attribute code associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}/force")
 	public void hardDeleteAttributeCode(
@@ -995,7 +1051,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete the file attachment for an attribute code")
 	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
 	public void deleteAttributeCodeAttachment(
@@ -1017,7 +1073,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Activate a Code and all associated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -1079,7 +1135,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();
@@ -1094,7 +1150,7 @@ public class AttributeResource
 			AttributeXRefMap tempMap = new AttributeXRefMap();
 			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 			tempMap.setAttributeType(type.getAttributeType());
-			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+			model.setMapping(service.getPersistenceService().queryByExample(tempMap));
 
 			attributeXrefMapViews.add(model);
 		}
@@ -1113,7 +1169,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();
@@ -1137,7 +1193,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setAttributeType(attributeType);
-		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(AttributeXRefType.class, example);
+		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(example);
 
 		if (attributeXRefType != null) {
 			model = new AttributeXrefMapView();
@@ -1152,13 +1208,13 @@ public class AttributeResource
 			AttributeXRefMap tempMap = new AttributeXRefMap();
 			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 			tempMap.setAttributeType(attributeXRefType.getAttributeType());
-			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+			model.setMapping(service.getPersistenceService().queryByExample(tempMap));
 		}
 		return sendSingleEntityResponse(model);
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Save an attribute cross-ref mapping")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/attributexreftypes/detail")
@@ -1198,7 +1254,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Remove a type and all mapping")
 	@Path("/attributexreftypes/{attributeType}")
 	public void deleteMappingType(

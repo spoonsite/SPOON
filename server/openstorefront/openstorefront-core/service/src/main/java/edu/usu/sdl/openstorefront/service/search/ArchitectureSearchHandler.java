@@ -87,7 +87,7 @@ public class ArchitectureSearchHandler
 				}
 			}
 
-			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(AttributeCode.class, queryByExample);
+			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> ids = new ArrayList();
 			attributeCodes.forEach(code -> {
 				ids.add(code.getAttributeCodePk().getAttributeCode());

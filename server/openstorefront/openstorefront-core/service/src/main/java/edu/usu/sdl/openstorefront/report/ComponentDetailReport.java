@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
@@ -115,11 +116,12 @@ public class ComponentDetailReport
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = componentExample.findByExample();
+		components = FilterEngine.filter(components);
 
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
-
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
 	}
 
 	@Override
@@ -241,8 +243,10 @@ public class ComponentDetailReport
 			}
 
 			//meta data
-			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
+			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());			
 			if (metaData != null) {
+				metaData = FilterEngine.filter(metaData);
+				
 				cvsGenerator.addLine("MetaData");
 				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
@@ -266,6 +270,8 @@ public class ComponentDetailReport
 			//contacts
 			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
 			if (contacts != null) {
+				contacts = FilterEngine.filter(contacts);
+				
 				cvsGenerator.addLine("Contacts");
 				for (ComponentContact contact : contacts) {
 					
@@ -292,6 +298,8 @@ public class ComponentDetailReport
 			//resources
 			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
 			if (resources != null) {
+				resources = FilterEngine.filter(resources);
+				
 				cvsGenerator.addLine("Resources");
 				for (ComponentResource resource : resources) {
 
@@ -431,6 +439,8 @@ public class ComponentDetailReport
 			//meta data
 			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
+				metaData = FilterEngine.filter(metaData);
+				
 				htmlGenerator.addLine("<h2>MetaData</h2>");
 				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
@@ -459,6 +469,8 @@ public class ComponentDetailReport
 			//contacts
 			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
 			if (contacts != null) {
+				contacts = FilterEngine.filter(contacts);
+				
 				htmlGenerator.addLine("<h2>Contacts</h2>");
 				htmlGenerator.addLine("<table>");
 				htmlGenerator.addLine("<tr>");
@@ -496,6 +508,8 @@ public class ComponentDetailReport
 			//resources
 			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
 			if (resources != null) {
+				resources = FilterEngine.filter(resources);
+				
 				htmlGenerator.addLine("<h2>Resources</h2>");
 				htmlGenerator.addLine("<table>");
 				htmlGenerator.addLine("<tr>");

@@ -55,7 +55,7 @@ public class DBLikeTest
 		QueryByExample queryByExample = new QueryByExample(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
-		List<TestEntity> testEntities = service.getPersistenceService().queryByExample(TestEntity.class, queryByExample);
+		List<TestEntity> testEntities = service.getPersistenceService().queryByExample(queryByExample);
 		results.append("Results Entities of ").append(testEntityLikeExample.getCode()).append(":<br>");
 		testEntities.forEach(entity -> {
 			results.append(entity.getCode()).append("<br>");
@@ -70,7 +70,7 @@ public class DBLikeTest
 		queryByExample = new QueryByExample(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
-		testEntities = service.getPersistenceService().queryByExample(TestEntity.class, queryByExample);
+		testEntities = service.getPersistenceService().queryByExample(queryByExample);
 		results.append("Results Entities of ").append(testEntityLikeExample.getCode()).append(": ").append("<br>");
 		testEntities.forEach(entity -> {
 			results.append(entity.getCode()).append("<br>");
@@ -85,7 +85,7 @@ public class DBLikeTest
 		queryByExample = new QueryByExample(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
-		testEntities = service.getPersistenceService().queryByExample(TestEntity.class, queryByExample);
+		testEntities = service.getPersistenceService().queryByExample(queryByExample);
 		results.append("Results Entities of ").append(testEntityLikeExample.getCode()).append(": ").append("<br>");
 		testEntities.forEach(entity -> {
 			results.append(entity.getCode()).append("<br>");

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class ErrorTicketWrapper
 		extends ListWrapper
 {
 
+	@DataType(ErrorTicket.class)
 	private List<ErrorTicket> errorTickets = new ArrayList<>();
 
 	public ErrorTicketWrapper()

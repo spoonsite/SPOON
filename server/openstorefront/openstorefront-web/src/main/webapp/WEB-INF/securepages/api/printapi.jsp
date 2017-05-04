@@ -69,6 +69,36 @@
 		<br>
 		<span class="resource-admin">Requires Admin Privilege</span>	  
 	</c:if>	  
+		
+		<c:if test="${actionBean.resourceModel.securityRestriction != null}">
+			<br>		
+			<c:if test="${!empty actionBean.resourceModel.securityRestriction.permissions}">
+				<b>Permissions:</b>
+				<ul>							
+					<c:forEach var="permission" items="${actionBean.resourceModel.securityRestriction.permissions}">
+						<li>
+							${permission}
+						</li>
+					</c:forEach>
+				</ul>			
+			</c:if>
+			<c:if test="${!empty actionBean.resourceModel.securityRestriction.roles}">
+				<b>Roles:</b>
+				<ul>							
+					<c:forEach var="role" items="${actionBean.resourceModel.securityRestriction.roles}">
+						<li>
+							${role}
+						</li>
+					</c:forEach>
+				</ul>			
+			</c:if>	
+			<c:if test="${actionBean.resourceModel.securityRestriction.logicOperation != null && (actionBean.resourceModel.securityRestriction.permissions.size > 1 || actionBean.resourceModel.securityRestriction.roles.size > 1)}">
+				<b>Logic Operation:</b> ${actionBean.resourceModel.securityRestriction.logicOperation}<br>
+			</c:if>
+			<c:if test="${actionBean.resourceModel.securityRestriction.specialCheck != null}">
+				<b>Special Handling:</b> ${actionBean.resourceModel.securityRestriction.specialCheck}<br>
+			</c:if>
+		</c:if>	 		
 	
 	<h3>API Path: ${resourceModel.resourcePath}</h3>
 	<c:if test="${!empty resourceModel.methods}">
@@ -106,34 +136,63 @@
 		
 	</c:if>
 	<c:if test="${!empty resourceModel.methods}">
-		<h2>Details</h2>
+		<h2>Details</h2>		
 		<table width="100%">
 			<tr>
 				<th style='text-align: center;'>Method</th>
-				<th style='text-align: center;'>Requires Admin</th>
+				<th style='text-align: center;'>Requires</th>
 				<th style='text-align: left;'>Description</th>
 				<th style='text-align: left;'>Path</th>
 				<th style='text-align: left;'>Parameters</th>				
 				<th style='text-align: left;'>Produces/Consumes Type(s)</th>
 			</tr>		
 			<c:forEach var="item" items="${resourceModel.methods}">
-			<tr style="background-color: white;">
-				<td align="center"><span class="${item.restMethod}">${item.restMethod}</span></td>
-				<td align="center">${item.requireAdmin}</td>
-				<td>${item.description}</td>
-				<td id="${item.id}TD"><span class="resourcePath">${resourceModel.resourcePath}${item.methodPath}</span></td>
-				<td>
-					<c:if test="${!empty item.methodParams}">
-					<table width="100%">
-						<tr>
-							<th>Parameter</th>
-							<th>Description</th>
-							<th>Required</th>
-							<th>Defaults</th>
-							<th>Restrictions</th>
-							<th>Parameter Type</th>
-						</tr>		
-						<c:forEach var="methodParam" items="${item.methodParams}">
+			<span class="${item.restMethod}">${item.restMethod}</span> - ${resourceModel.resourcePath}${item.methodPath}	
+			${item.description}	<br>
+			<c:if test="${item.producesTypes != null}">
+				<b>Produces:</b><br> 					
+				${item.producesTypes}<br>						
+			</c:if>
+			<c:if test="${item.consumesTypes != null}">
+				<b>Consumes:</b><br> 					
+				${item.consumesTypes}<br>						
+			</c:if>			
+			<c:if test="${item.securityRestriction != null}">
+				<br>						
+				<c:if test="${!empty item.securityRestriction.permissions}">
+					<b>Permissions:</b><br>
+						<c:forEach var="permission" items="${item.securityRestriction.permissions}">
+							${permission}
+						</c:forEach>							
+				</c:if>
+				<c:if test="${!empty item.securityRestriction.roles}">
+					<b>Roles:</b>
+					<ul>							
+						<c:forEach var="role" items="${item.securityRestriction.roles}">
+							<li>
+								${role}
+							</li>
+						</c:forEach>
+					</ul>			
+				</c:if>	
+				<c:if test="${item.securityRestriction.logicOperation != null && (actionBean.resourceModel.securityRestriction.permissions.size > 1 || actionBean.resourceModel.securityRestriction.roles.size > 1)}">
+					<b>Logic Operation:</b> ${item.securityRestriction.logicOperation}<br>
+				</c:if>
+				<c:if test="${item.securityRestriction.specialCheck != null}">
+					<b>Special Handling:</b> ${item.securityRestriction.specialCheck}<br>
+				</c:if>
+			</c:if>		
+			<c:if test="${!empty item.methodParams}">
+				<table width="100%">
+					<tr>
+						<th>Parameter</th>
+						<th>Description</th>
+						<th>Required</th>
+						<th>Defaults</th>
+						<th>Restrictions</th>
+						<th>Parameter Type</th>
+					</tr>		
+					<c:forEach var="methodParam" items="${item.methodParams}">
 						<tr>
 							<td>${methodParam.parameterName}</td>
 							<td>${methodParam.parameterDescription}</td>
@@ -142,21 +201,10 @@
 							<td>${methodParam.restrictions}</td>
 							<td>${methodParam.parameterType}</td>				
 						</tr>
-						</c:forEach>
-					</table> 					
-					</c:if>
-				</td>
-				<td>
-					<c:if test="${item.producesTypes != null}">
-						<b>Produces:</b><br> 					
-						${item.producesTypes}<br>						
-					</c:if>
-					<c:if test="${item.consumesTypes != null}">
-						<b>Consumes:</b><br> 					
-						${item.consumesTypes}<br>						
-					</c:if>
-				</td>				
-			</tr>
+					</c:forEach>
+				</table> 					
+			</c:if>							
+		
 			<c:if test="${item.consumeObject != null}">
 				<tr style="background-color: lightgrey;">
 					<td colspan="6">
@@ -406,9 +454,9 @@ ${complexType.object}
 							
 					</td>					
 				</tr>	
-			</c:if>				
-			</c:forEach>
-		</table> 
+			</c:if>	
+			<hr>	
+			</c:forEach>		
 		<div class="pageBreak">
 		</div>	
 	</c:if>		

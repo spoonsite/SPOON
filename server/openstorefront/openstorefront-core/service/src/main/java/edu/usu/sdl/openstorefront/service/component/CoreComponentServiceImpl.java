@@ -28,12 +28,15 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
+import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
@@ -58,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
@@ -67,10 +71,13 @@ import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
@@ -142,6 +149,7 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -228,11 +236,12 @@ public class CoreComponentServiceImpl
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
+		List<Component> components = persistenceService.queryByExample(new QueryByExample(componentExample));
+		components = FilterEngine.filter(components);
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(new QueryByExample(componentAttributeExample));
 		Map<String, List<ComponentAttribute>> attributeMaps = new HashMap<>();
 		for (ComponentAttribute attribute : componentAttributes) {
 			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
@@ -282,6 +291,8 @@ public class CoreComponentServiceImpl
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
+		tempComponent = FilterEngine.filter(tempComponent);
+
 		if (tempComponent == null) {
 			return null;
 		}
@@ -292,14 +303,21 @@ public class CoreComponentServiceImpl
 		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setComponentId(componentId);
-		result.getRelationships().addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
+		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
+		directRelationships = FilterEngine.filter(directRelationships, true);
+
+		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
 		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
 
 		//Pull indirect
 		componentRelationshipExample = new ComponentRelationship();
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setRelatedComponentId(componentId);
-		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample());
+
+		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
+		inDirectRelationships = FilterEngine.filter(inDirectRelationships, true);
+
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
 		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
 		result.getRelationships().addAll(relationshipViews);
 
@@ -307,7 +325,7 @@ public class CoreComponentServiceImpl
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample(tempWatch));
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
@@ -318,6 +336,7 @@ public class CoreComponentServiceImpl
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
 
 		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
+
 		componentResources = SortUtil.sortComponentResource(componentResources);
 		componentResources.forEach(resource
 				-> {
@@ -371,8 +390,8 @@ public class CoreComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
 
 			reviews.add(tempView);
 		});
@@ -387,13 +406,19 @@ public class CoreComponentServiceImpl
 			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-			responseViews = ComponentQuestionResponseView.toViewList(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
+			List<ComponentQuestionResponse> responses = tempResponse.findByExample();
+			responses = FilterEngine.filter(responses);
+
+			responseViews = ComponentQuestionResponseView.toViewList(responses);
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
 
 		List<ComponentEvaluationSection> evaluationSections = componentService.getBaseComponent(ComponentEvaluationSection.class, componentId);
 		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
+
+		List<EvaluationAll> publicEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		result.setFullEvaluations(publicEvaluations);
 
 		result.setToday(new Date());
 
@@ -429,9 +454,18 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
+	/**
+	 * This skips the external component duplication check. Don't use for
+	 * External Data Imports
+	 *
+	 * @param component
+	 * @return
+	 */
 	public RequiredForComponent doSaveComponent(RequiredForComponent component)
 	{
-		return doSaveComponent(component, new FileHistoryOption());
+		FileHistoryOption option = new FileHistoryOption();
+		option.setSkipDuplicationCheck(Boolean.TRUE);
+		return doSaveComponent(component, option);
 	}
 
 	/**
@@ -465,6 +499,9 @@ public class CoreComponentServiceImpl
 		Component oldComponent = null;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
+		} else {
+			//our id lookup only
+			oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 		}
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
@@ -611,7 +648,7 @@ public class CoreComponentServiceImpl
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
-							} catch (Exception ex) {
+							} catch (IOException ex) {
 								throw new OpenStorefrontRuntimeException("Failed to convert temporary media to component media", ex);
 							}
 						}
@@ -996,6 +1033,30 @@ public class CoreComponentServiceImpl
 			persistenceService.deleteByExample(componentRelationship);
 		}
 
+		if (option.getIgnoreClasses().contains(Evaluation.class.getSimpleName()) == false) {
+			Evaluation evaluationExample = new Evaluation();
+			evaluationExample.setOriginComponentId(componentId);
+
+			List<Evaluation> evaluations = evaluationExample.findByExample();
+			for (Evaluation evaluation : evaluations) {
+				componentService.getEvaluationService().deleteEvaluation(evaluation.getEvaluationId());
+			}
+		}
+
+		//Delete change log records
+		if (option.getIgnoreClasses().contains(ChangeLog.class.getSimpleName()) == false) {
+			componentService.getChangeLogServicePrivate().removeChangeLogs(Component.class.getSimpleName(), componentId);
+		}
+
+		//delete change requests
+		Component changeRequestExample = new Component();
+		changeRequestExample.setPendingChangeId(componentId);
+		List<Component> changeRequests = changeRequestExample.findByExample();
+		for (Component component : changeRequests) {
+			//delete everything as the record will be ophaned.
+			cascadeDeleteOfComponent(component.getComponentId());
+		}
+
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
 
@@ -1029,7 +1090,7 @@ public class CoreComponentServiceImpl
 		UserWatch example = new UserWatch();
 		example.setComponentId(componentId);
 		example.setUsername(userId);
-		example = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(example));
+		example = persistenceService.queryOneByExample(new QueryByExample(example));
 		if (example != null) {
 			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
 			watch.setLastViewDts(TimeUtil.currentDate());
@@ -1042,8 +1103,14 @@ public class CoreComponentServiceImpl
 
 	public List<Component> findRecentlyAdded(int maxResults)
 	{
+		String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+		if (StringUtils.isNotBlank(dataFilterRestriction)) {
+			dataFilterRestriction = " and " + dataFilterRestriction;
+		}
+
 		String query = "select from Component where activeStatus = :activeStatusParam "
 				+ " and approvalState = :approvedStateParam "
+				+ dataFilterRestriction
 				+ " order by approvedDts DESC LIMIT " + maxResults;
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -1058,21 +1125,28 @@ public class CoreComponentServiceImpl
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 		if (componentIds.isEmpty() == false) {
 
+			String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+			if (StringUtils.isNotBlank(dataFilterRestriction)) {
+				dataFilterRestriction += " and ";
+			}
+
 			//get all active data
 			StringBuilder componentQuery = new StringBuilder();
 			componentQuery.append("select from Component where activeStatus='")
 					.append(Component.ACTIVE_STATUS)
 					.append("'and approvalState='")
 					.append(ApprovalStatus.APPROVED)
-					.append("' and componentId IN :componentIdsParams");
+					.append("' and ")
+					.append(dataFilterRestriction)
+					.append(" componentId IN :componentIdsParams");
 
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("componentIdsParams", componentIds);
-			List<Component> components = persistenceService.query(componentQuery.toString(), paramMap, Component.class, true);
+			List<Component> components = persistenceService.query(componentQuery.toString(), paramMap, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();
 			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), paramMap, ComponentAttribute.class, true);
+			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), paramMap, true);
 			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeMap.containsKey(componentAttribute.getComponentId())) {
@@ -1086,7 +1160,7 @@ public class CoreComponentServiceImpl
 
 			StringBuilder componentReviewQuery = new StringBuilder();
 			componentReviewQuery.append("select from ComponentReview where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
-			List<ComponentReview> componentReviews = persistenceService.query(componentReviewQuery.toString(), paramMap, ComponentReview.class, true);
+			List<ComponentReview> componentReviews = persistenceService.query(componentReviewQuery.toString(), paramMap, true);
 			Map<String, List<ComponentReview>> reviewMap = new HashMap<>();
 			for (ComponentReview componentReview : componentReviews) {
 				if (reviewMap.containsKey(componentReview.getComponentId())) {
@@ -1100,7 +1174,7 @@ public class CoreComponentServiceImpl
 
 			StringBuilder componentTagQuery = new StringBuilder();
 			componentTagQuery.append("select from ComponentTag where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
-			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), paramMap, ComponentTag.class, true);
+			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), paramMap, true);
 			Map<String, List<ComponentTag>> tagMap = new HashMap<>();
 			for (ComponentTag componentTag : componentTags) {
 				if (tagMap.containsKey(componentTag.getComponentId())) {
@@ -1149,7 +1223,7 @@ public class CoreComponentServiceImpl
 
 				Component componentExample = new Component();
 				componentExample.setComponentId(componentId);
-				componentAll.setComponent(persistenceService.queryOneByExample(Component.class, componentExample));
+				componentAll.setComponent(persistenceService.queryOneByExample(componentExample));
 
 				if (componentAll.getComponent() != null) {
 					componentAll.setAttributes(sub.getAttributesByComponentId(componentId));
@@ -1173,7 +1247,7 @@ public class CoreComponentServiceImpl
 						ComponentQuestionResponse questionResponseExample = new ComponentQuestionResponse();
 						questionResponseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 						questionResponseExample.setQuestionId(question.getQuestionId());
-						questionAll.setResponds(persistenceService.queryByExample(ComponentQuestionResponse.class, questionResponseExample));
+						questionAll.setResponds(persistenceService.queryByExample(questionResponseExample));
 						allQuestions.add(questionAll);
 					}
 					componentAll.setQuestions(allQuestions);
@@ -1188,13 +1262,13 @@ public class CoreComponentServiceImpl
 						ComponentReviewProPk componentReviewProExamplePk = new ComponentReviewProPk();
 						componentReviewProExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
 						componentReviewProExample.setComponentReviewProPk(componentReviewProExamplePk);
-						reviewAll.setPros(persistenceService.queryByExample(ComponentReviewPro.class, componentReviewProExample));
+						reviewAll.setPros(persistenceService.queryByExample(componentReviewProExample));
 
 						ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
 						ComponentReviewConPk componentReviewConExamplePk = new ComponentReviewConPk();
 						componentReviewConExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
 						componentReviewConExample.setComponentReviewConPk(componentReviewConExamplePk);
-						reviewAll.setCons(persistenceService.queryByExample(ComponentReviewCon.class, componentReviewConExample));
+						reviewAll.setCons(persistenceService.queryByExample(componentReviewConExample));
 
 						allReviews.add(reviewAll);
 					}
@@ -1204,7 +1278,7 @@ public class CoreComponentServiceImpl
 					componentIntegrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
 					componentIntegrationExample.setComponentId(componentId);
 
-					ComponentIntegration componentIntegration = persistenceService.queryOneByExample(ComponentIntegration.class, componentIntegrationExample);
+					ComponentIntegration componentIntegration = persistenceService.queryOneByExample(componentIntegrationExample);
 					if (componentIntegration != null) {
 						IntegrationAll integrationAll = new IntegrationAll();
 						integrationAll.setIntegration(componentIntegration);
@@ -1212,13 +1286,21 @@ public class CoreComponentServiceImpl
 						ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
 						configExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 						configExample.setComponentId(componentId);
-						integrationAll.setConfigs(persistenceService.queryByExample(ComponentIntegrationConfig.class, configExample));
+						integrationAll.setConfigs(persistenceService.queryByExample(configExample));
 						componentAll.setIntegrationAll(integrationAll);
 					}
 
 					element = new Element(componentId, componentAll);
 					OSFCacheManager.getComponentCache().put(element);
 				}
+			}
+		}
+
+		if (componentAll != null) {
+			Component componentToFilter = componentAll.getComponent();
+			componentToFilter = FilterEngine.filter(componentToFilter);
+			if (componentToFilter == null) {
+				componentAll = null;
 			}
 		}
 
@@ -1273,6 +1355,13 @@ public class CoreComponentServiceImpl
 			parameterMap.put("componentIdList", componentIdInResults);
 		}
 
+		if (StringUtils.isNotBlank(filter.getSortField()) && StringUtils.isNotBlank(filter.getSortOrder())) {
+			primaryQuery.append(" ORDER BY ");
+			primaryQuery.append(filter.getSortField());
+			primaryQuery.append(" ");
+			primaryQuery.append(filter.getSortOrder());
+		}
+
 		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
 
 		result.setCount(componentTrackings.size());
@@ -1314,7 +1403,9 @@ public class CoreComponentServiceImpl
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 
 		//TODO: consider moving the filtering work to the DB
-		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);
+		List<Component> components = persistenceService.queryByExample(queryByExample);
+
+		components = FilterEngine.filter(components);
 
 		//filter out pending changes
 		components = components.stream().filter(c -> c.getActiveStatus().equals(Component.PENDING_STATUS) == false).collect(Collectors.toList());
@@ -1324,7 +1415,7 @@ public class CoreComponentServiceImpl
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 
-		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(integrationConfigExample);
 		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
 		componentIntegrationConfigs.forEach(config
 				-> {
@@ -1347,7 +1438,7 @@ public class CoreComponentServiceImpl
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
+		List<Component> pendingChanges = persistenceService.queryByExample(queryPendingChanges);
 		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
 		List<ComponentView> componentViews = new ArrayList<>();
 		for (Component component : components) {
@@ -1472,7 +1563,7 @@ public class CoreComponentServiceImpl
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
 			updateQueueExample.setNodeId(PropertiesManager.getNodeName());
 
-			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(ComponentUpdateQueue.class, updateQueueExample);
+			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(updateQueueExample);
 			if (componentUpdateQueues.isEmpty() == false) {
 				//Get the latest entries
 				Map<String, ComponentUpdateQueue> componentMap = new HashMap<>();
@@ -1608,99 +1699,163 @@ public class CoreComponentServiceImpl
 		return approved;
 	}
 
+	public ComponentSensitivityModel getComponentSensitivity(String componentId)
+	{
+		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
+		componentSensitivityModel.setComponentId(componentId);
+
+		Element element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
+		if (element != null) {
+			componentSensitivityModel = (ComponentSensitivityModel) element.getObjectValue();
+		} else {
+			String query = "select componentId, dataSource, dataSensitivity from " + Component.class.getSimpleName() + " where dataSource IS NOT NULL OR dataSensitivity IS NOT NULL";
+			Map<String, Object> parameters = new HashMap<>();
+
+			List<ODocument> documents = persistenceService.query(query, parameters);
+			for (ODocument document : documents) {
+				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+				cacheSensitivityModel.setComponentId(document.field("componentId"));
+				cacheSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
+				cacheSensitivityModel.setDataSource(document.field("dataSource"));
+
+				Element newElement = new Element(document.field("componentId"), cacheSensitivityModel);
+				if (document.field("componentId").equals(componentId)) {
+					componentSensitivityModel.setComponentId(document.field("componentId"));
+					componentSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
+					componentSensitivityModel.setDataSource(document.field("dataSource"));
+				}
+				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+			}
+		}
+
+		return componentSensitivityModel;
+	}
+
 	public Component copy(String orignalComponentId)
 	{
-		cleanupCache(orignalComponentId);
-		ComponentAll componentAll = getFullComponent(orignalComponentId);
-		if (componentAll != null) {
-			componentAll.getComponent().setComponentId(null);
-			componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
-			componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-			componentAll.getComponent().setApprovedDts(null);
-			componentAll.getComponent().setApprovedUser(null);
-			componentAll.getComponent().setExternalId(null);
+		try {
+			componentService.getChangeLogService().suspendSaving();
 
-			clearBaseComponentKey(componentAll.getAttributes());
-			clearBaseComponentKey(componentAll.getContacts());
-			clearBaseComponentKey(componentAll.getEvaluationSections());
-			clearBaseComponentKey(componentAll.getExternalDependencies());
-			clearBaseComponentKey(componentAll.getMetadata());
-			clearBaseComponentKey(componentAll.getRelationships());
-			clearBaseComponentKey(componentAll.getTags());
-
-			//Don't copy these item
-			componentAll.setIntegrationAll(null);
-			componentAll.setReviews(new ArrayList<>());
-			componentAll.setQuestions(new ArrayList<>());
-
-			//Handle local media seperately
-			List<ComponentMedia> localMedia = new ArrayList<>();
-			for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
-				ComponentMedia media = componentAll.getMedia().get(i);
-				if (media.getFileName() != null) {
-					localMedia.add(componentAll.getMedia().remove(i));
-				} else {
-					media.clearKeys();
-				}
-			}
-
-			//Handle local resource seperately
-			List<ComponentResource> localResources = new ArrayList<>();
-			for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
-				ComponentResource resource = componentAll.getResources().get(i);
-				if (resource.getFileName() != null) {
-					localResources.add(componentAll.getResources().remove(i));
-				} else {
-					resource.clearKeys();
-				}
-			}
-
-			FileHistoryOption fileHistoryOption = new FileHistoryOption();
-			fileHistoryOption.setSkipDuplicationCheck(true);
-			fileHistoryOption.setSkipRequiredAttributes(true);
-
-			componentAll = saveFullComponent(componentAll, fileHistoryOption);
-
-			//copy over local resources
-			for (ComponentMedia media : localMedia) {
-				media.setComponentId(componentAll.getComponent().getComponentId());
-				Path oldPath = media.pathToMedia();
-				if (oldPath != null) {
-					media.setComponentMediaId(persistenceService.generateId());
-					media.setFileName(media.getComponentMediaId());
-					Path newPath = media.pathToMedia();
-					try {
-						Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
-					}
-					media.populateBaseUpdateFields();
-					persistenceService.persist(media);
-				}
-			}
-
-			for (ComponentResource resource : localResources) {
-				resource.setComponentId(componentAll.getComponent().getComponentId());
-				Path oldPath = resource.pathToResource();
-				if (oldPath != null) {
-					resource.setResourceId(persistenceService.generateId());
-					resource.setFileName(resource.getResourceId());
-					Path newPath = resource.pathToResource();
-					try {
-						Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
-					}
-					resource.populateBaseUpdateFields();
-					persistenceService.persist(resource);
-				}
-			}
 			cleanupCache(orignalComponentId);
-			cleanupCache(componentAll.getComponent().getComponentId());
+			ComponentAll componentAll = getFullComponent(orignalComponentId);
+			if (componentAll != null) {
 
-			return componentAll.getComponent();
-		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find component to copy  id: " + orignalComponentId, "Must sure component still exists");
+				//check the copy name it should be unique
+				String newName = componentAll.getComponent().getName() + COPY_MARKER;
+
+				String validNewName = newName;
+				boolean nameIsUnique = false;
+				int count = 1;
+				while (nameIsUnique == false) {
+					Component componentSearch = new Component();
+					componentSearch.setName(validNewName.toLowerCase());
+
+					QueryByExample queryByExample = new QueryByExample(componentSearch);
+					queryByExample.getFieldOptions().put(Component.FIELD_NAME,
+							new GenerateStatementOptionBuilder()
+									.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
+									.build());
+
+					Component existing = persistenceService.queryOneByExample(queryByExample);
+					if (existing == null) {
+						nameIsUnique = true;
+					} else {
+						validNewName = newName + count;
+						count++;
+					}
+				}
+
+				componentAll.getComponent().setComponentId(null);
+				componentAll.getComponent().setName(validNewName);
+				componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+				componentAll.getComponent().setApprovedDts(null);
+				componentAll.getComponent().setApprovedUser(null);
+				componentAll.getComponent().setExternalId(null);
+
+				clearBaseComponentKey(componentAll.getAttributes());
+				clearBaseComponentKey(componentAll.getContacts());
+				clearBaseComponentKey(componentAll.getEvaluationSections());
+				clearBaseComponentKey(componentAll.getExternalDependencies());
+				clearBaseComponentKey(componentAll.getMetadata());
+				clearBaseComponentKey(componentAll.getRelationships());
+				clearBaseComponentKey(componentAll.getTags());
+
+				//Don't copy these item
+				componentAll.setIntegrationAll(null);
+				componentAll.setReviews(new ArrayList<>());
+				componentAll.setQuestions(new ArrayList<>());
+
+				//Handle local media seperately
+				List<ComponentMedia> localMedia = new ArrayList<>();
+				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
+					ComponentMedia media = componentAll.getMedia().get(i);
+					if (media.getFileName() != null) {
+						localMedia.add(componentAll.getMedia().remove(i));
+					} else {
+						media.clearKeys();
+					}
+				}
+
+				//Handle local resource seperately
+				List<ComponentResource> localResources = new ArrayList<>();
+				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
+					ComponentResource resource = componentAll.getResources().get(i);
+					if (resource.getFileName() != null) {
+						localResources.add(componentAll.getResources().remove(i));
+					} else {
+						resource.clearKeys();
+					}
+				}
+
+				FileHistoryOption fileHistoryOption = new FileHistoryOption();
+				fileHistoryOption.setSkipDuplicationCheck(true);
+				fileHistoryOption.setSkipRequiredAttributes(true);
+
+				componentAll = saveFullComponent(componentAll, fileHistoryOption);
+
+				//copy over local resources
+				for (ComponentMedia media : localMedia) {
+					media.setComponentId(componentAll.getComponent().getComponentId());
+					Path oldPath = media.pathToMedia();
+					if (oldPath != null) {
+						media.setComponentMediaId(persistenceService.generateId());
+						media.setFileName(media.getComponentMediaId());
+						Path newPath = media.pathToMedia();
+						try {
+							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
+						}
+						media.populateBaseUpdateFields();
+						persistenceService.persist(media);
+					}
+				}
+
+				for (ComponentResource resource : localResources) {
+					resource.setComponentId(componentAll.getComponent().getComponentId());
+					Path oldPath = resource.pathToResource();
+					if (oldPath != null) {
+						resource.setResourceId(persistenceService.generateId());
+						resource.setFileName(resource.getResourceId());
+						Path newPath = resource.pathToResource();
+						try {
+							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
+						}
+						resource.populateBaseUpdateFields();
+						persistenceService.persist(resource);
+					}
+				}
+				cleanupCache(orignalComponentId);
+				cleanupCache(componentAll.getComponent().getComponentId());
+
+				return componentAll.getComponent();
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find component to copy  id: " + orignalComponentId, "Must sure component still exists");
+			}
+		} finally {
+			componentService.getChangeLogService().resumeSaving();
 		}
 	}
 
@@ -1726,6 +1881,8 @@ public class CoreComponentServiceImpl
 			}
 			versionHistory.setVersion(version);
 			versionHistory.populateBaseCreateFields();
+
+			componentService.getChangeLogService().logOtherChange(componentAll.getComponent(), ChangeType.SNAPSHOT, "Version: " + version);
 
 			try {
 				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(componentAll);
@@ -1879,6 +2036,7 @@ public class CoreComponentServiceImpl
 				}
 				//Always leave versions
 				deleteOptions.getIgnoreClasses().add(ComponentVersionHistory.class.getSimpleName());
+				deleteOptions.getIgnoreClasses().add(ChangeLog.class.getSimpleName());
 				cascadeDeleteOfComponent(versionHistory.getComponentId(), deleteOptions);
 
 				//copy resources
@@ -1937,6 +2095,8 @@ public class CoreComponentServiceImpl
 
 				saveFullComponent(archivedVersion, fileHistoryOptions);
 
+				componentService.getChangeLogService().logOtherChange(archivedVersion.getComponent(), ChangeType.RESTORE, "Version: " + versionHistory.getVersion());
+
 				cleanupCache(archivedVersion.getComponent().getComponentId());
 				return archivedVersion.getComponent();
 			} else {
@@ -1986,6 +2146,7 @@ public class CoreComponentServiceImpl
 				mergeComponent.getComponent().setApprovedDts(targetComponent.getComponent().getApprovedDts());
 				mergeComponent.getComponent().setRecordVersion(targetComponent.getComponent().getRecordVersion());
 				mergeComponent.getComponent().setLastModificationType(ModificationType.MERGE);
+				componentService.setModificationType(ModificationType.MERGE);
 
 				targetComponent.getComponent().updateFields(mergeComponent.getComponent());
 
@@ -2045,6 +2206,17 @@ public class CoreComponentServiceImpl
 					options = saveOptions;
 				}
 				saveFullComponent(targetComponent, options);
+
+				//move evaluations over to target
+				//Keep in mind the change requests will need to be discarded (cascade delete should take care of it)
+				//New one need to be created upon editing the evaluation
+				Evaluation existingEvaluations = new Evaluation();
+				existingEvaluations.setOriginComponentId(mergeComponent.getComponent().getComponentId());
+				List<Evaluation> evaluations = existingEvaluations.findByExample();
+				for (Evaluation evaluation : evaluations) {
+					evaluation.setOriginComponentId(targetComponentId);
+					persistenceService.persist(evaluation);
+				}
 
 				//move any watches from merge to target
 				UserWatch userWatchExample = new UserWatch();
@@ -2228,7 +2400,9 @@ public class CoreComponentServiceImpl
 					inactivate = false;
 					persistenceService.delete(componentTypeFound);
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{newComponentType, componentType}));
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{
+						newComponentType, componentType
+					}));
 				}
 			}
 
@@ -2244,12 +2418,16 @@ public class CoreComponentServiceImpl
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
+		Objects.requireNonNull(componentTypeTemplate);
+
 		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
 		} else {
-			componentTypeTemplate.setTemplateId(persistenceService.generateId());
+			if (StringUtil.isBlank(componentTypeTemplate.getTemplateId())) {
+				componentTypeTemplate.setTemplateId(persistenceService.generateId());
+			}
 			componentTypeTemplate.populateBaseCreateFields();
 			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
 		}

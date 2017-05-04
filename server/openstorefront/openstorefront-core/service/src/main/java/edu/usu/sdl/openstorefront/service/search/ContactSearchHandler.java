@@ -109,7 +109,7 @@ public class ContactSearchHandler
 				throw new OpenStorefrontRuntimeException("Unable to set value on field for a contact search.", ex);
 			}
 
-			List<ComponentContact> componentContacts = serviceProxy.getPersistenceService().queryByExample(ComponentContact.class, queryByExample);
+			List<ComponentContact> componentContacts = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> results = new ArrayList<>();
 			for (ComponentContact contact : componentContacts) {
 				results.add(contact.getComponentId());

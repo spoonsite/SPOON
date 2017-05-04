@@ -43,36 +43,62 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
+			
 				var description = Ext.create('OSF.component.template.Description', {
 					margin: '0 0 20 0',
 					showDescriptionHeader: false
 				});								
-				template.blocks.push(description);
 				
 				var media = Ext.create('OSF.component.template.Media', {
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(media);				
 				
 				var resources = Ext.create('OSF.component.template.Resources', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(resources);
 				
 				var contacts = Ext.create('OSF.component.template.Contacts', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(contacts);				
 				
 				var vitals = Ext.create('OSF.component.template.Vitals', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(vitals);					
+		
+				var relatedAttributes = Ext.create('OSF.component.template.RelatedAttributes', {					
+					margin: '0 0 20 0'
+				})
 				
 				var relationships = Ext.create('OSF.component.template.Relationships', {					
 					margin: '0 0 20 0'
-				});								
-				template.blocks.push(relationships);				
+				});	
+				
+				var detailPanel = Ext.create('OSF.component.template.LayoutScroll', {
+					title: 'Details',
+					items: [
+						description,
+						media,
+						resources,
+						contacts,
+						vitals,
+						relatedAttributes,
+						relationships
+					]
+				});
+	
+				var questionPanel = Ext.create('OSF.component.template.Questions', {
+					scrollable: true
+				});				
+				
+				var tabPanel = Ext.create('OSF.component.template.LayoutTab', {
+					items: [
+						detailPanel,
+						questionPanel
+					]
+				});				
+				
+							
+				template.blocks.push(tabPanel);				
 				
 			});
 

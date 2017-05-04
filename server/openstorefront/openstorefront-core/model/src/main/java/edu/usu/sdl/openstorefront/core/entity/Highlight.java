@@ -73,6 +73,29 @@ public class Highlight
 	{
 	}
 
+	public boolean hasChange(Highlight newHighlight)
+	{
+		boolean changed = false;
+
+		if (getDescription().compareTo(newHighlight.getDescription()) != 0) {
+			changed = true;
+		} else if (getHighlightType().compareTo(newHighlight.getHighlightType()) != 0) {
+			changed = true;
+		} else if ((getLink() != null
+				&& newHighlight.getLink() != null
+				&& getLink().compareTo(newHighlight.getLink()) != 0)) {
+			changed = true;
+		} else if (getLink() != null && newHighlight.getLink() == null) {
+			changed = true;
+		} else if (getLink() == null && newHighlight.getLink() != null) {
+			changed = true;
+		} else if (getTitle().compareTo(newHighlight.getTitle()) != 0) {
+			changed = true;
+		}
+
+		return changed;
+	}
+
 	@Override
 	public void updateFields(StandardEntity entity)
 	{

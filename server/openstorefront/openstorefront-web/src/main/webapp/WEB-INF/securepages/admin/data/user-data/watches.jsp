@@ -27,6 +27,9 @@
 		</stripes:layout-render>		
 		
 		<script type="text/javascript">
+			
+			var activeRequests = 0;
+	
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
@@ -79,8 +82,7 @@
 						{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 							renderer: function(value, meta, record) {
 								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-									meta.tdCls = 'alert-success';
-									return value + '<br>*Updated';
+									return value + '<span class="updated-watch text-success"> UPDATED </span>';
 								} else {
 									return value;
 								}
@@ -96,22 +98,13 @@
 						},
 						{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
 							renderer: function(value, meta, record) {
-								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-									meta.tdCls = 'alert-success';
-								}
+								
 								return Ext.util.Format.date(value, 'm/d/y H:i:s');
 							}			
 						},
 						{ text: 'Send Email Notification', align: 'center', dataIndex: 'notifyFlg', width: 200,
-							renderer: function(value, meta, record) {
-								if (value) {
-									meta.tdCls = 'alert-success';
-									return '<i class="fa fa-lg fa-check"></i>';
-								} else {
-									meta.tdCls = 'alert-danger';
-									return '<i class="fa fa-lg fa-close"></i>';
-								}
-							}
+							
+							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{ text: 'Create Date', align: 'center', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User', dataIndex: 'createUser', width: 200 },
@@ -126,8 +119,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '120px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -136,56 +130,36 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Activate',
-									itemId: 'activate',
+									text: 'Toggle Status',
+									itemId: 'toggle',
 									scale: 'medium',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,									
 									handler: function () {
-										actionSetStatus('/activate');;
+										actionSetStatus();
 									}									
-								},
-								{
-									text: 'Inactivate',
-									itemId: 'inactivate',
-									scale: 'medium',
-									disabled: true,									
-									handler: function () {
-										actionSetStatus('/inactivate');
-									}									
-								}								
+								}							
 							]
 						}		
 					],
 					listeners: {	
 						selectionchange: function(selectionModel, selected, opts){
+							
 							var tools = this.getComponent('tools');
-
+							var toggleButton = tools.getComponent('toggle');
+							
 							if (selected.length > 0) {								
-								var countActive = 0;								
-								Ext.Array.each(selected, function(record){
-									if (record.get('activeStatus') === 'A') {
-										countActive++;
-									}
-								});		
 								
-								tools.getComponent('activate').setDisabled(true);
-								tools.getComponent('inactivate').setDisabled(true);
-								
-								if (countActive === selected.length) {
-									//all active
-									tools.getComponent('inactivate').setDisabled(false);
-								} else if (countActive === 0) {
-									//all inactive
-									tools.getComponent('activate').setDisabled(false);
-								}
-								
+								toggleButton.setDisabled(false);
+
 							} else {								
-								tools.getComponent('activate').setDisabled(true);
-								tools.getComponent('inactivate').setDisabled(true);
+
+								toggleButton.setDisabled(true);
 							}
 						}
 					},
 					bbar: Ext.create('Ext.PagingToolbar', {
+						
 						store: watchStore,
 						displayInfo: true,
 						displayMsg: 'Displaying {0} - {1} of {2}',
@@ -194,34 +168,65 @@
 				});
 				
 				var actionRefresh = function() {
+					
 					Ext.getCmp('watchGrid').getStore().loadPage(1);
 				};
 				
 				var actionSetStatus = function(newStatusAction) {
+					
 					var grid = Ext.getCmp('watchGrid');
-					var records = Ext.getCmp('watchGrid').getSelectionModel().getSelection();
+					var records = grid.getSelectionModel().getSelection();
 					
-					var ids = [];
+					var dataIds = [];
+					
+					dataIds[0] = {
+						
+						command: "activate",
+						ids: []
+					};
+					
+					dataIds[1] = {
+						
+						command: "inactivate",
+						ids: []
+					};
+
+					
 					Ext.Array.each(records, function(record){
-						ids.push(record.get('watchId'));
+						
+						if (record.get("activeStatus") == 'A') {
+							
+							dataIds[1].ids.push(record.get('watchId'));
+						} else {
+							
+							dataIds[0].ids.push(record.get('watchId'));
+						}
 					});
-					
-					var dataIds = {
-						ids: ids
-					}
 										
 					grid.setLoading("Updating...");
-					Ext.Ajax.request({
-						url:'api/v1/resource/userwatches' + newStatusAction,
-						method: 'PUT',
-						jsonData: dataIds,
-						callback: function(){
-							grid.setLoading(false);
-						},
-						success: function(){
-							actionRefresh();
-						}														
-					});					
+					
+					for (var i = 0; i < dataIds.length; i++) {
+						
+						if (dataIds[i].ids.length > 0) {
+							
+							activeRequests++;
+							console.log(dataIds[i]);
+							Ext.Ajax.request({
+
+								url:'api/v1/resource/userwatches/' + dataIds[i].command,
+								method: 'PUT',
+								jsonData: dataIds[i],
+								callback: function(){
+
+									if (--activeRequests === 0) {
+										
+										grid.setLoading(false);
+										actionRefresh();
+									}	
+								}														
+							});
+						}
+					}					
 				};
 				
 				addComponentToMainViewPort(watchesGrid);

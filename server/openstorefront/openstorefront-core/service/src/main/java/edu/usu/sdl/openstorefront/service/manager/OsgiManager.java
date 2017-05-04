@@ -61,41 +61,39 @@ public class OsgiManager
 		list.add(new CoreAPIActivator());
 		list.add(new APIDocActivator());
 		configMap.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, list);
-		
+
 		//We are managing the plugins in the application
 		configMap.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
-		
+
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
 		String moduleVersion = PropertiesManager.getModuleVersion();
-		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, 								
-				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", " +
-				"edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", " +
-				"edu.usu.sdl.openstorefront.core.api.query; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.api.model; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.entity; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.model; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.model.search; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.sort; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.spi; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.spi.parser; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.spi.parser.mapper; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.spi.parser.reader; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.util; version=" + moduleVersion + ", " + 
-				"edu.usu.sdl.openstorefront.core.view; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.view.statistic; version=" + moduleVersion + ", "  + 
-				"edu.usu.sdl.openstorefront.common.util; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.common.exception; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.common.manager; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.secuirty; version=" + moduleVersion				
+		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.api.query; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.api.model; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.entity; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.model; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.model.search; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.sort; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.spi; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.spi.parser; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.spi.parser.mapper; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.spi.parser.reader; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.util; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.view; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.core.view.statistic; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.common.util; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.common.exception; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.common.manager; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "
+				+ "edu.usu.sdl.openstorefront.security; version=" + moduleVersion
 		);
 		//configMap.put(FelixConstants, list);
 		try {
 			felix = new Felix(configMap);
 			felix.start();
-			
-		
 
 			log.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
 
@@ -137,11 +135,11 @@ public class OsgiManager
 		OsgiManager.cleanup();
 		started.set(false);
 	}
-	
+
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
+	}
 
 }

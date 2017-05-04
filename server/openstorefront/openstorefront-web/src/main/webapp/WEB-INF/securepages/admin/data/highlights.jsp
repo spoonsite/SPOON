@@ -100,7 +100,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										Ext.getCmp('highlightGrid').getStore().load();
 									}
@@ -112,32 +112,21 @@
 									text: 'Add',
 									id: 'highlightGrid-tools-add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddHighlight();
 									}
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
 									text: 'Edit',
 									id: 'highlightGrid-tools-edit',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									handler: function () {
 										actionEditHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
-									}
-								},
-								{
-									text: 'Delete',
-									id: 'highlightGrid-tools-delete',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-vertical-correction',
-									disabled: true,
-									handler: function () {
-										actionDeleteHighlight();
 									}
 								},
 								{
@@ -151,7 +140,7 @@
 									text: 'Up',
 									id: 'highlightGrid-tools-up',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										actionUpHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
@@ -161,10 +150,23 @@
 									text: 'Down',
 									id: 'highlightGrid-tools-down',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										actionDownHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
+									id: 'highlightGrid-tools-delete',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning',
+									disabled: true,
+									handler: function () {
+										actionDeleteHighlight();
 									}
 								}
 							]
@@ -284,7 +286,7 @@
 
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
-					var title = 'Delete Highlight';
+					var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Highlight?</span>';
 					var msg = 'Are you sure you want to delete "' + record.data.title + '"?';
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
@@ -303,7 +305,7 @@
 									Ext.getCmp('highlightGrid-tools-delete').disable();
 								},
 								failure: function (response, opts) {
-									Ext.MessageBox.alert('Failed to delete',
+									Ext.MessageBox.alert('Failed to delete highlight',
 									'Error: Could not delete highlight: "' + record.data.title + '"');
 								}
 							});	
@@ -314,12 +316,13 @@
 				var highlightAddEditWin = Ext.create('Ext.window.Window', {
 					id: 'highlightAddEditWin',
 					title: 'Add/Edit Highlight',
+					minHeight: 750,
+					minWidth: 700,
 					modal: true,
-					width: '55%',
-					height: '70%',
+					scrollable: true,
 					maximizable: true,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-edit',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -388,7 +391,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												var form = Ext.getCmp('editHighlightForm');
@@ -465,7 +468,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('editHighlightForm').reset();
 												Ext.getCmp('highlightAddEditWin').hide();

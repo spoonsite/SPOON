@@ -21,11 +21,11 @@ import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import java.lang.reflect.Field;
 
 public class TemporaryMediaUniqueHandler
-		implements UniqueHandler
+		implements UniqueHandler<TemporaryMedia>
 {
 
 	@Override
-	public boolean isUnique(Field field, Object value)
+	public boolean isUnique(Field field, Object value, TemporaryMedia fullDataObject)
 	{
 		boolean unique = true;
 		Service serviceProxy = ServiceProxyFactory.getServiceProxy();
@@ -33,12 +33,18 @@ public class TemporaryMediaUniqueHandler
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName((String) value);
 
-		TemporaryMedia media = serviceProxy.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		TemporaryMedia media = serviceProxy.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		if (media != null) {
 			unique = false;
 		}
 
 		return unique;
+	}
+
+	@Override
+	public String getMessage()
+	{
+		return "Provided name already exists, and duplication is not permitted.  Please choose another name.";
 	}
 
 }

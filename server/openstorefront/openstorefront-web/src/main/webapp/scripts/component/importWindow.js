@@ -21,6 +21,7 @@ Ext.define('OSF.component.ImportWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.ImportWindow',
 	title: 'Import Data',
+	iconCls: 'fa fa-lg fa-upload icon-small-vertical-correction',
 	modal: true,
 	width: '50%',
 	height: '70%',
@@ -44,7 +45,7 @@ Ext.define('OSF.component.ImportWindow', {
 						{
 							text: 'Upload',
 							formBind: true,
-							iconCls: 'fa fa-upload',
+							iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 							handler: function () {
 								var uploadForm = this.up('form');
 								var data = uploadForm.getValues();
@@ -82,7 +83,7 @@ Ext.define('OSF.component.ImportWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function () {
 								importWindow.close();
 							}
@@ -152,38 +153,11 @@ Ext.define('OSF.component.ImportWindow', {
 						autoLoad: false
 					}
 				}),
-				{
-					xtype: 'combobox',
+				Ext.create('OSF.component.DataSourceComboBox', {			
 					name: 'dataSource',
-					editable: false,
-					typeAhead: false,
-					width: '100%',
-					fieldLabel: 'Data Source',
-					valueField: 'code',
-					displayField: 'description',					
-					labelAlign: 'top',	
-					labelSeparator: '',
-					emptyText: 'Select',
-					queryMode: 'remote',
-					store: {
-						field: [
-							'code',
-							'description'
-						],
-						listeners: {
-							load: function(myStore){
-								myStore.add([{
-									code: null,
-									description: 'Select'
-								}]);
-							}
-						},
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/lookuptypes/DataSource'
-						}
-					}
-				},			
+					hideOnNoData: true,
+					width: '100%'
+				}),
 				{
 					xtype: 'filefield',
 					name: 'uploadFile',

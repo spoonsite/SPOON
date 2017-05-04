@@ -68,7 +68,7 @@ public class ComponentWatchMessageGenerator
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setUsername(userMessage.getUsername());
 		userWatchExample.setComponentId(userMessage.getComponentId());
-		UserWatch userWatch = serviceProxy.getPersistenceService().queryOneByExample(UserWatch.class, userWatchExample);
+		UserWatch userWatch = serviceProxy.getPersistenceService().queryOneByExample(userWatchExample);
 
 		message.append("The following item(s) on <b>").append(componentAll.getComponent().getName()).append("</b> were updated:<br><br>");
 

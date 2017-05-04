@@ -72,3 +72,5 @@ project*.properties
 /server/openstorefront/openstorefront-core/target/
 /server/openstorefront/openstorefront-plugin/target/
 /server/openstorefront/loadgenerator/target/
+/server/openstorefront/selenium-tests/target/
+/server/openstorefront/selenium-tests/drivers

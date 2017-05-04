@@ -184,7 +184,7 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'userRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									tip: 'Refresh the list of records',
 									handler: function () {
 										userRefreshGrid();
@@ -192,10 +192,14 @@
 									tooltip: 'Refresh the list of records'
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'View',
 									id: 'userViewButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-eye',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									width: '100px',
 									disabled: true,
 									handler: function () {
 										userViewMessage();
@@ -204,19 +208,12 @@
 								},
 								{
 									xtype: 'tbfill'
-								}]
-						},
-						{
-							xtype: 'pagingtoolbar',
-							dock: 'bottom',
-							store: 'userTrackingGridStore',
-							displayInfo: true,
-							items: [
+								},
 								{
 									text: 'Export',
 									id: 'userExportButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									disabled: false,
 									handler: function () {
 										userExport();
@@ -225,6 +222,12 @@
 
 								}
 							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'userTrackingGridStore',
+							displayInfo: true,
 						}
 					],
 					listeners: {
@@ -408,7 +411,7 @@
 					Ext.create('Ext.window.Window', {
 						id: 'viewUserTrackingInfo',
 						title: 'View Record Information',
-						iconCls: 'fa fa-info-circle',
+						iconCls: 'fa fa-lg fa-eye',
 						width: '30%',
 						height: 400,
 						autoScroll: true,
@@ -439,7 +442,7 @@
 										xtype: 'button',
 										text: 'Previous',
 										id: 'previewWinTools-previousBtn',
-										iconCls: 'fa fa-arrow-left',
+										iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
 										handler: function () {
 											actionPreviewNextRecord(false);
 										}
@@ -450,7 +453,7 @@
 									{
 										xtype: 'button',
 										text: 'Close',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											this.up('window').hide();
 										}
@@ -462,7 +465,7 @@
 										xtype: 'button',
 										text: 'Next',
 										id: 'previewWinTools-nextBtn',
-										iconCls: 'fa fa-arrow-right',
+										iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 										iconAlign: 'right',
 										handler: function () {
 											actionPreviewNextRecord(true);
@@ -842,7 +845,7 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'entryRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										entryRefreshGrid();
 									},
@@ -850,19 +853,12 @@
 								},
 								{
 									xtype: 'tbfill'
-								}]
-						},
-						{
-							xtype: 'pagingtoolbar',
-							dock: 'bottom',
-							store: 'entryTrackingGridStore',
-							displayInfo: true,
-							items: [
+								},
 								{
 									text: 'Export',
 									id: 'entryExportButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									disabled: false,
 									handler: function () {
 										entryExport();
@@ -870,6 +866,12 @@
 									tooltip: 'Export data and download to .csv format'
 								}
 							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'entryTrackingGridStore',
+							displayInfo: true,
 						}
 					]
 				});
@@ -1124,7 +1126,7 @@
 
 				var userPanel = Ext.create('Ext.panel.Panel', {
 					title: 'User',
-					iconCls: 'fa fa-user',
+					iconCls: 'fa fa-lg fa-user',
 					layout: 'fit',
 					items: [
 						userTrackingGrid
@@ -1133,7 +1135,7 @@
 
 				var entryPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Entry',
-					iconCls: 'fa fa-book',
+					iconCls: 'fa fa-lg fa-book',
 					layout: 'fit',
 					items: [
 						entryTrackingGrid
@@ -1141,7 +1143,7 @@
 				});
 
 				var msgTabPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Tracking <i class="fa fa-question-circle"  data-qtip="Track user, entry, and article data." ></i>',
+					title: 'Manage Tracking <i class="fa fa-lg fa-question-circle"  data-qtip="Track user, entry, and article data." ></i>',
 					layout: 'fit',
 					items: [
 						userPanel,

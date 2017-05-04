@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.ApplicationStatus;
 import edu.usu.sdl.openstorefront.core.view.CacheView;
@@ -40,9 +41,10 @@ import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.MediaRetrieveRequestModel;
 import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -100,7 +102,7 @@ public class Application
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets the application system status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationStatus.class)
@@ -166,7 +168,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets the application system thread and status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ThreadStatus.class)
@@ -191,7 +193,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Attempts to get the full stack of a thread")
 	@Produces({MediaType.TEXT_HTML})
 	@Path("/threads/{threadId}/stack")
@@ -224,7 +226,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets config properties")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -275,7 +277,6 @@ public class Application
 	@Path("/retrievemedia")
 	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
 	{
-
 		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
 
 		if (temporaryMedia == null) {
@@ -283,11 +284,10 @@ public class Application
 		}
 
 		return Response.ok(temporaryMedia).build();
-
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Save a config property")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -313,7 +313,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Removes config property (Allow it to fallback to the Default)")
 	@Path("/configproperties/{key}")
 	public void removeConfigProperties(@PathParam("key") String key)
@@ -322,7 +322,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets Loggers in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LoggerView.class)
@@ -356,7 +356,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets log levels")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -375,7 +375,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Sets logger level")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})
@@ -430,7 +430,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets log records")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(DBLogRecord.class)
@@ -474,7 +474,7 @@ public class Application
 			queryByExample.setOrderBy(logRecordSortExample);
 		}
 
-		List<DBLogRecord> logRecords = service.getPersistenceService().queryByExample(DBLogRecord.class, queryByExample);
+		List<DBLogRecord> logRecords = service.getPersistenceService().queryByExample(queryByExample);
 
 		DBLogRecordWrapper logRecordWrapper = new DBLogRecordWrapper();
 		logRecordWrapper.getLogRecords().addAll(logRecords);
@@ -485,7 +485,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Clears all DB log records. Doesn't affect server logs. Note: application will automatically clear old records exceeding max allowed.")
 	@Path("/logrecords")
 	public void clearAllDBLogs()
@@ -494,7 +494,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Toggle Database logging; pass use=true or use=false")
 	@DataType(LookupModel.class)
 	@Path("/dblogger/{use}")
@@ -523,44 +523,44 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets information about system caches.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(CacheView.class)
-	@Path("/caches")	
+	@Path("/caches")
 	public Response getCaches()
 	{
 		List<CacheView> cacheViews = new ArrayList<>();
-		for (String cacheName :OSFCacheManager.getCacheManager().getCacheNames()) {
+		for (String cacheName : OSFCacheManager.getCacheManager().getCacheNames()) {
 			CacheView cacheView = new CacheView();
 			cacheView.setName(cacheName);
-			
+
 			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
 			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
 			cacheView.setRoughCount(cache.getKeysNoDuplicateCheck().size());
-			
+
 			long total = cache.getStatistics().cacheHitCount() + cache.getStatistics().cacheMissCount();
 			if (total > 0) {
-				cacheView.setHitRatio((double)cache.getStatistics().cacheHitCount() / (double)total);
+				cacheView.setHitRatio((double) cache.getStatistics().cacheHitCount() / (double) total);
 			} else {
 				cacheView.setHitRatio(0);
 			}
-			cacheView.setMissCount(cache.getStatistics().cacheMissCount());						
+			cacheView.setMissCount(cache.getStatistics().cacheMissCount());
 			cacheViews.add(cacheView);
 		}
-		
+
 		GenericEntity<List<CacheView>> entity = new GenericEntity<List<CacheView>>(cacheViews)
 		{
-		};		
+		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Clears cache of records")
-	@Path("/caches/{name}/flush")	
+	@Path("/caches/{name}/flush")
 	public Response flushCaches(
-		@PathParam("name") String cacheName
+			@PathParam("name") String cacheName
 	)
 	{
 		Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
@@ -568,106 +568,115 @@ public class Application
 			cache.removeAll();
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
 	}
-	
+
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets information resource managers")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ManagerView.class)
-	@Path("/managers")	
+	@Path("/managers")
 	public Response getManagers()
-	{	
-		List<ManagerView> views = CoreSystem.getManagersView();		
+	{
+		List<ManagerView> views = CoreSystem.getManagersView();
 		GenericEntity<List<ManagerView>> entity = new GenericEntity<List<ManagerView>>(views)
 		{
-		};		
-		return sendSingleEntityResponse(entity);		
+		};
+		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
-	@Path("/managers/{managerClass}/start")	
+	@Path("/managers/{managerClass}/start")
 	public Response startManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.startManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
-	
+	}
+
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
-	@Path("/managers/{managerClass}/stop")	
+	@Path("/managers/{managerClass}/stop")
 	public Response stopManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.stopManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
-	
+	}
+
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Restart a manager.")
-	@Path("/managers/{managerClass}/restart")	
+	@Path("/managers/{managerClass}/restart")
 	public Response restartManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.restartManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
+	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
-	@Path("/restart")	
+	@Path("/restart")
 	public Response restartApplication(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		CoreSystem.restart();
 		return Response.ok().build();
-	}	
-	
+	}
+
 	@GET
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Translate a label to key; Useful for generating code for attribute.")
 	@Path("/key")
 	public Response toKey(
-		@QueryParam("label") @RequiredParam String label	
+			@QueryParam("label") @RequiredParam String label
 	)
 	{
 		String key = "";
-		
+
 		if (StringUtils.isNotBlank(label)) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			key = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 		}
 		return Response.ok(key).build();
 	}
-	
+
+	@GET
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Get the current status of the system")
+	@Path("/systemstatus")
+	public SystemStatusView getSystemStatus()
+	{
+		return CoreSystem.getStatus();
+	}
+
 }

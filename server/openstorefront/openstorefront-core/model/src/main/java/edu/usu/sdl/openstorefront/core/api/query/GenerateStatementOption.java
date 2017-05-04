@@ -28,6 +28,7 @@ public class GenerateStatementOption
 	public static final String CONDITION_COMMA = " , ";
 
 	public static final String OPERATION_EQUALS = "=";
+	public static final String OPERATION_NOT_EQUALS = " <> ";
 	public static final String OPERATION_LIKE = "LIKE";
 	public static final String OPERATION_NOT_NULL = " IS NOT NULL";
 	public static final String OPERATION_NULL = " IS NULL";

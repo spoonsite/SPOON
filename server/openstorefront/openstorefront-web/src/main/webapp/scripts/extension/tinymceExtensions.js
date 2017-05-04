@@ -636,7 +636,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									xtype: 'button',
 									title: 'Upload',
 									flex: 1,
-									iconCls: 'fa fa-upload',
+									iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 									formBind: true,
 									text: 'Upload',
 									handler: function() {
@@ -680,7 +680,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 														uploadForm.setLoading(false);
 														Ext.Msg.show({
 															title: 'Upload Failed',
-															msg: 'The file upload was not successful.',
+															msg: 'The file upload was unsuccessful.',
 															buttons: Ext.Msg.OK
 														});		
 													}
@@ -839,6 +839,9 @@ Ext.define('OSF.component.FullScreenEditor', {
 			fswin.editor.setContent(fswin.fsEditor.getValue());
 		});
 		
+		fswin.fsEditor.on('change', function(panel, newValue, oldValue) {
+			fswin.editor.setContent(fswin.fsEditor.getValue());
+		});		
 		
 		fswin.add(fswin.fsEditor);
 	}

@@ -19,6 +19,7 @@
 /* global Ext, URL */
 
 var CoreUtil = {	
+	pageActions: {},
 	showContextMenu: function (menu, event) {
 
 		event.stopEvent();
@@ -324,7 +325,9 @@ var CoreUtil = {
 
 		var loadingText = options.loadingText ? options.loadingText : 'Saving...';
 
-		options.form.setLoading(loadingText);
+		if (!options.noLoadmask) {
+			options.form.setLoading(loadingText);
+		}
 		Ext.Ajax.request({
 			url: options.url,
 			method: options.method,
@@ -374,6 +377,41 @@ var CoreUtil = {
 
 		return proxy;
 	},
+	/**
+	 *  Return predfined configs
+	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
+	 * of additional plugins to add to the config (optional)
+	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
+	 */
+	tinymceConfigNoMedia: function(additionalPlugins) {
+		var defaultConfig = {
+			plugins: [
+			"advlist autolink lists link charmap print preview hr anchor pagebreak",
+			"searchreplace wordcount visualblocks visualchars code osffullscreen",
+			"insertdatetime media nonbreaking save table contextmenu directionality",
+			"emoticons template paste textcolor placeholder"
+			],
+
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen",
+
+			content_css : "contents.css",
+
+			menubar: "edit format tools",
+			statusbar: false,
+			skin: 'openstorefront',
+			toolbar_items_size: 'small',
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
+		};
+
+		if (additionalPlugins) {
+			defaultConfig.plugins.push(additionalPlugins);
+		}
+		
+		return defaultConfig;
+	},	
+	
 	/**
 	 *  Return predfined configs
 	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
@@ -818,11 +856,69 @@ var CoreUtil = {
 		}
 		return '';
 	},
+	actionSubComponentToggleStatus: function(grid, idField, entity, subEntityId, subEntity, forceDelete, successFunc) {
+		var status = grid.getSelection()[0].get('activeStatus');
+		var recordId = grid.getSelection()[0].get(idField);
+		var componentId = grid.getSelection()[0].get('componentId'); 
+		if (!componentId) {
+			if (grid.componentRecord) {
+				componentId = grid.componentRecord.get('componentId');
+			} else {
+				componentId = grid.componentId;
+			}
+		}
+		subEntityId = subEntityId ? '/' + grid.getSelection()[0].get(subEntityId) : '';
+		subEntity = subEntity ? '/' + subEntity : '';
+
+		var urlEnding = '';
+		var method = 'DELETE';
+
+		if (status === 'I') {
+			urlEnding = '/activate';
+			method = 'PUT';
+		} 
+
+		if (forceDelete)
+		{
+			urlEnding = '/force';
+			method = 'DELETE';
+		}
+
+		grid.setLoading('Updating status...');
+		Ext.Ajax.request({
+			url: 'api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
+			method: method,
+			callback: function(opt, success, response){
+				grid.setLoading(false);
+			},
+			success: function(response, opts){
+				if (successFunc) {
+					successFunc();
+				} else {
+					grid.getStore().reload();
+				}
+			}
+		});
+	},	
 	showSavedSearchWindow: function(searchId) {
 		var searchWin = Ext.create('OSF.component.SearchPopupResultsWindow', {					
 			closeAction: 'destroy',
 			alwaysOnTop: true
 		});
 		searchWin.showResults(searchId);
+
+	},
+	renderer: {
+		
+		booleanRenderer: function(value, meta, record) {
+			if (value) {
+				meta.tdCls = 'alert-success';
+				return '<i class="fa fa-check"></i>';
+			} else {
+				meta.tdCls = 'alert-danger';
+				return '<i class="fa fa-close"></i>';
+			}
+		}
 	}
+	
 };

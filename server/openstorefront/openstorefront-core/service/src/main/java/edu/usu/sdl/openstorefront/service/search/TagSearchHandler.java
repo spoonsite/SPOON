@@ -93,7 +93,7 @@ public class TagSearchHandler
 				queryByExample.setLikeExample(componentTagLike);
 			}
 
-			List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(ComponentTag.class, queryByExample);
+			List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> results = new ArrayList<>();
 			for (ComponentTag tag : componentTags) {
 				results.add(tag.getComponentId());

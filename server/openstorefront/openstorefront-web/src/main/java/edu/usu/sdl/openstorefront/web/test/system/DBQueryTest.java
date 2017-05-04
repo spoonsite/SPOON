@@ -67,7 +67,7 @@ public class DBQueryTest
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});
 		results.append("Check All").append("<br>");
-		List<TestEntity> testInActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, new TestEntity());
+		List<TestEntity> testInActiveRecords = service.getPersistenceService().queryByExample(new TestEntity());
 		if (testInActiveRecords.size() == testActiveRecords.size()) {
 			failureReason.append("All return the same count and active.");
 		} else {

@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -135,6 +136,9 @@ public class ComponentDetailView
 	@DataType(ComponentExternalDependencyView.class)
 	private List<ComponentExternalDependencyView> dependencies = new ArrayList<>();
 
+	@DataType(EvaluationAll.class)
+	private List<EvaluationAll> fullEvaluations = new ArrayList<>();
+
 	private long componentViews = 0;
 
 	public ComponentDetailView()
@@ -142,6 +146,11 @@ public class ComponentDetailView
 	}
 
 	public static ComponentDetailView toView(ComponentAll componentAll)
+	{
+		return toView(componentAll, new ArrayList<>());
+	}
+
+	public static ComponentDetailView toView(ComponentAll componentAll, List<EvaluationAll> evaluations)
 	{
 		ComponentDetailView detailView = new ComponentDetailView();
 
@@ -156,6 +165,7 @@ public class ComponentDetailView
 		detailView.setMetadata(ComponentMetadataView.toViewList(componentAll.getMetadata()));
 		detailView.setTags(componentAll.getTags());
 		detailView.setEvaluation(ComponentEvaluationView.toViewFromStorage(componentAll.getEvaluationSections()));
+		detailView.setFullEvaluations(evaluations);
 
 		detailView.setComponentDetails(componentAll.getComponent());
 		return detailView;
@@ -214,6 +224,9 @@ public class ComponentDetailView
 		this.toStandardView(reviews);
 		this.toStandardView(dependencies);
 		this.toStandardView(evaluation.getEvaluationSections());
+		for (EvaluationAll evaluationAll : fullEvaluations) {
+			this.toStandardView(evaluationAll.getEvaluation());
+		}
 
 	}
 
@@ -635,6 +648,16 @@ public class ComponentDetailView
 	public void setApprovalStateLabel(String approvalStateLabel)
 	{
 		this.approvalStateLabel = approvalStateLabel;
+	}
+
+	public List<EvaluationAll> getFullEvaluations()
+	{
+		return fullEvaluations;
+	}
+
+	public void setFullEvaluations(List<EvaluationAll> fullEvaluations)
+	{
+		this.fullEvaluations = fullEvaluations;
 	}
 
 }

@@ -15,20 +15,25 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.codemonkey.simplejavamail.MailException;
 import org.codemonkey.simplejavamail.Mailer;
 import org.codemonkey.simplejavamail.TransportStrategy;
 import org.codemonkey.simplejavamail.email.Email;
 import org.codemonkey.simplejavamail.email.Recipient;
+import org.hazlewood.connor.bottema.emailaddress.EmailAddressValidator;
 
 /**
  * Used for Handling Email
@@ -87,24 +92,175 @@ public class MailManager
 		}
 		return email;
 	}
-
+        
+        /**
+         * Sends an email
+         * <p>
+         * Performs validation on recipient email addresses
+         * prior to sending. Catches and logs any exceptions
+         * thrown during the sending of the email. Will not
+         * throw or re-throw exceptions when validation or
+         * sending fails.
+         * 
+         * @param email An email object which is pre-configured
+         * and ready to be sent
+         */
 	public static void send(Email email)
 	{
+                // Send Email
+                send(email, false);
+        }
+
+        /**
+         * Sends an email
+         * <p>
+         * Performs validation on recipient email addresses
+         * prior to sending. Catches and logs any exceptions
+         * thrown during the sending of the email. Throws or
+         * re-throws exceptions when instructed to do so.
+         * 
+         * @param email An email object which is pre-configured
+         * and ready to be sent
+         * @param throwException When true, throws an exception
+         * when validation or sending fails. When false, will
+         * still log, but will not throw an exception
+         */
+	public static void send(Email email, boolean throwException)
+	{
+                // Check For Null Email Object
 		if (email != null) {
+                        
+                        // Check For Null Mailer Service
 			if (mailer != null) {
-				mailer.sendMail(email);
-			} else {
+                            
+                                // Store Recipients
+                                List<Recipient> recipients = email.getRecipients();
+                            
+                                // Validate Recipients
+                                recipients = validateRecipients(recipients);
+                                
+                                // Check For Recipients
+                                if (!recipients.isEmpty()) {
+
+                                        // Attempt To Send Email
+                                        try {
+
+                                                // Send Email
+                                                mailer.sendMail(email);
+                                        }
+                                        
+                                        // Catch Mail Error
+                                        catch (MailException e) {
+
+                                                // Log Error
+                                                log.log(Level.SEVERE, MessageFormat.format("An error occurred while sending email. The error message follows: {0}", e.getMessage()));
+                                                
+                                                // Check If Exception Should Be Thrown
+                                                if (throwException) {
+                                                
+                                                        // Throw Runtime Exception
+                                                        throw new OpenStorefrontRuntimeException("Unable to send email", e);
+                                                }
+                                        }
+                                }
+                                else {
+                                        // Check If Exception Should Be Thrown
+                                        if (throwException) {
+                                        
+                                                // Throw Runtime Exception
+                                                throw new OpenStorefrontRuntimeException("Email validation failed", "Check recipient email address(es)");
+                                        }
+                                }
+			}
+                        else {
+                                // Initialize Recipients String
 				StringBuilder sb = new StringBuilder();
-				for (Recipient recipient : email.getRecipients()) {
-					sb.append(recipient.getType()).append(": ");
-					sb.append(recipient.getAddress()).append(", ");
-				}
+                                
+                                // Check Recipients
+                                email.getRecipients().forEach(recipient -> {
+                                    
+                                        // Store Recipient Type & Colon
+                                        sb.append(recipient.getType()).append(": ");
+                                        
+                                        // Store Recipient Address & Separator (Comma)
+                                        sb.append(recipient.getAddress()).append(", ");
+                                });
+                                
+                                // Log Recipients
 				log.log(Level.FINE, MessageFormat.format("(Mock Email Handler) Sending Message Subject: {0} To {1}", new Object[]{email.getSubject(), sb.toString()}));
 			}
-		} else {
+		}
+                else {
+                        
+                        // Log Error
 			log.log(Level.FINE, "Unable to send NULL email message. No message to send.");
 		}
 	}
+        
+        /**
+         * Validate email addresses
+         * <p>
+         * Receives a list of recipients and validates each of their email addresses.
+         * Returns a list of recipients whose email addresses passed validation
+         * and logs those whose did not.
+         * 
+         * @param recipients A list of recipients who are intended to receive an email
+         * @return A list of recipients which passed email address validation. An empty
+         * list will be returned in the event that no recipient passed validation.
+         */
+        public static List<Recipient> validateRecipients(List<Recipient> recipients) {
+            
+                // Initialize Failed Recipient Flag
+                boolean recipientsFailed = false;
+            
+                // Create New Recipient List
+                List<Recipient> validRecipients = new ArrayList<>();
+                
+                // Initialize Failed Recipients String
+                StringBuilder failedRecipients = new StringBuilder();
+                
+                // Loop Through Recipients
+                for (Recipient recipient : recipients) {
+                        
+                        // Validate Email
+                        if (EmailAddressValidator.isValid(recipient.getAddress())) {
+                            
+                                // Add Recipient
+                                validRecipients.add(recipient);
+                        }
+                        else {
+                                
+                                // Indicate Recipient Failed
+                                recipientsFailed = true;
+                                
+                                // Check For Existing Failed Recipient
+                                if (failedRecipients.length() != 0) {
+
+                                    // Append Comma
+                                    failedRecipients.append(", ");
+                                }
+
+                                // Append Failed Recipient Name
+                                failedRecipients.append(recipient.getName());
+
+                                // Append Colon
+                                failedRecipients.append(": ");
+
+                                // Append Failed Recipient's Invalid Email Address
+                                failedRecipients.append(recipient.getAddress());
+                        }
+                }
+                
+                // Check For Failed Recipients
+                if (recipientsFailed) {
+                    
+                    // Log Failed Recipients
+                    log.log(Level.WARNING, MessageFormat.format("Some recipient email addresses failed validation. The following are invalid: {0}", failedRecipients.toString()));
+                }
+                
+                // Return New Recipients
+                return validRecipients;
+        }
 
 	@Override
 	public void initialize()

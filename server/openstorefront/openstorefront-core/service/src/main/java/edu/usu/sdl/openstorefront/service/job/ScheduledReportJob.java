@@ -54,7 +54,7 @@ public class ScheduledReportJob
 		ScheduledReport scheduleReportExample = new ScheduledReport();
 		scheduleReportExample.setActiveStatus(ScheduledReport.ACTIVE_STATUS);
 
-		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(ScheduledReport.class, scheduleReportExample);
+		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(scheduleReportExample);
 		for (ScheduledReport report : reports) {
 			boolean run = true;
 

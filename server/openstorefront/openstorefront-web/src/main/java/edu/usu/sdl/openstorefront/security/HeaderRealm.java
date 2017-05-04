@@ -28,6 +28,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -49,9 +50,10 @@ public class HeaderRealm
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
 	{
 		UserContext userContext = (UserContext) principals.getPrimaryPrincipal();
-		HeaderAuthToken headerAuthToken = new HeaderAuthToken();
-		headerAuthToken.setUserContext(userContext);
-		return populateAccount(headerAuthToken);
+		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+		authorizationInfo.addRoles(userContext.roles());
+		authorizationInfo.addStringPermissions(userContext.permissions());
+		return authorizationInfo;
 	}
 
 	@Override
@@ -78,7 +80,7 @@ public class HeaderRealm
 		HeaderAccount headerAccount = new HeaderAccount();
 
 		UserContext userContext = headerAuthToken.getUserContext();
-		boolean admin = false;
+
 		if (userContext == null) {
 			ServiceProxy serviceProxy = new ServiceProxy();
 
@@ -96,19 +98,12 @@ public class HeaderRealm
 			userProfile.setPhone(headerAuthToken.getPhone());
 			userProfile.setExternalGuid(headerAuthToken.getGuid());
 
-			if (StringUtils.isNotBlank(headerAuthToken.getGroup())
-					&& StringUtils.isNotBlank(headerAuthToken.getAdminGroupName())) {
-				admin = headerAuthToken.getGroup().contains(headerAuthToken.getAdminGroupName());
-			}
-			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), admin);
-		} else {
-			admin = userContext.isAdmin();
+			serviceProxy.getSecurityService().updateRoleGroup(headerAuthToken.getUsername(), headerAuthToken.getGroups());
+			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), true);
+			userContext.setExternalGroups(headerAuthToken.getGroups());						
 		}
 		headerAccount.setCredentials(userContext);
-		headerAccount.getSimplePrincipals().add(userContext, "Open Am Header User");
-		if (admin) {
-			headerAccount.getRoles().add(SecurityUtil.ADMIN_ROLE);
-		}
+		headerAccount.getSimplePrincipals().add(userContext, HeaderRealm.class.getSimpleName());
 
 		return headerAccount;
 	}
@@ -139,20 +134,32 @@ public class HeaderRealm
 			headerAuthToken.setRequest(request);
 			headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
 			headerAuthToken.setEmail(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, "mail")));
-			headerAuthToken.setPhone(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, "telephonenumber")));
+			headerAuthToken.setPhone(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_PHONE, "telephonenumber")));
 			headerAuthToken.setFirstname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, "givenname")));
 
 			Enumeration<String> groupValues = request.getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, "memberOf"));
 			StringBuilder group = new StringBuilder();
 			while (groupValues.hasMoreElements()) {
-				group.append(groupValues.nextElement());
+				String adGroup = groupValues.nextElement();
+				group.append(adGroup);
 				group.append(" | ");
+				
+				//CN=STORE-Admin,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab
+				//extract the CN values
+				String groupFragments[] = adGroup.split(",");				
+				for (String fragment : groupFragments) {
+					String keyValue[] = fragment.split("=");
+					if ("CN".equals(keyValue[0])) {
+						headerAuthToken.getGroups().add(keyValue[1]);
+					}
+				}
+				
 			}
 
 			headerAuthToken.setGroup(group.toString());
 			headerAuthToken.setGuid(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
 			headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, "sn")));
-			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
+			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, "company")));
 			headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, "sAMAccountName")));
 
 			try {

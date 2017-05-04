@@ -24,11 +24,17 @@ import javax.ws.rs.container.ResourceInfo;
  * @author dshurtleff
  */
 public class NoOpRequireHandler
-		implements CustomRequireHandler
+		implements CustomRequiredHandler
 {
+	
+	@Override
+	public String getDescription()
+	{
+		return null;
+	}
 
 	@Override
-	public boolean requireAdminCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext)
+	public boolean specialSecurityCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext, RequireSecurity requireSecurity)
 	{
 		return true;
 	}

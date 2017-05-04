@@ -154,7 +154,7 @@ public class OrientPersistenceService
 	}
 
 	@Override
-	public boolean isAttached(BaseEntity baseEntity)
+	public boolean isManaged(BaseEntity baseEntity)
 	{
 		boolean attached = false;
 		OObjectDatabaseTx database = getConnection();
@@ -164,6 +164,16 @@ public class OrientPersistenceService
 			closeConnection(database);
 		}
 		return attached;
+	}
+
+	@Override
+	public boolean isProxy(BaseEntity baseEntity)
+	{
+		boolean proxied = false;
+		if (baseEntity instanceof Proxy) {
+			proxied = true;
+		}
+		return proxied;
 	}
 
 	@Override
@@ -359,15 +369,14 @@ public class OrientPersistenceService
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
 			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
-				if (queryString.indexOf(" where ") != -1) {
-					queryString.append(" AND ");
-				} else {
-					queryString.append(" where ");
-				}
-				queryString.append(extraWhere);
+				appendToWhere(queryString, extraWhere);
 				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
+
+		if (queryByExample.getAdditionalWhere() != null) {
+			appendToWhere(queryString, queryByExample.getAdditionalWhere());
+		}
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -385,7 +394,9 @@ public class OrientPersistenceService
 		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
 		queryString.append("delete from ").append(entityClass.getSimpleName());
-		queryString.append(" where ").append(whereClause);
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(whereClause);
+		}
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -407,8 +418,17 @@ public class OrientPersistenceService
 		GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();
 		generateStatementOption.setCondition(GenerateStatementOption.CONDITION_COMMA);
 		generateStatementOption.setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
-		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
-		queryString.append(" where ").append(generateWhereClause(exampleWhere));
+		String setQuery = generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>());
+		if (StringUtils.isNotBlank(setQuery)) {
+			queryString.append(" set ").append(setQuery);
+		} else {
+			throw new OpenStorefrontRuntimeException("Update query requires a SET clause.", "Make sure to set the example set");
+		}
+
+		String whereClause = generateWhereClause(exampleWhere);
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(generateWhereClause(exampleWhere));
+		}
 
 		Map<String, Object> queryParams = new HashMap<>();
 		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
@@ -475,15 +495,14 @@ public class OrientPersistenceService
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
 			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
-				if (queryString.indexOf(" where ") != -1) {
-					queryString.append(" AND ");
-				} else {
-					queryString.append(" where ");
-				}
-				queryString.append(extraWhere);
+				appendToWhere(queryString, extraWhere);
 				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
+
+		if (queryByExample.getAdditionalWhere() != null) {
+			appendToWhere(queryString, queryByExample.getAdditionalWhere());
+		}
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -518,13 +537,13 @@ public class OrientPersistenceService
 	 * @return
 	 */
 	@Override
-	public <T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity)
+	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
-		return queryByExample(exampleClass, new QueryByExample(baseEntity));
+		return queryByExample(new QueryByExample(baseEntity));
 	}
 
 	@Override
-	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
+	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
 
@@ -546,12 +565,7 @@ public class OrientPersistenceService
 		if (queryByExample.getLikeExample() != null) {
 			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(likeClause)) {
-				if (StringUtils.isNotBlank(whereClause)) {
-					queryString.append(" AND ");
-				} else {
-					queryString.append(" where ");
-				}
-				queryString.append(likeClause);
+				appendToWhere(queryString, likeClause);
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions()));
 			}
 		}
@@ -559,15 +573,14 @@ public class OrientPersistenceService
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
 			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
-				if (queryString.indexOf(" where ") != -1) {
-					queryString.append(" AND ");
-				} else {
-					queryString.append(" where ");
-				}
-				queryString.append(extraWhere);
+				appendToWhere(queryString, extraWhere);
 				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
+
+		if (queryByExample.getAdditionalWhere() != null) {
+			appendToWhere(queryString, queryByExample.getAdditionalWhere());
+		}
 
 		if (queryByExample.getGroupBy() != null) {
 			String names = generateExampleNames(queryByExample.getGroupBy());
@@ -594,8 +607,18 @@ public class OrientPersistenceService
 			queryString.append(" PARALLEL ");
 		}
 
-		List<T> results = query(queryString.toString(), mappedParams, exampleClass, queryByExample.isReturnNonProxied());
+		List<T> results = query(queryString.toString(), mappedParams, queryByExample.isReturnNonProxied());
 		return results;
+	}
+
+	private void appendToWhere(StringBuilder queryString, String conditionClause)
+	{
+		if (queryString.indexOf(" where ") != -1) {
+			queryString.append(" AND ");
+		} else {
+			queryString.append(" where ");
+		}
+		queryString.append(conditionClause);
 	}
 
 	private <T> String generateWhereClause(T example)
@@ -768,15 +791,15 @@ public class OrientPersistenceService
 	 * @return the entity or null if not found
 	 */
 	@Override
-	public <T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity)
+	public <T> T queryOneByExample(BaseEntity baseEnity)
 	{
-		return queryOneByExample(exampleClass, new QueryByExample(baseEnity));
+		return queryOneByExample(new QueryByExample(baseEnity));
 	}
 
 	@Override
-	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
+	public <T> T queryOneByExample(QueryByExample queryByExample)
 	{
-		List<T> results = queryByExample(exampleClass, queryByExample);
+		List<T> results = queryByExample(queryByExample);
 		if (!results.isEmpty()) {
 			return results.get(0);
 		}
@@ -794,7 +817,7 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
-		return query(query, parameterMap, null, false);
+		return query(query, parameterMap, false);
 	}
 
 	/**
@@ -803,12 +826,11 @@ public class OrientPersistenceService
 	 * @param <T>
 	 * @param query
 	 * @param parameterMap
-	 * @param dataClass
 	 * @param unwrap
 	 * @return
 	 */
 	@Override
-	public <T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap)
+	public <T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap)
 	{
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
@@ -829,7 +851,7 @@ public class OrientPersistenceService
 
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
 			if (unwrap) {
-				results = unwrapProxy(db, dataClass, results);
+				results = unwrapProxy(db, results);
 			}
 		} finally {
 			closeConnection(db);
@@ -961,19 +983,19 @@ public class OrientPersistenceService
 	}
 
 	@Override
-	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
+	public <T> List<T> unwrapProxy(List<T> data)
 	{
 		OObjectDatabaseTx db = getConnection();
 		List<T> nonProxyData = null;
 		try {
-			nonProxyData = unwrapProxy(db, origClass, data);
+			nonProxyData = unwrapProxy(db, data);
 		} finally {
 			closeConnection(db);
 		}
 		return nonProxyData;
 	}
 
-	public <T> List<T> unwrapProxy(OObjectDatabaseTx db, Class<T> origClass, List<T> data)
+	public <T> List<T> unwrapProxy(OObjectDatabaseTx db, List<T> data)
 	{
 		List<T> nonProxyList = new ArrayList<>();
 		for (T dbproxy : data) {
@@ -984,19 +1006,19 @@ public class OrientPersistenceService
 	}
 
 	@Override
-	public <T> T unwrapProxyObject(Class<T> origClass, T data)
+	public <T> T unwrapProxyObject(T data)
 	{
 		OObjectDatabaseTx db = getConnection();
 		T nonProxyData = null;
 		try {
-			nonProxyData = unwrapProxyObject(db, origClass, data);
+			nonProxyData = unwrapProxyObject(db, data);
 		} finally {
 			closeConnection(db);
 		}
 		return nonProxyData;
 	}
 
-	public <T> T unwrapProxyObject(OObjectDatabaseTx db, Class<T> origClass, T data)
+	public <T> T unwrapProxyObject(OObjectDatabaseTx db, T data)
 	{
 		T nonProxy = db.detachAll(data, true);
 		return nonProxy;

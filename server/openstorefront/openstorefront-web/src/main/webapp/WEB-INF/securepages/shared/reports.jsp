@@ -22,7 +22,7 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 		</stripes:layout-render>			
 		
         <script type="text/javascript">
@@ -128,8 +128,8 @@
 
 									}
 								},
-								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-								{text: 'Email Addresses', dataIndex: 'emailAddresses', width: 150, flex: 1,
+								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+								{text: 'Email Addresses', dataIndex: 'emailAddresses', minWidth: 200, flex: 1,
 									renderer: function (v, meta) {
 										var emailStr = '';
 										if (v && v.length) {
@@ -196,7 +196,7 @@
 											text: 'Refresh',
 											scale: 'medium',
 											id: 'reportRefreshButton',
-											iconCls: 'fa fa-2x fa-refresh',
+											iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 											tip: 'Refresh the list of records',
 											handler: function () {
 												scheduleReportRefreshGrid();
@@ -204,10 +204,14 @@
 											tooltip: 'Refresh the list of records'
 										},
 										{
+											xtype: 'tbseparator'
+										},
+										{
 											text: 'Add',
 											id: 'reportAddButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-plus',
+											width: '100px',
+											iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 											disabled: false,
 											handler: function () {
 												scheduleReportAdd();
@@ -218,7 +222,8 @@
 											text: 'Edit',
 											id: 'reportEditButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-edit',
+											width: '100px',
+											iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 											disabled: true,
 											handler: function () {
 												scheduleReportEdit();
@@ -226,13 +231,13 @@
 											tooltip: 'Edit a record'
 										},
 										{
-											xtype: 'tbfill'
+											xtype: 'tbseparator'
 										},
 										{
 											text: 'Toggle Status',
 											id: 'reportActivateButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-power-off',
+											iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 											disabled: true,
 											handler: function () {
 												scheduleReportActivate();
@@ -240,10 +245,14 @@
 											tooltip: 'Toggle activation of a record'
 										},
 										{
+											xtype: 'tbfill'
+										},
+										{
 											text: 'Delete',
 											id: 'reportDeleteButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-trash',
+											width: '110px',
+											iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 											disabled: true,
 											handler: function () {
 												scheduleReportDelete();
@@ -332,6 +341,7 @@
 
 					Ext.Msg.show({
 						title: 'Delete Scheduled Report?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the scheduled report?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -480,6 +490,12 @@
 									if (scheduleData.data.reportOption.category) {
 										Ext.getCmp('categorySelect').setValue(scheduleData.data.reportOption.category);
 									}
+									if (scheduleData.data.reportOption.assignedUser) {
+										Ext.getCmp('assignedUser').setValue(scheduleData.data.reportOption.assignedUser);
+									}
+									if (scheduleData.data.reportOption.assignedGroup) {
+										Ext.getCmp('assignedGroup').setValue(scheduleData.data.reportOption.assignedGroup);
+									}
 									if (scheduleData.data.reportOption.maxWaitSeconds) {
 										Ext.getCmp('waitSeconds').setValue(scheduleData.data.reportOption.maxWaitSeconds);
 									}
@@ -621,6 +637,9 @@
 						Ext.getCmp('startDate').setHidden(true);
 						Ext.getCmp('endDate').setHidden(true);
 						Ext.getCmp('previousDaysSelect').setHidden(true);
+						Ext.getCmp('assignedUser').setHidden(true);
+						Ext.getCmp('assignedGroup').setHidden(true);						
+						
 						Ext.getCmp('waitSeconds').setValue('');
 						Ext.getCmp('filterForEntries').setValue('');
 						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();											
@@ -648,6 +667,10 @@
 							Ext.getCmp('endDate').setHidden(false);
 							Ext.getCmp('previousDaysSelect').setHidden(false);
 						}
+						else if (rType === 'EVALSTAT') {							
+							Ext.getCmp('assignedUser').setHidden(false);
+							Ext.getCmp('assignedGroup').setHidden(false);
+						}
 						else if (rType === 'USER' || rType === 'ORGANIZATION') {
 							//Do nothing just the base form which is already active.
 						}
@@ -661,11 +684,10 @@
 					Ext.create('Ext.window.Window', {
 						title: 'Schedule Report',
 						id: 'scheduleReportWin',
-						iconCls: 'fa fa-calendar',
+						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
 						minHeight: 500,
-						maxHeight: 600,
-						y: 20,
+						y: 100,
 						closeAction: 'destroy',
 						modal: true,						
 						alwaysOnTop: true,											
@@ -686,9 +708,9 @@
 										xtype: 'toolbar',
 										items: [
 											{
-												text: 'Generate',
+												text: 'Run Report',
 												formBind: true,
-												iconCls: 'fa fa-save',
+												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 												handler: function () {
 
 													var data = {};
@@ -708,6 +730,12 @@
 													if (Ext.getCmp('categorySelect').isVisible()) {
 														reportOpt.category = Ext.getCmp('categorySelect').getValue();
 													}
+													if (Ext.getCmp('assignedUser').isVisible()) {
+														reportOpt.assignedUser = Ext.getCmp('assignedUser').getValue();
+													}													
+													if (Ext.getCmp('assignedGroup').isVisible()) {
+														reportOpt.assignedGroup = Ext.getCmp('assignedGroup').getValue();
+													}													
 
 													if (Ext.getCmp('startDate').isVisible()) {
 
@@ -725,6 +753,7 @@
 													if (Ext.getCmp('waitSeconds').isVisible()) {
 														reportOpt.maxWaitSeconds = Ext.getCmp('waitSeconds').getValue();
 													}
+												
 													data.reportOption = reportOpt;
 
 													if (data.scheduleIntervalDays === null)
@@ -759,7 +788,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function () {
 													Ext.getCmp('scheduleReportWin').destroy();
 												}
@@ -952,6 +981,64 @@
 												}
 											}
 										}
+									},	
+									{
+										xtype: 'combobox',
+										id: 'assignedUser',
+										name: 'assignedUser',
+										fieldLabel: 'Assigned User',
+										displayField: 'description',
+										valueField: 'code',								
+										emptyText: 'All',
+										labelAlign: 'top',
+										width: '100%',
+										editable: false,
+										hidden: true,
+										forceSelection: true,
+										store: {									
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/userprofiles/lookup'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													store.add({
+														code: null,
+														description: 'All'
+													});
+												}
+											}									
+										}										
+									},
+									{
+										xtype: 'combobox',
+										id: 'assignedGroup',
+										name: 'assignedGroup',
+										fieldLabel: 'Assign to Group',
+										displayField: 'description',
+										valueField: 'code',								
+										emptyText: 'All',
+										labelAlign: 'top',
+										width: '100%',
+										hidden: true,
+										editable: false,
+										forceSelection: true,
+										store: {									
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/securityroles/lookup'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													store.add({
+														code: null,
+														description: 'All'
+													});
+												}
+											}
+										}									
 									},									
 									{
 										xtype: 'gridpanel',
@@ -959,7 +1046,7 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										height: 200,
+										maxHeight: 250,										
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
@@ -1036,7 +1123,7 @@
 				
 				var historyGrid = Ext.create('Ext.grid.Panel', {
 					id: 'historyGrid',
-					title: 'Reports <i class="fa fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
+					title: 'Reports &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
@@ -1069,7 +1156,9 @@
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
-						{text: 'Scheduled', dataIndex: 'scheduled', width: 100},
+						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender }
 					],
 					dockedItems: [
@@ -1081,7 +1170,7 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'historyRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									tip: 'Refresh the list of records',
 									handler: function () {
 										historyRefreshGrid();
@@ -1089,49 +1178,52 @@
 									tooltip: 'Refresh the list of records'
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'New Report',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
+									scale: 'medium',
+									handler: function () {
+										scheduleReportWin();
+									}
+								},
+								{
 									text: 'View',
 									scale: 'medium',
 									id: 'historyViewButton',
-									iconCls: 'fa fa-2x fa-eye',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									handler: function () {
 										viewHistory();
 									},
 									tooltip: 'View Report'
-								},								
-								{
-									text: 'Download',
-									id: 'historyExportButton',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download',
-									disabled: true,
-									handler: function () {
-										historyExport();
-									},
-									tooltip: 'Export report'
-								},
-								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'New Report',
-									iconCls: 'fa fa-2x fa-plus',
-									scale: 'medium',
-									handler: function () {
-										scheduleReportWin();
-									}
-								},								
+								},																
 								{
 									xtype: 'tbseparator'
 								},
 								{
 									text: 'Scheduled Reports',
-									iconCls: 'fa fa-2x fa-clock-o',
+									id: 'scheduledReportBtn',
+									hidden: true,
+									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function () {
 										scheduledReportsWin.show();
 									},
 									tooltip: 'Schedule Reports'
+								},
+								{
+									text: 'Download',
+									id: 'historyExportButton',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										historyExport();
+									},
+									tooltip: 'Export report'
 								},
 								{
 									xtype: 'tbfill'
@@ -1140,7 +1232,7 @@
 									text: 'Delete',
 									id: 'historyDeleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyDelete();
@@ -1279,7 +1371,7 @@
 					Ext.create('Ext.window.Window', {
 						title: historyTitle,
 						id: 'viewHistoryData',
-						iconCls: 'fa fa-eye',
+						iconCls: 'fa fa-lg fa-eye',
 						width: '50%',
 						height: '60%',
 						y: 40,
@@ -1299,7 +1391,7 @@
 									xtype: 'button',
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-arrow-left',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
 									handler: function () {
 										actionPreviewNextRecord(false);
 									}
@@ -1311,7 +1403,7 @@
 									xtype: 'button',
 									id: 'previewWinTools-download',
 									text: 'Download',
-									iconCls: 'fa fa-download',
+									iconCls: 'fa fa-lg fa-download icon-button-color-default',
 									handler: function () {
 										historyExport();
 									}
@@ -1323,7 +1415,7 @@
 									xtype: 'button',
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-arrow-right',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function () {
 										actionPreviewNextRecord(true);
@@ -1415,7 +1507,17 @@
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
 					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
-				};				
+				};	
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
+						Ext.getCmp('scheduledReportBtn').setHidden(false);					
+					}				
+				});	
+
+				
+				
+				
 				
 			});
 

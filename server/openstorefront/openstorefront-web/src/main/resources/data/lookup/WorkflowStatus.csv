@@ -1,0 +1,5 @@
+OPEN,Open,,0
+INPROGRESS,In-progress,,1
+HOLD,Hold,Stopped progress,3
+WAIT,Needs more information,waiting for more information to be completed,2 
+COMPLETE,Complete,,1000

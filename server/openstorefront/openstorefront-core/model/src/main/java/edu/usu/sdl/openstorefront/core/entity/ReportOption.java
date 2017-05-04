@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Holds report options")
+@Embeddable
 public class ReportOption
 		implements Serializable
 {
@@ -54,6 +56,14 @@ public class ReportOption
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String category;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String assignedUser;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String assignedGroup;
 
 	@Version
 	private String storageVersion;
@@ -120,6 +130,26 @@ public class ReportOption
 	public void setCategory(String category)
 	{
 		this.category = category;
+	}
+
+	public String getAssignedUser()
+	{
+		return assignedUser;
+	}
+
+	public void setAssignedUser(String assignedUser)
+	{
+		this.assignedUser = assignedUser;
+	}
+
+	public String getAssignedGroup()
+	{
+		return assignedGroup;
+	}
+
+	public void setAssignedGroup(String assignedGroup)
+	{
+		this.assignedGroup = assignedGroup;
 	}
 
 }

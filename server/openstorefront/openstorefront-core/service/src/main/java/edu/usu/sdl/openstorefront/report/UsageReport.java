@@ -78,7 +78,7 @@ public class UsageReport
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
+		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
 		for (UserTracking userTracking : userTrackings) {
 			userTrackingUsers.add(userTracking.getCreateUser());
 		}
@@ -171,7 +171,7 @@ public class UsageReport
 		);
 
 		UserProfile userProfileExample = new UserProfile();
-		List<UserProfile> allUsers = service.getPersistenceService().queryByExample(UserProfile.class, userProfileExample);
+		List<UserProfile> allUsers = service.getPersistenceService().queryByExample(userProfileExample);
 		Map<String, UserProfile> userMap = new HashMap<>();
 		allUsers.forEach(user -> {
 			userMap.put(user.getUsername(), user);

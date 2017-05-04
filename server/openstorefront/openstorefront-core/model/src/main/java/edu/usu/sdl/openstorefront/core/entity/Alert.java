@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -58,16 +59,24 @@ public class Alert
 
 	@DataType(EmailAddress.class)
 	@ConsumeField
+	@Embedded
 	@OneToMany(orphanRemoval = true)
 	private List<EmailAddress> emailAddresses;
 
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private UserDataAlertOption userDataAlertOption;
 
 	@ConsumeField
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private SystemErrorAlertOption systemErrorAlertOption;
+
+	@ConsumeField
+	@Embedded
+	@OneToOne(orphanRemoval = true)
+	private UserManagementAlertOption userManagementAlertOption;
 
 	public Alert()
 	{
@@ -144,6 +153,16 @@ public class Alert
 	public void setSystemErrorAlertOption(SystemErrorAlertOption systemErrorAlertOption)
 	{
 		this.systemErrorAlertOption = systemErrorAlertOption;
+	}
+
+	public UserManagementAlertOption getUserManagementAlertOption()
+	{
+		return userManagementAlertOption;
+	}
+
+	public void setUserManagementAlertOption(UserManagementAlertOption userManagementAlertOption)
+	{
+		this.userManagementAlertOption = userManagementAlertOption;
 	}
 
 }

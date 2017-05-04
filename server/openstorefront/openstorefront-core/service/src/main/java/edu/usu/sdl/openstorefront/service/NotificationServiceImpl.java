@@ -61,76 +61,71 @@ public class NotificationServiceImpl
 	@Override
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams)
 	{
-                // Initialize Response Object
+		// Initialize Response Object
 		NotificationEventWrapper notificationEventWrapper = new NotificationEventWrapper();
-                
-                // Initialize Notification Event Query
-                String eventQuery = "SELECT FROM " + NotificationEvent.class.getSimpleName() + " WHERE activeStatus = '" + NotificationEvent.ACTIVE_STATUS + "'";
-                
-                // Check For Username
-                if (username != null) {
-                    
-                    // Add User-Specific Filtering To Query
-                    eventQuery += " AND (username = '" + username + "' OR (username IS NULL AND roleGroup IS NULL))";
-                }
-                
-                /////////////////////
-                // Get Total Count //
-                /////////////////////
-                
-                // Modify Query To Get Count
-                String eventCountQuery = eventQuery.replace("SELECT FROM", "SELECT COUNT(*) FROM");
-                
-                // Request Count
-                List<ODocument> countDocuments = persistenceService.query(eventCountQuery, null);
-                
-                // Initialize Count Variable
-                Long totalCount;
-                
-                // Check For Count Results
-                if (!countDocuments.isEmpty()) {
-                    
-                    // Set Total Count
-                    totalCount = countDocuments.get(0).field("COUNT");
-                }
-                else {
-                    
-                    // Set Total Count To Zero
-                    // (Something Happened)
-                    totalCount = 0L;
-                }
-                
-                // Set Total Count On Response Object
-                notificationEventWrapper.setTotalNumber(totalCount);
-                
-                /////////////////////
-                // End Total Count //
-                /////////////////////
-                
-                //////////////////////
-                // Sorting & Offset //
-                //////////////////////
-                
-                // Handle Sorting (In Query)
-                eventQuery += " ORDER BY " + queryParams.getSortField() + " " +  queryParams.getSortOrder();
-                
-                // Handle Offset (In Query)
-                eventQuery += " SKIP " + queryParams.getOffset();
-                
-                // Handle Limit (In Query)
-                eventQuery += " LIMIT " + queryParams.getMax();
-                
-                //////////////////////////
-                // End Sorting & Offset //
-                //////////////////////////
 
-                // Request Notification Events
-                List<NotificationEvent> notificationEvents = persistenceService.query(eventQuery, null);
-                
-                // Set Result Set Size In Response Object
+		// Initialize Notification Event Query
+		String eventQuery = "SELECT FROM " + NotificationEvent.class.getSimpleName() + " WHERE activeStatus = '" + NotificationEvent.ACTIVE_STATUS + "'";
+
+		// Check For Username
+		if (username != null) {
+
+			// Add User-Specific Filtering To Query
+			eventQuery += " AND (username = '" + username + "' OR (username IS NULL AND roleGroup IS NULL))";
+		}
+
+		/////////////////////
+		// Get Total Count //
+		/////////////////////
+		// Modify Query To Get Count
+		String eventCountQuery = eventQuery.replace("SELECT FROM", "SELECT COUNT(*) FROM");
+
+		// Request Count
+		List<ODocument> countDocuments = persistenceService.query(eventCountQuery, null);
+
+		// Initialize Count Variable
+		Long totalCount;
+
+		// Check For Count Results
+		if (!countDocuments.isEmpty()) {
+
+			// Set Total Count
+			totalCount = countDocuments.get(0).field("COUNT");
+		} else {
+
+			// Set Total Count To Zero
+			// (Something Happened)
+			totalCount = 0L;
+		}
+
+		// Set Total Count On Response Object
+		notificationEventWrapper.setTotalNumber(totalCount);
+
+		/////////////////////
+		// End Total Count //
+		/////////////////////
+		//////////////////////
+		// Sorting & Offset //
+		//////////////////////
+		// Handle Sorting (In Query)
+		eventQuery += " ORDER BY " + queryParams.getSortField() + " " + queryParams.getSortOrder();
+
+		// Handle Offset (In Query)
+		eventQuery += " SKIP " + queryParams.getOffset();
+
+		// Handle Limit (In Query)
+		eventQuery += " LIMIT " + queryParams.getMax();
+
+		//////////////////////////
+		// End Sorting & Offset //
+		//////////////////////////
+		// Request Notification Events
+		List<NotificationEvent> notificationEvents = persistenceService.query(eventQuery, null);
+
+		// Set Result Set Size In Response Object
 		notificationEventWrapper.setResults(notificationEvents.size());
-                
-                // Set Returned Notification Events In Response Object
+
+		// Set Returned Notification Events In Response Object
 		notificationEventWrapper.setData(NotificationEventView.toView(notificationEvents));
 
 		//mark read flag
@@ -165,7 +160,7 @@ public class NotificationServiceImpl
 			notificationEventWrapper.setData(notificationEventWrapper.getData().stream().filter(r -> r.getReadMessage() == false).collect(Collectors.toList()));
 		}
 
-                // Return Response
+		// Return Response
 		return notificationEventWrapper;
 	}
 
@@ -276,7 +271,7 @@ public class NotificationServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
+			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(queryByExample);
 			for (NotificationEvent notificationEvent : notificationEvents) {
 				markEventAsRead(notificationEvent.getEventId(), username);
 			}

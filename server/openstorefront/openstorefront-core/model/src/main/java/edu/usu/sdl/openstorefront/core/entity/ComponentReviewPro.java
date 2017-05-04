@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
@@ -32,6 +33,7 @@ public class ComponentReviewPro
 
 	@PK
 	@NotNull
+	@Embedded
 	@ConsumeField
 	@OneToOne(orphanRemoval = true)
 	private ComponentReviewProPk componentReviewProPk;

@@ -103,5 +103,5 @@ public class APIParamModel
 	{
 		this.fieldName = fieldName;
 	}
-		
+
 }

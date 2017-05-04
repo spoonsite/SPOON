@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
@@ -73,8 +74,12 @@ public class ComponentOrganizationReport
 			params.put("idlistParam", report.dataIdSet());
 			componentFilter = " and componentId in :idlistParam";
 		}
+		
+		String restrictionQuery = FilterEngine.queryComponentRestriction();
+		
 		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
 				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
 
 		//group by org
@@ -108,8 +113,8 @@ public class ComponentOrganizationReport
 
 				List<String> data = new ArrayList<>();
 				data.add("");
-				data.add(document.field("name"));
-				data.add(document.field("lastActivityDts"));
+				data.add(document.field("name"));		
+				data.add(sdf.format(document.field("lastActivityDts")));
 				data.add(document.field("approvalState"));
 
 				if (getBranding().getAllowSecurityMarkingsFlg()) {

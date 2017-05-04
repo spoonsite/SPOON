@@ -164,7 +164,8 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'mRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									tip: 'Refresh the list of messages',
 									handler: function () {
 										mRefreshGrid();
@@ -172,27 +173,19 @@
 									tooltip: 'Refresh the list of messages'
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'View',
 									id: 'mViewButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-eye',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									handler: function () {
 										mViewMessage();
 									},
 									tooltip: 'View the message data'
-								},
-								{
-									text: 'Delete',
-									id: 'mDeleteButton',
-									cls: 'alert-danger',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
-									disabled: true,
-									handler: function () {
-										mDeleteMessage();
-									},
-									tooltip: 'Delete a message'
 								},
 								{
 									xtype: 'tbfill'
@@ -202,7 +195,7 @@
 									text: 'Process Messages Now',
 									scale: 'medium',
 									id: 'mProcessNowButton',
-									iconCls: 'fa fa-2x fa-bolt',
+									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 									disabled: false,
 									handler: function () {
 										mProcessMessagesNow();
@@ -214,13 +207,30 @@
 									text: 'Cleanup Old Messages Now',
 									id: 'mCleanUpNowButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-eraser',
+									width: '250px',
+									iconCls: 'fa fa-2x fa-eraser icon-button-color-default icon-vertical-correction-eraser',
 									disabled: false,
 									handler: function () {
 										mCleanupOldMessagesNow();
 									},
-									tooltip: 'Removes old archive data now. Default is 28 days.'
+									tooltip: 'Deletes old archive data now. Default is 28 days.'
 
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Delete',
+									id: 'mDeleteButton',
+									cls: 'alert-danger',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										mDeleteMessage();
+									},
+									tooltip: 'Delete a message'
 								}
 							]
 						},
@@ -327,7 +337,7 @@
 					
 					Ext.create('Ext.window.Window', {
 						title: 'View Message',
-						iconCls: 'fa fa-info-circle',
+						iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction',
 						width: '30%',
 						height: '70%',
 						bodyStyle: 'padding: 10px;',
@@ -427,14 +437,22 @@
 							}
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
-						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150, sortable: false},
+						{text: 'Event Type', dataIndex: 'eventType', width: 150,
+							renderer: function(value, metaData, record, rowIndex) {
+								
+								// Set Tooltip
+								metaData.tdAttr = 'data-qtip="' + record.get('eventTypeDescription') + '"';
+								
+								// Simply Return Value
+								return value;
+							}
+						},
 						{
 							text: 'Update Date', 
 							dataIndex: 'updateDts',
 							width: 150,
 							xtype: 'datecolumn', 
-							format: 'm/d/y H:i:s',
-							sortable: false
+							format: 'm/d/y H:i:s'
 						}
 					],
 					dockedItems: [
@@ -446,36 +464,38 @@
 									text: 'Refresh',
 									scale: 'medium',
 									id: 'nRefreshButton',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh',
 									tooltip: 'Refresh Notifications',
 									handler: function () {
 										nRefresh();
 									}
 								},
 								{
-									text: 'Admin Message',
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Create Admin Message',
 									scale: 'medium',
 									id: 'nAdminMessageButton',
-									iconCls: 'fa fa-2x fa-plus',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									tooltip: 'Create admin message',
 									handler: function () {
 										nAdminMessage();
 									}
 								},
 								{
+									xtype: 'tbfill'
+								},
+								{
 									text: 'Delete',
 									id: 'nDeleteButton',
-									cls: 'alert-danger',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										nDelete();
 									}
 								},
-								{
-									xtype: 'tbfill'
-								}
 							]
 						},
 						{
@@ -565,7 +585,7 @@
 						title: 'Send Admin Message',
 						iconCls: 'fa fa-envelope-o',
 						width: '30%',
-						height: 350,
+						minHeight: 350,
 						bodyStyle: 'padding: 10px;',
 						y: 40,
 						modal: true,
@@ -601,7 +621,7 @@
 									{
 										text: 'Send',
 										formBind: true,
-										iconCls: 'fa fa-save',
+										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 										handler: function () {
 											var msgtosend = {};
 
@@ -636,7 +656,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											Ext.getCmp('sendAdminMsgWin').close();
 										}
@@ -655,6 +675,7 @@
 					var selectedObj = Ext.getCmp('notificationsGrid').getSelection()[0];
 					Ext.Msg.show({
 						title: 'Delete Notification?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						message: 'Are you sure you want to delete the selected notification?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
@@ -680,7 +701,7 @@
 
 				var messagePanel = Ext.create('Ext.panel.Panel', {
 					title: 'User Messages',
-					iconCls: 'fa fa-user',
+					iconCls: 'fa fa-lg fa-user icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						userMessageGrid
@@ -689,7 +710,7 @@
 
 				var notificationsPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Event Notifications',
-					iconCls: 'fa fa-bell-o',
+					iconCls: 'fa fa-lg fa-bell-o icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						notificationsGrid
@@ -697,7 +718,7 @@
 				});
 
 				var msgTabPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Messages <i class="fa fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
+					title: 'Manage Messages &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
 					layout: 'fit',
 					items: [
 						messagePanel,

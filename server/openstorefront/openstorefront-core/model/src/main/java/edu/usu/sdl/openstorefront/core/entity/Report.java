@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -69,11 +70,13 @@ public class Report
 	private String runStatus;
 
 	@ConsumeField
+	@Embedded
 	@DataType(ReportDataId.class)
 	@OneToMany(orphanRemoval = true)
 	private List<ReportDataId> ids;
 
 	@ConsumeField
+	@Embedded	
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 

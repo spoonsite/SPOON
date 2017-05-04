@@ -68,7 +68,7 @@
 								{
 									text: 'Previous',
 									id: 'referenceWinTools-previousBtn',
-									iconCls: 'fa fa-arrow-left',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
 									handler: function() {
 										actionReferencesNextRecord(false);
 									}									
@@ -78,7 +78,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -89,7 +89,7 @@
 								{
 									text: 'Next',
 									id: 'referenceWinTools-nextBtn',
-									iconCls: 'fa fa-arrow-right',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function() {
 										actionReferencesNextRecord(true);
@@ -126,7 +126,7 @@
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
 					title: 'Add/Edit Contact',
-					iconCls: 'fa fa-edit',
+					iconCls: 'fa fa-edit icon-button-color-edit',
 					modal: true,
 					width: '65%',
 					height: 470,
@@ -152,7 +152,7 @@
 										{											
 											text: 'Save',
 											formBind: true,											
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){	
 												var win = this.up('window');
 												var form = this.up('form');
@@ -184,7 +184,7 @@
 										{
 											xtype: 'button',
 											text: 'Cancel',										
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												this.up('form').reset();
 												this.up('window').close();
@@ -378,7 +378,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
 									}
@@ -389,8 +389,9 @@
 								{
 									text: 'Add',
 									itemId: 'add',
-									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-plus',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAdd();										
 									}									
@@ -399,60 +400,56 @@
 									text: 'Edit',
 									itemId: 'edit',
 									scale: 'medium',
+									width: '100px',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEdit(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
 									}									
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
 									text: 'View References',
 									itemId: 'view',
 									scale: 'medium',
+									width: '180px',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-eye',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									handler: function () {
 										actionView(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
 									}									
 								},
 								{
 									xtype: 'tbseparator'
-								},								
-								{
-									text: 'Merge',
-									itemId: 'merge',
-									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-compress',
-									handler: function () {
-										actionMerge(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
-									}									
-								},								
-								{
-									xtype: 'tbfill'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'togglestatus',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									text: 'Merge',
+									itemId: 'merge',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
+									handler: function () {
+										actionMerge(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
+									}									
+								},								
+								{
+									xtype: 'tbfill'
 								},									
 								{
 									text: 'Delete',
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-trash-o',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}
@@ -503,7 +500,7 @@
 						iconCls: 'fa fa-compress',
 						modal: true,
 						width: 400,
-						height: 175,
+						height: 190,
 						y: 200,
 						layout: 'fit',
 						items: [
@@ -571,7 +568,7 @@
 											{
 												text: 'Save',
 												formBind: true,
-												iconCls: 'fa fa-save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
 												handler: function() {
 													var form = this.up('form');
 													var win = this.up('window');
@@ -593,7 +590,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function() {
 													this.up('window').close();
 												}												
@@ -617,7 +614,7 @@
 					}
 					
 					Ext.Msg.show({
-						title:'Update Status',
+						title: '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Change Status?</span>',
 						message: 'Do you want to ' + newStatus + ' entry contact reference as well?',
 						buttons: Ext.Msg.YESNOCANCEL,
 						icon: Ext.Msg.QUESTION,
@@ -661,12 +658,12 @@
 							var references = Ext.decode(response.responseText);
 							
 							if (references.length > 0) {
-								Ext.Msg.alert('Reference', 'Unable to delete; Remove references first.');
+								Ext.Msg.alert('<i class="fa fa-warning icon-small-horizontal-correction-left"></i>' + 'Reference', 'Unable to delete contact; Delete references first.');
 							} else {
 							
 								Ext.Msg.show({
 									title:'Delete Contact',
-									message: 'Are you want to delete contact: ' + record.get('firstName') + ' ?',
+									message: 'Are you sure want to delete contact: ' + record.get('firstName') + ' ?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
 									fn: function(btn) {

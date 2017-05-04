@@ -78,7 +78,7 @@ public class ExternalLinkValidationReport
 	{
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 		Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
 		componentResources.forEach(resource -> {
 			if (resourceMap.containsKey(resource.getComponentId())) {
@@ -93,7 +93,7 @@ public class ExternalLinkValidationReport
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 
 		Map<String, Component> componentMap = new HashMap<>();
 		components.forEach(component -> {

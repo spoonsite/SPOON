@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+// <editor-fold defaultstate="collapsed"  desc="IMPORTS">
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
@@ -24,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -58,7 +60,9 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -90,7 +94,7 @@ import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
 import edu.usu.sdl.openstorefront.service.io.export.Exporter;
@@ -142,6 +146,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+// </editor-fold>
 
 /**
  * ComponentRESTResource Resource
@@ -150,12 +155,12 @@ import net.java.truevfs.kernel.spec.FsSyncException;
  * @author jlaw
  */
 @Path("v1/resource/components")
-@APIDescription("Components are the central resource of the system.  The majority of the listing are components.")
+@APIDescription("Components are the central resource of the system.")
 public class ComponentRESTResource
 		extends BaseResource
 {
 
-	private static final Logger log = Logger.getLogger(ComponentRESTResource.class.getSimpleName());
+	private static final Logger LOG = Logger.getLogger(ComponentRESTResource.class.getSimpleName());
 
 	@Context
 	HttpServletRequest request;
@@ -171,7 +176,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of active and approved components for selection list.")
+	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/lookup")
@@ -205,7 +210,8 @@ public class ComponentRESTResource
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
 				componentExample.setComponentType(null);
 			}
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -223,7 +229,8 @@ public class ComponentRESTResource
 
 			Component componentExample = new Component();
 
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -240,7 +247,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get all resources for ")
+	@APIDescription("Get all resources for components")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentResourceView.class)
 	@Path("/resources")
@@ -248,7 +255,8 @@ public class ComponentRESTResource
 	{
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
+		componentResources = FilterEngine.filter(componentResources, true);
 
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -277,7 +285,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
@@ -324,6 +332,7 @@ public class ComponentRESTResource
 		List<Component> componentViews = new ArrayList<>();
 		idList.forEach(componentId -> {
 			Component view = service.getPersistenceService().findById(Component.class, componentId);
+			view = FilterEngine.filter(view);
 			if (view != null) {
 				componentViews.add(view);
 			}
@@ -343,12 +352,13 @@ public class ComponentRESTResource
 	)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
+		view = FilterEngine.filter(view);
 		return sendSingleEntityResponse(view);
 	}
 
 	@GET
-	@RequireAdmin
-	@APIDescription("Gets a component  admin view")
+	@RequireSecurity("SecurityPermission.ADMIN_ENTRY_MANAGEMENT")
+	@APIDescription("Gets a component admin view")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminView.class)
 	@Path("/{id}/admin")
@@ -367,7 +377,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Export a component with full component details.")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/{id}/export")
@@ -388,7 +398,7 @@ public class ComponentRESTResource
 
 	@POST
 	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export")
@@ -433,7 +443,7 @@ public class ComponentRESTResource
 									fileNameMediaSet.add(name);
 								}
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
 							}
 						}
 					}
@@ -450,7 +460,7 @@ public class ComponentRESTResource
 									fileNameResourceSet.add(name);
 								}
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
 							}
 						}
 					}
@@ -484,8 +494,8 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@APIDescription("Exports a set of components.  In describe record format.")
-	@RequireAdmin
+	@APIDescription("Exports a set of components. In describe record format.")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export/describe")
@@ -512,11 +522,12 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of components tags")
+	@APIDescription("Get a list of components with a given tag")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(TagView.class)
-	@Path("/tagviews")
-	public Response getAllComponentTags(
+	@Path("/singletagview")
+	public Response getAllComponentsForTag(
+			@QueryParam("tag") String tagText,
 			@QueryParam("approvedOnly") boolean approvedOnly
 	)
 	{
@@ -524,8 +535,10 @@ public class ComponentRESTResource
 
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentTagExample.setText(tagText);
 
-		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
+		tags = FilterEngine.filter(tags, true);
 
 		if (approvedOnly) {
 			tags = tags.stream()
@@ -542,6 +555,37 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get a list of components tags")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(TagView.class)
+	@Path("/tagviews")
+	public Response getAllComponentTags(
+			@QueryParam("approvedOnly") boolean approvedOnly
+	)
+	{
+		List<TagView> views = new ArrayList<>();
+
+		ComponentTag componentTagExample = new ComponentTag();
+		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
+
+		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
+
+		if (approvedOnly) {
+			tags = tags.stream()
+					.filter(tag -> service.getComponentService().checkComponentApproval(tag.getComponentId()))
+					.collect(Collectors.toList());
+		}
+
+		views.addAll(TagView.toView(tags));
+
+		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
 	@APIDescription("Get a list of components reviews")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewView.class)
@@ -556,7 +600,7 @@ public class ComponentRESTResource
 		ComponentReview reviewExample = new ComponentReview();
 		reviewExample.setActiveStatus(filterQueryParams.getStatus());
 
-		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
 
@@ -567,6 +611,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
 	@APIDescription("Get a list of components questions")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
@@ -581,11 +626,11 @@ public class ComponentRESTResource
 		ComponentQuestion questionExample = new ComponentQuestion();
 		questionExample.setActiveStatus(filterQueryParams.getStatus());
 
-		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(questionExample);
 		componentQuestions = filterQueryParams.filter(componentQuestions);
 
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
-		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(responseExample);
 		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
@@ -610,7 +655,7 @@ public class ComponentRESTResource
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (!SecurityUtil.isAdminUser()) {
+		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
@@ -634,7 +679,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam RequiredForComponent component)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -646,6 +691,15 @@ public class ComponentRESTResource
 			attribute.setComponentId(componentId);
 			attributeKeySet.add(attribute.getComponentAttributePk().pkValue());
 		});
+
+		//pull existing for pending id; need it for validation
+		Component existingRecord = new Component();
+		existingRecord.setComponentId(componentId);
+		existingRecord = existingRecord.find();
+		if (existingRecord != null) {
+			component.getComponent().setPendingChangeId(existingRecord.getPendingChangeId());
+		}
+
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -655,7 +709,7 @@ public class ComponentRESTResource
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 			componentAttributeExample.setComponentId(componentId);
-			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
 					component.getAttributes().add(componentAttribute);
@@ -674,7 +728,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
@@ -689,7 +743,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
 	@Path("/{id}/copy")
@@ -711,7 +765,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Merge component A to component B")
 	@DataType(Component.class)
 	@Path("/{mergeId}/{targetId}/merge")
@@ -744,17 +798,17 @@ public class ComponentRESTResource
 			}
 		} else {
 			if (mergeComponent == null) {
-				log.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
+				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
 			}
 			if (targetComponent == null) {
-				log.log(Level.FINE, MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
+				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
 			}
 		}
 		return response;
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Activates a component")
 	@Path("/{id}/activate")
 	public Response activateComponent(
@@ -769,7 +823,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Changes owner of component")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("/{id}/changeowner")
@@ -787,7 +841,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
 	@Path("/{id}")
 	public void deleteComponentSingle(
@@ -854,7 +908,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, false);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, false);
 		if (response != null) {
 			return response;
 		}
@@ -873,7 +927,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -884,7 +938,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@APIDescription("Merges change request component with it parent component")
@@ -909,7 +963,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -929,7 +983,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
 	public Response getComponentVersionHistory(
@@ -940,7 +994,7 @@ public class ComponentRESTResource
 		versionHistory.setActiveStatus(ComponentVersionHistory.ACTIVE_STATUS);
 		versionHistory.setComponentId(componentId);
 
-		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(ComponentVersionHistory.class, versionHistory);
+		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(versionHistory);
 
 		GenericEntity<List<ComponentVersionHistory>> entity = new GenericEntity<List<ComponentVersionHistory>>(versionHistories)
 		{
@@ -951,7 +1005,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets a version history record")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public Response getComponentVersionHistoryRecord(
@@ -970,7 +1024,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets the detail of a component version")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
 	public Response viewComponentVerison(
@@ -985,7 +1039,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Create a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
@@ -1008,7 +1062,7 @@ public class ComponentRESTResource
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Restores a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
@@ -1037,7 +1091,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Delete a version history record")
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public void deleteVersionHistory(
@@ -1076,7 +1130,7 @@ public class ComponentRESTResource
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 
 		GenericEntity<List<ComponentAttribute>> entity = new GenericEntity<List<ComponentAttribute>>(componentAttributes)
@@ -1103,7 +1157,7 @@ public class ComponentRESTResource
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 		List<ComponentAttributeView> componentAttributeViews = ComponentAttributeView.toViewList(componentAttributes);
 
@@ -1129,7 +1183,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		return componentAttributes;
 	}
 
@@ -1151,7 +1205,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
 		for (ComponentAttribute attribute : componentAttributes) {
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
@@ -1165,7 +1219,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Remove all attributes from the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
@@ -1173,9 +1227,12 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		ComponentAttribute attribute = new ComponentAttribute();
-		attribute.setComponentId(componentId);
-		service.getPersistenceService().deleteByExample(attribute);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response == null) {
+			ComponentAttribute attribute = new ComponentAttribute();
+			attribute.setComponentId(componentId);
+			service.getPersistenceService().deleteByExample(attribute);
+		}
 	}
 
 	@DELETE
@@ -1190,7 +1247,7 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1214,7 +1271,7 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1228,7 +1285,6 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Activates an attribute on the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/activate")
@@ -1240,6 +1296,11 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
@@ -1252,14 +1313,14 @@ public class ComponentRESTResource
 	@POST
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentContact.class)
+	@DataType(ComponentAttribute.class)
 	@Path("/{id}/attributes")
 	public Response addComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@RequiredParam ComponentAttribute attribute)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1312,7 +1373,7 @@ public class ComponentRESTResource
 		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
 		dependencyExample.setDependencyId(dependencyId);
 		dependencyExample.setComponentId(componentId);
-		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(dependencyExample);
 		return sendSingleEntityResponse(componentExternalDependency);
 	}
 
@@ -1335,7 +1396,7 @@ public class ComponentRESTResource
 		dependencyExample.setActiveStatus(filterQueryParams.getStatus());
 		dependencyExample.setComponentId(componentId);
 
-		List<ComponentExternalDependency> componentExternalDependencies = service.getPersistenceService().queryByExample(ComponentExternalDependency.class, dependencyExample);
+		List<ComponentExternalDependency> componentExternalDependencies = service.getPersistenceService().queryByExample(dependencyExample);
 		componentExternalDependencies = filterQueryParams.filter(componentExternalDependencies);
 		List<ComponentExternalDependencyView> views = ComponentExternalDependencyView.toViewList(componentExternalDependencies);
 
@@ -1354,7 +1415,7 @@ public class ComponentRESTResource
 			@PathParam("dependencyId")
 			@RequiredParam String dependencyId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1368,7 +1429,6 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Activates a dependency from the component")
 	@Path("/{id}/dependencies/{dependencyId}/activate")
 	public Response activatieComponentDependency(
@@ -1377,10 +1437,15 @@ public class ComponentRESTResource
 			@PathParam("dependencyId")
 			@RequiredParam String dependencyId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
 		dependencyExample.setDependencyId(dependencyId);
 		dependencyExample.setComponentId(componentId);
-		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(dependencyExample);
 		if (componentExternalDependency != null) {
 			service.getComponentService().activateBaseComponent(ComponentExternalDependency.class, dependencyId);
 		}
@@ -1397,7 +1462,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentExternalDependency dependency)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1418,7 +1483,7 @@ public class ComponentRESTResource
 			@RequiredParam String dependencyId,
 			ComponentExternalDependency dependency)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1493,7 +1558,7 @@ public class ComponentRESTResource
 		componentContactExample.setActiveStatus(filterQueryParams.getStatus());
 		componentContactExample.setComponentId(componentId);
 
-		List<ComponentContact> contacts = service.getPersistenceService().queryByExample(ComponentContact.class, componentContactExample);
+		List<ComponentContact> contacts = service.getPersistenceService().queryByExample(componentContactExample);
 		List<ComponentContactView> contactViews = new ArrayList<>();
 		contacts.forEach(contact -> {
 			contactViews.add(ComponentContactView.toView(contact));
@@ -1506,7 +1571,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a contact from the component")
+	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}")
 	public Response deleteComponentContact(
@@ -1515,7 +1580,7 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1529,7 +1594,6 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}/force")
@@ -1539,6 +1603,11 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
@@ -1548,7 +1617,6 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Activate a contact on the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}/activate")
@@ -1558,6 +1626,11 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
@@ -1577,7 +1650,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1597,7 +1670,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentContactId,
 			ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1669,8 +1742,8 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes an evaluation section from the component")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Deletes an evaluation section from the component")
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
@@ -1685,8 +1758,8 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes all evaluation section from the component")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Deletes all evaluation section from the component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -1700,7 +1773,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Adds a group evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1738,7 +1811,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Adds an evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1754,7 +1827,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Updates an evaluation section for a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/sections/{evalSectionId}")
@@ -1834,7 +1907,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(filterQueryParams.getStatus());
 		componentResourceExample.setComponentId(componentId);
-		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 		componentResources = filterQueryParams.filter(componentResources);
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -1858,7 +1931,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		return sendSingleEntityResponse(componentResource);
 	}
 
@@ -1872,7 +1945,7 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1880,7 +1953,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 		}
@@ -1888,7 +1961,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a given resource from the specified component")
+	@APIDescription("Delete a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(
@@ -1897,7 +1970,7 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1905,7 +1978,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 		}
@@ -1913,7 +1986,6 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Activates a resource")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/activate")
@@ -1923,10 +1995,15 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().activateBaseComponent(ComponentResource.class, resourceId);
 			componentResource.setActiveStatus(Component.ACTIVE_STATUS);
@@ -1945,7 +2022,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1966,7 +2043,7 @@ public class ComponentRESTResource
 			@RequiredParam String resourceId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1975,7 +2052,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
 			resource.setComponentId(componentId);
 			resource.setResourceId(resourceId);
@@ -2042,7 +2119,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setActiveStatus(filterQueryParams.getStatus());
 		componentMediaExample.setComponentId(componentId);
-		List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
+		List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(componentMediaExample);
 		componentMedia = filterQueryParams.filter(componentMedia);
 		List<ComponentMediaView> views = ComponentMediaView.toViewList(componentMedia);
 
@@ -2069,7 +2146,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setComponentId(componentId);
 		componentMediaExample.setComponentMediaId(mediaId);
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		return sendSingleEntityResponse(componentMedia);
 	}
 
@@ -2082,7 +2159,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2096,7 +2173,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes media from the specified entity")
+	@APIDescription("Deletes media from the specified entity")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
 			@PathParam("id")
@@ -2104,7 +2181,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2128,7 +2205,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2136,7 +2213,7 @@ public class ComponentRESTResource
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setComponentId(componentId);
 		componentMediaExample.setComponentMediaId(mediaId);
-		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(componentMediaExample);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().activateBaseComponent(ComponentMedia.class, mediaId);
@@ -2156,7 +2233,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2176,7 +2253,7 @@ public class ComponentRESTResource
 			@RequiredParam String mediaId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2256,7 +2333,7 @@ public class ComponentRESTResource
 		ComponentMetadata metadataExample = new ComponentMetadata();
 		metadataExample.setMetadataId(metadataId);
 		metadataExample.setComponentId(componentId);
-		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(metadataExample);
 		return sendSingleEntityResponse(componentMetadata);
 	}
 
@@ -2282,7 +2359,7 @@ public class ComponentRESTResource
 		metadataExample.setActiveStatus(filterQueryParams.getStatus());
 		metadataExample.setComponentId(componentId);
 
-		List<ComponentMetadata> componentMetadata = service.getPersistenceService().queryByExample(ComponentMetadata.class, metadataExample);
+		List<ComponentMetadata> componentMetadata = service.getPersistenceService().queryByExample(metadataExample);
 		componentMetadata = filterQueryParams.filter(componentMetadata);
 		List<ComponentMetadataView> views = ComponentMetadataView.toViewList(componentMetadata);
 
@@ -2301,7 +2378,7 @@ public class ComponentRESTResource
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2315,7 +2392,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@APIDescription("Removes metadata from the specified component")
+	@APIDescription("Deletes metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}/activate")
 	public Response activateComponentMetadata(
 			@PathParam("id")
@@ -2323,7 +2400,7 @@ public class ComponentRESTResource
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2331,7 +2408,7 @@ public class ComponentRESTResource
 		ComponentMetadata metadataExample = new ComponentMetadata();
 		metadataExample.setMetadataId(metadataId);
 		metadataExample.setComponentId(componentId);
-		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(metadataExample);
 		if (componentMetadata != null) {
 			service.getComponentService().activateBaseComponent(ComponentMetadata.class, metadataId);
 		}
@@ -2348,7 +2425,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2368,7 +2445,7 @@ public class ComponentRESTResource
 			@RequiredParam String metadataId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2443,13 +2520,13 @@ public class ComponentRESTResource
 		questionExample.setActiveStatus(filterQueryParams.getStatus());
 		questionExample.setComponentId(componentId);
 
-		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(questionExample);
 		componentQuestions = filterQueryParams.filter(componentQuestions);
 
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 
-		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(responseExample);
 		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
@@ -2487,7 +2564,7 @@ public class ComponentRESTResource
 			responseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseExample.setQuestionId(question.getQuestionId());
 
-			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, new QueryByExample(responseExample));
+			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(new QueryByExample(responseExample));
 			ComponentQuestionView questionView = ComponentQuestionView.toView(question, ComponentQuestionResponseView.toViewList(responses));
 			componentQuestionViews.add(questionView);
 		}
@@ -2532,7 +2609,7 @@ public class ComponentRESTResource
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 				response = Response.ok().build();
@@ -2542,7 +2619,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
 	@APIDescription("Activates a question from the specified entity")
 	@Consumes(
 			{
@@ -2559,7 +2636,7 @@ public class ComponentRESTResource
 		componentQuestionExample.setComponentId(componentId);
 		componentQuestionExample.setQuestionId(questionId);
 
-		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(ComponentQuestion.class, componentQuestionExample);
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
 		if (componentQuestion != null) {
 			service.getComponentService().activateBaseComponent(ComponentQuestion.class, questionId);
 			componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
@@ -2596,7 +2673,7 @@ public class ComponentRESTResource
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				question.setComponentId(componentId);
 				question.setQuestionId(questionId);
@@ -2645,7 +2722,7 @@ public class ComponentRESTResource
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
-		List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(responseExample);
 		return responses;
 	}
 
@@ -2669,7 +2746,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		return sendSingleEntityResponse(questionResponse);
 	}
 
@@ -2693,9 +2770,9 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 				response = Response.ok().build();
@@ -2705,7 +2782,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a response from the given question on the specified component")
 	@Consumes(
 			{
@@ -2724,7 +2801,7 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
 			service.getComponentService().activateBaseComponent(ComponentQuestionResponse.class, responseId);
 			questionResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
@@ -2768,9 +2845,9 @@ public class ComponentRESTResource
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
-		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				questionResponseInput.setComponentId(componentId);
 				questionResponseInput.setQuestionId(questionId);
@@ -2841,7 +2918,7 @@ public class ComponentRESTResource
 		reviewExample.setActiveStatus(filterQueryParams.getStatus());
 		reviewExample.setComponentId(componentId);
 
-		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
 
@@ -2867,7 +2944,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a review from the specified entity")
+	@APIDescription("Delete a review from the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -2882,7 +2959,7 @@ public class ComponentRESTResource
 		Response response = Response.ok().build();
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 			}
@@ -2891,7 +2968,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
 	@APIDescription("Activate a review on  the specified component")
 	@Consumes(
 			{
@@ -2908,7 +2985,7 @@ public class ComponentRESTResource
 		componentReviewExample.setComponentId(componentId);
 		componentReviewExample.setComponentReviewId(reviewId);
 
-		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(ComponentReview.class, componentReviewExample);
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
 		if (componentReview != null) {
 			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
 			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
@@ -2945,7 +3022,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setComponentReviewId(reviewId);
@@ -3004,7 +3081,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setReviewId(reviewId);
@@ -3080,7 +3157,7 @@ public class ComponentRESTResource
 		componentReviewConPk.setComponentReviewId(reviewId);
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
-		return service.getPersistenceService().queryByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewConExample));
 	}
 
 	@GET
@@ -3106,12 +3183,12 @@ public class ComponentRESTResource
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
 
-		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
+		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewConExample));
 		return sendSingleEntityResponse(reviewCon);
 	}
 
 	@DELETE
-	@APIDescription("Removes all cons from the given review accociated with the specified entity")
+	@APIDescription("Deletes all cons from the given review accociated with the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3127,7 +3204,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewCon example = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3155,7 +3232,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewCon con = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3215,7 +3292,7 @@ public class ComponentRESTResource
 		ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		return service.getPersistenceService().queryByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewProExample));
 	}
 
 	@GET
@@ -3240,12 +3317,12 @@ public class ComponentRESTResource
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProPk.setReviewPro(proId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
+		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewProExample));
 		return sendSingleEntityResponse(componentReviewPro);
 	}
 
 	@DELETE
-	@APIDescription("Removes all pros from the review associated with a specified entity")
+	@APIDescription("Deletes all pros from the review associated with a specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3261,7 +3338,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewPro example = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3290,7 +3367,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewPro pro = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3379,16 +3456,17 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setTagId(tagId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
 		return sendSingleEntityResponse(componentTag);
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Remove all tags from the specified component")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Delete all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
 	@Path("/{id}/tags")
+
 	public void deleteComponentTags(
 			@PathParam("id")
 			@RequiredParam String componentId)
@@ -3399,7 +3477,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a tag by id from the specified entity")
+	@APIDescription("Delete a tag by id from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/{tagId}")
 	public Response deleteComponentTagById(
@@ -3412,9 +3490,9 @@ public class ComponentRESTResource
 		ComponentTag example = new ComponentTag();
 		example.setTagId(tagId);
 		example.setComponentId(componentId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(example));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(example));
 		if (componentTag != null) {
-			response = ownerCheck(componentTag);
+			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}
@@ -3423,7 +3501,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a single tag from the specified entity by the Tag Text")
+	@APIDescription("Delete a single tag from the specified entity by the Tag Text")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/text")
 	public Response deleteComponentTag(
@@ -3436,10 +3514,10 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setText(example.getText());
-		ComponentTag tag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
+		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
 
 		if (tag != null) {
-			response = ownerCheck(tag);
+			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
 				response = Response.ok().build();
@@ -3634,7 +3712,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -3675,7 +3753,7 @@ public class ComponentRESTResource
 			@RequiredParam String relationshipId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -3704,7 +3782,7 @@ public class ComponentRESTResource
 			@PathParam("relationshipId")
 			@RequiredParam String relationshipId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -3716,7 +3794,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces(
 			{
@@ -3747,14 +3825,14 @@ public class ComponentRESTResource
 		queryByExample.setOrderBy(trackingOrderExample);
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
-		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
+		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(queryByExample);
 
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
 		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Get the list of tracking details on a specified component")
 	@Produces(
 			{
@@ -3771,12 +3849,12 @@ public class ComponentRESTResource
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
-		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
+		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(componentTrackingExample);
 		return sendSingleEntityResponse(componentTracking);
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Remove a tracking entry from the specified component")
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
@@ -3788,14 +3866,14 @@ public class ComponentRESTResource
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
-		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
+		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(componentTrackingExample);
 		if (componentTracking != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentTracking.class, trackingId);
 		}
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Remove all tracking entries from the specified component")
 	@Path("/{id}/tracking")
 	public void deleteAllComponentTracking(
@@ -3806,9 +3884,23 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	// <editor-fold defaultstate="collapsed"  desc="Evaluation section">
+//	@GET
+//	@APIDescription("Get a complete evaluation for a ")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentRelationshipView.class)
+//	@Path("/{id}/evaluation/{evaluationId}")
+//	public Response getEvaluation (
+//			@PathParam("id")
+//			@RequiredParam String componentId,
+//			@BeanParam FilterQueryParams filterQueryParams)
+//	{
+//
+//	}
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets all integration models from the database.")
 	@Produces(
 			{
@@ -3833,7 +3925,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets a integration model")
 	@Produces(
 			{
@@ -3846,7 +3938,7 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integrationExample = new ComponentIntegration();
 		integrationExample.setComponentId(componentId);
-		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(ComponentIntegration.class, integrationExample);
+		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(integrationExample);
 		ComponentIntegrationView view = null;
 		if (integration != null) {
 			view = ComponentIntegrationView.toView(integration);
@@ -3855,7 +3947,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration")
@@ -3876,7 +3968,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -3904,7 +3996,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -3930,7 +4022,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Activates  a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
@@ -3946,7 +4038,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Inactivates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/inactivate")
@@ -3962,12 +4054,13 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Toggle status for multiple component integration models. Consumes a list of componentId strings")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/integration/togglemultiple")
 	public void toggleMultipleIntegrations(
-			@RequiredParam List<String> componentIds)
+			@RequiredParam
+			@DataType(String.class) List<String> componentIds)
 	{
 		for (String componentId : componentIds) {
 			ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
@@ -3983,7 +4076,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public Response deleteComponentConfig(
@@ -4000,7 +4093,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Runs a full component integration")
 	@Path("/{componentId}/integration/run")
 	public Response runComponentIntegration(
@@ -4029,7 +4122,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Runs all active component integrations")
 	@Path("/integrations/run")
 	public Response runAllComponentIntegration()
@@ -4042,7 +4135,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4056,12 +4149,12 @@ public class ComponentRESTResource
 		List<ComponentIntegrationConfig> configs;
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
-		configs = service.getPersistenceService().queryByExample(null, integrationConfigExample);
+		configs = service.getPersistenceService().queryByExample(integrationConfigExample);
 		return configs;
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4076,12 +4169,12 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 		return sendSingleEntityResponse(integrationConfig);
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs")
@@ -4099,16 +4192,23 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			//check for exsiting config with the same ticket
 			ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
-			configExample.setComponentId(componentId);
+			configExample.setComponentId(integrationConfig.getComponentId());
 			configExample.setIntegrationType(integrationConfig.getIntegrationType());
 			configExample.setProjectType(integrationConfig.getProjectType());
 			configExample.setIssueType(integrationConfig.getIssueType());
 			configExample.setIssueNumber(integrationConfig.getIssueNumber());
 
-			long count = service.getPersistenceService().countByExample(configExample);
+			GenerateStatementOption option = new GenerateStatementOption();
+			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
+
+			QueryByExample configQueryExample = new QueryByExample();
+			configQueryExample.getFieldOptions().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, option);
+			configQueryExample.setExample(configExample);
+
+			long count = service.getPersistenceService().countByExample(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
-				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+				restErrorModel.getErrors().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, "Issue number needs to be unique per project.");
 				return Response.status(Response.Status.CONFLICT).entity(restErrorModel).build();
 			} else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -4121,7 +4221,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Updates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{integrationConfigId}")
@@ -4139,7 +4239,7 @@ public class ComponentRESTResource
 		configExample.setComponentId(componentId);
 		configExample.setIntegrationConfigId(integrationConfigId);
 
-		configExample = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, configExample);
+		configExample = service.getPersistenceService().queryOneByExample(configExample);
 		if (configExample != null) {
 			ValidationModel validationModel = new ValidationModel(integrationConfig);
 			validationModel.setConsumeFieldsOnly(true);
@@ -4148,13 +4248,25 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				//check for exsiting config with the same ticket
 				configExample = new ComponentIntegrationConfig();
-				configExample.setComponentId(componentId);
+				configExample.setComponentId(integrationConfig.getComponentId());
+				configExample.setIntegrationConfigId(integrationConfig.getIntegrationConfigId());
 				configExample.setIntegrationType(integrationConfig.getIntegrationType());
 				configExample.setProjectType(integrationConfig.getProjectType());
 				configExample.setIssueType(integrationConfig.getIssueType());
 				configExample.setIssueNumber(integrationConfig.getIssueNumber());
 
-				long count = service.getPersistenceService().countByExample(configExample);
+				GenerateStatementOption configIdOption = new GenerateStatementOption();
+				configIdOption.setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+
+				GenerateStatementOption issueNumberOption = new GenerateStatementOption();
+				issueNumberOption.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
+
+				QueryByExample configQueryExample = new QueryByExample();
+				configQueryExample.getFieldOptions().put("integrationConfigId", configIdOption);
+				configQueryExample.getFieldOptions().put("issueNumber", issueNumberOption);
+				configQueryExample.setExample(configExample);
+
+				long count = service.getPersistenceService().countByExample(configQueryExample);
 				if (count > 0) {
 					RestErrorModel restErrorModel = new RestErrorModel();
 					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
@@ -4172,7 +4284,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Activates a component integration config")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/activate")
@@ -4184,7 +4296,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -4193,7 +4305,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/inactivate")
@@ -4205,7 +4317,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
@@ -4214,8 +4326,8 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes component integration config")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@APIDescription("Deletes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
 			@PathParam("componentId")
@@ -4225,7 +4337,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			service.getComponentService().deleteComponentIntegrationConfig(configId);
@@ -4233,7 +4345,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Runs a component integration config.")
 	@Path("/{componentId}/integration/configs/{configId}/run")
 	public Response runComponentIntegrationConfig(
@@ -4244,7 +4356,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
-		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(integrationConfigExample);
 
 		if (integrationConfig != null) {
 			JobManager.runComponentIntegrationNow(componentId, configId);
@@ -4263,12 +4375,12 @@ public class ComponentRESTResource
 		}
 	}
 
-	private Response checkComponentOwner(String componentId)
+	private Response checkComponentOwner(String componentId, String permission)
 	{
-		return checkComponentOwner(componentId, false);
+		return checkComponentOwner(componentId, permission, false);
 	}
 
-	private Response checkComponentOwner(String componentId, boolean skipApproveCheck)
+	private Response checkComponentOwner(String componentId, String permission, boolean skipApproveCheck)
 	{
 		Response response;
 
@@ -4276,9 +4388,9 @@ public class ComponentRESTResource
 		component.setComponentId(componentId);
 		component = component.find();
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerCheck(component, permission);
 			if (response == null) {
-				if (!SecurityUtil.isAdminUser()) {
+				if (!SecurityUtil.hasPermission(permission)) {
 					if (skipApproveCheck == false) {
 						if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 							response = Response.status(Response.Status.FORBIDDEN).build();

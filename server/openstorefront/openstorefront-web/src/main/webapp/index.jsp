@@ -28,15 +28,17 @@
 	
 
 	<div id="browserWarning" class="browser-warning" >
-		 <p>You are using an <strong>outdated</strong> browser. Please switch to <strong>
+		 <p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
 		 <a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
 		 <a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
 		 <a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>		
 	</div>
 	
 	<script type="text/javascript">
-		
-		if (Ext.isIE8m) {
+		//start fresh on index
+		sessionStorage.clear();
+				
+		if (Ext.isIE10m) {
 			Ext.get('browserWarning').setStyle({
 				display: 'block'
 			});
@@ -76,7 +78,7 @@
 										},
 										{
 											text: 'Close',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function() {
 												this.up('window').close();
 											}
@@ -273,12 +275,11 @@
 										},
 										{
 											xtype: 'button',
-											text: '<span style="font-size: 10px;">Search Tools</span>',																		
-											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
-											iconAlign: 'top',
+											text: '<span style="font-size: 12px; margin-left: 2px;">Search Tools</span>',																		
+											iconCls: 'fa fa-2x fa-search-plus icon-vertical-correction-search-tools',
 											margin: '0 0 0 10',
 											style: 'border-radius: 3px 3px 3px 3px;',											
-											width: 100,
+											width: 130,
 											handler: function(){
 												searchtoolsWin.show();
 											}
@@ -537,7 +538,7 @@
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -565,8 +566,7 @@
 				}]
 			});	
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
-				var branding = Ext.decode(response.responseText);
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
 				if (branding.securityBannerText && branding.securityBannerText !== '') {
 					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
 						securityBannerText: branding.securityBannerText

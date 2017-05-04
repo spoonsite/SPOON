@@ -160,7 +160,7 @@ public class ReviewSearchHandler
 					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
 				}
 
-				List<ComponentReview> componentReviews = serviceProxy.getPersistenceService().queryByExample(ComponentReview.class, queryByExample);
+				List<ComponentReview> componentReviews = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 				List<String> results = new ArrayList<>();
 				for (ComponentReview review : componentReviews) {
 					results.add(review.getComponentId());

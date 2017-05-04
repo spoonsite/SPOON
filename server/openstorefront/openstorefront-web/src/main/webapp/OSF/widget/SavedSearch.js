@@ -41,7 +41,7 @@ Ext.define('OSF.widget.SavedSearch', {
 					labelSeparator: '',
 					width: '100%',
 					allowBlank: false,
-					fieldLabel: 'Select Save Search to Display',					
+					fieldLabel: 'Select Saved Search to Display',					
 					displayField: 'searchName',
 					valueField: 'userSearchId',
 					editable: false,
@@ -63,7 +63,7 @@ Ext.define('OSF.widget.SavedSearch', {
 						{
 							text: 'Apply',
 							formBind: true,
-							iconCls: 'fa fa-check',
+							iconCls: 'fa fa-check icon-button-color-save',
 							handler: function() {	
 								var form = this.up('form');
 								var data = form.getValues();
@@ -174,7 +174,7 @@ Ext.define('OSF.widget.SavedSearch', {
 							text: 'View Entry',
 							itemId: 'view',
 							disabled: true,
-							iconCls: 'fa fa-binoculars',
+							iconCls: 'fa fa-eye icon-button-color-view icon-vertical-correction-view',
 							handler: function () {
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
 								var frame = Ext.create('OSF.ux.IFrame', {							

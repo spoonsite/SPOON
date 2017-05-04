@@ -25,6 +25,8 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
@@ -38,7 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.StringWriter;
@@ -131,7 +133,7 @@ public class Search
 				searchWrapper.setData(result.getResults());
 				searchWrapper.setResults(result.getResults().size());
 				searchWrapper.setTotalNumber(result.getTotalNumber());
-				searchWrapper.setResultTypeStats(result.getResultTypeStats());				
+				searchWrapper.setResultTypeStats(result.getResultTypeStats());
 				return sendSingleEntityResponse(searchWrapper);
 			} else {
 				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
@@ -145,8 +147,8 @@ public class Search
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes all indexes from Solr")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@APIDescription("Removes all indexes from the search engine")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
 	public Response clearSolr()
@@ -156,7 +158,7 @@ public class Search
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
 	@Path("/resetSolr")
 	public Response resetSolr()
@@ -249,7 +251,9 @@ public class Search
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
+		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
+		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());		
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
 		return Response.ok(listingStats).build();
@@ -257,25 +261,25 @@ public class Search
 
 	@POST
 	@APIDescription("Export a set of entries")
-	@Produces({"application/csv"})	
+	@Produces({"application/csv"})
 	@Path("/export")
 	public Response export(
-			@FormParam("multipleIds")					
-			@RequiredParam List<String> ids			
+			@FormParam("multipleIds")
+			@RequiredParam List<String> ids
 	)
 	{
 		StringWriter writer = new StringWriter();
 		CSVWriter cvsWriter = new CSVWriter(writer);
-		
+
 		String header[] = {
-			"Name", 
+			"Name",
 			"Organization",
 			"Description",
 			"Last Updated Dts",
 			"Entry Type"
 		};
 		cvsWriter.writeNext(header);
-		
+
 		SimpleDateFormat sdf = TimeUtil.standardDateFormater();
 		List<ComponentSearchView> views = service.getComponentService().getSearchComponentList(ids);
 		for (ComponentSearchView view : views) {
@@ -286,29 +290,29 @@ public class Search
 				sdf.format(view.getLastActivityDts()),
 				view.getComponentTypeDescription()
 			};
-			cvsWriter.writeNext(data);		
+			cvsWriter.writeNext(data);
 		}
-		
+
 		Response.ResponseBuilder response = Response.ok(writer.toString());
 		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"searchResults.csv\"");
-		return response.build();		
+		return response.build();
 	}
-	
+
 	@GET
 	@APIDescription("Gets search suggestions")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchSuggestion.class)
 	@Path("/suggestions")
 	public List<SearchSuggestion> getSearchSuggestions(
-		@QueryParam("query")
-		@DefaultValue("*") String query,
-		@QueryParam("max") 
-		@DefaultValue("6") int maxResults	
-	)			
-	{	
-		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);		
+			@QueryParam("query")
+			@DefaultValue("*") String query,
+			@QueryParam("max")
+			@DefaultValue("6") int maxResults
+	)
+	{
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);
 		return suggestions;
 	}
-	
+
 }

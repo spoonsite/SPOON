@@ -322,7 +322,7 @@
 									// Build Saved Tag Presentation
 									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
 									html += '<strong style="color: #111; float: left;">' + value + '</strong>';
-									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + componentCount + '</span>';
+									html += '<span style="float: right"><i class="fa fa-book fa-fw icon-small-vertical-correction-book"></i> ' + componentCount + '</span>';
 									html += "</div>";
 									return html;
 								}
@@ -439,7 +439,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										
 										// Backup Any "New" Tags
@@ -498,7 +499,8 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
 										actionAddTagForm();
 									}
@@ -655,7 +657,7 @@
 								
 								var html = "<strong>" + value + "</strong>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + record.get('type').name + '</span>';
 								html += "</div>";
 								
@@ -672,7 +674,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										
 										// Reload Remote Component Store
@@ -805,7 +808,7 @@
 					border: false,
 					autoScroll: true,
 					margin: '5 5 5 5',
-					emptyText: 'Select a Tag to see the currently associated Entries',
+					emptyText: 'Select a Tag to see the current associated Entries',
 					viewConfig: {
 						
 						plugins: {
@@ -815,7 +818,7 @@
 							dropGroup: 'tagAssociation-add-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
-							dragText: 'Remove: {0}',
+							dragText: 'Delete: {0}',
 							dragTextField: 'name'
 						},
 						listeners: {
@@ -954,7 +957,7 @@
 									// Build Component With Record Type
 									var html = "<strong>" + value + "</strong>";
 									html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-									html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+									html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 									html += '<span style="float: left;">' + record.get('type').name + '</span>';
 									html += "</div>";
 									return html;
@@ -1058,7 +1061,7 @@
 					width: '30%',
 					height: 185,
 					y: '10em',
-					iconCls: 'fa fa-lg fa-plus',
+					iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 					layout: 'fit',
 					items: [
 						{
@@ -1133,7 +1136,7 @@
 										{
 											text: 'Save',
 											id: 'addTagForm-saveButton',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
 												
@@ -1183,7 +1186,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('addTagForm').reset();
 												Ext.getCmp('tagAddWin').hide();

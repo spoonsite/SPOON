@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.util.HashSet;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sf.uadetector.ReadableUserAgent;
-import net.sourceforge.stripes.action.ErrorResolution;
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
@@ -75,103 +77,104 @@ public class SystemAction
 		return new StreamingResolution("text/plain", getApplicationVersion());
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@HandlesEvent("BulkAttributeStatusUpdate")
 	public Resolution attributeStatusUpdate()
 	{
-		if (SecurityUtil.isAdminUser()) {
-			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
-			ComponentAttribute componentAttributeExample = new ComponentAttribute();
-			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-			componentAttributePk.setAttributeType(attributeType);
-			componentAttributeExample.setComponentAttributePk(componentAttributePk);
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+		componentAttributePk.setAttributeType(attributeType);
+		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-			QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
-			queryByExample.setReturnNonProxied(false);
+		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		queryByExample.setReturnNonProxied(false);
 
-			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
-			int updateCount = 0;
-			for (ComponentAttribute attribute : componentAttributes) {
-				if (ComponentAttribute.ACTIVE_STATUS.equals(attribute.getActiveStatus()) == false) {
-					attribute.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-					service.getPersistenceService().persist(attribute);
-					updateCount++;
-				}
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(queryByExample);
+		int updateCount = 0;
+		for (ComponentAttribute attribute : componentAttributes) {
+			if (ComponentAttribute.ACTIVE_STATUS.equals(attribute.getActiveStatus()) == false) {
+				attribute.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+				service.getPersistenceService().persist(attribute);
+				updateCount++;
 			}
-			return new StreamingResolution("text/html", "Updated Status on: " + updateCount + " component attibutes.");
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new StreamingResolution("text/html", "Updated Status on: " + updateCount + " component attibutes.");
 	}
 
 	//Temp 1.4 Clean the duplicate attibutes
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@HandlesEvent("AttributeCleanup")
 	public Resolution attributeCleanup()
 	{
-		if (SecurityUtil.isAdminUser()) {
-			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
-			//Deduplicate
-			ComponentAttribute componentAttributeExample = new ComponentAttribute();
-			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-			componentAttributePk.setAttributeType(attributeType);
-			componentAttributeExample.setComponentAttributePk(componentAttributePk);
+		//Deduplicate
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+		componentAttributePk.setAttributeType(attributeType);
+		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-			Set<String> attributeKeySet = new HashSet<>();
-			QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
-			queryByExample.setReturnNonProxied(false);
+		Set<String> attributeKeySet = new HashSet<>();
+		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		queryByExample.setReturnNonProxied(false);
 
-			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
-			int dupCount = 0;
-			StringBuilder details = new StringBuilder();
-			for (ComponentAttribute componentAttribute : componentAttributes) {
-				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue())) {
-					service.getPersistenceService().delete(componentAttribute);
-					details.append("Remove duplication: ").append(componentAttribute.getComponentAttributePk().pkValue()).append("<br>");
-					dupCount++;
-				} else {
-					attributeKeySet.add(componentAttribute.getComponentAttributePk().pkValue());
-				}
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(queryByExample);
+		int dupCount = 0;
+		StringBuilder details = new StringBuilder();
+		for (ComponentAttribute componentAttribute : componentAttributes) {
+			if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue())) {
+				service.getPersistenceService().delete(componentAttribute);
+				details.append("Remove duplication: ").append(componentAttribute.getComponentAttributePk().pkValue()).append("<br>");
+				dupCount++;
+			} else {
+				attributeKeySet.add(componentAttribute.getComponentAttributePk().pkValue());
 			}
-			return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@HandlesEvent("ContactCleanup")
 	public Resolution contactCleanup()
 	{
 		//remove component contacts that don't match to a contact
-		if (SecurityUtil.isAdminUser()) {
-			StringBuilder results = new StringBuilder();
+		StringBuilder results = new StringBuilder();
 
-			Contact contact = new Contact();
-			List<Contact> allContacts = contact.findByExample();
-			Map<String, List<Contact>> contactMap = allContacts.stream().collect(Collectors.groupingBy(Contact::getContactId));
+		Contact contact = new Contact();
+		List<Contact> allContacts = contact.findByExample();
+		Map<String, List<Contact>> contactMap = allContacts.stream().collect(Collectors.groupingBy(Contact::getContactId));
 
-			int count = 0;
-			int internalDups = 0;
-			ComponentContact componentContact = new ComponentContact();
-			List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
-			Set<String> internalDup = new HashSet<>();
-			for (ComponentContact componentContactFound : componentContacts) {
-				String internalKey = componentContactFound.getContactId() + "-" + componentContactFound.getComponentId();
-				if (internalDup.contains(internalKey)) {
-					service.getPersistenceService().delete(componentContactFound);
-					internalDups++;
-				} else {
-					internalDup.add(internalKey);
-				}
-				if (contactMap.containsKey(componentContactFound.getContactId()) == false) {
-					service.getPersistenceService().delete(componentContactFound);
-					count++;
-				}
+		int count = 0;
+		int internalDups = 0;
+		ComponentContact componentContact = new ComponentContact();
+		List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
+		Set<String> internalDup = new HashSet<>();
+		for (ComponentContact componentContactFound : componentContacts) {
+			String internalKey = componentContactFound.getContactId() + "-" + componentContactFound.getComponentId();
+			if (internalDup.contains(internalKey)) {
+				service.getPersistenceService().delete(componentContactFound);
+				internalDups++;
+			} else {
+				internalDup.add(internalKey);
 			}
-			results.append("Duplicates removed: ").append(count).append("<br>");
-			results.append("Internal Duplicates removed: ").append(internalDups).append("<br>");
-
-			return new StreamingResolution("text/html", results.toString());
+			if (contactMap.containsKey(componentContactFound.getContactId()) == false) {
+				service.getPersistenceService().delete(componentContactFound);
+				count++;
+			}
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		results.append("Duplicates removed: ").append(count).append("<br>");
+		results.append("Internal Duplicates removed: ").append(internalDups).append("<br>");
+
+		return new StreamingResolution("text/html", results.toString());
+	}
+
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@HandlesEvent("SystemStandby")
+	public Resolution standByPage()
+	{
+		return new ForwardResolution("/WEB-INF/securepages/systemStandby.jsp");
 	}
 
 	public String getAttributeType()

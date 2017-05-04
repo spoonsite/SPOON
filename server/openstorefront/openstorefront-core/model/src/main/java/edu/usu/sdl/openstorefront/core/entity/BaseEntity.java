@@ -52,7 +52,7 @@ public abstract class BaseEntity<T>
 	public T find()
 	{
 		Service serviceProxy = ServiceProxyFactory.getServiceProxy();
-		return (T) serviceProxy.getPersistenceService().queryOneByExample(this.getClass(), this);
+		return (T) serviceProxy.getPersistenceService().queryOneByExample(this);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public abstract class BaseEntity<T>
 	public List<T> findByExample()
 	{
 		Service serviceProxy = ServiceProxyFactory.getServiceProxy();
-		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this.getClass(), this);
+		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public abstract class BaseEntity<T>
 
 		QueryByExample queryByExample = new QueryByExample(this);
 		queryByExample.setReturnNonProxied(false);
-		return (T) serviceProxy.getPersistenceService().queryOneByExample(this.getClass(), queryByExample);
+		return (T) serviceProxy.getPersistenceService().queryOneByExample(queryByExample);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public abstract class BaseEntity<T>
 
 		QueryByExample queryByExample = new QueryByExample(this);
 		queryByExample.setReturnNonProxied(false);
-		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this.getClass(), queryByExample);
+		return (List<T>) serviceProxy.getPersistenceService().queryByExample(queryByExample);
 	}
 	
 	public ValidationResult validate()

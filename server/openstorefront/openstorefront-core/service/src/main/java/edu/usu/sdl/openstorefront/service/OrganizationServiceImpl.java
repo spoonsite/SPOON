@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -34,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
@@ -61,7 +63,7 @@ public class OrganizationServiceImpl
 		implements OrganizationService
 {
 
-	private static final Logger log = Logger.getLogger(OrganizationServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	private static final int MAX_REFERENCE_NAME_DETAIL = 80;
 
 	@Override
@@ -95,7 +97,14 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new Component(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentContact(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new Contact(), organizationExisting.getName(), organization);
-				updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);
+				int usersChanged = updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);
+				
+				if (usersChanged > 0) {
+					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
+					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit()) == false) {
+						LOG.log(Level.WARNING, "Users are being managed externally. So they may change or recreate groups if they don't match after the user sync.  User were moved in this application only.");
+					}
+				}
 				updateOrganizationOnEntity(new ComponentReview(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationExisting.getName(), organization);
@@ -133,9 +142,9 @@ public class OrganizationServiceImpl
 
 	private void extractOrg(Class organizationClass)
 	{
-		log.log(Level.FINE, MessageFormat.format("Extracting Orgs from {0}", organizationClass.getSimpleName()));
+		LOG.log(Level.FINE, MessageFormat.format("Extracting Orgs from {0}", organizationClass.getSimpleName()));
 		List<ODocument> documents = persistenceService.query("Select DISTINCT(organization) as organization from " + organizationClass.getSimpleName(), new HashMap<>());
-		log.log(Level.FINE, MessageFormat.format("Found: {0}", documents.size()));
+		LOG.log(Level.FINE, MessageFormat.format("Found: {0}", documents.size()));
 		documents.forEach(document -> {
 			String org = document.field("organization");
 			addOrganization(org);
@@ -158,7 +167,15 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new Component(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentContact(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new Contact(), organizationMerge.getName(), organizationTarget);
-				updateOrganizationOnEntity(new UserProfile(), organizationMerge.getName(), organizationTarget);
+				int usersChanged = updateOrganizationOnEntity(new UserProfile(), organizationMerge.getName(), organizationTarget);
+				
+				if (usersChanged > 0) {
+					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
+					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit()) == false) {
+						LOG.log(Level.WARNING, "Users are being managed externally. So they may change or recreate groups if they don't match after the user sync.  Users were moved in this application only.");
+					}				
+				}
+				
 				updateOrganizationOnEntity(new ComponentReview(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
@@ -174,22 +191,25 @@ public class OrganizationServiceImpl
 		}
 	}
 
-	private <T extends BaseEntity> void updateOrganizationOnEntity(T entityExample, String existingOrgName, Organization organizationTarget)
+	private <T extends BaseEntity> int updateOrganizationOnEntity(T entityExample, String existingOrgName, Organization organizationTarget)
 	{
+		int changedRecords = 0;
 		if (entityExample instanceof OrganizationModel) {
-			log.log(Level.FINE, MessageFormat.format("Updating organizations on {0}", entityExample.getClass().getSimpleName()));
+			LOG.log(Level.FINE, MessageFormat.format("Updating organizations on {0}", entityExample.getClass().getSimpleName()));
 			((OrganizationModel) entityExample).setOrganization(existingOrgName);
 
 			List<T> entities = entityExample.findByExampleProxy();
-			entities.forEach(entity -> {
+			for (T entity : entities) {
 				((OrganizationModel) entity).setOrganization(organizationTarget.getName());
 				((StandardEntity) entity).populateBaseUpdateFields();
 				persistenceService.persist(entity);
-			});
-			log.log(Level.FINE, MessageFormat.format("Updated: ", entities.size()));
+				changedRecords++;
+			}
+			LOG.log(Level.FINE, MessageFormat.format("Updated: ", entities.size()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Entity does not implement Organization", "Programming error");
 		}
+		return changedRecords;
 	}
 
 	@Override
@@ -208,7 +228,7 @@ public class OrganizationServiceImpl
 			if (organizationEntity != null) {
 				organization = organizationEntity.getName();
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Unable to find organization with key or label:  {0}", organization));
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to find organization with key or label:  {0}", organization));
 				return references;
 			}
 		}
@@ -343,7 +363,7 @@ public class OrganizationServiceImpl
 			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity) entity);
 			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
-			entities = persistenceService.queryByExample((Class<T>) entity.getClass(), queryByExample);
+			entities = persistenceService.queryByExample(queryByExample);
 
 		} else {
 			//Search for records with no org

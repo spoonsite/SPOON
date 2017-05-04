@@ -284,7 +284,15 @@
 														{
 															code: 'lastName',
 															description: 'Last Name'
-														}
+														},
+														{
+															code: 'organization',
+															description: 'Organization'
+														},
+														{
+															code: 'email',
+															description: 'Email'
+														}														
 													]
 												}
 											},
@@ -334,7 +342,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction icon-button-color-refresh',
 									handler: function () {
 										userProfileStore.load();
 									}
@@ -347,20 +356,26 @@
 									id: 'userProfileGrid-tools-edit',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionEditUser(record);
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									// For cryptic reasons, we must add a space before message
 									// to get proper spacing for this button
 									text: '&nbsp;Message',
 									id: 'userProfileGrid-tools-message',
+									hidden: true,
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+									width: '130px',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-save',
 									iconAlign: 'left',
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();
@@ -368,12 +383,9 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
 									text: 'Toggle Status',
 									id: 'userProfileGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									scale: 'medium',
 									tooltip: 'Activates/Deactivates',
@@ -393,12 +405,13 @@
 									text: 'Export',
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
-									iconCls: 'fa fa-2x fa-download',
+									width: '150px',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction-edit',
 									menu: [
 										{
 											text: 'All Profiles',
 											id: 'userProfileGrid-tools-export-all',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											handler: function() {
 												var records = userProfileGrid.getStore().getData().items;
 												actionExportUser([]);
@@ -407,7 +420,7 @@
 										{
 											text: 'Profiles on Current Page',
 											id: 'userProfileGrid-tools-export-shown',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											handler: function() {
 												var records = userProfileGrid.getStore().getData().items;
 												actionExportUser(records);
@@ -416,7 +429,7 @@
 										{
 											text: 'Selected Profiles',
 											id: 'userProfileGrid-tools-export-selected',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											disabled: true,
 											handler: function() {
 												var records = userProfileGrid.getSelection();
@@ -463,6 +476,11 @@
 					}
 				});
 
+				CoreService.userservice.getCurrentUser().then(function(user){				
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT")) {
+						Ext.getCmp('userProfileGrid-tools-message').setHidden(false);
+					}				
+				});
 
 				var actionToggleUser = function actionToggleUser(record) {
 					if (record) {
@@ -562,12 +580,33 @@
 				};
 
 				var actionExportUser = function actionExportUser(records) {
+					
+					// Initialize Export IDs
 					var userIdInputs = "";
+					
+					// Loop Through Records
 					Ext.Array.each(records, function (record) {
+						
+						// Add Username To Form
 						userIdInputs += '<input type="hidden" name="userId" ';
 						userIdInputs += 'value="' + record.get('username') + '" />';
 					});
+					
+					// Get CSRF Token From Cookie
+					var token = Ext.util.Cookies.get('X-Csrf-Token');
+					
+					// Ensure CSRF Token Is Available
+					if (token) {
+						
+						// Add CSRF Token To Form
+						userIdInputs += '<input type="hidden" name="X-Csrf-Token" ';
+						userIdInputs += 'value="' + token + '" />';
+					}
+					
+					// Set Form
 					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
+					
+					// Submit Form
 					document.exportForm.submit();
 				};
 

@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -30,6 +31,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 @APIDescription("Used to restrict report data to a specific subset")
+@Embeddable
 public class ReportDataId
 		implements Serializable
 {

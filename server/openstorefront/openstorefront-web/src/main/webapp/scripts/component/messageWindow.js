@@ -134,7 +134,7 @@ Ext.define('OSF.component.MessageWindow', {
 						items: [
 							{
 								text: 'Add',
-								iconCls: 'fa fa-plus',
+								iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 								handler: function(){
 									var toText = emailField;
 									
@@ -158,7 +158,7 @@ Ext.define('OSF.component.MessageWindow', {
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function(){
 									this.up('window').close();
 								}													
@@ -202,7 +202,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							xtype: 'button',
 							text: 'Select Users',
-							iconCls: 'fa fa-users',
+							iconCls: 'fa fa-lg fa-users',
 							width: '15%',
 							margin: '30 0  0  0',
 							handler: function(){
@@ -235,7 +235,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							xtype: 'button',
 							text: 'Select Users',
-							iconCls: 'fa fa-users',
+							iconCls: 'fa fa-lg fa-users',
 							width: '15%',
 							margin: '30 0  0  0',
 							handler: function(){
@@ -269,7 +269,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							xtype: 'button',
 							text: 'Select Users',
-							iconCls: 'fa fa-users',
+							iconCls: 'fa fa-lg fa-users',
 							width: '15%',
 							margin: '30 0  0  0',
 							handler: function(){
@@ -307,7 +307,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-envelope',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 							handler: function() {
 								var mainForm = this.up('form');
 								var data = mainForm.getValues();
@@ -371,7 +371,7 @@ Ext.define('OSF.component.MessageWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function() {
 								messageForm.reset();
 								messageWindow.close();

@@ -77,7 +77,7 @@ public class FindAttributeTest
 			results.append(code.getAttributeCodePk().getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
 		});
 
-		results.append("<br>Remove attribute").append("<br>");
+		results.append("<br>Delete attribute").append("<br>");
 	}
 
 	@Override

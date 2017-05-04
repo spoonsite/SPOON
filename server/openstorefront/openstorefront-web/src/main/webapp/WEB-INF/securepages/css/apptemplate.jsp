@@ -329,7 +329,8 @@ limitations under the License.
 
 .details-table {
 	 border-collapse: collapse;
-	 border: 1px solid grey;	 
+	 border: 1px solid grey;
+	table-layout:fixed;
 }
 
 th.details-table {
@@ -354,6 +355,7 @@ td.details-table {
 	border: 1px solid grey;
 	padding: 5px;
 	text-align: left;
+	word-wrap:break-word;
 }
 
 tr.details-table:hover {
@@ -563,6 +565,34 @@ td.info-table {
 	background-color: #45587B;
 }
 
+.entry-template_block-layout {
+	background-color: #c79300;;
+}
+
+.entry-template-drag-proxy {
+    color: #000;
+    padding: 5px;
+    width: 150px;
+    height: 50px;
+    background-color: #ffeb3b;
+    border: 5px dotted #ffeb3b;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.entry-template-drag-proxy-invalid {
+	background-color: #bc0000;
+	color: white;
+}
+
+.entry-template-drag-proxy-valid {
+	background-color: #00bc19;
+	color: white;
+}
+
 .generated-code {
 	background-color: darkslategrey;
 	color: white;
@@ -670,13 +700,178 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	margin-left: -5px
 }
 
-.icon-color-light {
-	color: white
+/* Icon button colors */
+
+.icon-button-color-default {
+	color: #4a4e4f;
+}
+
+.icon-button-color-white-fill {
+	color: white;
+}
+
+.icon-button-color-run {
+	color: #FFA500;
+}
+
+.icon-button-color-refresh {
+	color: #64B647;
+}
+
+.icon-button-color-save {
+	color: #167DEE;
+}
+
+.icon-button-color-edit {
+	color: #2E27D9;
+}
+
+.icon-button-color-warning {
+	color: #a94442; 
+}
+
+.icon-button-color-view {
+	color: #0d4577;
+}
+
+.icon-button-color-key {
+	color: #FFA500;
 }
 
 /* For icons that don't vertically center for cryptic reasons **/
+
 .icon-vertical-correction {
-	margin-top: -5px;
+	position: relative;
+	bottom: 3px;
+}
+
+.icon-vertical-correction-send {
+	position: relative;
+	right: 8px;
+	bottom: 3px;
+}
+
+.icon-vertical-correction-save {
+	position: relative;
+	right: 3px;
+	bottom: 3px;
+}
+
+.icon-vertical-correction-add {
+	position: relative;
+	bottom: 2px;
+}
+
+.icon-vertical-correction-view {
+	position: relative;
+	right: 5px;
+	bottom: 2px;
+}
+
+.icon-vertical-correction-edit {
+	position: relative;
+	right: 4px;
+	bottom: 1px;
+}
+
+.icon-vertical-correction-check {
+	position: relative;
+	bottom: 4px;
+	right: 2px;
+}
+
+.icon-correction-users {
+	position: relative;
+	right: 8px;
+	bottom: 3px;
+}
+
+.icon-correction-key {
+	transform: rotate(270deg) scaleX(-1);
+}
+
+.icon-correction-gavel {
+	position: relative;
+	bottom: 2px;
+	right: 3px;
+}
+
+.icon-small-vertical-correction {
+	margin-top: 5px;
+}
+
+.icon-small-vertical-correction-media-table{
+	position: relative;
+	top: 2px;
+}
+
+.icon-small-vertical-correction-book {
+	margin-top: 3px;
+}
+
+.icon-horizontal-correction {
+	margin-right: 3px;
+}
+
+.shift-window-text-right {
+	margin-left: 8px;
+}
+
+.icon-small-horizontal-correction-left {
+	margin-right: 8px;
+}
+
+.icon-small-horizontal-correction-right {
+	margin-left: 5px;
+}
+
+.icon-small-horizontal-correction-trash {
+	margin-left: 12px;
+}
+
+.icon-vertical-correction-eraser {
+	position: relative;
+	right: 5px;
+	bottom: 2px;
+}
+
+.icon-vertical-correction-search-tools {
+	position: relative;
+	right: 4px;
+	bottom: 6px;
+}
+
+.approval-message {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-left: 7px;
+}
+
+.alerts-option-items {
+
+	border: 1px solid #A5A7A7;
+	border-radius: 5px;
+	padding: 3px;
+	margin-left: 6px;
+	line-height: 1.9em;
+	background-color: #949494;
+	color: white;
+}
+
+.menu-items-css {
+
+	padding-right: 1.8em;
+}
+
+.label-text-bold {
+
+	font-weight: bold;
+}
+
+.updated-watch {
+	
+	font-weight: bold;
+	float: right;
 }
 
 /* For displaying tables pasted in from Confluence */
@@ -816,11 +1011,11 @@ table.confluenceTable td.numberingColumn {
 }
 
 .text-success {
-	color: #3c763d;
+	color: #64B647;
 }
 
 .alert-success {
-    color: #3c763d;
+    color: #64B647;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }
@@ -844,7 +1039,7 @@ table.confluenceTable td.numberingColumn {
 }
 
 .highlight-success {
-    color: #3c763d;
+    color: #64B647;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }
@@ -859,5 +1054,216 @@ table.confluenceTable td.numberingColumn {
   border-width: 0px;
 }
 
+.evaluation-nav-button
+{
+	background: steelblue;
+}
+
+.evaluation-nav-button-over
+{
+	background: #559edc;
+}
+
+.evaluation-nav-question-status
+{
+	background-color: #dadada;
+    border-color: #bbbbbb;
+}
+
+.eval-form-title 
+{
+	background: rgba(0, 0, 0, .5) !important;
+}
+
+.eval-form-field
+{
+	font-size: 2em;
+	border-radius: 4px 4px 4px 4px;
+	color: rgba(0, 0, 0, .7);
+}
+
+.eval-form-field-label
+{
+	font-size: 2em;
+	padding-top: 10px;
+}
+
+.checklist-question{
+	line-height: 100%;
+	font-size: 24px;
+}
+
+.checklist-question-table{
+	width: 100%;
+	border: 1px solid grey;
+	border-collapse: collapse;
+}
+
+.checklist-question-table-header{
+    padding: 15px;
+	border: 1px solid grey;
+    text-align: left;	
+    color: white;	
+}
+
+.checklist-question-table-header-row{
+    background-color: #4CAF50;
+}
+
+.checklist-question-table-data{
+    padding: 15px;
+	border: 1px solid grey;
+    text-align: left;
+}
+
+.checklist-question-table-datarow:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+/**
+UI: Button Overrides for specfic buttons
+to use set the ui: danger
+**/
+
+
+.x-btn-danger-small {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    padding: 3px 3px 3px 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #cc0303;
+    background-image: none;
+    background-color: #ce0000;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #Ae0000), color-stop(50%, #ce0000), color-stop(51%, #ce0000), color-stop(0%, #Ae0000));
+    background-image: -webkit-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -moz-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -o-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -ms-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+}
+
+/* http://localhost:1843/classic/theme-base/sass/etc/mixins/frame.scss:237 */
+.x-btn-danger-small-mc {
+    background-image: url(images/btn/btn-default-small-fbg.gif);
+    background-position: 0 top;
+    background-color: #cc0303;
+}
+/* http://localhost:1843/classic/theme-neutral/sass/src/button/Button.scss:445 */
+.x-btn-danger-small {
+    border-color: #cc0303;
+}
+/* http://localhost:1843/classic/theme-neutral/sass/src/button/Button.scss:464 */
+.x-btn-inner-danger-small {
+    font: bold 12px/16px helvetica, arial, verdana, sans-serif;
+    color: #fff;
+    padding: 0 5px;
+    max-width: 100%;
+}
+/* http://localhost:1843/classic/theme-neutral/sass/src/button/Button.scss:492 */
+.x-btn-icon-el-danger-small {
+    font-size: 16px;
+    height: 16px;
+    color: #fff;
+    line-height: 16px;
+}
+/* http://localhost:1843/classic/theme-neutral/sass/src/button/Button.scss:525 */
+.x-ie8 .x-btn-icon-el-danger-small.x-btn-glyph {
+    color: #fff;
+}
+
+/* http://localhost:1843/classic/theme-neutral/sass/src/button/Button.scss:727 */
+.x-btn-focus.x-btn-danger-small {
+    border-color: #ff0000;
+    background-image: none;
+    background-color: #ce0000;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #Ae0000), color-stop(50%, #ce0000), color-stop(51%, #ce0000), color-stop(0%, #Ae0000));
+    background-image: -webkit-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -moz-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -o-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -ms-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    -webkit-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
+    -moz-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
+    box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
+}
+
+.x-btn-danger-small.x-arrow-focus .x-btn-arrow-el {
+    border: 1px solid #d7e9f6;
+}
+
+.x-btn-over.x-btn-danger-small {
+    border-color: #cc0303;
+    background-image: none;
+    background-color: #ee0000;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #ce0000), color-stop(50%, #ee0000), color-stop(51%, #ee0000), color-stop(0%, #ce0000));
+    background-image: -webkit-linear-gradient(top, #ce0000, #ee0000 50%, #ee0000 51%, #ce0000);
+    background-image: -moz-linear-gradient(top, #ce0000, #ee0000 50%, #ee0000 51%, #ce0000);
+    background-image: -o-linear-gradient(top, #ce0000, #ee0000 50%, #ee0000 51%, #ce0000);
+    background-image: -ms-linear-gradient(top, #ce0000, #ee0000 50%, #ee0000 51%, #ce0000);
+    background-image: linear-gradient(top, #ce0000, #ee0000 50%, #ee0000 51%, #ce0000);
+}
+
+.x-btn-focus.x-btn-over.x-btn-danger-small {
+    -webkit-box-shadow: #d6e7f3 0 1px 0px 0 inset, #d6e7f3 0 -1px 0px 0 inset, #d6e7f3 -1px 0 0px 0 inset, #d6e7f3 1px 0 0px 0 inset;
+    -moz-box-shadow: #d6e7f3 0 1px 0px 0 inset, #d6e7f3 0 -1px 0px 0 inset, #d6e7f3 -1px 0 0px 0 inset, #d6e7f3 1px 0 0px 0 inset;
+    box-shadow: #d6e7f3 0 1px 0px 0 inset, #d6e7f3 0 -1px 0px 0 inset, #d6e7f3 -1px 0 0px 0 inset, #d6e7f3 1px 0 0px 0 inset;
+}
+
+.x-btn.x-btn-menu-active.x-btn-danger-small,
+.x-btn.x-btn-pressed.x-btn-danger-small {
+    border-color: #cc0303;
+    background-image: none;
+    background-color: #Ae0000;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #2e0000), color-stop(50%, #Ae0000), color-stop(51%, #Ae0000), color-stop(0%, #2e0000));
+    background-image: -webkit-linear-gradient(top, #2e0000, #Ae0000 50%, #Ae0000 51%, #2e0000);
+    background-image: -moz-linear-gradient(top, #2e0000, #Ae0000 50%, #Ae0000 51%, #2e0000);
+    background-image: -o-linear-gradient(top, #2e0000, #Ae0000 50%, #Ae0000 51%, #2e0000);
+    background-image: -ms-linear-gradient(top, #2e0000, #Ae0000 50%, #Ae0000 51%, #2e0000);
+    background-image: linear-gradient(top, #2e0000, #Ae0000 50%, #Ae0000 51%, #2e0000);
+}
+
+.x-btn-focus.x-btn-menu-active.x-btn-danger-small,
+.x-btn-focus.x-btn-pressed.x-btn-danger-small {
+    -webkit-box-shadow: #d4e2ec 0 1px 0px 0 inset, #d4e2ec 0 -1px 0px 0 inset, #d4e2ec -1px 0 0px 0 inset, #d4e2ec 1px 0 0px 0 inset;
+    -moz-box-shadow: #d4e2ec 0 1px 0px 0 inset, #d4e2ec 0 -1px 0px 0 inset, #d4e2ec -1px 0 0px 0 inset, #d4e2ec 1px 0 0px 0 inset;
+    box-shadow: #d4e2ec 0 1px 0px 0 inset, #d4e2ec 0 -1px 0px 0 inset, #d4e2ec -1px 0 0px 0 inset, #d4e2ec 1px 0 0px 0 inset;
+}
+
+.x-btn.x-btn-disabled.x-btn-danger-small {
+    border-color: #cc0303;
+    background-image: none;
+    background-color: #ce0000;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #Ae0000), color-stop(50%, #ce0000), color-stop(51%, #ce0000), color-stop(0%, #Ae0000));
+    background-image: -webkit-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -moz-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -o-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: -ms-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+    background-image: linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+}
+
+.x-btn-focus .x-btn-danger-small-mc {
+    background-color: #ce0000;
+    background-image: url(images/btn/btn-danger-small-focus-fbg.gif);
+}
+
+.x-btn-over .x-btn-danger-small-mc {
+    background-color: #ee0000;
+    background-image: url(images/btn/btn-danger-small-over-fbg.gif);
+}
+
+.x-btn-focus.x-btn-over .x-btn-danger-small-mc {
+    background-color: #ce0000;
+    background-image: url(images/btn/btn-danger-small-focus-over-fbg.gif);
+}
+
+.x-btn.x-btn-menu-active .x-btn-danger-small-mc,
+.x-btn.x-btn-pressed .x-btn-danger-small-mc {
+    background-color: #Ae0000;
+    background-image: url(images/btn/btn-danger-small-pressed-fbg.gif);
+}
 
 

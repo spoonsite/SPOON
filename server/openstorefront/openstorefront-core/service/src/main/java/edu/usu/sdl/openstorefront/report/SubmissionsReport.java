@@ -76,7 +76,7 @@ public class SubmissionsReport
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		List<Component> found = service.getPersistenceService().queryByExample(Component.class, queryByExample);
+		List<Component> found = service.getPersistenceService().queryByExample(queryByExample);
 		for (Component component : found) {
 			if (component.getSubmittedDts() != null) {
 				componentsSubmited.add(component);

@@ -132,7 +132,7 @@ public class AttributeSearchHandler
 				}
 			}
 
-			List<ComponentAttribute> attributes = serviceProxy.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
+			List<ComponentAttribute> attributes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> results = new ArrayList<>();
 			for (ComponentAttribute attribute : attributes) {
 				results.add(attribute.getComponentId());

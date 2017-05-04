@@ -25,6 +25,7 @@ public class UserRecord
 
 	protected String username;
 	protected String email;
+	protected String phone;
 	protected String firstName;
 	protected String lastName;
 	protected String organization;
@@ -92,6 +93,16 @@ public class UserRecord
 	public void setGuid(String guid)
 	{
 		this.guid = guid;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
 	}
 
 }

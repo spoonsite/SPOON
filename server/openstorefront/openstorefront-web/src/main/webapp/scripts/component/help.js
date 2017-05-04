@@ -43,7 +43,7 @@ Ext.define('OSF.component.HelpPanel', {
 				{
 					xtype: 'treepanel',
 					itemId: 'tree',
-					width: 250,
+					width: 300,
 					store: Ext.create('Ext.data.TreeStore', {		
 						rootVisible: false,
 						expand: true,
@@ -63,7 +63,7 @@ Ext.define('OSF.component.HelpPanel', {
 							url: 'api/v1/resource/help'
 						},
 						listeners: {
-							load: function(store, records, successful, operation, node, eOpt) {											
+							load: function(store, records, successful, operation, node, eOpt) {
 								if (records && records.length > 0) {
 									helpPanel.navPanel.getComponent('tree').expandAll();
 									helpPanel.navPanel.getComponent('tree').collapseAll();
@@ -74,12 +74,25 @@ Ext.define('OSF.component.HelpPanel', {
 									var allHelp = Ext.decode(response.responseText);
 									var flattenHelp = function(allHelp) {
 									  helpPanel.helpFlat.push(allHelp.helpSection);
-									   Ext.Array.each(allHelp.childSections, function(section) {
+									   Ext.Array.each(allHelp.childSections, function(section) {										  
 										  flattenHelp(section);
 									   });
 									};
 									flattenHelp(allHelp);
 								}
+								//mark leafs
+								Ext.Array.each(records, function(item){									
+									var markLeafs = function(root) {
+										if (root.childNodes.length === 0) {
+											root.data.leaf = true;
+										} else {
+											Ext.Array.each(root.childNodes, function (child) {
+												markLeafs(child);
+											});
+										}
+									};
+									markLeafs(item);
+								});
 							}							
 						}
 					}),
@@ -99,7 +112,7 @@ Ext.define('OSF.component.HelpPanel', {
 					items: [
 						{
 							text: 'Print',
-							iconCls: 'fa fa-print',
+							iconCls: 'fa fa-lg fa-print icon-button-color-default',
 							handler: function(){
 								var frame = Ext.getDom(helpPanel.getId() + '-frame');
 																
@@ -149,14 +162,14 @@ Ext.define('OSF.component.HelpPanel', {
 							xtype: 'tbfill'
 						},
 						{
-							iconCls: 'fa fa-expand',
+							iconCls: 'fa fa-lg fa-expand icon-button-color-default',
 							tooltip: 'Expand All',
 							handler: function(){
 								helpPanel.navPanel.getComponent('tree').expandAll();
 							}							
 						},
 						{
-							iconCls: 'fa fa-compress',
+							iconCls: 'fa fa-lg fa-compress icon-button-color-default',
 							tooltip: 'Collapse All',
 							handler: function(){
 								helpPanel.navPanel.getComponent('tree').collapseAll();
@@ -209,6 +222,8 @@ Ext.define('OSF.component.HelpPanel', {
 														Ext.Array.each(childNodes, function(node){
 															if (!node.get('helpSection').content) {
 																node.get('helpSection').content = '';
+																console.log(node);
+																node.set('leaf', true); 
 															}
 															var searchTextChild = node.get('text').toLowerCase() + " " +  node.get('helpSection').content.toLowerCase();
 															if (searchTextChild.search(v) !== -1) {
@@ -283,11 +298,9 @@ Ext.define('OSF.component.HelpWindow', {
 	layout: 'fit',
 	title: 'Help',
 	iconCls: 'fa fa-lg fa-question-circle',
-	
-	x: 50,
-	y: 70,
-	width: '50%',
-	height: 500,
+	y: 150,
+	width: 800,
+	height: 600,
 	maximizable: true,
 	collapsible: true,
 	items: [

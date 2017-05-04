@@ -199,7 +199,7 @@ public class TaskThreadExecutor
 			AsyncTask asyncTaskExample = new AsyncTask();
 			asyncTaskExample.setActiveStatus(AsyncTask.ACTIVE_STATUS);
 
-			List<AsyncTask> asyncTasks = serviceProxy.getPersistenceService().queryByExample(AsyncTask.class, asyncTaskExample);
+			List<AsyncTask> asyncTasks = serviceProxy.getPersistenceService().queryByExample(asyncTaskExample);
 			for (AsyncTask asyncTask : asyncTasks) {
 				TaskFuture taskFuture = asyncTask.toTaskFuture();
 				if (taskFuture.isExpired()) {

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -177,10 +178,10 @@ public class EntityUtil
 		List<Field> fields = ReflectionUtil.getAllFields(entity.getClass());
 		for (Field field : fields) {
 			PK idAnnotation = field.getAnnotation(PK.class);
-				if (idAnnotation != null) {
-					pkField = field;
-				}
+			if (idAnnotation != null) {
+				pkField = field;
 			}
+		}
 		return pkField;
 	}
 
@@ -253,6 +254,23 @@ public class EntityUtil
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find PK for enity: " + entity.getClass().getName(), "Check entity passed in.");
 		}
+	}
+
+	/**
+	 * This correct for an proxy instance which give the proxy class
+	 *
+	 * @param className
+	 * @return
+	 */
+	public static String getRealClassName(String className)
+	{
+		if (StringUtils.isNotBlank(className)) {
+			if (className.contains("$$")) {
+				String tokens[] = className.split("_");
+				className = tokens[0];
+			}
+		}
+		return className;
 	}
 
 }

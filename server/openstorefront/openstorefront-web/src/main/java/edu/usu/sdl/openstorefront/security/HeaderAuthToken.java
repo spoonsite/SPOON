@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.authc.AuthenticationToken;
 
@@ -38,6 +40,7 @@ public class HeaderAuthToken
 	private String adminGroupName;
 	private HttpServletRequest request;
 	private UserContext userContext;
+	private Set<String> groups = new HashSet<>();
 
 	public HeaderAuthToken()
 	{
@@ -164,6 +167,16 @@ public class HeaderAuthToken
 	public void setPhone(String phone)
 	{
 		this.phone = phone;
+	}
+
+	public Set<String> getGroups()
+	{
+		return groups;
+	}
+
+	public void setGroups(Set<String> groups)
+	{
+		this.groups = groups;
 	}
 
 }

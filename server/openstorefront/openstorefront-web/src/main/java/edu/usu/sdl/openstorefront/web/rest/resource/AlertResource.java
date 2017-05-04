@@ -18,10 +18,11 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.AlertView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -51,7 +52,7 @@ public class AlertResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Gets alert subscription records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AlertView.class)
@@ -64,7 +65,7 @@ public class AlertResource
 
 		Alert alertExample = new Alert();
 		alertExample.setActiveStatus(filterQueryParams.getStatus());
-		List<Alert> alerts = service.getPersistenceService().queryByExample(Alert.class, alertExample);
+		List<Alert> alerts = service.getPersistenceService().queryByExample(alertExample);
 		alerts = filterQueryParams.filter(alerts);
 
 		GenericEntity<List<AlertView>> entity = new GenericEntity<List<AlertView>>(AlertView.toView(alerts))
@@ -74,7 +75,7 @@ public class AlertResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Gets an alert subscription record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -84,12 +85,12 @@ public class AlertResource
 	{
 		Alert alertExample = new Alert();
 		alertExample.setAlertId(alertId);
-		Alert alert = service.getPersistenceService().queryOneByExample(Alert.class, alertExample);
+		Alert alert = service.getPersistenceService().queryOneByExample(alertExample);
 		return sendSingleEntityResponse(alert);
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Creates a new Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(Alert alert)
@@ -98,7 +99,7 @@ public class AlertResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Updates a Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -134,7 +135,7 @@ public class AlertResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Activates an Alert")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -147,7 +148,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Inactivates an Alert")
 	@Path("/{id}")
 	public void inactiveAlert(
@@ -157,7 +158,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
 	@APIDescription("Deletes an alert")
 	@Path("/{id}/force")
 	public void deleteAlert(

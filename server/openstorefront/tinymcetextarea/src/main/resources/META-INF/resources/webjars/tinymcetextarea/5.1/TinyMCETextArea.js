@@ -238,6 +238,8 @@ Ext.define('Ext.ux.form.TinyMCETextArea', {
 
         if (me.tinyMCEConfig.setup) { user_setup = me.tinyMCEConfig.setup; }
         
+		me.saveDelayTask = new Ext.util.DelayedTask();
+		
         // BEGIN: setup
         me.tinyMCEConfig.setup = function (ed) {
         
@@ -269,7 +271,15 @@ Ext.define('Ext.ux.form.TinyMCETextArea', {
                 var oldval = me.getValue();
                 var newval = ed.getContent();
 
-                ed.save();
+				if (Ext.isIE) {
+					//Save make typing very slow; however, it needs to be called 
+					//to sync changes back to the unlying textarea
+					me.saveDelayTask.delay(500, function(){
+						ed.save();
+					});
+				} else {
+					ed.save();
+				}
 
                 me.fireEvent('change', me, newval, oldval, {});
                 me.checkDirty();
@@ -491,7 +501,7 @@ Ext.define('Ext.ux.form.TinyMCETextArea', {
         }
 
         return res;
-    },
+    }, 	
     //-----------------------------------------------------------------
     focus: function (selectText, delay) {
         var me = this;

@@ -26,6 +26,7 @@ import java.util.Arrays;
 public class DBSaveTest
 		extends BaseTestCase
 {
+
 	@Override
 	protected void runInternalTest()
 	{
@@ -49,7 +50,8 @@ public class DBSaveTest
 			testEntity.setCreateUser(TEST_USER);
 			testEntity.setUpdateUser(TEST_USER);
 
-			service.getLookupService().saveLookupValue(testEntity);
+			TestEntity newSave = testEntity.save();
+			addResultsLines("New Save - " + newSave.getDescription());
 		});
 		results.append("Saved C, D, E").append("<br>");
 

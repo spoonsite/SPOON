@@ -21,9 +21,18 @@ import java.lang.reflect.Field;
  * Used to determine Uniqueness
  *
  * @author dshurtleff
+ * @param <T> Entity that the unique handler can handle
  */
-public interface UniqueHandler
+public interface UniqueHandler<T>
 {
 
-	public boolean isUnique(Field field, Object value);
+	public boolean isUnique(Field field, Object value, T fullDataObject);
+
+	/**
+	 * Retrieves the error message when uniqueness test fails
+	 *
+	 * @return Error message
+	 */
+	public String getMessage();
+
 }

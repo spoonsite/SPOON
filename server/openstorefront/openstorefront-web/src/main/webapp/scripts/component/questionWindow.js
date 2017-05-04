@@ -25,7 +25,7 @@ Ext.define('OSF.component.QuestionWindow', {
 	iconCls: 'fa fa-lg fa-comment',
 	modal: true,
 	width: '70%',
-	height: 400,
+	height: 440,
 	maximizable: true,
 	layout: 'fit',
 	dockedItems: [
@@ -43,6 +43,7 @@ Ext.define('OSF.component.QuestionWindow', {
 		
 		questionWindow.form = Ext.create('Ext.form.Panel', {	
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
+			scrollable: true,
 			items: [
 				{
 					xtype: 'htmleditor',
@@ -57,6 +58,9 @@ Ext.define('OSF.component.QuestionWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [
@@ -66,7 +70,7 @@ Ext.define('OSF.component.QuestionWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -110,7 +114,7 @@ Ext.define('OSF.component.QuestionWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								questionWindow.close();
 							}							
@@ -123,8 +127,7 @@ Ext.define('OSF.component.QuestionWindow', {
 		questionWindow.add(questionWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){		
 			if (branding.userInputWarning) {
 				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -136,8 +139,8 @@ Ext.define('OSF.component.QuestionWindow', {
 		});	
 				
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			questionWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			questionWindow.user = user;
 						
 			//confirm that they have the required info
 			questionWindow.on('show', function(){
@@ -145,8 +148,8 @@ Ext.define('OSF.component.QuestionWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								questionWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								questionWindow.user = user;
 								
 							});
 						}
@@ -156,7 +159,7 @@ Ext.define('OSF.component.QuestionWindow', {
 					Ext.defer(function(){	
 						Ext.MessageBox.show({
 							title:'Update User Profile',
-							message: 'Please update you profile and fill in missing information to continue.',
+							message: 'Please update your profile and fill in missing information to continue.',
 							buttons: Ext.Msg.OK,
 							icon: Ext.Msg.ERROR										
 						});						
@@ -191,7 +194,7 @@ Ext.define('OSF.component.ResponseWindow', {
 	modal: true,
 	maximizable: true,
 	width: '70%',
-	height: 400,
+	height: 440,
 	layout: 'fit',
 	dockedItems: [
 		{
@@ -208,6 +211,7 @@ Ext.define('OSF.component.ResponseWindow', {
 				
 		responseWindow.form = Ext.create('Ext.form.Panel', {			
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
+			scrollable: true,
 			items: [
 				{
 					xtype: 'htmleditor',
@@ -222,6 +226,9 @@ Ext.define('OSF.component.ResponseWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),			
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [
@@ -231,7 +238,7 @@ Ext.define('OSF.component.ResponseWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -277,7 +284,7 @@ Ext.define('OSF.component.ResponseWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								responseWindow.close();
 							}							
@@ -290,8 +297,7 @@ Ext.define('OSF.component.ResponseWindow', {
 		responseWindow.add(responseWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBranding().then(function(response){
-			var branding = Ext.decode(response.responseText);
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
 			if (branding.userInputWarning) {
 				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
@@ -303,8 +309,8 @@ Ext.define('OSF.component.ResponseWindow', {
 		});
 		
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			responseWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			responseWindow.user = user;
 						
 			//confirm that they have the required info
 			responseWindow.on('show', function(){
@@ -312,8 +318,8 @@ Ext.define('OSF.component.ResponseWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								responseWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								responseWindow.user = user;
 								
 							});
 						}
@@ -323,7 +329,7 @@ Ext.define('OSF.component.ResponseWindow', {
 					Ext.defer(function(){	
 						Ext.MessageBox.show({
 							title:'Update User Profile',
-							message: 'Please update you profile and fill in missing information to continue.',
+							message: 'Please update your profile and fill in missing information to continue.',
 							buttons: Ext.Msg.OK,
 							icon: Ext.Msg.ERROR										
 						});						
@@ -338,7 +344,10 @@ Ext.define('OSF.component.ResponseWindow', {
 	},
 	
 	refresh: function(){
-		this.form.reset();
+		var responseWindow = this;
+		responseWindow.questionId = null;
+		responseWindow.responseId = null;
+		responseWindow.form.reset();
 	},
 	
 	edit: function(reponseRecord) {

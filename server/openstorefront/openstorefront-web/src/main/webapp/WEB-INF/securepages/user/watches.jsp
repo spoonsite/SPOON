@@ -38,7 +38,7 @@
 			 Ext.onReady(function() {
 				
 				 var watchPanel = Ext.create('OSF.component.UserWatchPanel', {
-					 title: 'Manage Watches <i class="fa fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>'					
+					 title: 'Manage Watches <i class="fa fa-lg fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>'					
 				 });
 				
 				 addComponentToMainViewPort(watchPanel);

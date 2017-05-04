@@ -22,10 +22,11 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FeedbackTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -54,7 +55,7 @@ public class FeedbackResource
 {
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicketWrapper.class)
@@ -100,13 +101,13 @@ public class FeedbackResource
 			queryByExample.setOrderBy(ticketSortExample);
 		}
 
-		List<FeedbackTicket> tickets = service.getPersistenceService().queryByExample(FeedbackTicket.class, queryByExample);
+		List<FeedbackTicket> tickets = service.getPersistenceService().queryByExample(queryByExample);
 		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new FeedbackTicketWrapper(tickets, total));
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Gets a feedback ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicket.class)
@@ -139,7 +140,7 @@ public class FeedbackResource
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket complete")
 	@Path("/{feedbackId}/markcomplete")
 	public Response markComplete(			
@@ -151,7 +152,7 @@ public class FeedbackResource
 	}		
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket outstanding")
 	@Path("/{feedbackId}/markoutstanding")
 	public Response markOutstanding(			
@@ -178,7 +179,7 @@ public class FeedbackResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Deletes a feedback ticket")
 	@Path("/{feedbackId}")
 	public Response deleteFeedbackTicket(			

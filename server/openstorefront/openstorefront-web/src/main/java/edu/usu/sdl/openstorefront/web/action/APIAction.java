@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.doc.EntityProcessor;
 import edu.usu.sdl.openstorefront.doc.JaxrsProcessor;
 import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
 import edu.usu.sdl.openstorefront.doc.model.EntityDocModel;
+import edu.usu.sdl.openstorefront.doc.model.ServiceClassModel;
 import edu.usu.sdl.openstorefront.doc.sort.ApiResourceComparator;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
@@ -69,6 +70,23 @@ public class APIAction
 	@DefaultHandler
 	public Resolution mainPage()
 	{
+		initServiceDescription();
+		return new ForwardResolution("/WEB-INF/securepages/api/apidocmain.jsp");
+	}
+
+	@HandlesEvent("Services")
+	public Resolution getServices()
+	{
+		initServiceDescription();
+		ServiceClassModel serviceClassModel = new ServiceClassModel();
+		serviceClassModel.setResourceClasses(resourceClasses);
+		serviceClassModel.setServiceClasses(serviceClasses);
+
+		return streamResults(serviceClassModel);
+	}
+
+	private void initServiceDescription()
+	{
 		ResolverUtil resolverUtil = new ResolverUtil();
 		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.resource");
 
@@ -96,8 +114,6 @@ public class APIAction
 		}
 		resourceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 		serviceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
-
-		return new ForwardResolution("/WEB-INF/securepages/api/main.jsp");
 	}
 
 	@HandlesEvent("API")
@@ -110,7 +126,7 @@ public class APIAction
 		} catch (ClassNotFoundException ex) {
 			return new ErrorResolution(404, "resource not found");
 		}
-		return new ForwardResolution("/WEB-INF/securepages/api/apidetails.jsp");
+		return streamResults(resourceModel);
 	}
 
 	@HandlesEvent("Page")

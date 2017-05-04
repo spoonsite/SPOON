@@ -45,17 +45,18 @@
 		request.setAttribute("branding", brandingView);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
-		request.setAttribute("admin", SecurityUtil.isAdminUser());
+		request.setAttribute("admin", SecurityUtil.isEntryAdminUser());
 		
 		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
 		request.setAttribute("idlegraceperiod", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));
+		request.setAttribute("enableWebsocket", PropertiesManager.getValue(PropertiesManager.KEY_ENABLE_WEBSOCKETS, "false"));
 		
 	%>	
 
 	<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
@@ -154,7 +155,7 @@
 				});				
 			};
 			
-			if (!Ext.isIE9m || Ext.isIE9m === false) {			
+			if (${enableWebsocket} === true && (!Ext.isIE9m || Ext.isIE9m === false)) {			
 				var contextPath = "${pageContext.request.contextPath}";
 				contextPath = contextPath.replace('/', '');
 				var socket = io.connect('', {

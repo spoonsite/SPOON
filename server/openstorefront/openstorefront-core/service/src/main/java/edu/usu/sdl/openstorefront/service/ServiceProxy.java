@@ -19,8 +19,12 @@ import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
+import edu.usu.sdl.openstorefront.core.api.ChangeLogService;
+import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
+import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
+import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
@@ -30,16 +34,20 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.PluginService;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
+import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.ChangeLogServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
 
@@ -77,6 +85,14 @@ public class ServiceProxy
 	private NotificationService notificationService;
 	private FeedbackService feedbackService;
 	private ContactService contactService;
+	private EvaluationService evaluationService;
+	private ChecklistService checklistService;
+	private ContentSectionService contentSectionService;
+	private SecurityService securityService;
+	private ChangeLogService changeLogService;
+	private ChangeLogServicePrivate changeLogServicePrivate;
+	private SystemArchiveService systemArchiveService;
+	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 
 	public ServiceProxy()
 	{
@@ -278,7 +294,7 @@ public class ServiceProxy
 		}
 		return notificationService;
 	}
-	
+
 	@Override
 	public FeedbackService getFeedbackService()
 	{
@@ -294,7 +310,7 @@ public class ServiceProxy
 		if (contactService == null) {
 			contactService = DynamicProxy.newInstance(new ContactServiceImpl());
 		}
-		return contactService;		
+		return contactService;
 	}
 
 	@Override
@@ -322,6 +338,76 @@ public class ServiceProxy
 	public void setModificationType(String modificationType)
 	{
 		this.modificationType = modificationType;
+	}
+
+	@Override
+	public EvaluationService getEvaluationService()
+	{
+		if (evaluationService == null) {
+			evaluationService = DynamicProxy.newInstance(new EvaluationServiceImpl());
+		}
+		return evaluationService;
+	}
+
+	@Override
+	public ContentSectionService getContentSectionService()
+	{
+		if (contentSectionService == null) {
+			contentSectionService = DynamicProxy.newInstance(new ContentSectionServiceImpl());
+		}
+		return contentSectionService;
+	}
+
+	@Override
+	public ChecklistService getChecklistService()
+	{
+		if (checklistService == null) {
+			checklistService = DynamicProxy.newInstance(new ChecklistServiceImpl());
+		}
+		return checklistService;
+	}
+
+	@Override
+	public SecurityService getSecurityService()
+	{
+		if (securityService == null) {
+			securityService = DynamicProxy.newInstance(new SecurityServiceImpl());
+		}
+		return securityService;
+	}
+
+	@Override
+	public ChangeLogService getChangeLogService()
+	{
+		if (changeLogService == null) {
+			changeLogService = DynamicProxy.newInstance(new ChangeLogServiceImpl());
+		}
+		return changeLogService;
+	}
+
+	public ChangeLogServicePrivate getChangeLogServicePrivate()
+	{
+		if (changeLogServicePrivate == null) {
+			changeLogServicePrivate = DynamicProxy.newInstance(new ChangeLogServiceImpl());
+		}
+		return changeLogServicePrivate;
+	}
+
+	@Override
+	public SystemArchiveService getSystemArchiveService()
+	{
+		if (systemArchiveService == null) {
+			systemArchiveService = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
+		}
+		return systemArchiveService;
+	}
+
+	public SystemArchiveServicePrivate getSystemArchiveServicePrivate()
+	{
+		if (systemArchiveServicePrivate == null) {
+			systemArchiveServicePrivate = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
+		}
+		return systemArchiveServicePrivate;
 	}
 
 }

@@ -66,11 +66,13 @@ public class IniRealmManager
 		try (InputStream in = new FileInputStream(FileSystemManager.getConfig("shiro.ini"))) {
 			ini.load(in);
 			Section section = ini.getSection("users");
-			for (String user : section.keySet()) {
-				if (userSet.contains(user)) {
-					UserRecord userRecord = new UserRecord();
-					userRecord.setUsername(user);
-					userRecords.add(userRecord);
+			if (section != null) {
+				for (String user : section.keySet()) {
+					if (userSet.contains(user)) {
+						UserRecord userRecord = new UserRecord();
+						userRecord.setUsername(user);
+						userRecords.add(userRecord);
+					}
 				}
 			}
 		} catch (IOException ex) {

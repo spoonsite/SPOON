@@ -42,8 +42,9 @@ public class ReportType
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String CATEGORY_COMPONENT = "CATCOMP";
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
+	public static final String EVALUATION_STATUS = "EVALSTAT";
 
-	private boolean adminOnly;
+	private String requiredPermission;
 	private boolean componentReport;
 	private List<String> supportedFormats = new ArrayList<>();
 
@@ -64,13 +65,15 @@ public class ReportType
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
+		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evaluation Status", "Reports on the status of unpublished evaluations."));
 
 		//update metadata
-		((ReportType) codeMap.get(USAGE)).setAdminOnly(true);
-		((ReportType) codeMap.get(LINK_VALIDATION)).setAdminOnly(true);
-		((ReportType) codeMap.get(USER)).setAdminOnly(true);
-		((ReportType) codeMap.get(SUBMISSION)).setAdminOnly(true);
-		((ReportType) codeMap.get(ORGANIZATION)).setAdminOnly(true);
+		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);
+		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		((ReportType) codeMap.get(USER)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
@@ -85,16 +88,6 @@ public class ReportType
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
 
 		return codeMap;
-	}
-
-	public boolean getAdminOnly()
-	{
-		return adminOnly;
-	}
-
-	public void setAdminOnly(boolean adminOnly)
-	{
-		this.adminOnly = adminOnly;
 	}
 
 	public List<String> getSupportedFormats()
@@ -115,6 +108,16 @@ public class ReportType
 	public void setComponentReport(boolean componentReport)
 	{
 		this.componentReport = componentReport;
+	}
+
+	public String getRequiredPermission()
+	{
+		return requiredPermission;
+	}
+
+	public void setRequiredPermission(String requiredPermission)
+	{
+		this.requiredPermission = requiredPermission;
 	}
 
 }

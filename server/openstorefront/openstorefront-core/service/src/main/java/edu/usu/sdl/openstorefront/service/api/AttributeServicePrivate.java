@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 
 /**
- * Used to jump into a transaction when needed.
+ * Used to jump into a transactions when needed.
  *
  * @author jlaw
  */

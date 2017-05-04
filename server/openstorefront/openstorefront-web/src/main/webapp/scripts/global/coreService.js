@@ -20,43 +20,169 @@
 
 var CoreService = {
   
-  usersevice: {    
+  userservice: {    
     
     getCurrentUser: function(forceReload){
-      var me = this;     
-    
-      //for now don't cache    
-  
-      var promise = Ext.Ajax.request({
-        url: 'api/v1/resource/userprofiles/currentuser'
-      });
-      
-      return promise;
-    }
+		var userservice = this;     
+		var deferred = new Ext.Deferred();
+		
+		var haveUser = false;
+		
+		//page level cache (safe but, minimual impact as it only help complex nested components)
+		if (userservice.user && !forceReload) {
+			deferred.resolve(userservice.user);
+			haveUser = true;
+		}
+		
+		//caching this causes a lot of headaches with edge cases
+//		if (sessionStorage && sessionStorage.getItem('user')) {
+//			if (!forceReload) {
+//				deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+//				haveUser = true;
+//			}
+//		}
+		
+		if (haveUser === false) {
+			Ext.Ajax.request({
+				url: 'api/v1/resource/userprofiles/currentuser',
+				success: function(response, opts) {
+					var user = Ext.decode(response.responseText);
+					//sessionStorage.setItem('user', Ext.encode(user));
+					//deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+					userservice.user = user;
+					deferred.resolve(user);
+				},
+				failure: function(response, opts) {
+					deferred.reject("Error loading user.");
+				}
+			});
+		}
+
+		return deferred.promise;
+    },
+	clearUser: function() {
+		sessionStorage.removeItem('user');
+	},
+	userHasPermisson: function(user, permissions, operator) {
+		var userservice = this; 
+		var valid = false;
+		if (Ext.isArray(permissions)) {
+			var operatorValue = operator ? operator.toUpperCase() : 'AND';
+			if (operatorValue === 'OR') {
+				Ext.Array.each(permissions, function(permission) {
+					Ext.Array.each(user.roles, function(role){
+						Ext.Array.each(role.permissions, function(userpermission) {
+							if (userpermission.permission === permission) {
+								valid = true;
+								return false;
+							}			
+						});
+						if (valid) {
+							return false;
+						}
+					});	
+					if (valid) {
+						return false;
+					}
+				});
+			} else {
+				var foundCount = 0;
+				Ext.Array.each(permissions, function(permission) {
+					var foundPermission = false;
+					Ext.Array.each(user.roles, function(role){						
+						Ext.Array.each(role.permissions, function(userpermission) {
+							if (userpermission.permission === permission) {
+								foundPermission = true;
+								return false;
+							}			
+						});
+						if (foundPermission) {
+							return false;
+						}
+					});	
+					if (foundPermission) {
+						foundCount++;
+					}
+				});				
+				if (foundCount === permissions.length) {
+					valid = true;
+				}
+			}
+		} else {			
+			Ext.Array.each(user.roles, function(role){
+				Ext.Array.each(role.permissions, function(userpermission) {
+					if (userpermission.permission === permissions) {
+						valid = true;
+						return false;
+					}			
+				});
+				if (valid) {
+					return false;
+				}
+			});
+		}
+		return valid;
+	}
     
   },
   systemservice: {
     
     getConfigProperties: function(){
-      var me = this;     
+      var systemService = this;     
             
       var promise = Ext.Ajax.request({
         url: 'api/v1/service/application/configproperties'
       });
       
       return promise;
-    }    
+    },   
     	
+	getSecurityPolicy: function() {
+		var systemService = this;
+		var deferred = new Ext.Deferred();
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/securitypolicy',
+			success: function (response, opts) {
+				var securityPolicy = Ext.decode(response.responseText);
+				deferred.resolve(securityPolicy);
+			},
+			failure: function (response, opts) {
+				deferred.reject("Error loading user.");
+			}
+		});
+
+		return deferred.promise;
+	}	
+		
   },
   brandingservice: {
 	  
 	  getCurrentBranding: function(){
-		  var me = this;
+		var brandingservice = this;		  
+		var deferred = new Ext.Deferred();
 		  
-		  var promise = Ext.Ajax.request({
-			url: 'api/v1/resource/branding/current' 
+		var haveBranding = false;
+		if (brandingservice.branding) {
+			deferred.resolve(brandingservice.branding);
+			haveBranding = true;
+		}		  
+		  
+		if (haveBranding === false) { 
+		  Ext.Ajax.request({
+			url: 'api/v1/resource/branding/current',
+			success: function(response, opts) {
+				var branding = Ext.decode(response.responseText);
+				brandingservice.branding = branding;
+				deferred.resolve(branding);				
+			},
+			failure: function(response, opts) {
+				deferred.reject("Error loading user.");
+			}
 		  });
-		  return promise;
+		}
+		
+		return deferred.promise;
 	  },
 	  
 	  getBranding: function(brandingId){

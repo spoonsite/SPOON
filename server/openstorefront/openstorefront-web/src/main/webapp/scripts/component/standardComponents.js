@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, CoreUtil */
+/* global Ext, CoreUtil, CoreService */
 
 Ext.define('OSF.component.StandardComboBox', {
     extend: 'Ext.form.field.ComboBox',
@@ -60,22 +60,210 @@ Ext.define('OSF.component.SecurityComboBox', {
 	displayField: 'description',
 	typeAhead: false,
 	editable: false,
-	forceSelection: true,	
+	forceSelection: true,
+	hidden: true,
 	queryMode: 'local',
 	labelAlign: 'top',
+	addSelect: true,
 	store: {
 		autoLoad: true,
 		proxy: {
 			type: 'ajax',
 			url: 'api/v1/resource/lookuptypes/SecurityMarkingType'			
+		},
+		listeners: {
+			load: function(store, records, opts) {
+				if (store.addSelect) {
+					store.add({
+						code: null,
+						description: 'Select'
+					});
+				}				
+			}
 		}
 	},	
 	initComponent: function() {
-		var me = this;	
-		me.callParent();
+		var combo = this;	
+		combo.callParent();
+		combo.getStore().addSelect = combo.addSelect;
+		
+		//check branding to see it should show
+		
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+			if (branding.allowSecurityMarkingsFlg) {
+				combo.setHidden(false);
+			}
+		});
+		
 	}	
 	
 });
+
+Ext.define('OSF.component.DataSensitivityComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSensitivityComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Sensitivity',
+	name: 'dataSensitivity',
+	width: '100%',	
+	valueField: 'dataSensitivity',
+	displayField: 'dataSensitivityDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	hidden: true,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
+		}
+	},		
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];		
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSensitivity',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response.responseText);
+				
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSensitivity) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSensitivity === lookup.code) {
+										return true;
+									}
+								});
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSensitivity === item.dataSensitivity) {
+										add = false;
+									}
+								});
+								
+								if (add) {
+									data.push({
+										dataSensitivity: item.dataSensitivity,
+										dataSensitivityDesc: found.description
+									});
+								}
+							}
+						});						
+					});
+					
+					if (data.length > 0) {
+						combo.setHidden(false);
+					}
+					
+					if (combo.addSelect) {
+						data.push({
+							dataSensitivity: null,
+							dataSensitivityDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+					combo.fireEvent('ready', combo);
+				}
+			});						
+		});	
+	}	
+	
+});
+
+Ext.define('OSF.component.DataSourceComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSourceComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Source',
+	name: 'dataSource',
+	width: '100%',	
+	valueField: 'dataSource',
+	displayField: 'dataSourceDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	hidden: false,
+	hideOnNoData: false,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSource'			
+		}
+	},	
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSource',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response.responseText);
+				
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSource) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSource === lookup.code) {
+										return true;
+									}
+								});
+
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSource === item.dataSource) {
+										add = false;
+									}
+								});
+								
+								if (add) {
+									data.push({
+										dataSource: item.dataSource,
+										dataSourceDesc: found.description
+									});
+								}
+							}
+						});
+					});
+					if (combo.hideOnNoData && data.length === 0) {
+						combo.setHidden(true);
+					}					
+					
+					if (combo.addSelect) {
+						data.push({
+							dataSource: null,
+							dataSourceDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+					combo.fireEvent('ready', combo);
+				}
+			});			
+		});		
+		
+	}	
+	
+});
+
 
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',
@@ -83,11 +271,12 @@ Ext.define('OSF.component.UserMenu', {
 		
 	scale: 'large',
 	ui: 'default',	
-	minWidth: 150,
+	minWidth: 170,
 	maxWidth: 250,
 	initCallBack: null,
 	showUserTools: true,
 	showAdminTools: true,
+	showEvaluatorTools: true,
 	showHelp: true,
 	menu: {},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
@@ -104,7 +293,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Home',
-			iconCls: 'fa fa-2x fa-home',
+			iconCls: 'fa fa-2x fa-home icon-button-color-default',
 			href: 'index.jsp'			
 		});
 		
@@ -112,7 +301,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Admin Tools',
 				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-2x fa-gear',
+				iconCls: 'fa fa-2x fa-gear icon-button-color-default',
 				hidden: true,
 				href: 'AdminTool.action'	
 			});
@@ -121,8 +310,18 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showUserTools) {
 			menuItems.push({
 				text: 'User Tools',
-				iconCls: 'fa fa-2x fa-user',
+				iconCls: 'fa fa-2x fa-user icon-button-color-default',
 				href: 'UserTool.action'		
+			});
+		}			
+		
+		if (userMenu.showEvaluatorTools) {
+			menuItems.push({
+				text: 'Evaluation Tools',
+				itemId: 'menuEvalTools',
+				hidden: true,
+				iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
+				href: 'EvaluationTool.action'		
 			});
 		}	
 		menuItems.push({
@@ -132,7 +331,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showHelp) {
 			menuItems.push({
 				text: '<b>Help</b>',
-				iconCls: 'fa fa-2x fa-question-circle',
+				iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
 				handler: function() {
 					userMenu.helpWin.show();
 				}			
@@ -141,7 +340,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-2x fa-commenting',
+			iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 			handler: function() {
 				userMenu.feedbackWin.show();
 			}		
@@ -153,7 +352,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Logout',
-			iconCls: 'fa fa-2x fa-sign-out',
+			iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
 			href: 'Login.action?Logout'			
 		});
 		
@@ -163,9 +362,8 @@ Ext.define('OSF.component.UserMenu', {
 			this.setWidth(this.up('button').getWidth());
 		});
 		
-		CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
+		CoreService.userservice.getCurrentUser().then(function(usercontext){
+								
 				var userMenuText = usercontext.username;
 				if (usercontext.firstName && usercontext.lastName)
 				{
@@ -173,14 +371,162 @@ Ext.define('OSF.component.UserMenu', {
 				}
 				userMenu.setText(userMenuText);	
 				
-				if (usercontext.admin) {
-					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
+				var permissions = [
+					"ADMIN-USER-MANAGEMENT",
+					"ADMIN-SYSTEM-MANAGEMENT",
+					"ADMIN-ENTRY-MANAGEMENT",
+					"ADMIN-MESSAGE-MANAGEMENT",
+					"ADMIN-JOB-MANAGEMENT",
+					"ADMIN-INTEGRATION",
+					"ADMIN-DATA-IMPORT-EXPORT",
+					"ADMIN-WATCHES",
+					"ADMIN-TRACKING",
+					"ADMIN-SEARCH",
+					"ADMIN-USER-MANAGEMENT-PROFILES",
+					"ADMIN-TEMPMEDIA-MANAGEMENT",
+					"ADMIN-ORGANIZATION",
+					"ADMIN-LOOKUPS",
+					"ADMIN-HIGHLIGHTS",
+					"ADMIN-MEDIA",
+					"ADMIN-FEEDBACK",
+					"ADMIN-EVALUATION-TEMPLATE",
+					"API-DOCS",
+					"ADMIN-BRANDING",
+					"ADMIN-EVALUATION-TEMPLATE-SECTION",
+					"ADMIN-CONTACT-MANAGEMENT",
+					"ADMIN-ENTRY-TEMPLATES",
+					"ADMIN-ENTRY-TYPES",
+					"ADMIN-QUESTIONS",
+					"ADMIN-REVIEW",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
+					"ADMIN-ATTRIBUTE-MANAGEMENT",
+					"ADMIN-ALERT-MANAGEMENT",
+					"REPORTS-ALL",
+					"ADMIN-EVALUATION-MANAGEMENT"
+				];
+				
+				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
+					var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
+					if (adminmenu) {
+						adminmenu.setHidden(false);
+					}
 				}				
+				
+				if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
+					var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
+					if (evalmenu) {
+						userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+					}
+				}					
 				
 				if (userMenu.initCallBack) {
 					userMenu.initCallBack(usercontext);	
 				}
 		});
 	}	
+	
+});
+
+Ext.define('OSF.component.ChangeLogWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.ChangeLogWindow',
+	
+	title: 'Change History',
+	modal: false,	
+	maximizable: true,
+	width: '40%',
+	height: '70%',
+	layout: 'fit',
+	alwaysOnTop: true,
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Refresh',
+					iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+					handler: function() {
+						this.up('window').refresh();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Close',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+					handler: function() {
+						this.up('window').close();
+					}
+				}
+			]
+		}
+	],
+	listeners:
+	{
+		show: function()   
+		{        
+			this.removeCls("x-unselectable");    
+		}
+	},	
+	initComponent: function () {
+		this.callParent();
+		
+		var changeWindow = this;		
+
+		changeWindow.details = Ext.create('Ext.panel.Panel', {
+			bodyStyle: 'padding: 10px;',
+			scrollable: true,
+			tpl: new Ext.XTemplate(				
+				'<tpl for=".">',
+				'	<tpl if="changeTypeDescription">',
+				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
+				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment">{comment}</tpl><br>',									
+				'	<tpl if="newValue"><br><b>New Value: </b><br>',
+				'	<b>{newValue}</b><br><br></tpl>',
+				'	<tpl if="oldValue"><b>Old Value:</b> <br>',
+				'	<span style="color: gray">{oldValue}</span></tpl>',
+				'	<hr></tpl>',				
+				'</tpl>'
+			)			
+		});
+		changeWindow.add(changeWindow.details);		
+	},
+	load: function(loadInfo) {
+		var changeWindow = this;
+
+		changeWindow.setLoading(true);
+		changeWindow.loadInfo  = loadInfo;
+		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/changelogs/' + loadInfo.entity + '/' + loadInfo.entityId + '?includeChildren=' + (loadInfo.includeChildren ? true : false),
+			callback: function() {
+				changeWindow.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				if (loadInfo.addtionalLoad) {
+					loadInfo.addtionalLoad(data, changeWindow);
+				} else {
+					changeWindow.updateData(data);
+				}
+			}
+		});
+	},
+	updateData: function(data) {
+		var changeWindow = this;
+		
+		if (data && data.length > 0){
+			changeWindow.details.update(data);
+		} else {
+			changeWindow.details.update("No Change History");
+		}					
+	},
+	refresh: function() {
+		var changeWindow = this;
+		changeWindow.load(changeWindow.loadInfo);
+	}
 	
 });

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -76,6 +77,20 @@ public abstract class BaseComponent<T>
 	{
 		setComponentId(null);
 		customKeyClear();
+	}
+
+	@Override
+	protected Set<String> excludedChangeFields()
+	{
+		Set<String> excludeFields = super.excludedChangeFields();
+		excludeFields.add("componentId");
+		return excludeFields;
+	}
+
+	public void setChangeParent(ChangeLog changeLog)
+	{
+		changeLog.setParentEntity(Component.class.getSimpleName());
+		changeLog.setParentEntityId(getComponentId());
 	}
 
 	//Override to add primary key clearing

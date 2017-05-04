@@ -49,11 +49,14 @@ public class PropertiesManager
 
 	public static final String PW_PROPERTY = ".pw";
 
+	public static final String KEY_ENABLE_WEBSOCKETS = "websockets.enabled";
+	
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";
 	public static final String KEY_DB_USER = "db.user";
 	public static final String KEY_DB_AT = "db.pw";
+	public static final String KEY_EXTERNAL_HOST_URL = "external.host.url";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
 	public static final String KEY_SEARCH_SERVER = "search.server";
 	public static final String KEY_SOLR_URL = "solr.server.url";
@@ -71,6 +74,7 @@ public class PropertiesManager
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
 	public static final String KEY_TEST_EMAIL = "test.email";
+	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
@@ -86,6 +90,8 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_LDAPGUID = "openam.header.ldapguid";
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
 	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
+
+	public static final String KEY_SECURITY_DEFAULT_ADMIN_GROUP = "role.admin";
 
 	public static final String KEY_TOOLS_USER = "tools.login.user";
 	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
@@ -129,6 +135,7 @@ public class PropertiesManager
 	public static final String KEY_LDAP_MANAGER_CONTEXT_ROOT = "ldapmanager.contextRoot";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_USERNAME = "ldapmanager.attribute.username";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_EMAIL = "ldapmanager.attribute.email";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_PHONE = "ldapmanager.attribute.phone";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_FULLNAME = "ldapmanager.attribute.fullname";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION = "ldapmanager.attribute.organization";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_GUID = "ldapmanager.attribute.guid";
@@ -137,16 +144,16 @@ public class PropertiesManager
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static SortedProperties properties;
-	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
 	private static SortedProperties defaults = new SortedProperties();
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
-	public static String getDefault(String key)
+	private static String getDefault(String key)
 	{
 		return defaults.getProperty(key);
 	}
 
-	public static String getDefault(String key, String defaultValue)
+	private static String getDefault(String key, String defaultValue)
 	{
 		return defaults.getProperty(key, defaultValue);
 	}
@@ -159,8 +166,10 @@ public class PropertiesManager
 
 	public static String getModuleVersion()
 	{
+		loadVersionProperties();
+		
 		String key = "app.module.version";
-		String moduleVersion = getValue(key);
+		String moduleVersion = properties.getProperty(key);
 
 		//Make sure it's a valid osgi module version (only likes 2.0.2 )
 		StringBuilder version = new StringBuilder();
@@ -176,6 +185,11 @@ public class PropertiesManager
 	public static String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));
+	}
+
+	public static String getValueDefinedDefault(String key, String defaultValue)
+	{
+		return getProperties().getProperty(key, getDefault(key, defaultValue));
 	}
 
 	public static String getValue(String key)
@@ -233,56 +247,67 @@ public class PropertiesManager
 
 	private static void init()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
+		LOCK.lock();
 		try {
 			//Set defaults
 			defaults.put(KEY_NOTIFICATION_MAX_DAYS, "7");
 			defaults.put(KEY_FILE_HISTORY_KEEP_DAYS, "180");
 			defaults.put(KEY_MAX_ERROR_TICKETS, "5000");
 			defaults.put(KEY_JOB_WORKING_STATE_OVERRIDE, "30");
+			defaults.put(KEY_EXTERNAL_HOST_URL, "http://localhost:8080/openstorefront");
 			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
 			defaults.put(KEY_DBLOG_ON, "false");
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
 			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
+			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 
-			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
+			
+			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
+				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
 			}
-			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
+			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(propertiesFilename))) {
 				properties = new SortedProperties();
 				properties.load(bin);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
 			}
 
-			try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
-				Properties versionProperties = new Properties();
-				versionProperties.load(in);
-				properties.putAll(versionProperties);
-			} catch (IOException e) {
-				throw new OpenStorefrontRuntimeException(e);
-			}
+			loadVersionProperties();
 
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
+	}
+	
+	private static void loadVersionProperties() 
+	{
+		try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
+			Properties versionProperties = new Properties();
+			versionProperties.load(in);
+			if (properties == null) {
+				properties = new SortedProperties();
+			}
+			properties.putAll(versionProperties);
+		} catch (IOException e) {
+			throw new OpenStorefrontRuntimeException(e);
+		}		
 	}
 
 	private static void saveProperties()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
-		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(PROPERTIES_FILENAME))) {
+		LOCK.lock();
+		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();		
+		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
 			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
 	}
 

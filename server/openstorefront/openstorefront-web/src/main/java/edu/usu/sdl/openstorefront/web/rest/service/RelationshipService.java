@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
@@ -50,85 +51,87 @@ import javax.ws.rs.core.Response;
 @Path("v1/service/relationship")
 @APIDescription("Relationship Services that cross multiple resources")
 public class RelationshipService
-	extends BaseResource	
+		extends BaseResource
 {
+
 	@GET
 	@APIDescription("Find the next level of a given entity")
 	@DataType(RelationshipView.class)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNextRelationships(
-		@QueryParam("key") String entityKey,
-		@QueryParam("entityType") String entityType	
+			@QueryParam("key") String entityKey,
+			@QueryParam("entityType") String entityType
 	)
 	{
 		List<RelationshipView> views = new ArrayList<>();
-		
+
 		entityKey = entityKey.replace("~", "#");
-		
+
 		//check to see if key exists		
-		boolean entityExists = false;		
+		boolean entityExists = false;
 		switch (entityType) {
-			case RelationshipView.ENTITY_TYPE_COMPONENT:
-			{
+			case RelationshipView.ENTITY_TYPE_COMPONENT: {
 				Component component = new Component();
 				component.setComponentId(entityKey);
 				component = component.find();
+				component = FilterEngine.filter(component);
 				if (component != null) {
 					entityExists = true;
-					
+
 					//pull details
 					ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
-					
+
 					//organization
 					RelationshipView view = new RelationshipView();
 					view.setKey(componentAll.getComponent().getComponentId());
-					view.setName(componentAll.getComponent().getName());						
+					view.setName(componentAll.getComponent().getName());
 					view.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
-					view.setTargetKey(Organization.toKey(componentAll.getComponent().getOrganization()));					
+					view.setTargetKey(Organization.toKey(componentAll.getComponent().getOrganization()));
 					view.setTargetName(componentAll.getComponent().getOrganization());
 					view.setTargetEntityType(RelationshipView.ENTITY_TYPE_ORGANIZATION);
-					views.add(view);					
-					
+					views.add(view);
+
 					//relationships
 					List<ComponentRelationshipView> componentRelationshipViews = ComponentRelationshipView.toViewList(componentAll.getRelationships());
 					componentRelationshipViews = componentRelationshipViews.stream()
 							.filter(r -> r.getOwnerApproved() && r.getTargetApproved())
-							.collect(Collectors.toList());					
+							.collect(Collectors.toList());
 					for (ComponentRelationshipView componentRelationshipView : componentRelationshipViews) {
 						view = new RelationshipView();
 						view.setKey(componentRelationshipView.getOwnerComponentId());
-						view.setName(componentRelationshipView.getOwnerComponentName());						
+						view.setName(componentRelationshipView.getOwnerComponentName());
 						view.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 						view.setRelationshipLabel(componentRelationshipView.getRelationshipTypeDescription());
-						view.setTargetKey(componentRelationshipView.getTargetComponentId());					
+						view.setTargetKey(componentRelationshipView.getTargetComponentId());
 						view.setTargetName(componentRelationshipView.getTargetComponentName());
 						view.setTargetEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 						views.add(view);
 					}
-						
+
 					//attributes
-					for (ComponentAttribute componentAttribute : componentAll.getAttributes()) 
-					{
+					for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
 						AttributeCodePk attributeCodePk = new AttributeCodePk();
 						attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
 						attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-						
-						AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-						AttributeType attributeType = service.getAttributeService().findType(attributeCodePk.getAttributeType());
-						
-						RelationshipView relationship = new RelationshipView();							
-						relationship.setKey(componentAttribute.getComponentId());
-						relationship.setName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));								
-						relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
-						relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
-						relationship.setTargetKey(attributeCode.getAttributeCodePk().toKey());
-						relationship.setRelationshipLabel(attributeType.getDescription());
-						relationship.setTargetName(attributeCode.getLabel());
-						relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
-						views.add(relationship);	
+						AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+						if (attributeCode != null) {
+							AttributeType attributeType = service.getAttributeService().findType(attributeCodePk.getAttributeType());
+
+							RelationshipView relationship = new RelationshipView();
+							relationship.setKey(componentAttribute.getComponentId());
+							relationship.setName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));
+							relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
+							relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+							relationship.setTargetKey(attributeCode.getAttributeCodePk().toKey());
+							relationship.setRelationshipLabel(attributeType.getDescription());
+							relationship.setTargetName(attributeCode.getLabel());
+							relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+
+							views.add(relationship);
+						}
 					}
-					
+
 					//tag
 					for (ComponentTag tag : componentAll.getTags()) {
 						view = new RelationshipView();
@@ -139,89 +142,90 @@ public class RelationshipService
 						view.setTargetName(tag.getText());
 						view.setTargetEntityType(RelationshipView.ENTITY_TYPE_TAG);
 						views.add(view);
-					}					
-					
+					}
+
 				}
 			}
 			break;
-			case RelationshipView.ENTITY_TYPE_ORGANIZATION:
-			{
+			case RelationshipView.ENTITY_TYPE_ORGANIZATION: {
 				Organization organization = new Organization();
 				organization.setOrganizationId(entityKey);
 				organization = organization.find();
 				if (organization != null) {
 					entityExists = true;
-					
+
 					Component componentExample = new Component();
 					componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-					componentExample.setApprovalState(ApprovalStatus.APPROVED);		
+					componentExample.setApprovalState(ApprovalStatus.APPROVED);
 					componentExample.setOrganization(organization.getName());
 					List<Component> components = componentExample.findByExample();
-					
+					components = FilterEngine.filter(components);
+
 					for (Component component : components) {
 						RelationshipView view = new RelationshipView();
 						view.setKey(entityKey);
-						view.setName(organization.getName());						
+						view.setName(organization.getName());
 						view.setEntityType(RelationshipView.ENTITY_TYPE_ORGANIZATION);
 						view.setTargetKey(component.getComponentId());
 						view.setTargetName(component.getName());
 						view.setTargetEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 						views.add(view);
-					}					
+					}
 				}
 			}
 			break;
-			case RelationshipView.ENTITY_TYPE_ATTRIBUTE:
-			{
-				AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(entityKey);				
+			case RelationshipView.ENTITY_TYPE_ATTRIBUTE: {
+				AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(entityKey);
 				if (attributeCodePk != null) {
-					
+
 					AttributeCode attributeCode = new AttributeCode();
 					attributeCode.setAttributeCodePk(attributeCodePk);
-					
+
 					attributeCode = (AttributeCode) attributeCode.find();
 					if (attributeCode != null) {
 						entityExists = true;
 						AttributeType attributeType = service.getAttributeService().findType(attributeCodePk.getAttributeType());
-						
+
 						ComponentAttribute componentAttributeExample = new ComponentAttribute();
 						componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-						
+
 						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 						componentAttributePk.setAttributeCode(attributeCodePk.getAttributeCode());
-						componentAttributePk.setAttributeType(attributeCodePk.getAttributeType());												
+						componentAttributePk.setAttributeType(attributeCodePk.getAttributeType());
 						componentAttributeExample.setComponentAttributePk(componentAttributePk);
-						
+
 						List<ComponentAttribute> componentAttributes = componentAttributeExample.findByExample();
+						componentAttributes = FilterEngine.filter(componentAttributes, true);
+
 						for (ComponentAttribute componentAttribute : componentAttributes) {
 							if (service.getComponentService().checkComponentApproval(componentAttribute.getComponentId())) {
-								RelationshipView relationship = new RelationshipView();							
+								RelationshipView relationship = new RelationshipView();
 								relationship.setKey(entityKey);
-								relationship.setName(attributeCode.getLabel());								
+								relationship.setName(attributeCode.getLabel());
 								relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
-								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);								
+								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
 								relationship.setRelationshipLabel(attributeType.getDescription());
 								relationship.setTargetKey(componentAttribute.getComponentId());
 								relationship.setTargetName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));
 								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 
-								views.add(relationship);							
+								views.add(relationship);
 							}
-						}					
+						}
 					}
 				} else {
 					AttributeType attributeType = new AttributeType();
 					attributeType.setAttributeType(entityKey);
-					
+
 					attributeType = (AttributeType) attributeType.find();
 					if (attributeType != null) {
 						entityExists = true;
-						
+
 						if (attributeType.getArchitectureFlg()) {
 							Architecture architecture = service.getAttributeService().generateArchitecture(attributeType.getAttributeType());
-							
+
 							AttributeResource attributeResource = new AttributeResource();
-							attributeResource.buildRelations(views, architecture, null);							
+							attributeResource.buildRelations(views, architecture, null);
 						} else {
 							List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
 							for (AttributeCode attributeCode : attributeCodes) {
@@ -236,20 +240,20 @@ public class RelationshipService
 								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
 								views.add(relationship);
-							}							
-						}						
+							}
+						}
 					}
 				}
-			}	
+			}
 			break;
-			case RelationshipView.ENTITY_TYPE_TAG:
-			{
+			case RelationshipView.ENTITY_TYPE_TAG: {
 				ComponentTag tagExample = new ComponentTag();
 				tagExample.setText(entityKey);
 				List<ComponentTag> tags = tagExample.findByExample();
+				tags = FilterEngine.filter(tags, true);
 				if (!tags.isEmpty()) {
 					entityExists = true;
-					
+
 					for (ComponentTag tag : tags) {
 						RelationshipView view = new RelationshipView();
 						view.setKey(tag.getComponentId());
@@ -263,16 +267,16 @@ public class RelationshipService
 				}
 			}
 			break;
-		}		
-		
+		}
+
 		if (entityExists) {
 			GenericEntity<List<RelationshipView>> entity = new GenericEntity<List<RelationshipView>>(views)
 			{
 			};
-			return sendSingleEntityResponse(entity);		
+			return sendSingleEntityResponse(entity);
 		} else {
 			return sendSingleEntityResponse(null);
 		}
 	}
-	
+
 }

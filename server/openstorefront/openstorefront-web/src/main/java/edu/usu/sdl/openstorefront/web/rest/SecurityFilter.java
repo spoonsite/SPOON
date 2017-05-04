@@ -16,9 +16,10 @@
 package edu.usu.sdl.openstorefront.web.rest;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.IOException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -36,12 +37,12 @@ import javax.ws.rs.ext.Provider;
  * @author dshurtleff
  */
 @Provider
-@RequireAdmin
+@RequireSecurity
 public class SecurityFilter
 		implements ContainerRequestFilter
 {
 
-	private static final Logger log = Logger.getLogger(SecurityFilter.class.getName());
+	private static final Logger LOG = Logger.getLogger(SecurityFilter.class.getName());
 
 	@Context
 	ResourceInfo resourceInfo;
@@ -53,22 +54,79 @@ public class SecurityFilter
 	public void filter(ContainerRequestContext requestContext) throws IOException
 	{
 		boolean doAdminCheck = true;
-		RequireAdmin requireAdmin = resourceInfo.getResourceMethod().getAnnotation(RequireAdmin.class);
-		try {
-			doAdminCheck = requireAdmin.value().newInstance().requireAdminCheck(resourceInfo, requestContext);
-		} catch (InstantiationException | IllegalAccessException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
+		RequireSecurity requireSecurity = resourceInfo.getResourceMethod().getAnnotation(RequireSecurity.class);
+		if (requireSecurity.specialCheck() != null) {
+			try {		
+				doAdminCheck =  requireSecurity.specialCheck().newInstance().specialSecurityCheck(resourceInfo, requestContext, requireSecurity);
+			} catch (InstantiationException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException(ex);
+			}
 		}
 
 		if (doAdminCheck) {
-			if (SecurityUtil.isAdminUser() == false) {
+			boolean hasPermission = false;
+			
+			Set<String> userPermissions = SecurityUtil.getUserContext().permissions();
+			Set<String> userRoles = SecurityUtil.getUserContext().roles();
+			int matchPermissions = 0;
+			for (String permissions : requireSecurity.value()) {
+				if (userPermissions.contains(permissions)) {
+					matchPermissions++;
+				}
+			}
+			
+			int matchRoles = 0;
+			for (String role : requireSecurity.roles()) {
+				if (userRoles.contains(role)) {
+					matchRoles++;
+				}
+			}			
+			
+			if (null == requireSecurity.logicOperator()) {
+				throw new OpenStorefrontRuntimeException("Logic operation not supported.");
+			} else switch (requireSecurity.logicOperator()) {
+				case OR:
+					if (requireSecurity.value().length > 0 && matchPermissions > 0) {
+						if (requireSecurity.roles().length > 0 && matchRoles > 0) {
+							hasPermission = true;
+						} else if (requireSecurity.roles().length == 0) {
+							hasPermission = true;
+						}
+					} else if (requireSecurity.roles().length > 0 && matchRoles > 0) {
+						if (requireSecurity.value().length == 0) { 
+							hasPermission = true;
+						}
+					} else if (requireSecurity.value().length == 0 &&
+							requireSecurity.roles().length == 0) {
+						hasPermission = true;
+					}	break;
+				case AND:
+					if (requireSecurity.value().length == matchPermissions) {
+						if (requireSecurity.roles().length == matchRoles) {
+							hasPermission = true;
+						} else if (requireSecurity.roles().length == 0) {
+							hasPermission = true;
+						} 
+					} else if (requireSecurity.roles().length == matchRoles) {
+						if (requireSecurity.value().length == 0) {
+							hasPermission = true;
+						}
+					} else if (requireSecurity.value().length == 0 &&
+							requireSecurity.roles().length == 0) {
+						hasPermission = true;
+					}	break;
+				default:
+					throw new OpenStorefrontRuntimeException("Logic operation not supported.");
+			}
+						
+			if (hasPermission == false) {
 				requestContext.abortWith(Response
 						.status(Response.Status.UNAUTHORIZED)
 						.type(MediaType.TEXT_PLAIN)
 						.entity("User cannot access the resource.")
 						.build());
 			} else {
-				log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(httpServletRequest));
+				LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(httpServletRequest));
 			}
 		}
 	}

@@ -114,6 +114,40 @@ Ext.define('LookupDataModel', {
 
 
 //Overrides
+
+/**
+ * workaround for bug in ExtJs 6.2.0.
+ * Resolved in current yet unreleased version
+ */
+Ext.define('Mb.override.dom.Element', 
+{
+    override: 'Ext.dom.Element'
+},
+function(){
+    var additiveEvents = this.prototype.additiveEvents,
+        eventMap = this.prototype.eventMap;
+    if(Ext.supports.TouchEvents && Ext.firefoxVersion >= 52 && Ext.os.is.Desktop){
+        eventMap['touchstart'] = 'mousedown';
+        eventMap['touchmove'] = 'mousemove';
+        eventMap['touchend'] = 'mouseup';
+        eventMap['touchcancel'] = 'mouseup';
+        eventMap['click'] = 'click';
+        eventMap['dblclick'] = 'dblclick';
+        additiveEvents['mousedown'] = 'mousedown';
+        additiveEvents['mousemove'] = 'mousemove';
+        additiveEvents['mouseup'] = 'mouseup';
+        additiveEvents['touchstart'] = 'touchstart';
+        additiveEvents['touchmove'] = 'touchmove';
+        additiveEvents['touchend'] = 'touchend';
+        additiveEvents['touchcancel'] = 'touchcancel';
+
+        additiveEvents['pointerdown'] = 'mousedown';
+        additiveEvents['pointermove'] = 'mousemove';
+        additiveEvents['pointerup'] = 'mouseup';
+        additiveEvents['pointercancel'] = 'mouseup';
+    }
+});
+
 Ext.define('OSF.defaults.fieldbase', {
     override: 'Ext.form.field.Base',
 
@@ -245,12 +279,23 @@ Ext.onReady(function() {
 
 
 	Ext.Ajax.timeout = 590000;
+
+	Ext.Ajax.on('beforerequest', function(conn, option, eOpts){
+		var token = Ext.util.Cookies.get('X-Csrf-Token');
+		if (token) {
+			conn.setDefaultHeaders({
+				'X-Csrf-Token': token
+			});
+		}
+	});	
+	
 	Ext.Ajax.on('requestcomplete', function (conn, response, options, eOpts) {
 		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
-			currentlocation = currentlocation + window.parent.location.search;
-
-			window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
+			if (response.request.url.indexOf('service/security/shiroconfig') === -1) {			
+				currentlocation = currentlocation + window.parent.location.search;
+				window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
+			}
 		}		
 	});
 	
@@ -316,7 +361,20 @@ Ext.onReady(function() {
 			requestUrl = '<br><hr> ('+ response.request.url + ' <b>' + response.request.requestOptions.method + '</b>)'; 
 		}
 		
-		if (response.status === 403) {
+		if (response.status === 400) {
+			Ext.Msg.show({
+				title: 'Bad Client Request (400)',
+				message: 'Check request. ' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}					
+				}
+			});			
+		} else if (response.status === 403) {
 			Ext.Msg.show({
 				title: 'Forbidden (403)',
 				message: 'Check request.  User may not have access or the request is invalid.' + requestUrl,
@@ -348,10 +406,22 @@ Ext.onReady(function() {
 					}
 				}
 			});			
-		} else if (response.status === 415) {
+		} else if (response.status === 409) {
+			var message = "Resource conflict. Check data.";
+			try {
+				var responseText = Ext.decode(response.responseText);
+				for (i = 0; i < responseText.errors.entry.length; i++) {
+					message += responseText.errors.entry[i].value;
+					if ((i + 1) < responseText.errors.entry.length) {
+						message += "<br /><br />";
+					}
+				}
+			} catch (e) {
+				//ignore; just use default message.
+			}				
 			Ext.Msg.show({
-				title: 'Bad Client Request (415)',
-				message: 'Unsupported content type on the request.  Check request.' + requestUrl,
+				title: 'Conflict (409)',
+				message: message,
 				buttons: Ext.MessageBox.YESNO,
 				buttonText: feedbackButtonConfig,
 				icon: Ext.Msg.Error,
@@ -361,10 +431,10 @@ Ext.onReady(function() {
 					}					
 				}
 			});			
-		} else if (response.status === 400) {
+		} else if (response.status === 415) {
 			Ext.Msg.show({
-				title: 'Bad Client Request (400)',
-				message: 'Check request. ' + requestUrl,
+				title: 'Unsupported Content Type (415)',
+				message: 'Unsupported content type on the request.  Check request.' + requestUrl,
 				buttons: Ext.MessageBox.YESNO,
 				buttonText: feedbackButtonConfig,
 				icon: Ext.Msg.Error,

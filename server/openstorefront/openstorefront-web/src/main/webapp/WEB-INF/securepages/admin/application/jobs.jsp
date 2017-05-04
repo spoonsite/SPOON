@@ -116,37 +116,25 @@
 							xtype: 'toolbar',
 							items: [
 								{
-									scale: 'medium',
-									id: 'jobGrid-refresh',
-									iconCls: 'fa fa-2x fa-refresh',
 									text: 'Refresh',
 									tooltip: 'Refresh the list of jobs',
+									scale: 'medium',
+									id: 'jobGrid-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										jobStore.load();
 									}
 								},
 								{ 
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
 								},
 								{
-									scale: 'medium',
-									id: 'jobGrid-jobPause',
-									iconCls: 'fa fa-2x fa-pause',
-									text: 'Pause Job',
-									tooltip: 'Pause the selected job',
-									name: 'individualJobControl',
-									disabled: true,
-									handler: function () {
-										var record = Ext.getCmp('jobGrid').getSelection()[0];
-										pauseJob(record);
-									}
-								},
-								{
-									scale: 'medium',
-									id: 'jobGrid-jobResume',
-									iconCls: 'fa fa-2x fa-play',
 									text: 'Resume Job',
 									tooltip: 'Resume the selected job',
+									scale: 'medium',
+									id: 'jobGrid-jobResume',
+									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
 									name: 'individualJobControl',
 									disabled: true,
 									handler: function () {
@@ -155,11 +143,24 @@
 									}
 								},
 								{
+									text: 'Pause Job',
+									tooltip: 'Pause the selected job',
+									name: 'individualJobControl',
 									scale: 'medium',
-									id: 'jobGrid-jobExecute',
-									iconCls: 'fa fa-2x fa-bolt icon-vertical-correction',
+									id: 'jobGrid-jobPause',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										pauseJob(record);
+									}
+								},
+								{
 									text: 'Run Job',
 									tooltip: 'Execute the selected job',
+									scale: 'medium',
+									id: 'jobGrid-jobExecute',
+									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 									name: 'individualJobControl',
 									disabled: true,
 									handler: function () {
@@ -172,7 +173,10 @@
 								},
 								{ 
 									xtype: 'label',
-									text: 'Show Integration Jobs:'
+									text: 'Show Integration Jobs:',
+									style: {
+										fontWeight: 'bold'
+									}
 								},
 								{
 									xtype: 'segmentedbutton',
@@ -225,12 +229,12 @@
 									}
 								},
 								{
+									text: 'Pause Scheduler',
+									tooltip: 'Toggle the scheduler status',
 									scale: 'medium',
 									toggleGroup: 'scheduler',
 									id: 'jobGrid-schedulerToggleButton',
-									iconCls: 'fa fa-2x fa-pause',
-									text: 'Pause Scheduler',
-									tooltip: 'Toggle the scheduler status',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									name: 'schedulerControl',
 									handler: function () {
 										toggleScheduler();
@@ -388,11 +392,11 @@
 							xtype: 'toolbar',
 							items: [
 								{
-									scale: 'medium',
-									id: 'taskGrid-refresh',
-									iconCls: 'fa fa-2x fa-refresh',
 									text: 'Refresh',
 									tooltip: 'Refresh the list of tasks',
+									scale: 'medium',
+									id: 'taskGrid-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										taskStore.load();									
 									}
@@ -402,11 +406,11 @@
 								},
 								
 								{
+									text: 'Stop Task',
+									tooltip: 'Attempts to cancel the task',
 									scale: 'medium',
 									id: 'taskGrid-tools-cancel',
-									iconCls: 'fa fa-2x fa-close',
-									text: 'Cancel',
-									tooltip: 'Attempts to cancel the task',
+									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionCancelTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -416,11 +420,11 @@
 									xtype: 'tbseparator'
 								},								
 								{
-									scale: 'medium',
-									id: 'taskGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash',
 									text: 'Delete',
 									tooltip: 'Delete the task',
+									scale: 'medium',
+									id: 'taskGrid-tools-delete',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionDeleteTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -512,7 +516,7 @@
 				};				
 
 				var jobsMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'Manage Jobs <i class="fa fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
+					title: 'Manage Jobs &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
 					width: 400,
 					height: 400,
 					items: [jobGrid, taskGrid]
@@ -611,13 +615,13 @@
 								label.setText('Running');
 								label.setStyle({color: 'green'});
 								button.setText('Pause Scheduler');
-								button.setIconCls('fa fa-pause fa-2x');
+								button.setIconCls('fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction');
 							}
 							else {
 								label.setText('Paused');
 								label.setStyle({color: 'red'});
 								button.setText('Resume Scheduler');
-								button.setIconCls('fa fa-play fa-2x');
+								button.setIconCls('fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction');
 							}
 						},
 						failure: function (response, opts) {

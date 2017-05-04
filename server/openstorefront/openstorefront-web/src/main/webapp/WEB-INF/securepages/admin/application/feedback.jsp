@@ -35,7 +35,7 @@
 				
 				var viewWindow = Ext.create('Ext.window.Window', {
 					title: 'Details',
-					iconCls: 'fa fa-eye',
+					iconCls: 'fa fa-lg fa-eye',
 					modal: true,
 					width: '70%',
 					height: '60%',
@@ -67,41 +67,49 @@
 					)
 				});
 				
+				var ticketGridStore = Ext.create('Ext.data.Store', {
+					pageSize: 100,
+					autoLoad: true,
+					fields: [
+						{
+							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'lastViewDts',
+							type:	'date',
+							dateFormat: 'c'
+						}	
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/feedbacktickets',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}							
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('filterActiveStatus').getValue() ? Ext.getCmp('filterActiveStatus').getValue() : 'A'
+							};
+						}
+					}					
+				});
 
 				var ticketGrid =  Ext.create('Ext.grid.Panel', {
-					title: 'User Feedback <i class="fa fa-question-circle"  data-qtip="Display feedback capture in the application"></i>',
+					title: 'User Feedback &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Display feedback capture in the application"></i>',
 					id: 'ticketGrid',
 					columnLines: true,
-					store: {
-						pageSize: 100,
-						autoLoad: true,
-						fields: [
-							{
-								name: 'createDts',
-								type:	'date',
-								dateFormat: 'c'
-							},
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							},
-							{
-								name: 'lastViewDts',
-								type:	'date',
-								dateFormat: 'c'
-							}	
-						],
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/feedbacktickets',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}							
-						})						
-					},
+					store: ticketGridStore,
 					columns: [
 						{ text: 'Ticket Type', dataIndex: 'ticketType',  width: 150},
 						{ text: 'Summary', dataIndex: 'summary', flex: 1, minWidth: 200},
@@ -196,17 +204,22 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
+									width: '110px',
 									handler: function () {
 										actionRefresh();
 									}
+								},
+								{
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'View Details',
 									itemId: 'view',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									width: '140px',
 									handler: function () {
 										actionView(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -215,25 +228,25 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Mark Complete',
-									itemId: 'complete',
-									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
-									handler: function () {
-										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
-									}									
-								},
-								{
 									text: 'Mark Outstanding',
 									itemId: 'outstanding',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], false);										
 									}									
-								},								
+								},
+								{
+									text: 'Mark Complete',
+									itemId: 'complete',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save',
+									handler: function () {
+										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
+									}									
+								},
 								{
 									xtype: 'tbfill'
 								},
@@ -242,13 +255,19 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);	
 									}									
 								}
 							]							
-						}
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: ticketGridStore,
+							displayInfo: true
+						}						
 					]
 					
 					
@@ -290,13 +309,14 @@
 
 				var actionDelete = function(record) {
 					Ext.Msg.show({
-						title: 'Remove Feedback?',
-						message: 'Are you sure you want to remove the selected feedback?',
+						title: 'Delete Feedback?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete the selected feedback?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('ticketGrid').setLoading('Removing Feedback...');
+								Ext.getCmp('ticketGrid').setLoading('Deleting Feedback...');
 								Ext.Ajax.request({
 									url: 'api/v1/resource/feedbacktickets/' + record.get('feedbackId'),
 									method: 'DELETE',

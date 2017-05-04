@@ -54,6 +54,7 @@ public class ComponentStandardParser
 	{
 		allowTextTypes.add("text/json");
 		allowTextTypes.add("text");
+		allowTextTypes.add("application/octet-stream");
 		allowTextTypes.add("application/json");
 
 		//Some times the browsers mark JSON file as this. Meaning they don't know what it is.

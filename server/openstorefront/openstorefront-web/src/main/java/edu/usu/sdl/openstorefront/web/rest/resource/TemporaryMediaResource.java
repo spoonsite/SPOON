@@ -17,11 +17,12 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.TemporaryMediaView;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class TemporaryMediaResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets all temporary media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -55,7 +56,7 @@ public class TemporaryMediaResource
 
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setActiveStatus(filterQueryParams.getStatus());
-		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(TemporaryMedia.class, temporaryMediaExample);
+		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(temporaryMediaExample);
 		temporaryMedia = filterQueryParams.filter(temporaryMedia);
 		List<TemporaryMediaView> temporaryMediaViews = TemporaryMediaView.toViewList(temporaryMedia);
 
@@ -66,7 +67,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets all temporary media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -75,7 +76,7 @@ public class TemporaryMediaResource
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
-		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(TemporaryMedia.class, temporaryMediaExample);
+		List<TemporaryMedia> temporaryMedia = service.getPersistenceService().queryByExample(temporaryMediaExample);
 		List<TemporaryMediaView> temporaryMediaViews = TemporaryMediaView.toViewList(temporaryMedia);
 
 		List<LookupModel> lookups = new ArrayList<>();
@@ -92,7 +93,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets a temporary media record. See Media.action?TemporaryMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -102,12 +103,12 @@ public class TemporaryMediaResource
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName(name);
-		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		return sendSingleEntityResponse(temporaryMedia);
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Deletes a temporary media record.")
 	@Path("/{id}")
 	public void deleteTemporaryMedia(

@@ -25,6 +25,11 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 public class ComponentTypeInit
 		extends ApplyOnceInit
 {
+	
+	public ComponentTypeInit()
+	{
+		super("Component-Type");
+	}	
 
 	@Override
 	protected String internalApply()
@@ -37,15 +42,18 @@ public class ComponentTypeInit
 		componentType.setDescription("Main entry representing a DI2E Component");
 		componentType.setAllowOnSubmission(true);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
-		componentType.setDataEntryContacts(Boolean.TRUE);
-		componentType.setDataEntryDependencies(Boolean.TRUE);
+		componentType.setDataEntryContacts(Boolean.TRUE);		
 		componentType.setDataEntryEvaluationInformation(Boolean.TRUE);
-		componentType.setDataEntryMedia(Boolean.TRUE);
-		componentType.setDataEntryMetadata(Boolean.TRUE);
+		componentType.setDataEntryMedia(Boolean.TRUE);		
 		componentType.setDataEntryRelationships(Boolean.TRUE);
 		componentType.setDataEntryResources(Boolean.TRUE);
 		componentType.setDataEntryReviews(Boolean.TRUE);
 		componentType.setDataEntryQuestions(Boolean.TRUE);
+		
+		//Skip
+		//componentType.setDataEntryDependencies(Boolean.TRUE);
+		//componentType.setDataEntryMetadata(Boolean.TRUE);
+		
 
 		service.getComponentService().saveComponentType(componentType);
 
@@ -54,8 +62,12 @@ public class ComponentTypeInit
 		componentType.setAllowOnSubmission(false);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
 		componentType.setDataEntryQuestions(Boolean.TRUE);
+		componentType.setDataEntryMedia(Boolean.TRUE);
+		componentType.setDataEntryContacts(Boolean.TRUE);
+		componentType.setDataEntryResources(Boolean.TRUE);
+		componentType.setDataEntryRelationships(Boolean.TRUE);
 		componentType.setLabel("Article");
-		componentType.setDescription("Use to display information on a topic and show related items");
+		componentType.setDescription("Informational Entries used to display information on a topic and show related items.");
 
 		service.getComponentService().saveComponentType(componentType);
 		return "Added defaults";

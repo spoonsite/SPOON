@@ -233,8 +233,8 @@
 							dock: 'bottom',
 							items: [								
 								{
-									text: 'Create Relationship',
-									iconCls: 'fa fa-check text-success',
+									text: 'Apply',
+									iconCls: 'fa fa-lg fa-check icon-button-color-save',
 									handler: function() {
 										var originId = typePromptWindow.originId;
 										var originName = typePromptWindow.originName;
@@ -275,7 +275,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close text-danger',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -309,7 +309,7 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + record.get('componentTypeDescription') + '</span>';
 								html += '<span style="float: right"><i class="fa fa-share-alt"></i> ' + num + '</span>';
 								html += "</div>";
@@ -412,7 +412,7 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + record.get('componentTypeDescription') + '</span>';
 								html += "</div>";
 								return html;
@@ -531,15 +531,18 @@
 							items: [
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function () {
 										relationshipsStore.load();
 									}
 								},
 								{
+									xtype: 'tbfill'
+								},
+								{
 									text: 'Delete',
 									id: 'relationshipGridAction-Delete',
-									iconCls: 'fa fa-trash',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 									disabled: true,
 									handler: function() {
 										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];

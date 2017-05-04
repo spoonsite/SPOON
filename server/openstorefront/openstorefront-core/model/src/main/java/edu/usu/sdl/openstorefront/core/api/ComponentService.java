@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -164,6 +165,14 @@ public interface ComponentService
 	 * @return Status or null if component is not found
 	 */
 	public String getComponentApprovalStatus(String componentId);
+
+	/**
+	 * Gets component's data sensitivity
+	 *
+	 * @param componentId
+	 * @return sensitivityModel or null if the component doesn't exist
+	 */
+	public ComponentSensitivityModel getComponentSensitivity(String componentId);
 
 	/**
 	 * Return the whole list of components. (the short view) Just Active and
@@ -360,6 +369,7 @@ public interface ComponentService
 	public void saveComponentTracking(ComponentTracking tracking);
 
 	/**
+	 * This will save the component (skipping duplication checking)
 	 *
 	 * @param component
 	 * @return
