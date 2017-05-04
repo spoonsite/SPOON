@@ -444,9 +444,7 @@ public class SystemServiceImpl
 			generalMedia.populateBaseCreateFields();
 			persistenceService.persist(generalMedia);
 			return generalMedia;
-		}
-		catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
