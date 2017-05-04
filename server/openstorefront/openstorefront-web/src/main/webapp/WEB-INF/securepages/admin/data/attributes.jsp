@@ -124,8 +124,8 @@
 		};
 		
 		/* global Ext, CoreUtil */
-		Ext.onReady(function(){	
-	
+		Ext.onReady(function() {
+
 
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
@@ -1729,8 +1729,19 @@
 					{'highlightStyle': 'default'}
 				]
 			});
+			
+			var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
+				
+				isEditor: false,
+				mediaSelectionUrl: 'api/v1/resource/generalmedia',
+				closeAction: 'hide',
+				mediaHandler: function(link) {
 
-			var editCodeWin = Ext.create('Ext.window.Window' , {
+					Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
+				}
+			});
+
+			var editCodeWin = Ext.create('Ext.window.Window', {
 				id: 'editCodeWin',
 				title: 'Add/Edit Code Win',
 				modal: true,
@@ -1799,9 +1810,31 @@
 								name: 'architectureCode'
 							},
 							{
-								xtype: 'textfield',
-								fieldLabel: 'Badge URL',
-								name: 'badgeUrl'
+								xtype: 'label',
+								text: 'Badge URL:',
+								style: {
+									fontWeight: 'bold'
+								}
+							},
+							{
+								layout: 'hbox',
+								margin: '5px 0 0 0',
+								items: [
+									{
+										xtype: 'textfield',
+										name: 'badgeUrl',
+										flex: 4
+									},
+									{
+										xtype: 'button',
+										text: 'Insert Media',
+										flex: 1,
+										handler: function() {
+											
+											mediaWindow.show();
+										}
+									}
+								]
 							},
 							{
 								xtype: 'combobox',

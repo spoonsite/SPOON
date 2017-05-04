@@ -394,7 +394,7 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
+	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
 	{
 		Objects.requireNonNull(generalMedia);
 		Objects.requireNonNull(generalMedia.getName(), "Name must be set.");
@@ -404,6 +404,7 @@ public class SystemServiceImpl
 			Files.copy(in, generalMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			generalMedia.populateBaseCreateFields();
 			persistenceService.persist(generalMedia);
+			return generalMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
