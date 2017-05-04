@@ -66,6 +66,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 /**
@@ -269,13 +270,15 @@ public class ElasticSearchManager
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
                         esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase));
 		}
-		
+		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
+				.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
 		SearchResponse response = ElasticSearchManager.getClient()
 				.prepareSearch(INDEX)
 				.setQuery(esQuery)
 				.setFrom(filter.getOffset())
-				.setSize(maxSearchResults)				
-				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC)
+				.setSize(maxSearchResults)
+				.addSort(sort)
 				.execute()
 				.actionGet();
 
