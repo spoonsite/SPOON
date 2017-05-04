@@ -1720,6 +1720,7 @@
 				
 				isEditor: false,
 				mediaSelectionUrl: 'api/v1/resource/generalmedia',
+				closeAction: 'hide',
 				mediaHandler: function(link) {
 
 					Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
