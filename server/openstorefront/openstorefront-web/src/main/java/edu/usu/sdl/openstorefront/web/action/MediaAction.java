@@ -281,7 +281,8 @@ public class MediaAction
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				try {
-					service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					return streamResults(generalMedia);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
