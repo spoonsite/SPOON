@@ -202,8 +202,8 @@
 						iconCls: 'fa fa-user-plus',
 						closeAction: 'destroy',
 						modal: true,
-						width: '700px',
-						minHeight: '75%',
+						width: 700,
+						height: '85%',
 						maximizable: true,
 						layout: 'fit',
 						items: [
@@ -220,7 +220,8 @@
 										defaults: {
 											width: '75%',
 											labelSeparator: '',
-											labelAlign: 'top'
+											labelAlign: 'top',
+											msgTarget: 'under'
 										},
 										items: [
 											{
@@ -277,9 +278,9 @@
 											{
 												xtype: 'combobox',
 												name: 'organization',
-												allowBlank: true,
+												allowBlank: false,
 												maxLength: 120,
-												fieldLabel: 'Organization',
+												fieldLabel: 'Organization <span class="field-required" />',
 												forceSelection: false,
 												valueField: 'description',
 												displayField: 'description',
@@ -345,7 +346,7 @@
 												handler: function(){										
 													var form = this.up('form');
 													var data = form.getValues();
-
+													
 													if (data.password !== data.confirmPassword) {
 														Ext.Msg.show({
 															title:'Validation',
@@ -359,6 +360,9 @@
 															confirmPassword: 'Must match password'
 														});											
 													} else {
+														if (data.userTypeCode === '') {
+															delete data.userTypeCode;
+														}
 
 														CoreUtil.submitForm({
 															url: 'api/v1/resource/userregistrations',
@@ -370,6 +374,9 @@
 																actionRefreshRegs();
 																actionRefreshUsers();
 																addUserWin.close();
+															},
+															failure: function(action, opts) {
+																form.setScrollY(0);
 															}
 														});
 													}

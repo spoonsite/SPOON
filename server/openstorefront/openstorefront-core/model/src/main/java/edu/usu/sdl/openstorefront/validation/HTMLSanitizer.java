@@ -76,7 +76,7 @@ public class HTMLSanitizer
 					.addTags("component-list")
 					.addTags("span")
 					.addAttributes("component-list", "hide-more", "click-callback", "class-list", "title", "data", "cols", "type", "filters", "set-filters", "code")
-					.addAttributes("a", "ng-click", "id")
+					//.addAttributes("a", "ng-click", "id")
 					.addAttributes(":all", "style")
 					.addEnforcedAttribute("a", "rel", "nofollow")
 			);

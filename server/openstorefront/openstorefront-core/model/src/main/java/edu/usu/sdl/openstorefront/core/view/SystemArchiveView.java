@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
@@ -56,6 +57,11 @@ public class SystemArchiveView
 		view.setRunStatusDescription(TranslateUtil.translate(RunStatus.class, archive.getRunStatus()));
 		view.setIoDirectionTypeDescription(TranslateUtil.translate(IODirectionType.class, archive.getIoDirectionType()));
 		view.setImportModeTypeDescription(TranslateUtil.translate(ImportModeType.class, archive.getImportModeType()));
+		
+		Path path = view.pathToArchive();
+		if (path == null || !path.toFile().exists()) {
+			view.setArchiveFilename(null);			
+		}
 
 		return view;
 	}

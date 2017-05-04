@@ -514,16 +514,16 @@
 							]
 						}
 					],
-					tpl: '<h1>Question</h1>'+ 
+					tpl: '<h1>Question {qid}</h1>'+ 
 						 '(<b>{evaluationSectionDescription}</b>)<br>' + 						 
-						 '<h3>{question}</h3>' + 
-						 '<tpl if="objective"><h2>Objective</h2>'+ 
+						 '<h2>{question}</h2>' + 
+						 '<tpl if="scoreCriteria"><h2>Scoring Criteria</h2><hr>'+ 
+						 '{scoreCriteria}' + 
+						 '</tpl>' +						 
+						 '<tpl if="objective"><h2>Objective</h2><hr>'+ 
 						 '{objective}' + 
 						 '</tpl>' +
-						 '<tpl if="scoreCriteria"><h2>Scoring Criteria</h2>'+ 
-						 '{scoreCriteria}' + 
-						 '</tpl>' +
-						 '<tpl if="narrative"><h2>Narrative</h2>'+ 
+						 '<tpl if="narrative"><h2>Narrative</h2><hr>'+ 
 						 '{narrative}' + 
 						 '</tpl>'
 				});				

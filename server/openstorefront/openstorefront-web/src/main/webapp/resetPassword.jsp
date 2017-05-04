@@ -170,7 +170,8 @@
 																					},
 																					{ 
 																						text: 'Return to Login',
-																						iconCls: 'fa fa-2x fa-sign-in',
+																						width: '170px',
+																						iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction-view',
 																						scale: 'medium',
 																						handler: function() {
 																							window.location.href = 'login.jsp';

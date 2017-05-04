@@ -40,17 +40,18 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
-		CoreSystem.startup();
-
 		//curb some noisy logs by default
 		Logger atmospshereLog = Logger.getLogger("org.atmosphere");
 		if (atmospshereLog != null) {
 			atmospshereLog.setLevel(Level.OFF);
 		}
 
+		CoreSystem.startup();
+
 		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
 		AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
 		ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
+
 	}
 
 	@Override

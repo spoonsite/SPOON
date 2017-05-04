@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,6 +79,7 @@ public class DBManager
 
 			String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
 			System.setProperty("ORIENTDB_HOME", home);
+			System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 			server.setServerRootDirectory(home);
 
 			server.startup(FileSystemManager.getConfig("orientdb-server-config.xml"));
@@ -96,7 +98,7 @@ public class DBManager
 			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 			try (OObjectDatabaseTx db = getConnection()) {
-				db.getEntityManager().registerEntityClasses(ENTITY_MODEL_PACKAGE);
+				db.getEntityManager().registerEntityClasses(ENTITY_MODEL_PACKAGE, BaseEntity.class.getClassLoader());
 			}
 
 			started.set(true);

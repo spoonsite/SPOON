@@ -50,7 +50,7 @@ public class PatternRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value must follow pattern";
 	}

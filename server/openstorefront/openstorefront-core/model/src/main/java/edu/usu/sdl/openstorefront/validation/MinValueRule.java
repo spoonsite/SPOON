@@ -58,7 +58,7 @@ public class MinValueRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value is less than minimum allowed";
 	}

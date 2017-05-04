@@ -1,7 +1,7 @@
-#Version Migration Guide
+# Version Migration Guide
 
 
-##Upgrading from 2.2 to 2.3
+## Upgrading from 2.2 to 2.3
 ---------
 
 DI2E environments that use open am should follow JIRA ticket STORE-1243.
@@ -24,7 +24,7 @@ upgrade path is to just remove the the existing shiro.ini.
 
 			i) Copy /var/openstorefront/db directory to backup location 
 		
-	c) Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) 
+	c) Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)
 
 
 

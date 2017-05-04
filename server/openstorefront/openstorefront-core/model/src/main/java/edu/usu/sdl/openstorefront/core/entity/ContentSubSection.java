@@ -70,7 +70,7 @@ public class ContentSubSection
 	private Boolean noContent;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@Sanitize(HTMLSanitizer.class)
 	private String content;
 

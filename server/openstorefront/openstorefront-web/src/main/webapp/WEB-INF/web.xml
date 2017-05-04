@@ -25,6 +25,12 @@
         <listener-class>edu.usu.sdl.openstorefront.web.init.ShiroLoader</listener-class>
     </listener>
 	
+	<!-- This needs to be top level -->
+	<filter-mapping>
+		<filter-name>SystemStatusFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 <!--  
 	<filter>
 		<filter-name>MockHeaderFilter</filter-name>

@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.MediaType;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TVFS;
@@ -334,7 +335,7 @@ public class UploadAction
 				LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 			}
 		}
-		return streamUploadResponse(errors);		
+		return streamUploadResponse(errors);
 	}
 
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
@@ -355,14 +356,14 @@ public class UploadAction
 			String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
 			// Check MIME Type
-			if (fileMimeType.matches("application/(x-)?zip.*") &&
-					(fileExtension.equals("war") || fileExtension.equals("jar"))) {
+			if ((fileMimeType.matches("application/(x-)?zip.*")
+					|| MediaType.APPLICATION_OCTET_STREAM.equals(fileMimeType))
+					&& (fileExtension.equals("war") || fileExtension.equals("jar"))) {
 
 				//just copy plugin to  plugin directory...to avoid double pickup
 				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
 				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
-			}
-			else {
+			} else {
 
 				// Throw Invalid File Type Exception
 				throw new InvalidFileTypeException("Invalid File Type");
@@ -570,7 +571,7 @@ public class UploadAction
 
 		return streamErrorResponse(errors, true);
 	}
-	
+
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@HandlesEvent("ImportArchive")
 	public Resolution importArchive()
@@ -583,12 +584,12 @@ public class UploadAction
 		systemArchive.setOriginalArchiveFilename(uploadFile.getFileName());
 		systemArchive.setImportModeType(importModeType);
 		systemArchive.setIoDirectionType(IODirectionType.IMPORT);
-		
-		systemArchive.setArchiveFilename("import-" + service.getPersistenceService().generateId() + ".zip");		
+
+		systemArchive.setArchiveFilename("import-" + service.getPersistenceService().generateId() + ".zip");
 		File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
 		Path path = Paths.get(archiveDir.getPath() + "/" + systemArchive.getArchiveFilename());
 		File fullArchive = path.toFile();
-				
+
 		try {
 
 			uploadFile.save(fullArchive);
@@ -606,7 +607,7 @@ public class UploadAction
 		}
 
 		return streamErrorResponse(errors, true);
-	}	
+	}
 
 	public FileBean getUploadFile()
 	{
@@ -697,11 +698,13 @@ public class UploadAction
 	{
 		this.attributeCodeName = attributeCodeName;
 	}
-	
-	private class InvalidFileTypeException extends Exception {
-		
-		public InvalidFileTypeException(String message) {
-			
+
+	private class InvalidFileTypeException extends Exception
+	{
+
+		public InvalidFileTypeException(String message)
+		{
+
 			super(message);
 		}
 	}

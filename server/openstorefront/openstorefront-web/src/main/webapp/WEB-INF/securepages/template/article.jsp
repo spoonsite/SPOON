@@ -87,6 +87,7 @@
 				});
 	
 				var questionPanel = Ext.create('OSF.component.template.Questions', {
+					scrollable: true
 				});				
 				
 				var tabPanel = Ext.create('OSF.component.template.LayoutTab', {

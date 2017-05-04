@@ -1,4 +1,4 @@
-#Front-end Code Standards
+# Front-end Code Standards
 ----
 
 1. Use the Ext.js docs.  Look at them first for utility functions  (format, string manipulation, etc...).  
@@ -8,7 +8,7 @@
 5. Avoid deeply nested components definitions as it easier to read a fewer layers.
 
 
-##IE 9 - Tips
+## IE 9 - Tips
 ----
 
 **Window sizes:** need height defined (minHeight, height) percent height will work only with maximizable on.

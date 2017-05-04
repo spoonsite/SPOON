@@ -33,6 +33,7 @@ Ext.define('OSF.form.EntryQuestions', {
 			width: '100%',
 			flex: 1,
 			columnLines: true,
+			bufferedRenderer: false,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					{

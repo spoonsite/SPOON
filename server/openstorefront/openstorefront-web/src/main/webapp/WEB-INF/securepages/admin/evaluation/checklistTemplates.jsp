@@ -16,12 +16,13 @@
 		Ext.onReady(function(){	
 			
 			var addEditWindow = Ext.create('Ext.window.Window', {
-				title: 'Add/Edit Checkist Template',
+				title: 'Add/Edit Checklist Template',
 				iconCls: 'fa fa-edit',
 				modal: true,
 				width: '75%',
 				height: '75%',
 				maximizable: true,
+				scrollable: true,
 				layout: 'fit',
 				items: [
 					{
@@ -459,28 +460,6 @@
 			};
 			
 			var actionView = function(record) {			
-				var actionPreviewNextRecord = function(next) {
-					if (next) {
-						Ext.getCmp('checklistGrid').getSelectionModel().selectNext();						
-					} else {
-						Ext.getCmp('checklistGrid').getSelectionModel().selectPrevious();						
-					}
-					viewWin.update(Ext.getCmp('checklistGrid').getSelection()[0]);					
-				};
-				
-				var previewCheckButtons = function() {	
-					if (Ext.getCmp('checklistGrid').getSelectionModel().hasPrevious()) {
-						Ext.getCmp('viewWinTools-previousBtn').setDisabled(false);
-					} else {
-						Ext.getCmp('viewWinTools-previousBtn').setDisabled(true);
-					}
-					
-					if (Ext.getCmp('checklistGrid').getSelectionModel().hasNext()) {
-						Ext.getCmp('viewWinTools-nextBtn').setDisabled(false);
-					} else {
-						Ext.getCmp('viewWinTools-nextBtn').setDisabled(true);
-					}					
-				};				
 				
 				var viewWin = Ext.create('Ext.window.Window', {
 					title: 'Checklist View',
@@ -498,15 +477,6 @@
 							dock: 'bottom',
 							items: [
 								{
-									text: 'Previous',
-									id: 'viewWinTools-previousBtn',
-									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-default icon-vertical-correction',
-									scale: 'medium',
-									handler: function() {
-										actionPreviewNextRecord(false);
-									}									
-								},
-								{
 									xtype: 'tbfill'
 								},
 								{
@@ -519,16 +489,6 @@
 								},
 								{
 									xtype: 'tbfill'
-								},
-								{
-									text: 'Next',
-									id: 'viewWinTools-nextBtn',
-									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default icon-vertical-correction',
-									iconAlign: 'right',
-									scale: 'medium',
-									handler: function() {
-										actionPreviewNextRecord(true);
-									}									
 								}
 							]
 						}

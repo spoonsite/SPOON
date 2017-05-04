@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.validation;
-
-import java.lang.reflect.Field;
+package edu.usu.sdl.openstorefront.core.view;
 
 /**
- * Used to determine Uniqueness
+ * Used to display status
  *
  * @author dshurtleff
- * @param <T> Entity that the unique handler can handle
  */
-public interface UniqueHandler<T>
+public class SystemStatusView
 {
 
-	public boolean isUnique(Field field, Object value, T fullDataObject);
+	private boolean started;
+	private String systemStatus;
 
-	/**
-	 * Retrieves the error message when uniqueness test fails
-	 *
-	 * @return Error message
-	 */
-	public String getMessage();
+	public SystemStatusView()
+	{
+	}
+
+	public boolean getStarted()
+	{
+		return started;
+	}
+
+	public void setStarted(boolean started)
+	{
+		this.started = started;
+	}
+
+	public String getSystemStatus()
+	{
+		return systemStatus;
+	}
+
+	public void setSystemStatus(String systemStatus)
+	{
+		this.systemStatus = systemStatus;
+	}
 
 }

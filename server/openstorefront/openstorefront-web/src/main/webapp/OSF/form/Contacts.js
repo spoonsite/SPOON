@@ -63,6 +63,7 @@ Ext.define('OSF.form.Contacts', {
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Entry Contact Id',  dataIndex: 'componentContactId', width: 200, hidden: true },
 				{ text: 'Contact Id',  dataIndex: 'contactId', width: 200, hidden: true },
+				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: contactPanel.hideSecurityMarking }
 			],
 			listeners: {
