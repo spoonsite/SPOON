@@ -515,8 +515,24 @@ Ext.define('OSF.component.MediaInsertWindow', {
 
 		var mediaInsertWindow = this;
 		
-		mediaInsertWindow.mediaSelectionUrl = (!mediaInsertWindow.isEditor ? (!mediaInsertWindow.mediaSelectionUrl ? "" : mediaInsertWindow.mediaSelectionUrl) : mediaInsertWindow.editor.settings.mediaSelectionUrl());
-
+		if (!mediaInsertWindow.isEditor) {
+			
+			if (!mediaInsertWindow.mediaSelectionUrl) {
+					
+				mediaInsertWindow.mediaSelectionUrl = '';
+			}
+			
+			var apiMediaType = 'GeneralMedia';
+			var requestFieldName = 'generalMedia';
+		}
+		else {
+			
+			mediaInsertWindow.mediaSelectionUrl = mediaInsertWindow.editor.settings.mediaSelectionUrl();
+			
+			var apiMediaType = 'TemporaryMedia';
+			var requestFieldName = 'temporaryMedia';
+		}
+		
 		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {			
 		});
 
@@ -634,7 +650,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 							items: [
 								{
 									xtype: 'textfield',									
-									name: 'temporaryMedia.name',
+									name: requestFieldName + '.name',
 									allowBlank: false,
 									flex: 9,
 									labelWidth: 175,
@@ -657,17 +673,18 @@ Ext.define('OSF.component.MediaInsertWindow', {
 											uploadForm.setLoading("Uploading...");
 										
 											uploadForm.submit({
-												url: 'Media.action?' + (mediaInsertWindow.isEditor ? 'UploadTemporaryMedia' : 'UploadMedia'),
+												url: 'Media.action?Upload' + apiMediaType,
 												method: 'POST',
 												success: function(form, action) { },
 												failure: function(form, action) {
+													
 													// In this case, to not up-end the
 													// server side things, technically a 
 													// failure is a potentially a sucess
 													if (action.result && action.result.fileName) {
 														// True success
 														uploadForm.setLoading(false);
-														var link = 'Media.action?' + (mediaInsertWindow.isEditor ? 'TemporaryMedia' : 'GeneralMedia') + '&name=';
+														var link = 'Media.action?' + apiMediaType + '&name=';
 														link += encodeURIComponent(action.result.name);
 														
 														var mediaTypeCode = mediaInsertWindow.mediaToShow;
