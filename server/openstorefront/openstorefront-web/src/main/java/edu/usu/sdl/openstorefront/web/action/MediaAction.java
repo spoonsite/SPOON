@@ -287,7 +287,7 @@ public class MediaAction
 			if (validationResult.valid()) {
 				try {
 					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
-					return streamResults(generalMedia);
+					return streamResults(generalMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
@@ -375,7 +375,7 @@ public class MediaAction
 			if (validationResult.valid()) {
 				try {
 					temporaryMedia = service.getSystemService().saveTemporaryMedia(temporaryMedia, file.getInputStream());
-					return streamResults(temporaryMedia);
+					return streamResults(temporaryMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
