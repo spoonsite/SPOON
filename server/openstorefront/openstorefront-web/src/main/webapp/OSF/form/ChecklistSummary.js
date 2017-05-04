@@ -20,8 +20,14 @@ Ext.define('OSF.form.ChecklistSummary', {
 	extend: 'Ext.form.Panel',
 	alias: 'osf.form.ChecklistSummary',
 
-	layout: 'border',
-
+	scrollable: true,
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -54,6 +60,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 				},
 				{
 					text: 'Save',
+					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
 					handler: function() {
 						var summaryForm = this.up('panel');
@@ -73,7 +80,6 @@ Ext.define('OSF.form.ChecklistSummary', {
 		var summaryForm = this;
 				
 		summaryForm.topPanel = Ext.create('Ext.panel.Panel', {
-			region: 'north',
 			items: [
 				{
 					xtype: 'panel',	
@@ -93,12 +99,13 @@ Ext.define('OSF.form.ChecklistSummary', {
 					tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()			
 				}
 			]
-		});	
+		});
 				
 		summaryForm.recommendations = Ext.create('Ext.grid.Panel', {
 			title: 'Recommendations',
-			region: 'center',
 			columnLines: true,
+			margin: '0 0 5 0',
+			scrollable: false,
 			store: {	
 				proxy: {
 					type: 'ajax',
@@ -394,9 +401,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 
 				summaryForm.topPanel.getComponent('summary').on('change', function(){
 					summaryForm.markUnsaved();			
-				}, undefined, {
-					buffer: 2000
-				});
+				}, undefined);
 			}
 		});
 				
@@ -404,9 +409,12 @@ Ext.define('OSF.form.ChecklistSummary', {
 	},
 	markUnsaved: function () {
 		var summaryForm = this;
-		summaryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');				
 		summaryForm.saveTask.delay(1000*60*3);		
-		summaryForm.unsavedChanges = true;
+		
+		if (!summaryForm.unsavedChanges) {
+			summaryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');						
+			summaryForm.unsavedChanges = true;
+		}
 	},
 	saveData: function() {
 		var summaryForm = this;
@@ -417,6 +425,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 			data.workflowStatus !== summaryForm.fullEvalData.workflowStatus) {
 				
 				summaryForm.saveTask.cancel();
+				summaryForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 				CoreUtil.submitForm({
 					url: 'api/v1/resource/evaluations/' + 
 						summaryForm.evaluationId 
@@ -426,6 +435,9 @@ Ext.define('OSF.form.ChecklistSummary', {
 					data: data,
 					form: summaryForm,
 					noLoadmask: true,
+					callback: function(form, action) {
+						summaryForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
+					},					
 					success: function(action, opts) {			
 						Ext.toast('Saved Summary');
 						summaryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));

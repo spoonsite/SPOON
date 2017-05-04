@@ -167,12 +167,13 @@ public interface ComponentService
 	public String getComponentApprovalStatus(String componentId);
 
 	/**
-	 * Gets component's data sensitivity 
+	 * Gets component's data sensitivity
+	 *
 	 * @param componentId
 	 * @return sensitivityModel or null if the component doesn't exist
 	 */
 	public ComponentSensitivityModel getComponentSensitivity(String componentId);
-		
+
 	/**
 	 * Return the whole list of components. (the short view) Just Active and
 	 * Approved components
@@ -368,6 +369,7 @@ public interface ComponentService
 	public void saveComponentTracking(ComponentTracking tracking);
 
 	/**
+	 * This will save the component (skipping duplication checking)
 	 *
 	 * @param component
 	 * @return

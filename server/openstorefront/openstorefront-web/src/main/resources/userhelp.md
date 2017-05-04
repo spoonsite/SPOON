@@ -48,14 +48,16 @@ Version 2.3 incorporates:
  * Evaluator Tools added
  * Admin- Adding Roles and Permissions to Users
  * Admin- System Export/Import
+ * IE9 is now not officially supported.  A warning will come up for IE9 users, advising them to upgrade their browser.
  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
-## 1.2 Known Issues, v2.2 @ADMIN-SYSTEM-MANAGEMENT 
+## 1.2 Known Issues, v2.3 @ADMIN-SYSTEM-MANAGEMENT 
  
- * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
-  attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
+ * 
+ 
+
 
 # 2. User Features
 ------
@@ -1051,6 +1053,17 @@ Inactive entries are not visible to or searchable by users.
 3.  Click **Upload**. The processing will happen in the background and a
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
+
+**Version and Change History:**
+
+Entry Versions(Snapshots) hold a copy of an entry that can later be used to restore
+an entry to specific version.  Snapshots are created only when importing a record 
+of the same entry.  Also, snapshots can be created manually using the entry version tool.
+
+Change history logs all changes that occur to an entry (2.3+ only).  This is 
+a running history that stays with the entry.  It records add/edits/remove of entry details.
+Note: Some changes/actions trigger many changes on an entry and the application will create 
+records for each change.  The history is provided for auditing and conflict resolution.
 
 
 #### 3.2.3.2 Approval @ADMIN-ENTRY-MANAGEMENT

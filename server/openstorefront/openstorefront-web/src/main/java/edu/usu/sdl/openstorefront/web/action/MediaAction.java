@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
@@ -165,6 +166,10 @@ public class MediaAction
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+						allow = true;
+					}
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -404,7 +409,7 @@ public class MediaAction
 				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream());
 				List<ContentSectionMedia> data = new ArrayList<>();
 				data.add(contentSectionMedia);
-				return streamResults(data);
+				return streamResults(data, MediaType.TEXT_HTML);
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 			} finally {

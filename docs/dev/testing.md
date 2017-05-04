@@ -1,7 +1,7 @@
-#Testing
+# Testing
 ----
 
-##Layers
+## Layers
 
 1. Unit Tests (Server-side) - Unit test should cover Core libraries and utility classes.
 2. Integration/Container Tests (openstorefront/test/ServiceTest.action) - These test the server-side service/business layer.

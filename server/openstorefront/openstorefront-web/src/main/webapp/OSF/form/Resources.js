@@ -231,6 +231,7 @@ Ext.define('OSF.form.Resources', {
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
 				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: resourcePanel.hideSecurityMarking  }
 			],
 			listeners: {

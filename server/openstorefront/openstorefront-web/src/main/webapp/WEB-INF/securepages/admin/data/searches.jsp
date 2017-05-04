@@ -35,157 +35,161 @@
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function() {
-				
-				var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
-					id: 'advanceSearch'
-				});
-	
-				var searchWindow = Ext.create('Ext.window.Window', {
-					id: 'searchWindow',
-					title: 'Add/Edit Search',
-					iconCls: 'fa fa-lg fa-search-plus',
-					modal: true,
-					width: '80%',
-					hieght: '80%',
-					y: 50,
-					maximizable: true,
-					scrollable: true,
-					layout: 'card',
-					items: [
-						advanceSearch
-					],
-					dockedItems: [
-						{
-							xtype: 'textfield',
-							id: 'searchName',
-							width: '100%',
-							name: 'searchName',
-							allowBlank: false,
-							maxLength: 255,
-							margin: '10 10 0 10',
-							labelAlign: 'top',
-							fieldLabel: 'Search Name <span class="field-required" />',
-							labelSeparator: '',							
-							listeners: {
-								change: function(field, newValue, oldvalue, opts){										
-									advanceSearch.changed = true;
-								}
-							}							
-						},
-						{
-							html: '<hr>',
-							dock: 'top'
-						},
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							items: [
-								{
-									text: 'Save',
-									iconCls: 'fa fa-lg fa-save icon-button-color-save',
-									handler: function(){
-										actionSaveSearch();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},								
-								{
-									text: 'Preview Results',
-									iconCls: 'fa fa-lg fa-eye icon-button-color-view',
-									handler: function(){
-										Ext.getCmp('advanceSearch').previewResults();
-									}							
-								},
 
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-									handler: function () {
-										if (advanceSearch.changed) {
-											Ext.Msg.show({
-												title:'Save Changes?',
-												message: 'You are closing a search that has unsaved changes. Would you like to save your changes?',
-												buttons: Ext.Msg.YESNOCANCEL,
-												icon: Ext.Msg.QUESTION,
-												fn: function(btn) {
-													if (btn === 'yes') {
-														actionSaveSearch();														
-													} else if (btn === 'no') {
-														Ext.getCmp('searchWindow').close();
-													} 
-												}
-											});											
-										} else {
-											Ext.getCmp('searchWindow').close();
+	
+				var createSearchWindow = function() {
+					var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {	
+						itemId: 'advanceSearch'
+					});
+					
+					var searchWindow = Ext.create('Ext.window.Window', {						
+						title: 'Add/Edit Search',
+						iconCls: 'fa fa-lg fa-search-plus',
+						closeAction: 'destroy',
+						modal: true,
+						width: '80%',
+						height: '80%',					
+						y: 50,
+						maximizable: true,
+						scrollable: true,
+						layout: 'card',
+						items: [
+							advanceSearch
+						],
+						dockedItems: [
+							{
+								xtype: 'textfield',
+								id: 'searchName',
+								width: '100%',
+								name: 'searchName',
+								allowBlank: false,
+								maxLength: 255,
+								margin: '10 10 0 10',
+								labelAlign: 'top',
+								fieldLabel: 'Search Name <span class="field-required" />',
+								labelSeparator: '',							
+								listeners: {
+									change: function(field, newValue, oldvalue, opts){										
+										advanceSearch.changed = true;
+									}
+								}							
+							},
+							{
+								html: '<hr>',
+								dock: 'top'
+							},
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-save',
+										handler: function(){
+											actionSaveSearch();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},								
+									{
+										text: 'Preview Results',
+										iconCls: 'fa fa-lg fa-eye icon-button-color-view',
+										handler: function(){
+											advanceSearch.previewResults();
+										}							
+									},
+
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+										handler: function () {
+											if (advanceSearch.changed) {
+												Ext.Msg.show({
+													title:'Save Changes?',
+													message: 'You are closing a search that has unsaved changes. Would you like to save your changes?',
+													buttons: Ext.Msg.YESNOCANCEL,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															actionSaveSearch();														
+														} else if (btn === 'no') {
+															searchWindow.close();
+														} 
+													}
+												});											
+											} else {
+												searchWindow.close();
+											}
 										}
 									}
-								}
-							]
-						}
-					]					
-				});
-				
-				var actionSaveSearch = function() {
-					var searchPanel = Ext.getCmp('advanceSearch');
-					var search = searchPanel.getSearch();
-					var searchName = Ext.getCmp('searchName').getValue();
+								]
+							}
+						]					
+					});
 
-					//check name and search elements
-					if (!searchName || searchName === '') {
+					var actionSaveSearch = function() {
+						var searchPanel = advanceSearch;
+						var search = searchPanel.getSearch();
+						var searchName = Ext.getCmp('searchName').getValue();
+
+						//check name and search elements
+						if (!searchName || searchName === '') {
+								Ext.Msg.show({
+									title:'Validation',
+									message: 'Please enter Search Name.',
+									buttons: Ext.Msg.OK,
+									icon: Ext.Msg.ERROR,
+									fn: function(btn) {							
+									}	
+								});
+							return;
+						}
+
+						if (!search) {
 							Ext.Msg.show({
 								title:'Validation',
-								message: 'Please enter Search Name.',
+								message: 'Enter at least one Search Criteria',
 								buttons: Ext.Msg.OK,
 								icon: Ext.Msg.ERROR,
 								fn: function(btn) {							
 								}	
-							});
-						return;
-					}
-
-					if (!search) {
-						Ext.Msg.show({
-							title:'Validation',
-							message: 'Enter at least one Search Criteria',
-							buttons: Ext.Msg.OK,
-							icon: Ext.Msg.ERROR,
-							fn: function(btn) {							
-							}	
-						});											
-						return;
-					}
-
-					var search = {
-						searchName: searchName,
-						searchRequest: Ext.encode(search)
-					};
-
-					var method = 'POST';
-					var endUrl = '';
-
-					if (searchPanel.searchId) {
-						method = 'PUT';
-						endUrl = '/' +searchPanel.searchId;
-					}
-
-					searchPanel.setLoading('Saving...');
-					Ext.Ajax.request({
-						url: 'api/v1/resource/systemsearches' + endUrl,
-						method: method,
-						jsonData: search,
-						callback: function() {
-							searchPanel.setLoading(false);
-						},
-						success: function(response, opts){
-							Ext.toast("Successfully saved search.");
-							actionRefresh();
-							Ext.getCmp('searchWindow').close();
+							});											
+							return;
 						}
-					});
+
+						var search = {
+							searchName: searchName,
+							searchRequest: Ext.encode(search)
+						};
+
+						var method = 'POST';
+						var endUrl = '';
+
+						if (searchPanel.searchId) {
+							method = 'PUT';
+							endUrl = '/' +searchPanel.searchId;
+						}
+
+						searchPanel.setLoading('Saving...');
+						Ext.Ajax.request({
+							url: 'api/v1/resource/systemsearches' + endUrl,
+							method: method,
+							jsonData: search,
+							callback: function() {
+								searchPanel.setLoading(false);
+							},
+							success: function(response, opts){
+								Ext.toast("Successfully saved search.");
+								actionRefresh();
+								searchWindow.close();
+							}
+						});
+					};
+					return searchWindow;
 				};
 					
 				var searchGrid = Ext.create('Ext.grid.Panel', {
@@ -333,18 +337,25 @@
 				};
 				
 				var actionAdd = function() {
+					var searchWindow = createSearchWindow();
 					searchWindow.show();
+					var advanceSearch = searchWindow.queryById('advanceSearch');
 					advanceSearch.reset();
 					advanceSearch.searchId = null;
 					searchWindow.getComponent('searchName').reset();
+					advanceSearch.changed = false;					
 				};
 				
 				var actionEdit = function(record) {
+					var searchWindow = createSearchWindow();
 					var searchRequest = Ext.decode(record.get('searchRequest'));
 					searchWindow.show();
+					var advanceSearch = searchWindow.queryById('advanceSearch');					
 					advanceSearch.searchId = record.get('searchId');
-					advanceSearch.edit(searchRequest.searchElements);
+					advanceSearch.edit(searchRequest.searchElements);					
 					searchWindow.getComponent('searchName').setValue(record.get('searchName'));
+					advanceSearch.changed = false;
+					
 				};
 
 				var actionToggleStatus = function(record) {

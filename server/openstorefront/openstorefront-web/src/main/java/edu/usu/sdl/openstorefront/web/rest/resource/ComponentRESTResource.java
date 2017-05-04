@@ -211,6 +211,7 @@ public class ComponentRESTResource
 				componentExample.setComponentType(null);
 			}
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -229,6 +230,7 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
@@ -536,6 +538,7 @@ public class ComponentRESTResource
 		componentTagExample.setText(tagText);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
+		tags = FilterEngine.filter(tags, true);
 
 		if (approvedOnly) {
 			tags = tags.stream()
@@ -688,6 +691,15 @@ public class ComponentRESTResource
 			attribute.setComponentId(componentId);
 			attributeKeySet.add(attribute.getComponentAttributePk().pkValue());
 		});
+
+		//pull existing for pending id; need it for validation
+		Component existingRecord = new Component();
+		existingRecord.setComponentId(componentId);
+		existingRecord = existingRecord.find();
+		if (existingRecord != null) {
+			component.getComponent().setPendingChangeId(existingRecord.getPendingChangeId());
+		}
+
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -1582,7 +1594,6 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}/force")
@@ -1592,6 +1603,11 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
@@ -4186,13 +4202,13 @@ public class ComponentRESTResource
 			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
 
 			QueryByExample configQueryExample = new QueryByExample();
-			configQueryExample.getFieldOptions().put("issueNumber", option);
+			configQueryExample.getFieldOptions().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, option);
 			configQueryExample.setExample(configExample);
 
 			long count = service.getPersistenceService().countByExample(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
-				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+				restErrorModel.getErrors().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, "Issue number needs to be unique per project.");
 				return Response.status(Response.Status.CONFLICT).entity(restErrorModel).build();
 			} else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);

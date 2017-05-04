@@ -174,16 +174,18 @@ public class EvaluationExporter
 		if (files != null) {
 			int importedCount = 0;
 			for (TFile dataFile : files) {
-				try (InputStream in = new TFileInputStream(dataFile)) {
-					archive.setStatusDetails("Importing: " + dataFile.getName());
-					archive.save();
+				if (dataFile.isFile()) {
+					try (InputStream in = new TFileInputStream(dataFile)) {
+						archive.setStatusDetails("Importing: " + dataFile.getName());
+						archive.save();
 
-					EvaluationAll evaluationAll = StringProcessor.defaultObjectMapper().readValue(in, EvaluationAll.class);
-					service.getEvaluationService().saveEvaluationAll(evaluationAll);
-					importedCount++;
-				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
-					addError("Unable to load evaluation: " + dataFile.getName());
+						EvaluationAll evaluationAll = StringProcessor.defaultObjectMapper().readValue(in, EvaluationAll.class);
+						service.getEvaluationService().saveEvaluationAll(evaluationAll);
+						importedCount++;
+					} catch (Exception ex) {
+						LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
+						addError("Unable to load evaluation: " + dataFile.getName());
+					}
 				}
 			}
 
@@ -192,20 +194,22 @@ public class EvaluationExporter
 			files = dataDir.listFiles();
 			if (files != null) {
 				for (TFile dataFile : files) {
-					try (InputStream in = new TFileInputStream(dataFile)) {
-						archive.setStatusDetails("Importing: " + dataFile.getName());
-						archive.save();
+					if (dataFile.isFile()) {
+						try (InputStream in = new TFileInputStream(dataFile)) {
+							archive.setStatusDetails("Importing: " + dataFile.getName());
+							archive.save();
 
-						List<ContentSectionMedia> allMediaRecords = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionMedia>>()
-						{
-						});
-						for (ContentSectionMedia media : allMediaRecords) {
-							media.save();
+							List<ContentSectionMedia> allMediaRecords = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ContentSectionMedia>>()
+							{
+							});
+							for (ContentSectionMedia media : allMediaRecords) {
+								media.save();
+							}
+
+						} catch (Exception ex) {
+							LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
+							addError("Unable to load evaluation: " + dataFile.getName());
 						}
-
-					} catch (Exception ex) {
-						LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
-						addError("Unable to load evaluation: " + dataFile.getName());
 					}
 				}
 				TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);

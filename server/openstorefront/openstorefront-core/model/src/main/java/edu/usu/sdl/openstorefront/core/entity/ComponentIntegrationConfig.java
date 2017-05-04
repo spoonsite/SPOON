@@ -36,6 +36,8 @@ public class ComponentIntegrationConfig
 		extends StandardEntity<ComponentIntegrationConfig>
 {
 
+	public static final String FIELD_ISSUENUMBER = "issueNumber";
+
 	@PK(generated = true)
 	@NotNull
 	private String integrationConfigId;

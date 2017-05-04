@@ -1,7 +1,7 @@
-#JIRA - Issue Tracking  Workflow
+# JIRA - Issue Tracking  Workflow
 ----
 
-##Ticket Types
+## Ticket Types
 
 -  New Features, Improvements, Bugs
 
@@ -9,7 +9,7 @@
 
 -  Build
 
-##New Features, Improvements, Bugs Stages
+## New Features, Improvements, Bugs Stages
 
 1. Pending Review - Ticket in product backlog.
 
@@ -38,11 +38,11 @@ implementation plan, time estimate, sub-tasks, and other relevant changes.
 12. Close - Ticket moved to production. Any new changes require creation of a new ticket.
 
 
-##Task
+## Task
 
 A task ticket is created to represent a general task that isn't subject to the workflow above.
 
 Example: Updating development documentation.
 
-##Build
+## Build
 A build ticket is created for each release.  It contains all move instructions, environment changes, and configuration changes needed for the release.

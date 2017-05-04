@@ -162,7 +162,7 @@ Ext.define('OSF.form.Relationships', {
 									}
 									var target = this.up('form').getComponent('relationshipTargetCB');
 									target.reset();
-									target.load({
+									target.getStore().load({
 										url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
 									});
 								}

@@ -71,6 +71,22 @@
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/systemarchives'							
+						},
+						listeners: {
+							load: function(store, records, opts) {
+								var autoRefresh = false;
+								store.each(function(record){
+									if (record.get('runStatus') === 'P' || record.get('runStatus') === 'W') {
+										autoRefresh = true;
+									}
+								});
+								
+								if (autoRefresh) {
+									Ext.defer(function(){
+										actionRefresh();
+									}, 2000);
+								}
+							}
 						}
 					},
 					columns: [
@@ -136,7 +152,9 @@
 								var record = selected[0];
 								
 								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
-									tools.getComponent('download').setDisabled(false);
+									if (record.get('archiveFilename') && record.get('archiveFilename') !== "") {									
+										tools.getComponent('download').setDisabled(false);
+									}
 								}
 								if (record.get('runStatus') === 'E' || record.get('runStatus') === 'C') {
 									tools.getComponent('delete').setDisabled(false);
@@ -229,7 +247,14 @@
 				addComponentToMainViewPort(archiveGrid);
 				
 				var actionRefresh = function() {
-					archiveGrid.getStore().reload();
+					archiveGrid.getStore().reload({
+						callback: function(records, operation, success) {
+							if (!success) {
+								//system may not be available
+								window.location.reload();
+							}
+						}
+					});
 				};
 				
 				var actionGenerate = function() {

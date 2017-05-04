@@ -54,6 +54,7 @@ Ext.define('OSF.form.Dependencies', {
 				{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
 				{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: dependanciesPanel.hideSecurityMarking }
 			],
 			listeners: {

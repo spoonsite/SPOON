@@ -442,78 +442,87 @@ public class EvaluationServiceImpl
 	{
 		Objects.requireNonNull(evaluationId);
 
-		EvaluationAll existing = getEvaluation(evaluationId);
-		if (existing == null) {
-			throw new OpenStorefrontRuntimeException("Unable to find evaluation to copy: " + evaluationId);
-		}
+		try {
+			getChangeLogService().suspendSaving();
 
-		Evaluation evaluation = existing.getEvaluation();
-
-		WorkflowStatus initial = WorkflowStatus.initalStatus();
-
-		Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getOriginComponentId());
-		evaluation.setComponentId(changeRequest.getComponentId());
-
-		evaluation.setEvaluationId(persistenceService.generateId());
-		evaluation.setWorkflowStatus(initial.getCode());
-		evaluation.setVersion(StringUtils.left(evaluation.getVersion() + "-COPY", OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
-		evaluation.setPublished(Boolean.FALSE);
-		evaluation.populateBaseCreateFields();
-		evaluation = persistenceService.persist(evaluation);
-
-		EvaluationChecklist checklist = existing.getCheckListAll().getEvaluationChecklist();
-		checklist.setChecklistId(persistenceService.generateId());
-		checklist.setWorkflowStatus(initial.getCode());
-		checklist.setEvaluationId(evaluationId);
-		checklist.populateBaseCreateFields();
-		checklist = persistenceService.persist(checklist);
-
-		for (EvaluationChecklistRecommendation recommendation : existing.getCheckListAll().getRecommendations()) {
-			EvaluationChecklistRecommendation newRecommendation = new EvaluationChecklistRecommendation();
-
-			newRecommendation.updateFields(recommendation);
-			newRecommendation.setRecommendationId(persistenceService.generateId());
-			newRecommendation.setChecklistId(checklist.getChecklistId());
-			newRecommendation.populateBaseCreateFields();
-			persistenceService.persist(newRecommendation);
-		}
-
-		for (EvaluationChecklistResponse response : existing.getCheckListAll().getResponses()) {
-			EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
-			newResponse.updateFields(response);
-			newResponse.setQuestionId(response.getQuestionId());
-			newResponse.setChecklistId(checklist.getChecklistId());
-			newResponse.setResponseId(persistenceService.generateId());
-			newResponse.setWorkflowStatus(initial.getCode());
-			newResponse.populateBaseCreateFields();
-			persistenceService.persist(newResponse);
-		}
-
-		for (ContentSectionAll sectionAll : existing.getContentSections()) {
-			String existingSectionId = sectionAll.getSection().getContentSectionId();
-
-			sectionAll.getSection().setContentSectionId(persistenceService.generateId());
-			sectionAll.getSection().setEntity(Evaluation.class.getSimpleName());
-			sectionAll.getSection().setEntityId(evaluationId);
-			sectionAll.getSection().setWorkflowStatus(initial.getCode());
-			sectionAll.getSection().populateBaseCreateFields();
-			ContentSection contentSection = persistenceService.persist(sectionAll.getSection());
-
-			for (ContentSubSection subSection : sectionAll.getSubsections()) {
-				subSection.setSubSectionId(persistenceService.generateId());
-				subSection.setContentSectionId(contentSection.getContentSectionId());
-				subSection.populateBaseCreateFields();
-				persistenceService.persist(subSection);
+			EvaluationAll existing = getEvaluation(evaluationId);
+			if (existing == null) {
+				throw new OpenStorefrontRuntimeException("Unable to find evaluation to copy: " + evaluationId);
 			}
 
-			ContentSectionMedia existingMedia = new ContentSectionMedia();
-			existingMedia.setContentSectionId(existingSectionId);
-			List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();
-			getContentSectionService().copySectionMedia(existingMediaRecords, contentSection);
+			Evaluation evaluation = existing.getEvaluation();
 
+			WorkflowStatus initial = WorkflowStatus.initalStatus();
+
+			Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getOriginComponentId());
+			evaluation.setComponentId(changeRequest.getComponentId());
+
+			evaluation.setEvaluationId(persistenceService.generateId());
+			evaluation.setWorkflowStatus(initial.getCode());
+			evaluation.setVersion(StringUtils.left(evaluation.getVersion() + "-COPY", OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+			evaluation.setPublished(Boolean.FALSE);
+			evaluation.populateBaseCreateFields();
+			evaluation = persistenceService.persist(evaluation);
+
+			String copyEvaluationId = evaluation.getEvaluationId();
+
+			EvaluationChecklist checklist = existing.getCheckListAll().getEvaluationChecklist();
+			checklist.setChecklistId(persistenceService.generateId());
+			checklist.setWorkflowStatus(initial.getCode());
+			checklist.setEvaluationId(copyEvaluationId);
+			checklist.populateBaseCreateFields();
+			checklist = persistenceService.persist(checklist);
+
+			for (EvaluationChecklistRecommendation recommendation : existing.getCheckListAll().getRecommendations()) {
+				EvaluationChecklistRecommendation newRecommendation = new EvaluationChecklistRecommendation();
+				newRecommendation.setRecommendationId(persistenceService.generateId());
+				newRecommendation.setChecklistId(checklist.getChecklistId());
+				newRecommendation.updateFields(recommendation);
+
+				newRecommendation.populateBaseCreateFields();
+				persistenceService.persist(newRecommendation);
+			}
+
+			for (EvaluationChecklistResponse response : existing.getCheckListAll().getResponses()) {
+				EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
+				newResponse.setQuestionId(response.getQuestionId());
+				newResponse.setChecklistId(checklist.getChecklistId());
+				newResponse.setResponseId(persistenceService.generateId());
+				newResponse.updateFields(response);
+
+				newResponse.setWorkflowStatus(initial.getCode());
+				newResponse.populateBaseCreateFields();
+				persistenceService.persist(newResponse);
+			}
+
+			for (ContentSectionAll sectionAll : existing.getContentSections()) {
+				String existingSectionId = sectionAll.getSection().getContentSectionId();
+
+				sectionAll.getSection().setContentSectionId(persistenceService.generateId());
+				sectionAll.getSection().setEntity(Evaluation.class.getSimpleName());
+				sectionAll.getSection().setEntityId(copyEvaluationId);
+				sectionAll.getSection().setWorkflowStatus(initial.getCode());
+				sectionAll.getSection().populateBaseCreateFields();
+				ContentSection contentSection = persistenceService.persist(sectionAll.getSection());
+
+				for (ContentSubSection subSection : sectionAll.getSubsections()) {
+					subSection.setSubSectionId(persistenceService.generateId());
+					subSection.setContentSectionId(contentSection.getContentSectionId());
+					subSection.populateBaseCreateFields();
+					persistenceService.persist(subSection);
+				}
+
+				ContentSectionMedia existingMedia = new ContentSectionMedia();
+				existingMedia.setContentSectionId(existingSectionId);
+				List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();
+				getContentSectionService().copySectionMedia(existingMediaRecords, contentSection);
+
+			}
+
+			return evaluation.getEvaluationId();
+		} finally {
+			getChangeLogService().resumeSaving();
 		}
-
-		return evaluation.getEvaluationId();
 	}
 
 }

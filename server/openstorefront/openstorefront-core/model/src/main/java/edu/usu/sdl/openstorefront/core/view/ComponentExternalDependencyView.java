@@ -34,7 +34,7 @@ public class ComponentExternalDependencyView
 	private String dependancyReferenceLink;
 	private String comment;
 	private Date updateDts;
-	private String activeStatus;
+	private String activeStatus;	
 
 	public ComponentExternalDependencyView()
 	{

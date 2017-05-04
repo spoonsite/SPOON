@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
@@ -453,9 +454,18 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
+	/**
+	 * This skips the external component duplication check. Don't use for
+	 * External Data Imports
+	 *
+	 * @param component
+	 * @return
+	 */
 	public RequiredForComponent doSaveComponent(RequiredForComponent component)
 	{
-		return doSaveComponent(component, new FileHistoryOption());
+		FileHistoryOption option = new FileHistoryOption();
+		option.setSkipDuplicationCheck(Boolean.TRUE);
+		return doSaveComponent(component, option);
 	}
 
 	/**
@@ -489,6 +499,9 @@ public class CoreComponentServiceImpl
 		Component oldComponent = null;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
+		} else {
+			//our id lookup only
+			oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 		}
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
@@ -1348,7 +1361,7 @@ public class CoreComponentServiceImpl
 			primaryQuery.append(" ");
 			primaryQuery.append(filter.getSortOrder());
 		}
-		
+
 		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
 
 		result.setCount(componentTrackings.size());
@@ -1689,6 +1702,7 @@ public class CoreComponentServiceImpl
 	public ComponentSensitivityModel getComponentSensitivity(String componentId)
 	{
 		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
+		componentSensitivityModel.setComponentId(componentId);
 
 		Element element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
 		if (element != null) {
@@ -1704,7 +1718,7 @@ public class CoreComponentServiceImpl
 				cacheSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
 				cacheSensitivityModel.setDataSource(document.field("dataSource"));
 
-				Element newElement = new Element(document.field("componentId"), componentSensitivityModel);
+				Element newElement = new Element(document.field("componentId"), cacheSensitivityModel);
 				if (document.field("componentId").equals(componentId)) {
 					componentSensitivityModel.setComponentId(document.field("componentId"));
 					componentSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
@@ -1725,8 +1739,34 @@ public class CoreComponentServiceImpl
 			cleanupCache(orignalComponentId);
 			ComponentAll componentAll = getFullComponent(orignalComponentId);
 			if (componentAll != null) {
+
+				//check the copy name it should be unique
+				String newName = componentAll.getComponent().getName() + COPY_MARKER;
+
+				String validNewName = newName;
+				boolean nameIsUnique = false;
+				int count = 1;
+				while (nameIsUnique == false) {
+					Component componentSearch = new Component();
+					componentSearch.setName(validNewName.toLowerCase());
+
+					QueryByExample queryByExample = new QueryByExample(componentSearch);
+					queryByExample.getFieldOptions().put(Component.FIELD_NAME,
+							new GenerateStatementOptionBuilder()
+									.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
+									.build());
+
+					Component existing = persistenceService.queryOneByExample(queryByExample);
+					if (existing == null) {
+						nameIsUnique = true;
+					} else {
+						validNewName = newName + count;
+						count++;
+					}
+				}
+
 				componentAll.getComponent().setComponentId(null);
-				componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
+				componentAll.getComponent().setName(validNewName);
 				componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 				componentAll.getComponent().setApprovedDts(null);
 				componentAll.getComponent().setApprovedUser(null);
@@ -2106,6 +2146,7 @@ public class CoreComponentServiceImpl
 				mergeComponent.getComponent().setApprovedDts(targetComponent.getComponent().getApprovedDts());
 				mergeComponent.getComponent().setRecordVersion(targetComponent.getComponent().getRecordVersion());
 				mergeComponent.getComponent().setLastModificationType(ModificationType.MERGE);
+				componentService.setModificationType(ModificationType.MERGE);
 
 				targetComponent.getComponent().updateFields(mergeComponent.getComponent());
 
@@ -2378,7 +2419,7 @@ public class CoreComponentServiceImpl
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
 		Objects.requireNonNull(componentTypeTemplate);
-		
+
 		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);

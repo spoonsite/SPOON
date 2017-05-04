@@ -144,7 +144,6 @@ public class PropertiesManager
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static SortedProperties properties;
-	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
 	private static SortedProperties defaults = new SortedProperties();
 	private static final ReentrantLock LOCK = new ReentrantLock();
@@ -167,8 +166,10 @@ public class PropertiesManager
 
 	public static String getModuleVersion()
 	{
+		loadVersionProperties();
+		
 		String key = "app.module.version";
-		String moduleVersion = getValue(key);
+		String moduleVersion = properties.getProperty(key);
 
 		//Make sure it's a valid osgi module version (only likes 2.0.2 )
 		StringBuilder version = new StringBuilder();
@@ -262,23 +263,19 @@ public class PropertiesManager
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 
-			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
+			
+			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
+				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
 			}
-			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
+			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(propertiesFilename))) {
 				properties = new SortedProperties();
 				properties.load(bin);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
 			}
 
-			try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
-				Properties versionProperties = new Properties();
-				versionProperties.load(in);
-				properties.putAll(versionProperties);
-			} catch (IOException e) {
-				throw new OpenStorefrontRuntimeException(e);
-			}
+			loadVersionProperties();
 
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
@@ -286,11 +283,26 @@ public class PropertiesManager
 			LOCK.unlock();
 		}
 	}
+	
+	private static void loadVersionProperties() 
+	{
+		try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
+			Properties versionProperties = new Properties();
+			versionProperties.load(in);
+			if (properties == null) {
+				properties = new SortedProperties();
+			}
+			properties.putAll(versionProperties);
+		} catch (IOException e) {
+			throw new OpenStorefrontRuntimeException(e);
+		}		
+	}
 
 	private static void saveProperties()
 	{
 		LOCK.lock();
-		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(PROPERTIES_FILENAME))) {
+		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();		
+		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
 			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);

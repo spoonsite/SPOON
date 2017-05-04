@@ -21,6 +21,13 @@ Ext.define('OSF.form.EntrySummary', {
 	alias: 'osf.form.EntrySummary',
 
 	layout: 'fit',
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	bodyStyle: 'padding: 20px',
 	dockedItems: [
 		{
@@ -76,7 +83,7 @@ Ext.define('OSF.form.EntrySummary', {
 					itemId: 'version',
 					fieldLabel: 'Version',
 					name: 'version'																		
-				},
+				},										
 				{
 					xtype: 'panel',
 					html: '<b>Description</b> <span class="field-required" />'
@@ -91,6 +98,15 @@ Ext.define('OSF.form.EntrySummary', {
 				{
 					xtype: 'tbfill'
 				},
+				{
+					text: 'Save',
+					itemId: 'saveBtn',
+					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+					handler: function() {										
+						var entryForm = this.up('panel');
+						entryForm.saveData();
+					}
+				},				
 				{
 					xtype: 'tbtext',
 					itemId: 'status'
@@ -122,7 +138,10 @@ Ext.define('OSF.form.EntrySummary', {
 				})			
 			}				
 		);
-		
+
+		entryForm.saveTask = new Ext.util.DelayedTask(function(){
+			entryForm.saveData();
+		});	
 	},
 	
 	loadData: function(evaluationId, componentId, data, opts) {
@@ -149,36 +168,35 @@ Ext.define('OSF.form.EntrySummary', {
 				
 				//set change event
 				entryForm.getComponent('description').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});
+					entryForm.markUnsaved();
+				}, undefined);
 				entryForm.getComponent('topform').getComponent('name').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});
+					entryForm.markUnsaved();
+				}, undefined);
 				entryForm.getComponent('topform').getComponent('organization').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});				
+					entryForm.markUnsaved();
+				}, undefined);				
 				entryForm.getComponent('topform').getComponent('releaseDate').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});	
+					entryForm.markUnsaved();
+				}, undefined);	
 				entryForm.getComponent('topform').getComponent('version').on('change', function(){
-					entryForm.saveData();
-				}, undefined, {
-					buffer: 2000
-				});					
+					entryForm.markUnsaved();
+				}, undefined);					
 				
 			}
 		});	
 		
 		opts.commentPanel.loadComments(evaluationId, "Entry Summmary", componentId);
 	},
+	markUnsaved: function () {
+		var entryForm = this;
+		entryForm.saveTask.delay(1000*60*3);	
+		
+		if (!entryForm.unsavedChanges) {
+			entryForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
+			entryForm.unsavedChanges = true;
+		}
+	},	
 	saveData: function() {		
 		var entryForm = this;
 		
@@ -205,7 +223,16 @@ Ext.define('OSF.form.EntrySummary', {
 							var missingAttributes = [];
 							
 							data.componentType = entryForm.componentData.componentType;
-							data.approvalState = entryForm.componentData.approvalState;
+							data.approvalState = entryForm.componentData.approvalState;							
+							if (entryForm.componentData.dataSource) {
+								data.dataSource = entryForm.componentData.dataSource;
+							}
+							if (entryForm.componentData.securityMarkingType) {
+								data.securityMarkingType = entryForm.componentData.securityMarkingType;
+							}							
+							if (entryForm.componentData.dataSensitivity) {
+								data.dataSensitivity = entryForm.componentData.dataSensitivity;
+							}							
 							
 							var requiredForComponent = {
 								component: data,
@@ -359,8 +386,10 @@ Ext.define('OSF.form.EntrySummary', {
 							} else {
 								hasAllRequiredAttributes = true;
 							}
-
+							entryForm.saveTask.cancel();
+							
 							if (hasAllRequiredAttributes) {
+								entryForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 								CoreUtil.submitForm({
 									url: 'api/v1/resource/components/' + 
 										entryForm.componentId,
@@ -370,12 +399,14 @@ Ext.define('OSF.form.EntrySummary', {
 									noLoadmask: true,
 									callback: function() {
 										entryForm.saving = false;
+										entryForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
 									},
 									success: function(action, opts) {							
 
 										Ext.toast('Saved Entry Summary');
 										entryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
-
+										entryForm.unsavedChanges = false;
+										
 										if (entryForm.refreshCallback) {
 											entryForm.refreshCallback();
 										}

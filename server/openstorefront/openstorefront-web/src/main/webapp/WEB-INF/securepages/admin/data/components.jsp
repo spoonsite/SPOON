@@ -171,7 +171,7 @@
 					requiredStore.loadData(requiredAttributes);
 					
 					//Ext.getCmp('attributeGrid').down('form').getComponent('attributeTypeCB').getStore().loadData(optionalAttributes);
-					//loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+					//loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());				
 				};
 			
 			
@@ -236,7 +236,8 @@
 									record.formField = field;
 									panel.add(field);
 								});
-								panel.updateLayout(true, true);					
+								panel.updateLayout(true, true);	
+								panel.fireEvent('ready');
 							},
 							update: function(store, record, operation, modifiedFieldNames, details, opts) {
 								if (record.formField) {
@@ -261,7 +262,7 @@
 									{
 										text: 'Change History',
 										itemId: 'changeHistoryBtn',
-										iconCls: 'fa fa-lg fa-history',
+										iconCls: 'fa fa-lg fa-history icon-button-color-default icon-top-padding',
 										handler: function() {
 											changeHistory.show();
 											changeHistory.load({
@@ -321,7 +322,7 @@
 									{
 										text: 'Integration',
 										itemId: 'integrationBtn',
-										iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction icon-button-color-default',
+										iconCls: 'fa fa-lg fa-gear icon-button-color-default icon-top-padding',
 										disabled: true,
 										handler: function() {
 											integrationWindow.show();
@@ -667,12 +668,22 @@
 										name: 'guid'																		
 									},
 									Ext.create('OSF.component.DataSensitivityComboBox', {												
-										width: '100%'
+										width: '100%',
+										listeners: {
+											ready: function(combo) {
+												combo.setValue(generalForm.componentRecord.get('dataSensitivity'));												
+											}
+										}
 									}),								
 									Ext.create('OSF.component.DataSourceComboBox', {			
 										name: 'dataSource',
 										hideOnNoData: true,
-										width: '100%'
+										width: '100%',
+										listeners: {
+											ready: function(combo) {
+												combo.setValue(generalForm.componentRecord.get('dataSource'));												
+											}
+										}
 									}),																
 									Ext.create('OSF.component.SecurityComboBox', {	
 									})
@@ -2128,20 +2139,26 @@
 				var actionAddEditComponent = function(record) {
 					
 					var mainAddEditWin = createAddEditWin();					
-					mainAddEditWin.show();		
+					mainAddEditWin.show();							
 					
 					mainAddEditWin.generalForm.componentRecord = record;
 					
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').suspendEvent('change');
 					
-					if (record) {						
+					if (record) {							
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
+					
 						checkFormTabs(mainAddEditWin, record);
+						
 						mainAddEditWin.generalForm.loadRecord(record);
 						handleAttributes(record.get('componentType'));
-						Ext.defer(function(){
-							mainAddEditWin.generalForm.loadComponentAttributes();
-						}, 250);
+						//Ext.defer(function(){
+					//		mainAddEditWin.generalForm.loadComponentAttributes();
+					//	}, 1000);
+						mainAddEditWin.generalForm.queryById('requiredAttributePanel').on('ready', function(){
+							mainAddEditWin.generalForm.loadComponentAttributes();							
+						});
+						
 						
 						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);	
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);							
@@ -2174,20 +2191,23 @@
 						}
 						
 						//remove all extra tabs
-						var tabpanel = mainAddEditWin.getComponent('tabpanel');
+						var tabpanel = mainAddEditWin.getComponent('tabpanel');				
 						tabpanel.items.each(function(panel) {
 							if (panel.subPanel) {
 								panel.subPanel.close();
 							}
 						});
+										
 						
+						var panelsToAdd = [];
 						var addSubTab = function(panelName, title, tooltip) {
 							var subTab = Ext.create(panelName, {
 								title: title,
 								tooltip: tooltip
 							});
-							tabpanel.add(subTab);
-							subTab.loadData(null, componentId, null, null);
+							//tabpanel.add(subTab);
+							panelsToAdd.push(subTab);
+							//subTab.loadData(null, componentId, null, null);
 						};
 						
 						Ext.Array.each(allComponentTypes, function(type){
@@ -2225,7 +2245,10 @@
 								addSubTab('OSF.form.Tags', 'Tags', 'Searchable Labels');
 							}
 						});
-
+						tabpanel.add(panelsToAdd);
+						Ext.Array.each(panelsToAdd, function(subTab){
+							subTab.loadData(null, componentId, null, null);
+						});
 					}
 					
 				};

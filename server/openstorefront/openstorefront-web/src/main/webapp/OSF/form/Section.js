@@ -21,6 +21,13 @@ Ext.define('OSF.form.Section', {
 	alias: 'osf.form.Section',
 
 	layout: 'fit',	
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -53,10 +60,11 @@ Ext.define('OSF.form.Section', {
 				},
 				{
 					text: 'Save',
+					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
-					handler: function() {
-						var questionForm = this.up('panel');
-						questionForm.saveData();
+					handler: function() {										
+						var sectionForm = this.up('panel');
+						sectionForm.saveData();
 					}
 				},				
 				{
@@ -64,7 +72,7 @@ Ext.define('OSF.form.Section', {
 					itemId: 'status'
 				},				
 				{
-					text: 'Manage Media',					
+					text: '&nbsp;Manage Media',					
 					iconCls: 'fa fa-2x fa-image',
 					scale: 'medium',
 					handler: function(){
@@ -200,7 +208,7 @@ Ext.define('OSF.form.Section', {
 																								record.get('contentSectionMediaId'),
 																							method: 'PUT',
 																							form: form,
-																							data: recordData,
+																							data: recordData,																							
 																							success: function(form, action) {
 																								grid.getStore().load();
 																								editWindow.close();
@@ -395,7 +403,7 @@ Ext.define('OSF.form.Section', {
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
 							style: { border: border },					
 							name: 'content',			
-							maxLength: 32000,
+							maxLength: 1048576,
 							height: 400,
 							width: '100%',
 							value: originalData.section.content,
@@ -404,8 +412,7 @@ Ext.define('OSF.form.Section', {
 									mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {
-									buffer: 2000,
+								change: {									
 									fn: function(field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
@@ -434,7 +441,7 @@ Ext.define('OSF.form.Section', {
 								fieldStyle: 'font-family: Courier New; font-size: 12px;',
 								style: { border: border },								
 								name: 'subcontent',			
-								maxLength: 32000,
+								maxLength: 1048576,
 								height: 400,
 								value: subsection.content,
 								tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
@@ -442,8 +449,7 @@ Ext.define('OSF.form.Section', {
 										mediaUploadHandler: mediaUploadHandler
 								}),
 								listeners: {
-									change: {
-										buffer: 2000,
+									change: {										
 										fn: function(field, newValue, oldValue) {
 											sectionForm.markUnsaved();
 										}
@@ -461,9 +467,9 @@ Ext.define('OSF.form.Section', {
 									customField: field,
 									fieldLabel: field.label,
 									value: field.value,
+									maxLength: 1048576,
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -482,7 +488,7 @@ Ext.define('OSF.form.Section', {
 										style: { border: border },					
 										name: 'customValue',			
 										customField: field,
-										maxLength: 32000,
+										maxLength: 1048576,
 										height: 250,
 										width: '100%',
 										value: field.value,
@@ -491,8 +497,7 @@ Ext.define('OSF.form.Section', {
 												mediaUploadHandler: mediaUploadHandler
 										}),
 										listeners: {
-											change: {
-												buffer: 2000,
+											change: {												
 												fn: function(field, newValue, oldValue) {
 													sectionForm.markUnsaved();
 												}
@@ -516,8 +521,7 @@ Ext.define('OSF.form.Section', {
 										data: field.validValues
 									},
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -539,8 +543,7 @@ Ext.define('OSF.form.Section', {
 										data: field.validValues
 									},
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -555,8 +558,7 @@ Ext.define('OSF.form.Section', {
 									boxLabel: field.label,
 									value: field.value,
 									listeners: {
-										change: {
-											buffer: 2000,
+										change: {											
 											fn: function(field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
@@ -592,15 +594,14 @@ Ext.define('OSF.form.Section', {
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
 							style: { border: '0' },					
 							name: 'content',			
-							maxLength: 32000,
+							maxLength: 1048576,
 							value: originalData.section.content,
 							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
 									mediaSelectionUrl: mediaSelectionUrl,
 									mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {
-									buffer: 2000,
+								change: {									
 									fn: function(field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
@@ -626,9 +627,12 @@ Ext.define('OSF.form.Section', {
 	},
 	markUnsaved: function () {
 		var sectionForm = this;
-		sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 		sectionForm.saveTask.delay(1000*60*3);	
-		sectionForm.unsavedChanges = true;
+		
+		if (!sectionForm.unsavedChanges) {
+			sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');		
+			sectionForm.unsavedChanges = true;
+		}
 	},		
 	saveData: function(){
 		
@@ -650,40 +654,43 @@ Ext.define('OSF.form.Section', {
 			if (contentPanel) {
 				Ext.Array.each(contentPanel.items.items, function(subsectionPanel){
 					
-					//find the matching original data
-					var originalSubSection = null;
-					Ext.Array.each(sectionForm.originalData.subsections, function(subSection){
-						if (subsectionPanel.subsection.subSectionId === subSection.subSectionId) {
-							originalSubSection = subSection;
-						}
-					});
-					
-					//update data
-					if (originalSubSection) {
-						
-						Ext.Array.each(subsectionPanel.items.items, function(formItem){
-							if (formItem.name === 'subcontent') {
-								originalSubSection.content = formItem.getValue();
+					if (subsectionPanel.subsection) {
+						//find the matching original data
+						var originalSubSection = null;
+						Ext.Array.each(sectionForm.originalData.subsections, function(subSection){
+							if (subsectionPanel.subsection.subSectionId === subSection.subSectionId) {
+								originalSubSection = subSection;
 							}
-						});	
+						});
 
-						
-						if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {						
-							var customFieldIndex = 0;
+						//update data
+						if (originalSubSection) {
+
 							Ext.Array.each(subsectionPanel.items.items, function(formItem){
-								if (formItem.name !== 'subcontent') {
-									originalSubSection.customFields[customFieldIndex].value = formItem.getValue();
-									customFieldIndex++;
-								}								
-							});						
-						}						
-						contentSectionAll.subsections.push(originalSubSection);
-					}	
+								if (formItem.name === 'subcontent') {
+									originalSubSection.content = formItem.getValue();
+								}
+							});	
+
+
+							if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {						
+								var customFieldIndex = 0;
+								Ext.Array.each(subsectionPanel.items.items, function(formItem){
+									if (formItem.name !== 'subcontent') {
+										originalSubSection.customFields[customFieldIndex].value = formItem.getValue();
+										customFieldIndex++;
+									}								
+								});						
+							}						
+							contentSectionAll.subsections.push(originalSubSection);
+						}	
+					}
 						
 				});
 			}
 			sectionForm.saveTask.cancel();
 			
+			sectionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/evaluations/' + 
 					sectionForm.evaluationId
@@ -693,9 +700,12 @@ Ext.define('OSF.form.Section', {
 				data: contentSectionAll,
 				form: sectionForm,
 				noLoadmask: true,
+				callback: function(form, action) {
+					sectionForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
+				},
 				success: function(action, opts) {			
 					Ext.toast('Saved Section');
-					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));					
 					sectionForm.unsavedChanges = false;
 				}	
 			});			

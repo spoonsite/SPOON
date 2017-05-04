@@ -388,7 +388,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username.toLowerCase());
+		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
@@ -416,7 +416,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username.toLowerCase());
+		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
@@ -436,7 +436,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username.toLowerCase());
+		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
@@ -502,13 +502,13 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(role);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username.toLowerCase());
+		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(role);
-			userRole.setUsername(username.toLowerCase());
+			userRole.setUsername(username);
 
 			userRole = userRole.find();
 			if (userRole != null) {
@@ -516,7 +516,7 @@ public class SecurityServiceImpl
 			} else {
 				userRole = new UserRole();
 				userRole.setRole(role);
-				userRole.setUsername(username.toLowerCase());
+				userRole.setUsername(username);
 				userRole.setUserRoleId(persistenceService.generateId());
 				userRole.populateBaseCreateFields();
 				persistenceService.persist(userRole);
@@ -534,22 +534,14 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(role);
 
-		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username.toLowerCase());
-		userSecurity = userSecurity.findProxy();
+		UserRole userRoleExample = new UserRole();
+		userRoleExample.setRole(role);
+		userRoleExample.setUsername(username);
 
-		if (userSecurity != null) {
-			UserRole userRoleExample = new UserRole();
-			userRoleExample.setRole(role);
-			userRoleExample.setUsername(username.toLowerCase());
-
-			userRoleExample = userRoleExample.findProxy();
-			if (userRoleExample != null) {
-				persistenceService.delete(userRoleExample);
-				LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
-			}
-		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find user to remove role from.", "Check input: " + username);
+		userRoleExample = userRoleExample.findProxy();
+		if (userRoleExample != null) {
+			persistenceService.delete(userRoleExample);
+			LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
 		}
 	}
 
@@ -712,6 +704,10 @@ public class SecurityServiceImpl
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null) {
+
+			UserRole userRole = new UserRole();
+			userRole.setUsername(username);
+			persistenceService.deleteByExample(userRole);
 
 			UserRegistration userRegistration = new UserRegistration();
 			userRegistration.setUsername(username);

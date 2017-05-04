@@ -190,7 +190,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 						{
 							text: 'Change History',
 							itemId: 'changeHistoryBtn',
-							iconCls: 'fa fa-2x fa-history',
+							iconCls: 'fa fa-2x fa-history icon-button-color-default icon-vertical-correction',
 							scale: 'medium',
 							handler: function() {									
 								changeHistory.show();
@@ -226,7 +226,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 		
 		evalPanel.commentPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Comments',
-			iconCls: 'fa fa-comment',
+			iconCls: 'fa fa-lg fa-comment',
 			region: 'east',			
 			collapsed: true,
 			collapsible: true,
@@ -628,6 +628,17 @@ Ext.define('OSF.component.EvaluationPanel', {
 			success: function(response, opts) {
 				var entryType = Ext.decode(response.responseText);
 				var menuItems = [];
+				menuItems.push(
+					{							
+						text: 'Summary',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'EntrySummary',
+								title: 'Entry Summary'
+							});								
+						}							
+					}					
+				);
 				if (entryType.dataEntryAttributes){
 					menuItems.push({						
 						text: 'Attributes',							
@@ -1061,6 +1072,11 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	modal: true,
 	maximizable: true,
 	layout: 'fit',
+	listeners: {
+		show: function() {        
+			this.removeCls("x-unselectable");    
+		}
+	},	
 	initComponent: function () {
 		this.callParent();
 		

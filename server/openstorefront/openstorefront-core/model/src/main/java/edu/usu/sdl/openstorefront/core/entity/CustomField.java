@@ -52,7 +52,7 @@ public class CustomField
 	private String label;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	private String value;
 
 	@ConsumeField

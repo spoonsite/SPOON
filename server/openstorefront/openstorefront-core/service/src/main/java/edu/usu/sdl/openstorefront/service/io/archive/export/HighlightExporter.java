@@ -52,7 +52,7 @@ public class HighlightExporter
 	@Override
 	public String getExporterSupportEntity()
 	{
-		return HighlightExporter.class.getSimpleName();
+		return Highlight.class.getSimpleName();
 	}
 
 	@Override

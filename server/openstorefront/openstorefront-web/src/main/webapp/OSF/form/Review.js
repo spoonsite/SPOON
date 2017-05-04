@@ -28,6 +28,10 @@ Ext.define('OSF.form.Review', {
 		
 		reviewForm.grid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			bufferedRenderer: false,
+			viewConfig: {
+				enableTextSelection: true
+			},				
 			store: {
 				fields: [
 					{
@@ -209,7 +213,8 @@ Ext.define('OSF.form.Review', {
 								items: [
 									{
 										text: 'Comment',
-										iconCls: 'fa fa-2x fa-comment',
+										iconCls: 'fa fa-2x fa-comment icon-button-color-save icon-vertical-correction-save',
+										width: '130px',
 										scale: 'medium',
 										handler: function() {
 											var form = this.up('form');
@@ -246,7 +251,7 @@ Ext.define('OSF.form.Review', {
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-2x fa-close',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											editWindow.close();
@@ -277,6 +282,7 @@ Ext.define('OSF.form.Review', {
 		var actionDelete = function(record) {
 			Ext.Msg.show({
 				title:'Delete Comment',
+				iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 				message: 'Are you sure you want DELETE this comment?',
 				buttons: Ext.Msg.YESNO,
 				icon: Ext.Msg.QUESTION,

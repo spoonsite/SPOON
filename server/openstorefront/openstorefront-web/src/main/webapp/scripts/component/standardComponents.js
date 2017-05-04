@@ -64,16 +64,28 @@ Ext.define('OSF.component.SecurityComboBox', {
 	hidden: true,
 	queryMode: 'local',
 	labelAlign: 'top',
+	addSelect: true,
 	store: {
 		autoLoad: true,
 		proxy: {
 			type: 'ajax',
 			url: 'api/v1/resource/lookuptypes/SecurityMarkingType'			
+		},
+		listeners: {
+			load: function(store, records, opts) {
+				if (store.addSelect) {
+					store.add({
+						code: null,
+						description: 'Select'
+					});
+				}				
+			}
 		}
 	},	
 	initComponent: function() {
 		var combo = this;	
 		combo.callParent();
+		combo.getStore().addSelect = combo.addSelect;
 		
 		//check branding to see it should show
 		
@@ -111,7 +123,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 			type: 'ajax',
 			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
 		}
-	},	
+	},		
 	initComponent: function() {
 		var combo = this;	
 		combo.callParent();
@@ -131,15 +143,23 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 										return true;
 									}
 								});
-
-								data.push({
-									dataSensitivity: item.dataSensitivity,
-									dataSensitivityDesc: found.description
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSensitivity === item.dataSensitivity) {
+										add = false;
+									}
 								});
+								
+								if (add) {
+									data.push({
+										dataSensitivity: item.dataSensitivity,
+										dataSensitivityDesc: found.description
+									});
+								}
 							}
 						});						
 					});
-
+					
 					if (data.length > 0) {
 						combo.setHidden(false);
 					}
@@ -152,7 +172,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 					}
 
 					combo.getStore().loadData(data);
-					combo.fireEvent('ready');
+					combo.fireEvent('ready', combo);
 				}
 			});						
 		});	
@@ -207,10 +227,19 @@ Ext.define('OSF.component.DataSourceComboBox', {
 									}
 								});
 
-								data.push({
-									dataSource: item.dataSource,
-									dataSourceDesc: found.description
+								var add = true;
+								Ext.Array.each(data, function(dataItem){
+									if (dataItem.dataSource === item.dataSource) {
+										add = false;
+									}
 								});
+								
+								if (add) {
+									data.push({
+										dataSource: item.dataSource,
+										dataSourceDesc: found.description
+									});
+								}
 							}
 						});
 					});
@@ -226,6 +255,7 @@ Ext.define('OSF.component.DataSourceComboBox', {
 					}
 
 					combo.getStore().loadData(data);
+					combo.fireEvent('ready', combo);
 				}
 			});			
 		});		
@@ -377,11 +407,17 @@ Ext.define('OSF.component.UserMenu', {
 				];
 				
 				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
-					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
+					var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
+					if (adminmenu) {
+						adminmenu.setHidden(false);
+					}
 				}				
 				
 				if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
-					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+					var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
+					if (evalmenu) {
+						userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
+					}
 				}					
 				
 				if (userMenu.initCallBack) {
@@ -420,7 +456,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				},
 				{
 					text: 'Close',
-					iconCls: 'fa fa-close icon-button-color-warning',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function() {
 						this.up('window').close();
 					}

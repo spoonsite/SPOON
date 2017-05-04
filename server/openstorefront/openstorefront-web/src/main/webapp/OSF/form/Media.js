@@ -241,6 +241,7 @@ Ext.define('OSF.form.Media', {
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Hide In Carousel', dataIndex: 'hideInDisplay', width: 150},
 				{ text: 'Used Inline', dataIndex: 'usedInline', width: 150 },
+				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: mediaPanel.hideSecurityMarking }
 			],
 			listeners: {

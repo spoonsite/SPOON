@@ -20,6 +20,13 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	alias: 'osf.form.ChecklistQuestion',
 
 	scrollable: true,
+	listeners: {
+		close: function(panel, opts) {
+			if (panel.saveTask) {
+				panel.saveTask.cancel();
+			}
+		}
+	},	
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -52,6 +59,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				},
 				{
 					text: 'Save',
+					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
 					handler: function() {
 						var questionForm = this.up('panel');
@@ -244,9 +252,13 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	},
 	markUnsaved: function () {
 		var questionForm = this;
-		questionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 		questionForm.saveTask.delay(1000*60*3);	
-		questionForm.unsavedChanges = true;
+		
+		if (!questionForm.unsavedChanges) {
+			questionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');		
+			questionForm.unsavedChanges = true;
+		}
+		
 	},	
 	saveData: function() {
 		var questionForm = this;
@@ -254,6 +266,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		var data = questionForm.getValues();
 		
 		questionForm.saveTask.cancel();
+		questionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 		CoreUtil.submitForm({
 			url: 'api/v1/resource/evaluations/' + 
 				questionForm.evaluationId 
@@ -265,6 +278,9 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			data: data,
 			form: questionForm,
 			noLoadmask: true,
+			callback: function(form, action) {
+				questionForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
+			},			
 			success: function(action, opts) {
 				var chkResponse = Ext.decode(action.responseText);
 				

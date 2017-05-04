@@ -66,6 +66,10 @@ Ext.define('OSF.form.ChecklistAll', {
 					actionEdit(record);
 				} 
 			},
+			bufferedRenderer: false,
+			viewConfig: {
+				enableTextSelection: true
+			},				
 			columns: [
 				{ text: 'QID', dataIndex: 'qid', align: 'center', width: 100 },
 				{ text: 'Status', dataIndex: 'workflowStatus', align: 'center',
@@ -148,7 +152,8 @@ Ext.define('OSF.form.ChecklistAll', {
 						items: [
 							{
 								text: 'Save',
-								iconCls: 'fa fa-2x fa-save',
+								iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-save',
+								width: '100px',
 								scale: 'medium',
 								handler: function() {
 									var form = editWin.getComponent('form');
@@ -193,7 +198,7 @@ Ext.define('OSF.form.ChecklistAll', {
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-close text-danger icon-vertical-correction',
 								scale: 'medium',
 								handler: function() {
 									editWin.close();

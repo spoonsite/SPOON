@@ -83,7 +83,7 @@ public class ValidValueRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value not in the list of valid values";
 	}

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sf.uadetector.ReadableUserAgent;
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
@@ -167,6 +168,13 @@ public class SystemAction
 		results.append("Internal Duplicates removed: ").append(internalDups).append("<br>");
 
 		return new StreamingResolution("text/html", results.toString());
+	}
+
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@HandlesEvent("SystemStandby")
+	public Resolution standByPage()
+	{
+		return new ForwardResolution("/WEB-INF/securepages/systemStandby.jsp");
 	}
 
 	public String getAttributeType()

@@ -58,7 +58,7 @@ public class MaxValueRule
 	}
 
 	@Override
-	protected String getMessage()
+	protected String getMessage(Field field)
 	{
 		return "Value exceeded MAX allowed";
 	}
