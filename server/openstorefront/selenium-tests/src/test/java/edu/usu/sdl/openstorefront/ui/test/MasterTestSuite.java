@@ -33,7 +33,7 @@ import org.junit.runners.Suite;
  // AdminTestSuite.class,
  // EvaluatorTestSuite.class,
  // SearchTestSuite.class,
-    SecurityTestSuite.class,
+    SecurityTestSuite.class
  // UserToolTestSuite.class
 })
 public class MasterTestSuite
