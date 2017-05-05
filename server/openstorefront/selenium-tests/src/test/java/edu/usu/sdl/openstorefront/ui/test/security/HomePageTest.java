@@ -16,20 +16,27 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class LoginHomePageTest
+public class HomePageTest
 		extends BrowserTestBase
 {
+    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
     @BeforeClass
     public static void setupTest(){
+        
 	login();
     }
     
-    public LoginHomePageTest(){
+    /**
+     *
+     */
+    public HomePageTest(){
 
     }
 
@@ -37,9 +44,11 @@ public class LoginHomePageTest
     // Output build version at bottom of the page
     public void versionUnderTest(){
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
+              driver.get(webDriverUtil.getPage("index.jsp"));
               String vers = driver.findElement(By.xpath("//div[@class='home-footer-version']")).getText();
               //TODO:  Replace with Logger Out
-              System.out.println("*******   VERSION UNDER TEST:  " + vers + "   *******");         
+              LOG.log(Level.INFO, "*******   VERSION UNDER TEST:  {0}   *******", vers);
+
         }
     }
     

@@ -15,20 +15,42 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.logging.Logger;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
+ * Note on this test we don't want to login
  *
  * @author dshurtleff
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    AccountSignupActivateTest.class,
-    SecurityRolesTest.class
-        
-})
-public class SecurityTestSuite
+public class AccountSignupActivateTest
+		extends BrowserTestBase
 {
+    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+    @BeforeClass
+    public static void setupTest(){
+        
+	logout();
+    }
+    
+    /**
+     *
+     */
+    public AccountSignupActivateTest(){
 
+    }
+
+    @Test
+    public void signupForm(){
+        // click on Signup
+        
+        
+    }
+    
+    public void activateAccount(){
+        
+    }
+    
 }
