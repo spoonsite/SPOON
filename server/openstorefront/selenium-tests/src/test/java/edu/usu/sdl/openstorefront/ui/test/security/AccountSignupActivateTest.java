@@ -76,7 +76,7 @@ public class AccountSignupActivateTest
            // SUBMIT the form
            driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
            try {
-                Thread.sleep(8000);
+                Thread.sleep(9000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
            
