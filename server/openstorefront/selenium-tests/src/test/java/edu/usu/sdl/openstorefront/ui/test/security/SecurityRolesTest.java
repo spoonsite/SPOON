@@ -1,3 +1,11 @@
+package edu.usu.sdl.openstorefront.ui.test.security;
+
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
+import java.util.logging.Logger;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 /*
  * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
@@ -13,21 +21,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.security;
-
-import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 
 /**
- * Note on this test we don't want to login
  *
- * @author dshurtleff
+ * @author besplin
  */
-public class AccountSignupTest
+
+public class SecurityRolesTest 
 		extends BrowserTestBase
 {
+    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+    
+    @BeforeClass
+    public static void setupTest(){
 
-	public AccountSignupTest()
-	{
-	}
+    }
+   
+    @Test
+    public void blah () {
+    
+    }
 
 }

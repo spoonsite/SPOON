@@ -51,7 +51,8 @@ public class BrowserTestBase
 
 	protected static void login()
 	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
+	    LOG.log(Level.INFO,"Starting the AccountsSignupActivateTest");
+            for (WebDriver driver : webDriverUtil.getDrivers()) {
 			driver.get(webDriverUtil.getPage("login.jsp"));
 
 			WebElement element = driver.findElement(By.name("username"));
