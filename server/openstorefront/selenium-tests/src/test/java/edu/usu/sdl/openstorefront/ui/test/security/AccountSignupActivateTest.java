@@ -76,7 +76,7 @@ public class AccountSignupActivateTest
            // SUBMIT the form
            driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
            try {
-                Thread.sleep(7000);
+                Thread.sleep(8000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
            
@@ -91,7 +91,7 @@ public class AccountSignupActivateTest
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
            driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
              try {
-                Thread.sleep(2000);
+                Thread.sleep(2500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);}
             // Now filter by Locked/Disabled and Pending and activate.
