@@ -547,6 +547,13 @@ td.info-table {
 	font-size: 10px;
 }
 
+.home-backsplash {
+	background-size: 100%;
+	background-position: center top;
+    background-repeat: no-repeat;
+	background-image: url('${pageContext.request.contextPath}/images/background_globe.jpg');
+}
+
 .logo-small {
     width: 250px;
     padding: 2px;

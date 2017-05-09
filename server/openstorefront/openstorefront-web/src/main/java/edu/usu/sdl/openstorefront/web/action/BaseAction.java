@@ -22,14 +22,18 @@ import edu.usu.sdl.openstorefront.core.view.JsonFormLoad;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
@@ -100,6 +104,33 @@ public abstract class BaseAction
 		return exceeds;
 	}
 
+	protected String getPageOutput(String pathToPage)
+	{
+		HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(getContext().getResponse())
+		{
+			private final StringWriter sw = new StringWriter();
+
+			@Override
+			public PrintWriter getWriter() throws IOException
+			{
+				return new PrintWriter(sw);
+			}
+
+			@Override
+			public String toString()
+			{
+				return sw.toString();
+			}
+		};
+		try {
+			getContext().getRequest().getRequestDispatcher(pathToPage).include(getContext().getRequest(), responseWrapper);
+		} catch (ServletException | IOException ex) {
+			LOG.log(Level.SEVERE, "Unable to find page", ex);
+		}
+		String content = responseWrapper.toString();
+		return content;
+	}
+
 	protected void deleteUploadFile(FileBean fileBean)
 	{
 		try {
@@ -146,8 +177,8 @@ public abstract class BaseAction
 	protected <T> Resolution streamResults(List<T> data)
 	{
 		return streamResults(data, null);
-	}	
-	
+	}
+
 	protected <T> Resolution streamResults(List<T> data, String contentType)
 	{
 		JsonResponse jsonResponse = new JsonResponse();
@@ -157,8 +188,8 @@ public abstract class BaseAction
 
 		return streamResults(jsonResponse, contentType);
 	}
-	
-	protected Resolution streamResults(Object data) 
+
+	protected Resolution streamResults(Object data)
 	{
 		return streamResults(data, null);
 	}
@@ -167,7 +198,7 @@ public abstract class BaseAction
 	{
 		if (StringUtils.isBlank(contentType)) {
 			contentType = MediaType.APPLICATION_JSON;
-		}		
+		}
 		return new StreamingResolution(contentType)
 		{
 
@@ -183,7 +214,7 @@ public abstract class BaseAction
 	{
 		return streamResults(jsonResponse, null);
 	}
-	
+
 	protected Resolution streamResults(final JsonResponse jsonResponse, String contentType)
 	{
 		if (StringUtils.isBlank(contentType)) {
