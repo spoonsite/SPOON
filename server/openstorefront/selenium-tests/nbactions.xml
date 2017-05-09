@@ -57,4 +57,15 @@
                 <goal>site</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-clean install skip</actionName>
+            <displayName>clean install skip</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
     </actions>
