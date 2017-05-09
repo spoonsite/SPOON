@@ -32,11 +32,13 @@ public class SecurityRolesTest
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
     
     @BeforeClass
-    public static void setupTest(){
-		
+    public static void setupTest() throws InterruptedException
+	{
+		login();
+		AccountSignupActivateTest accountSignupTest = new AccountSignupActivateTest();		
+		accountSignupTest.signupActivate();
     }
-
-			
+		
     @Test
     public void deleteExistingRoles () {
     

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import edu.usu.sdl.openstorefront.ui.test.model.TableItem;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,14 +47,9 @@ public class AccountSignupActivateTest
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
-		try {
-			deleteUserIfPresent();
-			signupForm();
-			activateAccount();
-		}
-		finally {
-			deleteUserIfPresent();
-		}
+		deleteUserIfPresent();
+		signupForm();
+		activateAccount();
 	}
 	
     
@@ -68,42 +62,19 @@ public class AccountSignupActivateTest
 		   // Set timeout
 		   driver.manage().timeouts().implicitlyWait(7, TimeUnit.SECONDS);
 		   
-		   // Search for autoTest1 and delete if present
+		   // Filter by Locked/Disabled and Pending
+		   // *** TODO: *** Do a SEARCH instead!
            driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
            driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
            driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
            driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
 
-		   // ******* Call the TABLE function ***** 
-		   TableItem tableItem = getTableRC("tableview-1125","Test1");
-		   int theRow = tableItem.getrRow();    // Row 0 is the header
-		   int theCol = tableItem.getrCol() +1; // Can't click on td 0
-		   System.out.println("ROW is " + theRow + ".  COLUMN is " + theCol);
-		   
-		   	try {
-				Thread.sleep(7000);
-			} catch (InterruptedException ex) {
-				Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			
-			
-		   // Now CLICK on the table! 
-		   if (theRow !=-1 || theCol !=-1) {
-			    LOG.log(Level.INFO,"********** DELETING ************");
-				driver.findElement(By.xpath("//tr[" + theRow + "]//td[" + theCol + "]")).click();
+		   // Delete if present
+		   if (tableClickRowCol("tableview-1125","Test1")) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();		
 				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
+				LOG.log(Level.INFO,"*** User DELETED ***");
 		   }
-		   else {
-				LOG.log(Level.INFO,"********** NOT FOUND ************");
-		   } 
-		   
-			try {
-				Thread.sleep(7000);
-			} catch (InterruptedException ex) {
-				Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			
 		}
 	}
 
@@ -126,16 +97,23 @@ public class AccountSignupActivateTest
            driver.findElement(By.xpath("//input[@name='organization']")).sendKeys("Air Force");
            driver.findElement(By.xpath("//input[@name='email']")).sendKeys("blaine.esplin@sdl.usu.edu");
            driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("435-555-5555");
+		   
+		    try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
            // SUBMIT the form
            driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
            try {
                 Thread.sleep(9000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-           
-       }
-    }
-}
+            }
+		   login("admin","Secret1!");
+		}
+	}
    
     private void activateAccount(){
         // Navigate to Admin Tools -> Application Management -> User Tools to activate
@@ -146,26 +124,24 @@ public class AccountSignupActivateTest
                 Thread.sleep(2500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);}
+			 
             // Now filter by Locked/Disabled and Pending and activate.
+			// *** TODO: ***  Do a SEARCH instead!
             driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
             driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
             driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
             driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
             
 			// Select and click Approve
-            // TODO:  Call into new table function
-			driver.findElement(By.xpath("//div[contains(.,'autotest1')]"));
+		   if (tableClickRowCol("tableview-1125","Test1")) {
+		   driver.findElement(By.xpath("//span[@id='button-1130-btnEl']")).click();
+			   
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex); }
             driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
-              try {
-                Thread.sleep(11000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex); }
-        }
-    }
-	
+			}
+		}
+	}
 }
-
