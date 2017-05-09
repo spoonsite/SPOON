@@ -15,15 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import static java.lang.Thread.sleep;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Note on this test we don't want to login
@@ -36,25 +34,57 @@ public class AccountSignupActivateTest
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
     @BeforeClass
     public static void setupTest(){
-
+           login();
     }
     
     /**
      *
      */
     public AccountSignupActivateTest(){
-   
+		
     }
-    
+	
     @Test
     // Delete if active
-    public void deleteIfPresent(){
-        
+    public void deleteUserIfPresent() throws InterruptedException{
+        // Navigate to the registration page
+		for (WebDriver driver : webDriverUtil.getDrivers()) { 
+		   driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		   
+		   // Set timeout
+		   driver.manage().timeouts().implicitlyWait(7, TimeUnit.SECONDS);
+		   
+		   // Search for autoTest1 and delete if present
+           driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+           driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
+           driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+           driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
+
+		   getTableRC("tableview-1125","autotest1");
+			
+		   // driver.findElement(By.xpath("//input[@name='searchValue']")).sendKeys("autoTest1");
+				
+		     try {
+                Thread.sleep(7000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           // if exists, delete it, otherwise move on
+		   if (driver.findElement(By.xpath("//div[contains(.,'autoTest1')]")).isDisplayed()) {
+               // select and delete
+		    	LOG.log(Level.INFO,"********** DELETING autoTest1 ************");
+				driver.findElement(By.xpath("//div[contains(.,'autotest1')]")).click();
+				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
+           }
+		   else {
+				LOG.log(Level.INFO,"********** autoTest1 NOT FOUND TO DELETE ************");
+		   } 
+			   
     }
+}
 
     @Test
     public void signupForm(){
-        LOG.log(Level.INFO,"********** Starting the signupForm in AccountSignupActivateTest ************");
         // Navigate to the registration page
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
            driver.get(webDriverUtil.getPage("registration.jsp"));
@@ -64,7 +94,7 @@ public class AccountSignupActivateTest
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
             }
            // Fill out the form
-           LOG.log(Level.INFO,"********** FILLING OUT SIGNUP FORM NOW ************");   
+           LOG.log(Level.INFO,"********** Fill out the signupForm ************");   
            driver.findElement(By.xpath("//input[@name='username']")).sendKeys("autotest1");
            driver.findElement(By.xpath("//input[@name='password']")).sendKeys("autoTest1!");
            driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("autoTest1!");
@@ -99,8 +129,10 @@ public class AccountSignupActivateTest
             driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
             driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
             driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
-            // Select and click Approve
-            driver.findElement(By.xpath("//div[contains(.,'autotest1')]"));
+            
+			// Select and click Approve
+            // TODO:  Call into new table function
+			driver.findElement(By.xpath("//div[contains(.,'autotest1')]"));
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ex) {

@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -41,6 +42,13 @@ public class BrowserTestBase
 
 	protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
 
+	/*@BeforeClass
+	public static void setSize() throws Exception
+	{
+		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
+	}
+	*/
+ 
 	@AfterClass
 	public static void tearDown() throws Exception
 	{
@@ -53,6 +61,7 @@ public class BrowserTestBase
 	{
 	    LOG.log(Level.INFO,"Starting the AccountsSignupActivateTest");
             for (WebDriver driver : webDriverUtil.getDrivers()) {
+		    driver.manage().window().setSize(new Dimension(1200,1024));	   
 			driver.get(webDriverUtil.getPage("login.jsp"));
 
 			WebElement element = driver.findElement(By.name("username"));
@@ -97,6 +106,41 @@ public class BrowserTestBase
 		}
 	}
 
+	// pass in table name, return Row, Column
+	public int getTableRC(String tableName, String searchFor)
+	{
+		String localTable = tableName;
+		String localSearch = searchFor;
+		int fRow = -1; int fColumn = -1;
+		// get the tableText[theRow][theColumn] from table theTable
+		// WebDriverUtil webDriverUtil = new WebDriverUtil();
+		WebElement table = driver.findElement(By.id(localTable)); 
+		List<WebElement> allRows = table.findElements(By.tagName("tr")); 
+		String[][] tableText = new String[256][256];
+
+		// Iterate through rows
+		int theRow = 0;
+		for (WebElement row : allRows) { 
+			List<WebElement> cells = row.findElements(By.tagName("td")); 
+			theRow ++;
+
+			// Iterate through cells
+			int theColumn = 0;
+			for (WebElement cell : cells) { 
+				tableText[theRow][theColumn] = cell.getText();
+				//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
+				// If text found remember row, column
+				if (localSearch.toLowerCase() == cell.getText().toLowerCase()) {
+					fRow = theRow; fColumn = theColumn;
+				}
+				theColumn ++;
+			}
+		}
+		System.out.println("TEXT WAS FOUND AT: " + fRow + ", " + fColumn);
+		return fRow && fColumn;
+	}
+			
+	
 	/**
 	 * This assumes the driver is on the correct page before this is called This
 	 * stores the image in the configure report directory.

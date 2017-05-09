@@ -1,7 +1,6 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,11 +33,16 @@ public class SecurityRolesTest
     
     @BeforeClass
     public static void setupTest(){
-
+		
     }
    
     @Test
-    public void blah () {
+    public void deleteExistingRoles () {
+    
+    }
+
+    @Test
+    public void addRolePermissions () {
     
     }
 
