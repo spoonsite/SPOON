@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import edu.usu.sdl.openstorefront.ui.test.model.TableItem;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,9 +45,22 @@ public class AccountSignupActivateTest
 		
     }
 	
-    @Test
+	@Test
+	public void signupActivate() throws InterruptedException
+	{
+		try {
+			deleteUserIfPresent();
+			signupForm();
+			activateAccount();
+		}
+		finally {
+			deleteUserIfPresent();
+		}
+	}
+	
+    
     // Delete if active
-    public void deleteUserIfPresent() throws InterruptedException{
+    private void deleteUserIfPresent() throws InterruptedException{
         // Navigate to the registration page
 		for (WebDriver driver : webDriverUtil.getDrivers()) { 
 		   driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
@@ -60,30 +74,39 @@ public class AccountSignupActivateTest
            driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
            driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
 
-		   getTableRC("tableview-1125","autotest1");
+		   // ******* Call the TABLE function ***** 
+		   TableItem tableItem = getTableRC("tableview-1125","Test1");
+		   int theRow = tableItem.getrRow();    // Row 0 is the header
+		   int theCol = tableItem.getrCol() +1; // Can't click on td 0
+		   System.out.println("ROW is " + theRow + ".  COLUMN is " + theCol);
+		   
+		   	try {
+				Thread.sleep(7000);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+			}
 			
-		   // driver.findElement(By.xpath("//input[@name='searchValue']")).sendKeys("autoTest1");
-				
-		     try {
-                Thread.sleep(7000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-            }
-           // if exists, delete it, otherwise move on
-		   if (driver.findElement(By.xpath("//div[contains(.,'autoTest1')]")).isDisplayed()) {
-               // select and delete
-		    	LOG.log(Level.INFO,"********** DELETING autoTest1 ************");
-				driver.findElement(By.xpath("//div[contains(.,'autotest1')]")).click();
-				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-           }
+			
+		   // Now CLICK on the table! 
+		   if (theRow !=-1 || theCol !=-1) {
+			    LOG.log(Level.INFO,"********** DELETING ************");
+				driver.findElement(By.xpath("//tr[" + theRow + "]//td[" + theCol + "]")).click();
+				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();		
+				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
+		   }
 		   else {
-				LOG.log(Level.INFO,"********** autoTest1 NOT FOUND TO DELETE ************");
+				LOG.log(Level.INFO,"********** NOT FOUND ************");
 		   } 
-			   
-    }
-}
+		   
+			try {
+				Thread.sleep(7000);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
+		}
+	}
 
-    @Test
     public void signupForm(){
         // Navigate to the registration page
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
@@ -114,8 +137,7 @@ public class AccountSignupActivateTest
     }
 }
    
-    @Test
-    public void activateAccount(){
+    private void activateAccount(){
         // Navigate to Admin Tools -> Application Management -> User Tools to activate
         LOG.log(Level.INFO,"********** Starting activateAccount in AccountsSignupActivateTest ************");
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
@@ -144,5 +166,6 @@ public class AccountSignupActivateTest
                 Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex); }
         }
     }
-    
+	
 }
+

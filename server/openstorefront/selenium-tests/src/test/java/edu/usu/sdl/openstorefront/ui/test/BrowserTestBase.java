@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test;
 
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
+import edu.usu.sdl.openstorefront.ui.test.model.TableItem;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
@@ -107,40 +108,49 @@ public class BrowserTestBase
 	}
 
 	// pass in table name, return Row, Column
-	public int getTableRC(String tableName, String searchFor)
+	public TableItem getTableRC(String tableName, String searchFor)
 	{
+		int fRow =-1; int fColumn = -1;
 		String localTable = tableName;
 		String localSearch = searchFor;
-		int fRow = -1; int fColumn = -1;
 		// get the tableText[theRow][theColumn] from table theTable
-		// WebDriverUtil webDriverUtil = new WebDriverUtil();
-		WebElement table = driver.findElement(By.id(localTable)); 
-		List<WebElement> allRows = table.findElements(By.tagName("tr")); 
-		String[][] tableText = new String[256][256];
+		for (WebDriver driver : webDriverUtil.getDrivers()) { 
+			driver.manage().window().setSize(new Dimension(1200,1024));
 
-		// Iterate through rows
-		int theRow = 0;
-		for (WebElement row : allRows) { 
-			List<WebElement> cells = row.findElements(By.tagName("td")); 
-			theRow ++;
+			WebElement table = driver.findElement(By.id(localTable)); 
+			List<WebElement> allRows = table.findElements(By.tagName("tr")); 
+			//String[][] tableText = new String[256][256];
 
-			// Iterate through cells
-			int theColumn = 0;
-			for (WebElement cell : cells) { 
-				tableText[theRow][theColumn] = cell.getText();
-				//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
-				// If text found remember row, column
-				if (localSearch.toLowerCase() == cell.getText().toLowerCase()) {
-					fRow = theRow; fColumn = theColumn;
+			// Iterate through rows
+			int theRow = 0;
+			for (WebElement row : allRows) { 
+				List<WebElement> cells = row.findElements(By.tagName("td")); 
+				theRow ++;
+
+				// Iterate through cells
+				int theColumn = 0;
+				for (WebElement cell : cells) { 
+					//tableText[theRow][theColumn] = cell.getText();
+					//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
+					
+					// If text found remember row, column
+					if (localSearch.trim().toLowerCase().equals(cell.getText().toLowerCase())) {
+						fRow = theRow; fColumn = theColumn;
+						//System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
+						break;
+					}
+					
+					// NOTE:  Finds the FIRST instance, if > 1 instance found
+					if (fRow !=-1 || fColumn !=-1) break;
+					theColumn ++;
 				}
-				theColumn ++;
 			}
+
 		}
-		System.out.println("TEXT WAS FOUND AT: " + fRow + ", " + fColumn);
-		return fRow && fColumn;
+		return new TableItem(fRow, fColumn);
 	}
-			
-	
+
+
 	/**
 	 * This assumes the driver is on the correct page before this is called This
 	 * stores the image in the configure report directory.
@@ -159,5 +169,6 @@ public class BrowserTestBase
 			LOG.log(Level.WARNING, "Unable to create Screenshot; no driver support for {0}", driver.getClass().getName());
 		}
 	}
-
 }
+
+

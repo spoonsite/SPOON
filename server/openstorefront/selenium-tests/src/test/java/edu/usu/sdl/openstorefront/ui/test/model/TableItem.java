@@ -1,10 +1,3 @@
-package edu.usu.sdl.openstorefront.ui.test.security;
-
-import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.logging.Logger;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 /*
  * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
@@ -20,31 +13,41 @@ import org.junit.Test;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package edu.usu.sdl.openstorefront.ui.test.model;
 
 /**
  *
  * @author besplin
  */
-
-public class SecurityRolesTest 
-		extends BrowserTestBase
+public class TableItem
 {
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-    
-    @BeforeClass
-    public static void setupTest(){
-		
-    }
+	private int rRow = -1;
+	private int rCol = -1;
 
-			
-    @Test
-    public void deleteExistingRoles () {
-    
-    }
+	public TableItem(int rRow, int rCol)
+	{
+		this.rRow = rRow;
+		this.rCol = rCol;
+	}
 
-    @Test
-    public void addRolePermissions () {
-    
-    }
+	public int getrRow()
+	{
+		return rRow;
+	}
 
+	public void setrRow(int rRow)
+	{
+		this.rRow = rRow;
+	}
+
+	public int getrCol()
+	{
+		return rCol;
+	}
+
+	public void setrCol(int rCol)
+	{
+		this.rCol = rCol;
+	}
+	
 }
