@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test;
 
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
+import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,6 +42,13 @@ public class BrowserTestBase
 
 	protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
 
+	/*@BeforeClass
+	public static void setSize() throws Exception
+	{
+		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
+	}
+	*/
+ 
 	@AfterClass
 	public static void tearDown() throws Exception
 	{
@@ -49,16 +57,23 @@ public class BrowserTestBase
 		webDriverUtil.closeDrivers();
 	}
 
-	protected static void login()
+	protected static void login(){
+		login("admin","Secret1@");
+	}
+	
+	protected static void login(String userName, String passWord)
 	{
+		String uN = userName;
+		String pW = passWord;
+		
 	    LOG.log(Level.INFO,"Starting the AccountsSignupActivateTest");
             for (WebDriver driver : webDriverUtil.getDrivers()) {
 			driver.get(webDriverUtil.getPage("login.jsp"));
 
 			WebElement element = driver.findElement(By.name("username"));
-			element.sendKeys("admin");
+			element.sendKeys(uN);
 			// Enter password and hit ENTER since submit does not seem to work.
-			driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
+			driver.findElement(By.name("password")).sendKeys(pW, Keys.ENTER);
 
 			//confirm login
 			//TODO: make sure it can handle different landing pages
@@ -96,6 +111,70 @@ public class BrowserTestBase
 			//TODO: confirm logout
 		}
 	}
+	
+	// pass in table name, return Row, Column
+	public boolean tableClickRowCol(String tableName, String searchFor)
+	{
+		int fRow =-1; int fColumn = -1;
+		String localTable = tableName;
+		String localSearch = searchFor;
+		boolean theBool = false;
+		// get the tableText[theRow][theColumn] from table theTable
+		for (WebDriver driver : webDriverUtil.getDrivers()) { 
+			WebElement table = driver.findElement(By.id(localTable)); 
+			List<WebElement> allRows = table.findElements(By.tagName("tr")); 
+			//String[][] tableText = new String[256][256];
+
+			// Iterate through rows
+			int theRow = 0;
+			for (WebElement row : allRows) { 
+				List<WebElement> cells = row.findElements(By.tagName("td")); 
+				theRow ++;
+
+				// Iterate through cells
+				int theColumn = 0;
+				for (WebElement cell : cells) { 
+					//tableText[theRow][theColumn] = cell.getText();
+					//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
+					
+					// If text found remember row, column
+					if (localSearch.trim().toLowerCase().equals(cell.getText().toLowerCase())) {
+						fRow = theRow; fColumn = theColumn;
+						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
+						break;
+					}
+					
+					// NOTE:  Finds the FIRST instance, if > 1 instance found
+					if (fRow !=-1 || fColumn !=-1) break;
+					theColumn ++;
+				}
+			}
+				
+		   // Now CLICK on the table! 
+		   if (fRow !=-1 || fColumn !=-1) {
+			    LOG.log(Level.INFO,"*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
+				fColumn ++; // increment by 1 as it is 0-based and you can't click on td 0th instance.
+				driver.findElement(By.xpath("//tr[" + fRow + "]//td[" + fColumn + "]")).click();
+				theBool = true;
+		   }
+		   else {
+				LOG.log(Level.INFO,"*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ". ***");
+				theBool = false;
+		   } 
+		   
+	
+		}
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return theBool;
+		//return new TableItem(fRow, fColumn);
+	}
+
 
 	/**
 	 * This assumes the driver is on the correct page before this is called This
@@ -115,5 +194,6 @@ public class BrowserTestBase
 			LOG.log(Level.WARNING, "Unable to create Screenshot; no driver support for {0}", driver.getClass().getName());
 		}
 	}
-
 }
+
+

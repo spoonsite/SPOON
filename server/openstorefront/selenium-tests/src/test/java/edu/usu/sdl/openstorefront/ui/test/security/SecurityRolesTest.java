@@ -1,7 +1,6 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,12 +32,20 @@ public class SecurityRolesTest
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
     
     @BeforeClass
-    public static void setupTest(){
-
+    public static void setupTest() throws InterruptedException
+	{
+		login();
+		AccountSignupActivateTest accountSignupTest = new AccountSignupActivateTest();		
+		accountSignupTest.signupActivate();
     }
-   
+		
     @Test
-    public void blah () {
+    public void deleteExistingRoles () {
+    
+    }
+
+    @Test
+    public void addRolePermissions () {
     
     }
 
