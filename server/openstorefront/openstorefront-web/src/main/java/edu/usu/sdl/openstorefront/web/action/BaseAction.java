@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.view.JsonFormLoad;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -63,6 +64,7 @@ public abstract class BaseAction
 
 	protected ActionBeanContext context;
 	protected String projectId;
+	protected String brandingId;
 
 	protected final ServiceProxy service = new ServiceProxy();
 
@@ -104,6 +106,25 @@ public abstract class BaseAction
 		return exceeds;
 	}
 
+	protected Branding loadBranding()
+	{
+		Branding branding;
+		if (StringUtils.isNotBlank(getBrandingId())) {
+			branding = new Branding();
+			branding.setBrandingId(getBrandingId());
+			branding = branding.find();
+		} else {
+			branding = service.getBrandingService().getCurrentBrandingView();
+		}
+		return branding;
+	}
+
+	/**
+	 * This only works for jsp if including into a jsp
+	 *
+	 * @param pathToPage
+	 * @return
+	 */
 	protected String getPageOutput(String pathToPage)
 	{
 		HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(getContext().getResponse())
@@ -314,6 +335,16 @@ public abstract class BaseAction
 	public void setProjectId(String projectId)
 	{
 		this.projectId = projectId;
+	}
+
+	public String getBrandingId()
+	{
+		return brandingId;
+	}
+
+	public void setBrandingId(String brandingId)
+	{
+		this.brandingId = brandingId;
 	}
 
 }

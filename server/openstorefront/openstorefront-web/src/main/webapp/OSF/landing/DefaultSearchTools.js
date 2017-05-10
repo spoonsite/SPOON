@@ -15,20 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-Ext.require('OSF.landing.DefaultHeader');
 
-Ext.onReady(function(){
+/* global Ext */
+
+Ext.define('OSF.landing.DefaultSearchTools', {
+	extend: 'Ext.panel.Panel',
+	alias: 'widget.osf-defaultsearchtools'
 	
 	
-	Ext.create('Ext.container.Viewport', {
-		cls: 'home-backsplash',
-		layout: 'border',
-		items: [
-			Ext.create('OSF.landing.DefaultHeader', {
-			})
-
-		]
-	});
 	
 });
-		

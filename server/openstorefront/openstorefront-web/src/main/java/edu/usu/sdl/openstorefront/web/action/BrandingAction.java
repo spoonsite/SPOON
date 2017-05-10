@@ -16,8 +16,6 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
-import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -38,29 +36,12 @@ public class BrandingAction
 	@Validate(required = true, on = "CSS")
 	private String template;
 
-	private String brandingId;
-
 	private Branding branding;
-	private String landingTemplate;
-
-	@DefaultHandler
-	public Resolution landingPage()
-	{
-		loadBranding();
-		LandingTemplate landingTemplateFull = branding.getLandingTemplate();
-		if (landingTemplate != null && StringUtils.isNotBlank(landingTemplateFull.getTemplate())) {
-			landingTemplate = landingTemplateFull.getTemplate();
-		} else {
-			landingTemplate = getPageOutput("/WEB-INF/securepages/template/defaultLanding.js");
-		}
-
-		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
-	}
 
 	@HandlesEvent("CSS")
 	public Resolution cssPage()
 	{
-		loadBranding();
+		branding = loadBranding();
 		if (branding != null) {
 			return new ForwardResolution("/WEB-INF/securepages/css/" + template);
 		} else {
@@ -68,21 +49,10 @@ public class BrandingAction
 		}
 	}
 
-	private void loadBranding()
-	{
-		if (StringUtils.isNotBlank(brandingId)) {
-			branding = new Branding();
-			branding.setBrandingId(brandingId);
-			branding = branding.find();
-		} else {
-			branding = service.getBrandingService().getCurrentBrandingView();
-		}
-	}
-
 	@HandlesEvent("Override")
 	public Resolution brandingCssOverride()
 	{
-		loadBranding();
+		branding = loadBranding();
 		if (branding != null) {
 			String overrideCss = "";
 			if (StringUtils.isNotBlank(branding.getOverrideCSS())) {
@@ -110,16 +80,6 @@ public class BrandingAction
 		this.template = template;
 	}
 
-	public String getBrandingId()
-	{
-		return brandingId;
-	}
-
-	public void setBrandingId(String brandingId)
-	{
-		this.brandingId = brandingId;
-	}
-
 	public Branding getBranding()
 	{
 		return branding;
@@ -128,16 +88,6 @@ public class BrandingAction
 	public void setBranding(Branding branding)
 	{
 		this.branding = branding;
-	}
-
-	public String getLandingTemplate()
-	{
-		return landingTemplate;
-	}
-
-	public void setLandingTemplate(String landingTemplate)
-	{
-		this.landingTemplate = landingTemplate;
 	}
 
 }

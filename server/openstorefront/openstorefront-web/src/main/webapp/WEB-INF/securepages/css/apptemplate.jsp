@@ -554,6 +554,10 @@ td.info-table {
 	background-image: url('${pageContext.request.contextPath}/images/background_globe.jpg');
 }
 
+.home-footer {
+	background-color: #271848;
+}
+
 .logo-small {
     width: 250px;
     padding: 2px;

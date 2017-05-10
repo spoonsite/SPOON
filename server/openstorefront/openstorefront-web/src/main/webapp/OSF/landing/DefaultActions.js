@@ -16,19 +16,4 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
-
-Ext.define('OSF.landing.DefaultFooter', {
-	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultfooter',
-	
-	height: 400,
-	bodyCls: 'home-footer',
-	initComponent: function () {
-		this.callParent();	
-		
-		
-	}
-	
-});
 

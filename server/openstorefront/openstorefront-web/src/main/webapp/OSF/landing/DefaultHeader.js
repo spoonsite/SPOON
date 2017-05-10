@@ -20,7 +20,7 @@
 
 Ext.define('OSF.landing.DefaultHeader', {
 	extend: 'Ext.panel.Panel',
-	alias: 'osf.landing.DefaultHeader',
+	alias: 'widget.osf-defaultheader',
 	
 	
 	height: 50,

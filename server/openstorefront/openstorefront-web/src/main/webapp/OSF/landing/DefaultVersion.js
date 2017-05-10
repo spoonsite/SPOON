@@ -18,17 +18,32 @@
 
 /* global Ext */
 
-Ext.define('OSF.landing.DefaultFooter', {
+Ext.define('OSF.landing.DefaultVersion', {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultfooter',
+	alias: 'widget.osf-defaultversion',
 	
-	height: 400,
+	width: '100%',
+	layout: 'center',
 	bodyCls: 'home-footer',
+	items: [
+		{
+			itemId: 'display',
+			tpl: '<div class="home-footer-version">{appVersion}</div>'
+		}
+	],
 	initComponent: function () {
-		this.callParent();	
+		this.callParent();			
+		var versionPanel = this;
 		
 		
-	}
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+			
+			
+		});
+		
+		
+		
+	}	
 	
 });
 

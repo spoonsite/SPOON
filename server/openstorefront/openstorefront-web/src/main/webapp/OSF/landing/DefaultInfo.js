@@ -18,17 +18,10 @@
 
 /* global Ext */
 
-Ext.define('OSF.landing.DefaultFooter', {
+Ext.define('OSF.landing.DefaultInfo', {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultfooter',
+	alias: 'widget.osf-defaultinfo'
 	
-	height: 400,
-	bodyCls: 'home-footer',
-	initComponent: function () {
-		this.callParent();	
-		
-		
-	}
+	
 	
 });
-

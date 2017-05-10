@@ -43,11 +43,10 @@
 				display: 'block'
 			});
 		} 
-			
-		${actionBean.landingTemplate}		
-			
 		
 	</script>	
+	
+	${actionBean.landingTemplate}
 		
     </stripes:layout-component>
 </stripes:layout-render>		
