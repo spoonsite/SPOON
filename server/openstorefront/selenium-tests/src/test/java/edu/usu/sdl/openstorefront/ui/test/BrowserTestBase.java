@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -69,7 +68,6 @@ public class BrowserTestBase
 		
 	    LOG.log(Level.INFO,"Starting the AccountsSignupActivateTest");
             for (WebDriver driver : webDriverUtil.getDrivers()) {
-		    driver.manage().window().setSize(new Dimension(1200,1024));	   
 			driver.get(webDriverUtil.getPage("login.jsp"));
 
 			WebElement element = driver.findElement(By.name("username"));
@@ -113,7 +111,7 @@ public class BrowserTestBase
 			//TODO: confirm logout
 		}
 	}
-
+	
 	// pass in table name, return Row, Column
 	public boolean tableClickRowCol(String tableName, String searchFor)
 	{
@@ -123,8 +121,6 @@ public class BrowserTestBase
 		boolean theBool = false;
 		// get the tableText[theRow][theColumn] from table theTable
 		for (WebDriver driver : webDriverUtil.getDrivers()) { 
-			driver.manage().window().setSize(new Dimension(1300,1150));
-
 			WebElement table = driver.findElement(By.id(localTable)); 
 			List<WebElement> allRows = table.findElements(By.tagName("tr")); 
 			//String[][] tableText = new String[256][256];

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
@@ -58,10 +57,7 @@ public class AccountSignupActivateTest
         // Navigate to the registration page
 		for (WebDriver driver : webDriverUtil.getDrivers()) { 
 		   driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
-		   
-		   // Set timeout
-		   driver.manage().timeouts().implicitlyWait(7, TimeUnit.SECONDS);
-		   
+
 		   // Filter by Locked/Disabled and Pending
 		   // *** TODO: *** Do a SEARCH instead!
            driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
