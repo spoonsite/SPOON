@@ -62,7 +62,7 @@ public class WebDriverUtil
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to load Configuration file.");
 		}
-		server = properties.getProperty("test.server", "http://store-accept.usu.di2e.net/openstorefront/");
+		server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
 		String driverKey = properties.getProperty("test.drivers", "EDGE");
 		try {
 			WebDriverType webDriverType = WebDriverType.valueOf(driverKey.toUpperCase().trim());
