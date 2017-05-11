@@ -104,6 +104,16 @@ public class BrowserTestBase {
             //TODO: confirm logout
         }
     }
+	
+	// Making Tread.sleep "universal"
+	protected void sleep (int mills) {
+		try {
+			Thread.sleep(mills);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
 
     // pass in table name, return Row, Column
     public boolean tableClickRowCol(String tableName, String searchFor, WebDriver driver) {
@@ -147,21 +157,16 @@ public class BrowserTestBase {
 
         // Now CLICK on the table! 
         if (fRow != -1 || fColumn != -1) {
-            LOG.log(Level.INFO, "*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
             fColumn++; // increment by 1 as it is 0-based and you can't click on td 0th instance.
-            driver.findElement(By.xpath("//tr[" + fRow + "]//td[" + fColumn + "]")).click();
+			LOG.log(Level.INFO, "*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
+			driver.findElement(By.xpath("//tr[" + fRow + "]//td[" + fColumn + "]")).click();
             theBool = true;
         } else {
             LOG.log(Level.INFO, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ". ***");
             theBool = false;
         }
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        sleep(1000);
+        
         return theBool;
         //return new TableItem(fRow, fColumn);
     }
