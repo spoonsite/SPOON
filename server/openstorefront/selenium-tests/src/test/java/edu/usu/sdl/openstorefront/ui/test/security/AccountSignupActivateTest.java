@@ -47,95 +47,107 @@ public class AccountSignupActivateTest
 
     @Test
     public void signupActivate() throws InterruptedException {
-        deleteUserIfPresent();
-        signupForm();
-        activateAccount();
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			deleteUserIfPresent(driver);
+			signupForm(driver);
+			activateAccount(driver);
+		}
     }
 
     // Delete if active
-    private void deleteUserIfPresent() throws InterruptedException {
+    private void deleteUserIfPresent(WebDriver driver) throws InterruptedException {
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		// TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
+		for (int loop=0; loop<=3; loop ++) {
+			// First (loop == 0) filter by Active and Approved
+			
+			if (loop == 1) {
+				// Filter by Locked/Disabled and Pending (just created account scenario)
+				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
+				sleep(2200);  // Need to explicity pause to let drop-down selection catch up
+	 			driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
+				sleep(1500);
+			}
 
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+			if (loop == 2){
+				// Filter by Locked/ Disabled and Approved
+				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
+				sleep(1500);  
+				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Approved')]")).click();
+				sleep (1500);
+			}
+			
+			if (loop == 3){
+				// Filter by Active and Pending
+				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Active')]")).click();
+				sleep(1500);  
+				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+				driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
+				sleep (1500);
+			}
+				
+			// Delete if present
+			if (tableClickRowCol("tableview-1125", "autotest1", driver)) {
+				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
+				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
+				LOG.log(Level.INFO, "*** User DELETED ***");
+				loop = 99;  // exit
+			}
+			sleep(1500);
+			}
+	    }
 
-            // TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
-            driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
-            driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
-            sleep(1500);  // Need to explicity pause to let drop-down selection catch up
-
-            driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
-            driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
-
-            // Delete if present
-            if (tableClickRowCol("tableview-1125", "Test1", driver)) {
-                driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-                driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
-                LOG.log(Level.INFO, "*** User DELETED ***");
-            }
-            sleep(1500);
-        }
-        /*
+    public void signupForm(WebDriver driver) {
         // Navigate to the registration page
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
-		
+		driver.get(webDriverUtil.getPage("registration.jsp"));
+		sleep(2000);
+		// Fill out the form
+		LOG.log(Level.INFO, "********** Fill out the signupForm ************");
+		driver.findElement(By.xpath("//input[@name='username']")).sendKeys("autotest1");
+		driver.findElement(By.xpath("//input[@name='password']")).sendKeys("autoTest1!");
+		driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("autoTest1!");
+		driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("auto");
+		driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("Test1");
+		driver.findElement(By.xpath("//input[@name='organization']")).sendKeys("Air Force");
+		driver.findElement(By.xpath("//input[@name='email']")).sendKeys("blaine.esplin@sdl.usu.edu");
+		driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("435-555-5555");
+		sleep(2000);
 
-			// Search for the account to delete
-			// TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
-            // Delete if present
-            if (tableClickRowCol("tableview-1125", "Test1", driver)) {
-                driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-                driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
-                LOG.log(Level.INFO, "*** User autotest1 was DELETED! ***");
-            }
-        }*/
-    }
+		// SUBMIT the form
+		driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
+		sleep(9000);
+		login("admin", "Secret1!");
+	}
 
-    public void signupForm() {
-        // Navigate to the registration page
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("registration.jsp"));
-            sleep(2000);
-            // Fill out the form
-            LOG.log(Level.INFO, "********** Fill out the signupForm ************");
-            driver.findElement(By.xpath("//input[@name='username']")).sendKeys("autotest1");
-            driver.findElement(By.xpath("//input[@name='password']")).sendKeys("autoTest1!");
-            driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("autoTest1!");
-            driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("auto");
-            driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("Test1");
-            driver.findElement(By.xpath("//input[@name='organization']")).sendKeys("Air Force");
-            driver.findElement(By.xpath("//input[@name='email']")).sendKeys("blaine.esplin@sdl.usu.edu");
-            driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("435-555-5555");
-            sleep(2000);
 
-            // SUBMIT the form
-            driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
-            sleep(9000);
-            login("admin", "Secret1!");
-        }
-    }
-
-    private void activateAccount() {
+    private void activateAccount(WebDriver driver) {
         // Navigate to Admin Tools -> Application Management -> User Tools to activate
         LOG.log(Level.INFO, "********** Starting activateAccount in AccountsSignupActivateTest ************");
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
-            sleep(2500);
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		sleep(2500);
 
-            // Now filter by Locked/Disabled and Pending and activate.
-            // *** TODO: ***  Do a SEARCH instead!
-            driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
-            driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
-            driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
-            driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
+		// Now filter by Locked/Disabled and Pending and activate.
+		// *** TODO: ***  Do a SEARCH instead!
+		driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+		driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
+		sleep(1500);
+		driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+		driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
+		sleep(1500);
+		// Select and click Approve
+		if (tableClickRowCol("tableview-1125", "Test1", driver)) {
+			driver.findElement(By.xpath("//span[@id='button-1130-btnEl']")).click();
+			sleep(2000);
 
-            // Select and click Approve
-            if (tableClickRowCol("tableview-1125", "Test1", driver)) {
-                driver.findElement(By.xpath("//span[@id='button-1130-btnEl']")).click();
-                sleep(3000);
-
-                driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
-            }
-        }
-    }
+			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
+			sleep(3000);
+			// Confirm
+		}
+	}
+    
 }
