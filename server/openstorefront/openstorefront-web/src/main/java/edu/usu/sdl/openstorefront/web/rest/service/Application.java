@@ -73,6 +73,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -100,6 +101,8 @@ import org.apache.commons.lang.StringUtils;
 public class Application
 		extends BaseResource
 {
+	@Inject
+	private CoreSystem coreSystem;
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
@@ -649,7 +652,7 @@ public class Application
 			@PathParam("managerClass") String managerClass
 	)
 	{
-		CoreSystem.restart();
+		coreSystem.restart();
 		return Response.ok().build();
 	}
 
