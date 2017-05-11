@@ -52,19 +52,17 @@ public class AccountSignupActivateTest
         activateAccount();
     }
 
-	
     // Delete if active
     private void deleteUserIfPresent() throws InterruptedException {
-		
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
+
+        for (WebDriver driver : webDriverUtil.getDrivers()) {
             driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
 
             // TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
             driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
             driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
-			sleep(1500);  // Need to explicity pause to let drop-down selection catch up
-			
-			
+            sleep(1500);  // Need to explicity pause to let drop-down selection catch up
+
             driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
             driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
 
@@ -74,8 +72,9 @@ public class AccountSignupActivateTest
                 driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
                 LOG.log(Level.INFO, "*** User DELETED ***");
             }
+            sleep(1500);
         }
-		/*
+        /*
         // Navigate to the registration page
         for (WebDriver driver : webDriverUtil.getDrivers()) {
             driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
@@ -107,7 +106,7 @@ public class AccountSignupActivateTest
             driver.findElement(By.xpath("//input[@name='organization']")).sendKeys("Air Force");
             driver.findElement(By.xpath("//input[@name='email']")).sendKeys("blaine.esplin@sdl.usu.edu");
             driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("435-555-5555");
-			sleep(2000);
+            sleep(2000);
 
             // SUBMIT the form
             driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
@@ -133,8 +132,8 @@ public class AccountSignupActivateTest
             // Select and click Approve
             if (tableClickRowCol("tableview-1125", "Test1", driver)) {
                 driver.findElement(By.xpath("//span[@id='button-1130-btnEl']")).click();
-				sleep(3000);
-                
+                sleep(3000);
+
                 driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
             }
         }
