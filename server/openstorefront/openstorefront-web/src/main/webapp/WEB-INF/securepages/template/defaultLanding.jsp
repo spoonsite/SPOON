@@ -22,14 +22,30 @@
 	Ext.require('OSF.landing.DefaultHeader');
 	Ext.require('OSF.landing.DefaultFooter');
 	Ext.require('OSF.landing.DefaultSearch');
+	Ext.require('OSF.landing.DefaultVersion');
+	Ext.require('OSF.landing.DefaultSearchTools');
+	Ext.require('OSF.landing.DefaultActions');
 
 	Ext.onReady(function(){
 
+		Ext.create('Ext.Img', {																								
+			alt: 'logo',
+			cls: 'home-page-top-logo',					
+			src: 'images/di2elogo-sm.png',
+			renderTo: Ext.getBody()
+		});
+		
 
 		Ext.create('Ext.container.Viewport', {
-			cls: 'home-backsplash',
+			//cls: 'home-backsplash',
+			style: 'background: white;',
 			layout: 'border',
-			items: [
+			listeners: {
+				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+					view.updateLayout(true, true);
+				}
+			},			
+			items: [								
 				{
 					xtype: 'osf-defaultheader'
 				},
@@ -37,25 +53,30 @@
 					xtype: 'panel',
 					region: 'center',
 					scrollable: true,
-					items: [
+					items: [	
 						{
-							xtype: 'osf-defaultsearch',
-							bodyStyle: 'padding-top: 80px; padding-bottom: 40px;'
-						},
+							xtype: 'panel',
+							cls: 'home-backsplash',
+							items: [
+								{
+									xtype: 'osf-defaultsearch',
+									bodyStyle: 'padding-top: 80px; padding-bottom: 40px;'
+								},
+								{
+									xtype: 'osf-defaultsearchtools',
+									bodyStyle: 'padding-bottom: 40px;'
+								}								
+							]
+						},		
+						{
+							xtype: 'osf-defaultactions'
+						},						
 						{
 							xtype: 'osf-defaultfooter'
 						},
 						{
-							xtype: 'panel',
-							width: '100%',
-							layout: 'center',
-							bodyCls: 'home-footer',
-							bodyStyle: 'padding: 20px 0px 20px 0px;',
-							items: [
-								{
-									html: '<div class="home-footer-version">${actionBean.appVersion}</div>'
-								}
-							]
+							xtype: 'osf-defaultversion',
+							bodyStyle: 'padding-bottom: 20px;'
 						}	
 					]
 				}

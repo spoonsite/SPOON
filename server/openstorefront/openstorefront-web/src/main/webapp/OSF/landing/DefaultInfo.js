@@ -20,8 +20,15 @@
 
 Ext.define('OSF.landing.DefaultInfo', {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultinfo'
+	alias: 'widget.osf-defaultinfo',
 	
-	
+		
+	initComponent: function () {
+		this.callParent();			
+		var infoPanel = this;
+		
+		
+		
+	}
 	
 });

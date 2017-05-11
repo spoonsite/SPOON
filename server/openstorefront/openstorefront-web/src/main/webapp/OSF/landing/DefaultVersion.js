@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.landing.DefaultVersion', {
 	extend: 'Ext.panel.Panel',
@@ -24,25 +24,26 @@ Ext.define('OSF.landing.DefaultVersion', {
 	
 	width: '100%',
 	layout: 'center',
-	bodyCls: 'home-footer',
+	bodyCls: 'home-footer',	
 	items: [
 		{
 			itemId: 'display',
-			tpl: '<div class="home-footer-version">{appVersion}</div>'
+			tpl: '<div class="home-footer-version">{applicationVersion}</div>'
 		}
 	],
 	initComponent: function () {
 		this.callParent();			
 		var versionPanel = this;
-		
-		
-		CoreService.brandingservice.getCurrentBranding().then(function(branding){
-			
-			
-		});
-		
-		
-		
+				
+		Ext.Ajax.request({
+			url: 'api/v1/service/application/version',
+			success: function(response, opts) {
+				var version = response.responseText;
+				versionPanel.queryById('display').update({
+					applicationVersion: version
+				});
+			}
+		});				
 	}	
 	
 });

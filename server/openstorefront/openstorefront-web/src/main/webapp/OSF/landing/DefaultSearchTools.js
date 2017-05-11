@@ -20,8 +20,74 @@
 
 Ext.define('OSF.landing.DefaultSearchTools', {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultsearchtools'
+	alias: 'widget.osf-defaultsearchtools',
 	
-	
+	layout: 'center',	
+	items: [
+		{
+			xtype: 'dataview',
+			itemId: 'dataview',
+			store: {				
+			},
+			itemSelector: 'div.search-tool',
+			tpl: new Ext.XTemplate(
+				'<tpl for=".">',
+					'<div style="margin: 15px;" class="search-tool-button-outer search-tool">',
+					  '<div class="search-tool-button-inner">',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
+						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
+						'<br/><span>{text}</span>',
+					  '</div>',
+					'</div>',
+				'</tpl>'
+			),
+			listeners: {
+				itemclick: function(dataView, record, item, index, e, eOpts) {	
+					if (record.handler) {
+						record.handler(record, item);
+					} else {
+						Ext.log("Add Handler to item");
+					}
+				}
+			}
+		}
+	],
+	initComponent: function () {
+		this.callParent();			
+		var searchToolsPanel = this;
+				
+		var tools=[
+			{
+				text: 'Tags',
+				icon: 'fa-cloud',
+				handler: function(record, item) {
+					
+				}
+			},
+			{
+				text: 'Organizations',
+				icon: 'fa-sitemap',
+				handler: function(record, item) {
+					
+				}
+			},
+			{
+				text: 'Advance Search',
+				icon: 'fa-search-plus',
+				handler: function(record, item) {
+					
+				}
+			},
+			{
+				text: 'My Searches',
+				icon: 'fa-folder-open-o',
+				handler: function(record, item) {
+					
+				}
+			}			
+		];
+		
+		searchToolsPanel.queryById('dataview').getStore().loadData(tools);
+	}
 	
 });

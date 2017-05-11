@@ -23,15 +23,14 @@ Ext.define('OSF.landing.DefaultHeader', {
 	alias: 'widget.osf-defaultheader',
 	
 	
-	height: 50,
 	region: 'north',					
 	border: false,					
-	cls: 'border_accent',	
+	//cls: 'border_accent',	
 	dockedItems: [						
 		{
 			xtype: 'toolbar',
 			dock: 'top',								
-			cls: 'nav-back-color',
+			cls: 'nav-back-color',			
 			listeners: {
 				resize: function(toolbar, width, height, oldWidth, oldHeight, eOpts) {
 					if (width < 1024) {
@@ -41,6 +40,7 @@ Ext.define('OSF.landing.DefaultHeader', {
 						toolbar.getComponent('spacer').setHidden(false);										
 						toolbar.getComponent('notificationBtn').setText('Notifications');										
 					}
+					toolbar.updateLayout(true, true);
 				}
 			},
 			items: [
