@@ -104,16 +104,15 @@ public class BrowserTestBase {
             //TODO: confirm logout
         }
     }
-	
-	// Making Tread.sleep "universal"
-	protected void sleep (int mills) {
-		try {
-			Thread.sleep(mills);
-		} catch (InterruptedException ex) {
-			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-	
+
+    // Making Tread.sleep "universal"
+    protected void sleep(int mills) {
+        try {
+            Thread.sleep(mills);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     // pass in table name, return Row, Column
     public boolean tableClickRowCol(String tableName, String searchFor, WebDriver driver) {
@@ -124,6 +123,7 @@ public class BrowserTestBase {
         boolean theBool = false;
         // get the tableText[theRow][theColumn] from table theTable
         WebElement table = driver.findElement(By.id(localTable));
+        System.out.println("Inside table click row col");
         List<WebElement> allRows = table.findElements(By.tagName("tr"));
         //String[][] tableText = new String[256][256];
 
@@ -158,15 +158,19 @@ public class BrowserTestBase {
         // Now CLICK on the table! 
         if (fRow != -1 || fColumn != -1) {
             fColumn++; // increment by 1 as it is 0-based and you can't click on td 0th instance.
-			LOG.log(Level.INFO, "*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
-			driver.findElement(By.xpath("//tr[" + fRow + "]//td[" + fColumn + "]")).click();
+            
+            LOG.log(Level.INFO, "*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
+            
+            WebElement element = table.findElement(By.xpath("//td[contains(.,'" + localSearch + "')]"));
+            element.click();
+            
             theBool = true;
+            System.out.println("Bool set to true");
         } else {
             LOG.log(Level.INFO, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ". ***");
             theBool = false;
         }
-        sleep(1000);
-        
+ 
         return theBool;
         //return new TableItem(fRow, fColumn);
     }

@@ -76,8 +76,9 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 					items: [
 						{
 							text: 'Insert Link',
+							id: 'insertLinkBtn',
 							itemId: 'insert',
-							iconCls: 'fa fa-link',
+							iconCls: 'fa fa-lg fa-link icon-button-color-default',
 							disabled: true,
 							handler: function(button) {
 								var window = button.up('window');
@@ -97,6 +98,8 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						},
 						{
 							text: 'Cancel',
+							id: 'linkCancelBtn',
+							iconCls: 'fa fa-lg fa-times icon-button-color-warning',
 							handler: function(button) {
 								var window = button.up('window');
 								window.close();
