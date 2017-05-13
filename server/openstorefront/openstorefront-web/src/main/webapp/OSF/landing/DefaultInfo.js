@@ -22,10 +22,59 @@ Ext.define('OSF.landing.DefaultInfo', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultinfo',
 	
-		
+	layout: 'center',
+	width: '100%',
+	items: [
+		{
+			xtype: 'dataview',
+			width: '50%',
+			itemId: 'dataview',
+			store: {				
+			},
+			itemSelector: 'div.search-tool',
+			tpl: new Ext.XTemplate(
+				'<div',	
+				'<tpl for=".">',
+					'<div style="margin: 15px;" class="search-tool-button-outer search-tool">',
+					  '<div class="search-tool-button-inner">',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
+						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
+						'<br/><span>{text}</span>',
+					  '</div>',
+					'</div>',
+				'</tpl>'
+			),
+			listeners: {
+				itemclick: function(dataView, record, item, index, e, eOpts) {	
+					if (record.handler) {
+						record.handler(record, item);
+					} else {
+						Ext.log("Add Handler to item");
+					}
+				}
+			}			
+		}
+	],	
 	initComponent: function () {
 		this.callParent();			
 		var infoPanel = this;
+		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/highlights',
+			success: function(response, opts) {
+				var highlights = Ext.decode(response.responseText);
+				
+				
+				
+				Ext.Ajax.request({
+					url: 'api/v1/service/search/recent',
+					success: function(response, opts) {
+						var recent = Ext.decode(response.responseText);
+						
+					}
+				});
+			}
+		});
 		
 		
 		

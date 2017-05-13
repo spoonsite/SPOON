@@ -15,5 +15,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
 
-
+Ext.define('OSF.landing.DefaultCategory', {
+	extend: 'Ext.panel.Panel',
+	alias: 'widget.osf-defaultcategory',
+	
+	width: '100%',
+	titleCollapse: true,
+	collapsible: true,
+	hideCollapseTool:true,
+	header: {
+		title: 'Browse Categories',
+		titleAlign: 'center'
+	},
+	items: [
+		{
+			xtype: 'dataview',
+			width: '50%',
+			itemId: 'dataview',
+			store: {				
+			},
+			itemSelector: 'div.category-tool',
+			tpl: new Ext.XTemplate(
+				'<div',	
+				'<tpl for=".">',
+					'<div style="margin: 15px;" class="search-tool-button-outer category-tool">',
+					  '<div class="search-tool-button-inner">',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
+						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
+						'<br/><span>{text}</span>',
+					  '</div>',
+					'</div>',
+				'</tpl>'
+			),
+			listeners: {
+				itemclick: function(dataView, record, item, index, e, eOpts) {	
+					if (record.handler) {
+						record.handler(record, item);
+					} else {
+						Ext.log("Add Handler to item");
+					}
+				}
+			}			
+		}
+	],	
+	initComponent: function () {
+		this.callParent();			
+		var infoPanel = this;
+		
+		
+		
+	}
+	
+});
