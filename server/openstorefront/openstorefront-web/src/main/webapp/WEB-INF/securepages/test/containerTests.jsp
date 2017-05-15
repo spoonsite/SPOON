@@ -48,7 +48,7 @@
 				margin-left: 300px;
 				min-width: 750px;		
 			}
-			
+
 			.loading{
 				text-align: center;
 				font-size: 24px;
@@ -60,9 +60,9 @@
 				bottom: 0px;
 				right: 0px;				
 			}
-			
+
 			.loading-top{
-				position: absolute;
+				position: fixed;
 				top: 0px;
 				left: 0px;
 				bottom: 0px;
@@ -79,57 +79,133 @@
 				animation-iteration-count: infinite;
 				animation-direction: alternate;
 			}
-			
+
 			@keyframes example {
 				from {color: white;}
 				to {color: yellow;}
 			}			
-			
+			.test-case .result,
+			.test-suite-stat .result,
+			.header .passed,
+			.header .failed,
+			.header .all
+			{
+				padding: 5px; 
+				border-radius: 2px;
+				color: white; 
+				font-weight: bold; 
+				font-size: 16px;
+				display: inline-block;
+				margin: 5px;
+			}	
+			.test-case .result.passed,
+			.test-suite-stat .result.passed,
+			.header .passed
+			{
+				background-color: green; 
+			}
+			.test-case .result.failed,
+			.test-suite-stat .result.failed,
+			.header .failed
+			{
+				background-color: red; 
+			}
+			.header .all
+			{
+				background-color: blue;
+			}
+			.test-case .output
+			{
+				font-size: 9px; 
+				color: grey; 
+				border: 1px solid grey;
+				padding: 5px;
+			}
+			.test-case .heading .description
+			{
+				font-weight: bold;
+			}
+			.test-suite .test-list
+			{
+				border-width: 1px 0px;
+				border-color: #000000;
+				border-style: solid;
+			}
+			.test-suite-stat 
+			{
+				margin: 20px 0px 0px 0px;
+			}
+			#fullbody.passed .test-suite.failed,
+			#fullbody.passed .test-case.failed
+			{
+				display: none;
+			}
+			#fullbody.failed .test-suite.passed,
+			#fullbody.failed .test-case.passed
+			{
+				display: none;
+			}
+			#header-buttons
+			{
+				text-align: right;
+			}
+			#header-buttons span
+			{
+				cursor: pointer;
+			}
 		</style>
     </head>
     <body id="fullbody">
-				<header class="header">
+		<header class="header">
 			<span class="api-title">Open Storefront Container Tests</span>
+			<div id="header-buttons">
+				<span class="all">ALL</span>
+				<span class="passed">PASSED</span>
+				<span class="failed">FAILED</span>
+			</div>
 		</header>
-		
+
 		<div id="nav" class="test-guide" >
 			<ul>
 				<li>
 					<a onclick="runTest('');" style="cursor: pointer">Run All Tests</a>
 					<hr>
 				</li>				
-			<c:forEach var="testSuite" items="${actionBean.testSuites}">
-				<li>
-					<a onclick="runTest('&suite=${testSuite.name}');" style="cursor: pointer">${testSuite.name}</a>
-					<ul>	
-					<c:forEach var="item" items="${testSuite.tests}">						
-						<li>
-							<a onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" style="cursor: pointer">${item.description}</a>
-						</li>	
-					</c:forEach>					
-					</ul>
-				</li>
-			</c:forEach>	
+				<c:forEach var="testSuite" items="${actionBean.testSuites}">
+					<li>
+						<a onclick="runTest('&suite=${testSuite.name}');" style="cursor: pointer">${testSuite.name}</a>
+						<ul>	
+							<c:forEach var="item" items="${testSuite.tests}">						
+								<li>
+									<a onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" style="cursor: pointer">${item.description}</a>
+								</li>	
+							</c:forEach>					
+						</ul>
+					</li>
+				</c:forEach>	
 			</ul>	
 		</div>
 		<div id="outputId" class="test-doc">
 		</div>		
-		
+
 		<script type="text/javascript">
+			$("#header-buttons span").click(function ()
+			{
+				$("body").attr("class", $(this).attr("class"));
+			});
 			function runTest(query)
-			{	 
-				//$('#outputId').html("<div class='loading'>Running Test(s)...</div>");				
+			{
 				$('#fullbody').append("<div id='nav-loader' class='loading-top'>Running Test(s)...</div>");
-				$('#outputId').load('ServiceTest.action?RunTest' + query.replace(/ /g, '%20'), 
-					function(responseText,status, xhr){
-						$('#nav-loader').remove();
-					}
+				$('#outputId').load('ServiceTest.action?RunTest' + query.replace(/ /g, '%20'),
+						function (responseText, status, xhr) {
+							$('#nav-loader').remove();
+						}
 				);
-				$(document).ajaxError(function(event, request, settings) {
-				    $('#nav-loader').remove();
+				$(document).ajaxError(function (event, request, settings) {
+					$('#nav-loader').remove();
 				});
 			}
 		</script>
-		
+
     </body>
 </html>
