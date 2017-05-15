@@ -62,10 +62,13 @@ public class BrowserTestBase {
         String uN = userName;
         String pW = passWord;
 
-        LOG.log(Level.INFO, "Starting the AccountsSignupActivateTest");
+		
         for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("login.jsp"));
+            // Make sure logged out before attempting login.
+			driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
+			// Now log in
+			driver.get(webDriverUtil.getPage("login.jsp"));
             WebElement element = driver.findElement(By.name("username"));
             element.sendKeys(uN);
             // Enter password and hit ENTER since submit does not seem to work.
@@ -96,12 +99,7 @@ public class BrowserTestBase {
         for (WebDriver driver : webDriverUtil.getDrivers()) {
             driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
-            WebElement element = driver.findElement(By.name("username"));
-            element.sendKeys("admin");
-            // Enter password and hit ENTER since submit does not seem to work.
-            driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
-
-            //TODO: confirm logout
+            //TODO: confirm logout, return -1 or 0 or a boolean?
         }
     }
 
@@ -123,7 +121,7 @@ public class BrowserTestBase {
         boolean theBool = false;
         // get the tableText[theRow][theColumn] from table theTable
         WebElement table = driver.findElement(By.id(localTable));
-        System.out.println("Inside table click row col");
+        // System.out.println("Inside table click row col");
         List<WebElement> allRows = table.findElements(By.tagName("tr"));
         //String[][] tableText = new String[256][256];
 
@@ -165,9 +163,9 @@ public class BrowserTestBase {
             element.click();
             
             theBool = true;
-            System.out.println("Bool set to true");
+            // System.out.println("Bool set to true");
         } else {
-            LOG.log(Level.INFO, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ". ***");
+            LOG.log(Level.INFO, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + "-- with current filters set. ***");
             theBool = false;
         }
  

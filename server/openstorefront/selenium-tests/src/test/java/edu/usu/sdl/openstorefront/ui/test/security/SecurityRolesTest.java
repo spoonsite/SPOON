@@ -35,18 +35,36 @@ public class SecurityRolesTest
     public static void setupTest() throws InterruptedException
 	{
 		login();
-		AccountSignupActivateTest accountSignupTest = new AccountSignupActivateTest();		
-		accountSignupTest.signupActivate();
     }
 		
-    @Test
-    public void deleteExistingRoles () {
-    
+	@Test
+	public void signupForAccounts() throws InterruptedException{
+	//	AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();		
+	//	newAccountSignup.signupActivate("autoUser");
+	//	newAccountSignup.signupActivate("autoEval");
+	//	newAccountSignup.signupActivate("autoAdmin");
+	//	newAccountSignup.signupActivate("autoLibrarian");
+	}
+	
+	@Test
+    public void SecurityRole () throws InterruptedException {
+		NewSecurityRole newSecurityRole = new NewSecurityRole();
+		newSecurityRole.addRole("AUTO-User","autoUser");
     }
 
+	@Test
+	public void setSecurityRoles () {
+		
+	}
+	
     @Test
-    public void addRolePermissions () {
+    public void importDataRestrictionEntries () {
     
     }
+	
+	@Test
+	public void verifySecurityPermissions () {
+		
+	}
 
 }
