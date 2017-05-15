@@ -191,7 +191,7 @@
 		<script type="text/javascript">
 			$("#header-buttons span").click(function ()
 			{
-				$("body").attr("class", $(this).attr("class"));
+				$("#fullbody").attr("class", $(this).attr("class"));
 			});
 			function runTest(query)
 			{
@@ -199,10 +199,12 @@
 				$('#outputId').load('ServiceTest.action?RunTest' + query.replace(/ /g, '%20'),
 						function (responseText, status, xhr) {
 							$('#nav-loader').remove();
+							$("#fullbody").attr("class", "");
 						}
 				);
 				$(document).ajaxError(function (event, request, settings) {
 					$('#nav-loader').remove();
+					$("#fullbody").attr("class", "");
 				});
 			}
 		</script>
