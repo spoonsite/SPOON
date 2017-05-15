@@ -31,12 +31,26 @@ Ext.define('OSF.landing.DefaultSearch', {
 		},
 		{	
 			xtype: 'panel',
-			width: '65%',
+			width: '75%',
 			layout: {
 				type: 'hbox',
 				align: 'stretch'
 			},
 			items: [
+				{
+					xtype: 'combo',
+					name: 'entryType',
+					width: 225,
+					valueField: 'code',
+					displayField: 'description',
+					editable: false,
+					typeAhead: false,
+					forceSelection: true,
+					emptyText: 'All',
+					fieldCls: 'home-search-field',
+					store: {						
+					}
+				},
 				{
 					xtype: 'combobox',										
 					itemId: 'searchText',

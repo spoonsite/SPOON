@@ -26,6 +26,7 @@
 	Ext.require('OSF.landing.DefaultSearchTools');
 	Ext.require('OSF.landing.DefaultActions');
 	Ext.require('OSF.landing.DefaultCategory');	
+	Ext.require('OSF.landing.DefaultInfo');	
 
 	Ext.onReady(function(){
 
@@ -73,10 +74,15 @@
 							xtype: 'osf-defaultactions'
 						},
 						{
+							xtype: 'osf-defaultinfo',
+							margin: '0 0 40 0'
+						},						
+						{
 							xtype: 'osf-defaultcategory'
 						},
 						{
-							xtype: 'osf-defaultfooter'
+							xtype: 'osf-defaultfooter',
+							bodyStyle: 'padding-top: 20px;'							
 						},
 						{
 							xtype: 'osf-defaultversion',

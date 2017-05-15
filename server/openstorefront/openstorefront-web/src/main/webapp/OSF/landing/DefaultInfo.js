@@ -24,53 +24,96 @@ Ext.define('OSF.landing.DefaultInfo', {
 	
 	layout: 'center',
 	width: '100%',
+	
 	items: [
 		{
-			xtype: 'dataview',
+			xtype: 'panel',
 			width: '50%',
-			itemId: 'dataview',
-			store: {				
-			},
-			itemSelector: 'div.search-tool',
+			height: 250,
+			cls: 'home-info-carousel',
+			itemId: 'carousel',
 			tpl: new Ext.XTemplate(
-				'<div',	
-				'<tpl for=".">',
-					'<div style="margin: 15px;" class="search-tool-button-outer search-tool">',
-					  '<div class="search-tool-button-inner">',	
-						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
-						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
-						'<br/><span>{text}</span>',
-					  '</div>',
-					'</div>',
-				'</tpl>'
-			),
-			listeners: {
-				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (record.handler) {
-						record.handler(record, item);
-					} else {
-						Ext.log("Add Handler to item");
-					}
-				}
-			}			
+				'<div class="new-home-highlight-item">',
+				'	<div class="new-home-highlight-item-back">',
+					'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="homelink" target="_blank">{title} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{title}</tpl></div>',
+					'<div class="new-home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}</div>',					
+					'<div class="home-highlight-footer"><span style="font-size: 10px; float: left;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="homelink" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></span></div>',
+				'	</div>',
+				'</div>'
+			)			
 		}
 	],	
+	listeners: {
+		resize: function(panel, width, height, oldWidth, oldHeight, eOpts) {
+			var carousel = panel.queryById('carousel');
+			if (width < 1024) {
+				carousel.setWidth('100%');										
+			} else {
+				carousel.setWidth('50%');										
+			}			
+		}
+	},	
 	initComponent: function () {
 		this.callParent();			
 		var infoPanel = this;
+		
+		
+		var carousel = infoPanel.queryById('carousel');
+		infoPanel.infoItems = [];	
+		carousel.currentHighlighIndex = 0;
+		var updateHighlight = function(slideDirOut, slideDirIn) {			
+			if (carousel.currentHighlighIndex >= infoPanel.infoItems.length) {
+				carousel.currentHighlighIndex = 0;
+			} 
+
+			if (carousel.currentHighlighIndex < 0) {
+				carousel.currentHighlighIndex = infoPanel.infoItems-1;
+			}
+
+			carousel.update(infoPanel.infoItems[carousel.currentHighlighIndex]);
+			var textel = Ext.query('.new-home-highlight-item-desc');
+			var el = Ext.get(textel[0]);
+			el.slideIn();	
+										
+		};		
 		
 		Ext.Ajax.request({
 			url: 'api/v1/resource/highlights',
 			success: function(response, opts) {
 				var highlights = Ext.decode(response.responseText);
 				
+				Ext.Array.each(highlights, function(highlight){
+					if (!highlight.link) {
+						highlight.link = false;
+					}
+					highlight.moreText = 'Read More >>';
+					highlight.displayDesc = Ext.util.Format.ellipsis(Ext.util.Format.stripTags(highlight.description), 700);
+
+				});				
 				
+				Ext.Array.each(highlights, function(item){
+					infoPanel.infoItems.push(item);
+				});
 				
 				Ext.Ajax.request({
 					url: 'api/v1/service/search/recent',
 					success: function(response, opts) {
 						var recent = Ext.decode(response.responseText);
 						
+//						Ext.Array.each(recent, function(item){
+//							infoPanel.infoItems.push(item);
+//						});
+						
+						infoPanel.highlightTask = Ext.TaskManager.newTask({
+							run: function() {								
+								updateHighlight();								
+								carousel.currentHighlighIndex++;
+							},
+							interval: 10000
+						});
+						Ext.TaskManager.start(infoPanel.highlightTask);						
+						updateHighlight();
+						carousel.currentHighlighIndex++;
 					}
 				});
 			}

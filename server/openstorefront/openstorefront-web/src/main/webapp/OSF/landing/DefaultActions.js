@@ -21,7 +21,8 @@ Ext.define('OSF.landing.DefaultActions', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultactions',
 	
-	layout: 'center',	
+	layout: 'center',
+	bodyStyle: 'padding-bottom: 40px;',
 	items: [
 		{
 			xtype: 'dataview',
@@ -32,8 +33,8 @@ Ext.define('OSF.landing.DefaultActions', {
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',
 					'<div style="margin: 15px;" class="action-tool-button-outer search-tool">',
-					  '<div class="action-tool-button-inner">',	
-						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
+					  '<div class="action-tool-button-inner" >',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" width=200/></tpl>',	
 						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
 						'<br/><span>{text}</span>',
 					  '</div>',
@@ -58,14 +59,16 @@ Ext.define('OSF.landing.DefaultActions', {
 		var tools=[
 			{
 				text: 'Dashboard',
-				icon: 'fa-th-large',
+				//icon: 'fa-th-large',
+				imageSrc: 'images/background_predator.jpg',
 				handler: function(record, item) {
 					
 				}
 			},
 			{
 				text: 'Submissions',
-				icon: 'fa-file-text-o',
+				//icon: 'fa-file-text-o',
+				imageSrc: 'images/background_soldier1.jpg',
 				permissions: [''],
 				handler: function(record, item) {
 					
@@ -73,14 +76,16 @@ Ext.define('OSF.landing.DefaultActions', {
 			},
 			{
 				text: 'Relationships',
-				icon: 'fa-share-alt',
+				//icon: 'fa-share-alt',
+				imageSrc: 'images/background_soldier2.jpg',
 				handler: function(record, item) {
 					
 				}
 			},
 			{
 				text: 'Tools',
-				icon: 'fa-gears',
+				//icon: 'fa-gears',
+				imageSrc: 'images/background_soldier4.jpg',
 				handler: function(record, item) {
 					
 				}

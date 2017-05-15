@@ -216,6 +216,92 @@ limitations under the License.
 	color: ${actionBean.branding.primaryTextColor};
 }
 
+.new-home-highlight-item {
+	text-align: center;    
+	color: whitesmoke;
+	height: 100%;
+}
+
+.new-home-highlight-item-back {
+	background: rgba(0, 0, 0, 0.5);
+	height: 100%;
+}
+
+.new-home-highlight-item-desc {
+	text-align: left;
+	padding: 10px;
+	color: whitesmoke;
+	font-size: 14px;	
+}
+
+.home-highlight-header {
+    text-align: center;
+    font-size: 24px;
+    height: 50px;
+    padding-top: 15px;
+    background: rgba(181, 157, 255, 0.4);
+}
+
+.home-highlight-header a {
+	color: white;	
+	text-decoration: none;
+}
+
+.home-highlight-footer {
+    position: absolute;
+    bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;	
+}
+
+.homelink {
+	color: white;	
+}
+
+.home-info-carousel {
+	background-size: 100%;
+	background-position: center top;
+    background-repeat: no-repeat;
+	background-image: url('${pageContext.request.contextPath}/images/background-info.jpg');
+}
+
+.home-category-block {
+	background-color: black;
+}
+
+.home-category-block:hover {
+	cursor: pointer;
+}
+
+.home-category-title {
+	font-size: 24px;
+}
+
+.home-category-title-section {
+	/* secondary light or quote */
+	background-color: ${actionBean.branding.quoteColor};
+}
+
+.home-category-section {
+	border: 1px solid lightgrey;
+	float: left;
+    width: 210px;
+    margin: 20px;
+}
+
+.home-category-header {
+	border: 1px grey solid; 
+	padding: 10px; width: 100%; 
+	/* accent color? */
+	background-color: rgba(255, 210, 7, 1);	
+}
+
+.home-category-content {
+	/* text color */
+	background-color: white;
+}
+
 .searchresults-morefilter {
 	color: white;
 	background-color: ${actionBean.branding.primaryColor};
@@ -486,7 +572,7 @@ td.info-table {
 	font-size: 32px;
     line-height: 32px;	
 	color: #252525;
-	padding-top: 18%;
+	//padding-top: 18%;
 	text-align: center;
 }
 
@@ -602,7 +688,17 @@ td.info-table {
 
 .home-footer {
 	/* Secondary-dark */
+	
 	background-color: #22183a;
+}
+
+.home-footer-item {
+	color: white;
+}
+
+.home-footer-item a {
+	color: whitesmoke;
+	text-decoration: none;
 }
 
 .home-page-top-logo {

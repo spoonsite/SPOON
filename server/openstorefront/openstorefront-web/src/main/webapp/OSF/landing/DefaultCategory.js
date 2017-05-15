@@ -25,27 +25,51 @@ Ext.define('OSF.landing.DefaultCategory', {
 	titleCollapse: true,
 	collapsible: true,
 	hideCollapseTool:true,
+	layout: 'center',
+	collapsed: true,	
+	cls: 'home-category-block',
 	header: {
-		title: 'Browse Categories',
+		title: '<span class="home-category-title">Browse by Category &nbsp;<i class="fa fa-lg fa-caret-down"></i></span>',		
+		cls: 'home-category-title-section',		
+		padding: 20,
 		titleAlign: 'center'
+	},
+	listeners: {
+		expand: function(panel, opts) {
+			panel.setTitle('<span class="home-category-title">Browse by Category &nbsp;<i class="fa fa-lg fa-caret-up"></i></span>');
+		},
+		collapse: function(panel, opts) {
+			panel.setTitle('<span class="home-category-title">Browse by Category &nbsp;<i class="fa fa-lg fa-caret-down"></i></span>');
+		}		
 	},
 	items: [
 		{
 			xtype: 'dataview',
-			width: '50%',
+			width: '80%',
 			itemId: 'dataview',
-			store: {				
+			store: {	
+				autoLoad: true,
+				sorters: [{
+					property: 'description',
+					direction: 'ASC'
+				}],				
+				proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/attributes?important=true'
+				}
 			},
 			itemSelector: 'div.category-tool',
-			tpl: new Ext.XTemplate(
-				'<div',	
+			tpl: new Ext.XTemplate(				
 				'<tpl for=".">',
-					'<div style="margin: 15px;" class="search-tool-button-outer category-tool">',
-					  '<div class="search-tool-button-inner">',	
-						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
-						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
-						'<br/><span>{text}</span>',
-					  '</div>',
+					'<div class="home-category-section">',
+					'	<div class="home-category-header">',
+					'		<table style="width: 100%"><tr><td><span class="{icon}"></span></td>',
+					'		<td valign="center"><span class="home-nav-item-header">{description}</span></td></tr></table></div>',
+					'	<div style="padding: 10px; overflow: auto; height: 165px;" class="home-category-content">',
+					'		<ul>',
+					'		<tpl for="codes">',
+					'			<li><a href="#" class="link" onclick="homepage.viewCategories(\'{parent.attributeType}\', \'{code}\');">{label}</a></li>',
+					'		</tpl></ul></div>',
 					'</div>',
 				'</tpl>'
 			),

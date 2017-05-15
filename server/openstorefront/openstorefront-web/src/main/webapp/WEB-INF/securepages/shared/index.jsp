@@ -22,7 +22,7 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-	
+			
 	<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
 	
