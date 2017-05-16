@@ -38,7 +38,8 @@ public class AdminAttributesTest
         for (WebDriver driver : webDriverUtil.getDrivers()) {
 
             setup(driver);
-            createAttribute(driver);
+            createAttribute(driver, "MyTestAttribute17", "MYTESTATTR17");
+            deleteAttribute(driver, "MyTestAttribute17");
         }
     }
 
@@ -58,16 +59,16 @@ public class AdminAttributesTest
         });
     }
 
-    public void createAttribute(WebDriver driver) {
+    public void createAttribute(WebDriver driver, String attrName, String attrCode) {
 
         driver.findElement(By.xpath("//*[@id='attributeGrid-tools-add']")).click();
 
-        driver.findElement(By.xpath("//*[@id='editAttributeForm-label-inputEl']")).sendKeys("MyNewAttribute1");
-        driver.findElement(By.xpath("//*[@id='editAttributeForm-code-inputEl']")).sendKeys("MyNewAttributeCode1");
-        
+        driver.findElement(By.xpath("//*[@id='editAttributeForm-label-inputEl']")).sendKeys(attrName);
+        driver.findElement(By.xpath("//*[@id='editAttributeForm-code-inputEl']")).sendKeys(attrCode);
+
         // radio buttons
         boolean bValue = false;
-        
+
         WebElement allowAllEntriesRadioBtn = driver.findElement(By.xpath("//*[@id='allEntryTypes-inputEl']"));
         bValue = allowAllEntriesRadioBtn.isSelected();
         if (!bValue) {
@@ -79,16 +80,45 @@ public class AdminAttributesTest
             requiredRadioBtn.click();
         }
         driver.findElement(By.xpath("//*[@id='tool-1273-toolEl']")).click();
-        sleep(1000);
-        
-        WebElement element = driver.findElement(By.xpath("//*[@id='tableview-1278']"));
-        System.out.println("Ok here");
-        WebElement element1 = element.findElement(By.xpath("//*[@id='tableview-1278']/div[2]"));
-        System.out.println("Do I get here");
-        sleep(1000);
-        WebElement table = driver.findElement(By.cssSelector("#ext-element-31"));
-        System.out.println("My element: " + table);
         sleep(2000);
 
+        try {
+            WebElement element = driver.findElement(By.cssSelector("#tableview-1278 .x-grid-item-container table"));
+            element.click();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+//        System.out.println(element);
+        driver.findElement(By.id("editAttributeWin-bodyWrap")).click();
+        sleep(2000);
+
+        WebElement visibleRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1200-inputEl']"));
+        bValue = visibleRadioBtn.isSelected();
+        if (!bValue) {
+            visibleRadioBtn.click();
+        }
+        sleep(1000);
+        WebElement allowUserCodesRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1203-inputEl']"));
+        bValue = allowUserCodesRadioBtn.isSelected();
+        if (!bValue) {
+            allowUserCodesRadioBtn.click();
+        }
+        sleep(1000);
+        driver.findElement(By.xpath("//*[@id='editAttributeWin-save']")).click();
+        sleep(2000);
+    }
+    
+    public void deleteAttribute(WebDriver driver, String attrName) {
+        
+        if (tableClickRowCol("tableview-1092", attrName, driver)) {
+            
+            driver.findElement(By.xpath("//*[@id='attributeGrid-tools-action']")).click();
+            sleep(1000);
+            driver.findElement(By.id("attributeGrid-tools-action-delete-itemEl")).click();
+            sleep(500);
+            driver.findElement(By.xpath("//*[@id='button-1037']")).click();
+            sleep(4000);
+        }
     }
 }

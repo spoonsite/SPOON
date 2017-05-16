@@ -47,7 +47,7 @@ public class AdminHighlightTest extends AdminTestBase {
             createHighlight(driver);
             editHighlight(driver);
             deleteHighlight(driver);
-            
+
         }
     }
 
@@ -56,6 +56,8 @@ public class AdminHighlightTest extends AdminTestBase {
         driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
 
         sleep(2000);
+        // Check to see if already exists and delete if existing
+        deleteHighlight(driver);
 
         // Click add button and fill out form
         driver.findElement(By.xpath("//*[@id='highlightGrid-tools-add']")).click();
@@ -71,60 +73,49 @@ public class AdminHighlightTest extends AdminTestBase {
         driver.findElement(By.xpath("//*[@id='button-1099']")).click();
 
         sleep(2000);
-    
+
     }
-    
+
     public void editHighlight(WebDriver driver) {
-        
+
         // locate highlight in table and edit
         if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
 
             sleep(1000);
             driver.findElement(By.xpath("//*[@id='highlightGrid-tools-edit']")).click();
             sleep(2000);
-            
+
             WebElement iframeMsg = driver.findElement(By.xpath("//*[@id='tinymce_textarea-1097-inputEl_ifr']"));
             driver.switchTo().frame(iframeMsg);
-            
+
             WebElement body = driver.findElement(By.cssSelector("body"));
             String bodyText = body.getText() + "- Edited";
-            
-            ((JavascriptExecutor)driver).executeScript("arguments[0].innerHTML = '" + bodyText + "'", body);
+            body.clear();
+
             sleep(2000);
-            
+
             driver.switchTo().defaultContent();
-            
-            WebElement linkContainer = driver.findElement(By.xpath("//*[@id='mceu_17']/button"));
-            linkContainer.click();
-            sleep(2000);
-            
-            // insert saved search link into description
-            WebElement table = driver.findElement(By.className("x-grid-view"));
-            WebElement element = table.findElement(By.xpath("//td[contains(.,'Find my test entry please')]"));
-            element.click();
-            sleep(1000);
-            driver.findElement(By.id("insertLinkBtn")).click();
-            
+            ((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('" + bodyText + "')");
+
             // click save
             sleep(1000);
             driver.findElement(By.xpath("//*[@id='button-1099']")).click();
-            
+
             sleep(2000);
+            driver.findElement(By.xpath("//*[@id='button-1089']")).click();
         }
     }
-    
+
     public void deleteHighlight(WebDriver driver) {
-        
+
         if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
-            
+
             driver.findElement(By.xpath("//*[@id='highlightGrid-tools-delete']")).click();
             sleep(1000);
             driver.findElement(By.xpath("//*[@id=\"button-1037\"]")).click();
             sleep(3000);
+            // refresh table
+            driver.findElement(By.xpath("//*[@id='button-1089']")).click();
         }
-        
-        // refresh table
-        driver.findElement(By.xpath("//*[@id='button-1089']")).click();
-        sleep(2000);
     }
 }
