@@ -70,7 +70,9 @@ public class NewSecurityRole
 			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
 			LOG.log(Level.INFO, "*** Old Security Role '" + roleName + "' DELETED ***");
 		}
-		
+		else {
+			LOG.log(Level.INFO, "*** Security Role " + roleName + " was not found. ***");
+		}
 	}
 	
 	private void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException {
@@ -83,23 +85,31 @@ public class NewSecurityRole
 		sleep(500);
 		driver.findElement(By.xpath("//span[contains(.,'Save')]")).click();
 		sleep(2000);
+		LOG.log(Level.INFO, "*** Added the role " + roleName + ". ***");
 	}
 	
 	private void manageUsers(WebDriver driver, String roleName, String userName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
-			sleep(750); //Users with xxxx role is now up
+			sleep(250); //Users with xxxx role is now up
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(userName);
-			sleep(750);
+			sleep(1250);
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
+			sleep(1600);
+			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
 			sleep(1500);
-			driver.findElement(By.xpath("//span[contains(.,'Add')]")).click();
-			sleep(5000);
 			// Verify it is in the list below
-			
-			LOG.log(Level.INFO, "*** Added '" + userName + "' to " + roleName +" role. ***");
-			sleep(2000);
+			boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName +"')]")).isDisplayed();
+			if (wasAdded) {
+				LOG.log(Level.INFO, "*** Successfully added " + userName + " to " + roleName +" role. ***");
+			}
+			else { 
+				LOG.log(Level.SEVERE, "!!!!! Could not add the user " + userName + " to the role " + roleName + " !!!!!");
+			}
+		}
+		else {
+			LOG.log(Level.SEVERE, "!!!!! Could not find the role " + roleName + " in order to add a managed user. !!!!!");
 		}
 	}
 	
