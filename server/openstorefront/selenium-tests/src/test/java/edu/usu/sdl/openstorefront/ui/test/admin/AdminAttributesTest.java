@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,13 +35,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class AdminAttributesTest
         extends AdminTestBase {
 
+    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+
     @Test
     public void adminAttributesTest() {
 
         for (WebDriver driver : webDriverUtil.getDrivers()) {
 
             setup(driver);
+            deleteAttribute(driver, "MyTestAttribute17");
             createAttribute(driver, "MyTestAttribute17", "MYTESTATTR17");
+            attributeManageCodes(driver, "MyTestAttribute17", "C:/Development/");
             deleteAttribute(driver, "MyTestAttribute17");
         }
     }
@@ -108,11 +115,11 @@ public class AdminAttributesTest
         driver.findElement(By.xpath("//*[@id='editAttributeWin-save']")).click();
         sleep(2000);
     }
-    
+
     public void deleteAttribute(WebDriver driver, String attrName) {
-        
+
         if (tableClickRowCol("tableview-1092", attrName, driver)) {
-            
+
             driver.findElement(By.xpath("//*[@id='attributeGrid-tools-action']")).click();
             sleep(1000);
             driver.findElement(By.id("attributeGrid-tools-action-delete-itemEl")).click();
@@ -121,4 +128,25 @@ public class AdminAttributesTest
             sleep(4000);
         }
     }
+
+    public void attributeManageCodes(WebDriver driver, String attrName, String userDirectory) {
+
+        if (tableClickRowCol("tableview-1092", attrName, driver)) {
+
+            driver.findElement(By.xpath("//*[@id='attributeGrid-tools-manageCodes']")).click();
+            sleep(500);
+            driver.findElement(By.xpath("//*[@id='button-1163']")).click();
+            sleep(500);
+            driver.findElement(By.xpath("//*[@id='editCodeForm-label-inputEl']")).sendKeys("MyTestCodeLabel11");
+            driver.findElement(By.xpath("//*[@id='editCodeForm-code-inputEl']")).sendKeys("MYTESTCODETYPE11");
+            driver.findElement(By.xpath("//*[@id='editCodeWin-save']")).click();
+
+            // Download Attachment to be done manually 
+
+        } else {
+
+            LOG.log(Level.INFO, "Unable to add code and download attachment");
+        }
+    }
+
 }
