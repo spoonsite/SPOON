@@ -182,8 +182,20 @@ limitations under the License.
 	border-bottom: 1px solid lightgray !important;
 }
 
+.home-search-field-cat {
+	font-size: 2.6em;
+	height: 48px !important;
+	line-height: 1.428571429;
+	color: #555555;
+	vertical-align: middle;
+	background-color: #d2e3f9;
+	background-image: none;
+	border-right: 0px;		
+}
+
 .home-search-field {
 	font-size: 2.6em;
+	height: 48px !important;
 	line-height: 1.428571429;
 	color: #555555;
 	vertical-align: middle;
@@ -270,9 +282,6 @@ limitations under the License.
 	background-color: black;
 }
 
-.home-category-block:hover {
-	cursor: pointer;
-}
 
 .home-category-title {
 	font-size: 24px;
@@ -283,6 +292,10 @@ limitations under the License.
 	background-color: ${actionBean.branding.quoteColor};
 }
 
+.home-category-title-section:hover {
+	cursor: pointer;
+}
+
 .home-category-section {
 	border: 1px solid lightgrey;
 	float: left;
@@ -290,8 +303,7 @@ limitations under the License.
     margin: 20px;
 }
 
-.home-category-header {
-	border: 1px grey solid; 
+.home-category-header {	
 	padding: 10px; width: 100%; 
 	/* accent color? */
 	background-color: rgba(255, 210, 7, 1);	

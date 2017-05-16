@@ -31,7 +31,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 		},
 		{	
 			xtype: 'panel',
-			width: '75%',
+			width: '75%',		
 			layout: {
 				type: 'hbox',
 				align: 'stretch'
@@ -40,15 +40,29 @@ Ext.define('OSF.landing.DefaultSearch', {
 				{
 					xtype: 'combo',
 					name: 'entryType',
-					width: 225,
+					width: 325,
 					valueField: 'code',
 					displayField: 'description',
 					editable: false,
 					typeAhead: false,
 					forceSelection: true,
 					emptyText: 'All',
-					fieldCls: 'home-search-field',
+					fieldCls: 'home-search-field-cat',
+					triggerCls: 'home-search-field-cat',
 					store: {						
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/componenttypes/lookup'
+						},
+						listeners: {
+							load: function(store, records, successful, operations, opts) {
+								store.add({
+									code: null,
+									description: 'All'
+								});								
+							}
+						}
 					}
 				},
 				{
