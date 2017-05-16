@@ -69,34 +69,57 @@ public class NewSecurityRole
 			and when assigning the user again the Add button cannot be clicked.
 		SOLUTIONS:  Try sending a refresh?  Pause more for it to catch up?
 		*/
-		
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		//driver.navigate().refresh();
+		sleep(1500);
 		// Click on Table Row Col containing roleName
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
-			LOG.log(Level.INFO, "*** Old Security Role '" + roleName + "' DELETED ***");
+			sleep(1500); 
+			
+			// Causes error, the Confirm button is not seen on the curren page attachment
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
+
+			driver.findElement(By.xpath("//span[contains(@class,'x-btn-icon-el x-btn-icon-el-default-toolbar-small fa fa-lg fa-check icon-button-color-save ')]")).click();
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
+			sleep(250);
+			// Check to ensure deletion
+			if (tableClickRowCol("tableview-1092", roleName, driver)) {
+				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
+			}
+			else {
+				LOG.log(Level.INFO, "--- Old Security Role '" + roleName + "' DELETED ---");
+			}
 		}
 		else {
-			LOG.log(Level.INFO, "*** Security Role " + roleName + " was not found. ***");
+			LOG.log(Level.INFO, "--- Old (Deleted) Security Role " + roleName + " was not found. ---");
 		}
 	}
 	
 	private void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		//driver.navigate().refresh();
+		sleep(1500);		
 		driver.findElement(By.xpath("//span[contains(.,'Add')]")).click();
-		sleep(750); // Give box time to come up
+		sleep(1250); // Give box time to come up
 		driver.findElement(By.xpath("//input[contains(@name,'roleName')]")).sendKeys(roleName);
 		driver.findElement(By.xpath("//input[@name='description']")).sendKeys("Created by automation");
 		driver.findElement(By.xpath("//input[@name='landingPage']")).sendKeys("/");
 		sleep(500);
 		driver.findElement(By.xpath("//span[contains(.,'Save')]")).click();
 		sleep(2000);
-		LOG.log(Level.INFO, "*** Added the role " + roleName + ". ***");
+		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+			LOG.log(Level.INFO, "--- Added the role " + roleName + ". ---");
+		}else {
+			LOG.log(Level.WARNING, "*** Could NOT ADD the role " + roleName + ". ***");
+		}
 	}
 	
 	private void manageUsers(WebDriver driver, String roleName, String userName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		//driver.navigate().refresh();
+		sleep(1500);
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
 			sleep(250); //Users with xxxx role is now up
@@ -107,12 +130,12 @@ public class NewSecurityRole
 			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
 			sleep(1500);
 			// Verify it is in the list below
-			boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName +"')]")).isDisplayed();
+			boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() +"')]")).isDisplayed();
 			if (wasAdded) {
-				LOG.log(Level.INFO, "*** Successfully added " + userName + " to " + roleName +" role. ***");
+				LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName +" role. ---");
 			}
 			else { 
-				LOG.log(Level.SEVERE, "!!!!! Could not add the user " + userName + " to the role " + roleName + " !!!!!");
+				LOG.log(Level.SEVERE, "!!!!! Could not add the user " + userName.toLowerCase() + " to the role " + roleName + " !!!!!");
 			}
 		}
 		else {
@@ -124,6 +147,7 @@ public class NewSecurityRole
 	// Feed in a <List> of permissions to activate
 	private void managePermissions(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		
 		
 	}
 	

@@ -113,7 +113,7 @@ public class BrowserTestBase {
     }
 
     // pass in table name, return Row, Column
-    public boolean tableClickRowCol(String tableName, String searchFor, WebDriver driver) {
+    public boolean tableClickRowCol(String tableName, String searchFor, WebDriver driver) throws InterruptedException {
         int fRow = -1;
         int fColumn = -1;
         String localTable = tableName;
@@ -157,15 +157,15 @@ public class BrowserTestBase {
         if (fRow != -1 || fColumn != -1) {
             fColumn++; // increment by 1 as it is 0-based and you can't click on td 0th instance.
             
-            LOG.log(Level.INFO, "*** Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ***");
+            LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
+			
+			WebElement element = table.findElement(By.xpath("//td[contains(.,'" + localSearch + "')]"));
+			element.click();
             
-            WebElement element = table.findElement(By.xpath("//td[contains(.,'" + localSearch + "')]"));
-            element.click();
-            
-            theBool = true;
+			theBool = true;
             // System.out.println("Bool set to true");
         } else {
-            LOG.log(Level.INFO, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + "-- with current filters set. ***");
+            LOG.log(Level.INFO, "--- The text '" + localSearch + "' was NOT FOUND in table " + localTable + ", with current filters set. ---");
             theBool = false;
         }
  
@@ -187,7 +187,7 @@ public class BrowserTestBase {
             //TODO: save
             //webDriverUtil.saveReportArtifact(in);
         } else {
-            LOG.log(Level.WARNING, "Unable to create Screenshot; no driver support for {0}", driver.getClass().getName());
+            LOG.log(Level.WARNING, "*** Unable to create Screenshot; no driver support for {0} ***", driver.getClass().getName());
         }
     }
 }

@@ -119,7 +119,7 @@ public class AccountSignupActivateTest
 
 		// SUBMIT the form
 		driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
-		LOG.log(Level.INFO, "*** User '" + userName + "' CREATED ***");
+		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
 		sleep(4000);
 
 	}
@@ -142,7 +142,7 @@ public class AccountSignupActivateTest
 		// Select and click Approve
 		if (tableClickRowCol("tableview-1125", userName, driver)) {
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
-			LOG.log(Level.INFO, "*** User '" + userName + "' APPROVED ***");
+			LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED ---");
 			sleep(3000);
 		}
 		
@@ -150,7 +150,7 @@ public class AccountSignupActivateTest
 		sleep(500);
 		login(userName, userName + "A1!");
 		sleep(1500);
-		LOG.log(Level.INFO, "*** Logged in as new user '" + userName + "' ***");
+		LOG.log(Level.INFO, "--- Logged in as new user '" + userName + "' ---");
 		login(); //logout and log back in as admin
 				
 	}  
