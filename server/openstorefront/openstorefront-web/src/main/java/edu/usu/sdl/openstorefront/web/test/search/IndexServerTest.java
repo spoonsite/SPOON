@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,13 +44,13 @@ public class IndexServerTest
 	protected void initializeTest()
 	{
 		super.initializeTest(); 		
-		SearchServerManager.getSearchServer().deleteAll();		
+		SearchServerManager.getSearchServer().deleteAll();	
 	}
 
 	
 	@Override
 	protected void runInternalTest()
-	{
+	{		
 		//Empty Search
 		addResultsLines("Checking Empty index.");
 		FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
@@ -63,6 +65,11 @@ public class IndexServerTest
 		components.add(componentAll.getComponent());
 		SearchServerManager.getSearchServer().index(components);
 		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(IndexServerTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		//Search for record
 		searchResults = SearchServerManager.getSearchServer().doIndexSearch("Test", filterQueryParams);
 		addResultsLines("Results found: " + searchResults.getTotalResults());

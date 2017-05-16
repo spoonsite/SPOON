@@ -20,9 +20,11 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.web.atmosphere.AtmosphereNotificationListerner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Context;
 import org.atmosphere.cpr.AtmosphereFramework;
 
 /**
@@ -30,15 +32,18 @@ import org.atmosphere.cpr.AtmosphereFramework;
  *
  * @author dshurtleff
  */
-@WebListener
 public class ApplicationInit
-		implements ServletContextListener
 {
+	private static final Logger LOG = Logger.getLogger(ApplicationInit.class.getName());
 
-	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
-
-	@Override
-	public void contextInitialized(ServletContextEvent sce)
+	// inject Items that need started at sytem startup
+	@Inject
+	private CoreSystem coreSystem;
+	@Context
+	private ServletContext context;
+	
+	@PostConstruct
+	public void contextInitialized()
 	{
 		//curb some noisy logs by default
 		Logger atmospshereLog = Logger.getLogger("org.atmosphere");
@@ -46,24 +51,20 @@ public class ApplicationInit
 			atmospshereLog.setLevel(Level.OFF);
 		}
 
-		CoreSystem.startup();
-
-		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
+		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
 		AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
 		ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
 
 	}
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce)
+	@PreDestroy
+	public void contextDestroyed()
 	{
-		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
+		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
 		if (atmosphereFramework != null) {
-			log.log(Level.INFO, "Shutdown Atmosphere");
+			LOG.log(Level.INFO, "Shutdown Atmosphere");
 			atmosphereFramework.destroy();
 		}
-
-		CoreSystem.shutdown();
 	}
 
 }

@@ -15,8 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.rest;
 
+import edu.usu.sdl.core.CoreSystem;
+import edu.usu.sdl.openstorefront.web.init.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
 
 /**
  *
@@ -24,9 +30,24 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("api")
 public class RestConfiguration
-		extends Application
+		extends ResourceConfig
 {
 
 	public static final String APPLICATION_BASE_PATH = "api";
+
+	@Inject
+	public RestConfiguration(ServiceLocator locator)
+	{
+		// jersy 2 does not support @Immediate once https://java.net/jira/browse/JERSEY-2291 is reolcved for the version we are using
+		// replace register(new ApplicationInit()); with ServiceLocatorUtilities.enableImmediateScope(locator);
+		register(new ApplicationInit());
+		register(new AbstractBinder(){
+			@Override
+            protected void configure() {
+				bind(CoreSystem.class).to(CoreSystem.class).in(Singleton.class);
+			}
+		});
+		packages(true, "edu.usu.sdl.openstorefront");
+	}
 
 }
