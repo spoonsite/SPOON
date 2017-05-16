@@ -1,7 +1,5 @@
 This software is licensed as whole under GPL V3.
 
-If desired you can be released from the GPL V3 license by purchasing a commercial license from sencha.com for EXT JS.  This software, as a whole, will then be available under Apache V2 license. Indiviual compoenent have different but compatible licenses.
-
 FAQ:
 https://www.sencha.com/legal/GPL/
 https://www.gnu.org/licenses/gpl-faq.html
@@ -31,7 +29,7 @@ This Software Contains (most when compiled/packaged):
 This is listed here for convenience as the individual packages contain their respective licenses.
 
 Patterns from http://subtlepatterns.com/
-Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
+Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ which have be modified as and released as CC BY-SA 4.0 
 
 UI: (Included)
 
