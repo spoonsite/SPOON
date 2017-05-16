@@ -63,6 +63,13 @@ public class NewSecurityRole
 
     // Delete if active
     private void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException {
+		/* ***************************  NOTE:  ***************************
+			When deleting via automation, and when a user is still attached,
+			then creating another Security Role, I get a 403 on the creation page
+			and when assigning the user again the Add button cannot be clicked.
+		SOLUTIONS:  Try sending a refresh?  Pause more for it to catch up?
+		*/
+		
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		// Click on Table Row Col containing roleName
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
