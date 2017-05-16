@@ -267,6 +267,19 @@ limitations under the License.
     width: 100%;	
 }
 
+.home-highlight-footer-indicator {
+	position: absolute;
+	bottom: 10px;
+	width: 100%;
+	text-align: center;
+	color: black;
+	font-size: 12px;
+}
+
+.home-highlight-footer-indicator-item:hover {
+	cursor: pointer;
+}
+
 .homelink {
 	color: white;	
 }
@@ -297,7 +310,6 @@ limitations under the License.
 }
 
 .home-category-section {
-	border: 1px solid lightgrey;
 	float: left;
     width: 210px;
     margin: 20px;
@@ -306,7 +318,8 @@ limitations under the License.
 .home-category-header {	
 	padding: 10px; width: 100%; 
 	/* accent color? */
-	background-color: rgba(255, 210, 7, 1);	
+	background-color: ${actionBean.branding.quoteColor};
+	color: white;
 }
 
 .home-category-content {
@@ -714,7 +727,7 @@ td.info-table {
 }
 
 .home-page-top-logo {
-	z-index: 100000;
+	z-index: 10;
 	position: fixed !important;
 	top: 10px !important;
 	left: 30px !important;

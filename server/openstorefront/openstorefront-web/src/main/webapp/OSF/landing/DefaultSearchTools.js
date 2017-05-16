@@ -22,7 +22,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultsearchtools',
 	
-	layout: 'center',	
+	layout: 'center',		
 	items: [
 		{
 			xtype: 'dataview',
@@ -32,7 +32,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			itemSelector: 'div.search-tool',
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',
-					'<div style="margin: 15px;" class="search-tool-button-outer search-tool">',
+					'<div style="margin: 15px;" class="search-tool-button-outer search-tool" data-qtip="{tip}">',
 					  '<div class="search-tool-button-inner">',	
 						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
 						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
@@ -59,6 +59,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 		var tools=[
 			{
 				text: 'Tags',
+				tip: 'Search Tag Cloud',
 				icon: 'fa-cloud',
 				handler: function(record, item) {
 					
@@ -66,13 +67,15 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			},
 			{
 				text: 'Organizations',
+				tip: 'Search by Entry Organization',
 				icon: 'fa-sitemap',
 				handler: function(record, item) {
 					
 				}
 			},
 			{
-				text: 'Advance Search',
+				text: 'Advanced',
+				tip: 'Create Advanced Searches',
 				icon: 'fa-search-plus',
 				handler: function(record, item) {
 					
@@ -80,6 +83,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			},
 			{
 				text: 'My Searches',
+				tip: 'View Saved Searches',
 				icon: 'fa-folder-open-o',
 				handler: function(record, item) {
 					

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.landing.DefaultCategory', {
 	extend: 'Ext.panel.Panel',
@@ -68,7 +68,7 @@ Ext.define('OSF.landing.DefaultCategory', {
 					'	<div style="padding: 10px; overflow: auto; height: 165px;" class="home-category-content">',
 					'		<ul>',
 					'		<tpl for="codes">',
-					'			<li><a href="#" class="link" onclick="homepage.viewCategories(\'{parent.attributeType}\', \'{code}\');">{label}</a></li>',
+					'			<li><a href="#" class="link" onclick="CoreUtil.pageActions.viewCategories(\'{parent.attributeType}\', \'{code}\');">{label}</a></li>',
 					'		</tpl></ul></div>',
 					'</div>',
 				'</tpl>'
@@ -88,6 +88,36 @@ Ext.define('OSF.landing.DefaultCategory', {
 		this.callParent();			
 		var infoPanel = this;
 		
+		var viewCategories = function(attributeType, attributeCode) {
+			var searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "ATTRIBUTE",
+						"field": null,
+						"value": null,
+						"keyField": attributeType,
+						"keyValue": attributeCode,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+
+			var searchRequest = {
+				type: 'Advance',
+				query: searchObj
+			};
+
+			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+			window.location.href = 'searchResults.jsp';	
+		};		
+		CoreUtil.pageActions.viewCategories = viewCategories;
 		
 		
 	}
