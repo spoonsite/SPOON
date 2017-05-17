@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -26,4 +28,7 @@ public class SecurityTestBase
 		extends BrowserTestBase
 {
          private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+		 
+		 protected Map<String, Boolean> dataSource = new HashMap<>();
+		
 }

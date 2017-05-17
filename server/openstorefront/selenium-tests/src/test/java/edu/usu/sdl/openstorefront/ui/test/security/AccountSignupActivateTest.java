@@ -125,7 +125,7 @@ public class AccountSignupActivateTest
 	}
 
 
-    private void activateAccount(WebDriver driver, String userName) {
+    private void activateAccount(WebDriver driver, String userName) throws InterruptedException {
         // Navigate to Admin Tools -> Application Management -> User Tools to activate
 
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));

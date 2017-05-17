@@ -41,6 +41,7 @@ public class BrowserTestBase {
 
     protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
 
+	
     /*@BeforeClass
 	public static void setSize() throws Exception
 	{
@@ -172,8 +173,8 @@ public class BrowserTestBase {
         return theBool;
         //return new TableItem(fRow, fColumn);
     }
-
-    /**
+		
+	 /**
      * This assumes the driver is on the correct page before this is called This
      * stores the image in the configure report directory.
      *

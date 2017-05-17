@@ -16,10 +16,10 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -29,7 +29,7 @@ import org.openqa.selenium.WebDriver;
  * @author besplin
  */
 public class NewSecurityRole    
-		extends BrowserTestBase {
+		extends SecurityTestBase {
 
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
@@ -38,31 +38,12 @@ public class NewSecurityRole
         login();
     }
 
-    /**
-     *
-     */
     public NewSecurityRole() {
-
-    }
-
-	@Test
-    public void addRole() throws InterruptedException {
-		addRole("AUTO-someRole", "autoTestDEFALT");
-	}
-	   
-    public void addRole(String roleName, String userName) throws InterruptedException {
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			deleteRoleIfPresent(driver, roleName);
-			addRoleBasic(driver, roleName);
-			manageUsers(driver, roleName, userName);
-			managePermissions(driver, roleName);
-			manageDataSources(driver, roleName, true, true);
-			manageDataSensitivity(driver, roleName);
-		}
+		
     }
 
     // Delete if active
-    private void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException {
+    public void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException {
 		/* ***************************  NOTE:  ***************************
 			When deleting via automation, and when a user is still attached,
 			then creating another Security Role, I get a 403 on the creation page
@@ -114,7 +95,7 @@ public class NewSecurityRole
 	
 	}
 
-	private void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException {
+	public void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);		
@@ -133,7 +114,7 @@ public class NewSecurityRole
 		}
 	}
 	
-	private void manageUsers(WebDriver driver, String roleName, String userName) throws InterruptedException {
+	public void addUserToRole(WebDriver driver, String roleName, String userName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
@@ -161,29 +142,43 @@ public class NewSecurityRole
 	}
 	
 	
-	// Feed in a <List> of permissions to activate
-	private void managePermissions(WebDriver driver, String roleName) throws InterruptedException {
+	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException {
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		sleep(1500);
+	
+		// TODO:  Write here
+	}
+	
+	
+	// True in boolean means to add it to the accessible side, false means to remove it.
+	public void manageDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		sleep(1500);
 		
+		// Retreive dataSource desired settings
+		//	('false' for don't activate (Restricted), 'true' for activate (Accessible)) 
+		for (String key : dataSource.keySet()) {
+				LOG.log(Level.INFO, "dataSource = " + key + " Active? " + dataSource.get(key));
+		    }
+			
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
-			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
+			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(250); 
-			
-			
-		}
 		
+			// Set the desired dataSource settings
+			
+		    
+		}else {
+			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
+		}
 	}
 	
-	// True in boolean means to add it to the accessible side, false means to remove it.
-	private void manageDataSources(WebDriver driver, String roleName, boolean DI2E, boolean ER2) throws InterruptedException {
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		
-	}
 	
 	// Feed in a <List> of Data Distributions to Activate
-	private void manageDataSensitivity(WebDriver driver, String roleName) throws InterruptedException {
+	public void manageDataSensitivity(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		sleep(1500);
 		
+		// TODO:  Write here
 	}
 }
