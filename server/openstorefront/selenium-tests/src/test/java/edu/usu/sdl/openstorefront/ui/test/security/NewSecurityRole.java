@@ -74,16 +74,32 @@ public class NewSecurityRole
 		sleep(1500);
 		// Click on Table Row Col containing roleName
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+			sleep(500);
 			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-			sleep(1500); 
-			
-			// Causes error, the Confirm button is not seen on the curren page attachment
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
-
-			driver.findElement(By.xpath("//span[contains(@class,'x-btn-icon-el x-btn-icon-el-default-toolbar-small fa fa-lg fa-check icon-button-color-save ')]")).click();
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!				
+			sleep(750); 
+			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
 			sleep(250);
+			
+			//FIXES detached from page error message
+			boolean breakIt = true;
+				while (true) {
+				breakIt = true;
+				try {
+					sleep(500);
+					// Command that was erring out (detached) earlier.
+					tableClickRowCol("tableview-1092", roleName, driver);
+					LOG.log(Level.INFO, "--- Waiting for element to show up so that it is not detached ---");
+				} catch (Exception e) {
+					if (e.getMessage().contains("element is not attached")) {
+						breakIt = false;
+					}
+				}
+				if (breakIt) {
+					LOG.log(Level.INFO, "--- Successfully waited for detached element to show up, continuing on now --");
+					break;
+				}
+		    }
+				
 			// Check to ensure deletion
 			if (tableClickRowCol("tableview-1092", roleName, driver)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
@@ -95,8 +111,9 @@ public class NewSecurityRole
 		else {
 			LOG.log(Level.INFO, "--- Old (Deleted) Security Role " + roleName + " was not found. ---");
 		}
-	}
 	
+	}
+
 	private void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
@@ -147,7 +164,14 @@ public class NewSecurityRole
 	// Feed in a <List> of permissions to activate
 	private void managePermissions(WebDriver driver, String roleName) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		sleep(1500);
 		
+		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
+			sleep(250); 
+			
+			
+		}
 		
 	}
 	
