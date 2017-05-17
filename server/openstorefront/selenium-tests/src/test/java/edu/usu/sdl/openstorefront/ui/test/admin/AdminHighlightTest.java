@@ -40,7 +40,7 @@ public class AdminHighlightTest extends AdminTestBase {
     }
 
     @Test
-    public void adminHighlightTest() {
+    public void adminHighlightTest() throws InterruptedException {
 
         for (WebDriver driver : webDriverUtil.getDrivers()) {
 
@@ -51,7 +51,7 @@ public class AdminHighlightTest extends AdminTestBase {
         }
     }
 
-    public void createHighlight(WebDriver driver) {
+    public void createHighlight(WebDriver driver) throws InterruptedException {
 
         driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
 
@@ -76,7 +76,7 @@ public class AdminHighlightTest extends AdminTestBase {
 
     }
 
-    public void editHighlight(WebDriver driver) {
+    public void editHighlight(WebDriver driver) throws InterruptedException {
 
         // locate highlight in table and edit
         if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
@@ -106,7 +106,7 @@ public class AdminHighlightTest extends AdminTestBase {
         }
     }
 
-    public void deleteHighlight(WebDriver driver) {
+    public void deleteHighlight(WebDriver driver) throws InterruptedException {
 
         if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
 

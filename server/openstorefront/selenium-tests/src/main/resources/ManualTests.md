@@ -11,5 +11,7 @@
 
 ## Section 5 - Admin Tools (Data Management)
 
+* (5.1) Manage Codes -> add Attachment.  Download and delete attachment.
+
 ## Section 6 - Admin Tools (Application Management & API Doc)
 

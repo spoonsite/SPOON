@@ -2021,6 +2021,28 @@
 				layout: 'fit',
 				items: [
 					codesGrid
+//				]
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill',
+							},
+							{
+								text: 'Close',
+								id: 'manageCodesCloseBtn',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									
+									// Hide Manage Codes Window
+									Ext.getCmp('manageCodesWin').close();
+								}
+							}
+						]
+					}
 				]
 			});
 
