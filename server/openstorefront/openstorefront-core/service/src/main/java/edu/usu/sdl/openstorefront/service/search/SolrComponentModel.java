@@ -31,7 +31,8 @@ public class SolrComponentModel
 	public static final String FIELD_NAME = "title";
 	public static final String FIELD_ORGANIZATION = "organization_s_is";
 	public static final String FIELD_DESCRIPTION = "content_text";
-		
+	public static final String FIELD_COMPONENTTYPE = "componentType_s_is";
+
 	public static final String FIELD_SEARCH_WEIGHT = "searchWeight";
 
 	@Field
@@ -76,14 +77,16 @@ public class SolrComponentModel
 
 	@Field("name_s_is")
 	private String nameString;
-	
+
+	@Field("componentType_s_is")
+	private String componentType;
+
 	@Field("datasource_s_is")
 	private String dataSource;
-	
-	@Field("datasensitivy_s_is")	
+
+	@Field("datasensitivy_s_is")
 	private String dataSensitivity;
-	
-	
+
 	private int searchWeight;
 	private float queryScore;
 
@@ -94,7 +97,7 @@ public class SolrComponentModel
 	public static SolrComponentModel fromComponentSearchView(ComponentSearchView view)
 	{
 		SolrComponentModel solrComponentModel = new SolrComponentModel();
-		
+
 		solrComponentModel.setId(view.getComponentId());
 		solrComponentModel.setComponentId(view.getComponentId());
 		solrComponentModel.setDescription(view.getDescription());
@@ -106,10 +109,11 @@ public class SolrComponentModel
 		solrComponentModel.setGuid(view.getGuid());
 		solrComponentModel.setDataSource(view.getDataSource());
 		solrComponentModel.setDataSensitivity(view.getDataSensitivity());
-				
-		return solrComponentModel;		
+		solrComponentModel.setComponentType(view.getComponentType());
+
+		return solrComponentModel;
 	}
-	
+
 	public String getId()
 	{
 		return id;
@@ -308,6 +312,16 @@ public class SolrComponentModel
 	public void setDataSensitivity(String dataSensitivity)
 	{
 		this.dataSensitivity = dataSensitivity;
+	}
+
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

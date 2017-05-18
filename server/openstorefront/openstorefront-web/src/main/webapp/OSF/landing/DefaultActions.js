@@ -32,7 +32,7 @@ Ext.define('OSF.landing.DefaultActions', {
 			itemSelector: 'div.search-tool',
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',
-					'<div style="margin: 15px;" class="action-tool-button-outer search-tool">',
+					'<div style="margin: 15px;" class="action-tool-button-outer search-tool" data-qtip="{tip}">',
 					  '<div class="action-tool-button-inner" >',	
 						'<tpl if="imageSrc"><img src="{imageSrc}" width=200/></tpl>',	
 						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
@@ -43,8 +43,8 @@ Ext.define('OSF.landing.DefaultActions', {
 			),
 			listeners: {
 				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (record.handler) {
-						record.handler(record, item);
+					if (record.data.handler) {
+						record.data.handler(record, item);
 					} else {
 						Ext.log("Add Handler to item");
 					}
@@ -59,35 +59,39 @@ Ext.define('OSF.landing.DefaultActions', {
 		var tools=[
 			{
 				text: 'Dashboard',
-				//icon: 'fa-th-large',
-				imageSrc: 'images/background_predator.jpg',
+				icon: 'fa-th-large',
+				tip: 'Access your dashboard',
+				//imageSrc: 'images/background_predator.jpg',
 				handler: function(record, item) {
-					
+					window.location.href = 'UserTool.action?load=Dashboard';
 				}
 			},
 			{
 				text: 'Submissions',
-				//icon: 'fa-file-text-o',
-				imageSrc: 'images/background_soldier1.jpg',
+				icon: 'fa-file-text-o',
+				//imageSrc: 'images/background_soldier1.jpg',
+				tip: 'Add or update entries to the registry',
 				permissions: [''],
 				handler: function(record, item) {
-					
+					window.location.href = 'UserTool.action?load=Submissions';
 				}
 			},
 			{
 				text: 'Relationships',
-				//icon: 'fa-share-alt',
-				imageSrc: 'images/background_soldier2.jpg',
+				icon: 'fa-share-alt',
+				tip: 'View relationships bewteen entries',
+				//imageSrc: 'images/background_soldier2.jpg',
 				handler: function(record, item) {
-					
+					window.location.href = 'UserTool.action?load=Relationships';
 				}
 			},
 			{
 				text: 'Tools',
-				//icon: 'fa-gears',
-				imageSrc: 'images/background_soldier4.jpg',
+				icon: 'fa-gears',
+				tip: 'Access user tools to update profile and manage your data.',
+				//imageSrc: 'images/background_soldier4.jpg',
 				handler: function(record, item) {
-					
+					window.location.href = 'UserTool.action';
 				}
 			}			
 		];

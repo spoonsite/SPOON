@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.landing.DefaultSearch', {
 	extend: 'Ext.panel.Panel',
@@ -36,9 +36,59 @@ Ext.define('OSF.landing.DefaultSearch', {
 				type: 'hbox',
 				align: 'stretch'
 			},
+			performSearch: function(query) {
+				if (!query || Ext.isEmpty(query)) {																										
+					query = '*';		
+				}
+				
+				var containerPanel = this;
+				var entryTypeCB = containerPanel.getComponent('entryType');
+				var entryType = entryTypeCB.getValue();
+
+				var searchRequest;
+				if (entryType) {
+					var searchObj = {
+						"sortField": null,
+						"sortDirection": "ASC",
+						"startOffset": 0,
+						"max": 2147483647,
+						"searchElements": [
+							{
+								"searchType": "COMPONENT",
+								"field": 'componentType',
+								"value": entryType,
+								"caseInsensitive": false,
+								"numberOperation": "EQUALS",
+								"stringOperation": "EQUALS",
+								"mergeCondition": "AND"
+							},
+							{
+								"searchType": 'INDEX',
+								"field": null,
+								"value": query,
+								"mergeCondition": "AND"
+							}
+						]
+					};
+
+					searchRequest = {
+						type: 'Advance',
+						query: searchObj
+					};						
+				} else {												
+					searchRequest = {
+						type: 'SIMPLE',
+						query: CoreUtil.searchQueryAdjustment(query)
+					};
+				}
+				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				
+				window.location.href = 'searchResults.jsp';				
+			},
 			items: [
 				{
 					xtype: 'combo',
+					itemId: 'entryType',
 					name: 'entryType',
 					width: 325,
 					valueField: 'code',
@@ -49,6 +99,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					emptyText: 'All',
 					fieldCls: 'home-search-field-cat',
 					triggerCls: 'home-search-field-cat',
+					emptyCls: 'home-search-field-cat',
 					store: {						
 						autoLoad: true,
 						proxy: {
@@ -62,6 +113,11 @@ Ext.define('OSF.landing.DefaultSearch', {
 									description: 'All'
 								});								
 							}
+						}
+					},
+					listeners: {
+						change: function(field, newValue, oldValue, opts) {
+							CoreUtil.tempComponentType = newValue;
 						}
 					}
 				},
@@ -81,6 +137,13 @@ Ext.define('OSF.landing.DefaultSearch', {
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/service/search/suggestions'													
+						},
+						listeners: {
+							beforeload: function(store, operation, opts) {
+								store.getProxy().extraParams = {
+									componentType: CoreUtil.tempComponentType ? CoreUtil.tempComponentType : null
+								};
+							}
 						}
 					},
 					listeners: {
@@ -100,14 +163,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 									case e.ENTER:
 										var query = value;
-										if (query && !Ext.isEmpty(query)) {
-											var searchRequest = {
-												type: 'SIMPLE',
-												query: CoreUtil.searchQueryAdjustment(query)
-											};
-											CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-										}
-										window.location.href = 'searchResults.jsp';
+										field.up('panel').performSearch(query);
 										break;
 
 									case e.HOME:
@@ -133,19 +189,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 					style: 'border-radius: 0px 3px 3px 0px;',																					
 					width: 50,											
 					handler: function(){
-
 						var query = this.up('panel').getComponent('searchText').getValue();
-						if (query && !Ext.isEmpty(query)) {																										
-							var searchRequest = {
-								type: 'SIMPLE',
-								query: CoreUtil.searchQueryAdjustment(query)
-							}
-							CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-						} else {
-							delete CoreUtil.sessionStorage().searchRequest;
-						}												
-						window.location.href = 'searchResults.jsp';
-
+						this.up('panel').performSearch(query);
 					}
 				}
 			]

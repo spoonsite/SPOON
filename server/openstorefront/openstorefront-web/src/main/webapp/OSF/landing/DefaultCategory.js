@@ -44,8 +44,7 @@ Ext.define('OSF.landing.DefaultCategory', {
 	},
 	items: [
 		{
-			xtype: 'dataview',
-			width: '80%',
+			xtype: 'dataview',			
 			itemId: 'dataview',
 			store: {	
 				autoLoad: true,

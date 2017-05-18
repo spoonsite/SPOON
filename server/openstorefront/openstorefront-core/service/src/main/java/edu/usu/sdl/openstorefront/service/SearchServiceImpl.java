@@ -423,9 +423,9 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
-		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult);
+		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult, componentType);
 	}
 
 	@Override

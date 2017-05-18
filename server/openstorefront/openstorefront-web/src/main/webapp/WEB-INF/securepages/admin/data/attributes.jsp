@@ -2269,7 +2269,7 @@
 									deferEmptyText: false,
 									emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
 								},
-								search: {
+								search: {									
 									field: 'description',
 									bodyStyle: 'background: white;',
 									store: Ext.create('Ext.data.Store', {

@@ -21,6 +21,9 @@
 Ext.define('OSF.landing.DefaultSearchTools', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultsearchtools',
+	requires: [
+		'OSF.landing.TagCloud'
+	],
 	
 	layout: 'center',		
 	items: [
@@ -43,8 +46,8 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			),
 			listeners: {
 				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (record.handler) {
-						record.handler(record, item);
+					if (record.data.handler) {
+						record.data.handler(record, item);
 					} else {
 						Ext.log("Add Handler to item");
 					}
@@ -61,9 +64,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 				text: 'Tags',
 				tip: 'Search Tag Cloud',
 				icon: 'fa-cloud',
-				handler: function(record, item) {
-					
-				}
+				toolType: 'OSF.landing.TagCloud'
 			},
 			{
 				text: 'Organizations',

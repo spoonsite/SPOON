@@ -188,7 +188,8 @@ limitations under the License.
 	line-height: 1.428571429;
 	color: #555555;
 	vertical-align: middle;
-	background-color: #d2e3f9;
+	color: ${actionBean.branding.primaryTextColor};
+	background-color: #2D0D41;
 	background-image: none;
 	border-right: 0px;		
 }
@@ -251,7 +252,7 @@ limitations under the License.
     font-size: 24px;
     height: 50px;
     padding-top: 15px;
-    background: rgba(181, 157, 255, 0.4);
+    background: ${actionBean.branding.quoteColor};
 }
 
 .home-highlight-header a {
@@ -565,7 +566,7 @@ td.info-table {
 	width: 200px;
     float: left;
 	/* Secondary Color dark */
-	background: #22183a;
+	background: #2D0D41;
 }
 
 .search-tool-button-inner {
@@ -714,7 +715,7 @@ td.info-table {
 .home-footer {
 	/* Secondary-dark */
 	
-	background-color: #22183a;
+	background-color: #2D0D41;
 }
 
 .home-footer-item {
