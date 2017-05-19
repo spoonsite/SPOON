@@ -158,38 +158,64 @@ public class NewSecurityRole
 		// Retreive dataSource desired settings
 		//	('false' for don't activate (Restricted), 'true' for activate (Accessible)) 
 		for (String key : dataSource.keySet()) {
-				LOG.log(Level.INFO, "dataSource = " + key + " Active? " + dataSource.get(key));
+				System.out.println("dataSource = " + key + " Active? " + dataSource.get(key));
 		    }
 			
 		// Select row and clik on Manage Data Restrictions to bring up the dable (Data Sources Tab by default)
+								// Does NOT WORK!
+		//if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-item-container //table//", roleName, driver)) {
+								// Works!!!    vvvvvvvvvvvvvvvvvvvvvvv
+		//if (tableClickRowCol("#tableview-1092 .x-grid-item-container table", roleName, driver)) {
+		
+		
+		/*  DUPLICATE ER2 ERROR IN TABLE, DOES NOT KNOW WHICH ONE TO CLICK ON
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
-			sleep(250); 
+			sleep(500); 
 		
-			// Set the desired dataSource settings
-			// Restricted Table
-			if (tableClickRowCol("dataSourcesGrid-body", "DI2E", driver)) {
-				LOG.log(Level.INFO, "Found in the Restricted table");
-			} else
-			{
+			// if true move left to right if in left restricted table
+			for (String key : dataSource.keySet()) {
+				if (dataSource.get(key)) { // should be in the RIGHT Accessible table
+					//System.out.println("LOOKING FOR   ---   " + key);
+					if (tableClickRowCol("dataSourcesGrid-body", key, driver)) { // is in Restricted table (LEFT) currently
+						sleep(500);
+						System.out.println("dataSlourcesGrid-body (RESTRICTED on the LEFT contains " + key + " as " + dataSource.get(key)  );
+					}
+				}
+			}
 			
-			}
-			// Accesible Table
-		    if (tableClickRowCol("dataSourcesInRoleGrid", "ER2", driver)) {
-				LOG.log(Level.INFO, "Found the Accessible table");
-			}
+			
 		
 		}else {
 			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
-		}
+		} */
 	}
 	
 	
 	// Feed in a <List> of Data Distributions to Activate
-	public void manageDataSensitivity(WebDriver driver, String roleName) throws InterruptedException {
+	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		sleep(1500);
 		
-		// TODO:  Write here
+		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
+			sleep(1500); 
+		
+			//driver.findElement(By.xpath("//span[contains(.,'Data Sensitivity')]")).click();
+			//sleep(1500);
+			
+			// Retreive dataSource desired settings
+			for (String key : dataSens.keySet()) {
+				if (dataSens.get(key)) {
+					System.out.println(key + " +++ This is 'true' move to RIGHT (Accessible) if it is NOT already there.");
+				/*if (tableClickRowCol("window-1147", key, driver)) { // is in Restricted table (LEFT) currently
+						System.out.println("Needs to be dragged to the right");
+					}
+				}*/
+				} else {
+					System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
+				}
+			}
+		}
 	}
 }

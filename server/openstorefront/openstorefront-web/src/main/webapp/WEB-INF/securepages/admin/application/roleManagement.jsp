@@ -30,7 +30,7 @@
 
 			Ext.onReady(function () {
 				
-			
+					
 				var roleGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Security Role Management <i class="fa fa-question-circle"  data-qtip="Manage security roles that allow access to features in the application."></i>',
 					columnLines: true,
@@ -71,6 +71,13 @@
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true  }
 					],
+				
+				
+					autoEl: {
+						'data-test' : 'securityRolesTable'
+					},
+				
+			
 					listeners: {
 						selectionchange: function(selModel, records, opts) {
 							var tools = roleGrid.getComponent('tools');

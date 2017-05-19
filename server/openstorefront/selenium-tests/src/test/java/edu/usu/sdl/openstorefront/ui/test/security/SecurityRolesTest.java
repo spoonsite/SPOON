@@ -34,26 +34,24 @@ public class SecurityRolesTest
 	@Test
 	public void signupForAccounts() throws InterruptedException{
 		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
-/*		
+		
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// TODO:  *** BREAK OUT INTO METHODS (DELETE, SIGNUPFORM, ACTIVATE)? ***
 		newAccountSignup.signupActivate("autoUser");
 		newAccountSignup.signupActivate("autoEval");
 		newAccountSignup.signupActivate("autoAdmin");
 		newAccountSignup.signupActivate("autoLibrarian");
-*/
 	}
 	
 	@Test
     public void SecurityRole () throws InterruptedException {
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
-/*
+
 			// Set up new Security Role, add user to role
 			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
 			newSecurityRole.addRoleBasic(driver, "AUTO-User");
 			newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
-*/
 		}
 	}
 	
@@ -63,16 +61,25 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 			// Set up Permissions to use
 			//newSecurityRole.managePermissions(driver, roleName, permissions);
+			
 
-
-			// Set up Data Sources to use
+			// dataSource options: "DI2E", "ER2"
 			dataSource.put("DI2E", true);
 			dataSource.put("ER2", true);
 			newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
 
-
-			// Set up Data Sensitivities to use
-			//newSecurityRole.manageDataSensitivity(driver, roleName, dataSensitivity);
+			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
+			//					 "ITAR", "PUBLIC", "SENSITIVE"
+			dataSens.put("DISTROA", true);
+			dataSens.put("DISTROB", false);
+			dataSens.put("DISTROC", true);
+			dataSens.put("DISTROD", false);
+			dataSens.put("DISTROE", true);
+			dataSens.put("DISTROF", false);
+			dataSens.put("ITAR", true);
+			dataSens.put("PUBLIC", false);
+			dataSens.put("SENSITIVE", true);
+			newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
 		}
 	}
 	

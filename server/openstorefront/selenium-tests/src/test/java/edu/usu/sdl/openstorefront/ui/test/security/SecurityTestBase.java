@@ -29,6 +29,7 @@ public class SecurityTestBase
 {
          private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 		 
-		 protected Map<String, Boolean> dataSource = new HashMap<>();
+		protected Map<String, Boolean> dataSource = new HashMap<>();
+		protected Map<String, Boolean> dataSens = new HashMap<>();
 		
 }
