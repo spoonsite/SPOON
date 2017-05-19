@@ -94,11 +94,11 @@ public class AdminAttributesTest
         if (!bValue) {
             requiredRadioBtn.click();
         }
-        driver.findElement(By.xpath("//*[@id='tool-1273-toolEl']")).click();
-        sleep(2000);
+        driver.findElement(By.xpath("//*[@id='tool-1275-toolEl']")).click();
+//        sleep(2000);
 
         try {
-            WebElement element = driver.findElement(By.cssSelector("#tableview-1278 .x-grid-item-container table"));
+            WebElement element = driver.findElement(By.cssSelector("#tableview-1280 .x-grid-item-container table"));
             element.click();
         } catch (Exception e) {
             System.out.println(e);
@@ -108,13 +108,13 @@ public class AdminAttributesTest
         driver.findElement(By.xpath("//*[@id='editAttributeForm-label-inputEl']")).click();
         sleep(2000);
 
-        WebElement visibleRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1200-inputEl']"));
+        WebElement visibleRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1202-inputEl']"));
         bValue = visibleRadioBtn.isSelected();
         if (!bValue) {
             visibleRadioBtn.click();
         }
         sleep(1000);
-        WebElement allowUserCodesRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1203-inputEl']"));
+        WebElement allowUserCodesRadioBtn = driver.findElement(By.xpath("//*[@id='checkboxfield-1205-inputEl']"));
         bValue = allowUserCodesRadioBtn.isSelected();
         if (!bValue) {
             allowUserCodesRadioBtn.click();

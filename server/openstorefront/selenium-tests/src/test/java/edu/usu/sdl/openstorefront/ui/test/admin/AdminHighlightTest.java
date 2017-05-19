@@ -79,7 +79,7 @@ public class AdminHighlightTest extends AdminTestBase {
     public void editHighlight(WebDriver driver) throws InterruptedException {
 
         // locate highlight in table and edit
-        if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
+        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
 
             sleep(1000);
             driver.findElement(By.xpath("//*[@id='highlightGrid-tools-edit']")).click();
@@ -101,21 +101,24 @@ public class AdminHighlightTest extends AdminTestBase {
             sleep(1000);
             driver.findElement(By.xpath("//*[@id='button-1099']")).click();
 
-            sleep(2000);
+            sleep(1000);
             driver.findElement(By.xpath("//*[@id='button-1089']")).click();
+            sleep(1000);
         }
     }
 
     public void deleteHighlight(WebDriver driver) throws InterruptedException {
 
-        if (tableClickRowCol("tableview-1087", "TestHighlight1", driver)) {
-
-            driver.findElement(By.xpath("//*[@id='highlightGrid-tools-delete']")).click();
+        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
+            
             sleep(1000);
-            driver.findElement(By.xpath("//*[@id=\"button-1037\"]")).click();
+            driver.findElement(By.xpath("//*[@id='highlightGrid-tools-delete']")).click();
+            sleep(2000);
+            WebElement yesButton = driver.findElement(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])"));
+            yesButton.click();
             sleep(3000);
             // refresh table
-            driver.findElement(By.xpath("//*[@id='button-1089']")).click();
+            driver.findElement(By.cssSelector("[data-test='highlightRefreshBtn']")).click();
         }
     }
 }
