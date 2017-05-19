@@ -166,7 +166,7 @@ public class BrowserTestBase {
 			theBool = true;
             // System.out.println("Bool set to true");
         } else {
-            LOG.log(Level.INFO, "--- The text '" + localSearch + "' was NOT FOUND in table " + localTable + ", with current filters set. ---");
+            LOG.log(Level.WARNING, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ", with current filters set. ***");
             theBool = false;
         }
  

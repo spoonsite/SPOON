@@ -161,13 +161,24 @@ public class NewSecurityRole
 				LOG.log(Level.INFO, "dataSource = " + key + " Active? " + dataSource.get(key));
 		    }
 			
+		// Select row and clik on Manage Data Restrictions to bring up the dable (Data Sources Tab by default)
 		if (tableClickRowCol("tableview-1092", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(250); 
 		
 			// Set the desired dataSource settings
+			// Restricted Table
+			if (tableClickRowCol("dataSourcesGrid-body", "DI2E", driver)) {
+				LOG.log(Level.INFO, "Found in the Restricted table");
+			} else
+			{
 			
-		    
+			}
+			// Accesible Table
+		    if (tableClickRowCol("dataSourcesInRoleGrid", "ER2", driver)) {
+				LOG.log(Level.INFO, "Found the Accessible table");
+			}
+		
 		}else {
 			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
 		}
