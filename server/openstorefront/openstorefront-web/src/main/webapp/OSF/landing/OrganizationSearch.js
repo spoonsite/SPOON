@@ -16,4 +16,27 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
+
+Ext.define('OSF.landing.OrganizationSearch', {
+	
+	handler: function(record) {
+		var searchConfig = this;		
+		if (!searchConfig.view) {
+			searchConfig.view = Ext.create('OSF.landing.SavedSearchView', {				
+			});
+		}	
+		searchConfig.view.show();
+	}
+	
+});
+
+Ext.define('OSF.landing.OrganizationSearchView', {
+	extend: 'Ext.window.Window',
+	alias: 'widget.osf-organizationview'
+	
+	
+	
+	
+});
 

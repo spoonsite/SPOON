@@ -22,7 +22,9 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultsearchtools',
 	requires: [
-		'OSF.landing.TagCloud'
+		'OSF.landing.TagCloud',
+		'OSF.landing.AdvancedSearch',
+		'OSF.landing.SavedSearch'
 	],
 	
 	layout: 'center',		
@@ -46,11 +48,11 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			),
 			listeners: {
 				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (record.data.handler) {
-						record.data.handler(record, item);
-					} else {
-						Ext.log("Add Handler to item");
+					if (!record.tool) {
+						record.tool = Ext.create(record.data.toolType, {							
+						});
 					}
+					record.tool.handler(record);
 				}
 			}
 		}
@@ -78,17 +80,13 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 				text: 'Advanced',
 				tip: 'Create Advanced Searches',
 				icon: 'fa-search-plus',
-				handler: function(record, item) {
-					
-				}
+				toolType: 'OSF.landing.AdvancedSearch'
 			},
 			{
 				text: 'My Searches',
 				tip: 'View Saved Searches',
 				icon: 'fa-folder-open-o',
-				handler: function(record, item) {
-					
-				}
+				toolType: 'OSF.landing.SavedSearch'
 			}			
 		];
 		

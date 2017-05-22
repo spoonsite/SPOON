@@ -15,5 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
 
+Ext.define('OSF.landing.SavedSearch', {
+	
+	handler: function(record) {
+		var searchConfig = this;		
+		if (!searchConfig.view) {
+			searchConfig.view = Ext.create('OSF.landing.SavedSearchView', {				
+			});
+		}	
+		searchConfig.view.show();
+	}
+	
+});
+
+Ext.define('OSF.landing.SavedSearchView', {
+	extend: 'Ext.window.Window',
+	alias: 'widget.osf-savedsearchview',
+	
+	width: '70%',
+	height: '70%',
+	layout: 'fit',
+	modal: true,
+	title: 'My Searches',
+	iconCls: 'fa fa-lg fa-folder',
+	
+	initComponent: function () {
+		this.callParent();			
+		var	searchWin = this;
+		
+		var savedSearches = Ext.create('OSF.landing.SavedSearchPanel', {
+			title: '',
+			iconCls: ''
+		});		
+		
+		searchWin.add(savedSearches);
+		
+	}
+	
+	
+});
 

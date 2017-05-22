@@ -16,4 +16,41 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
 
+Ext.define('OSF.landing.AdvancedSearch', {
+	
+	handler: function(record) {
+		var searchConfig = this;		
+		if (!searchConfig.view) {
+			searchConfig.view = Ext.create('OSF.landing.AdvancedSearchView', {				
+			});
+		}	
+		searchConfig.view.show();
+	}
+	
+});
+
+Ext.define('OSF.landing.AdvancedSearchView', {
+	extend: 'Ext.window.Window',
+	alias: 'widget.osf-advancedsearchview',
+	
+	
+	width: '70%',
+	height: '70%',
+	layout: 'fit',
+	modal: true,
+	title: 'Advanced Search',
+	iconCls: 'fa fa-lg fa-search-plus',
+	
+	initComponent: function () {
+		this.callParent();			
+		var	searchWin = this;
+		
+		var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {				
+		});
+		
+		searchWin.add(advanceSearch);
+	}
+	
+});

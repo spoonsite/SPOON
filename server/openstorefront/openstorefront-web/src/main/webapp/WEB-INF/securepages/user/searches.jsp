@@ -30,13 +30,13 @@
 		<stripes:layout-render name="../../../layout/userheader.jsp">		
 		</stripes:layout-render>			
 		
-		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/advancedSearch.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function() {
 				
-				var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
+				var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {
 					id: 'advanceSearch'
 				});
 	
