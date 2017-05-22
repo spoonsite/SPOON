@@ -92,7 +92,8 @@ public class AccountSignupActivateTest
 			}
 
 			// Delete if present
-			if (tableClickRowCol("tableview-1125", userName, driver)) {
+			if (tableClickRowCol("[data-test='userManagementTable'] .x-grid-view", userName, driver)) {
+		//	if (tableClickRowCol("tableview-1125", userName, driver)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
 				LOG.log(Level.INFO, "*** EXISTING User '" + userName + "' DELETED ***");

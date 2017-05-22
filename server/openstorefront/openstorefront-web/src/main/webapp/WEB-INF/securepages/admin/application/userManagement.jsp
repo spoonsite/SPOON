@@ -67,7 +67,8 @@
 					store: registrationGridStore,
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
 					columns: [
 						{ text: 'Username', dataIndex: 'username', width: 200 },
 						{ text: 'First name', dataIndex: 'firstName', width: 200 },
@@ -94,7 +95,12 @@
 								tools.getComponent('message').setDisabled(true);
 							}
 						}
-					},					
+					},	
+					
+					autoEl: {
+						'data-test' : 'userManagementTable'
+					},
+					
 					dockedItems: [
 						{
 							xtype: 'toolbar',

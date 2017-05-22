@@ -30,8 +30,17 @@ public class SecurityRolesTest
 		extends NewSecurityRole
 {
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-		
+	
+	// establish order when just running the SecurityRolesTest class/ file
 	@Test
+	public void runSecurityRolesTest() throws InterruptedException{
+		signupForAccounts();
+		addSecurityRole();
+		setSecurityRoles();
+	//	importDataRestrictionEntries ();
+	//	verifyPermissions();
+	}
+	
 	public void signupForAccounts() throws InterruptedException{
 		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
 		
@@ -43,8 +52,7 @@ public class SecurityRolesTest
 		newAccountSignup.signupActivate("autoLibrarian");
 	}
 	
-	@Test
-    public void SecurityRole () throws InterruptedException {
+	public void addSecurityRole () throws InterruptedException {
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
@@ -55,12 +63,15 @@ public class SecurityRolesTest
 		}
 	}
 	
-	@Test
 	public void setSecurityRoles () throws InterruptedException {
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
+		
 			// Set up Permissions to use
-			//newSecurityRole.managePermissions(driver, roleName, permissions);
+			
+			
+			
+		//	newSecurityRole.managePermissions(driver, roleName, permissions);
 			
 
 			// dataSource options: "DI2E", "ER2"
@@ -79,16 +90,14 @@ public class SecurityRolesTest
 			dataSens.put("ITAR", true);
 			dataSens.put("PUBLIC", false);
 			dataSens.put("SENSITIVE", true);
-			newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
+	//		newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
 		}
 	}
 	
-    @Test
     public void importDataRestrictionEntries () {
     
     }
 	
-	@Test
 	public void verifyPermissions () {
 		
 	}

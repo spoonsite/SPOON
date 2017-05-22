@@ -44,31 +44,25 @@ public class NewSecurityRole
 
     // Delete if active
     public void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException {
-		/* ***************************  NOTE:  ***************************
-			When deleting via automation, and when a user is still attached,
-			then creating another Security Role, I get a 403 on the creation page
-			and when assigning the user again the Add button cannot be clicked.
-		SOLUTIONS:  Try sending a refresh?  Pause more for it to catch up?
-		*/
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
 		// Click on Table Row Col containing roleName
-		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			sleep(500);
 			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 			sleep(750); 
 			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
-			sleep(250);
+			sleep(500);
 			
-			//FIXES detached from page error message
+			// *** FIXES detached from page error message ***  TODO: Put in a seperate method if used again?
 			boolean breakIt = true;
 				while (true) {
 				breakIt = true;
 				try {
 					sleep(500);
 					// Command that was erring out (detached) earlier.
-					tableClickRowCol("tableview-1092", roleName, driver);
+					tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver);
 					LOG.log(Level.INFO, "--- Waiting for element to show up so that it is not detached ---");
 				} catch (Exception e) {
 					if (e.getMessage().contains("element is not attached")) {
@@ -81,12 +75,14 @@ public class NewSecurityRole
 				}
 		    }
 				
+				
 			// Check to ensure deletion
-			if (tableClickRowCol("tableview-1092", roleName, driver)) {
+			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
 			}
 			else {
 				LOG.log(Level.INFO, "--- Old Security Role '" + roleName + "' DELETED ---");
+				sleep(1000);
 			}
 		}
 		else {
@@ -107,7 +103,7 @@ public class NewSecurityRole
 		sleep(500);
 		driver.findElement(By.xpath("//span[contains(.,'Save')]")).click();
 		sleep(2000);
-		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			LOG.log(Level.INFO, "--- Added the role " + roleName + ". ---");
 		}else {
 			LOG.log(Level.WARNING, "*** Could NOT ADD the role " + roleName + ". ***");
@@ -118,16 +114,21 @@ public class NewSecurityRole
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
-		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
 			sleep(250); //Users with xxxx role is now up
+			
+			// Start typing in the Add User drop down box, then hit ENTER
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(userName);
-			sleep(1250);
+			sleep(1000);
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
-			sleep(1600);
+			sleep(1250);
+			
+			// Hit add button (when active?)
 			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
-			sleep(1500);
-			// Verify it is in the list below
+			sleep(1250);
+			
+			// Verify it is in the list of added usernames
 			boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() +"')]")).isDisplayed();
 			if (wasAdded) {
 				LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName +" role. ---");
@@ -155,24 +156,17 @@ public class NewSecurityRole
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		sleep(1500);
 		
-		// Retreive dataSource desired settings
-		//	('false' for don't activate (Restricted), 'true' for activate (Accessible)) 
+		// Print HashMap 'dataSource' that was passed in from SecurityRolesTest.java
 		for (String key : dataSource.keySet()) {
 				System.out.println("dataSource = " + key + " Active? " + dataSource.get(key));
 		    }
-			
-		// Select row and clik on Manage Data Restrictions to bring up the dable (Data Sources Tab by default)
-								// Does NOT WORK!
-		//if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-item-container //table//", roleName, driver)) {
-								// Works!!!    vvvvvvvvvvvvvvvvvvvvvvv
-		//if (tableClickRowCol("#tableview-1092 .x-grid-item-container table", roleName, driver)) {
-		
-		
-		/*  DUPLICATE ER2 ERROR IN TABLE, DOES NOT KNOW WHICH ONE TO CLICK ON
-		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+	
+	/*
+		// DUPLICATE ER2 ERROR IN TABLE, DOES NOT KNOW WHICH ONE TO CLICK ON
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(500); 
-		
+
 			// if true move left to right if in left restricted table
 			for (String key : dataSource.keySet()) {
 				if (dataSource.get(key)) { // should be in the RIGHT Accessible table
@@ -183,21 +177,18 @@ public class NewSecurityRole
 					}
 				}
 			}
-			
-			
-		
 		}else {
 			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
-		} */
+		} 
+	*/
 	}
-	
 	
 	// Feed in a <List> of Data Distributions to Activate
 	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException {
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		sleep(1500);
 		
-		if (tableClickRowCol("tableview-1092", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(1500); 
 		

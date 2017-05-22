@@ -121,12 +121,9 @@ public class BrowserTestBase {
         String localSearch = searchFor;
         boolean theBool = false;
         
-		// get the tableText[theRow][theColumn] from table theTable
-        //WebElement table = driver.findElement(By.cssSelector(localTable));
-        
-		//******************* Changing back until autoEl/ cssSelector fix found *********************
-		WebElement table = driver.findElement(By.id(localTable));
-		
+		// ***** autoEl method ****   get the tableText[theRow][theColumn] from table theTable 
+        WebElement table = driver.findElement(By.cssSelector(localTable));
+
 		// System.out.println("Inside table click row col");
         List<WebElement> allRows = table.findElements(By.tagName("tr"));
         //String[][] tableText = new String[256][256];
