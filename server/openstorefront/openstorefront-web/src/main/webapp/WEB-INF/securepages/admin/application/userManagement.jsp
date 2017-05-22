@@ -97,10 +97,6 @@
 						}
 					},	
 					
-					autoEl: {
-						'data-test' : 'userManagementTable'
-					},
-					
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -326,6 +322,7 @@
 														type: 'ajax',
 														url: 'api/v1/resource/lookuptypes/UserTypeCode'
 													},
+													
 													listeners: {
 														load: function(store, records, opts) {
 															store.add({
@@ -486,7 +483,12 @@
 					],
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
+					autoEl: {
+						'data-test' : 'userManagementTable'
+					},
+					
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {
 							var tools = userGrid.getComponent('tools');

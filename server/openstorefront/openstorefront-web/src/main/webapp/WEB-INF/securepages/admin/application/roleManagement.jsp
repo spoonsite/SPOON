@@ -53,10 +53,6 @@
 						}
 					},
 					
-					autoEl: {
-						'data-test' : 'securityRolesTable'
-					},
-					
 					columns: [
 						{ text: 'Name', dataIndex: 'roleName', width: 200 },
 						{ text: 'Description', dataIndex: 'description',flex: 1, minWidth: 200 },
@@ -76,7 +72,11 @@
 						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true  }
 					],
 			
-					listeners: {
+					autoEl: {
+						'data-test' : 'securityRolesTable'
+					},
+					
+			listeners: {
 						selectionchange: function(selModel, records, opts) {
 							var tools = roleGrid.getComponent('tools');
 							if (records.length > 0) {					
