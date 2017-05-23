@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -2689,7 +2690,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+            if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+                question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+            } else {
+                question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+            }
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -2864,7 +2869,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+                response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+            } else {
+                response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+            }
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
