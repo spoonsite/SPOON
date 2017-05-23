@@ -68,8 +68,8 @@ Ext.define('OSF.landing.DefaultActions', {
 			},
 			{
 				text: 'Submissions',
-				icon: 'fa-file-text-o',
-				//imageSrc: 'images/background_soldier1.jpg',
+				//icon: 'fa-file-text-o',
+				imageSrc: 'images/submission.png',
 				tip: 'Add or update entries to the registry',
 				permissions: [''],
 				handler: function(record, item) {
@@ -78,18 +78,18 @@ Ext.define('OSF.landing.DefaultActions', {
 			},
 			{
 				text: 'Relationships',
-				icon: 'fa-share-alt',
+				//icon: 'fa-share-alt',
 				tip: 'View relationships bewteen entries',
-				//imageSrc: 'images/background_soldier2.jpg',
+				imageSrc: 'images/relationship.png',
 				handler: function(record, item) {
 					window.location.href = 'UserTool.action?load=Relationships';
 				}
 			},
 			{
 				text: 'Tools',
-				icon: 'fa-gears',
+				//icon: 'fa-gears',
 				tip: 'Access user tools to update profile and manage your data.',
-				//imageSrc: 'images/background_soldier4.jpg',
+				imageSrc: 'images/tools.png',
 				handler: function(record, item) {
 					window.location.href = 'UserTool.action';
 				}

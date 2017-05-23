@@ -90,7 +90,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					xtype: 'combo',
 					itemId: 'entryType',
 					name: 'entryType',
-					width: 325,
+					width: '20%',
 					valueField: 'code',
 					displayField: 'description',
 					editable: false,

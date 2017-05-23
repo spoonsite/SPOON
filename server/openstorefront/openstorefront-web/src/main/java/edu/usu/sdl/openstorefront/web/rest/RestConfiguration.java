@@ -41,9 +41,11 @@ public class RestConfiguration
 		// jersy 2 does not support @Immediate once https://java.net/jira/browse/JERSEY-2291 is reolcved for the version we are using
 		// replace register(new ApplicationInit()); with ServiceLocatorUtilities.enableImmediateScope(locator);
 		register(new ApplicationInit());
-		register(new AbstractBinder(){
+		register(new AbstractBinder()
+		{
 			@Override
-            protected void configure() {
+			protected void configure()
+			{
 				bind(CoreSystem.class).to(CoreSystem.class).in(Singleton.class);
 			}
 		});
