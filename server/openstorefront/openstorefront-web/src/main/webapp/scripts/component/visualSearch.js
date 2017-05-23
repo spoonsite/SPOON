@@ -2269,7 +2269,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				}, // fill
 				{
 					text: 'Download Image',
-					iconCls: 'fa fa-lg fa-download icon-button-color-stop',
+					iconCls: 'fa fa-lg fa-download icon-button-color-default icon-small-vertical-correction-load',
 					handler: function () {
 						var containerPanel = this.up('panel');
 						var data = containerPanel.visualPanel.getImage('png');

@@ -52,8 +52,8 @@ public class TestSuiteModel
 		int successCount = 0;
 		successCount = tests.stream().filter((test) -> (test.isSuccess())).map((_item) -> 1).reduce(successCount, Integer::sum);
 		sb.append("Total: ").append(tests.size()).append(" ");
-		sb.append("Success: <span style='font-weight:bold; padding: 5px; border-radius: 2px; 2px; 2px; 2px; background-color: green; color: white;'>").append(successCount).append("</span> ");
-		sb.append("Fail: <span style='font-weight:bold; padding: 5px; border-radius: 2px; 2px; 2px; 2px; background-color: red; color: white;'>").append(tests.size() - successCount).append("</span>  ");
+		sb.append("Success: <span class='result passed'>").append(successCount).append("</span> ");
+		sb.append("Fail: <span class='result failed'>").append(tests.size() - successCount).append("</span>  ");
 		sb.append("Run Time:  ").append(runTimeInMills).append("ms  ");
 
 		return sb.toString();
