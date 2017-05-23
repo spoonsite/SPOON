@@ -328,6 +328,25 @@ limitations under the License.
 	background-color: white;
 }
 
+.search-tool-org {
+	border-bottom: 1px solid lightgrey;
+	padding: 10px;
+}
+
+.search-tool-org-logo {
+	
+}
+
+.search-tool-org-text-name {
+	font-size: 2em;	
+	text-decoration: none;
+}
+
+.search-tool-org-text-desc {
+	font-size: 12px;
+	margin: 10px;
+}
+
 .searchresults-morefilter {
 	color: white;
 	background-color: ${actionBean.branding.primaryColor};

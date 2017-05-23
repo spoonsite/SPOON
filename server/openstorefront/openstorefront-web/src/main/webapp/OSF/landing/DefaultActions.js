@@ -59,9 +59,9 @@ Ext.define('OSF.landing.DefaultActions', {
 		var tools=[
 			{
 				text: 'Dashboard',
-				icon: 'fa-th-large',
+				//icon: 'fa-th-large',
 				tip: 'Access your dashboard',
-				//imageSrc: 'images/background_predator.jpg',
+				imageSrc: 'images/dash.png',
 				handler: function(record, item) {
 					window.location.href = 'UserTool.action?load=Dashboard';
 				}

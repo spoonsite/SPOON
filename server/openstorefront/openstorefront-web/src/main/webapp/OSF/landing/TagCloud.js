@@ -20,7 +20,7 @@
 
 Ext.define('OSF.landing.TagCloud', {
 	
-	handler: function(record) {
+	handler: function(record, item) {
 		var tagCloud = this;		
 		if (!tagCloud.view) {
 			tagCloud.view = Ext.create('OSF.landing.TagCloudView', {				

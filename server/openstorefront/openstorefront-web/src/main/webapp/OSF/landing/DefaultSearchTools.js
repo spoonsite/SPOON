@@ -24,7 +24,8 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 	requires: [
 		'OSF.landing.TagCloud',
 		'OSF.landing.AdvancedSearch',
-		'OSF.landing.SavedSearch'
+		'OSF.landing.SavedSearch',
+		'OSF.landing.OrganizationSearch'
 	],
 	
 	layout: 'center',		
@@ -52,7 +53,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 						record.tool = Ext.create(record.data.toolType, {							
 						});
 					}
-					record.tool.handler(record);
+					record.tool.handler(record, item);
 				}
 			}
 		}
@@ -72,9 +73,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 				text: 'Organizations',
 				tip: 'Search by Entry Organization',
 				icon: 'fa-sitemap',
-				handler: function(record, item) {
-					
-				}
+				toolType: 'OSF.landing.OrganizationSearch'
 			},
 			{
 				text: 'Advanced',
