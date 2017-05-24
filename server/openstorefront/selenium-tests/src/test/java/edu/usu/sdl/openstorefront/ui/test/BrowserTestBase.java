@@ -130,7 +130,9 @@ public class BrowserTestBase {
         // Iterate through rows
         int theRow = 0;
         for (WebElement row : allRows) {
-            List<WebElement> cells = row.findElements(By.tagName("td"));
+            
+            WebDriverWait waitForCells = new WebDriverWait(driver,20);
+            List<WebElement> cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
             theRow++;
 
             // Iterate through cells
