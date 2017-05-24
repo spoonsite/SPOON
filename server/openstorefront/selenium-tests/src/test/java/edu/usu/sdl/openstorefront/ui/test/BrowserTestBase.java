@@ -28,6 +28,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -60,8 +61,6 @@ public class BrowserTestBase {
     }
 
     protected static void login(String userName, String passWord) {
-        String uN = userName;
-        String pW = passWord;
 
         for (WebDriver driver : webDriverUtil.getDrivers()) {
             // Make sure logged out before attempting login.
@@ -69,10 +68,15 @@ public class BrowserTestBase {
 
             // Now log in
             driver.get(webDriverUtil.getPage("login.jsp"));
-            WebElement element = driver.findElement(By.name("username"));
-            element.sendKeys(uN);
+            
+            WebDriverWait waitUsername = new WebDriverWait(driver, 20);
+            WebElement userNameElement = waitUsername.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
+            userNameElement.sendKeys(userName);
+            
             // Enter password and hit ENTER since submit does not seem to work.
-            driver.findElement(By.name("password")).sendKeys(pW, Keys.ENTER);
+            WebDriverWait waitPassword = new WebDriverWait(driver, 20);
+            WebElement userPassword = waitPassword.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+            userPassword.sendKeys(passWord, Keys.ENTER);
 
             //confirm login
             //TODO: make sure it can handle different landing pages
@@ -134,7 +138,7 @@ public class BrowserTestBase {
             WebDriverWait waitForCells = new WebDriverWait(driver,20);
             List<WebElement> cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
             theRow++;
-
+            
             // Iterate through cells
             int theColumn = 0;
             for (WebElement cell : cells) {
@@ -146,7 +150,9 @@ public class BrowserTestBase {
                     fRow = theRow;
                     fColumn = theColumn;
                     LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
-                    cell.click();
+                    Actions builder = new Actions(driver);
+                    builder.moveToElement(cell);
+                    builder.click();
                     return true;
                     // System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
                 }

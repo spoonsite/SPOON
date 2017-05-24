@@ -481,6 +481,9 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
+								autoEl: {
+									"data-test": "attributesRefreshBtn"
+								},
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									attributeStore.load();

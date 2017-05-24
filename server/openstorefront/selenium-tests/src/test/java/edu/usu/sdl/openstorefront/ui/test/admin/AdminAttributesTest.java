@@ -71,28 +71,29 @@ public class AdminAttributesTest
     public void createAttribute(WebDriver driver, String attrName, String attrCode) {
 
         sleep(200);
-        driver.findElement(By.xpath("//*[@id='button-1095']")).click();
+        driver.findElement(By.cssSelector("[data-test='attributesRefreshBtn']")).click();
         sleep(500);
-        driver.findElement(By.xpath("//*[@id='attributeGrid-tools-add']")).click();
+        driver.findElement(By.cssSelector("#attributeGrid-tools-add")).click();
         sleep(500);
-        driver.findElement(By.xpath("//*[@id='editAttributeForm-label-inputEl']")).sendKeys(attrName);
-        driver.findElement(By.xpath("//*[@id='editAttributeForm-code-inputEl']")).sendKeys(attrCode);
+        driver.findElement(By.cssSelector("#editAttributeForm-label-inputEl")).sendKeys(attrName);
+        driver.findElement(By.cssSelector("#editAttributeForm-code-inputEl")).sendKeys(attrCode);
 
         // radio buttons
         boolean bValue = false;
         sleep(500);
-        WebElement allowAllEntriesRadioBtn = driver.findElement(By.xpath("//*[@id='allEntryTypes-inputEl']"));
+        WebElement allowAllEntriesRadioBtn = driver.findElement(By.cssSelector("#allEntryTypes-inputEl"));
         bValue = allowAllEntriesRadioBtn.isSelected();
         if (!bValue) {
             allowAllEntriesRadioBtn.click();
         }
         System.out.println("Made it to create radio btns");
-        WebElement requiredRadioBtn = driver.findElement(By.xpath("//*[@id='requiredFlagCheckBox-inputEl']"));
+        WebElement requiredRadioBtn = driver.findElement(By.cssSelector("#requiredFlagCheckBox-inputEl"));
         bValue = requiredRadioBtn.isSelected();
         if (!bValue) {
             requiredRadioBtn.click();
         }
-        driver.findElement(By.xpath("//*[@id='tool-1275-toolEl']")).click();
+        
+        driver.findElement(By.cssSelector("//*[@id='tool-1275-toolEl']")).click();
 //        sleep(2000);
 
         try {
@@ -124,7 +125,7 @@ public class AdminAttributesTest
 
     public void deleteAttribute(WebDriver driver, String attrName) throws InterruptedException {
 
-        if (tableClickRowCol("tableview-1092", attrName, driver)) {
+        if (tableClickRowCol("#attributeGrid-body .x-grid-view", attrName, driver)) {
 
             driver.findElement(By.xpath("//*[@id='attributeGrid-tools-action']")).click();
             sleep(1000);
@@ -137,7 +138,7 @@ public class AdminAttributesTest
 
     public void attributeManageCodes(WebDriver driver, String attrName) throws InterruptedException {
 
-        if (tableClickRowCol("tableview-1092", attrName, driver)) {
+        if (tableClickRowCol("#attributeGrid-body .x-grid-view", attrName, driver)) {
 
             driver.findElement(By.xpath("//*[@id='attributeGrid-tools-manageCodes']")).click();
             sleep(500);
