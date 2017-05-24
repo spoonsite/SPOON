@@ -23,6 +23,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Note on this test we don't want to login
@@ -91,14 +93,17 @@ public class AccountSignupActivateTest
 				sleep (500);
 			}
 
+			// ************** If too many users and you have to scroll down it fails *******************
+			// TODO:  JIRA-1724  
+
 			// Delete if present
-			if (tableClickRowCol("[data-test='userManagementTable'] .x-grid-view", userName, driver)) {
+			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
 				LOG.log(Level.INFO, "*** EXISTING User '" + userName + "' DELETED ***");
 				loop = 99;  // exit
 			}
-			sleep(1500);
+			sleep(1000);
 			}
 	    }
 
@@ -140,18 +145,36 @@ public class AccountSignupActivateTest
 		sleep(1500);
 		
 		// Select and click Approve
-		if (tableClickRowCol("[data-test='userManagementTable'] .x-grid-view", userName, driver)) {
+		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
+			sleep(1000);
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
-			LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED ---");
-			sleep(3000);
+
+			// Wait for Approving User Display Block to go away
+			WebDriverWait wait = new WebDriverWait(driver, 40);
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] x-component.x-border-box.x-mask.x-component-default")));
+			
+			// Change filter to Active and Approved 
+			driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
+			driver.findElement(By.xpath("//li[contains(.,'Active')]")).click();
+			sleep (1200);
+			
+			driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
+			driver.findElement(By.xpath("//li[contains(.,'Approve')]")).click();
+			sleep(1200);  
+			
+			// Verify user has been approved
+			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
+				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
+			} else	{
+				LOG.log(Level.SEVERE, "!!! User '" + userName + "' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user " + userName);					
+			}
 		}
-		
+			
 		// Login as newly created and approved user
 		sleep(500);
 		login(userName, userName + "A1!");
 		sleep(1500);
 		LOG.log(Level.INFO, "--- Logged in as new user '" + userName + "' ---");
 		login(); //logout and log back in as admin
-				
 	}  
 }
