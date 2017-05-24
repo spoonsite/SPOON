@@ -195,7 +195,7 @@
 									disabled: true,
 									menu: [
 										{
-											text: 'Approve',											
+											text: 'Approve/Activate',											
 											iconCls: 'fa fa-lg fa-check-square-o icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												var record = Ext.getCmp('reviewGrid').getSelection()[0];
@@ -211,9 +211,8 @@
 											}
 										},
 										{
-											text: 'Delete',
-											cls: 'alert-danger',
-											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction icon-button-color-default',
+											text: 'Inactivate',
+											iconCls: 'fa fa-lg fa-eye-slash icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												var record = Ext.getCmp('reviewGrid').getSelection()[0];
 												actionSetActivation(record, "I");
