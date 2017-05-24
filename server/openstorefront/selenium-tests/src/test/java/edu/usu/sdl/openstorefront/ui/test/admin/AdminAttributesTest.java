@@ -43,12 +43,12 @@ public class AdminAttributesTest
         for (WebDriver driver : webDriverUtil.getDrivers()) {
 
             setup(driver);
-            deleteAttribute(driver, "AAA MyTestAttribute17");
-            createAttribute(driver, "AAA MyTestAttribute17", "MYTESTATTR17");
-            attributeManageCodes(driver, "AAA MyTestAttribute17");
+            deleteAttribute(driver, "MyTestAttribute17");
+            createAttribute(driver, "MyTestAttribute17", "MYTESTATTR17");
+            attributeManageCodes(driver, "MyTestAttribute17");
             editManageCodes(driver, "MyTestCodeLabel11");
             toggleStatusManageCodes(driver, "MyTestCodeLabel11");
-            deleteAttribute(driver, "AAA MyTestAttribute17");
+            deleteAttribute(driver, "MyTestAttribute17");
         }
     }
 

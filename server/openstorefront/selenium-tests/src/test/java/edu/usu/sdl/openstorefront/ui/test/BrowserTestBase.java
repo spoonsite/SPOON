@@ -29,6 +29,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -41,7 +42,6 @@ public class BrowserTestBase {
 
     protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
 
-	
     /*@BeforeClass
 	public static void setSize() throws Exception
 	{
@@ -63,13 +63,12 @@ public class BrowserTestBase {
         String uN = userName;
         String pW = passWord;
 
-		
         for (WebDriver driver : webDriverUtil.getDrivers()) {
             // Make sure logged out before attempting login.
-			driver.get(webDriverUtil.getPage("Login.action?Logout"));
+            driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
-			// Now log in
-			driver.get(webDriverUtil.getPage("login.jsp"));
+            // Now log in
+            driver.get(webDriverUtil.getPage("login.jsp"));
             WebElement element = driver.findElement(By.name("username"));
             element.sendKeys(uN);
             // Enter password and hit ENTER since submit does not seem to work.
@@ -113,21 +112,21 @@ public class BrowserTestBase {
         }
     }
 
-    // pass in the entire string to element for tablename, return Row, Column
-    public boolean tableClickRowCol(String tableName, String searchFor, WebDriver driver) throws InterruptedException {
+    /**
+     * Used to located item in table
+     * @param cssSelector cssSelector used to find table
+     * @param searchFor text in the cell to find
+     * @param driver Selenium webdriver
+     * @return true if cell is found, false otherwise
+     * @throws InterruptedException 
+     */
+    public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver) throws InterruptedException {
         int fRow = -1;
         int fColumn = -1;
-        String localTable = tableName;
-        String localSearch = searchFor;
-        boolean theBool = false;
+
+        WebDriverWait waitForTable = new WebDriverWait(driver, 20);
+        List<WebElement> allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
         
-		// ***** autoEl method ****   get the tableText[theRow][theColumn] from table theTable 
-        WebElement table = driver.findElement(By.cssSelector(localTable));
-
-		// System.out.println("Inside table click row col");
-        List<WebElement> allRows = table.findElements(By.tagName("tr"));
-        //String[][] tableText = new String[256][256];
-
         // Iterate through rows
         int theRow = 0;
         for (WebElement row : allRows) {
@@ -141,42 +140,25 @@ public class BrowserTestBase {
                 //System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
 
                 // If text found remember row, column
-                if (localSearch.trim().toLowerCase().equals(cell.getText().toLowerCase())) {
+                if (searchFor.toLowerCase().equals(cell.getText().toLowerCase())) {
                     fRow = theRow;
                     fColumn = theColumn;
+                    LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
+                    cell.click();
+                    return true;
                     // System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
-                    break;
                 }
-
-                // NOTE:  Finds the FIRST instance, if > 1 instance found
-                if (fRow != -1 || fColumn != -1) {
-                    break;
-                }
+                
                 theColumn++;
             }
         }
 
-        // Now CLICK on the table! 
-        if (fRow != -1 || fColumn != -1) {
-            fColumn++; // increment by 1 as it is 0-based and you can't click on td 0th instance.
-            
-            LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
-			
-			WebElement element = table.findElement(By.xpath("//td[contains(.,'" + localSearch + "')]"));
-			element.click();
-            
-			theBool = true;
-            // System.out.println("Bool set to true");
-        } else {
-            LOG.log(Level.WARNING, "*** The text '" + localSearch + "' was NOT FOUND in table " + localTable + ", with current filters set. ***");
-            theBool = false;
-        }
- 
-        return theBool;
+        LOG.log(Level.WARNING, "*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
+        return false;
         //return new TableItem(fRow, fColumn);
     }
-		
-	 /**
+
+    /**
      * This assumes the driver is on the correct page before this is called This
      * stores the image in the configure report directory.
      *

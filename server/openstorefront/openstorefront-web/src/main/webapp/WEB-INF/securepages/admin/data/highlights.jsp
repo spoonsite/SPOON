@@ -402,6 +402,9 @@
 											text: 'Save',
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
+											autoEl: {
+												"data-test": "addEditHighlightSave"
+											},
 											handler: function () {
 												var form = Ext.getCmp('editHighlightForm');
 												// Submit Data
