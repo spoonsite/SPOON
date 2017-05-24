@@ -2690,11 +2690,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-            if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
-                question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-            } else {
-                question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
-            }
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+				question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			} else {
+				question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+			}
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -2870,10 +2870,10 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
-                response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-            } else {
-                response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
-            }
+				response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			} else {
+				response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			}
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
@@ -2978,13 +2978,40 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
-	@APIDescription("Activate a review on  the specified component")
+	@APIDescription("Activate a review on the specified component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
 			})
 	@Path("/{id}/reviews/{reviewId}/activate")
 	public Response activateComponentReview(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("reviewId")
+			@RequiredParam String reviewId)
+	{		
+		ComponentReview componentReviewExample = new ComponentReview();
+		componentReviewExample.setComponentId(componentId);
+		componentReviewExample.setComponentReviewId(reviewId);
+
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
+		if (componentReview != null) {
+			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
+			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentReview);
+	}
+
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@APIDescription("Activate a review on the specified component")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/reviews/{reviewId}/pending")
+	public Response pendingComponentReview(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("reviewId")
@@ -2996,11 +3023,12 @@ public class ComponentRESTResource
 
 		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
 		if (componentReview != null) {
-			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
-			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+			service.getComponentService().setReviewPending(ComponentReview.class, reviewId);
+			componentReview.setActiveStatus(ComponentReview.PENDING_STATUS);
 		}
-		return sendSingleEntityResponse(componentReviewExample);
+		return sendSingleEntityResponse(componentReview);
 	}
+	
 
 	@POST
 	@APIDescription("Add a review to the specified entity")

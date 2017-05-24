@@ -27,6 +27,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 /**
  *
  * @author dshurtleff
+ * @author kbair
  */
 @ApplicationPath("api")
 public class RestConfiguration
@@ -38,12 +39,13 @@ public class RestConfiguration
 	@Inject
 	public RestConfiguration(ServiceLocator locator)
 	{
-		// jersy 2 does not support @Immediate once https://java.net/jira/browse/JERSEY-2291 is reolcved for the version we are using
+		// jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is reolcved for the version we are using
 		// replace register(new ApplicationInit()); with ServiceLocatorUtilities.enableImmediateScope(locator);
 		register(new ApplicationInit());
 		register(new AbstractBinder(){
 			@Override
             protected void configure() {
+				// NOTE (KB): do not add anymore bind calls until a solution is found for getting stripes (ActionBeans) access to the jersey/hk2 Request Scope.
 				bind(CoreSystem.class).to(CoreSystem.class).in(Singleton.class);
 			}
 		});

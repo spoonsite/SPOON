@@ -130,6 +130,25 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public <T extends ComponentReview> T setReviewPending(Class<T> review, Object pk)
+	{
+		return sub.setReviewPending(review, pk);
+	}
+
+	@Override
+	public <T extends ComponentQuestion> T setQuestionPending(Class<T> question, Object pk)
+	{
+		return sub.setQuestionPending(question, pk);
+
+	}
+
+	@Override
+	public <T extends ComponentQuestionResponse> T setQuestionResponsePending(Class<T> answer, Object pk)
+	{
+		return sub.setQuestionResponsePending(answer, pk);
+	}
+
+	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
 		sub.deleteBaseComponent(subComponentClass, pk, true);

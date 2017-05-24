@@ -57,6 +57,10 @@
 					store: Ext.data.StoreManager.lookup('reviewStore'),
 					columnLines: true,
 					selModel: 'rowmodel',
+					plugins: [{
+						ptype: 'cellediting',
+						clicksToEdit: 1
+					}],
 					columns: {
 						defaults: {
 							cellWrap: true
@@ -125,18 +129,22 @@
 														type: 'ajax',
 														url: 'api/v1/resource/components/reviewviews?status=A'
 													});
-													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Toggle Status");
-												} else {
+													
+												} else if (newValue === 'I') {
 													store.setProxy({
 														id: 'reviewStoreProxy',
 														type: 'ajax',
 														url: 'api/v1/resource/components/reviewviews?status=I'
 													});
-													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Toggle Status");
+												} else {
+													store.setProxy({
+														id: 'reviewStoreProxy',
+														type: 'ajax',
+														url: 'api/v1/resource/components/reviewviews?status=P'
+													});
 												}
 												store.load();
 												Ext.getCmp('reviewGrid').getSelectionModel().deselectAll();
-												Ext.getCmp('reviewGrid-tools-toggleActivation').setDisabled(true);
 											}
 										}
 									},
@@ -154,6 +162,10 @@
 												{
 													code: 'I',
 													description: 'Inactive'
+												},
+												{
+													code: 'P',
+													description: 'Pending'
 												}
 											]
 										}
@@ -177,48 +189,76 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Toggle Status',
-									id: 'reviewGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
+									text: 'Action',
+									id: 'reviewGrid-tools-action',
+									scale: 'medium',																	
 									disabled: true,
-									scale: 'medium',
-									handler: function () {
-										var record = Ext.getCmp('reviewGrid').getSelection()[0];
-										actionToggleActivation(record);
-									}
-								}
+									menu: [
+										{
+											text: 'Approve',											
+											iconCls: 'fa fa-lg fa-check-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var record = Ext.getCmp('reviewGrid').getSelection()[0];
+												actionSetActivation(record, "A");
+											}
+										},
+										{
+											text: 'Pending',
+											iconCls: 'fa fa-lg fa-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var record = Ext.getCmp('reviewGrid').getSelection()[0];
+												actionSetActivation(record, "P");
+											}
+										},
+										{
+											text: 'Delete',
+											cls: 'alert-danger',
+											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction icon-button-color-default',
+											handler: function() {
+												var record = Ext.getCmp('reviewGrid').getSelection()[0];
+												actionSetActivation(record, "I");
+											}											
+										}
+									]																		
+								},
 							]
 						}
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('reviewGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('reviewGrid-tools-toggleActivation').enable(true);
-							} else {
-								Ext.getCmp('reviewGrid-tools-toggleActivation').disable();
-							}
+							var enabled = Ext.getCmp('reviewGrid').getSelectionModel().hasSelection();
+							Ext.getCmp('reviewGrid-tools-action').setDisabled(!enabled);
 						}
 					}
 				});
 
 
-				var actionToggleActivation = function (record) {
+				var actionSetActivation = function (record, newStatus) {
 					if (record) {
 						var reviewId = record.data.reviewId;
 						var componentId = record.data.componentId;
 						var active = record.data.activeStatus;
-						if (active === 'A') {
+						if(active === newStatus)
+						{
+							return;
+						} else if (newStatus === 'I') {
 							var method = "DELETE";
 							var url = 'api/v1/resource/components/';
 							url += componentId + '/reviews/';
 							url += reviewId;
-							var what = "deactivate";
-						} else if (active === 'I') {
+							var what = "inactive";
+						} else if (newStatus === 'A') {
 							var method = "PUT";
 							var url = 'api/v1/resource/components/';
 							url += componentId + '/reviews/';
 							url += reviewId + '/activate';
-							var what = "activate";
+							var what = "active";
+						} else if (newStatus === 'P') {
+							var method = "PUT";
+							var url = 'api/v1/resource/components/';
+							url += componentId + '/reviews/';
+							url += reviewId + '/pending';
+							var what = "pending";
 						} else {
 							Ext.MessageBox.alert("Record Not Recognized", "Error: Record is not active or inactive.");
 							return false;
@@ -228,17 +268,17 @@
 							url: url,
 							method: method,
 							success: function (response, opts) {
-								var message = 'Successfully ' + what + 'd review for "' + record.data.name + '"';
+								var message = 'Successfully set review status to ' + what + ' for "' + record.data.name + '"';
 								Ext.toast(message, '', 'tr');
 								// The ordering below is necessary
 								// to get Ext to disable the buttons.
 								Ext.getCmp('reviewGrid').getStore().load();
 								Ext.getCmp('reviewGrid').getSelectionModel().deselectAll();
-								Ext.getCmp('reviewGrid-tools-toggleActivation').disable();
+								Ext.getCmp('reviewGrid-tools-action').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
-										"Error: Could not " + what + ' review for "' + record.data.name + '"');
+										'Error: Could not set review status to ' + what + ' for "' + record.data.name + '"');
 							}
 						});
 
