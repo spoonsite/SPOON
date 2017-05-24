@@ -34,84 +34,97 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author dshurtleff
  */
 public class AccountSignupActivateTest
-        extends BrowserTestBase {
+		extends BrowserTestBase
+{
 
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-    @BeforeClass
-    public static void setupTest() {
-        login();
-    }
+	@BeforeClass
+	public static void setupTest()
+	{
+		login();
+	}
 
-    /**
-     *
-     */
-    public AccountSignupActivateTest() {
+	/**
+	 *
+	 */
+	public AccountSignupActivateTest()
+	{
 
-    }
+	}
 
-    @Test
-	public void signupActivate() throws InterruptedException {
+	@Test
+	public void signupActivate() throws InterruptedException
+	{
 		signupActivate("autoTestDEFALT");
 	}
-	
-    public void signupActivate(String userName) throws InterruptedException {
+
+	public void signupActivate(String userName) throws InterruptedException
+	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			deleteUserIfPresent(driver, userName);
 			signupForm(driver, userName);
 			activateAccount(driver, userName);
 		}
-    }
+	}
 
-    // Delete if active
-    private void deleteUserIfPresent(WebDriver driver, String userName) throws InterruptedException {
+	// Delete if active
+	private void deleteUserIfPresent(WebDriver driver, String userName) throws InterruptedException
+	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+
 		// TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
-		for (int loop=0; loop<=3; loop ++) {
-			// First (loop == 0) filter by Active and Approved, the default on page load
-			
-			// Filter on Active Status (Locked/Disabled; Active)
+		for (int loop = 0; loop <= 3; loop++) {
+			// NOTE: First (loop == 0) filter by Active and Approved, the default on page load
+
+			// Filter on *Active Status*
 			if ((loop == 1) || (loop == 2)) {
-				List <WebElement> activeStatus = driver.findElements(By.cssSelector("#filterActiveStatus-picker .x-boundlist-item"));
-				for (WebElement theStatus : activeStatus) {
-					if (theStatus.getText().equals("Locked/Disabled")) {
-						theStatus.click();
+				// Active Status Drop down arrow and get list of elements in it
+				WebDriverWait waitStatus = new WebDriverWait(driver, 10);
+				WebElement ActiveStatArrow = waitStatus.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
+				ActiveStatArrow.click();
+				WebDriverWait waitLockedDisabled = new WebDriverWait(driver, 10);
+				List<WebElement> statusList = waitLockedDisabled.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#filterActiveStatus-picker-listEl li")));
+				// Change Active Status to Locked/Disabled
+				for (WebElement element : statusList) {
+					if (element.getText().equals("Locked/Disabled")) {
+						element.click();
 					}
 				}
-
-			sleep(10000);	
-			// Wait for 
-			//WebDriverWait wait = new WebDriverWait(driver, 20);
-			//wait.until(ExpectedConditions.)));
-			
-			//      driver.findElement(By.id("codesFilter-activeStatus-inputEl")).clear();
-//            driver.findElement(By.id("codesFilter-activeStatus-inputEl")).sendKeys("Inactive");
-
-
-				
+				// Wait for Approving User Display Block to go away
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
 			}
-	 		if (loop == 3) {
+
+			// Change Active Staus = Active
+			if (loop == 3) {
 				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
 				driver.findElement(By.xpath("//li[contains(.,'Active')]")).click();
-				sleep(1000);  
-			}	
 
-			// Filter on Approval Satus (Approved; Pending)
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+			}
+
+			// Filter on *Approval Status*
 			if ((loop == 1) || (loop == 3)) {
-				// Filter by Active and Pending
+				// Change Approval Status = Pending
 				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
 				driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
-				sleep (500);
-			}				
-			if (loop == 2){
+
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+			}
+			if (loop == 2) {
+				// Change Approval Status = Approved
 				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
 				driver.findElement(By.xpath("//li[contains(.,'Approved')]")).click();
-				sleep (500);
+
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
 			}
 
 			// ************** If too many users and you have to scroll down it fails *******************
 			// TODO:  JIRA-1724  
-
 			// Delete if present
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
@@ -119,12 +132,15 @@ public class AccountSignupActivateTest
 				LOG.log(Level.INFO, "*** EXISTING User '" + userName + "' DELETED ***");
 				loop = 99;  // exit
 			}
-			sleep(1000);
-			}
-	    }
+			WebDriverWait wait = new WebDriverWait(driver, 10);
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgTextEl']")));
 
-    public void signupForm(WebDriver driver, String userName) {
-        // Navigate to the registration page
+		}
+	}
+
+	public void signupForm(WebDriver driver, String userName)
+	{
+		// Navigate to the registration page
 		driver.get(webDriverUtil.getPage("registration.jsp"));
 		sleep(2000);
 		// Fill out the form
@@ -145,9 +161,9 @@ public class AccountSignupActivateTest
 
 	}
 
-
-    private void activateAccount(WebDriver driver, String userName) throws InterruptedException {
-        // Navigate to Admin Tools -> Application Management -> User Tools to activate
+	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
+	{
+		// Navigate to Admin Tools -> Application Management -> User Tools to activate
 
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
 		sleep(2500);
@@ -159,7 +175,7 @@ public class AccountSignupActivateTest
 		driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
 		driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
 		sleep(1500);
-		
+
 		// Select and click Approve
 		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
 			sleep(1000);
@@ -168,29 +184,29 @@ public class AccountSignupActivateTest
 			// Wait for Approving User Display Block to go away
 			WebDriverWait wait = new WebDriverWait(driver, 40);
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] x-component.x-border-box.x-mask.x-component-default")));
-			
+
 			// Change filter to Active and Approved 
 			driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
 			driver.findElement(By.xpath("//li[contains(.,'Active')]")).click();
-			sleep (1200);
-			
+			sleep(1200);
+
 			driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
 			driver.findElement(By.xpath("//li[contains(.,'Approve')]")).click();
-			sleep(1200);  
-			
+			sleep(1200);
+
 			// Verify user has been approved
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
 				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
-			} else	{
-				LOG.log(Level.SEVERE, "!!! User '" + userName + "' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user " + userName);					
+			} else {
+				LOG.log(Level.SEVERE, "!!! User '" + userName + "' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user " + userName);
 			}
 		}
-			
+
 		// Login as newly created and approved user
 		sleep(500);
 		login(userName, userName + "A1!");
 		sleep(1500);
 		LOG.log(Level.INFO, "--- Logged in as new user '" + userName + "' ---");
 		login(); //logout and log back in as admin
-	}  
+	}
 }
