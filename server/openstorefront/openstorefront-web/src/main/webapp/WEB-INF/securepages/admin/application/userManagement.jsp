@@ -486,7 +486,7 @@
 					},	
 					
 					autoEl: {
-						'data-test' : 'userManagementTable'
+						'data-test' : 'xPanelTable'
 					},
 					
 					listeners: {
@@ -741,7 +741,7 @@
 									}									
 								}
 							]
-						},						
+						},
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',

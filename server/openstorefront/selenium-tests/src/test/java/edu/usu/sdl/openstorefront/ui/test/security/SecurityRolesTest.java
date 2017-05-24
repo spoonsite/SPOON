@@ -35,8 +35,8 @@ public class SecurityRolesTest
 	@Test
 	public void runSecurityRolesTest() throws InterruptedException{
 		signupForAccounts();
-		addSecurityRole();
-		setSecurityRoles();
+	//	addSecurityRole();
+	//	setSecurityRoles();
 	//	importDataRestrictionEntries ();
 	//	verifyPermissions();
 	}
