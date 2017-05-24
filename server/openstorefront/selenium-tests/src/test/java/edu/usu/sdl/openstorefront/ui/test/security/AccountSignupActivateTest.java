@@ -74,69 +74,70 @@ public class AccountSignupActivateTest
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
 
 		// TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.
-		for (int loop = 0; loop <= 3; loop++) {
-			// NOTE: First (loop == 0) filter by Active and Approved, the default on page load
-
+		for (int loop = 0; loop < 3; loop++) {
+			String activeStatusDropDownText;
+			String approvalStatusDropDownText;
+			
 			// Filter on *Active Status*
-			if ((loop == 1) || (loop == 2)) {
-				// Active Status Drop down arrow and get list of elements in it
-				WebDriverWait waitStatus = new WebDriverWait(driver, 10);
-				WebElement ActiveStatArrow = waitStatus.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
-				ActiveStatArrow.click();
-				WebDriverWait waitLockedDisabled = new WebDriverWait(driver, 10);
-				List<WebElement> statusList = waitLockedDisabled.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#filterActiveStatus-picker-listEl li")));
-				// Change Active Status to Locked/Disabled
-				for (WebElement element : statusList) {
-					if (element.getText().equals("Locked/Disabled")) {
-						element.click();
-					}
+			if ((loop == 0) || (loop ==3)) {
+				activeStatusDropDownText = "Active";
+			} else {
+				activeStatusDropDownText = "Locked/Disabled";
+			}
+			// ActiveStatusDropDown arrow and get list of elements in it
+			WebDriverWait waitStatus = new WebDriverWait(driver, 10);
+			WebElement ActiveStatArrow = waitStatus.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
+			ActiveStatArrow.click();
+			WebDriverWait waitLockedDisabled = new WebDriverWait(driver, 10);
+			List<WebElement> statusList = waitLockedDisabled.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#filterActiveStatus-picker-listEl li")));
+			// Change Active Status to looped value set above
+			for (WebElement element : statusList) {
+				if (element.getText().equals(activeStatusDropDownText)) {
+					element.click();
 				}
-				// Wait for Approving User Display Block to go away
-				WebDriverWait wait = new WebDriverWait(driver, 10);
-				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
 			}
-
-			// Change Active Staus = Active
-			if (loop == 3) {
-				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
-				driver.findElement(By.xpath("//li[contains(.,'Active')]")).click();
-
-				WebDriverWait wait = new WebDriverWait(driver, 10);
-				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
-			}
-
+			// Wait for Approving User Display Block to go away
+			WebDriverWait waitAct = new WebDriverWait(driver, 10);
+			waitAct.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+		
+			
 			// Filter on *Approval Status*
-			if ((loop == 1) || (loop == 3)) {
-				// Change Approval Status = Pending
-				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
-				driver.findElement(By.xpath("//li[contains(.,'Pending')]")).click();
-
-				WebDriverWait wait = new WebDriverWait(driver, 10);
-				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+			if ((loop == 0) || (loop ==1)) {
+				approvalStatusDropDownText = "Approved";
+			} else {
+				approvalStatusDropDownText = "Pending";
 			}
-			if (loop == 2) {
-				// Change Approval Status = Approved
-				driver.findElement(By.xpath("//div[@id='filterApprovalStatus-trigger-picker']")).click();
-				driver.findElement(By.xpath("//li[contains(.,'Approved')]")).click();
-
-				WebDriverWait wait = new WebDriverWait(driver, 10);
-				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+			// ActiveStatusDropDown arrow and get list of elements in it
+			WebDriverWait waitApprStatus = new WebDriverWait(driver, 10);
+			WebElement ApprStatArrow = waitApprStatus.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
+			ApprStatArrow.click();
+			WebDriverWait waitApprLockedDisabled = new WebDriverWait(driver, 10);
+			List<WebElement> thestatusList = waitApprLockedDisabled.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#filterActiveStatus-picker-listEl li")));
+			// Change Active Status to looped value set above
+			for (WebElement element : thestatusList) {
+				if (element.getText().equals(activeStatusDropDownText)) {
+					element.click();
+				}
 			}
-
-			// ************** If too many users and you have to scroll down it fails *******************
-			// TODO:  JIRA-1724  
-			// Delete if present
+			// Wait for Approving User Display Block to go away
+			WebDriverWait waitAppr= new WebDriverWait(driver, 10);
+			waitAppr.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
+			
+			
+			// Drop-down selectors finished, now search for user in the table and delete if present
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation YES
+				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation button "YES"
+
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgTextEl']")));
+
 				LOG.log(Level.INFO, "*** EXISTING User '" + userName + "' DELETED ***");
 				loop = 99;  // exit
-			}
-			WebDriverWait wait = new WebDriverWait(driver, 10);
-			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgTextEl']")));
-
+			}	
 		}
 	}
+
 
 	public void signupForm(WebDriver driver, String userName)
 	{
