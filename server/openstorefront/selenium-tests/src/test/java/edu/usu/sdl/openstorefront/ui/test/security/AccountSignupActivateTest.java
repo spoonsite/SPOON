@@ -107,6 +107,11 @@ public class AccountSignupActivateTest
 			} else {
 				approvalStatusDropDownText = "Pending";
 			}
+			
+			
+			// TODO:  ******************** This is from the ACTIVE STATUS DROP DOWN.  UPDATE FOR APPROVAL STATUS **************
+			
+			
 			// ActiveStatusDropDown arrow and get list of elements in it
 			WebDriverWait waitApprStatus = new WebDriverWait(driver, 10);
 			WebElement ApprStatArrow = waitApprStatus.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
