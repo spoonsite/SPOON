@@ -122,7 +122,7 @@ public class AdminHighlightTest extends AdminTestBase {
         if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
 
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='highlightGrid-tools-delete']")));
+            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
             element.click();
 
             WebDriverWait waitYesButton = new WebDriverWait(driver, 20);

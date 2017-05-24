@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.ui.test;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,11 +69,11 @@ public class BrowserTestBase {
 
             // Now log in
             driver.get(webDriverUtil.getPage("login.jsp"));
-            
+
             WebDriverWait waitUsername = new WebDriverWait(driver, 20);
             WebElement userNameElement = waitUsername.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
             userNameElement.sendKeys(userName);
-            
+
             // Enter password and hit ENTER since submit does not seem to work.
             WebDriverWait waitPassword = new WebDriverWait(driver, 20);
             WebElement userPassword = waitPassword.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
@@ -118,27 +119,38 @@ public class BrowserTestBase {
 
     /**
      * Used to located item in table
+     *
      * @param cssSelector cssSelector used to find table
      * @param searchFor text in the cell to find
      * @param driver Selenium webdriver
      * @return true if cell is found, false otherwise
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver) throws InterruptedException {
         int fRow = -1;
         int fColumn = -1;
 
-        WebDriverWait waitForTable = new WebDriverWait(driver, 20);
-        List<WebElement> allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
-        
+        List<WebElement> allRows = new ArrayList<WebElement>();
+        try {
+            WebDriverWait waitForTable = new WebDriverWait(driver, 20);
+            allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+        } catch (Exception e) {
+            
+        }
+
         // Iterate through rows
         int theRow = 0;
         for (WebElement row : allRows) {
-            
-            WebDriverWait waitForCells = new WebDriverWait(driver,20);
-            List<WebElement> cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
-            theRow++;
-            
+
+            List<WebElement> cells = new ArrayList<WebElement>();
+            try {
+                WebDriverWait waitForCells = new WebDriverWait(driver, 20);
+                cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+                theRow++;
+            } catch (Exception e) {
+                
+            }
+
             // Iterate through cells
             int theColumn = 0;
             for (WebElement cell : cells) {
@@ -146,17 +158,18 @@ public class BrowserTestBase {
                 //System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
 
                 // If text found remember row, column
-                if (searchFor.toLowerCase().equals(cell.getText().toLowerCase())) {
+                if (searchFor.equals(cell.getText())) {
                     fRow = theRow;
                     fColumn = theColumn;
                     LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
                     Actions builder = new Actions(driver);
                     builder.moveToElement(cell);
                     builder.click();
+                    builder.build().perform();
                     return true;
                     // System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
                 }
-                
+
                 theColumn++;
             }
         }

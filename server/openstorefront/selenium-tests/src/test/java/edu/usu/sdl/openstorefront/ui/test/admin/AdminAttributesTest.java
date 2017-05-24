@@ -25,6 +25,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -93,8 +94,10 @@ public class AdminAttributesTest
             requiredRadioBtn.click();
         }
         
-        driver.findElement(By.cssSelector("//*[@id='tool-1275-toolEl']")).click();
-//        sleep(2000);
+        WebDriverWait waitPlusTool = new WebDriverWait(driver, 10);
+        WebElement plusTool = waitPlusTool.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#editAttributeForm-typesRequiredFor_header-targetEl .x-tool-plus")));
+        plusTool.click();
+        sleep(2000);
 
         try {
             WebElement element = driver.findElement(By.cssSelector("#tableview-1280 .x-grid-item-container table"));
