@@ -17,12 +17,14 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -70,9 +72,23 @@ public class AccountSignupActivateTest
 			
 			// Filter on Active Status (Locked/Disabled; Active)
 			if ((loop == 1) || (loop == 2)) {
-				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();
-				driver.findElement(By.xpath("//li[contains(.,'Locked/Disabled')]")).click();
-				sleep(1000);  // Need to explicity pause to let drop-down selection catch up
+				List <WebElement> activeStatus = driver.findElements(By.cssSelector("#filterActiveStatus-picker .x-boundlist-item"));
+				for (WebElement theStatus : activeStatus) {
+					if (theStatus.getText().equals("Locked/Disabled")) {
+						theStatus.click();
+					}
+				}
+
+			sleep(10000);	
+			// Wait for 
+			//WebDriverWait wait = new WebDriverWait(driver, 20);
+			//wait.until(ExpectedConditions.)));
+			
+			//      driver.findElement(By.id("codesFilter-activeStatus-inputEl")).clear();
+//            driver.findElement(By.id("codesFilter-activeStatus-inputEl")).sendKeys("Inactive");
+
+
+				
 			}
 	 		if (loop == 3) {
 				driver.findElement(By.xpath("//div[@id='filterActiveStatus-trigger-picker']")).click();

@@ -47,9 +47,9 @@ public class SecurityRolesTest
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// TODO:  *** BREAK OUT INTO METHODS (DELETE, SIGNUPFORM, ACTIVATE)? ***
 		newAccountSignup.signupActivate("autoUser");
-		newAccountSignup.signupActivate("autoEval");
-		newAccountSignup.signupActivate("autoAdmin");
-		newAccountSignup.signupActivate("autoLibrarian");
+	//	newAccountSignup.signupActivate("autoEval");
+	//	newAccountSignup.signupActivate("autoAdmin");
+	//	newAccountSignup.signupActivate("autoLibrarian");
 	}
 	
 	public void addSecurityRole () throws InterruptedException {
