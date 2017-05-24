@@ -60,6 +60,7 @@ public class EntryTypeExporter
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
 		exporters.add(new EntryTemplateExporter());
+		exporters.add(new GeneralMediaExporter());
 		exporters.add(this);
 		return exporters;
 	}

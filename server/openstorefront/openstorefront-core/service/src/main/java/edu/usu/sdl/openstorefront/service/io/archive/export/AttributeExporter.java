@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -24,6 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,8 +47,8 @@ public class AttributeExporter
 {
 
 	private static final Logger LOG = Logger.getLogger(AttributeExporter.class.getName());
-	private List<AttributeType> attributesToExport = new ArrayList<>();
 	private static final String DATA_DIR = "/attribute/";
+	private static final String ATTACHMENT_DIR = "/attribute/attachments/";
 
 	@Override
 	public int getPriority()
@@ -57,16 +63,6 @@ public class AttributeExporter
 	}
 
 	@Override
-	public void exporterInit()
-	{
-		super.exporterInit();
-
-		AttributeType attributeType = new AttributeType();
-		attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		attributesToExport = attributeType.findByExample();
-	}
-
-	@Override
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
@@ -78,6 +74,10 @@ public class AttributeExporter
 	@Override
 	public void exportRecords()
 	{
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		List<AttributeType> attributesToExport = attributeTypeExample.findByExample();
+
 		for (AttributeType attributeType : attributesToExport) {
 
 			AttributeAll attributeAll = new AttributeAll();
@@ -90,6 +90,18 @@ public class AttributeExporter
 			} catch (IOException ex) {
 				LOG.log(Level.WARNING, "Failed to export attibute", ex);
 				addError("Unable to export: " + attributeType.getDescription());
+			}
+
+			//save any attachments
+			for (AttributeCode attributeCode : attributeAll.getAttributeCodes()) {
+				File mediaFile = new TFile(archiveBasePath + ATTACHMENT_DIR + attributeCode.getAttachmentFileName());
+				Path path = attributeCode.pathToAttachment();
+				try {
+					Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to copy media file: " + mediaFile.getName(), ex);
+					addError("Unable to copy media file: " + mediaFile.getName());
+				}
 			}
 
 			archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
@@ -128,12 +140,34 @@ public class AttributeExporter
 		} else {
 			LOG.log(Level.FINE, "No attibutes to load.");
 		}
+
+		//load attachments
+		TFile mediaDir = new TFile(archiveBasePath + ATTACHMENT_DIR);
+		TFile media[] = mediaDir.listFiles();
+		if (media != null) {
+			archive.setStatusDetails("Saving Attachments (" + media.length + ")...");
+			archive.save();
+			for (TFile mediaFile : media) {
+				try {
+					Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+					addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
+				}
+			}
+		}
+
 	}
 
 	@Override
 	public long getTotalRecords()
 	{
-		return attributesToExport.size();
+		AttributeType attributeType = new AttributeType();
+		attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(attributeType);
 	}
 
 }

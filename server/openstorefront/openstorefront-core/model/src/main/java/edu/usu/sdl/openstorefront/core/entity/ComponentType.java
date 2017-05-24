@@ -35,8 +35,9 @@ import javax.validation.constraints.Size;
 public class ComponentType
 		extends StandardEntity<ComponentType>
 {
+
 	public static final String FIELD_LABEL = "label";
-	
+
 	@PK(generated = false)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@NotNull
@@ -92,6 +93,11 @@ public class ComponentType
 	@ConsumeField
 	private String componentTypeTemplate;
 
+	@ConsumeField
+	@APIDescription("This url to an icon for a type; Typically points to general media")
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String iconUrl;
+
 	public static final String COMPONENT = "COMP";
 	public static final String ARTICLE = "ARTICLE";
 
@@ -123,6 +129,7 @@ public class ComponentType
 		this.setDataEntryReviews(componentTypeLocal.getDataEntryReviews());
 		this.setDataEntryQuestions(componentTypeLocal.getDataEntryQuestions());
 		this.setAllowOnSubmission(componentTypeLocal.getAllowOnSubmission());
+		this.setIconUrl(componentTypeLocal.getIconUrl());
 
 	}
 
@@ -274,6 +281,16 @@ public class ComponentType
 	public void setAllowOnSubmission(Boolean allowOnSubmission)
 	{
 		this.allowOnSubmission = allowOnSubmission;
+	}
+
+	public String getIconUrl()
+	{
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl)
+	{
+		this.iconUrl = iconUrl;
 	}
 
 }

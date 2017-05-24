@@ -106,6 +106,8 @@ public class ComponentDetailView
 	private Integer recordVersion;
 	private String componentTypeLabel;
 	private String approvalStateLabel;
+	private String componentIconId;
+	private String componentTypeIconUrl;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
@@ -198,11 +200,14 @@ public class ComponentDetailView
 		approvalStateLabel = TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState());
 		componentTypeLabel = TranslateUtil.translateComponentType(component.getComponentType());
 
+		Service service = ServiceProxyFactory.getServiceProxy();
+		componentIconId = service.getComponentService().resolveComponentIcon(componentId);
+		componentTypeIconUrl = service.getComponentService().resolveComponentTypeIcon(componentType);
+
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
 		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
 
-			Service service = ServiceProxyFactory.getServiceProxy();
 			SecurityMarkingType securityMarkingType = service.getLookupService().getLookupEnity(SecurityMarkingType.class, componentSecurityMarkingType);
 
 			if (securityMarkingType != null) {
@@ -658,6 +663,26 @@ public class ComponentDetailView
 	public void setFullEvaluations(List<EvaluationAll> fullEvaluations)
 	{
 		this.fullEvaluations = fullEvaluations;
+	}
+
+	public String getComponentIconId()
+	{
+		return componentIconId;
+	}
+
+	public void setComponentIconId(String componentIconId)
+	{
+		this.componentIconId = componentIconId;
+	}
+
+	public String getComponentTypeIconUrl()
+	{
+		return componentTypeIconUrl;
+	}
+
+	public void setComponentTypeIconUrl(String componentTypeIconUrl)
+	{
+		this.componentTypeIconUrl = componentTypeIconUrl;
 	}
 
 }

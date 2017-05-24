@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("This is part of the alert entity")
+@APIDescription("This is part of the system archive entity")
 @Embeddable
 public class SystemArchiveOption
 		implements Serializable
@@ -41,10 +41,10 @@ public class SystemArchiveOption
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	private String primaryEntity;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	private String entityId;	
+	private String entityId;
 
 	@Version
 	private String storageVersion;

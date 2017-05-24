@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -41,9 +42,18 @@ public interface OrganizationService
 	 * Save the whole record
 	 *
 	 * @param organization
+	 * @return Saved record
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveOrganization(Organization organization);
+	public Organization saveOrganization(Organization organization);
+
+	/**
+	 * Save organization and logo
+	 *
+	 * @param organization
+	 * @param fileInput
+	 */
+	public void saveOrganizationLogo(Organization organization, InputStream fileInput);
 
 	/**
 	 * Find all organizations in the data and updates organization table
@@ -75,7 +85,8 @@ public interface OrganizationService
 	 * Deletes an Organization only if there no references exist
 	 *
 	 * @param organizationId
-	 * @throws edu.usu.sdl.core.common.exception.AttachedReferencesException
+	 * @throws
+	 * edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeOrganization(String organizationId) throws AttachedReferencesException;

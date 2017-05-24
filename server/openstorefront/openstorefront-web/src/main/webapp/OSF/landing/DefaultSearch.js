@@ -93,6 +93,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					width: '20%',
 					valueField: 'code',
 					displayField: 'description',
+					//grow: true,
 					editable: false,
 					typeAhead: false,
 					forceSelection: true,

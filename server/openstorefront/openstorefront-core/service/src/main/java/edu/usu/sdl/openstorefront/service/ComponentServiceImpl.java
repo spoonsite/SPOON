@@ -648,4 +648,16 @@ public class ComponentServiceImpl
 		return core.getComponentSensitivity(componentId);
 	}
 
+	@Override
+	public String resolveComponentIcon(String componentId)
+	{
+		return core.resolveComponentIcon(componentId);
+	}
+
+	@Override
+	public String resolveComponentTypeIcon(String componentType)
+	{
+		return core.resolveComponentTypeIcon(componentType);
+	}
+
 }
