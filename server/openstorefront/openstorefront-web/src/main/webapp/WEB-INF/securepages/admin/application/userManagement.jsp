@@ -540,7 +540,10 @@
 									name: 'activeStatus',									
 									typeAhead: false,
 									editable: false,
-									width: 200,							
+									width: 200,	
+									autoEl: {
+										'data-test' : 'userActiveStatus'
+									},
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshUsers();
