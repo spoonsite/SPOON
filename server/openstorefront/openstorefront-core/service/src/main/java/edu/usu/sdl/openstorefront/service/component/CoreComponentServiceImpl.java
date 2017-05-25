@@ -2578,22 +2578,10 @@ public class CoreComponentServiceImpl
 			componentMediaExample.setIconFlag(Boolean.TRUE);
 
 			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
-
-//			String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam and activeStatus = :activeStatusParam";
-//			Map<String, Object> parameters = new HashMap<>();
-//			parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
-//			parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
-//			List<ODocument> documents = persistenceService.query(query, parameters);
-//			for (ODocument document : documents) {
-//				Element newElement = new Element(document.field("componentId"), document.field("approvalState"));
-//				if (document.field("componentId").equals(componentId)) {
-//					String approvalState = (String) document.field("approvalState");
-//					if (StringUtils.isNotBlank(approvalState)) {
-//						approved = true;
-//					}
-//				}
-//				OSFCacheManager.getComponentApprovalCache().put(newElement);
-//			}
+			for (ComponentMedia componentMedia : allIconMedia) {
+				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
+				OSFCacheManager.getComponentApprovalCache().put(newElement);
+			}
 		}
 		return iconMediaId;
 	}

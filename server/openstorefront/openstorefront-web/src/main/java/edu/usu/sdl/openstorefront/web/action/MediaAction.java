@@ -117,7 +117,7 @@ public class MediaAction
 	})
 	private ContentSectionMedia contentSectionMedia;
 
-	@Validate(required = true, on = {"OrganizationLogo", "UploadOrganization"})
+	@Validate(required = true, on = {"OrganizationLogo", "UploadOrganizationLogo"})
 	private String organizationId;
 
 	@DefaultHandler
@@ -494,8 +494,8 @@ public class MediaAction
 	}
 
 	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
-	@HandlesEvent("UploadOrganization")
-	public Resolution uploadOrganization()
+	@HandlesEvent("UploadOrganizationLogo")
+	public Resolution uploadOrganizationLogo()
 	{
 		Map<String, String> errors = new HashMap<>();
 

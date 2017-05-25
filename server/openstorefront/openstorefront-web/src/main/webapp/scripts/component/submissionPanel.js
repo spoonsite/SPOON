@@ -1396,6 +1396,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'usedInline'
 							},
 							{
+								xtype: 'checkbox',
+								fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
+								name: 'iconFlag'
+							},								
+							{
 								xtype: 'filefield',
 								itemId: 'upload',
 								fieldLabel: 'Upload Media (Limit of 1GB)',
@@ -2239,6 +2244,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 								{ text: 'Link',  dataIndex: 'originalLink', width: 200 },
+								{ text: 'Icon Flag',  dataIndex: 'iconFlag', width: 150, hidden: true },
 								{ text: 'Security Marking', itemId: 'securityMarking', dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						

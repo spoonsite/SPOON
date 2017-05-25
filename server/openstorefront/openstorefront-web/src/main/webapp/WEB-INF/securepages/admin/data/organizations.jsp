@@ -721,8 +721,28 @@
 											valueField: 'code',
 											editable: false,
 											allowBlank: true		
+										},
+										{
+											xtype: 'form',
+											id: 'logoForm',
+											layout: 'hbox',
+											items: [
+												{
+													xtype: 'image',
+													itemId: 'logoImg',
+													width: 100,
+													height: '100%'
+												},
+												{
+													xtype: 'filefield',
+													itemId: 'uploadFile',
+													name: 'uploadFile',
+													flex: 1,													
+													fieldLabel: 'Import Logo',
+													buttonText: 'Select File...'
+												}
+											]
 										}
-										
 									]
 								},
 								{
@@ -803,8 +823,8 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function(){
-												
-												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
+												var mainForm = Ext.getCmp('entryForm');
+												var method = mainForm.edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
 												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/organizations/' + selectedObj.data.organizationId : 'api/v1/resource/organizations';       
                                                 //console.log("Made It ",selectedObj);
@@ -813,12 +833,34 @@
 													method: method,
 													data: data,
 													removeBlankDataItems: true,
-													form: Ext.getCmp('entryForm'),
+													form: mainForm,
 													success: function(response, opts) {
-														Ext.toast('Saved Successfully', '', 'tr');
-														Ext.getCmp('entryForm').setLoading(false);
-														Ext.getCmp('addEditWin').hide();													
-														refreshGrid();												
+														var org = Ext.decode(response.responseText);
+														
+														var logoForm = Ext.getCmp('logoForm');
+														var uploadData = logoForm.getComponent('uploadFile').getValue();
+														
+														var handleSuccess = function() {
+																Ext.toast('Saved Successfully', '', 'tr');
+																Ext.getCmp('entryForm').setLoading(false);
+																Ext.getCmp('addEditWin').hide();													
+																refreshGrid();															
+														};
+														
+														if (uploadData) {
+															mainForm.setLoading("Uploading Logo...");
+															logoForm.submit({
+																url: 'Media.action?UploadOrganizationLogo&organizationId=' + org.getOrganizationId,															
+																callback: function(){
+																	mainForm.setLoading(false);
+																},
+																success: function(form, action) {
+																	handleSuccess();	
+																}
+															});
+														} else {
+															handleSuccess();													
+														}											
 													}
 												});												
 											}
