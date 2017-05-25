@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -107,6 +110,8 @@ public class AdminHighlightTest extends AdminTestBase {
             WebElement saveBtn = waitSaveBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']")));
             saveBtn.click();
 
+            WebDriverWait waitLoading = new WebDriverWait(driver, 10);
+            waitLoading.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
             WebDriverWait waitLoadingFinished = new WebDriverWait(driver, 20);
             waitLoadingFinished.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
 
@@ -119,21 +124,49 @@ public class AdminHighlightTest extends AdminTestBase {
 
     public void deleteHighlight(WebDriver driver) throws InterruptedException {
 
-        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
+        assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver));
+        
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
+        element.click();
 
-            WebDriverWait wait = new WebDriverWait(driver, 20);
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
-            element.click();
+        WebDriverWait waitYesButton = new WebDriverWait(driver, 20);
 
-            WebDriverWait waitYesButton = new WebDriverWait(driver, 20);
+        WebElement yesButton = waitYesButton.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])")));
+        yesButton.click();
 
-            WebElement yesButton = waitYesButton.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])")));
-            yesButton.click();
+        WebDriverWait waitDeleting = new WebDriverWait(driver, 10);
+        waitDeleting.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask-msg-text")));
 
-            WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
-            WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
-            // refresh table
-            refreshBtn.click();
+        WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
+        WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
+        // refresh table
+        refreshBtn.click();
+
+    }
+
+    @AfterClass
+    public void cleanUp() throws InterruptedException {
+
+        for (WebDriver driver : webDriverUtil.getDrivers()) {
+            if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
+
+                WebDriverWait wait = new WebDriverWait(driver, 20);
+                WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
+                element.click();
+                WebDriverWait waitYesButton = new WebDriverWait(driver, 20);
+
+                WebElement yesButton = waitYesButton.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])")));
+                yesButton.click();
+
+                WebDriverWait waitDeleting = new WebDriverWait(driver, 10);
+                waitDeleting.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask-msg-text")));
+
+                WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
+                WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
+                // refresh table
+                refreshBtn.click();
+            }
         }
     }
 }
