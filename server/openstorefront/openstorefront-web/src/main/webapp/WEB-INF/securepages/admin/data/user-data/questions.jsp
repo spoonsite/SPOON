@@ -159,22 +159,52 @@
 						{
 							xtype: 'toolbar',
 							dock: 'top',
-							items: [
-								{
-									text: 'Toggle Status',
-									id: 'question-activateButton',
-									scale: 'medium',
+							items: [{
+									text: 'Action',
+									id: 'question-tools-action',
+									scale: 'medium',																	
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									handler: function () {
-										var cmpSel = componentPanel.getSelectionModel().hasSelection();
-										var qSel = questionPanel.getSelectionModel().hasSelection();
-										if (cmpSel && qSel) {
-											var componentId = componentPanel.getSelection()[0].data.componentId;
-											var questionId = questionPanel.getSelection()[0].data.questionId;
-											toggleQuestion(componentId, questionId);
+									menu: [
+										{
+											text: 'Approve/Activate',											
+											iconCls: 'fa fa-lg fa-check-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													actionSetActivation(componentId, questionId, "A");
+												}
+											}
+										},
+										{
+											text: 'Pending',
+											iconCls: 'fa fa-lg fa-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													actionSetActivation(componentId, questionId, "P");
+												}
+											}
+										},
+										{
+											text: 'Inactivate',
+											iconCls: 'fa fa-lg fa-eye-slash icon-small-vertical-correction icon-button-color-default',
+											handler: function() {
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													actionSetActivation(componentId, questionId, "I");
+												}
+											}											
 										}
-									}
+									]																		
 								}
 							]
 						}
@@ -290,6 +320,10 @@
 											{
 												code: 'I',
 												description: 'Inactive'
+											},
+											{
+												code: 'P',
+												description: 'Pending'
 											}
 										]
 									})
@@ -402,19 +436,18 @@
 									valueField: 'code',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
-											var qButton = Ext.getCmp('question-activateButton');
-											var aButton = Ext.getCmp('answer-activateButton');
 											var newUrl = 'api/v1/resource/components/questionviews';
 											if (newValue === 'A') {
-												qButton.setText('Toggle Status');
 												newUrl += '?status=A';
 											}
+											else if (newValue === 'P') {
+												newUrl += '?status=P';
+											}
 											else {
-												qButton.setText('Toggle Status');
 												newUrl += '?status=I';
 											}
-											qButton.disable();
-											aButton.disable();
+											Ext.getCmp('question-tools-action').disable();
+											Ext.getCmp('answer-activateButton').disable();
 											componentPanel.getStore().getProxy().setUrl(newUrl);
 											componentPanel.getStore().load();
 											questionPanel.getStore().setProxy(undefined);
@@ -438,6 +471,10 @@
 											{
 												code: 'I',
 												description: 'Inactive questions'
+											},
+											{
+												code: 'P',
+												description: 'Pending questions'
 											}
 										]
 									})
@@ -464,7 +501,7 @@
 
 				var actionSelectedComponent = function actionSelectedComponent(componentId) {
 					// Set Proxy and Load Questions
-					Ext.getCmp('question-activateButton').disable();
+					Ext.getCmp('question-tools-action').disable();
 					Ext.getCmp('answer-activateButton').disable();
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					questionStore.setProxy({
@@ -501,7 +538,7 @@
 						answerStore.filter('activeStatus', filterSelection);
 					}
 
-					Ext.getCmp('question-activateButton').enable();
+					Ext.getCmp('question-tools-action').enable();
 					Ext.getCmp('answer-activateButton').disable();
 				};
 
@@ -511,26 +548,36 @@
 				};
 
 
-				var toggleQuestion = function toggleQuestion(componentId, questionId) {
+				var actionSetActivation = function actionSetActivation(componentId, questionId, newStatus) {
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
-					if (activeStatus === 'A') {
+					if(activeStatus === newStatus)
+					{
+						return;
+					}
+					else if (newStatus === 'I') {
 						var method = 'DELETE';
 						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
-						var what = 'deactivate';
+						var what = 'inactive';
+					}
+					else if (newStatus === 'P') {
+						var method = 'PUT';
+						var url = 'api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId + '/pending';
+						var what = 'pending';
 					}
 					else {
 						var method = 'PUT';
 						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId + '/activate';
-						var what = 'activate';
+						var what = 'active';
 					}
 
 					Ext.Ajax.request({
 							url: url,
 							method: method,
 							success: function (response, opts) {
-								var message = 'Successfully ' + what + 'd question.';
+								var message = "Successfully set question status to " + what + '.';
 								Ext.toast(message, '', 'tr');
 								questionPanel.getStore().load();
 								questionPanel.getSelectionModel().deselectAll();
@@ -542,11 +589,11 @@
 								// for any given component, therefore, it should no 
 								// longer be listed in the component list.
 								componentPanel.getStore().load();
-								Ext.getCmp('question-activateButton').disable();
+								Ext.getCmp('question-tools-action').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
-										"Error: Could not " + what + ' the question.');
+										"Error: Could not set question status to " + what + ".");
 							}
 						});
 				};

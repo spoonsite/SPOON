@@ -112,6 +112,7 @@ public interface ComponentService
 	/**
 	 * Set Review to pending
 	 *
+	 * @param <T>
 	 * @param review
 	 * @param pk
 	 * @return
@@ -121,6 +122,7 @@ public interface ComponentService
 	/**
 	 * Set Review to pending
 	 *
+	 * @param <T>
 	 * @param question
 	 * @param pk
 	 * @return
@@ -130,6 +132,7 @@ public interface ComponentService
 	/**
 	 * Set Review to pending
 	 *
+	 * @param <T>
 	 * @param answer
 	 * @param pk
 	 * @return
