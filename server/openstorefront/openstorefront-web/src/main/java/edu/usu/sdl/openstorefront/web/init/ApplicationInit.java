@@ -39,12 +39,20 @@ public class ApplicationInit
 	// inject Items that need started at sytem startup
 	@Inject
 	private CoreSystem coreSystem;
+	
 	@Context
 	private ServletContext context;
+	
+	public ApplicationInit()
+	{
+	}
 	
 	@PostConstruct
 	public void contextInitialized()
 	{
+		LOG.log(Level.INFO, "----------------------------------------------------------------------------");
+		LOG.log(Level.INFO, "PostConstruct ApplicationInit");
+		LOG.log(Level.INFO, "----------------------------------------------------------------------------");
 		//curb some noisy logs by default
 		Logger atmospshereLog = Logger.getLogger("org.atmosphere");
 		if (atmospshereLog != null) {
@@ -60,6 +68,9 @@ public class ApplicationInit
 	@PreDestroy
 	public void contextDestroyed()
 	{
+		LOG.log(Level.INFO, "----------------------------------------------------------------------------");
+		LOG.log(Level.INFO, "PreDestroy ApplicationInit");
+		LOG.log(Level.INFO, "----------------------------------------------------------------------------");
 		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
 		if (atmosphereFramework != null) {
 			LOG.log(Level.INFO, "Shutdown Atmosphere");
