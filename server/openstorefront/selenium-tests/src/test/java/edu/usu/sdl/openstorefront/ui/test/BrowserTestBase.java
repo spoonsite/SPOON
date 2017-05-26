@@ -81,10 +81,14 @@ public class BrowserTestBase {
 
             //confirm login
             //TODO: make sure it can handle different landing pages
-            (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
+			
+			// ******************** SLOWDOWN HERE, TALK TO DEVIN, GOES INSTANEOUSLY, HANGS FOR 10 SECONDS ******************************
+			
+           (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
                 public Boolean apply(WebDriver driverLocal) {
                     //login check may be home page or tool page
                     List<WebElement> titleElements = driverLocal.findElements(By.id("homeTitle"));
+					System.out.println(titleElements.size());
                     if (titleElements.size() > 0) {
                         return titleElements.get(0).isDisplayed();
                     } else {
@@ -97,6 +101,7 @@ public class BrowserTestBase {
                     }
                 }
             });
+			
         }
     }
 
