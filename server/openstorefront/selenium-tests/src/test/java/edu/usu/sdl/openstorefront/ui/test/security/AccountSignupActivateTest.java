@@ -85,10 +85,9 @@ public class AccountSignupActivateTest
 			} else {
 				activeStatusDropDownText = "Locked/Disabled";
 			}
-			
+
 			setActiveStatus(activeStatusDropDownText, driver);
-					
-			
+
 			// Filter on *Approval Status*
 			if ((loop == 0) || (loop == 1)) {
 				approvalStatusDropDownText = "Approved";
@@ -97,7 +96,7 @@ public class AccountSignupActivateTest
 			}
 			// ActiveStatusDropDown arrow and get list of elements in it
 			setApprovalStatus(approvalStatusDropDownText, driver);
-			
+
 			// Drop-down selectors finished, now search for user in the table and delete if present
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
@@ -131,19 +130,26 @@ public class AccountSignupActivateTest
 		sleep(4000);
 
 	}
-
+		
+		
+		
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
-
 		// Switch to activeStatus = Locked/Disabled and approvalStatus = Pending so it can be approved
+
+		// ******************************* 403 Error in the way can't get to the buttons ****************************************
+		// **************** If I shut down the web server, and rebuild this does not happen, so it must just be a build problem?
+		
 		setActiveStatus("Locked/Disabled", driver);
 		setApprovalStatus("Pending", driver);
-		
+
+		// ******************************* ********************************************* ****************************************
 		
 		// Select and click Approve
-		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
+		if (tableClickRowCol(
+				"[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
 
 			// Wait for Approving User Display Block to go away
@@ -152,8 +158,8 @@ public class AccountSignupActivateTest
 
 			// Change filter to Active and Approved 
 			setActiveStatus("Active", driver);
-			setApprovalStatus("Approve", driver);
-			
+			setApprovalStatus("Approved", driver);
+
 			// Verify user has been approved
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
 				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
@@ -162,13 +168,16 @@ public class AccountSignupActivateTest
 			}
 		}
 
-		// Login as newly created and approved user
-		login(userName, userName + "A1!");
-		LOG.log(Level.INFO, "--- Logged in as new user '" + userName + "' ---");
-		login(); //logout and log back in as admin
-	}
+	// Login as newly created and approved user
+	login(userName, userName + "A1!");
+	LOG.log (Level.INFO,
+			
 
-	public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
+	"--- Logged in as new user '" + userName + "' ---");
+	login(); //logout and log back in as admin
+}
+
+public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
 	{
 		// ActiveStatusDropDown arrow and get list of elements in it
 		WebDriverWait waitStatus = new WebDriverWait(driver, 10);

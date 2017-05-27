@@ -49,7 +49,6 @@ public class NewSecurityRole
 		sleep(1500);
 		// Click on Table Row Col containing roleName
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
-			sleep(500);
 			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 			sleep(750); 
 			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
@@ -161,8 +160,6 @@ public class NewSecurityRole
 				System.out.println("dataSource = " + key + " Active? " + dataSource.get(key));
 		    }
 	
-	/*
-		// DUPLICATE ER2 ERROR IN TABLE, DOES NOT KNOW WHICH ONE TO CLICK ON
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(500); 
@@ -180,7 +177,7 @@ public class NewSecurityRole
 		}else {
 			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
 		} 
-	*/
+	
 	}
 	
 	// Feed in a <List> of Data Distributions to Activate
@@ -192,19 +189,22 @@ public class NewSecurityRole
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 			sleep(1500); 
 		
+			// ************************************************************************
+			// Was not working, moving it from xpath to CSS
 			//driver.findElement(By.xpath("//span[contains(.,'Data Sensitivity')]")).click();
 			//sleep(1500);
+			// ************************************************************************
 			
 			// Retreive dataSource desired settings
 			for (String key : dataSens.keySet()) {
 				if (dataSens.get(key)) {
 					System.out.println(key + " +++ This is 'true' move to RIGHT (Accessible) if it is NOT already there.");
-				/*if (tableClickRowCol("window-1147", key, driver)) { // is in Restricted table (LEFT) currently
+					if (tableClickRowCol("window-1147", key, driver)) { // is in Restricted table (LEFT) currently
 						System.out.println("Needs to be dragged to the right");
 					}
-				}*/
-				} else {
-					System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
+					else {
+						System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
+					}
 				}
 			}
 		}
