@@ -164,6 +164,9 @@ public class Organization
 		this.setDescription(updated.getDescription());
 		this.setHomeUrl(updated.getHomeUrl());
 		this.setOrganizationType(updated.getOrganizationType());
+		this.setLogoFileName(updated.getLogoFileName());
+		this.setLogoMimeType(updated.getLogoMimeType());
+		this.setLogoOriginalFileName(updated.getLogoOriginalFileName());			
 	}
 
 	public String getOrganizationId()

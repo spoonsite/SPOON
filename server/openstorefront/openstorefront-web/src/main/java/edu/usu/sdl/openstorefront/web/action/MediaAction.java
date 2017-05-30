@@ -94,7 +94,7 @@ public class MediaAction
 	@Validate(required = true, on = "DataImage")
 	private String imageType;
 
-	@Validate(required = true, on = "UploadMedia")
+	@Validate(required = true, on = {"UploadMedia", "UploadOrganizationLogo"})
 	private FileBean file;
 
 	@Validate(required = true, on = "GeneralMedia")

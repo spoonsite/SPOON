@@ -736,7 +736,7 @@
 												{
 													xtype: 'filefield',
 													itemId: 'uploadFile',
-													name: 'uploadFile',
+													name: 'file',
 													flex: 1,													
 													fieldLabel: 'Import Logo',
 													buttonText: 'Select File...'
@@ -850,7 +850,7 @@
 														if (uploadData) {
 															mainForm.setLoading("Uploading Logo...");
 															logoForm.submit({
-																url: 'Media.action?UploadOrganizationLogo&organizationId=' + org.getOrganizationId,															
+																url: 'Media.action?UploadOrganizationLogo&organizationId=' + org.organizationId,															
 																callback: function(){
 																	mainForm.setLoading(false);
 																},

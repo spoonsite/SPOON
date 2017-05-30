@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.landing.AdvancedSearch', {
 	
@@ -42,15 +42,69 @@ Ext.define('OSF.landing.AdvancedSearchView', {
 	modal: true,
 	title: 'Advanced Search',
 	iconCls: 'fa fa-lg fa-search-plus',
-	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Search',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-search icon-button-color-refresh icon-vertical-correction',
+					width: '110px',
+					handler: function () {
+						var searchObj = this.up('window').advanceSearch.getSearch();
+
+						if (searchObj) {
+							var win = this.up('window');
+							var searchRequest = {
+								type: 'Advance',
+								query: searchObj
+							};
+							CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+							window.location.href = 'searchResults.jsp';
+
+							//close window
+							win.close();
+						}
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Preview Results',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+					width: '170px',
+					handler: function () {
+						this.up('window').advanceSearch.previewResults();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Save Search',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
+					width: '150px',
+					handler: function () {
+						this.up('window').advanceSearch.saveSearch();
+					}
+				}
+			]
+		}
+	],
+			
 	initComponent: function () {
 		this.callParent();			
 		var	searchWin = this;
 		
-		var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {				
+		searchWin.advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {				
 		});
 		
-		searchWin.add(advanceSearch);
+		searchWin.add(searchWin.advanceSearch);
 	}
 	
 });
