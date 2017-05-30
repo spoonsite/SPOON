@@ -159,7 +159,8 @@
 						{
 							xtype: 'toolbar',
 							dock: 'top',
-							items: [{
+							items: [
+								{
 									text: 'Action',
 									id: 'question-tools-action',
 									scale: 'medium',																	
@@ -174,7 +175,7 @@
 												if (cmpSel && qSel) {
 													var componentId = componentPanel.getSelection()[0].data.componentId;
 													var questionId = questionPanel.getSelection()[0].data.questionId;
-													actionSetActivation(componentId, questionId, "A");
+													actionSetQuestionActivation(componentId, questionId, "A");
 												}
 											}
 										},
@@ -187,7 +188,7 @@
 												if (cmpSel && qSel) {
 													var componentId = componentPanel.getSelection()[0].data.componentId;
 													var questionId = questionPanel.getSelection()[0].data.questionId;
-													actionSetActivation(componentId, questionId, "P");
+													actionSetQuestionActivation(componentId, questionId, "P");
 												}
 											}
 										},
@@ -200,7 +201,7 @@
 												if (cmpSel && qSel) {
 													var componentId = componentPanel.getSelection()[0].data.componentId;
 													var questionId = questionPanel.getSelection()[0].data.questionId;
-													actionSetActivation(componentId, questionId, "I");
+													actionSetQuestionActivation(componentId, questionId, "I");
 												}
 											}											
 										}
@@ -297,14 +298,7 @@
 										change: function (filter, newValue, oldValue, opts) {
 											answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
 											answerPanel.getStore().filter('activeStatus', newValue);
-											var actButton = Ext.getCmp('answer-activateButton');
-											if (newValue === 'A') {
-												actButton.setText('Toggle Status');
-											}
-											else {
-												actButton.setText('Toggle Status');
-											}
-											actButton.disable();
+											Ext.getCmp('answer-tools-action').disable();
 										}
 									},
 									store: Ext.create('Ext.data.Store', {
@@ -329,22 +323,57 @@
 									})
 								},
 								{
-									text: 'Toggle Status',
-									id: 'answer-activateButton',
-									scale: 'medium',
+									text: 'Action',
+									id: 'answer-tools-action',
+									scale: 'medium',																	
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									handler: function () {
-										var cmpSel = componentPanel.getSelectionModel().hasSelection();
-										var qSel = questionPanel.getSelectionModel().hasSelection();
-										var aSel = answerPanel.getSelectionModel().hasSelection();
-										if (cmpSel && qSel && aSel) {
-											var componentId = componentPanel.getSelection()[0].data.componentId;
-											var questionId = questionPanel.getSelection()[0].data.questionId;
-											var answerId = answerPanel.getSelection()[0].data.responseId;
-											toggleAnswer(componentId, questionId, answerId);
+									menu: [
+										{
+											text: 'Approve/Activate',											
+											iconCls: 'fa fa-lg fa-check-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												var aSel = answerPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel && aSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													var answerId = answerPanel.getSelection()[0].data.responseId;
+													actionSetAnswerActivation(componentId, questionId, answerId, "A");
+												}
+											}
+										},
+										{
+											text: 'Pending',
+											iconCls: 'fa fa-lg fa-square-o icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												var aSel = answerPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel && aSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													var answerId = answerPanel.getSelection()[0].data.responseId;
+													actionSetAnswerActivation(componentId, questionId, answerId, "P");
+												}
+											}
+										},
+										{
+											text: 'Inactivate',
+											iconCls: 'fa fa-lg fa-eye-slash icon-small-vertical-correction icon-button-color-default',
+											handler: function() {
+												var cmpSel = componentPanel.getSelectionModel().hasSelection();
+												var qSel = questionPanel.getSelectionModel().hasSelection();
+												var aSel = answerPanel.getSelectionModel().hasSelection();
+												if (cmpSel && qSel && aSel) {
+													var componentId = componentPanel.getSelection()[0].data.componentId;
+													var questionId = questionPanel.getSelection()[0].data.questionId;
+													var answerId = answerPanel.getSelection()[0].data.responseId;
+													actionSetAnswerActivation(componentId, questionId, answerId, "I");
+												}
+											}											
 										}
-									}
+									]																		
 								}
 							]
 						}
@@ -447,7 +476,7 @@
 												newUrl += '?status=I';
 											}
 											Ext.getCmp('question-tools-action').disable();
-											Ext.getCmp('answer-activateButton').disable();
+											Ext.getCmp('answer-tools-action').disable();
 											componentPanel.getStore().getProxy().setUrl(newUrl);
 											componentPanel.getStore().load();
 											questionPanel.getStore().setProxy(undefined);
@@ -502,7 +531,7 @@
 				var actionSelectedComponent = function actionSelectedComponent(componentId) {
 					// Set Proxy and Load Questions
 					Ext.getCmp('question-tools-action').disable();
-					Ext.getCmp('answer-activateButton').disable();
+					Ext.getCmp('answer-tools-action').disable();
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					questionStore.setProxy({
 						id: 'questionStoreProxy',
@@ -539,16 +568,16 @@
 					}
 
 					Ext.getCmp('question-tools-action').enable();
-					Ext.getCmp('answer-activateButton').disable();
+					Ext.getCmp('answer-tools-action').disable();
 				};
 
 				
 				var actionSelectedAnswer = function actionSelectedAnswer(componentId, questionId, answerId)  {
-					Ext.getCmp('answer-activateButton').enable();
+					Ext.getCmp('answer-tools-action').enable();
 				};
 
 
-				var actionSetActivation = function actionSetActivation(componentId, questionId, newStatus) {
+				var actionSetQuestionActivation = function actionSetQuestionActivation(componentId, questionId, newStatus) {
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					if(activeStatus === newStatus)
 					{
@@ -598,35 +627,46 @@
 						});
 				};
 
-				var toggleAnswer = function toggleAnswer(componentId, questionId, answerId) {
+				var actionSetAnswerActivation = function actionSetAnswerActivation(componentId, questionId, answerId, newStatus) {
 					var activeStatus = Ext.getCmp('answer-activeStatus').getValue();
-					if (activeStatus === 'A') {
+					if(activeStatus === newStatus)
+					{
+						return;
+					}
+					else if (newStatus === 'I') {
 						var method = 'DELETE';
 						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
 						url += '/responses/' + answerId;
-						var what = 'deactivate';
+						var what = 'inactive';
 					}
-					else {
+					else if (newStatus === 'P') {
+						var method = 'PUT';
+						var url = 'api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId;
+						url += '/responses/' + answerId + '/pending';
+						var what = 'pending';
+					}
+					else if (newStatus === 'A') {
 						var method = 'PUT';
 						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
 						url += '/responses/' + answerId + '/activate';
-						var what = 'activate';
+						var what = 'active';
 					}
 
 					Ext.Ajax.request({
 							url: url,
 							method: method,
 							success: function (response, opts) {
-								var message = 'Successfully ' + what + 'd answer.';
+								var message = 'Successfully set answer status to ' + what + '.';
 								Ext.toast(message, '', 'tr');
 								answerPanel.getStore().load();
-								Ext.getCmp('answer-activateButton').disable();
+								Ext.getCmp('answer-tools-action').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
-										"Error: Could not " + what + ' the answer.');
+										"Error: Could not set the answer to " + what + '.');
 							}
 						});
 
