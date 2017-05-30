@@ -60,7 +60,7 @@ public class BrowserTestBase
 
 	protected static void login()
 	{
-		login("admin", "Secret1@3");
+		login("admin", "Secret1@");
 	}
 
 	protected static void login(String userName, String passWord)
