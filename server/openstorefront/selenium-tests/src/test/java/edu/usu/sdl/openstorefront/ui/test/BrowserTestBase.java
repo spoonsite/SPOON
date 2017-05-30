@@ -30,7 +30,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -38,167 +37,162 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author dshurtleff
  */
-public class BrowserTestBase {
+public class BrowserTestBase
+{
 
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-    protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
+	protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
 
-    /*@BeforeClass
+	/*@BeforeClass
 	public static void setSize() throws Exception
 	{
 		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
 	}
-     */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        //Bot.driver().quit();
-        //WebDriverExtensionsContext.removeDriver();
-        webDriverUtil.closeDrivers();
-    }
+	 */
+	@AfterClass
+	public static void tearDown() throws Exception
+	{
+		//Bot.driver().quit();
+		//WebDriverExtensionsContext.removeDriver();
+		webDriverUtil.closeDrivers();
+	}
 
-    protected static void login() {
-        login("admin", "Secret1@");
-    }
+	protected static void login()
+	{
+		login("admin", "Secret1@3");
+	}
 
-    protected static void login(String userName, String passWord) {
+	protected static void login(String userName, String passWord)
+	{
 
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            // Make sure logged out before attempting login.
-            driver.get(webDriverUtil.getPage("Login.action?Logout"));
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			// Make sure logged out before attempting login.
+			driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
-            // Now log in
-            driver.get(webDriverUtil.getPage("login.jsp"));
+			// Now log in
+			driver.get(webDriverUtil.getPage("login.jsp"));
 
-            WebDriverWait waitUsername = new WebDriverWait(driver, 20);
-            WebElement userNameElement = waitUsername.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-            userNameElement.sendKeys(userName);
+			WebDriverWait waitUsername = new WebDriverWait(driver, 20);
+			WebElement userNameElement = waitUsername.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
+			userNameElement.sendKeys(userName);
 
-            // Enter password and hit ENTER since submit does not seem to work.
-            WebDriverWait waitPassword = new WebDriverWait(driver, 20);
-            WebElement userPassword = waitPassword.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-            userPassword.sendKeys(passWord, Keys.ENTER);
+			// Enter password and hit ENTER since submit does not seem to work.
+			WebDriverWait waitPassword = new WebDriverWait(driver, 20);
+			WebElement userPassword = waitPassword.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+			userPassword.sendKeys(passWord, Keys.ENTER);
 
-            //confirm login
-            //TODO: make sure it can handle different landing pages
-			
-			// ******************** SLOWDOWN HERE, TALK TO DEVIN, GOES INSTANEOUSLY, HANGS FOR 10 SECONDS ******************************
-			
-           (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-                public Boolean apply(WebDriver driverLocal) {
-                    //login check may be home page or tool page
-                    List<WebElement> titleElements = driverLocal.findElements(By.id("homeTitle"));
-					System.out.println(titleElements.size());
-                    if (titleElements.size() > 0) {
-                        return titleElements.get(0).isDisplayed();
-                    } else {
-                        titleElements = driverLocal.findElements(By.id("titleTextId"));
-                        if (titleElements.size() > 0) {
-                            return titleElements.get(0).isDisplayed();
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-            });
-			
-        }
-    }
+			// Look for the titleText
+			try {
+				WebDriverWait waitUserNameButton = new WebDriverWait(driver, 3);
+				waitUserNameButton.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
+				LOG.log(Level.INFO, "*** Sucessfully logged in as '" + userName + "' ***");
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "--- EXCEPTION --- " + e);
+				String message = driver.findElement(By.cssSelector(".showError")).getText();
+				LOG.log(Level.WARNING, "--- Problem logging in as '" + userName + "' ---\n Login Page MESSAGE is: --- '" + message + "' ---");
+			}
+		}
+	}
 
-    protected static void logout() {
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            driver.get(webDriverUtil.getPage("Login.action?Logout"));
+	protected static void logout()
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
-            //TODO: confirm logout, return -1 or 0 or a boolean?
-        }
-    }
+			//TODO: confirm logout, return -1 or 0 or a boolean?
+		}
+	}
 
-    // Making Tread.sleep "universal"
-    protected void sleep(int mills) {
-        try {
-            Thread.sleep(mills);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	// Making Tread.sleep "universal"
+	protected void sleep(int mills)
+	{
+		try {
+			Thread.sleep(mills);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    /**
-     * Used to located item in table
-     *
-     * @param cssSelector cssSelector used to find table
-     * @param searchFor text in the cell to find
-     * @param driver Selenium webdriver
-     * @return true if cell is found, false otherwise
-     * @throws InterruptedException
-     */
-    public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver) throws InterruptedException {
-        int fRow = -1;
-        int fColumn = -1;
+	/**
+	 * Used to located item in table
+	 *
+	 * @param cssSelector cssSelector used to find table
+	 * @param searchFor text in the cell to find
+	 * @param driver Selenium webdriver
+	 * @return true if cell is found, false otherwise
+	 * @throws InterruptedException
+	 */
+	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver) throws InterruptedException
+	{
+		int fRow = -1;
+		int fColumn = -1;
 
-        List<WebElement> allRows = new ArrayList<WebElement>();
-        try {
-            WebDriverWait waitForTable = new WebDriverWait(driver, 20);
-            allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
-        } catch (Exception e) {
-            
-        }
+		List<WebElement> allRows = new ArrayList<WebElement>();
+		try {
+			WebDriverWait waitForTable = new WebDriverWait(driver, 20);
+			allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+		} catch (Exception e) {
 
-        // Iterate through rows
-        int theRow = 0;
-        for (WebElement row : allRows) {
+		}
 
-            List<WebElement> cells = new ArrayList<WebElement>();
-            try {
-                WebDriverWait waitForCells = new WebDriverWait(driver, 20);
-                cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
-                theRow++;
-            } catch (Exception e) {
-                
-            }
+		// Iterate through rows
+		int theRow = 0;
+		for (WebElement row : allRows) {
 
-            // Iterate through cells
-            int theColumn = 0;
-            for (WebElement cell : cells) {
-                //tableText[theRow][theColumn] = cell.getText();
-                //System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
+			List<WebElement> cells = new ArrayList<WebElement>();
+			try {
+				WebDriverWait waitForCells = new WebDriverWait(driver, 20);
+				cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+				theRow++;
+			} catch (Exception e) {
 
-                // If text found remember row, column
-                if (searchFor.equals(cell.getText())) {
-                    fRow = theRow;
-                    fColumn = theColumn;
-                    LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
-                    Actions builder = new Actions(driver);
-                    builder.moveToElement(cell);
-                    builder.click();
-                    builder.build().perform();
-                    return true;
-                    // System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
-                }
+			}
 
-                theColumn++;
-            }
-        }
+			// Iterate through cells
+			int theColumn = 0;
+			for (WebElement cell : cells) {
+				//tableText[theRow][theColumn] = cell.getText();
+				//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
 
-        LOG.log(Level.WARNING, "*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
-        return false;
-        //return new TableItem(fRow, fColumn);
-    }
+				// If text found remember row, column
+				if (searchFor.equals(cell.getText())) {
+					fRow = theRow;
+					fColumn = theColumn;
+					LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
+					Actions builder = new Actions(driver);
+					builder.moveToElement(cell);
+					builder.click();
+					builder.build().perform();
+					return true;
+					// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
+				}
 
-    /**
-     * This assumes the driver is on the correct page before this is called This
-     * stores the image in the configure report directory.
-     *
-     * @param driver
-     */
-    protected static void takeScreenShot(WebDriver driver) {
-        if (driver instanceof TakesScreenshot) {
-            TakesScreenshot screenshot = (TakesScreenshot) driver;
-            File scrFile = screenshot.getScreenshotAs(OutputType.FILE);
+				theColumn++;
+			}
+		}
 
-            //TODO: save
-            //webDriverUtil.saveReportArtifact(in);
-        } else {
-            LOG.log(Level.WARNING, "*** Unable to create Screenshot; no driver support for {0} ***", driver.getClass().getName());
-        }
-    }
+		LOG.log(Level.WARNING, "*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
+		return false;
+		//return new TableItem(fRow, fColumn);
+	}
+
+	/**
+	 * This assumes the driver is on the correct page before this is called This
+	 * stores the image in the configure report directory.
+	 *
+	 * @param driver
+	 */
+	protected static void takeScreenShot(WebDriver driver)
+	{
+		if (driver instanceof TakesScreenshot) {
+			TakesScreenshot screenshot = (TakesScreenshot) driver;
+			File scrFile = screenshot.getScreenshotAs(OutputType.FILE);
+
+			//TODO: save
+			//webDriverUtil.saveReportArtifact(in);
+		} else {
+			LOG.log(Level.WARNING, "*** Unable to create Screenshot; no driver support for {0} ***", driver.getClass().getName());
+		}
+	}
 }
