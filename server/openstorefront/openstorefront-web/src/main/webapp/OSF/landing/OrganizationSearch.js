@@ -75,7 +75,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 				sorters: [{
 					property: 'name',
 					direction: 'ASC'
-				}],				
+				}],
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/organizations?componentOnly=true',
@@ -90,13 +90,20 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',					
 					'<div class="search-tool-org">',
-						'<div class="search-tool-org-logo">',
-							'<tpl if="logo"><img src="{logo}" height=50 /></tpl>',	
-						'</div>',
-						'<div class="search-tool-org-text">',							
-							'<a href="#" onclick="CoreUtil.pageActions.orgizationSearch(\'{name}\');" class="search-tool-org-text-name link">{name}</a><br>',
-							'<span class="search-tool-org-text-desc">{description}</span>',
-						'</div>',
+						'<table width="100%"><tr>',
+							'<td class="search-tool-org-logo" width="120">',							
+								'<tpl if="logoOriginalFileName">',
+								'		<img src="Media.action?OrganizationLogo&organizationId={organizationId}" width=100 />',
+								'</tpl>',
+								'<tpl if="logoOriginalFileName == undefined">',
+								'		<div class="search-tool-org-logo-text">{[Ext.String.capitalize(values.name).substring(0, 1)]}</div>',
+								'</tpl>',								
+							'</td>',						
+							'<td class="search-tool-org-text">',										
+								'<a href="#" onclick="CoreUtil.pageActions.organizationSearch(\'{name}\');" class="search-tool-org-text-name link">{name}</a><br>',
+								'<span class="search-tool-org-text-desc">{description}</span>',
+							'</td>',
+						'</tr></table>',
 					'</div>',
 				'</tpl>'
 			),
@@ -115,7 +122,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 		this.callParent();			
 		var	orgView = this;
 		
-		CoreUtil.pageActions.orgizationSearch = function(name) {
+		CoreUtil.pageActions.organizationSearch = function(name) {
 			
 			var searchObj = {
 				"sortField": null,

@@ -90,7 +90,7 @@ public class OrganizationServiceImpl
 		Objects.requireNonNull(organization, "Organization is required");
 		Objects.requireNonNull(organization.getName(), "Organization name is required");
 
-		Organization savedOrganization = null;
+		Organization savedOrganization;
 
 		Organization organizationExisting = persistenceService.findById(Organization.class, organization.getOrganizationId());
 		if (organizationExisting == null) {
@@ -133,13 +133,18 @@ public class OrganizationServiceImpl
 	public void saveOrganizationLogo(Organization organization, InputStream fileInput)
 	{
 		Objects.requireNonNull(organization);
+		Objects.requireNonNull(organization.getOrganizationId());
 		Objects.requireNonNull(organization.getName());
 		Objects.requireNonNull(organization.getLogoOriginalFileName());
 		Objects.requireNonNull(organization.getLogoMimeType());
 		Objects.requireNonNull(fileInput);
 
-		organization.setLogoFileName(organization.nameToKey());
-		Organization savedOrganization = saveOrganization(organization);
+		Organization savedOrganization = persistenceService.findById(Organization.class, organization.getOrganizationId());
+		savedOrganization.setLogoMimeType(organization.getLogoMimeType());
+		savedOrganization.setLogoOriginalFileName(organization.getLogoOriginalFileName());
+		savedOrganization.setLogoFileName(organization.nameToKey());
+		savedOrganization.populateBaseUpdateFields();
+		persistenceService.persist(savedOrganization);
 
 		try (InputStream in = fileInput) {
 			Files.copy(in, savedOrganization.pathToLogo(), StandardCopyOption.REPLACE_EXISTING);
@@ -413,18 +418,34 @@ public class OrganizationServiceImpl
 		if (references.isEmpty()) {
 			Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
 			if (organizationFound != null) {
-				Path path = organizationFound.pathToLogo();
-				if (path != null) {
-					if (path.toFile().exists()) {
-						if (!path.toFile().delete()) {
-							LOG.log(Level.WARNING, MessageFormat.format("Unable to delete attribute attatchment. File might be in use. Path: {0}", path.toString()));
-						}
-					}
-				}
+				deleteOrganizationLogo(organizationId);
 				persistenceService.delete(organizationFound);
 			}
 		} else {
 			throw new AttachedReferencesException();
+		}
+	}
+
+	@Override
+	public void deleteOrganizationLogo(String organizationId)
+	{
+		Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
+		if (organizationFound != null) {
+			Path path = organizationFound.pathToLogo();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					if (!path.toFile().delete()) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete logo. File might be in use. Path: {0}", path.toString()));
+					}
+				}
+			}
+			organizationFound.setLogoFileName(null);
+			organizationFound.setLogoMimeType(null);
+			organizationFound.setLogoOriginalFileName(null);
+			organizationFound.populateBaseUpdateFields();
+			persistenceService.persist(organizationFound);
+		} else {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find organization. Check Id: ", organizationId));
 		}
 	}
 

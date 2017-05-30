@@ -94,14 +94,15 @@ public class OrganizationExporter
 		}
 
 		for (Organization organization : organizations) {
-
 			File mediaFile = new TFile(archiveBasePath + MEDIA_DIR + organization.getLogoFileName());
 			Path path = organization.pathToLogo();
-			try {
-				Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ex) {
-				LOG.log(Level.WARNING, "Unable to copy media file: " + mediaFile.getName(), ex);
-				addError("Unable to copy media file: " + mediaFile.getName());
+			if (path != null) {
+				try {
+					Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to copy media file: " + mediaFile.getName(), ex);
+					addError("Unable to copy media file: " + mediaFile.getName());
+				}
 			}
 		}
 

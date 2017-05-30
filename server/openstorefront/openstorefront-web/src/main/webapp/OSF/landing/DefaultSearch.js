@@ -119,6 +119,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
 							CoreUtil.tempComponentType = newValue;
+							//field.set							
 						}
 					}
 				},

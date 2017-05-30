@@ -96,11 +96,13 @@ public class AttributeExporter
 			for (AttributeCode attributeCode : attributeAll.getAttributeCodes()) {
 				File mediaFile = new TFile(archiveBasePath + ATTACHMENT_DIR + attributeCode.getAttachmentFileName());
 				Path path = attributeCode.pathToAttachment();
-				try {
-					Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException ex) {
-					LOG.log(Level.WARNING, "Unable to copy media file: " + mediaFile.getName(), ex);
-					addError("Unable to copy media file: " + mediaFile.getName());
+				if (path != null) {
+					try {
+						Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, "Unable to copy media file: " + mediaFile.getName(), ex);
+						addError("Unable to copy media file: " + mediaFile.getName());
+					}
 				}
 			}
 

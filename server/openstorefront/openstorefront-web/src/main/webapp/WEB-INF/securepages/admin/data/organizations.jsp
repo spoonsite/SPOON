@@ -54,7 +54,7 @@
 						})
 					}),
 					columnLines: true,
-					columns: [						
+					columns: [											
 						{ text: 'Name', dataIndex: 'name', minWidth: 200, flex:1},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
 						{ text: 'Type', dataIndex: 'organizationType', width: 200,
@@ -62,6 +62,15 @@
 								return record.get('organizationTypeDescription');
 							}
 						},
+						{ text: 'Logo', dataIndex: 'logoOriginalFileName', width: 200, align: 'center',
+							renderer: function(value, meta, record) {
+								if (value) {
+									return '<img width=175 src="Media.action?OrganizationLogo&organizationId=' + record.get('organizationId') + '"><br>' + value;
+								} else {
+									return value;
+								}
+							}
+						},	
 						{ text: 'Web Site', dataIndex: 'homeUrl', width: 200, hidden:true },
 						{ text: 'Address', dataIndex: 'address', width: 150, hidden:true },
 						{ text: 'Agency', dataIndex: 'agency', width: 150, hidden:true },
@@ -113,6 +122,19 @@
 								{
 									xtype: 'tbseparator'
 								},
+								{									
+									text: 'Logo',
+									id: 'logoBtn',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-file-picture-o',
+									handler: function () {
+										manageLogoAction();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},								
 								{
 									text: 'References',
 									id: 'refButton',
@@ -209,11 +231,13 @@
 					var cnt = Ext.getCmp('orgGrid').getSelectionModel().getCount();
 					if ( cnt === 1) {
 						Ext.getCmp('editButton').setDisabled(false);
+						Ext.getCmp('logoBtn').setDisabled(false);						
 						Ext.getCmp('mergeButton').setDisabled(false);
 						Ext.getCmp('refButton').setDisabled(false);
-						Ext.getCmp('deleteButton').setDisabled(false);
+						Ext.getCmp('deleteButton').setDisabled(false);						
 					} else {
 						Ext.getCmp('editButton').setDisabled(true);
+						Ext.getCmp('logoBtn').setDisabled(true);
 						Ext.getCmp('mergeButton').setDisabled(true);
 						Ext.getCmp('refButton').setDisabled(true);
 						Ext.getCmp('deleteButton').setDisabled(true);						
@@ -242,7 +266,132 @@
 					Ext.getCmp('entryForm').edit = true;
 					//load form
 					Ext.getCmp('entryForm').loadRecord(selectedObj);
-				    
+				};
+				
+				var manageLogoAction = function() {
+					var record = Ext.getCmp('orgGrid').getSelection()[0];
+					
+					var addEditLogoWin = Ext.create('Ext.window.Window', {
+						title: 'Manage Logo',
+						iconCls: 'fa fa-lg fa-file-picture-o',
+						closeAction: 'destroy',
+						width: 600,	
+						height: 300,
+						layout: 'fit',
+						modal: true,
+						items: [
+							{
+								xtype: 'form',
+								itemId: 'logoForm',		
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								items: [
+									{
+										xtype: 'panel',
+										width: '100%',
+										layout: 'center',
+										items: [
+											{
+												xtype: 'image',
+												itemId: 'logoImg',
+												width: 100,
+												margin: '0 20 0 0'
+											}											
+										]
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'filefield',
+										itemId: 'uploadFile',
+										name: 'file',
+										width: '100%',
+										flex: 1,		
+										allowBlank: false,
+										margin: '10 10 10 10',
+										fieldLabel: 'Import Logo <span class="field-required"/>',										
+										buttonText: 'Select File...'								
+									},
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Upload Logo',
+												formBind: true, 
+												iconCls: 'fa fa-lg fa-upload',
+												handler: function(){
+													var logoForm = addEditLogoWin.queryById('logoForm');
+													
+													logoForm.setLoading("Uploading Logo...");
+													logoForm.submit({
+														url: 'Media.action?UploadOrganizationLogo&organizationId=' + record.get('organizationId'),															
+														callback: function(){
+															logoForm.setLoading(false);
+														},
+														success: function(form, action) {
+															Ext.toast('Saved Successfully', '', 'tr');																																									
+															refreshGrid();	
+															addEditLogoWin.close();
+														}
+													});												
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Delete Logo',
+												iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+												handler: function(){
+													Ext.Msg.show({
+														title:'Delete Logo?',
+														message: 'Are you sure you want to delete logo?',
+														buttons: Ext.Msg.YESNO,
+														icon: Ext.Msg.QUESTION,
+														fn: function(btn) {
+															if (btn === 'yes') {
+																Ext.getCmp('orgGrid').setLoading('Deleting Logo...');
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/organizations/' + record.get('organizationId') + '/logo',
+																	method: 'DELETE',
+																	callback: function(){
+																		Ext.getCmp('orgGrid').setLoading(false);
+																	},
+																	success: function() {	
+																		refreshGrid();
+																		addEditLogoWin.close();																		
+																	}
+																});
+															} 
+														}
+													});	
+												}										
+											},
+											{
+												xtype: 'tbfill'
+											},									
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												handler: function(){
+													addEditLogoWin.close();
+												}										
+											}
+										]
+									}
+								]	
+							}
+						]
+					});
+					addEditLogoWin.show();
+					
+					if (record.get('logoOriginalFileName')) {
+						addEditLogoWin.queryById('logoImg').setSrc('Media.action?OrganizationLogo&organizationId=' + record.get('organizationId'));
+					} else {
+						addEditLogoWin.queryById('logoImg').setSrc(null);
+					}
+					
 				};
 				
 				var mergeRecords = function() {
@@ -721,28 +870,7 @@
 											valueField: 'code',
 											editable: false,
 											allowBlank: true		
-										},
-										{
-											xtype: 'form',
-											id: 'logoForm',
-											layout: 'hbox',
-											items: [
-												{
-													xtype: 'image',
-													itemId: 'logoImg',
-													width: 100,
-													height: '100%'
-												},
-												{
-													xtype: 'filefield',
-													itemId: 'uploadFile',
-													name: 'file',
-													flex: 1,													
-													fieldLabel: 'Import Logo',
-													buttonText: 'Select File...'
-												}
-											]
-										}
+										}										
 									]
 								},
 								{
@@ -837,30 +965,10 @@
 													success: function(response, opts) {
 														var org = Ext.decode(response.responseText);
 														
-														var logoForm = Ext.getCmp('logoForm');
-														var uploadData = logoForm.getComponent('uploadFile').getValue();
-														
-														var handleSuccess = function() {
-																Ext.toast('Saved Successfully', '', 'tr');
-																Ext.getCmp('entryForm').setLoading(false);
-																Ext.getCmp('addEditWin').hide();													
-																refreshGrid();															
-														};
-														
-														if (uploadData) {
-															mainForm.setLoading("Uploading Logo...");
-															logoForm.submit({
-																url: 'Media.action?UploadOrganizationLogo&organizationId=' + org.organizationId,															
-																callback: function(){
-																	mainForm.setLoading(false);
-																},
-																success: function(form, action) {
-																	handleSuccess();	
-																}
-															});
-														} else {
-															handleSuccess();													
-														}											
+														Ext.toast('Saved Successfully', '', 'tr');														
+														Ext.getCmp('addEditWin').hide();													
+														refreshGrid();
+																								
 													}
 												});												
 											}

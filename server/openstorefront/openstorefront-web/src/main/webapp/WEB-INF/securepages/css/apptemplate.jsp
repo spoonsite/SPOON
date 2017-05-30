@@ -333,6 +333,14 @@ limitations under the License.
 	padding: 10px;
 }
 
+.search-tool-org:nth-child(odd) {
+	background: whitesmoke;
+}
+
+.search-tool-org:nth-child(even) {
+	background: white;
+}
+
 .search-tool-org-logo {
 	
 }
@@ -344,7 +352,6 @@ limitations under the License.
 
 .search-tool-org-text-desc {
 	font-size: 12px;
-	margin: 10px;
 }
 
 .searchresults-morefilter {

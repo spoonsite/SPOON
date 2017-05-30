@@ -400,10 +400,21 @@ public class OrganizationResource
 	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
-	public void deleteReport(
+	public void deleteOrganization(
 			@PathParam("id") String organizationid) throws AttachedReferencesException
 	{
 		service.getOrganizationService().removeOrganization(organizationid);
+	}
+
+	@DELETE
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@APIDescription("Deletes an organization logo only")
+	@Path("/{id}/logo")
+	public void deleteOrganizationLogo(
+			@PathParam("id") String organizationId
+	)
+	{
+		service.getOrganizationService().deleteOrganizationLogo(organizationId);
 	}
 
 }

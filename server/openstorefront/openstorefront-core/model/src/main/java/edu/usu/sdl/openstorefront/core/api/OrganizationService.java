@@ -56,6 +56,13 @@ public interface OrganizationService
 	public void saveOrganizationLogo(Organization organization, InputStream fileInput);
 
 	/**
+	 * Deletes an Organization Logo
+	 *
+	 * @param organizationId
+	 */
+	public void deleteOrganizationLogo(String organizationId);
+
+	/**
 	 * Find all organizations in the data and updates organization table
 	 */
 	public void extractOrganizations();
