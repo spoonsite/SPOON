@@ -2645,6 +2645,32 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(componentQuestion);
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@APIDescription("Activates a question from the specified entity")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/pending")
+	public Response pendingComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
+	{
+		ComponentQuestion componentQuestionExample = new ComponentQuestion();
+		componentQuestionExample.setComponentId(componentId);
+		componentQuestionExample.setQuestionId(questionId);
+
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
+		if (componentQuestion != null) {
+			service.getComponentService().setQuestionPending(ComponentQuestion.class, questionId);
+			componentQuestion.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(componentQuestion);
+	}
+
 	@POST
 	@APIDescription("Add a new question to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -2813,6 +2839,35 @@ public class ComponentRESTResource
 		}
 		return sendSingleEntityResponse(questionResponse);
 	}
+
+	@PUT
+	@RequireSecurity
+	@APIDescription("Activates a response from the given question on the specified component")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/responses/{responseId}/pending")
+	public Response pendingComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId,
+			@PathParam("responseId")
+			@RequiredParam String responseId)
+	{
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		responseExample.setComponentId(componentId);
+		responseExample.setQuestionId(questionId);
+		responseExample.setResponseId(responseId);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
+		if (questionResponse != null) {
+			service.getComponentService().setQuestionResponsePending(ComponentQuestionResponse.class, responseId);
+			questionResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(questionResponse);
+	}
+
 
 	@POST
 	@APIDescription("Add a response to the given question on the specified component")
@@ -2989,7 +3044,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@PathParam("reviewId")
 			@RequiredParam String reviewId)
-	{		
+	{
 		ComponentReview componentReviewExample = new ComponentReview();
 		componentReviewExample.setComponentId(componentId);
 		componentReviewExample.setComponentReviewId(reviewId);
@@ -3001,7 +3056,6 @@ public class ComponentRESTResource
 		}
 		return sendSingleEntityResponse(componentReview);
 	}
-
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
@@ -3028,7 +3082,6 @@ public class ComponentRESTResource
 		}
 		return sendSingleEntityResponse(componentReview);
 	}
-	
 
 	@POST
 	@APIDescription("Add a review to the specified entity")
