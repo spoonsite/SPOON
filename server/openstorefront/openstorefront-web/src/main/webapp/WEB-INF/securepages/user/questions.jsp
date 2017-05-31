@@ -66,7 +66,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/responses/' + '${user}'
+							url: 'api/v1/resource/componentquestions/responses/${user}/A'
 						}		
 					},
 					columns: [
@@ -80,7 +80,39 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							itemId: 'tools',
-							items: [
+							items: [{
+									xtype: 'combobox',
+									id: 'answer-activeStatus',									
+									value: 'A',
+									editable: false,
+									fieldLabel: 'Active Status',
+									name: 'answer-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											responseGrid.getStore().load({
+												url: 'api/v1/resource/componentquestions/responses/${user}/' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
+											});
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'P',
+												description: 'Pending'
+											}
+										]
+									})
+								},
 								{
 									text: 'Refresh',
 									scale: 'medium',
@@ -217,7 +249,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/' + '${user}'
+							url: 'api/v1/resource/componentquestions/${user}/A' 
 						}		
 					},
 					columns: [
@@ -233,6 +265,39 @@
 							xtype: 'toolbar',
 							itemId: 'tools',
 							items: [
+								{
+									xtype: 'combobox',
+									id: 'question-activeStatus',									
+									value: 'A',
+									editable: false,
+									fieldLabel: 'Active Status',
+									name: 'question-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											questionGrid.getStore().load({
+													url: 'api/v1/resource/componentquestions/${user}/' + Ext.getCmp('question-activeStatus').getSelection().getData().code
+												});
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'P',
+												description: 'Pending'
+											}
+										]
+									})
+								},
 								{
 									text: 'Refresh',
 									scale: 'medium',

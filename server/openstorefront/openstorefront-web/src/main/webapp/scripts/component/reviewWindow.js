@@ -26,23 +26,28 @@ Ext.define('OSF.component.ReviewWindow', {
 	maximizable: true,
 	width: '80%',
 	height: '80%',
-	layout: 'fit',	
-	dockedItems:[
+	layout: 'fit',
+	dockedItems: [
 		{
 			xtype: 'panel',
 			itemId: 'userInputWarning',
 			html: ''
+		},
+		{
+			xtype: 'panel',
+			itemId: 'pendingNotice',
+			html: ''
 		}
-	],	
+	],
 	initComponent: function () {
 		this.callParent();
 
 		var reviewWindow = this;
-		
+
 		reviewWindow.formPanel = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',
 			scrollable: true,
-			dockedItems:[				
+			dockedItems: [
 				{
 					xtype: 'toolbar',
 					dock: 'bottom',
@@ -51,28 +56,28 @@ Ext.define('OSF.component.ReviewWindow', {
 							text: 'Save',
 							formBind: true,
 							iconCls: 'fa fa-lg fa-save icon-button-color-save',
-							handler: function(){
+							handler: function () {
 								var form = this.up('form');
 								var data = form.getValues();
-								
+
 								var value = form.getComponent('rating').getValue();
 								if (!value || value === 0) {
 									Ext.MessageBox.show({
-									   title:'Missing Rating',
+										title: 'Missing Rating',
 										message: 'Please select a Rating.',
 										buttons: Ext.Msg.OK,
-										icon: Ext.Msg.ERROR										
+										icon: Ext.Msg.ERROR
 									});
 								} else if (!data.comment || data.comment === '') {
 									Ext.MessageBox.show({
-									   title:'Missing Comment',
+										title: 'Missing Comment',
 										message: 'Please enter comment.',
 										buttons: Ext.Msg.OK,
-										icon: Ext.Msg.ERROR										
+										icon: Ext.Msg.ERROR
 									});
 								} else {
 									data.rating = value;
-								
+
 									var method = 'POST';
 									var urlEnd = 'detail';
 									if (data.reviewId && data.reviewId !== '') {
@@ -80,10 +85,10 @@ Ext.define('OSF.component.ReviewWindow', {
 										urlEnd = data.reviewId + '/detail';
 									}
 									data.lastUsed += '-01';
-									data.lastUsed = Ext.Date.parse(data.lastUsed,'m-Y-d');
+									data.lastUsed = Ext.Date.parse(data.lastUsed, 'm-Y-d');
 									if (data.prosRaw) {
 										data.pros = [];
-										Ext.Array.each(data.prosRaw, function(pro){
+										Ext.Array.each(data.prosRaw, function (pro) {
 											data.pros.push({
 												text: pro
 											});
@@ -92,7 +97,7 @@ Ext.define('OSF.component.ReviewWindow', {
 
 									if (data.consRaw) {
 										data.cons = [];
-										Ext.Array.each(data.consRaw, function(con){
+										Ext.Array.each(data.consRaw, function (con) {
 											data.cons.push({
 												text: con
 											});
@@ -107,7 +112,7 @@ Ext.define('OSF.component.ReviewWindow', {
 										method: method,
 										data: data,
 										form: form,
-										success: function(response, opts) {
+										success: function (response, opts) {
 											Ext.toast('Posted Review');
 											if (reviewWindow.postHandler) {
 												reviewWindow.postHandler(reviewWindow, response, opts);
@@ -116,7 +121,7 @@ Ext.define('OSF.component.ReviewWindow', {
 										}
 									});
 								}
-								
+
 							}
 						},
 						{
@@ -125,7 +130,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						{
 							text: 'Cancel',
 							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-							handler: function(){
+							handler: function () {
 								this.up('window').close();
 							}
 						}
@@ -149,12 +154,12 @@ Ext.define('OSF.component.ReviewWindow', {
 					fieldLabel: 'Title <span class="field-required" />',
 					allowBlank: false,
 					maxLength: 255,
-					emptyText: 'Enter Review Title Here'					
+					emptyText: 'Enter Review Title Here'
 				},
 				{
 					xtype: 'label',
 					html: '<b>Rating</b><span class="field-required" />'
-				},				
+				},
 				{
 					xtype: 'rating',
 					itemId: 'rating',
@@ -175,25 +180,25 @@ Ext.define('OSF.component.ReviewWindow', {
 					name: 'lastUsed',
 					fieldLabel: 'Last Used <span class="field-required" />',
 					width: 200,
-					format: 'm-Y'					
+					format: 'm-Y'
 				},
 				Ext.create('OSF.component.StandardComboBox', {
-					name: 'userTimeCode',									
-					allowBlank: false,								
+					name: 'userTimeCode',
+					allowBlank: false,
 					margin: '0 0 5 0',
 					editable: false,
 					typeAhead: false,
 					width: 200,
 					fieldLabel: 'How long have you used it <span class="field-required" />',
 					storeConfig: {
-						url: 'api/v1/resource/lookuptypes/ExperienceTimeType'					
+						url: 'api/v1/resource/lookuptypes/ExperienceTimeType'
 					}
 				}),
-				{	
+				{
 					xtype: 'tagfield',
 					itemId: 'pros',
-					fieldLabel: 'Pros',					
-					name: 'prosRaw',	
+					fieldLabel: 'Pros',
+					name: 'prosRaw',
 					displayField: 'description',
 					valueField: 'code',
 					queryMode: 'local',
@@ -206,7 +211,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						}
 					})
 				},
-				{	
+				{
 					xtype: 'tagfield',
 					itemId: 'cons',
 					fieldLabel: 'Cons',
@@ -228,99 +233,106 @@ Ext.define('OSF.component.ReviewWindow', {
 					name: 'comment',
 					fieldLabel: 'Comment <span class="field-required" />',
 					allowBlank: false,
-					fieldBodyCls: 'form-comp-htmleditor-border',					
+					fieldBodyCls: 'form-comp-htmleditor-border',
 					maxLength: 4096
 				},
-				Ext.create('OSF.component.SecurityComboBox', {	
+				Ext.create('OSF.component.SecurityComboBox', {
 					itemId: 'securityMarkings',
 					hidden: true
 				}),
-				Ext.create('OSF.component.DataSensitivityComboBox', {												
+				Ext.create('OSF.component.DataSensitivityComboBox', {
 					width: '100%'
 				})
 
 			]
 		});
-		
+
 		reviewWindow.add(reviewWindow.formPanel);
-		
 		//Query Branding
-		CoreService.brandingservice.getCurrentBranding().then(function(branding){		
+		CoreService.brandingservice.getCurrentBranding().then(function (branding) {
 			if (branding.userInputWarning) {
-				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
-				'</h3>');
+				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' +
+						'<i class="fa fa-warning"></i> ' + branding.userInputWarning +
+						'</h3>');
 			}
 			if (branding.allowSecurityMarkingsFlg) {
 				reviewWindow.formPanel.getComponent('securityMarkings').setHidden(false);
-			}			
+			}
+		});
+		//Query Properties
+		CoreService.systemservice.getConfigProperties("userreview.autoapprove").then(function (property) {
+			if (property.description === "false")
+			{
+				reviewWindow.getComponent('pendingNotice').update('<h3 class="alert-warning" style="text-align: center;">' +
+						'<i class="fa fa-warning"></i> All reviews need admin approval before being made public.</h3>');
+			}
 		});
 		
 		//Query User
-		CoreService.userservice.getCurrentUser().then(function(user){
+		CoreService.userservice.getCurrentUser().then(function (user) {
 			reviewWindow.user = user;
-						
+
 			//confirm that they have the required info
-			reviewWindow.on('show', function(){
+			reviewWindow.on('show', function () {
 				if (!reviewWindow.user.organization || !reviewWindow.user.userTypeCode) {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
-						saveCallback: function(response, opts){
+						saveCallback: function (response, opts) {
 							CoreService.userservice.getCurrentUser().then(function (user) {
 								reviewWindow.user = user;
-								
+
 							});
 						}
 					});
 					userProfileWin.show();
-						
-					Ext.defer(function(){	
+
+					Ext.defer(function () {
 						Ext.MessageBox.show({
-							title:'Update User Profile',
+							title: 'Update User Profile',
 							message: 'Please update you profile and fill in missing information to continue.',
 							buttons: Ext.Msg.OK,
-							icon: Ext.Msg.ERROR										
-						});						
+							icon: Ext.Msg.ERROR
+						});
 					}, 200);
-					
+
 					reviewWindow.close();
-				}				
+				}
 			});
-			
+
 		});
-		
+
 	},
-	
-	refresh: function() {
+
+	refresh: function () {
 		var reviewWindow = this;
 		reviewWindow.formPanel.reset();
-		
+
 		reviewWindow.formPanel.getComponent('rating').setValue(null);
 	},
-	
-	editReview: function(reviewRecord) {
+
+	editReview: function (reviewRecord) {
 		var reviewWindow = this;
-		
+
 		reviewWindow.refresh();
-		reviewWindow.componentId = reviewRecord.get('componentId');		
+		reviewWindow.componentId = reviewRecord.get('componentId');
 		reviewWindow.formPanel.loadRecord(reviewRecord);
-		
+
 		reviewWindow.formPanel.getComponent('rating').setValue(reviewRecord.get('rating'));
 		var allPros = [];
-		Ext.Array.each(reviewRecord.get('pros'), function(item){
+		Ext.Array.each(reviewRecord.get('pros'), function (item) {
 			allPros.push(item.code);
 		});
 		reviewWindow.formPanel.getComponent('pros').setValue(allPros);
-		
+
 		var allCons = [];
-		Ext.Array.each(reviewRecord.get('cons'), function(item){
+		Ext.Array.each(reviewRecord.get('cons'), function (item) {
 			allCons.push(item.code);
-		});	
+		});
 		reviewWindow.formPanel.getComponent('cons').setValue(allCons);
-		
+
 		reviewWindow.formPanel.getComponent('lastUsed').setValue(Ext.util.Format.date(reviewRecord.get('lastUsed'), 'm-Y'));
-		
+
 	}
-		
+
 });
 

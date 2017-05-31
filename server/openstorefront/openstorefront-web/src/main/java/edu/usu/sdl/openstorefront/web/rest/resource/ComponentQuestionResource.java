@@ -48,13 +48,18 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all active questions posed by a user")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
-	@Path("/{username}")
+	@Path("/{username}/{status}")
 	public Response getQuestionsForUser(
-			@PathParam("username") String username
+			@PathParam("username") String username,
+			@PathParam("status") String status
 	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
-		componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionExample.setCreateUser(username);
 
 		List<ComponentQuestion> questions = componentQuestionExample.findByExample();
@@ -69,15 +74,19 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all active answers for a user.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponseView.class)
-	@Path("/responses/{username}")
+	@Path("/responses/{username}/{status}")
 	public Response getResponseForUser(
-			@PathParam("username") String username
+			@PathParam("username") String username,
+			@PathParam("status") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionResponseExample.setCreateUser(username);
-
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
 
 		GenericEntity<List<ComponentQuestionResponseView>> entity = new GenericEntity<List<ComponentQuestionResponseView>>(ComponentQuestionResponseView.toViewList(responses))

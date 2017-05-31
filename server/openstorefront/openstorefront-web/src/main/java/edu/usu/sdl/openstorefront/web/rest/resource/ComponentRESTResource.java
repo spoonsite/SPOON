@@ -2647,7 +2647,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
-	@APIDescription("Activates a question from the specified entity")
+	@APIDescription("Set a question to pending for the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -2842,7 +2842,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity
-	@APIDescription("Activates a response from the given question on the specified component")
+	@APIDescription("Sets a response from the given question on the specified component to Pending")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3059,7 +3059,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
-	@APIDescription("Activate a review on the specified component")
+	@APIDescription("Sets a review on the specified component to pending")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
