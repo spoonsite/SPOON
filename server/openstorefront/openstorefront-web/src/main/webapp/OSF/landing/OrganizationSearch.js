@@ -76,6 +76,11 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 					property: 'name',
 					direction: 'ASC'
 				}],
+				fields: [
+					{ name: 'nologo', mapping: function(data) {
+						return data.logoOriginalFileName ? false : true;
+					}}						
+				],
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/organizations?componentOnly=true',
@@ -95,7 +100,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 								'<tpl if="logoOriginalFileName">',
 								'		<img src="Media.action?OrganizationLogo&organizationId={organizationId}" width=100 />',
 								'</tpl>',
-								'<tpl if="logoOriginalFileName == undefined">',
+								'<tpl if="nologo">',
 								'		<div class="search-tool-org-logo-text">{[Ext.String.capitalize(values.name).substring(0, 1)]}</div>',
 								'</tpl>',								
 							'</td>',						

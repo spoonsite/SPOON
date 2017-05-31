@@ -183,13 +183,13 @@ limitations under the License.
 }
 
 .home-search-field-cat {
-	font-size: 2.6em;
-	height: 48px !important;
-	line-height: 1.428571429;
+	font-size: 2em;
+	height: 35px !important;
+	line-height: 35px;
 	color: #555555;
 	vertical-align: middle;
-	color: ${actionBean.branding.primaryTextColor};
-	background-color: #2D0D41;
+	color: #777777;
+	background-color: lightgrey;
 	background-image: none;
 	border-right: 0px;		
 }
@@ -343,6 +343,17 @@ limitations under the License.
 
 .search-tool-org-logo {
 	
+}
+
+.search-tool-org-logo-text {
+	width: 60px;
+    text-align: center;
+    background-color: slategray;
+    color: white;
+    font-size: 24px;
+    font-weight: bolder;    
+    padding: 20px;
+    border-radius: 50%;	
 }
 
 .search-tool-org-text-name {
