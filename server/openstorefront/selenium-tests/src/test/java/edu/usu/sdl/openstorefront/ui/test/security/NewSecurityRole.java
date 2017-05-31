@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,10 @@ import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  *
@@ -162,7 +167,18 @@ public class NewSecurityRole
 	
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
-			sleep(500); 
+			
+			// Wait for Data Restrictions box to come up
+			WebDriverWait waitBox = new WebDriverWait(driver, 20);
+			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
+			// Ensure you're on the Data Sources tab (should be there by default)
+			List <WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
+			for (WebElement tab: dataTabs) {
+				if (tab.getText().equals("Data Sources")) {
+					tab.click();
+				}
+			}
 
 			// if true move left to right if in left restricted table
 			for (String key : dataSource.keySet()) {
@@ -171,6 +187,8 @@ public class NewSecurityRole
 					if (tableClickRowCol("dataSourcesGrid-body", key, driver)) { // is in Restricted table (LEFT) currently
 						sleep(500);
 						System.out.println("dataSlourcesGrid-body (RESTRICTED on the LEFT contains " + key + " as " + dataSource.get(key)  );
+						
+						// ********** DRAG move here **********
 					}
 				}
 			}
@@ -187,24 +205,45 @@ public class NewSecurityRole
 		
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
-			sleep(1500); 
-		
-			// ************************************************************************
-			// Was not working, moving it from xpath to CSS
-			//driver.findElement(By.xpath("//span[contains(.,'Data Sensitivity')]")).click();
-			//sleep(1500);
-			// ************************************************************************
-			
+
+			// Wait for Data Restrictions box to come up
+			WebDriverWait waitBox = new WebDriverWait(driver, 20);
+			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+		    
+			// Click on Data Sensitvity tab
+			List <WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
+			for (WebElement tab: dataTabs) {
+				if (tab.getText().equals("Data Sensitivity")) {
+					tab.click();
+				}
+			}
+
 			// Retreive dataSource desired settings
-			for (String key : dataSens.keySet()) {
-				if (dataSens.get(key)) {
-					System.out.println(key + " +++ This is 'true' move to RIGHT (Accessible) if it is NOT already there.");
-					if (tableClickRowCol("window-1147", key, driver)) { // is in Restricted table (LEFT) currently
-						System.out.println("Needs to be dragged to the right");
-					}
-					else {
-						System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
-					}
+//			for (String key : dataSens.keySet()) {
+//				if (dataSens.get(key)) {
+//					System.out.println(key + " +++ This is 'true' move to RIGHT (Accessible) if it is NOT already there.");
+												
+			// Restricted:  x-grid-view x-grid-with-col-lines x-grid-with-row-lines x-fit-item x-grid-view-default x-unselectable x-scroll	
+			// Accessible:  x-grid-view x-grid-with-col-lines x-grid-with-row-lines x-fit-item x-grid-view-default x-unselectable x-scroller
+			
+			List <WebElement> restrictedList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroll"));
+			List <WebElement> AccessibleList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller"));
+
+			// Loop through restrictedList and move to AccesibleList if key is true (dataSens)
+			for (WebElement item: restrictedList) {
+				// if needs to be in accesible
+				System.out.println(item.getText());
+				// ********** MOVE TO THE RIGHT HERE *****************	
+				(new Actions (driver)).dragAndDrop(restrictedList, AccessibleList).perform();
+			}
+			
+
+
+//					}
+//					else {
+//						System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
+						// MOVE TO THE LEFT HERE
+//					}
 				}
 			}
 		}

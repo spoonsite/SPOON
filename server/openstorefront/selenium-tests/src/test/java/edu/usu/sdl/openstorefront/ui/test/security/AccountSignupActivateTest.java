@@ -139,14 +139,9 @@ public class AccountSignupActivateTest
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
 		// Switch to activeStatus = Locked/Disabled and approvalStatus = Pending so it can be approved
 
-		// ******************************* 403 Error in the way can't get to the buttons ****************************************
-		// **************** If I shut down the web server, and rebuild this does not happen, so it must just be a build problem?
-		
 		setActiveStatus("Locked/Disabled", driver);
 		setApprovalStatus("Pending", driver);
 
-		// ******************************* ********************************************* ****************************************
-		
 		// Select and click Approve
 		if (tableClickRowCol(
 				"[data-test='xPanelTable'] .x-grid-view", userName, driver)) {

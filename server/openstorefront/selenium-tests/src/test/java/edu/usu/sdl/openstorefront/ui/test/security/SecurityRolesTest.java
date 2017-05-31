@@ -46,7 +46,7 @@ public class SecurityRolesTest
 		
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// TODO:  *** BREAK OUT INTO METHODS (DELETE, SIGNUPFORM, ACTIVATE)? ***
-		newAccountSignup.signupActivate("autoUser");
+	//	newAccountSignup.signupActivate("autoUser");
 	//	newAccountSignup.signupActivate("autoEval");
 	//	newAccountSignup.signupActivate("autoAdmin");
 	//	newAccountSignup.signupActivate("autoLibrarian");
@@ -57,9 +57,9 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
 			// Set up new Security Role, add user to role
-			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
-			newSecurityRole.addRoleBasic(driver, "AUTO-User");
-			newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
+		//	newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
+		//	newSecurityRole.addRoleBasic(driver, "AUTO-User");
+		//	newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class SecurityRolesTest
 			// dataSource options: "DI2E", "ER2"
 			dataSource.put("DI2E", true);
 			dataSource.put("ER2", true);
-			newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
+		//	newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
 
 			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
 			//					 "ITAR", "PUBLIC", "SENSITIVE"

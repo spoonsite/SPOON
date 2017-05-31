@@ -734,7 +734,7 @@
 													{ text: 'Code', dataIndex: 'code', width: 200},
 													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
 												]
-											},
+											},	
 											{
 												xtype: 'grid',
 												id: 'dataSensitivitiesInRoleGrid',
