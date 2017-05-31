@@ -31,6 +31,7 @@ Ext.define('OSF.landing.DefaultActions', {
 			},
 			itemSelector: 'div.search-tool',
 			tpl: new Ext.XTemplate(
+				'<div class="action-tool-header">Quick Launch</div>',	
 				'<tpl for=".">',
 					'<div style="margin: 15px;" class="action-tool-button-outer search-tool" data-qtip="{tip}">',
 					  '<div class="action-tool-button-inner" >',	
@@ -77,12 +78,12 @@ Ext.define('OSF.landing.DefaultActions', {
 				}
 			},
 			{
-				text: 'Relationships',
+				text: 'My Searches',
 				//icon: 'fa-share-alt',
-				tip: 'View relationships bewteen entries',
+				tip: 'View and manage your saved searches',
 				imageSrc: 'images/relationship.png',
 				handler: function(record, item) {
-					window.location.href = 'UserTool.action?load=Relationships';
+					window.location.href = 'UserTool.action?load=Searches';
 				}
 			},
 			{

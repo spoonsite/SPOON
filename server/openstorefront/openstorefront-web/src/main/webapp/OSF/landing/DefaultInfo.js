@@ -22,22 +22,22 @@ Ext.define('OSF.landing.DefaultInfo', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultinfo',
 	
-	layout: 'center',
-	width: '100%',
-	bodyStyle: 'padding-left: 60px; padding-right: 60px;',
+	layout: 'anchor',
+	//width: '100%',
+	//bodyStyle: 'padding-left: 60px; padding-right: 60px;',
 	items: [
 		{
 			xtype: 'panel',
-			width: '50%',
-			height: 250,			
+			width: '100%',
+			minHeight: 250,			
 			bodyCls: 'home-info-carousel',			
 			itemId: 'carousel',
 			tpl: new Ext.XTemplate(
 				'<div class="new-home-highlight-item">',
 				'	<div class="new-home-highlight-item-back">',
-						'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="homelink" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl></div>',
+						'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl></div>',
 						'<div class="new-home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}</div>',					
-						'<div class="home-highlight-footer"><span style="font-size: 10px; float: left;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="homelink" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
+						'<div class="home-highlight-footer"><span style="font-size: 10px; float: left;padding-top:10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
 				'	</div>',										
 				'</div>'
 			),
@@ -48,6 +48,7 @@ Ext.define('OSF.landing.DefaultInfo', {
 					itemId: 'carouselIndicator',
 					width: '100%',
 					height: 30,
+					bodyCls: 'home-info-carousel',
 					tpl: new Ext.XTemplate(
 						'<div class="home-highlight-footer-indicator">',						
 							'<tpl for=".">',							
@@ -204,7 +205,7 @@ Ext.define('OSF.landing.DefaultInfo', {
 					if (!highlight.link) {
 						highlight.link = false;
 					}
-					highlight.titleDesc = Ext.util.Format.ellipsis(highlight.title, 50);
+					highlight.titleDesc = highlight.title; //Ext.util.Format.ellipsis(highlight.title, 50);
 					highlight.moreText = 'Read More >>';
 					highlight.displayDesc = Ext.util.Format.ellipsis(Ext.util.Format.stripTags(highlight.description), 700);
 

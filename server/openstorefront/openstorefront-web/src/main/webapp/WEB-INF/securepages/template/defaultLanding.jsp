@@ -74,8 +74,8 @@
 							xtype: 'osf-defaultactions'
 						},
 						{
-							xtype: 'osf-defaultinfo',
-							margin: '0 0 40 0'
+							xtype: 'osf-defaultinfo'
+							//margin: '0 0 40 0'
 						},						
 						{
 							xtype: 'osf-defaultcategory'

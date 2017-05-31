@@ -36,6 +36,7 @@
 		var SearchPage = {
 			viewDetails: function(componentId, resultId) {
 				SearchPage.detailPanel.expand();
+				SearchPage.filterPanel.collapse();
 				
 				//load component
 				if (!SearchPage.currentLoadedComponent ||  SearchPage.currentLoadedComponent !== componentId) { 
@@ -548,6 +549,7 @@
 					}
 				]
 			});
+			SearchPage.filterPanel = filterPanel;
 
 			var filterMode;
 			var filterResults = function() {
@@ -664,12 +666,12 @@
 						sort = {
 							field: filter.sortBy.field,
 							dir: filter.sortBy.dir
-						}
+						};
 					} else {
 						sort = {
 							field: 'name',
 							dir: 'ASC'
-						}
+						};
 					}
 					
 					//Transform Filters into search elements.
@@ -795,7 +797,7 @@
 									typeLabel: dataItem.componentTypeDescription,
 									type: dataItem.componentType,
 									count: 1
-								}
+								};
 							}
 						});
 						
@@ -1386,7 +1388,7 @@
 											
 											var ids = '';
 											searchResultsStore.each(function(record){
-												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />'
+												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />';
 											});
 											exportFormIds.innerHTML = ids;
 											exportForm.submit();
@@ -1591,7 +1593,7 @@
 													var searchRequest = {
 														type: 'SIMPLE',
 														query: CoreUtil.searchQueryAdjustment(query)
-													}
+													};
 													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 												} else {
 													delete CoreUtil.sessionStorage().searchRequest;

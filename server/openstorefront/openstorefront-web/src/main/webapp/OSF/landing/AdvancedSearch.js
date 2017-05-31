@@ -42,6 +42,7 @@ Ext.define('OSF.landing.AdvancedSearchView', {
 	modal: true,
 	title: 'Advanced Search',
 	iconCls: 'fa fa-lg fa-search-plus',
+	maximizable: true,
 	dockedItems: [
 		{
 			xtype: 'toolbar',

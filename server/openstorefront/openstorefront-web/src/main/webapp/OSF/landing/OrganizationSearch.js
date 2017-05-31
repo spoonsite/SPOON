@@ -74,7 +74,10 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 				autoLoad: true,
 				sorters: [{
 					property: 'name',
-					direction: 'ASC'
+					direction: 'ASC',
+					transform: function(value) {
+						return value.toLowerCase();
+					}
 				}],
 				fields: [
 					{ name: 'nologo', mapping: function(data) {

@@ -37,6 +37,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			},
 			itemSelector: 'div.search-tool',
 			tpl: new Ext.XTemplate(
+				'<div class="action-tool-header">Search Tools</div>',	
 				'<tpl for=".">',
 					'<div style="margin: 15px;" class="search-tool-button-outer search-tool" data-qtip="{tip}">',
 					  '<div class="search-tool-button-inner">',	
@@ -76,17 +77,17 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 				toolType: 'OSF.landing.OrganizationSearch'
 			},
 			{
+				text: 'Relationships',
+				tip: 'View relationships bewteen entries',
+				icon: 'fa-share-alt',
+				toolType: 'OSF.landing.SavedSearch'
+			},				
+			{
 				text: 'Advanced',
 				tip: 'Create Advanced Searches',
 				icon: 'fa-search-plus',
 				toolType: 'OSF.landing.AdvancedSearch'
-			},
-			{
-				text: 'My Searches',
-				tip: 'View Saved Searches',
-				icon: 'fa-folder-open-o',
-				toolType: 'OSF.landing.SavedSearch'
-			}			
+			}					
 		];
 		
 		searchToolsPanel.queryById('dataview').getStore().loadData(tools);

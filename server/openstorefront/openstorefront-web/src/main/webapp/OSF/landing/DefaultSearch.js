@@ -90,7 +90,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 					xtype: 'combo',
 					itemId: 'entryType',
 					name: 'entryType',
-					width: '20%',
+					width: 80,
+					matchFieldWidth: false,
 					valueField: 'code',
 					displayField: 'description',
 					//grow: true,
@@ -119,7 +120,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
 							CoreUtil.tempComponentType = newValue;
-							//field.set							
+							var record = field.getSelection();
+							var textDimensions = Ext.util.TextMetrics.measure(field.inputEl, record.get('description'));
+							var triggerSize = 60;
+							field.setWidth(textDimensions.width + triggerSize);							
 						}
 					}
 				},
@@ -127,7 +131,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					xtype: 'combobox',										
 					itemId: 'searchText',
 					flex: 1,
-					fieldCls: 'home-search-field',
+					fieldCls: 'home-search-field-new',
 					emptyText: 'Search',
 					queryMode: 'remote',
 					hideTrigger: true,

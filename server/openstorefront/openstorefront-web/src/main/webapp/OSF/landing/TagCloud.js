@@ -38,6 +38,7 @@ Ext.define('OSF.landing.TagCloudView', {
 	width: '70%',
 	height: '70%',
 	scrollable: true,
+	maximizable: true,	
 	modal: true,
 	title: 'Tags',
 	iconCls: 'fa fa-lg fa-tags',
