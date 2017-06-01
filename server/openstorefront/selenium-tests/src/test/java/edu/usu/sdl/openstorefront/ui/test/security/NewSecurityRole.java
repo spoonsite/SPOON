@@ -25,7 +25,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -218,34 +217,28 @@ public class NewSecurityRole
 				}
 			}
 
-			// Retreive dataSource desired settings
-//			for (String key : dataSens.keySet()) {
-//				if (dataSens.get(key)) {
-//					System.out.println(key + " +++ This is 'true' move to RIGHT (Accessible) if it is NOT already there.");
-												
-			// Restricted:  x-grid-view x-grid-with-col-lines x-grid-with-row-lines x-fit-item x-grid-view-default x-unselectable x-scroll	
-			// Accessible:  x-grid-view x-grid-with-col-lines x-grid-with-row-lines x-fit-item x-grid-view-default x-unselectable x-scroller
-			
-			List <WebElement> restrictedList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroll"));
-			List <WebElement> AccessibleList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller"));
+			// Get list of Codes in Restricted and Accessible Lists
+			List <WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSensitivityGrid-body td:nth-child(odd)"));
+// tableemptList <WebElement> accessibleList = driver.findElements(By.id("#dataSensitivitiesInRoleGrid-body td:nth-child(odd)"));
 
 			// Loop through restrictedList and move to AccesibleList if key is true (dataSens)
-			for (WebElement item: restrictedList) {
-				// if needs to be in accesible
-				System.out.println(item.getText());
-				// ********** MOVE TO THE RIGHT HERE *****************	
-				(new Actions (driver)).dragAndDrop(restrictedList, AccessibleList).perform();
-			}
-			
-
-
-//					}
-//					else {
-//						System.out.println(key + " --- this is 'false' move to the LEFT (Restricted) if it is NOT already there.");
-						// MOVE TO THE LEFT HERE
-//					}
-				}
+			for (WebElement restrictedItem: restrictedList) {
+				System.out.println(restrictedItem.getText() + " is in RESTRICTED list");
+				
+				// If it is true (should be in Accessible)
+				for (String userDataSens : dataSens.keySet()) {
+					System.out.println(userDataSens.toString() + " what data sensitivity I am searching for");
+					
+					if (userDataSens.toString().equals(restrictedItem.getText())) {
+						// If it is supposed to be in Acceible or TRUE in hashmap
+						if (dataSens.get(userDataSens)) {
+							System.out.println(userDataSens + " ********** READY TO BE MOVED **********************");							
+						}
+						//(new Actions (driver)).dragAndDrop(restrictedItem, accessibleList).perform();
+					}
+				} 
 			}
 		}
+		
 	}
 }
