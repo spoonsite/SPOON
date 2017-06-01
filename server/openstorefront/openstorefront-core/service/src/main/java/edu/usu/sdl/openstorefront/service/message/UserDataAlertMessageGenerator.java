@@ -135,7 +135,6 @@ public class UserDataAlertMessageGenerator
 
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnReviews())) {
 			ComponentReview componentReviewExample = new ComponentReview();
-			componentReviewExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 
 			ComponentReview componentReviewStartExample = new ComponentReview();
 			componentReviewStartExample.setUpdateDts(checkDate);
@@ -145,6 +144,17 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 			specialOperatorModel.setExample(componentReviewStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+			
+			
+			
+			ComponentReview inactiveExample = new ComponentReview();
+			inactiveExample.setActiveStatus(ComponentReview.INACTIVE_STATUS);
+			
+			SpecialOperatorModel notEqual = new SpecialOperatorModel();
+			notEqual.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+			notEqual.setExample(inactiveExample);
+			queryByExample.getExtraWhereCauses().add(notEqual);
+			
 
 			List<ComponentReview> reviews = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			reviews = reviews.stream()
@@ -159,6 +169,7 @@ public class UserDataAlertMessageGenerator
 				message.append(" <li>'").append(review.getTitle())
 						.append("' modified by ").append(review.getUpdateUser())
 						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(review.getComponentId()))
+						.append(review.getActiveStatus().equals(ComponentReview.PENDING_STATUS) ? " needs admin approval" : "")
 						.append("</li>");
 			}
 			if (!reviews.isEmpty()) {
@@ -168,7 +179,6 @@ public class UserDataAlertMessageGenerator
 
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
 			ComponentQuestion componentQuestionExample = new ComponentQuestion();
-			componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 
 			ComponentQuestion componentQuestionStartExample = new ComponentQuestion();
 			componentQuestionStartExample.setUpdateDts(checkDate);
@@ -179,6 +189,15 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.setExample(componentQuestionStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
+			
+			ComponentQuestion inactiveExample = new ComponentQuestion();
+			inactiveExample.setActiveStatus(ComponentQuestion.INACTIVE_STATUS);
+			
+			SpecialOperatorModel notEqual = new SpecialOperatorModel();
+			notEqual.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+			notEqual.setExample(inactiveExample);
+			queryByExample.getExtraWhereCauses().add(notEqual);
+			
 			List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			questions = questions.stream()
 					.filter(question -> Convert.toBoolean(question.getAdminModified()) == false)
@@ -192,6 +211,7 @@ public class UserDataAlertMessageGenerator
 				message.append("  <li>'").append(StringProcessor.ellipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
 						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
+						.append(question.getActiveStatus().equals(ComponentQuestion.PENDING_STATUS) ? " needs admin approval" : "")
 						.append("</li>");
 			}
 			if (!questions.isEmpty()) {
@@ -199,7 +219,6 @@ public class UserDataAlertMessageGenerator
 			}
 
 			ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 
 			ComponentQuestionResponse componentQuestionResponseStartExample = new ComponentQuestionResponse();
 			componentQuestionResponseStartExample.setUpdateDts(checkDate);
@@ -209,6 +228,14 @@ public class UserDataAlertMessageGenerator
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 			specialOperatorModel.setExample(componentQuestionResponseStartExample);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+			
+			ComponentQuestionResponse inactiveResponseExample = new ComponentQuestionResponse();
+			inactiveResponseExample.setActiveStatus(ComponentQuestion.INACTIVE_STATUS);
+			
+			SpecialOperatorModel notEqualResponse = new SpecialOperatorModel();
+			notEqualResponse.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+			notEqualResponse.setExample(inactiveResponseExample);
+			queryByExample.getExtraWhereCauses().add(notEqual);
 
 			List<ComponentQuestionResponse> questionReponses = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			questionReponses = questionReponses.stream()
@@ -223,6 +250,7 @@ public class UserDataAlertMessageGenerator
 				message.append("  <li>'").append(StringProcessor.ellipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
 						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
+						.append(question.getActiveStatus().equals(ComponentQuestionResponse.PENDING_STATUS) ? " needs admin approval" : "")
 						.append("</li>");
 			}
 			if (!questionReponses.isEmpty()) {
