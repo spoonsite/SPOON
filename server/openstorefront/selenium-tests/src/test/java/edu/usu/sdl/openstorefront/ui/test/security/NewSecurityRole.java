@@ -203,13 +203,14 @@ public class NewSecurityRole
 	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		sleep(1500);
+		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
+		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 
 			// Wait for Data Restrictions box to come up
-			WebDriverWait waitBox = new WebDriverWait(driver, 20);
+			WebDriverWait waitBox = new WebDriverWait(driver, 10);
 			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
 			// Click on Data Sensitvity tab
@@ -220,47 +221,59 @@ public class NewSecurityRole
 				}
 			}
 
-			// Get list of Codes in Restricted and Accessible Lists
+			// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
 			List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSensitivityGrid-body td:nth-child(odd)"));
 			WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSensitivitiesInRoleGrid-body"));
 
 			// Loop through restrictedList 
 			for (WebElement restrictedItem : restrictedList) {
-				System.out.println(restrictedItem.getText() + " is in RESTRICTED list");
+				// System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
 
 				// Loop through the user set data Hashmap
 				for (String userDataSens : dataSens.keySet()) {
-					 System.out.println(userDataSens.toString() + " what data sensitivity I am searching for");
+					// System.out.println(userDataSens.toString() + " trying to match what is in the table to this that the user inputted.");
 
 					// If the User setting equals the setting in the Restricted List
-					if (userDataSens.toString().equals(restrictedItem.getText())) {
-
+					if (userDataSens.equals(restrictedItem.getText())) {
 						// If it is supposed to be in Accessible or TRUE in hashmap
 						if (dataSens.get(userDataSens)) {
 							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSens + " ********** READY TO BE MOVED **********************");
-							boolean detached = true;
-							while (true) {
-								detached = true;
-								try {
-									sleep(5000);
-									(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-									LOG.log(Level.INFO, "--- WAITING for dragging to complete so it is not detached --");
-								} catch (Exception e) {
-									if (e.getMessage().contains("element is not attached")) {
-										detached = false;
-									}
-								}
-								if (detached) {
-									LOG.log(Level.INFO, "--- Successfully waited for detached element to show up, continuing on now --");
-									break;
-								}
-							}
+							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
+							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							break;
 						}
 					}
 				}
 			}
-			// Hit SAVE DUDE!
+
+			// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
+			List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSensitivitiesInRoleGrid-body td:nth-child(odd)"));
+			WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSensitivityGrid-body"));
+
+			// Loop through accessibleList
+			for (WebElement accessibleItem : accessibleList) {
+				// System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
+
+				// Loop through the user set data Hashmap
+				for (String userDataSens : dataSens.keySet()) {
+					// System.out.println(userDataSens.toString() + " trying to match what is in the table to this that the user inputted.");
+
+					// If the User setting equals the setting in the Restricted List
+					if (userDataSens.equals(accessibleItem.getText())) {
+						// If it is supposed to be in Accessible or TRUE in hashmap
+						if (dataSens.get(userDataSens)) {
+							// Move it to the right (Restricted to Accessible)
+							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
+							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							break;
+						}
+					}
+				}
+			}
+			// Hit SAVE! (Data Restrictions)
+			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
 		}
 	}
 }
