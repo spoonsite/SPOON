@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.apiclient.test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ComponentService;
 import edu.usu.sdl.apiclient.LoginModel;
 import edu.usu.sdl.apiclient.view.ComponentResourceView;
@@ -31,6 +32,7 @@ public class ComponentResourceTestCase
 {
 
 	private LoginModel loginModel = new LoginModel();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Before
 	public void init()
@@ -56,7 +58,8 @@ public class ComponentResourceTestCase
 	@Test
 	public void testResourceLookup()
 	{
-		ComponentService componentService = new ComponentService(loginModel);
+		ComponentService componentService = new ComponentService();
+		componentService.connect("user", "user", "http://localhost:8380/openstorefront/");
 		List<LookupModel> components = componentService.getComponentLookupList();
 		if (components.isEmpty() == false) {
 			List<ComponentResourceView> resources = componentService.getComponentResources(components.get(0).getCode());
@@ -69,7 +72,8 @@ public class ComponentResourceTestCase
 	@Test
 	public void testAllResourceLookup()
 	{
-		ComponentService componentService = new ComponentService(loginModel);
+		ComponentService componentService = new ComponentService();
+		componentService.connect("user", "user", "http://localhost:8380/openstorefront/");
 		List<ComponentResourceView> resources = componentService.getComponentAllResources();
 		resources.forEach(resource -> {
 			System.out.println(resource.getResourceTypeDesc() + " - " + resource.getLink());
