@@ -150,7 +150,8 @@ public class NewSecurityRole
 	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		sleep(1500);
+		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
+		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		// TODO:  Write here
 	}
@@ -159,21 +160,17 @@ public class NewSecurityRole
 	public void manageDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		sleep(1500);
-
-		// Print HashMap 'dataSource' that was passed in from SecurityRolesTest.java
-		for (String key : dataSource.keySet()) {
-			System.out.println("dataSource = " + key + " Active? " + dataSource.get(key));
-		}
+		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
+		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 
 			// Wait for Data Restrictions box to come up
-			WebDriverWait waitBox = new WebDriverWait(driver, 20);
+			WebDriverWait waitBox = new WebDriverWait(driver, 10);
 			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
-			// Ensure you're on the Data Sources tab (should be there by default)
+			// Click on Data Sources tab
 			List<WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
 			for (WebElement tab : dataTabs) {
 				if (tab.getText().equals("Data Sources")) {
@@ -181,22 +178,64 @@ public class NewSecurityRole
 				}
 			}
 
-			// if true move left to right if in left restricted table
-			for (String key : dataSource.keySet()) {
-				if (dataSource.get(key)) { // should be in the RIGHT Accessible table
-					//System.out.println("LOOKING FOR   ---   " + key);
-					if (tableClickRowCol("dataSourcesGrid-body", key, driver)) { // is in Restricted table (LEFT) currently
-						sleep(500);
-						System.out.println("dataSlourcesGrid-body (RESTRICTED on the LEFT contains " + key + " as " + dataSource.get(key));
+			// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
+			List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSourcesGrid-body td:nth-child(odd)"));
+			WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSourcesInRoleGrid-body"));
 
-						// ********** DRAG move here **********
+			// Loop through restrictedList 
+			for (WebElement restrictedItem : restrictedList) {
+				System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+
+				// Loop through the user set data Hashmap
+				for (String userDataSource : dataSource.keySet()) {
+					System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+
+					// If the User setting equals the setting in the Restricted List
+					if (userDataSource.equals(restrictedItem.getText())) {
+						// If it is supposed to be in Accessible or TRUE in hashmap
+						if (dataSource.get(userDataSource)) {
+							// Move it to the right (Restricted to Accessible)
+							System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							break;
+						}
 					}
 				}
 			}
-		} else {
-			LOG.log(Level.WARNING, "*** Could not find the Role of " + roleName + " to set the dataSources ***  !!! FUTURE tests using these settings will FAIL !!!");
-		}
 
+			// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
+			List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSourcesInRoleGrid-body td:nth-child(odd)"));
+			WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSourcesGrid-body"));
+
+			// Loop through accessibleList
+			for (WebElement accessibleItem : accessibleList) {
+				// System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
+
+				// Loop through the user set data Hashmap
+				for (String userDataSource : dataSource.keySet()) {
+					// System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+
+					// If the User setting equals the setting in the Restricted List
+					if (userDataSource.equals(accessibleItem.getText())) {
+						// If it is supposed to be in Accessible or TRUE in hashmap
+						if (dataSource.get(userDataSource)) {
+							// Move it to the right (Restricted to Accessible)
+							// System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							break;
+						}
+					}
+				}
+			}
+			// Hit SAVE! (Data Restrictions)
+			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
+			WebDriverWait popupNotPresent = new WebDriverWait(driver, 4);
+			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sourceitivity) Settings ---");
+
+		}
 	}
 
 	// Feed in a <List> of Data Distributions to Activate
@@ -240,7 +279,7 @@ public class NewSecurityRole
 							// Move it to the right (Restricted to Accessible)
 							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
 							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
@@ -266,7 +305,7 @@ public class NewSecurityRole
 							// Move it to the right (Restricted to Accessible)
 							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
 							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
@@ -274,6 +313,9 @@ public class NewSecurityRole
 			}
 			// Hit SAVE! (Data Restrictions)
 			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
+			WebDriverWait popupNotPresent = new WebDriverWait(driver, 4);
+			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sensitivity) Settings ---");
 		}
 	}
 }

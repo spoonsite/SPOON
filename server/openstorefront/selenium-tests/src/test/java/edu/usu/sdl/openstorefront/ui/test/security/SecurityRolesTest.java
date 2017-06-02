@@ -71,14 +71,16 @@ public class SecurityRolesTest
 			
 			
 			
-		//	newSecurityRole.managePermissions(driver, roleName, permissions);
-			
+			//	newSecurityRole.managePermissions(driver, roleName, permissions);
+
 
 			// dataSource options: "DI2E", "ER2"
 			dataSource.put("DI2E", true);
 			dataSource.put("ER2", false);
+
 			newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
 
+			
 			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
 			//					 "ITAR", "PUBLIC", "SENSITIVE"
 			dataSens.put("DISTROA", true);
@@ -90,7 +92,8 @@ public class SecurityRolesTest
 			dataSens.put("ITAR", true);
 			dataSens.put("PUBLIC", false);
 			dataSens.put("SENSITIVE", true);
-		//	newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
+			
+			newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
 		}
 	}
 	
