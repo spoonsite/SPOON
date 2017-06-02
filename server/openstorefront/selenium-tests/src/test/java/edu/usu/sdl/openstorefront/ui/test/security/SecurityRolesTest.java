@@ -67,11 +67,57 @@ public class SecurityRolesTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 		
-			// Set up Permissions to use
-			
-			
-			
-			//	newSecurityRole.managePermissions(driver, roleName, permissions);
+			/* permissions	"ADMIN-ALERT-MANAGEMENT", "ADMIN-ATTRIBUTE-MANAGEMENT", "ADMIN-BRANDING", "ADMIN-CONTACT-MANAGEMENT",
+				options:	"ADMIN-DATA-IMPORT-EXPORT", "ADMIN-ENTRY-MANAGEMENT", "ADMIN-ENTRY-TEMPLATES", "ADMIN-EVALUATION-MANAGEMENT",
+							"ADMIN-EVALUATION-TEMPLATE", "ADMIN-EVALUATION-TEMPLATE-CHECKLIST", 
+							"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", "ADMIN-EVALUATION-TEMPLATE-SECTION", "ADMIN-FEEDBACK",
+							"ADMIN-HIGHLIGHTS", ADMIN-INTEGRATION", "ADMIN-JOB-MANAGEMENT", "ADMIN-LOOKUPS", "ADMIN-MEDIA", 
+							"ADMIN-MESSAGE-MANAGEMENT", "ADMIN-ORGANIZATION", "ADMIN-QUESTIONS", "ADMIN-REVIEW", "ADMIN-SEARCH", 
+							"ADMIN-SECURITY", "ADMIN-ROLE-MANAGEMENT", "ADMIN-SYSTEM-MANAGEMENT", "ADMIN-TRACKING", "ADMIN-USER-MANAGEMENT",
+							"ADMIN-USER-MANAGEMENT-PROFILES", "ADMIN-WATCHES", "ADMIN-ORGANIZATION-EXTRACTION", "API-DOCS", "ENTRY-TAG",
+							"EVALUATIONS", "RELATION-VIEW-TOOL", "REPORTS", "REPORTS-ALL", "REPORTS-SCHEDULE", "USER-SUBMISSIONS"
+			*/						
+			permissions.put("ADMIN-ALERT-MANAGEMENT", true);
+			permissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", true);
+			permissions.put("ADMIN-BRANDING", false);
+			permissions.put("ADMIN-CONTACT-MANAGEMENT", true);
+			permissions.put("ADMIN-DATA-IMPORT-EXPORT", false);
+			permissions.put("ADMIN-ENTRY-MANAGEMENT", true);
+			permissions.put("ADMIN-ENTRY-TEMPLATES", false);
+			permissions.put("ADMIN-EVALUATION-MANAGEMENT", true);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE", false);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST", true);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", false);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE-SECTION", true);
+			permissions.put("ADMIN-FEEDBACK", false);
+			permissions.put("ADMIN-HIGHLIGHTS", true);
+			permissions.put("ADMIN-INTEGRATION", false);
+			permissions.put("ADMIN-JOB-MANAGEMENT", true);
+			permissions.put("ADMIN-LOOKUPS", false);
+			permissions.put("ADMIN-MEDIA", true);
+			permissions.put("ADMIN-MESSAGE-MANAGEMENT", false);
+			permissions.put("ADMIN-ORGANIZATION", true);
+			permissions.put("ADMIN-QUESTIONS", false);
+			permissions.put("ADMIN-REVIEW", true);
+			permissions.put("ADMIN-SEARCH", false);
+			permissions.put("ADMIN-SECURITY", true);
+			permissions.put("ADMIN-ROLE-MANAGEMENT", false);
+			permissions.put("ADMIN-SYSTEM-MANAGEMENT", true);
+			permissions.put("ADMIN-TRACKING", false);
+			permissions.put("ADMIN-USER-MANAGEMENT", true);
+			permissions.put("ADMIN-USER-MANAGEMENT-PROFILES", false);
+			permissions.put("ADMIN-WATCHES", true);
+			permissions.put("ADMIN-ORGANIZATION-EXTRACTION", false);
+			permissions.put("API-DOCS", true);
+			permissions.put("ENTRY-TAG", false);
+			permissions.put("EVALUATIONS", true);
+			permissions.put("RELATION-VIEW-TOOL", false);
+			permissions.put("REPORTS", true);
+			permissions.put("REPORTS-ALL", false);
+			permissions.put("REPORTS-SCHEDULE", true);
+			permissions.put("USER-SUBMISSIONS", false);
+
+			newSecurityRole.managePermissions(driver, "AUTO-User", permissions);
 
 
 			// dataSource options: "DI2E", "ER2"

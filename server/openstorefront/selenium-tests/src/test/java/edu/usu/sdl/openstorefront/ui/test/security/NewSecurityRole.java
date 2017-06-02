@@ -147,15 +147,53 @@ public class NewSecurityRole
 		}
 	}
 
-	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
+	
+	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
 		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
-		// TODO:  Write here
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
+
+			// Wait for User Permissions box to come up
+			WebDriverWait waitBox = new WebDriverWait(driver, 10);
+			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
+			// Get list of Codes in the Permissions Available (Left) side.  Get table for Current Role Permissions (Right) side
+			
+			// ***** No easy id # here! *****
+			List<WebElement> availableList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller td:nth-child(odd)"));
+		//	WebElement currentRoleTable = driver.findElement(By.cssSelector(""));
+
+		/*	// Loop through restrictedList 
+			for (WebElement restrictedItem : availableList) {
+			//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+
+				// Loop through the user set data Hashmap
+				for (String userDataSource : dataSource.keySet()) {
+				//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+
+					// If the User setting equals the setting in the Restricted List
+					if (userDataSource.equals(restrictedItem.getText())) {
+						// If it is supposed to be in Accessible or TRUE in hashmap
+						if (dataSource.get(userDataSource)) {
+							// Move it to the right (Restricted to Accessible)
+							// System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							(new Actions(driver)).dragAndDrop(restrictedItem, currentRoleTable).perform();
+							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							break;
+						}
+					}
+				}
+			}
+			*/
+			
+		}
 	}
 
+	
 	// True in boolean means to add it to the accessible side, false means to remove it.
 	public void manageDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
@@ -239,6 +277,7 @@ public class NewSecurityRole
 		}
 	}
 
+	
 	// Feed in a <List> of Data Distributions to Activate
 	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{

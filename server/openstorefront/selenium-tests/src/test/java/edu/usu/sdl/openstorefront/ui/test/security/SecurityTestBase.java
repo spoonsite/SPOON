@@ -27,8 +27,9 @@ import java.util.logging.Logger;
 public class SecurityTestBase
 		extends BrowserTestBase
 {
-         private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-		 
+        private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+		
+		protected Map<String, Boolean> permissions = new HashMap<>();
 		protected Map<String, Boolean> dataSource = new HashMap<>();
 		protected Map<String, Boolean> dataSens = new HashMap<>();
 		
