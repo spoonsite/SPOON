@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -51,7 +52,7 @@ public class ComponentQuestionResource
 	@Path("/{username}/{status}")
 	public Response getQuestionsForUser(
 			@PathParam("username") String username,
-			@PathParam("status") String status
+			@PathParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
@@ -77,7 +78,7 @@ public class ComponentQuestionResource
 	@Path("/responses/{username}/{status}")
 	public Response getResponseForUser(
 			@PathParam("username") String username,
-			@PathParam("status") String status
+			@PathParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
@@ -99,13 +100,18 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all responses for a question")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponseView.class)
-	@Path("/{questionId}/responses")
+	@Path("/{questionId}/responses/{status}")
 	public Response getResponseForQuestion(
-			@PathParam("questionId") String questionId
+			@PathParam("questionId") String questionId,
+			@PathParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionResponseExample.setQuestionId(questionId);
 
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();

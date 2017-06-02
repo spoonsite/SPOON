@@ -66,7 +66,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/responses/${user}/A'
+							url: 'api/v1/resource/componentquestions/responses/${user}'
 						}		
 					},
 					columns: [
@@ -249,7 +249,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/${user}/A' 
+							url: 'api/v1/resource/componentquestions/${user}' 
 						}		
 					},
 					columns: [
