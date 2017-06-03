@@ -2580,7 +2580,10 @@ public class CoreComponentServiceImpl
 			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
 			for (ComponentMedia componentMedia : allIconMedia) {
 				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
-				OSFCacheManager.getComponentApprovalCache().put(newElement);
+				OSFCacheManager.getComponentIconCache().put(newElement);
+				if (componentMedia.getComponentId().equals(componentId)) {
+					iconMediaId = componentMedia.getComponentMediaId();
+				}
 			}
 		}
 		return iconMediaId;

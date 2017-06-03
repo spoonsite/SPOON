@@ -780,6 +780,16 @@
 			
 			var currentDataSet;
 			var processResults = function(data) {
+				//handle logo
+				Ext.Array.each(data, function(result){
+					//check entry logo first
+					if (result.componentIconId) {
+						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
+					} else if (result.componentTypeIconUrl) {
+						result.logo = result.componentTypeIconUrl;
+					}
+				});
+				
 				currentDataSet = data;
 				Ext.getCmp('resultsDisplayPanel').update(data);				
 		
@@ -814,6 +824,7 @@
 			
 			
 			var displaySections = [					
+				{ text: 'Logo', section: 'logo', display: true },
 				{ text: 'Organization', section: 'organization', display: true },
 				{ text: 'Badges', section: 'badges', display: true },
 				{ text: 'Description', section: 'description', display: true },
@@ -1021,8 +1032,8 @@
 				'<tpl for=".">',
 				' <div id="result-{componentId}" class="searchresults-item">',
 				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</h2>',
-				'	<tpl if="show.logo">',
-				'		',
+				'	<tpl if="show.logo && logo">',
+				'		<img src="{logo}" width=100 />',				
 				'	</tpl>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',

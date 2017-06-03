@@ -80,7 +80,7 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 				text: 'Relationships',
 				tip: 'View relationships bewteen entries',
 				icon: 'fa-share-alt',
-				toolType: 'OSF.landing.SavedSearch'
+				toolType: 'OSF.landing.RelationshipSearch'
 			},				
 			{
 				text: 'Advanced',

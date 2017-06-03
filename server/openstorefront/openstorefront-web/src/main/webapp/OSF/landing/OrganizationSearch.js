@@ -38,6 +38,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 	width: '70%',
 	height: '70%',	
 	modal: true,
+	maximizable: true,
 	title: 'Organizations',
 	iconCls: 'fa fa-lg fa-sitemap',
 	layout: 'fit',
