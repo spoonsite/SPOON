@@ -401,6 +401,30 @@ limitations under the License.
 	font-size: 12px;
 }
 
+.search-tool-relation {
+	border-bottom: 1px solid lightgrey;
+	padding: 10px;
+}
+
+.search-tool-relation:hover {
+	cursor: pointer;
+	background: #fff9cc !important;
+}
+
+.search-tool-relation:nth-child(odd) {
+	background: whitesmoke;
+}
+
+.search-tool-relation:nth-child(even) {
+	background: white;
+}
+
+.search-tool-relation-text {
+	font-size: 2em;	
+	text-decoration: none;
+	margin-left: 20px;
+}
+
 .searchresults-morefilter {
 	color: white;
 	background-color: ${actionBean.branding.primaryColor};

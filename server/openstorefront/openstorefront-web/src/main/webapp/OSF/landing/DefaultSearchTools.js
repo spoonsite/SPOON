@@ -25,7 +25,8 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 		'OSF.landing.TagCloud',
 		'OSF.landing.AdvancedSearch',
 		'OSF.landing.SavedSearch',
-		'OSF.landing.OrganizationSearch'
+		'OSF.landing.OrganizationSearch',
+		'OSF.landing.RelationshipSearch'
 	],
 	
 	layout: 'center',		

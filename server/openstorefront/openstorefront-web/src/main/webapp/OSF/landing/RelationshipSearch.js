@@ -37,64 +37,73 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 	
 	width: '70%',
 	height: '70%',
-	scrollable: true,
+	
 	maximizable: true,	
 	modal: true,
 	title: 'Relationship Select',
 	iconCls: 'fa fa-lg fa-share-alt',
-	dockedItems: [
-		{
-			xtype: 'toolbar',
-			dock: 'top',
-			items: [
-				{
-					text: 'Select Type',
-					handler: function() {
-						
-					}
-				}
-			]
-		}
-	],	
+	layout: 'fit',	
 	items: [
 		{
 			xtype: 'panel',
+			itemId: 'cardPanel',
 			layout: 'card',
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'top',				
+					items: [
+						{
+							text: 'Select Type',
+							handler: function() {
+								var relationshipWin = this.up('window');
+								var cardPanel = relationshipWin.queryById('cardPanel');
+								cardPanel = cardPanel.setActiveItem('relationType');
+							}
+						},
+						{
+							xtype: 'textfield',
+							name: 'filter',
+							fieldLabel: 'Filter',
+							flex: 1,					
+							listeners: {
+								change: function(field, newValue, oldValue, opts) {
+									var relationshipWin = field.up('window');							
+									var itemSelect = relationshipWin.queryById('itemSelect');
+									var store = itemSelect.getStore();
+									store.clearFilter();
+									store.filterBy(function(record) {
+										return Ext.String.startsWith(record.get('text'), newValue, true);
+									});
+								}
+							}
+						}			
+					]
+				}
+			],			
 			items: [
 				{
 					xtype: 'dataview',
 					itemId: 'relationType',
 					scrollable: true,
+					width: '100%',
 					store: {						
 					},
-					itemSelector: 'div.search-tool',			
+					itemSelector: 'div.search-tool-relation',			
 					tpl: new Ext.XTemplate(
 						'<tpl for=".">',					
-							'<div class="search-tool-org">',
-								'<table width="100%"><tr>',
-									'<td class="search-tool-org-logo" width="120">',							
-										'<tpl if="logoOriginalFileName">',
-										'		<img src="Media.action?OrganizationLogo&organizationId={organizationId}" width=100 />',
-										'</tpl>',
-										'<tpl if="nologo">',
-										'		<div class="search-tool-org-logo-text">{[Ext.String.capitalize(values.name).substring(0, 1)]}</div>',
-										'</tpl>',								
-									'</td>',						
-									'<td class="search-tool-org-text">',										
-										'<a href="#" onclick="CoreUtil.pageActions.organizationSearch(\'{name}\');" class="search-tool-org-text-name link">{name}</a><br>',
-										'<span class="search-tool-org-text-desc">{description}</span>',
-									'</td>',
-								'</tr></table>',
+							'<div class="search-tool-relation">',
+								'<span class="fa fa-3x {icon}"></span>',
+								'<span class="search-tool-relation-text">{text}</span>',
 							'</div>',
 						'</tpl>'
 					),
 					listeners: {
 						itemclick: function(dataView, record, item, index, e, eOpts) {	
-							if (!record.tool) {
-								record.tool = Ext.create(record.data.toolType, {							
-								});
-							}
-							record.tool.handler(record, item);
+							
+							var cardPanel = dataView.up('panel');
+							cardPanel.setActiveItem(cardPanel.queryById('itemSelect'));														
+							record.data.loadData();							
 						}
 					}
 				},
@@ -102,62 +111,33 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 					xtype: 'dataview',
 					itemId: 'itemSelect',
 					scrollable: true,
+					width: '100%',
 					store: {
-						autoLoad: true,
 						sorters: [{
-							property: 'name',
+							property: 'text',
 							direction: 'ASC',
 							transform: function(value) {
 								return value.toLowerCase();
 							}
-						}],
-						fields: [
-							{ name: 'nologo', mapping: function(data) {
-								return data.logoOriginalFileName ? false : true;
-							}}						
-						],
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/organizations?componentOnly=true',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}
-						}
+						}]
 					},
-					itemSelector: 'div.search-tool',			
+					itemSelector: 'div.search-tool-relation',			
 					tpl: new Ext.XTemplate(
 						'<tpl for=".">',					
-							'<div class="search-tool-org">',
-								'<table width="100%"><tr>',
-									'<td class="search-tool-org-logo" width="120">',							
-										'<tpl if="logoOriginalFileName">',
-										'		<img src="Media.action?OrganizationLogo&organizationId={organizationId}" width=100 />',
-										'</tpl>',
-										'<tpl if="nologo">',
-										'		<div class="search-tool-org-logo-text">{[Ext.String.capitalize(values.name).substring(0, 1)]}</div>',
-										'</tpl>',								
-									'</td>',						
-									'<td class="search-tool-org-text">',										
-										'<a href="#" onclick="CoreUtil.pageActions.organizationSearch(\'{name}\');" class="search-tool-org-text-name link">{name}</a><br>',
-										'<span class="search-tool-org-text-desc">{description}</span>',
-									'</td>',
-								'</tr></table>',
+							'<div class="search-tool-relation">',
+								'<span class="fa fa-3x {icon}"></span>',
+								'<span class="search-tool-relation-text">{text}</span>',
 							'</div>',
 						'</tpl>'
 					),
 					listeners: {
 						itemclick: function(dataView, record, item, index, e, eOpts) {	
-							if (!record.tool) {
-								record.tool = Ext.create(record.data.toolType, {							
-								});
-							}
-							record.tool.handler(record, item);
+							
+							
 						}
-					}
+					}				
 				}				
-			]
+			]				
 		}
 	],
 	initComponent: function () {
@@ -166,20 +146,125 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 		
 		var relationshipTypes = [
 			{
-				text: 'Entries',
-				icon: 'fa-list'
+				text: 'Entries',				
+				icon: 'fa-list',
+				loadData: function() {
+					relationshipSearchView.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/lookup',
+						callback: function(){
+							relationshipSearchView.setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							
+							var itemSelect = relationshipSearchView.queryById('itemSelect');
+							
+							var views = [];
+							Ext.Array.each(data, function(lookup){
+								views.push({
+									itemId: lookup.code,
+									text: lookup.description,
+									handler: function(record) {
+										
+									}
+								});	
+							});							
+							itemSelect.getStore().loadRawData(views);
+						}
+					});					
+				}
 			},
 			{
-				text: 'Organizations',
-				icon: 'fa-sitemap'
+				text: 'Organizations',				
+				icon: 'fa-sitemap',
+				loadData: function() {
+					relationshipSearchView.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/organizations?componentOnly=true',
+						callback: function(){
+							relationshipSearchView.setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							
+							var itemSelect = relationshipSearchView.queryById('itemSelect');
+							
+							var views = [];
+							Ext.Array.each(data.data, function(org){
+								views.push({
+									itemId: org.organizationId,
+									text: org.name,
+									logo: org.logoOriginalFileName ? 'Media.action?OrganizationLogo&organizationId={organizationId}' : null,
+									handler: function(record) {
+										
+									}
+								});	
+							});							
+							itemSelect.getStore().loadRawData(views);							
+						}
+					});	
+				}				
 			},
 			{
 				text: 'Attributes',
-				icon: 'fa-list-alt'
+				icon: 'fa-list-alt',
+				loadData: function() {
+					relationshipSearchView.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/attributes/attributetypes',
+						callback: function(){
+							relationshipSearchView.setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							
+							var itemSelect = relationshipSearchView.queryById('itemSelect');
+							
+							var views = [];
+							Ext.Array.each(data.data, function(attributeType){
+								views.push({
+									itemId: attributeType.attributeType,
+									text: attributeType.description,
+									handler: function(record) {
+										
+									}
+								});	
+							});							
+							itemSelect.getStore().loadRawData(views);							
+						}
+					});						
+				}				
 			},
 			{
 				text: 'Tags',
-				icon: 'fa-tags'
+				icon: 'fa-tags',
+				loadData: function() {
+					relationshipSearchView.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/tags',
+						callback: function(){
+							relationshipSearchView.setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							
+							var itemSelect = relationshipSearchView.queryById('itemSelect');
+							
+							var views = [];
+							Ext.Array.each(data, function(tag){
+								views.push({
+									itemId: tag.tagId,
+									text: tag.text,
+									handler: function(record) {
+										
+									}
+								});	
+							});							
+							itemSelect.getStore().loadRawData(views);								
+						}
+					});					
+				}				
 			}
 		];
 		
