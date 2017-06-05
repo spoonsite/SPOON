@@ -73,7 +73,6 @@ public class ApplicationImplTest
 		// Assert
 		Assert.assertEquals(key, result.getCode());
 		Assert.assertEquals("DI2E Clearinghouse (Dev)", result.getDescription());
-
 	}
 
 	@Test
