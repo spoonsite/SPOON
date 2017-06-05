@@ -662,7 +662,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									xtype: 'button',
 									title: 'Upload',
 									flex: 1,
-									iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+									iconCls: 'fa fa-lg fa-upload',
 									formBind: true,
 									text: 'Upload',
 									handler: function() {

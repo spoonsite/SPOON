@@ -73,14 +73,14 @@ Ext.define('OSF.form.Section', {
 				},				
 				{
 					text: '&nbsp;Manage Media',					
-					iconCls: 'fa fa-2x fa-image',
-					scale: 'medium',
+					iconCls: 'fa fa-lg fa-image icon-button-color-default',
+					scale: 'small',
 					handler: function(){
 						var sectionForm = this.up('form');
 						
 						var mediaWindow = Ext.create('Ext.window.Window',{
 							title: 'Section Media',
-							iconCls: 'fa fa-image',
+							iconCls: 'fa fa-lg fa-image',
 							modal: true,
 							closeAction: 'destroy',
 							width: 800,
@@ -145,7 +145,7 @@ Ext.define('OSF.form.Section', {
 												{
 													text: 'Edit Metadata',
 													itemId: 'edit',
-													iconCls: 'fa fa-edit',
+													iconCls: 'fa fa-lg fa-edit icon-button-color-edit icon-lg-vertical-correction',
 													disabled: true,
 													handler: function() {
 														var grid = this.up('grid');
@@ -154,7 +154,7 @@ Ext.define('OSF.form.Section', {
 														//set private and caption
 														var editWindow = Ext.create('Ext.window.Window', {
 															title: 'Edit Media',
-															iconCls: 'fa fa-edit',
+															iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 															width: 400,
 															height: 250,
 															modal: true,
@@ -188,7 +188,7 @@ Ext.define('OSF.form.Section', {
 																			items: [
 																				{
 																					text: 'Save',
-																					iconCls: 'fa fa-save',
+																					iconCls: 'fa fa-lg fa-save icon-button-color-save',
 																					handler: function() {
 																						var form = this.up('form');
 																						var formData = form.getValues();
@@ -221,7 +221,7 @@ Ext.define('OSF.form.Section', {
 																				}, 
 																				{
 																					text: 'Cancel',
-																					iconCls: 'fa fa-close',
+																					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 																					handler: function() {
 																						editWindow.close();
 																					}																					
@@ -242,7 +242,7 @@ Ext.define('OSF.form.Section', {
 												{
 													text: 'Delete',
 													itemId: 'delete',
-													iconCls: 'fa fa-close text-danger',
+													iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 													disabled: true,
 													handler: function() {
 														var grid = this.up('grid');
@@ -292,7 +292,7 @@ Ext.define('OSF.form.Section', {
 										},
 										{
 											text: 'Close',
-											iconCls: 'fa fa-2x fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-lg-vertical-correction',
 											scale: 'medium',
 											handler: function() {
 												mediaWindow.close();

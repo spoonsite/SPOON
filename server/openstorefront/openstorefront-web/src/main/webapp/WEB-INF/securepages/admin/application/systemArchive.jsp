@@ -183,7 +183,7 @@
 								{
 									text: 'Generate Archive',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
 									handler: function () {
 										actionGenerate();
 									}									
@@ -194,7 +194,8 @@
 								{
 									text: 'Import Archive',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
+									width: '160px',
+									iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-correction-load-port',
 									handler: function () {
 										actionImport();
 									}									
@@ -207,7 +208,8 @@
 									itemId: 'view',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
+									width: '140px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionView(record);
@@ -218,7 +220,8 @@
 									itemId: 'download',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
+									width: '130px',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-correction-load-port',
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionDownload(record);
@@ -232,7 +235,7 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionDelete(record);
@@ -503,7 +506,7 @@
 										items: [
 											{
 												text: 'Import',
-												iconCls: 'fa fa-lg fa-upload icon-button-color-save',
+												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 												formBind: true,
 												handler: function() {
 													

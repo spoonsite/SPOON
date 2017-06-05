@@ -1598,7 +1598,7 @@
 										{
 											text: 'Merge',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-compress',
+											iconCls: 'fa fa-lg fa-compress icon-button-color-default',
 											handler: function() {
 												
 												var mergeForm = this.up('form');

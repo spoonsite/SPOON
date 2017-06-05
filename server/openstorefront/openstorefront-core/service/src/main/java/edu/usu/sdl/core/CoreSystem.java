@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import net.java.truevfs.access.TVFS;
 import net.sourceforge.stripes.util.ResolverUtil;
 
@@ -62,7 +64,7 @@ public class CoreSystem
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static String systemStatus = "Starting application...";
 
-	private CoreSystem()
+	public CoreSystem()
 	{
 	}
 
@@ -88,7 +90,8 @@ public class CoreSystem
 			new PluginManager()
 	);
 
-	public static void startup()
+	@PostConstruct
+	public void startup()
 	{
 		started.set(false);
 		systemStatus = "Starting application...";
@@ -208,9 +211,10 @@ public class CoreSystem
 		}
 		started.set(true);
 	}
-
+	
+	@PreDestroy
 	@SuppressWarnings("UseSpecificCatch")
-	public static void shutdown()
+	public void shutdown()
 	{
 		started.set(false);
 		systemStatus = "Application is shutting down...";
@@ -240,7 +244,7 @@ public class CoreSystem
 		return running;
 	}
 
-	public static void restart()
+	public void restart()
 	{
 		if (isStarted()) {
 			shutdown();

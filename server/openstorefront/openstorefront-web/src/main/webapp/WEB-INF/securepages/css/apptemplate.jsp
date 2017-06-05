@@ -745,6 +745,12 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	bottom: 3px;
 }
 
+.icon-correction-load-port {
+	position: relative;
+	bottom: 2px;
+	right: 3px;
+}
+
 .icon-vertical-correction-send {
 	position: relative;
 	right: 8px;
@@ -796,6 +802,11 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	right: 3px;
 }
 
+.icon-small-vertical-correction-load {
+	position: absolute;
+	top: 3px;
+}
+
 .icon-small-vertical-correction {
 	margin-top: 5px;
 }
@@ -807,6 +818,11 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 
 .icon-small-vertical-correction-book {
 	margin-top: 3px;
+}
+
+.icon-lg-vertical-correction {
+	position: relative;
+	top: 2px;
 }
 
 .icon-horizontal-correction {

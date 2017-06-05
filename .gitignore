@@ -74,3 +74,4 @@ project*.properties
 /server/openstorefront/loadgenerator/target/
 /server/openstorefront/selenium-tests/target/
 /server/openstorefront/selenium-tests/drivers
+/server/openstorefront/apiclient/nbproject/
