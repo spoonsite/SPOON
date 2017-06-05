@@ -42,6 +42,13 @@ Ext.define('OSF.landing.TagCloudView', {
 	modal: true,
 	title: 'Tags',
 	iconCls: 'fa fa-lg fa-tags',
+	listeners: {
+		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+			if (width < 565) {
+				this.maximize(false);
+			} 		
+		}
+	},	
 	
 	initComponent: function () {
 		this.callParent();			

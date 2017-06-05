@@ -58,6 +58,11 @@ public class Branding
 	@ConsumeField
 	private String secondaryLogoUrl;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String homebackSplashUrl;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
@@ -152,6 +157,10 @@ public class Branding
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String secondaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String accentColor;
 
 	@ConsumeField
@@ -211,6 +220,7 @@ public class Branding
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
+		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
 		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
@@ -223,6 +233,7 @@ public class Branding
 
 		setPrimaryColor(branding.getPrimaryColor());
 		setPrimaryTextColor(branding.getPrimaryTextColor());
+		setSecondaryColor(branding.getSecondaryColor());
 		setAccentColor(branding.getAccentColor());
 		setQuoteColor(branding.getQuoteColor());
 		setLinkColor(branding.getLinkColor());
@@ -561,6 +572,26 @@ public class Branding
 	public void setLandingTemplate(LandingTemplate landingTemplate)
 	{
 		this.landingTemplate = landingTemplate;
+	}
+
+	public String getHomebackSplashUrl()
+	{
+		return homebackSplashUrl;
+	}
+
+	public void setHomebackSplashUrl(String homebackSplashUrl)
+	{
+		this.homebackSplashUrl = homebackSplashUrl;
+	}
+
+	public String getSecondaryColor()
+	{
+		return secondaryColor;
+	}
+
+	public void setSecondaryColor(String secondaryColor)
+	{
+		this.secondaryColor = secondaryColor;
 	}
 
 }

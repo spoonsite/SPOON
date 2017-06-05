@@ -55,6 +55,7 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 					items: [
 						{
 							text: 'Select Type',
+							iconCls: 'fa fa-lg fa-arrow-circle-left',
 							handler: function() {
 								var relationshipWin = this.up('window');
 								var cardPanel = relationshipWin.queryById('cardPanel');
@@ -125,15 +126,20 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 					tpl: new Ext.XTemplate(
 						'<tpl for=".">',					
 							'<div class="search-tool-relation">',
-								'<span class="fa fa-3x {icon}"></span>',
-								'<span class="search-tool-relation-text">{text}</span>',
+								'<table width="100%"><tr>',
+									'<td class="search-tool-org-logo" width="120">',							
+										'<tpl if="logo">{logo}</tpl>',								
+									'</td>',						
+									'<td class="search-tool-org-text">',										
+										'<span class="search-tool-relation-text">{text}</span>',
+									'</td>',
+								'</tr></table>',															
 							'</div>',
 						'</tpl>'
 					),
 					listeners: {
 						itemclick: function(dataView, record, item, index, e, eOpts) {	
-							
-							
+							record.data.handler(record);
 						}
 					}				
 				}				
@@ -164,9 +170,11 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 							Ext.Array.each(data, function(lookup){
 								views.push({
 									itemId: lookup.code,
+									logo: '<div class="search-tool-org-logo-text">'+ Ext.String.capitalize(lookup.description).substring(0, 1) + '</div>',
 									text: lookup.description,
 									handler: function(record) {
-										
+										var params = 'entityId=' + record.get('itemId') + '&entityName=' + encodeURIComponent(record.get('text'));
+										window.location.href='UserTool.action?load=Relationships&viewType=RELATION&'+ params;
 									}
 								});	
 							});							
@@ -195,9 +203,10 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 								views.push({
 									itemId: org.organizationId,
 									text: org.name,
-									logo: org.logoOriginalFileName ? 'Media.action?OrganizationLogo&organizationId={organizationId}' : null,
+									logo: org.logoOriginalFileName ? '<img src="Media.action?OrganizationLogo&organizationId=' + org.organizationId + '" width=100 />' : '<div class="search-tool-org-logo-text">'+ Ext.String.capitalize(org.name).substring(0, 1) + '</div>',
 									handler: function(record) {
-										
+										var params = 'entityId=' + record.get('itemId') + '&entityName=' + encodeURIComponent(record.get('text'));
+										window.location.href='UserTool.action?load=Relationships&viewType=ORG&'+ params;										
 									}
 								});	
 							});							
@@ -226,8 +235,10 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 								views.push({
 									itemId: attributeType.attributeType,
 									text: attributeType.description,
+									logo: '<div class="search-tool-org-logo-text">'+ Ext.String.capitalize(attributeType.description).substring(0, 1) + '</div>',
 									handler: function(record) {
-										
+										var params = 'entityId=' + record.get('itemId') + '&entityName=' + encodeURIComponent(record.get('text'));
+										window.location.href='UserTool.action?load=Relationships&viewType=ATT&'+ params;											
 									}
 								});	
 							});							
@@ -256,8 +267,10 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 								views.push({
 									itemId: tag.tagId,
 									text: tag.text,
+									logo: '<div class="search-tool-org-logo-text">'+ Ext.String.capitalize(tag.text).substring(0, 1) + '</div>',
 									handler: function(record) {
-										
+										var params = 'entityId=' + record.get('text') + '&entityName=' + encodeURIComponent(record.get('text'));
+										window.location.href='UserTool.action?load=Relationships&viewType=TAGS&'+ params;											
 									}
 								});	
 							});							

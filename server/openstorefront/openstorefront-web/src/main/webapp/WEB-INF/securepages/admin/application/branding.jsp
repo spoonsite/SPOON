@@ -385,6 +385,15 @@
 											allowBlank: false,
 											emptyText: 'Media.action?GeneralMedia&name=logo',											
 											maxLength: 255
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Backsplash URL <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
+											name: 'homebackSplashUrl',
+											width: '100%',
+											allowBlank: false,
+											emptyText: 'Media.action?GeneralMedia&name=logo',											
+											maxLength: 255
 										},										
 										{
 											xtype: 'colorfield',
@@ -399,6 +408,13 @@
 											fieldLabel: 'Primary Text Color',
 											format: '#hex6',
 											name: 'primaryTextColor'
+										},	
+										{
+											xtype: 'colorfield',
+											width: '100%',
+											format: '#hex6',
+											fieldLabel: 'Secondary Color',
+											name: 'secondaryColor'
 										},										
 										{
 											xtype: 'colorfield',

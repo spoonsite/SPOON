@@ -30,20 +30,28 @@
 
 	Ext.onReady(function(){
 
-		Ext.create('Ext.Img', {																								
-			alt: 'logo',
-			cls: 'home-page-top-logo',					
-			src: 'images/di2elogo-sm.png',
-			renderTo: Ext.getBody()
-		});
+	
+		CoreService.brandingservice.getCurrentBranding().then(function(branding) {
+			Ext.create('Ext.Img', {	
+				id: 'topLogo',
+				alt: 'logo',
+				cls: 'home-page-top-logo',					
+				src: branding.secondaryLogoUrl,
+				renderTo: Ext.getBody()
+			});						
+		});		
 		
 
-		Ext.create('Ext.container.Viewport', {
-			//cls: 'home-backsplash',
-			style: 'background: white;',
+		Ext.create('Ext.container.Viewport', {			
+			cls: 'home-viewport',
 			layout: 'border',
 			listeners: {
 				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+					//if (width < 565) {
+					//	comp.hide();
+					//} else {
+					//	comp.show();
+					//}					
 					view.updateLayout(true, true);
 				}
 			},			

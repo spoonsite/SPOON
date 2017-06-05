@@ -54,7 +54,7 @@ Ext.define('OSF.landing.DefaultHeader', {
 				},
 				{
 					xtype: 'tbtext',
-					id: 'homeTitle',
+					itemId: 'homeTitle',
 					text: '',
 					cls: 'page-title'
 				},
@@ -70,21 +70,54 @@ Ext.define('OSF.landing.DefaultHeader', {
 					iconAlign: 'left',
 					text: 'Notifications',
 					handler: function() {
-						//notificationWin.show();
-						//notificationWin.refreshData();
+						var headerPanel = this.up('panel');
+						headerPanel.notificationWin.show();
+						headerPanel.notificationWin.refreshData();
 					}
 				},								
 				Ext.create('OSF.component.UserMenu', {									
 					ui: 'default',
-					initCallBack: function(usercontext) {
-						//setupServerNotifications(usercontext);	
+					initCallBack: function(usercontext) {				
+						setupServerNotifications(usercontext);	
 					}
 				})
 			]
 		}						
-	]
-				
-	
-	
+	],
+	initComponent: function () {
+		this.callParent();			
+		var headerPanel = this;
+		
+		headerPanel.notificationWin = Ext.create('OSF.component.NotificationWindow', {				
+		});	
+		
+		var checkNotifications = function(){
+			Ext.Ajax.request({
+				url: 'api/v1/resource/notificationevent',
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+
+					var unreadCount = 0;
+					Ext.Array.each(data.data, function(item){
+						if (!item.readMessage) {
+							unreadCount++;
+						}
+					});
+
+					if (unreadCount > 0) {
+						Ext.toast({
+							title: 'Notifications',
+							html: 'You have <span style="font-size: 16px; font-weight: bold;"> ' + unreadCount + ' unread</span> notifications.',
+							align: 'br',
+							closable: true
+						});
+					}
+				}
+			});
+
+		};
+		checkNotifications();		
+		
+	}	
 	
 });

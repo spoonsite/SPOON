@@ -246,6 +246,10 @@ limitations under the License.
 	color: ${actionBean.branding.primaryTextColor};
 }
 
+.home-viewport {
+	background: white !important;
+}
+
 .new-home-highlight-item {
 	text-align: center;    
 	color: whitesmoke;
@@ -399,6 +403,11 @@ limitations under the License.
 
 .search-tool-org-text-desc {
 	font-size: 12px;
+}
+
+.search-tool-org:hover {
+	cursor: pointer;
+	background: #fff9cc !important;
 }
 
 .search-tool-relation {
@@ -813,7 +822,7 @@ td.info-table {
 	background-size: 100%;
 	background-position: center top;
     background-repeat: no-repeat;
-	background-image: url('${pageContext.request.contextPath}/images/background_globe.jpg');
+	background-image: url('${actionBean.branding.homebackSplashUrl}');
 }
 
 .home-footer {

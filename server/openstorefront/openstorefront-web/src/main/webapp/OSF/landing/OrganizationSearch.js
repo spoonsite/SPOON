@@ -95,7 +95,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 					}
 				}
 			},
-			itemSelector: 'div.search-tool',			
+			itemSelector: 'div.search-tool-org',			
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',					
 					'<div class="search-tool-org">',
@@ -109,7 +109,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 								'</tpl>',								
 							'</td>',						
 							'<td class="search-tool-org-text">',										
-								'<a href="#" onclick="CoreUtil.pageActions.organizationSearch(\'{name}\');" class="search-tool-org-text-name link">{name}</a><br>',
+								'<span class="search-tool-org-text-name">{name}</span><br>',
 								'<span class="search-tool-org-text-desc">{description}</span>',
 							'</td>',
 						'</tr></table>',
@@ -118,11 +118,35 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 			),
 			listeners: {
 				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (!record.tool) {
-						record.tool = Ext.create(record.data.toolType, {							
-						});
-					}
-					record.tool.handler(record, item);
+				
+					var searchObj = {
+						"sortField": null,
+						"sortDirection": "ASC",
+						"startOffset": 0,
+						"max": 2147483647,
+						"searchElements": [{
+								"searchType": "COMPONENT",
+								"field": "organization",
+								"value": record.get('name'),
+								"keyField": null,
+								"keyValue": null,
+								"startDate": null,
+								"endDate": null,
+								"caseInsensitive": false,
+								"numberOperation": "EQUALS",
+								"stringOperation": "EQUALS",
+								"mergeCondition": "OR"
+							}]
+					};
+
+					var searchRequest = {
+						type: 'Advance',
+						query: searchObj
+					};
+
+					CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+					window.location.href = 'searchResults.jsp';						
+					
 				}
 			}
 		}
@@ -130,38 +154,6 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 	initComponent: function () {
 		this.callParent();			
 		var	orgView = this;
-		
-		CoreUtil.pageActions.organizationSearch = function(name) {
-			
-			var searchObj = {
-				"sortField": null,
-				"sortDirection": "ASC",
-				"startOffset": 0,
-				"max": 2147483647,
-				"searchElements": [{
-						"searchType": "COMPONENT",
-						"field": "organization",
-						"value": name,
-						"keyField": null,
-						"keyValue": null,
-						"startDate": null,
-						"endDate": null,
-						"caseInsensitive": false,
-						"numberOperation": "EQUALS",
-						"stringOperation": "EQUALS",
-						"mergeCondition": "OR"
-					}]
-			};
-
-			var searchRequest = {
-				type: 'Advance',
-				query: searchObj
-			};
-
-			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-			window.location.href = 'searchResults.jsp';				
-			
-		};
 		
 	}
 	
