@@ -16,11 +16,8 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,9 +56,6 @@ public class AdminHighlightTest extends AdminTestBase {
     public void createHighlight(WebDriver driver) throws InterruptedException {
 
         driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
-
-        // Check to see if already exists and delete if existing
-        deleteHighlight(driver);
 
         // Click add button
         WebDriverWait waitAddBtn = new WebDriverWait(driver, 20);
@@ -145,8 +139,8 @@ public class AdminHighlightTest extends AdminTestBase {
 
     }
 
-    @AfterClass
-    public void cleanUp() throws InterruptedException {
+    @After
+    public void cleanUpTest() throws InterruptedException {
 
         for (WebDriver driver : webDriverUtil.getDrivers()) {
             if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
