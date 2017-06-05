@@ -147,7 +147,6 @@ public class NewSecurityRole
 		}
 	}
 
-	
 	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
@@ -157,43 +156,66 @@ public class NewSecurityRole
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
 
-			// Wait for User Permissions box to come up
-			WebDriverWait waitBox = new WebDriverWait(driver, 10);
-			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
-
 			// Get list of Codes in the Permissions Available (Left) side.  Get table for Current Role Permissions (Right) side
-			
-			// ***** No easy id # here! *****
-			List<WebElement> availableList = driver.findElements(By.cssSelector(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller td:nth-child(odd)"));
-		//	WebElement currentRoleTable = driver.findElement(By.cssSelector(""));
+			WebDriverWait waitPermTable = new WebDriverWait(driver, 10);
+			List<WebElement> permissionsTable = waitPermTable.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-panel.x-box-item.x-window-item.x-panel-default.x-grid")));
 
-		/*	// Loop through restrictedList 
-			for (WebElement restrictedItem : availableList) {
-			//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+			// Got both tables (left and right)
+			WebElement available = permissionsTable.get(0);
+			WebElement currentPermissions = permissionsTable.get(1);
+
+			// ---------------------------
+			// Get left side data in table
+			WebDriverWait waitPermissionsAvail = new WebDriverWait(driver, 10);
+			List<WebElement> permissionsAvailable = waitPermissionsAvail.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(available, By.cssSelector("tr td:nth-child(odd)")));
+
+			// Wait until nested table is there on the RIGHT
+			WebDriverWait waitCurrRole = new WebDriverWait(driver, 10);
+			WebElement currentRoleTable = waitCurrRole.until(ExpectedConditions.presenceOfNestedElementLocatedBy(currentPermissions, By.cssSelector(".x-panel-body.x-grid-with-col-lines.x-grid-with-row-lines.x-grid-body.x-panel-body-default.x-panel-body-default")));
+
+			// Loop through Permissions Available List 
+			for (WebElement permissAvail : permissionsAvailable) {
+				// System.out.println(permissAvail.getText() + " is in PEMISSIONS AVAILABLE list in the table");
 
 				// Loop through the user set data Hashmap
-				for (String userDataSource : dataSource.keySet()) {
-				//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
-
+				for (String userDataSource : permissions.keySet()) {
+					//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
 					// If the User setting equals the setting in the Restricted List
-					if (userDataSource.equals(restrictedItem.getText())) {
+					if (userDataSource.equals(permissAvail.getText())) {
 						// If it is supposed to be in Accessible or TRUE in hashmap
-						if (dataSource.get(userDataSource)) {
-							// Move it to the right (Restricted to Accessible)
-							// System.out.println(userDataSource + "*** READY TO BE MOVED ***");
-							(new Actions(driver)).dragAndDrop(restrictedItem, currentRoleTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+						if (permissions.get(userDataSource)) {
+							// Move it to the right 
+							//System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							WebDriverWait waitPermission = new WebDriverWait(driver, 5);
+							WebElement permissionTableLeft = waitPermission.until(ExpectedConditions.elementToBeClickable(permissAvail));
+
+							Actions builder = new Actions(driver);
+							builder.moveToElement(permissionTableLeft).perform();
+							sleep(100);
+							builder.dragAndDrop(permissionTableLeft, currentRoleTable);
+							sleep(100);
+							builder.perform();
+							sleep(100);
+							LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
+									+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
 				}
 			}
-			*/
-			
+			// Hit SAVE! (Data Restrictions)
+			/*	driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
+			WebDriverWait popupNotPresent = new WebDriverWait(driver, 5);
+			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+			LOG.log(Level.INFO, "--- SAVED Permissions Settings for: " + roleName + "---");
+			 */
+			System.out.println("blah");
+			// *********** Move RIGHT TO LEFT (currentRoleTable -> PermissionsAvail)
+		
+
 		}
 	}
 
-	
 	// True in boolean means to add it to the accessible side, false means to remove it.
 	public void manageDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
@@ -222,11 +244,11 @@ public class NewSecurityRole
 
 			// Loop through restrictedList 
 			for (WebElement restrictedItem : restrictedList) {
-			//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+				//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
 
 				// Loop through the user set data Hashmap
 				for (String userDataSource : dataSource.keySet()) {
-				//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+					//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
 
 					// If the User setting equals the setting in the Restricted List
 					if (userDataSource.equals(restrictedItem.getText())) {
@@ -248,18 +270,18 @@ public class NewSecurityRole
 
 			// Loop through accessibleList
 			for (WebElement accessibleItem : accessibleList) {
-				 System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
+				System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
 
 				// Loop through the user set data Hashmap
 				for (String userDataSource : dataSource.keySet()) {
-					 System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+					System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
 
 					// If the User setting equals the setting in the Restricted List
 					if (userDataSource.equals(accessibleItem.getText())) {
 						// If it is supposed to be in Restricted or FALSE in hashmap
 						if (!dataSource.get(userDataSource)) {
 							// Move it to the right (Restricted to Accessible)
-							 System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							System.out.println(userDataSource + "*** READY TO BE MOVED ***");
 							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
 							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
@@ -269,7 +291,7 @@ public class NewSecurityRole
 			}
 			// Hit SAVE! (Data Restrictions)
 			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
-			
+
 			WebDriverWait popupNoPresent = new WebDriverWait(driver, 5);
 			popupNoPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sourceitivity) Settings ---");
@@ -277,7 +299,6 @@ public class NewSecurityRole
 		}
 	}
 
-	
 	// Feed in a <List> of Data Distributions to Activate
 	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{

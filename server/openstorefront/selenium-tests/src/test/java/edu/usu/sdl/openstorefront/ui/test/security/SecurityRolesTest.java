@@ -68,14 +68,15 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 		
 			/* permissions	"ADMIN-ALERT-MANAGEMENT", "ADMIN-ATTRIBUTE-MANAGEMENT", "ADMIN-BRANDING", "ADMIN-CONTACT-MANAGEMENT",
-				options:	"ADMIN-DATA-IMPORT-EXPORT", "ADMIN-ENTRY-MANAGEMENT", "ADMIN-ENTRY-TEMPLATES", "ADMIN-EVALUATION-MANAGEMENT",
-							"ADMIN-EVALUATION-TEMPLATE", "ADMIN-EVALUATION-TEMPLATE-CHECKLIST", 
+				options:	"ADMIN-DATA-IMPORT-EXPORT", "ADMIN-ENTRY-MANAGEMENT", "ADMIN-ENTRY-TYPES", "ADMIN-ENTRY-TEMPLATES", 
+							"ADMIN-EVALUATION-MANAGEMENT",	"ADMIN-EVALUATION-TEMPLATE", "ADMIN-EVALUATION-TEMPLATE-CHECKLIST", 
 							"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", "ADMIN-EVALUATION-TEMPLATE-SECTION", "ADMIN-FEEDBACK",
 							"ADMIN-HIGHLIGHTS", ADMIN-INTEGRATION", "ADMIN-JOB-MANAGEMENT", "ADMIN-LOOKUPS", "ADMIN-MEDIA", 
 							"ADMIN-MESSAGE-MANAGEMENT", "ADMIN-ORGANIZATION", "ADMIN-QUESTIONS", "ADMIN-REVIEW", "ADMIN-SEARCH", 
-							"ADMIN-SECURITY", "ADMIN-ROLE-MANAGEMENT", "ADMIN-SYSTEM-MANAGEMENT", "ADMIN-TRACKING", "ADMIN-USER-MANAGEMENT",
-							"ADMIN-USER-MANAGEMENT-PROFILES", "ADMIN-WATCHES", "ADMIN-ORGANIZATION-EXTRACTION", "API-DOCS", "ENTRY-TAG",
-							"EVALUATIONS", "RELATION-VIEW-TOOL", "REPORTS", "REPORTS-ALL", "REPORTS-SCHEDULE", "USER-SUBMISSIONS"
+							"ADMIN-SECURITY", "ADMIN-ROLE-MANAGEMENT", "ADMIN-SYSTEM-MANAGEMENT", "ADMIN-TEMPMEDIA-MANAGEMENT", 
+							"ADMIN-TRACKING", "ADMIN-USER-MANAGEMENT", "ADMIN-USER-MANAGEMENT-PROFILES", "ADMIN-WATCHES", 
+							"ADMIN-ORGANIZATION-EXTRACTION", "API-DOCS", "ENTRY-TAG", "EVALUATIONS", "RELATION-VIEW-TOOL", 
+							"REPORTS", "REPORTS-ALL", "REPORTS-SCHEDULE", "USER-SUBMISSIONS"
 			*/						
 			permissions.put("ADMIN-ALERT-MANAGEMENT", true);
 			permissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", true);
@@ -83,6 +84,7 @@ public class SecurityRolesTest
 			permissions.put("ADMIN-CONTACT-MANAGEMENT", true);
 			permissions.put("ADMIN-DATA-IMPORT-EXPORT", false);
 			permissions.put("ADMIN-ENTRY-MANAGEMENT", true);
+			permissions.put("ADMIN-ENTRY-TYPES", true);
 			permissions.put("ADMIN-ENTRY-TEMPLATES", false);
 			permissions.put("ADMIN-EVALUATION-MANAGEMENT", true);
 			permissions.put("ADMIN-EVALUATION-TEMPLATE", false);
@@ -103,6 +105,7 @@ public class SecurityRolesTest
 			permissions.put("ADMIN-SECURITY", true);
 			permissions.put("ADMIN-ROLE-MANAGEMENT", false);
 			permissions.put("ADMIN-SYSTEM-MANAGEMENT", true);
+			permissions.put("ADMIN-TEMPMEDIA-MANAGEMENT", true);
 			permissions.put("ADMIN-TRACKING", false);
 			permissions.put("ADMIN-USER-MANAGEMENT", true);
 			permissions.put("ADMIN-USER-MANAGEMENT-PROFILES", false);
@@ -124,7 +127,7 @@ public class SecurityRolesTest
 			dataSource.put("DI2E", true);
 			dataSource.put("ER2", false);
 
-			newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
+		//	newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
 
 			
 			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
@@ -139,7 +142,7 @@ public class SecurityRolesTest
 			dataSens.put("PUBLIC", false);
 			dataSens.put("SENSITIVE", true);
 			
-			newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
+		//	newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
 		}
 	}
 	
