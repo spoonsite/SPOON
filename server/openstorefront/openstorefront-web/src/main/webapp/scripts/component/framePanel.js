@@ -24,7 +24,7 @@
 Ext.define('OSF.ux.IFrame', {
     extend: 'Ext.Component',
 
-    alias: 'OSF.widget.uxiframe',
+    alias: 'widget.osf-uxiframe',
 
     loadMask: 'Loading...',
 
