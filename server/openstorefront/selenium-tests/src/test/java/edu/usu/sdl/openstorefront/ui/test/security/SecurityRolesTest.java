@@ -78,68 +78,68 @@ public class SecurityRolesTest
 							"ADMIN-ORGANIZATION-EXTRACTION", "API-DOCS", "ENTRY-TAG", "EVALUATIONS", "RELATION-VIEW-TOOL", 
 							"REPORTS", "REPORTS-ALL", "REPORTS-SCHEDULE", "USER-SUBMISSIONS"
 			*/						
-			permissions.put("ADMIN-ALERT-MANAGEMENT", true);
-			permissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", true);
+			permissions.put("ADMIN-ALERT-MANAGEMENT", false);
+			permissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", false);
 			permissions.put("ADMIN-BRANDING", false);
-			permissions.put("ADMIN-CONTACT-MANAGEMENT", true);
+			permissions.put("ADMIN-CONTACT-MANAGEMENT", false);
 			permissions.put("ADMIN-DATA-IMPORT-EXPORT", false);
-			permissions.put("ADMIN-ENTRY-MANAGEMENT", true);
-			permissions.put("ADMIN-ENTRY-TYPES", true);
+			permissions.put("ADMIN-ENTRY-MANAGEMENT", false);
+			permissions.put("ADMIN-ENTRY-TYPES", false);
 			permissions.put("ADMIN-ENTRY-TEMPLATES", false);
-			permissions.put("ADMIN-EVALUATION-MANAGEMENT", true);
+			permissions.put("ADMIN-EVALUATION-MANAGEMENT", false);
 			permissions.put("ADMIN-EVALUATION-TEMPLATE", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST", true);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST", false);
 			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE-SECTION", true);
+			permissions.put("ADMIN-EVALUATION-TEMPLATE-SECTION", false);
 			permissions.put("ADMIN-FEEDBACK", false);
-			permissions.put("ADMIN-HIGHLIGHTS", true);
+			permissions.put("ADMIN-HIGHLIGHTS", false);
 			permissions.put("ADMIN-INTEGRATION", false);
-			permissions.put("ADMIN-JOB-MANAGEMENT", true);
+			permissions.put("ADMIN-JOB-MANAGEMENT", false);
 			permissions.put("ADMIN-LOOKUPS", false);
-			permissions.put("ADMIN-MEDIA", true);
+			permissions.put("ADMIN-MEDIA", false);
 			permissions.put("ADMIN-MESSAGE-MANAGEMENT", false);
-			permissions.put("ADMIN-ORGANIZATION", true);
+			permissions.put("ADMIN-ORGANIZATION", false);
 			permissions.put("ADMIN-QUESTIONS", false);
-			permissions.put("ADMIN-REVIEW", true);
+			permissions.put("ADMIN-REVIEW", false);
 			permissions.put("ADMIN-SEARCH", false);
-			permissions.put("ADMIN-SECURITY", true);
+			permissions.put("ADMIN-SECURITY", false);
 			permissions.put("ADMIN-ROLE-MANAGEMENT", false);
-			permissions.put("ADMIN-SYSTEM-MANAGEMENT", true);
-			permissions.put("ADMIN-TEMPMEDIA-MANAGEMENT", true);
+			permissions.put("ADMIN-SYSTEM-MANAGEMENT", false);
+			permissions.put("ADMIN-TEMPMEDIA-MANAGEMENT", false);
 			permissions.put("ADMIN-TRACKING", false);
-			permissions.put("ADMIN-USER-MANAGEMENT", true);
+			permissions.put("ADMIN-USER-MANAGEMENT", false);
 			permissions.put("ADMIN-USER-MANAGEMENT-PROFILES", false);
-			permissions.put("ADMIN-WATCHES", true);
+			permissions.put("ADMIN-WATCHES", false);
 			permissions.put("ADMIN-ORGANIZATION-EXTRACTION", false);
-			permissions.put("API-DOCS", true);
+			permissions.put("API-DOCS", false);
 			permissions.put("ENTRY-TAG", false);
-			permissions.put("EVALUATIONS", true);
+			permissions.put("EVALUATIONS", false);
 			permissions.put("RELATION-VIEW-TOOL", false);
-			permissions.put("REPORTS", true);
+			permissions.put("REPORTS", false);
 			permissions.put("REPORTS-ALL", false);
-			permissions.put("REPORTS-SCHEDULE", true);
+			permissions.put("REPORTS-SCHEDULE", false);
 			permissions.put("USER-SUBMISSIONS", false);
 
 			newSecurityRole.managePermissions(driver, "AUTO-User", permissions);
 
 
 			// dataSource options: "DI2E", "ER2"
-			dataSource.put("DI2E", true);
+			dataSource.put("DI2E", false);
 			dataSource.put("ER2", false);
 
-		//	newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
+	//		newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
 
 			
 			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
 			//					 "ITAR", "PUBLIC", "SENSITIVE"
 			dataSens.put("DISTROA", true);
-			dataSens.put("DISTROB", false);
+			dataSens.put("DISTROB", true);
 			dataSens.put("DISTROC", true);
-			dataSens.put("DISTROD", false);
+			dataSens.put("DISTROD", true);
 			dataSens.put("DISTROE", true);
-			dataSens.put("DISTROF", false);
+			dataSens.put("DISTROF", true);
 			dataSens.put("ITAR", true);
-			dataSens.put("PUBLIC", false);
+			dataSens.put("PUBLIC", true);
 			dataSens.put("SENSITIVE", true);
 			
 		//	newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);

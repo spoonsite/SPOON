@@ -451,7 +451,11 @@
 							{
 								xtype: 'grid',
 								itemId: 'availableGrid',
-								title: 'Permissions Available',
+								title: 'Permissions Available', 
+								autoEl: {
+									'data-test' : 'permissionsAvailableTable'
+								},
+
 								width: '50%',
 								margin: '0 5 0 0',
 								columnLines: true,
@@ -501,6 +505,9 @@
 								xtype: 'grid',
 								itemId: 'rolePermissionsGrid',
 								title: 'Current Role Permissions',
+								autoEl: {
+									'data-test' : 'currentRolePermissionsTable'
+								},
 								width: '50%',
 								columnLines: true,
 								store: {									

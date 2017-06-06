@@ -157,61 +157,116 @@ public class NewSecurityRole
 			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
 
 			// Get list of Codes in the Permissions Available (Left) side.  Get table for Current Role Permissions (Right) side
-			WebDriverWait waitPermTable = new WebDriverWait(driver, 10);
-			List<WebElement> permissionsTable = waitPermTable.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-panel.x-box-item.x-window-item.x-panel-default.x-grid")));
+			WebDriverWait waitAvailable = new WebDriverWait(driver, 10);
+			WebElement available = waitAvailable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body")));
 
-			// Got both tables (left and right)
-			WebElement available = permissionsTable.get(0);
-			WebElement currentPermissions = permissionsTable.get(1);
+			WebDriverWait waitcurrentPermissions = new WebDriverWait(driver, 10);
+			WebElement currentPermissions = waitcurrentPermissions.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='currentRolePermissionsTable'] .x-panel-body")));
 
-			// ---------------------------
-			// Get left side data in table
-			WebDriverWait waitPermissionsAvail = new WebDriverWait(driver, 10);
-			List<WebElement> permissionsAvailable = waitPermissionsAvail.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(available, By.cssSelector("tr td:nth-child(odd)")));
+			// *** IF if the list on the left is blank it will error out. **
+			try {
+				// *** Move LEFT TO RIGHT (PermissionsAvail -> currentRoleTable IF permissions HashMap is true) ***
+				// Get left side data in table 
+				List<WebElement> permissionsAvailable = driver.findElements(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body tr td:nth-child(odd)"));
+				
+				// Loop through Permissions Available List 
+				for (WebElement permissAvail : permissionsAvailable) {
+					// System.out.println(permissAvail.getText() + " is in PEMISSIONS AVAILABLE list in the table");
 
-			// Wait until nested table is there on the RIGHT
-			WebDriverWait waitCurrRole = new WebDriverWait(driver, 10);
-			WebElement currentRoleTable = waitCurrRole.until(ExpectedConditions.presenceOfNestedElementLocatedBy(currentPermissions, By.cssSelector(".x-panel-body.x-grid-with-col-lines.x-grid-with-row-lines.x-grid-body.x-panel-body-default.x-panel-body-default")));
+					// Loop through the user set data Hashmap
+					for (String userDataSource : permissions.keySet()) {
+						//	System.out.println(userDataSource + " trying to match what is in the table to this that the user inputted.");
+						// System.out.println("MATCHED userDataSoure " + userDataSource + " WITH permissionAvail " + permissAvail.getText());
 
-			// Loop through Permissions Available List 
-			for (WebElement permissAvail : permissionsAvailable) {
-				// System.out.println(permissAvail.getText() + " is in PEMISSIONS AVAILABLE list in the table");
+						// If the User setting equals the setting in the Restricted List
+						if (userDataSource.equals(permissAvail.getText())) {
+							// If it is supposed to be in Accessible or TRUE in hashmap
+							if (permissions.get(userDataSource)) {
+								// Move it to the right 
+								System.out.println(userDataSource + " *** READY TO BE MOVED to the RIGHT ***");
+								WebDriverWait waitPermission = new WebDriverWait(driver, 5);
+								WebElement permissionTableLeft = waitPermission.until(ExpectedConditions.elementToBeClickable(permissAvail));
+
+								Actions builder = new Actions(driver);
+								builder.moveToElement(permissionTableLeft).perform();
+								sleep(200);
+								builder.dragAndDrop(permissionTableLeft, currentPermissions);
+								sleep(200);
+								builder.perform();
+								sleep(200);
+								// LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
+								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							}
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				System.out.println(e + " ****************** Nothing in the LEFT-hand list (to move to the RIGHT), moving on ************************");
+			}
+
+			// DUPLICATE HERE 7 Jun
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// *** Move RIGHT TO LEFT (currentRoleTable -> PermissionsAvail) ***
+			// Get RIGHT (Current Role Permissions) side of the table in a List of WebElements, currPermissDisplayed
+			WebDriverWait waitCurrRolePermiss = new WebDriverWait(driver, 10);
+			// *** FAILS *** if current role permission table (RIGHT) is blank (all on LEFT) ***********
+			List<WebElement> currPermissDisplayed = waitCurrRolePermiss.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(currentPermissions, By.cssSelector("tr td:nth-child(odd)")));
+
+			// Wait until nested table is there on the LEFT, use for DESTINATION in the drag and drop
+			WebDriverWait waitPermisAvailb = new WebDriverWait(driver, 10);
+			WebElement permissAvailbTable = waitPermisAvailb.until(ExpectedConditions.presenceOfNestedElementLocatedBy(available, By.cssSelector(".x-panel-body.x-grid-with-col-lines.x-grid-with-row-lines.x-grid-body.x-panel-body-default.x-panel-body-default")));
+
+			// Loop through currentPermissionsDisplayed List 
+			for (WebElement currDisplayed : currPermissDisplayed) {
+				// System.out.println(currDisplayed.getText() + " is displayed in the Current Roles Permissions table");
 
 				// Loop through the user set data Hashmap
 				for (String userDataSource : permissions.keySet()) {
-					//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
-					// If the User setting equals the setting in the Restricted List
-					if (userDataSource.equals(permissAvail.getText())) {
-						// If it is supposed to be in Accessible or TRUE in hashmap
-						if (permissions.get(userDataSource)) {
-							// Move it to the right 
-							//System.out.println(userDataSource + "*** READY TO BE MOVED ***");
-							WebDriverWait waitPermission = new WebDriverWait(driver, 5);
-							WebElement permissionTableLeft = waitPermission.until(ExpectedConditions.elementToBeClickable(permissAvail));
+					//System.out.println(userDataSource + " Looping through userDataSource that was inputted, looking for a MATCH");
+
+					// If the userDataSource matches what id in currDisplayed (RIGHT) List
+					if (userDataSource.equals(currDisplayed.getText())) {
+						// System.out.println("MATCHED userDataSoure " + userDataSource + " WITH currDisplayed " + currDisplayed.getText());
+
+						// If the userDataSource Boolean is FALSE 
+						if (!permissions.get(userDataSource)) {
+							// Move it to the LEFT
+							System.out.println(userDataSource + " *** READY TO BE MOVED to the LEFT***");
+							WebDriverWait waitPermissionAvail = new WebDriverWait(driver, 5);
+							WebElement currDisplayedRight = waitPermissionAvail.until(ExpectedConditions.elementToBeClickable(currDisplayed));
 
 							Actions builder = new Actions(driver);
-							builder.moveToElement(permissionTableLeft).perform();
-							sleep(100);
-							builder.dragAndDrop(permissionTableLeft, currentRoleTable);
-							sleep(100);
+							builder.moveToElement(currDisplayedRight).perform();
+							sleep(200);
+							builder.dragAndDrop(currDisplayedRight, permissAvailbTable);
+							sleep(200);
 							builder.perform();
-							sleep(100);
-							LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
-									+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							sleep(200);
+							// LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the (LEFT) PERMISSIONS AVIALABLE column, for \n'"
+							//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
+
 						}
 					}
 				}
 			}
+
 			// Hit SAVE! (Data Restrictions)
-			/*	driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
+			driver.findElement(By.cssSelector(".x-window.x-layer .x-btn.x-box-item.x-toolbar-item")).click();
 			WebDriverWait popupNotPresent = new WebDriverWait(driver, 5);
-			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+			// Look for the mask of "Loading..." to be gone after save
+			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component x-border-box x-mask x-component-default")));
 			LOG.log(Level.INFO, "--- SAVED Permissions Settings for: " + roleName + "---");
-			 */
-			System.out.println("blah");
-			// *********** Move RIGHT TO LEFT (currentRoleTable -> PermissionsAvail)
-		
 
 		}
 	}
@@ -255,9 +310,9 @@ public class NewSecurityRole
 						// If it is supposed to be in Accessible or TRUE in hashmap
 						if (dataSource.get(userDataSource)) {
 							// Move it to the right (Restricted to Accessible)
-							// System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							System.out.println(userDataSource + " *** READY TO BE MOVED to the LEFT ***");
 							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							// LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
@@ -281,9 +336,9 @@ public class NewSecurityRole
 						// If it is supposed to be in Restricted or FALSE in hashmap
 						if (!dataSource.get(userDataSource)) {
 							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSource + "*** READY TO BE MOVED ***");
+							System.out.println(userDataSource + " *** READY TO BE MOVED to the RIGHT***");
 							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							// LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
@@ -294,6 +349,7 @@ public class NewSecurityRole
 
 			WebDriverWait popupNoPresent = new WebDriverWait(driver, 5);
 			popupNoPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
 			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sourceitivity) Settings ---");
 
 		}
@@ -338,9 +394,9 @@ public class NewSecurityRole
 						// If it is supposed to be in Accessible or TRUE in hashmap
 						if (dataSens.get(userDataSens)) {
 							// Move it to the right (Restricted to Accessible)
-							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
+							System.out.println(userDataSens + " *** READY TO BE MOVED to the RIGHT ***");
 							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							// LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
@@ -364,9 +420,9 @@ public class NewSecurityRole
 						// If it is supposed to be in Restricted or FALSE in hashmap
 						if (!dataSens.get(userDataSens)) {
 							// Move it to the right (Restricted to Accessible)
-							// System.out.println(userDataSens + "*** READY TO BE MOVED ***");
+							System.out.println(userDataSens + " *** READY TO BE MOVED to the LEFT ***");
 							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
-							LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+							// LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 							break;
 						}
 					}
