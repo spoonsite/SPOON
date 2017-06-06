@@ -104,8 +104,6 @@ public class AdminHighlightTest extends AdminTestBase {
             WebElement saveBtn = waitSaveBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']")));
             saveBtn.click();
 
-            WebDriverWait waitLoading = new WebDriverWait(driver, 10);
-            waitLoading.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
             WebDriverWait waitLoadingFinished = new WebDriverWait(driver, 20);
             waitLoadingFinished.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
 

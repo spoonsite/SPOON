@@ -68,7 +68,7 @@ public class WebDriverUtil
 			WebDriverType webDriverType = WebDriverType.valueOf(driverKey.toUpperCase().trim());
 			drivers.addAll(Arrays.asList(webDriverType.getDrivers()));
 		} catch (Exception e) {
-			throw new OpenStorefrontRuntimeException("Unable to find web driver or it not supported.", "Check configuration.  Key test.drivers = " + driverKey);
+			throw new OpenStorefrontRuntimeException("Unable to find web driver or it not supported.", "Check configuration.  Key test.drivers = " + driverKey, e);
 		}
 		for (WebDriver driver : drivers){
 			setBrowserSize(driver);

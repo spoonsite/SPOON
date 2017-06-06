@@ -24,7 +24,7 @@ import org.openqa.selenium.WebDriver;
  *
  * @author ccummings
  */
-public class AdminEntryTypesTest
+public class AdminEntryTypesTest extends BrowserTestBase
 {
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
@@ -36,7 +36,7 @@ public class AdminEntryTypesTest
 
     public void setup(WebDriver driver) {
 
-       
+       driver.get(webDriverUtil.getPage("AdminTool.action?load=Entry-Types"));
     }
 
     public void createEntryType(WebDriver driver, String attrName, String attrCode) {

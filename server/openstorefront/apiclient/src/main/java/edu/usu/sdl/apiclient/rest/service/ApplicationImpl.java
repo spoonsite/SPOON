@@ -168,7 +168,6 @@ public class ApplicationImpl
 	{
 		APIResponse response = client.httpPut(basePath + "logger/" + loggername + "/level", level, null);
 		LoggerView logView = response.getResponse(LoggerView.class);
-		
 		return logView;
 	}
 

@@ -1584,6 +1584,7 @@
 							},
 							{
 								text: 'Add New Code',
+								id: 'addNewCodeAttr',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function () {
