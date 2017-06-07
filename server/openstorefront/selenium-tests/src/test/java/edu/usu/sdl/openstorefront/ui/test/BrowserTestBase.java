@@ -123,56 +123,48 @@ public class BrowserTestBase
 	 * @return true if cell is found, false otherwise
 	 * @throws InterruptedException
 	 */
-	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver) throws InterruptedException
+	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
 		int fRow = -1;
-		int fColumn = -1;
 
-		List<WebElement> allRows = new ArrayList<WebElement>();
 		try {
+			List<WebElement> allRows = new ArrayList<WebElement>();
 			WebDriverWait waitForTable = new WebDriverWait(driver, 20);
-			allRows = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
-		} catch (Exception e) {
+			allRows = waitForTable.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
 
-		}
+			int theRow = 0;
+			for (WebElement row : allRows) {
 
-		// Iterate through rows
-		int theRow = 0;
-		for (WebElement row : allRows) {
+				List<WebElement> cells = new ArrayList<WebElement>();
+				try {
+					WebDriverWait waitForCells = new WebDriverWait(driver, 20);
+					cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+					theRow++;
 
-			List<WebElement> cells = new ArrayList<WebElement>();
-			try {
-				WebDriverWait waitForCells = new WebDriverWait(driver, 20);
-				cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
-				theRow++;
-			} catch (Exception e) {
+					WebElement cell = cells.get(columnIndex);
+					// Iterate through cells
+					if (cell.getText().equals(searchFor)) {
+						fRow = theRow;
+						LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ". ---");
+						Actions builder = new Actions(driver);
+						builder.moveToElement(row).perform();
+						sleep(100);
+						builder.click().perform();
+						return true;
+						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
+					}
+				} catch (Exception e) {
 
-			}
-
-			// Iterate through cells
-			int theColumn = 0;
-			for (WebElement cell : cells) {
-				//tableText[theRow][theColumn] = cell.getText();
-				//System.out.println("Row = " + theRow + " Cell = " + theColumn + " TEXT = " + tableText[theRow][theColumn]);
-
-				// If text found remember row, column
-				if (searchFor.equals(cell.getText())) {
-					fRow = theRow;
-					fColumn = theColumn;
-					LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ", COLUMN " + fColumn + ". ---");
-					Actions builder = new Actions(driver);
-					builder.moveToElement(cell);
-					builder.click();
-					builder.build().perform();
-					return true;
-					// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
 				}
-
-				theColumn++;
 			}
+
+		} catch (Exception e) {
+			LOG.log(Level.WARNING,
+					"*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
+			LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ". ---");
+			System.out.println(e);
 		}
 
-		LOG.log(Level.WARNING, "*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
 		return false;
 		//return new TableItem(fRow, fColumn);
 	}

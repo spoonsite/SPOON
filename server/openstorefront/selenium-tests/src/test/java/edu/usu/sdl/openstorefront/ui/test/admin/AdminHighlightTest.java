@@ -89,7 +89,7 @@ public class AdminHighlightTest extends AdminTestBase {
     public void editHighlight(WebDriver driver) throws InterruptedException {
 
         // locate highlight in table and edit
-        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
+        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
 
             // Click Edit
             WebDriverWait waitEditBtn = new WebDriverWait(driver, 20);
@@ -116,7 +116,7 @@ public class AdminHighlightTest extends AdminTestBase {
 
     public void deleteHighlight(WebDriver driver) throws InterruptedException {
 
-        assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver));
+        assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0));
         
         WebDriverWait wait = new WebDriverWait(driver, 20);
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
@@ -141,7 +141,7 @@ public class AdminHighlightTest extends AdminTestBase {
     public void cleanUpTest() throws InterruptedException {
 
         for (WebDriver driver : webDriverUtil.getDrivers()) {
-            if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver)) {
+            if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
 
                 WebDriverWait wait = new WebDriverWait(driver, 20);
                 WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
