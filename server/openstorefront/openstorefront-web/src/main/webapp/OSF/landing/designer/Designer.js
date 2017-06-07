@@ -77,17 +77,20 @@ Ext.define('OSF.landing.designer.Designer', {
 		
 		designerPanel.liveDesigner = Ext.create('OSF.landing.designer.LiveDesigner', {
 			title: 'Designer',
-			iconCls: 'fa fa-rotate-90 fa-file-image-o'
+			iconCls: 'fa fa-rotate-90 fa-file-image-o',
+			designerPanel: designerPanel
 		});
 		
 		designerPanel.code = Ext.create('OSF.landing.designer.Code', {
 			title: 'Code',
-			iconCls: 'fa fa-rotate-90 fa-cogs'
+			iconCls: 'fa fa-rotate-90 fa-cogs',
+			designerPanel: designerPanel
 		});
 		
 		designerPanel.preview = Ext.create('OSF.landing.designer.Preview', {
 			title: 'Preview',
-			iconCls: 'fa fa-rotate-90 fa-eye'
+			iconCls: 'fa fa-rotate-90 fa-eye',
+			designerPanel: designerPanel
 		});
 		
 		designerPanel.add(designerPanel.liveDesigner);
@@ -102,7 +105,17 @@ Ext.define('OSF.landing.designer.Designer', {
 		designerPanel.setActiveItem(designerPanel.liveDesigner);
 	},
 	loadData: function (branding) {
+		var designerPanel = this;
 		
-	}	
+	},
+	updateAll: function(componentBlocks) {
+		var designerPanel = this;
+		
+		if (designerPanel.liveDesigner) {
+			designerPanel.liveDesigner.updateDesigner(componentBlocks);
+			var fullCode = designerPanel.code.updateGeneratedCode(componentBlocks);
+			designerPanel.preview.updatePreview(fullCode);
+		}
+	}
 	
 });

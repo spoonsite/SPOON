@@ -84,7 +84,7 @@ Ext.define('OSF.landing.designer.Code', {
 	loadData: function (branding) {
 		
 	},
-	updateGeneratedCode: function(newCode) {
+	updateGeneratedCode: function(componentBlocks) {
 		
 	}
 	

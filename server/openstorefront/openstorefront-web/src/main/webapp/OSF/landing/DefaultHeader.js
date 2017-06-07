@@ -70,26 +70,27 @@ Ext.define('OSF.landing.DefaultHeader', {
 					iconAlign: 'left',
 					text: 'Notifications',
 					handler: function() {
-						var headerPanel = this.up('panel');
-						headerPanel.notificationWin.show();
-						headerPanel.notificationWin.refreshData();
+						//var headerPanel = this.up('panel');
+						var notWin = Ext.create('OSF.component.NotificationWindow', {								
+							closeAction: 'destroy'
+						});
+						notWin.show();
+						//notWin.refreshData();
 					}
-				},								
-				Ext.create('OSF.component.UserMenu', {									
+				},		
+				{
+					xtype: 'osf-UserMenu',
 					ui: 'default',
 					initCallBack: function(usercontext) {				
 						setupServerNotifications(usercontext);	
 					}
-				})
+				}
 			]
 		}						
 	],
 	initComponent: function () {
 		this.callParent();			
 		var headerPanel = this;
-		
-		headerPanel.notificationWin = Ext.create('OSF.component.NotificationWindow', {				
-		});	
 		
 		var checkNotifications = function(){
 			Ext.Ajax.request({

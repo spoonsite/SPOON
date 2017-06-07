@@ -267,7 +267,7 @@ Ext.define('OSF.component.DataSourceComboBox', {
 
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',
-	alias: 'osf.widget.UserMenu',
+	alias: 'widget.osf-UserMenu',
 		
 	scale: 'large',
 	ui: 'default',	

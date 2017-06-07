@@ -1,4 +1,4 @@
-/*
+<%--
 Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+--%>
 
 <%@page  contentType="text/css" %>
 
@@ -1445,5 +1445,9 @@ table.confluenceTable td.numberingColumn {
 	border: 1px solid #71a4c1 !important;
 }
 
+.landing-designer-layout {
+	background: darkgrey;
+	border: 1px solid #9b9d9e !important;
+}
 
 
