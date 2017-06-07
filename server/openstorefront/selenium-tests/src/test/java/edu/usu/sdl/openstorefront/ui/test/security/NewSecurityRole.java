@@ -149,122 +149,122 @@ public class NewSecurityRole
 
 	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
+		// Go to Security Role page, wait for the table to load.
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
 		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
+		// Click on the roleName (like AUTO-user) and then Manage Permissions		
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
 
-			// Get list of Codes in the Permissions Available (Left) side.  Get table for Current Role Permissions (Right) side
-			WebDriverWait waitAvailable = new WebDriverWait(driver, 10);
-			WebElement available = waitAvailable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body")));
+			// Get "permissAvailDivLeft" which is the table on the LEFT, used for the destination of drag-and-drop
+			WebDriverWait waitPermissAvailDivLeft = new WebDriverWait(driver, 10);
+			WebElement permissAvailDivLeft = waitPermissAvailDivLeft.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body")));
 
-			WebDriverWait waitcurrentPermissions = new WebDriverWait(driver, 10);
-			WebElement currentPermissions = waitcurrentPermissions.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='currentRolePermissionsTable'] .x-panel-body")));
+			// Get the table on the RIGHT used for the destination of drag-and-drop
+			WebDriverWait waitCurrentRoleDivRight = new WebDriverWait(driver, 10);
+			WebElement currentRoleDivRight = waitCurrentRoleDivRight.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='currentRolePermissionsTable'] .x-panel-body")));
 
-			// *** IF if the list on the left is blank it will error out. **
-			try {
-				// *** Move LEFT TO RIGHT (PermissionsAvail -> currentRoleTable IF permissions HashMap is true) ***
-				// Get left side data in table 
-				List<WebElement> permissionsAvailable = driver.findElements(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body tr td:nth-child(odd)"));
-				
-				// Loop through Permissions Available List 
-				for (WebElement permissAvail : permissionsAvailable) {
-					// System.out.println(permissAvail.getText() + " is in PEMISSIONS AVAILABLE list in the table");
+			// *** Move LEFT TO RIGHT (Permissions Available -> Current Role Permissions IF permissions in the HashMap is true) ***
+			try {  // avoid empty table error with catch below
+				// Get list of Codes on the LEFT, use the autoEl tag from roleMangement.jsp and odd <tr> from the table to get Codes
+				List<WebElement> permissionsAvailableList
+						= driver.findElements(By.cssSelector("[data-test='permissionsAvailableTable'] .x-panel-body tr td:nth-child(odd)"));
 
-					// Loop through the user set data Hashmap
-					for (String userDataSource : permissions.keySet()) {
-						//	System.out.println(userDataSource + " trying to match what is in the table to this that the user inputted.");
-						// System.out.println("MATCHED userDataSoure " + userDataSource + " WITH permissionAvail " + permissAvail.getText());
+				// Loop through Items in permissions AvailableList
+				for (WebElement permissionsAvailableItem : permissionsAvailableList) {
+					// System.out.println(permissAvailableItem.getText() + " is in PEMISSIONS AVAILABLE list in the table");
 
-						// If the User setting equals the setting in the Restricted List
-						if (userDataSource.equals(permissAvail.getText())) {
-							// If it is supposed to be in Accessible or TRUE in hashmap
-							if (permissions.get(userDataSource)) {
+					// Loop through the permissions Hashmap in order to set the permissions
+					for (String permissionToSet : permissions.keySet()) {
+						// If the permissionToSet is equal to what was found in the LEFT table
+						if (permissionToSet.equals(permissionsAvailableItem.getText())) {
+							//	System.out.println("--- When looping through the LEFT table '" + permissionsAvailableItem.getText() 
+							//			+ "' was found, which matches a setting '" + permissionToSet + "' ---");
+
+							// If this Code or item is set to TRUE in the hashmap (meaning it should MOVE to the right)
+							if (permissions.get(permissionToSet)) {
 								// Move it to the right 
-								System.out.println(userDataSource + " *** READY TO BE MOVED to the RIGHT ***");
+								System.out.println("--- '" + permissionToSet + "' *** READY TO BE MOVED to the RIGHT ***");
 								WebDriverWait waitPermission = new WebDriverWait(driver, 5);
-								WebElement permissionTableLeft = waitPermission.until(ExpectedConditions.elementToBeClickable(permissAvail));
-
+								WebElement permissionTableLeft
+										= waitPermission.until(ExpectedConditions.elementToBeClickable(permissionsAvailableItem));
 								Actions builder = new Actions(driver);
 								builder.moveToElement(permissionTableLeft).perform();
 								sleep(200);
-								builder.dragAndDrop(permissionTableLeft, currentPermissions);
+								builder.dragAndDrop(permissionTableLeft, currentRoleDivRight);
 								sleep(200);
 								builder.perform();
 								sleep(200);
-								// LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
+								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
 								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
+							} else {
+								System.out.println("--- '" + permissionsAvailableItem.getText() + "' is 'false' so it should remain "
+										+ "on the LEFT (Permissions Available) [NOT MOVED] ---");
 							}
 						}
 					}
 				}
-
 			} catch (Exception e) {
-				System.out.println(e + " ****************** Nothing in the LEFT-hand list (to move to the RIGHT), moving on ************************");
+				System.out.println(e + " *** Nothing in the LEFT-hand list (to move to the RIGHT), moving on... ***");
 			}
 
-			// DUPLICATE HERE 7 Jun
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			// *** Move RIGHT TO LEFT (currentRoleTable -> PermissionsAvail) ***
-			// Get RIGHT (Current Role Permissions) side of the table in a List of WebElements, currPermissDisplayed
-			WebDriverWait waitCurrRolePermiss = new WebDriverWait(driver, 10);
-			// *** FAILS *** if current role permission table (RIGHT) is blank (all on LEFT) ***********
-			List<WebElement> currPermissDisplayed = waitCurrRolePermiss.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(currentPermissions, By.cssSelector("tr td:nth-child(odd)")));
+			// *** Move RIGHT TO LEFT (Permissions Available <-- Current Role Permissions, IF permissions in the HashMap is 'false') ***
+			try {  // avoid empty table error with catch below
+				// Get list of Codes on the RIGHT, use the autoEl tag from roleMangement.jsp and odd <tr> from the table to get Codes
+				List<WebElement> currentRolePermissionsList
+						= driver.findElements(By.cssSelector("[data-test='currentRolePermissionsTable'] .x-panel-body tr td:nth-child(odd)"));
 
-			// Wait until nested table is there on the LEFT, use for DESTINATION in the drag and drop
-			WebDriverWait waitPermisAvailb = new WebDriverWait(driver, 10);
-			WebElement permissAvailbTable = waitPermisAvailb.until(ExpectedConditions.presenceOfNestedElementLocatedBy(available, By.cssSelector(".x-panel-body.x-grid-with-col-lines.x-grid-with-row-lines.x-grid-body.x-panel-body-default.x-panel-body-default")));
+				// Loop through Items in Current Role Permissions (RIGHT) List
+				for (WebElement currentRolePermissionItem : currentRolePermissionsList) {
+					// System.out.println(currentRolePermissionItem.getText() + " is in Current Role Permissions list in the table");
 
-			// Loop through currentPermissionsDisplayed List 
-			for (WebElement currDisplayed : currPermissDisplayed) {
-				// System.out.println(currDisplayed.getText() + " is displayed in the Current Roles Permissions table");
+					// Loop through the permissions Hashmap in order to set the permissions
+					for (String permissionToSet : permissions.keySet()) {
+						// If the permissionToSet is equal to what was found in the RIGHT table
+						if (permissionToSet.equals(currentRolePermissionItem.getText())) {
+							//	System.out.println("--- When looping through the RIGHT table '" + currentRolePermissionItem.getText() 
+							//			+ "' was found, which matches a setting '" + permissionToSet + "' ---");
 
-				// Loop through the user set data Hashmap
-				for (String userDataSource : permissions.keySet()) {
-					//System.out.println(userDataSource + " Looping through userDataSource that was inputted, looking for a MATCH");
-
-					// If the userDataSource matches what id in currDisplayed (RIGHT) List
-					if (userDataSource.equals(currDisplayed.getText())) {
-						// System.out.println("MATCHED userDataSoure " + userDataSource + " WITH currDisplayed " + currDisplayed.getText());
-
-						// If the userDataSource Boolean is FALSE 
-						if (!permissions.get(userDataSource)) {
-							// Move it to the LEFT
-							System.out.println(userDataSource + " *** READY TO BE MOVED to the LEFT***");
-							WebDriverWait waitPermissionAvail = new WebDriverWait(driver, 5);
-							WebElement currDisplayedRight = waitPermissionAvail.until(ExpectedConditions.elementToBeClickable(currDisplayed));
-
-							Actions builder = new Actions(driver);
-							builder.moveToElement(currDisplayedRight).perform();
-							sleep(200);
-							builder.dragAndDrop(currDisplayedRight, permissAvailbTable);
-							sleep(200);
-							builder.perform();
-							sleep(200);
-							// LOG.log(Level.INFO, "\n--- MOVED '" + userDataSource + "' to the (LEFT) PERMISSIONS AVIALABLE column, for \n'"
-							//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
-							break;
-
+							// If this Code or item is set to FALSE (!permissions.get) in the hashmap (meaning it should MOVE to the LEFT)
+							if (!permissions.get(permissionToSet)) {
+								// Move it to the Left 
+								System.out.println("--- '" + permissionToSet + "' *** READY TO BE MOVED to the LEFT ***");
+								WebDriverWait waitPermission = new WebDriverWait(driver, 5);
+								WebElement permissionTableRight
+										= waitPermission.until(ExpectedConditions.elementToBeClickable(currentRolePermissionItem));
+								Actions builder = new Actions(driver);
+								builder.moveToElement(permissionTableRight).perform();
+								sleep(200);
+								builder.dragAndDrop(permissionTableRight, permissAvailDivLeft);
+								sleep(200);
+								builder.perform();
+								sleep(200);
+								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the PERMISSIONS AVAILABLE column, for \n'"
+								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							} else {
+								System.out.println("--- '" + currentRolePermissionItem.getText() + "' is 'TRUE' so it should remain "
+										+ "on the RIGHT (Current Role Permissions) *NOT MOVED* ---");
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, " *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" +e);
+				System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" +e);
 			}
-
-			// Hit SAVE! (Data Restrictions)
+			
+			
+			// Hit SAVE! (Permissions)
 			driver.findElement(By.cssSelector(".x-window.x-layer .x-btn.x-box-item.x-toolbar-item")).click();
 			WebDriverWait popupNotPresent = new WebDriverWait(driver, 5);
 			// Look for the mask of "Loading..." to be gone after save
+			
+			// ************ Slow here **************
 			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component x-border-box x-mask x-component-default")));
 			LOG.log(Level.INFO, "--- SAVED Permissions Settings for: " + roleName + "---");
 
