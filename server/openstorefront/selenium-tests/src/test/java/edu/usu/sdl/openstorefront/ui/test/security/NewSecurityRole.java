@@ -58,7 +58,7 @@ public class NewSecurityRole
 		//driver.navigate().refresh();
 		sleep(1500);
 		// Click on Table Row Col containing roleName
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 			sleep(750);
 			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
@@ -71,7 +71,7 @@ public class NewSecurityRole
 				try {
 					sleep(500);
 					// Command that was erring out (detached) earlier.
-					tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver);
+					tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0);
 					LOG.log(Level.INFO, "--- Waiting for element to show up so that it is not detached ---");
 				} catch (Exception e) {
 					if (e.getMessage().contains("element is not attached")) {
@@ -85,7 +85,7 @@ public class NewSecurityRole
 			}
 
 			// Check to ensure deletion
-			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver,0)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
 			} else {
 				LOG.log(Level.INFO, "--- Old Security Role '" + roleName + "' DELETED ---");
@@ -113,7 +113,7 @@ public class NewSecurityRole
 		sleep(500);
 		driver.findElement(By.xpath("//span[contains(.,'Save')]")).click();
 		sleep(2000);
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			LOG.log(Level.INFO, "--- Added the role " + roleName + ". ---");
 		} else {
 			LOG.log(Level.WARNING, "*** Could NOT ADD the role " + roleName + ". ***");
@@ -125,7 +125,7 @@ public class NewSecurityRole
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
 			sleep(250); //Users with xxxx role is now up
 
@@ -164,7 +164,7 @@ public class NewSecurityRole
 		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		// Click on the roleName (like AUTO-user) and then Manage Permissions		
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Permissions')]")).click();
 
 			// Get "permissAvailDivLeft" which is the table on the LEFT, used for the destination of drag-and-drop
@@ -285,7 +285,7 @@ public class NewSecurityRole
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
 		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 
 			// Wait for Data Restrictions box to come up
@@ -396,7 +396,7 @@ public class NewSecurityRole
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
 		waitForTableLoad.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver)) {
+		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 
 			// Wait for Data Restrictions box to come up

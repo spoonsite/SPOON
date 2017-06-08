@@ -98,7 +98,7 @@ public class AccountSignupActivateTest
 			setApprovalStatus(approvalStatusDropDownText, driver);
 
 			// Drop-down selectors finished, now search for user in the table and delete if present
-			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver)) {
+			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver, 0)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation button "YES"
 
@@ -144,7 +144,7 @@ public class AccountSignupActivateTest
 
 		// Select and click Approve
 		if (tableClickRowCol(
-				"[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
+				"[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
 
 			// Wait for Approving User Display Block to go away
@@ -156,7 +156,7 @@ public class AccountSignupActivateTest
 			setApprovalStatus("Approved", driver);
 
 			// Verify user has been approved
-			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver)) {
+			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
 			} else {
 				LOG.log(Level.SEVERE, "!!! User '" + userName + "' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user " + userName);
