@@ -16,42 +16,69 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.List;
 import java.util.logging.Logger;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  *
  * @author ccummings
  */
-public class AdminEntryTypesTest extends BrowserTestBase
+public class AdminEntryTypesTest
+		extends AdminTestBase
 {
+
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-    @Test
-    public void adminEntryTypesTest() throws InterruptedException {
+	@Test
+	public void adminEntryTypesTest() throws InterruptedException
+	{
 
-        
-    }
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-    public void setup(WebDriver driver) {
+			setup(driver);
+			createEntryType(driver, "AMAZING-TEST", "An Amazing Test");
+			
+		}
+	}
 
-       driver.get(webDriverUtil.getPage("AdminTool.action?load=Entry-Types"));
-    }
+	public void setup(WebDriver driver)
+	{
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=Entry-Types"));
+		
+		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
+			List<WebElement> titleElements = driverLocal.findElements(By.id("entryGrid_header-title-textEl"));
+			if (titleElements.size() > 0) {
+				return titleElements.get(0).isDisplayed();
+			} else {
+				return false;
+			}
+		});
+	}
 
-    public void createEntryType(WebDriver driver, String attrName, String attrCode) {
+	public void createEntryType(WebDriver driver, String typeCode, String typeLabel) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#entryTypeAddBtn"))).click();
+		
+		
+	}
 
-        
-    }
+	public void deleteEntryType(WebDriver driver, String typeCode) throws InterruptedException
+	{
+		assertTrue(tableClickRowCol(".x-grid-item-container", typeCode, driver, 0));
+	}
 
-    public void deleteEntryType(WebDriver driver, String attrName) throws InterruptedException {
+	public void editEntryTypes(WebDriver driver, String codeLabel) throws InterruptedException
+	{
 
-        
-    }
-
-
-    public void editEntryTypes(WebDriver driver, String codeLabel) throws InterruptedException {
-
-
-    }
+	}
 }

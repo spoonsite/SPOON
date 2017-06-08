@@ -241,6 +241,7 @@
 							items: [
 								{
 									text: 'Refresh',
+									id: 'entryTypeRefreshBtn',
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
@@ -252,6 +253,7 @@
 								},
 								{
 									text: 'Add',
+									id: 'entryTypeAddBtn',
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
