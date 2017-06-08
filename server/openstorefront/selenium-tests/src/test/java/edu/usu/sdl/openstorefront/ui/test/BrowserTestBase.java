@@ -65,27 +65,25 @@ public class BrowserTestBase
 
 	protected static void login(String userName, String passWord)
 	{
-
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			
+			WebDriverWait wait = new WebDriverWait(driver, 20);
 			// Make sure logged out before attempting login.
 			driver.get(webDriverUtil.getPage("Login.action?Logout"));
 
 			// Now log in
 			driver.get(webDriverUtil.getPage("login.jsp"));
 
-			WebDriverWait waitUsername = new WebDriverWait(driver, 20);
-			WebElement userNameElement = waitUsername.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
+			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
 			userNameElement.sendKeys(userName);
 
 			// Enter password and hit ENTER since submit does not seem to work.
-			WebDriverWait waitPassword = new WebDriverWait(driver, 20);
-			WebElement userPassword = waitPassword.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
 			userPassword.sendKeys(passWord, Keys.ENTER);
 
 			// Look for the titleText
 			try {
-				WebDriverWait waitUserNameButton = new WebDriverWait(driver, 3);
-				waitUserNameButton.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
+				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
 				LOG.log(Level.INFO, "*** Sucessfully logged in as '" + userName + "' ***");
 			} catch (Exception e) {
 				LOG.log(Level.WARNING, "--- EXCEPTION --- " + e);
@@ -120,25 +118,25 @@ public class BrowserTestBase
 	 * @param cssSelector cssSelector used to find table
 	 * @param searchFor text in the cell to find
 	 * @param driver Selenium webdriver
+	 * @param columnIndex index of the column being searched
 	 * @return true if cell is found, false otherwise
 	 * @throws InterruptedException
 	 */
 	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
 		int fRow = -1;
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 
 		try {
 			List<WebElement> allRows = new ArrayList<WebElement>();
-			WebDriverWait waitForTable = new WebDriverWait(driver, 20);
-			allRows = waitForTable.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
 
 			int theRow = 0;
 			for (WebElement row : allRows) {
 
 				List<WebElement> cells = new ArrayList<WebElement>();
 				try {
-					WebDriverWait waitForCells = new WebDriverWait(driver, 20);
-					cells = waitForCells.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+					cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
@@ -161,7 +159,6 @@ public class BrowserTestBase
 		} catch (Exception e) {
 			LOG.log(Level.WARNING,
 					"*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
-			LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ". ---");
 			System.out.println(e);
 		}
 

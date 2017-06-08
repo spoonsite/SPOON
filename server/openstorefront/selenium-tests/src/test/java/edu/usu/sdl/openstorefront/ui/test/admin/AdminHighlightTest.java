@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,133 +31,145 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminHighlightTest extends AdminTestBase {
+public class AdminHighlightTest
+		extends AdminTestBase
+{
 
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-    @BeforeClass
-    public static void setupTest() {
-        login();
-    }
+	@BeforeClass
+	public static void setupTest()
+	{
+		login();
+	}
 
-    @Test
-    public void adminHighlightTest() throws InterruptedException {
+	@Test
+	public void adminHighlightTest() throws InterruptedException
+	{
 
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-            createHighlight(driver);
-            editHighlight(driver);
-            deleteHighlight(driver);
+			createHighlight(driver);
+			editHighlight(driver);
+			deleteHighlight(driver);
 
-        }
-    }
+		}
+	}
 
-    public void createHighlight(WebDriver driver) throws InterruptedException {
+	public void createHighlight(WebDriver driver) throws InterruptedException
+	{
 
-        driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
+		WebDriverWait wait = new WebDriverWait(driver, 5);
 
-        // Click add button
-        WebDriverWait waitAddBtn = new WebDriverWait(driver, 20);
-        WebElement addBtn = waitAddBtn.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='highlightGrid-tools-add']")));
-        addBtn.click();
+		// Click add button
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-add"))).click();
 
-        // Fill out form
-        WebDriverWait waitEntryForm = new WebDriverWait(driver, 20);
-        WebElement entryForm = waitEntryForm.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='highlightEntryForm-Title-inputEl']")));
-        entryForm.sendKeys("TestHighlight1");
+		// Fill out form
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightEntryForm-Title-inputEl"))).sendKeys("TestHighlight1");
 
-        ((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1')");
+		((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1')");
 
-        WebDriverWait waitDropDown = new WebDriverWait(driver, 20);
-        WebElement dropDownBtn = waitDropDown.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\'highlightEntryForm-Type-trigger-picker\']")));
-        dropDownBtn.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightEntryForm-Type-trigger-picker"))).click();
 
-        WebDriverWait waitComponentSelect = new WebDriverWait(driver, 20);
-        WebElement selectComponent = waitComponentSelect.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(.,'Component')]")));
-        selectComponent.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(.,'Component')]"))).click();
 
-        WebDriverWait waitSaveBtn = new WebDriverWait(driver, 20);
-        WebElement saveBtn = waitSaveBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']")));
-        saveBtn.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']"))).click();
 
-        WebDriverWait waitLoadingFinished = new WebDriverWait(driver, 20);
-        waitLoadingFinished.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-    }
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
 
-    public void editHighlight(WebDriver driver) throws InterruptedException {
+	public void editHighlight(WebDriver driver) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		// locate highlight in table and edit
+		if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
 
-        // locate highlight in table and edit
-        if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
+			// Click Edit
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-edit"))).click();
 
-            // Click Edit
-            WebDriverWait waitEditBtn = new WebDriverWait(driver, 20);
-            WebElement editBtn = waitEditBtn.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='highlightGrid-tools-edit']")));
-            editBtn.click();
+			// Add/Edit text in tinyMCE textarea
+			((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1 - Edited')");
 
-            // Add/Edit text in tinyMCE textarea
-            ((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1 - Edited')");
+			// click save
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']"))).click();
 
-            // click save
-            WebDriverWait waitSaveBtn = new WebDriverWait(driver, 20);
-            WebElement saveBtn = waitSaveBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']")));
-            saveBtn.click();
+			try {
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 
-            WebDriverWait waitLoadingFinished = new WebDriverWait(driver, 20);
-            waitLoadingFinished.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask")));
+			try {
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			// refresh table
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
+		}
+	}
 
-            // refresh table
-            WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
-            WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
-            refreshBtn.click();
-        }
-    }
+	public void deleteHighlight(WebDriver driver) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0));
 
-    public void deleteHighlight(WebDriver driver) throws InterruptedException {
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete"))).click();
 
-        assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0));
-        
-        WebDriverWait wait = new WebDriverWait(driver, 20);
-        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
-        element.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])"))).click();
 
-        WebDriverWait waitYesButton = new WebDriverWait(driver, 20);
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-        WebElement yesButton = waitYesButton.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])")));
-        yesButton.click();
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-        WebDriverWait waitDeleting = new WebDriverWait(driver, 10);
-        waitDeleting.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask-msg-text")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
+}
 
-        WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
-        WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
-        // refresh table
-        refreshBtn.click();
+	@After
+	public void cleanUpTest() throws InterruptedException
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-    }
+			WebDriverWait wait = new WebDriverWait(driver, 5);
+			if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
 
-    @After
-    public void cleanUpTest() throws InterruptedException {
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete"))).click();
 
-        for (WebDriver driver : webDriverUtil.getDrivers()) {
-            if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])"))).click();
 
-                WebDriverWait wait = new WebDriverWait(driver, 20);
-                WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete")));
-                element.click();
-                WebDriverWait waitYesButton = new WebDriverWait(driver, 20);
+				try {
+					wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 
-                WebElement yesButton = waitYesButton.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])")));
-                yesButton.click();
+				try {
+					wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 
-                WebDriverWait waitDeleting = new WebDriverWait(driver, 10);
-                waitDeleting.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-mask-msg-text")));
-
-                WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 20);
-                WebElement refreshBtn = waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']")));
-                // refresh table
-                refreshBtn.click();
-            }
-        }
-    }
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
+			}
+		}
+	}
 }

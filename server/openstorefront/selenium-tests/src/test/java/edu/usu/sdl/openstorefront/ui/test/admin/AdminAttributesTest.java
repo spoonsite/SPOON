@@ -75,43 +75,38 @@ public class AdminAttributesTest
 
 	public void createAttribute(WebDriver driver, String attrName, String attrCode)
 	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
 
-		WebDriverWait waitRefreshBtn = new WebDriverWait(driver, 5);
-		waitRefreshBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='attributesRefreshBtn']"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='attributesRefreshBtn']"))).click();
 
-		WebDriverWait waitAddNewAttribute = new WebDriverWait(driver, 5);
-		waitAddNewAttribute.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#attributeGrid-tools-add"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#attributeGrid-tools-add"))).click();
 
-		WebDriverWait waitAttrLabel = new WebDriverWait(driver, 5);
-		waitAttrLabel.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).sendKeys(attrName);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).sendKeys(attrName);
 
-		WebDriverWait waitAttrTypeCode = new WebDriverWait(driver, 5);
-		waitAttrTypeCode.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-code-inputEl"))).sendKeys(attrCode);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-code-inputEl"))).sendKeys(attrCode);
 
 		// radio buttons
 		boolean bValue = false;
-		WebDriverWait waitAllowAllEntryTypes = new WebDriverWait(driver, 5);
-		WebElement allowAllEntriesRadioBtn = waitAllowAllEntryTypes.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#allEntryTypes-inputEl")));
+
+		WebElement allowAllEntriesRadioBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#allEntryTypes-inputEl")));
 		bValue = allowAllEntriesRadioBtn.isSelected();
 
 		if (!bValue) {
 			allowAllEntriesRadioBtn.click();
 		}
 
-		WebDriverWait waitRequiredRadioBtn = new WebDriverWait(driver, 5);
-		WebElement requiredRadioBtn = waitRequiredRadioBtn.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#requiredFlagCheckBox-inputEl")));
+		WebElement requiredRadioBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#requiredFlagCheckBox-inputEl")));
 		bValue = requiredRadioBtn.isSelected();
 		if (!bValue) {
 			requiredRadioBtn.click();
 		}
 
-		WebDriverWait waitPlusTool = new WebDriverWait(driver, 5);
-		WebElement plusTool = waitPlusTool.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-typesRequiredFor_header-targetEl .x-tool-plus")));
+		WebElement plusTool = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-typesRequiredFor_header-targetEl .x-tool-plus")));
 		plusTool.click();
 
 		try {
-			WebDriverWait waitForTable = new WebDriverWait(driver, 5);
-			List<WebElement> tableList = waitForTable.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("[data-test='reqAttrList']"), By.cssSelector(".x-grid-cell.x-grid-td")));
+
+			List<WebElement> tableList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("[data-test='reqAttrList']"), By.cssSelector(".x-grid-cell.x-grid-td")));
 			for (WebElement item : tableList) {
 				if (item.getText().equals("DI2E Component")) {
 					item.click();
@@ -122,38 +117,32 @@ public class AdminAttributesTest
 			System.out.println(e);
 		}
 
-		WebDriverWait waitForFormAvail = new WebDriverWait(driver, 5);
-		waitForFormAvail.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).click();
 
-		WebDriverWait waitVisibleRadio = new WebDriverWait(driver, 5);
-		WebElement visibleRadioBtn = waitVisibleRadio.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='visibleFlg']")));
+		WebElement visibleRadioBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='visibleFlg']")));
 		bValue = visibleRadioBtn.isSelected();
 		if (!bValue) {
 			visibleRadioBtn.click();
 		}
 
-		WebDriverWait waitAllowUserCodes = new WebDriverWait(driver, 5);
-		WebElement allowUserCodesRadioBtn = waitAllowUserCodes.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='allowUserGeneratedCodes']")));
+		WebElement allowUserCodesRadioBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='allowUserGeneratedCodes']")));
 		bValue = allowUserCodesRadioBtn.isSelected();
 		if (!bValue) {
 			allowUserCodesRadioBtn.click();
 		}
 
-		WebDriverWait waitAttrSave = new WebDriverWait(driver, 5);
-		waitAttrSave.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#editAttributeWin-save"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#editAttributeWin-save"))).click();
 
 		try {
 
-			WebDriverWait waitDeleting = new WebDriverWait(driver, 5);
-			waitDeleting.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#attributeGrid-body .x-component.x-border-box.x-mask")));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#attributeGrid-body .x-component.x-border-box.x-mask")));
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
 		try {
-			WebDriverWait waitDeletingDone = new WebDriverWait(driver, 5);
-			waitDeletingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#attributeGrid-body .x-component.x-border-box.x-mask")));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#attributeGrid-body .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -162,31 +151,27 @@ public class AdminAttributesTest
 
 	public void deleteAttribute(WebDriver driver, String attrName) throws InterruptedException
 	{
-
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
 		if (tableClickRowCol("#attributeGrid-body .x-grid-view", attrName, driver, 1)) {
 
-			WebDriverWait waitActionBtn = new WebDriverWait(driver, 5);
-			waitActionBtn.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-action"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-action"))).click();
 
-			WebDriverWait waitDeleteAction = new WebDriverWait(driver, 5);
-			waitDeleteAction.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-action-delete-itemEl"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-action-delete-itemEl"))).click();
 
-			WebDriverWait waitConfirmDelete = new WebDriverWait(driver, 5);
-			waitConfirmDelete.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small:not([aria-hidden*='true'])"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small:not([aria-hidden*='true'])"))).click();
 		}
 
 		try {
 
-			WebDriverWait waitDeleting = new WebDriverWait(driver, 5);
-			waitDeleting.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#attributeGrid .x-component.x-border-box.x-mask")));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#attributeGrid .x-component.x-border-box.x-mask")));
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
 		try {
-			WebDriverWait waitDeletingDone = new WebDriverWait(driver, 5);
-			waitDeletingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#attributeGrid .x-component.x-border-box.x-mask")));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#attributeGrid .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -194,28 +179,23 @@ public class AdminAttributesTest
 
 	public void attributeManageCodes(WebDriver driver, String attrName) throws InterruptedException
 	{
-
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
 		if (tableClickRowCol("#attributeGrid-body .x-grid-view", attrName, driver, 1)) {
 
-			WebDriverWait waitManageCodesBtn = new WebDriverWait(driver, 5);
-			WebElement manageCodesBtn = waitManageCodesBtn.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-manageCodes")));
+			WebElement manageCodesBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("attributeGrid-tools-manageCodes")));
 			manageCodesBtn.click();
 
-			WebDriverWait waitAddNewCodeBtn = new WebDriverWait(driver, 5);
-			WebElement addNewCodeBtn = waitAddNewCodeBtn.until(ExpectedConditions.elementToBeClickable(By.id("addNewCodeAttr")));
+			WebElement addNewCodeBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("addNewCodeAttr")));
 			addNewCodeBtn.click();
 
-			WebDriverWait waitLabel = new WebDriverWait(driver, 5);
-			waitLabel.until(ExpectedConditions.presenceOfElementLocated(By.id("editCodeForm-label-inputEl"))).sendKeys("MyTestCodeLabel11");
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.id("editCodeForm-label-inputEl"))).sendKeys("MyTestCodeLabel11");
 
-			WebDriverWait waitTypeCode = new WebDriverWait(driver, 5);
-			waitTypeCode.until(ExpectedConditions.presenceOfElementLocated(By.id("editCodeForm-code-inputEl"))).sendKeys("MYTESTCODETYPE11");
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.id("editCodeForm-code-inputEl"))).sendKeys("MYTESTCODETYPE11");
 
-			WebDriverWait waitAddCodeSave = new WebDriverWait(driver, 5);
-			waitAddCodeSave.until(ExpectedConditions.elementToBeClickable(By.id("editCodeWin-save"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("editCodeWin-save"))).click();
 
-			WebDriverWait waitLoadingMask = new WebDriverWait(driver, 5);
-			waitLoadingMask.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
 
 			// Download Attachment to be done manually 
 		} else {
@@ -226,29 +206,26 @@ public class AdminAttributesTest
 
 	public void editManageCodes(WebDriver driver, String codeLabel) throws InterruptedException
 	{
-
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
 		if (tableClickRowCol("#codesGrid-body .x-grid-view", codeLabel, driver, 0)) {
 
-			WebDriverWait waitEditCodeBtn = new WebDriverWait(driver, 5);
-			waitEditCodeBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-edit"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-edit"))).click();
 
 			((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Testing My Code Type11')");
 
-			WebDriverWait waitEditCodeSave = new WebDriverWait(driver, 5);
-			waitEditCodeSave.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#editCodeWin-save"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#editCodeWin-save"))).click();
 
 			try {
 
-				WebDriverWait waitDeleting = new WebDriverWait(driver, 5);
-				waitDeleting.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#codesGrid-body .x-component.x-border-box.x-mask")));
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#codesGrid-body .x-component.x-border-box.x-mask")));
 
 			} catch (Exception e) {
 				System.out.println(e);
 			}
 
 			try {
-				WebDriverWait waitDeletingDone = new WebDriverWait(driver, 5);
-				waitDeletingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#codesGrid-body .x-component.x-border-box.x-mask")));
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#codesGrid-body .x-component.x-border-box.x-mask")));
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -262,37 +239,32 @@ public class AdminAttributesTest
 
 	public void toggleStatusManageCodes(WebDriver driver, String codeLabel) throws InterruptedException
 	{
-
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
 		if (tableClickRowCol("#codesGrid-body .x-grid-view", codeLabel, driver, 0)) {
 
 			// toggle status
-			WebDriverWait waitToggleMngCodes = new WebDriverWait(driver, 5);
-			waitToggleMngCodes.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-toggle"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-toggle"))).click();
 
-			WebDriverWait waitForTrigPicker = new WebDriverWait(driver, 5);
-			waitForTrigPicker.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesFilter-activeStatus-trigger-picker"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesFilter-activeStatus-trigger-picker"))).click();
 
 			driver.findElement(By.id("codesFilter-activeStatus-inputEl")).clear();
 			driver.findElement(By.id("codesFilter-activeStatus-inputEl")).sendKeys("Inactive");
 			driver.findElement(By.id("codesFilter-activeStatus-inputEl")).sendKeys(Keys.RETURN);
 
-			WebDriverWait waitRefreshTable = new WebDriverWait(driver, 5);
-			waitRefreshTable.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#refreshAttrCodes"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#refreshAttrCodes"))).click();
 			// search for code in inactive table click and delete
 			if (tableClickRowCol("#codesGrid-body .x-grid-view", codeLabel, driver, 0)) {
 
-				WebDriverWait waitDeleteCode = new WebDriverWait(driver, 5);
-				waitDeleteCode.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-delete"))).click();
-				
-				WebDriverWait waitToConfirm = new WebDriverWait(driver, 5);
-				waitToConfirm.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-toolbar.x-docked.x-toolbar-footer .x-btn:not([aria-hidden*='true'])"))).click();
-				
-				waitRefreshTable.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#refreshAttrCodes")));
-				waitRefreshTable.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#refreshAttrCodes"))).click();
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#codesGrid-tools-delete"))).click();
+
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-toolbar.x-docked.x-toolbar-footer .x-btn:not([aria-hidden*='true'])"))).click();
+
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#refreshAttrCodes")));
+				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#refreshAttrCodes"))).click();
 			}
 
-			WebDriverWait waitCloseBtn = new WebDriverWait(driver, 5);
-			waitCloseBtn.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='manageCodesCloseBtn']"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#manageCodesCloseBtn"))).click();
 		}
 	}
 }

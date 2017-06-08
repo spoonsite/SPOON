@@ -57,23 +57,19 @@ public class AdminSavedSearchTest
 	{
 
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Searches"));
-
+		WebDriverWait wait = new WebDriverWait(driver, 5);
 		// click add button
-		WebDriverWait waitAddBtn = new WebDriverWait(driver, 5);
-		WebElement addBtn = waitAddBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addBtnSearches']")));
+		WebElement addBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addBtnSearches']")));
 		addBtn.click();
 
 		// fill out form
-		WebDriverWait waitSearchNameField = new WebDriverWait(driver, 5);
-		WebElement searchNameField = waitSearchNameField.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
+		WebElement searchNameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
 		searchNameField.sendKeys("Regression DOD8500");
 
-		WebDriverWait waitSearchType = new WebDriverWait(driver, 5);
-		WebElement searchType = waitSearchType.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name = 'searchType']")));
+		WebElement searchType = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name = 'searchType']")));
 		searchType.click();
 
-		WebDriverWait waitListTypes = new WebDriverWait(driver, 5);
-		List<WebElement> types = waitListTypes.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("div[class*=x-boundlist-list-ct]:not([id*='filterActiveStatus-picker-listWrap'])"), By.tagName("li")));
+		List<WebElement> types = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("div[class*=x-boundlist-list-ct]:not([id*='filterActiveStatus-picker-listWrap'])"), By.tagName("li")));
 		for (WebElement type : types) {
 			if (type.getText().equals("Entry")) {
 				type.click();
@@ -81,12 +77,10 @@ public class AdminSavedSearchTest
 			}
 		}
 
-		WebDriverWait waitSearchField = new WebDriverWait(driver, 5);
-		WebElement fieldType = waitSearchField.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name = 'field']")));
+		WebElement fieldType = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name = 'field']")));
 		fieldType.click();
 
-		WebDriverWait waitFields = new WebDriverWait(driver, 5);
-		List<WebElement> fieldsLi = waitFields.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-boundlist-list-ct.x-unselectable.x-scroller ul[aria-hidden='false']"), By.cssSelector("li")));
+		List<WebElement> fieldsLi = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-boundlist-list-ct.x-unselectable.x-scroller ul[aria-hidden='false']"), By.cssSelector("li")));
 		for (WebElement field : fieldsLi) {
 			if (field.getText().equals("Name")) {
 				field.click();
@@ -94,19 +88,16 @@ public class AdminSavedSearchTest
 			}
 		}
 
-		WebDriverWait waitValueField = new WebDriverWait(driver, 5);
-		WebElement valueField = waitValueField.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='value']")));
+		WebElement valueField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name='value']")));
 		valueField.sendKeys("RegressionTest");
 
-		WebDriverWait waitCheckBox = new WebDriverWait(driver, 5);
-		WebElement checkBoxCase = waitCheckBox.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-form-item-body.x-form-item-body-default.x-form-cb-wrap.x-form-cb-wrap-default")));
+		WebElement checkBoxCase = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-form-item-body.x-form-item-body-default.x-form-cb-wrap.x-form-cb-wrap-default")));
 		if (!checkBoxCase.isSelected()) {
 			checkBoxCase.click();
 		}
 
 		// click add criteria button
-		WebDriverWait waitAddCritBtn = new WebDriverWait(driver, 5);
-		List<WebElement> addCritBtnList = waitAddCritBtn.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-btn-inner.x-btn-inner-default-small")));
+		List<WebElement> addCritBtnList = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-btn-inner.x-btn-inner-default-small")));
 		for (WebElement btn : addCritBtnList) {
 			if (btn.getText().equals("Add Criteria")) {
 				btn.click();
@@ -114,13 +105,22 @@ public class AdminSavedSearchTest
 			}
 		}
 		// save search
-		WebDriverWait waitSaveCriteriaBtn = new WebDriverWait(driver, 5);
-		WebElement saveCriteriaBtn = waitSaveCriteriaBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
+		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
 		saveCriteriaBtn.click();
+		
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-		WebDriverWait waitSearchTable = new WebDriverWait(driver, 5);
-		WebElement searchTable = waitSearchTable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
-		List<WebElement> searchesList = driver.findElements(By.tagName("td"));
+		List<WebElement> searchesList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view"), By.tagName("td")));
 		boolean inList = false;
 		for (WebElement search : searchesList) {
 			if (search.getText().equals("Regression DOD8500")) {
@@ -133,9 +133,10 @@ public class AdminSavedSearchTest
 
 	public void editSavedSearch(WebDriver driver)
 	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		
 		// find search
-		WebDriverWait waitSearchTable = new WebDriverWait(driver, 5);
-		WebElement searchTable = waitSearchTable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
+		WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
 		List<WebElement> searchesList = driver.findElements(By.tagName("td"));
 		WebElement mySearch = null;
 
@@ -146,29 +147,33 @@ public class AdminSavedSearchTest
 		}
 
 		Assert.assertNotNull(mySearch);
-
 		mySearch.click();
 
-		WebDriverWait waitEditBtn = new WebDriverWait(driver, 5);
-		WebElement editBtn = waitEditBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='editBtnSearches']")));
+		WebElement editBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='editBtnSearches']")));
 		editBtn.click();
 
 		// change search name
-		WebDriverWait waitSearchNameField = new WebDriverWait(driver, 5);
-		WebElement searchNameField = waitSearchNameField.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
+		WebElement searchNameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
 		searchNameField.clear();
 		searchNameField.sendKeys("Regression DOD8500 - Edited");
 
 		// save search
-		WebDriverWait waitSaveCriteriaBtn = new WebDriverWait(driver, 5);
-		WebElement saveCriteriaBtn = waitSaveCriteriaBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
+		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
 		saveCriteriaBtn.click();
 
-		WebDriverWait waitForLoadingDone = new WebDriverWait(driver, 5);
-		waitForLoadingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-		WebDriverWait waitForListTd = new WebDriverWait(driver, 5);
-		List<WebElement> mySearchList = waitForListTd.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view.x-grid-with-col-lines"), By.tagName("td")));
+		List<WebElement> mySearchList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view.x-grid-with-col-lines"), By.tagName("td")));
 		boolean isInList = false;
 
 		for (WebElement item : mySearchList) {
@@ -184,10 +189,10 @@ public class AdminSavedSearchTest
 
 	public void deleteSavedSearch(WebDriver driver)
 	{
-		WebDriverWait waitSearchTable = new WebDriverWait(driver, 5);
-		WebElement searchTable = waitSearchTable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
-		WebDriverWait waitForListTd = new WebDriverWait(driver, 5);
-		List<WebElement> searchesList = waitForListTd.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(searchTable, By.tagName("td")));
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+
+		WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));;
+		List<WebElement> searchesList = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(searchTable, By.tagName("td")));
 		WebElement mySearch = null;
 
 		for (WebElement search : searchesList) {
@@ -199,16 +204,23 @@ public class AdminSavedSearchTest
 
 		Assert.assertNotNull(mySearch);
 
-		WebDriverWait waitToggleBtn = new WebDriverWait(driver, 5);
-		WebElement toggleStatusBtn = waitToggleBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='toggleBtnSearches']")));
+		WebElement toggleStatusBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='toggleBtnSearches']")));
 		toggleStatusBtn.click();
 
-		WebDriverWait waitForLoadingDone = new WebDriverWait(driver, 5);
-		waitForLoadingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		
 		// Check to see if deleted/inactive
-		WebDriverWait waitForListElement = new WebDriverWait(driver, 5);
-		List<WebElement> mySearchesList = waitForListElement.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view.x-grid-with-col-lines"), By.tagName("td")));
+		List<WebElement> mySearchesList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view.x-grid-with-col-lines"), By.tagName("td")));
 		boolean inList = false;
 
 		for (WebElement item : mySearchesList) {
@@ -217,8 +229,7 @@ public class AdminSavedSearchTest
 			}
 		}
 
-		waitForLoadingDone = new WebDriverWait(driver, 5);
-		waitForLoadingDone.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg")));
 
 		Assert.assertEquals(false, inList);
 	}
@@ -227,10 +238,11 @@ public class AdminSavedSearchTest
 	public void cleanUpTest()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			WebDriverWait waitSearchTable = new WebDriverWait(driver, 5);
-			WebElement searchTable = waitSearchTable.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
-			WebDriverWait waitForListTd = new WebDriverWait(driver, 5);
-			List<WebElement> searchesList = waitForListTd.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(searchTable, By.tagName("td")));
+			
+			WebDriverWait wait = new WebDriverWait(driver, 5);
+			WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
+
+			List<WebElement> searchesList = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(searchTable, By.tagName("td")));
 			WebElement mySearch;
 
 			for (WebElement search : searchesList) {
@@ -238,8 +250,7 @@ public class AdminSavedSearchTest
 					mySearch = search;
 					mySearch.click();
 
-					WebDriverWait waitToggleBtn = new WebDriverWait(driver, 5);
-					WebElement toggleStatusBtn = waitToggleBtn.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='toggleBtnSearches']")));
+					WebElement toggleStatusBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='toggleBtnSearches']")));
 					toggleStatusBtn.click();
 
 					break;
