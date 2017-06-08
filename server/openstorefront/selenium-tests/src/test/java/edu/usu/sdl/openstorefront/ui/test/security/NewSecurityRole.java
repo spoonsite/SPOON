@@ -38,8 +38,8 @@ public class NewSecurityRole
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private int dragAndDropActionSleepTime = 150;  // In milliseconds
-	
+	private int dragAndDropActionSleepTime = 75;  // *** In milliseconds ***
+
 	@BeforeClass
 	public static void setupTest()
 	{
@@ -85,7 +85,7 @@ public class NewSecurityRole
 			}
 
 			// Check to ensure deletion
-			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver,0)) {
+			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
 			} else {
 				LOG.log(Level.INFO, "--- Old Security Role '" + roleName + "' DELETED ---");
@@ -101,7 +101,7 @@ public class NewSecurityRole
 	{
 		// ********* OPTIMIZE with WebDriverWAIT *************************
 		// ********** ADD WAY TO CHECK AND UNCHECK ******************
-		
+
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
@@ -134,6 +134,8 @@ public class NewSecurityRole
 			sleep(1000);
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
 			sleep(1250);
+			
+			// TODO:  What if the user has not been created?  Error handling here.
 
 			// Hit add button (when active?)
 			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
@@ -154,9 +156,9 @@ public class NewSecurityRole
 	public void deleteUserFromRole(WebDriver driver, String roleName, String userName) throws InterruptedException
 	{
 		// TODO
-	}		
-			
-	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
+	}
+
+	public void setPermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		// Go to Security Role page, wait for the table to load.
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
@@ -275,11 +277,14 @@ public class NewSecurityRole
 			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Permissions Settings for: " + roleName + "---");
 
+		} else {
+			LOG.log(Level.SEVERE, "!!!!! Could NOT find the Security Role '" + roleName + "'.  !!!!!"
+					+ "\n !!!!! Please ensure the role is created using a call to 'addSecurityRole' !!!!!");
 		}
 	}
 
 	// True in boolean means to add it to the accessible side, false means to remove it.
-	public void manageDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
+	public void setDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
@@ -378,19 +383,25 @@ public class NewSecurityRole
 						}
 					}
 				}
-			}catch (Exception e) {
-					System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" + e);
-				}
+			} catch (Exception e) {
+				System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" + e);
 			}
+
 			// Hit SAVE! (Data Restrictions)
 			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
 			// wait for table underneath to be visible again
 			WebDriverWait waitTableUnderneath = new WebDriverWait(driver, 5);
 			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sourceitivity) Settings ---");
+
+		} else {
+			LOG.log(Level.SEVERE, "!!!!! Could NOT find the Security Role '" + roleName + "'.  !!!!!"
+					+ "\n !!!!! Please ensure the role is created using a call to 'addSecurityRole' !!!!!");
 		}
-		// Feed in a <List> of Data Distributions to Activate
-	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
+	}
+
+	// Feed in a <List> of Data Distributions to Activate
+	public void setDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		WebDriverWait waitForTableLoad = new WebDriverWait(driver, 5);
@@ -470,7 +481,7 @@ public class NewSecurityRole
 							if (!dataSens.get(dataSensitvToSet)) {
 								// Move it to the right (Restricted to Accessible)
 								System.out.println(dataSensitvToSet + " *** READY TO BE MOVED to the LEFT ***");
-									
+
 								Actions builder = new Actions(driver);
 								builder.moveToElement(accessibleItem).perform();
 								sleep(dragAndDropActionSleepTime);
@@ -488,7 +499,7 @@ public class NewSecurityRole
 						}
 					}
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println(" *** Nothing in the LEFT-hand list (to move to the RIGHT), moving on... ***\n" + e);
 			}
 
@@ -499,6 +510,11 @@ public class NewSecurityRole
 			WebDriverWait waitTableUnderneath = new WebDriverWait(driver, 5);
 			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Data Sensitivity (Data Sources & Data Sourceitivity) Settings ---");
+		
+		} else {
+			LOG.log(Level.SEVERE, "!!!!! Could NOT find the Security Role '" + roleName + "'.  !!!!!"
+					+ "\n !!!!! Please ensure the role is created using a call to 'addSecurityRole' !!!!!");
 		}
+
 	}
 }

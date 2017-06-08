@@ -2,6 +2,7 @@ package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -20,146 +21,110 @@ import org.openqa.selenium.WebDriver;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  *
  * @author besplin
  */
-
-public class SecurityRolesTest 
+public class SecurityRolesTest
 		extends NewSecurityRole
 {
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	
+
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+
+	// located in SecurityTestBase, read this in to be used in setSecurityRoles method below
+	@Before
+	public void setupSecurityRoles()
+	{
+		defineCustomizedSecurityRoles();
+		defineDefaultSecurityRoles();
+		defineAdminSecurityRoles();
+		defineEvaluatorSecurityRoles();
+		defineLibrarianSecurityRoles();
+		defineUserSecurityRoles();
+	}
+
 	// establish order when just running the SecurityRolesTest class/ file
 	@Test
-	public void runSecurityRolesTest() throws InterruptedException{
+	public void runSecurityRolesTest() throws InterruptedException
+	{
 		signupForAccounts();
 		addSecurityRole();
 		setSecurityRoles();
-	//	importDataRestrictionEntries ();
-	//	verifyPermissions();
+		//	importDataRestrictionEntries ();
+		//	verifyPermissions();
 	}
-	
-	public void signupForAccounts() throws InterruptedException{
+
+	public void signupForAccounts() throws InterruptedException
+	{
 		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
-		
+
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// TODO:  *** BREAK OUT INTO METHODS (DELETE, SIGNUPFORM, ACTIVATE)? ***
-	//	newAccountSignup.signupActivate("autoUser");
-	//	newAccountSignup.signupActivate("autoEval");
-	//	newAccountSignup.signupActivate("autoAdmin");
-	//	newAccountSignup.signupActivate("autoLibrarian");
+		//	newAccountSignup.signupActivate("autoAdmin");  
+		//	newAccountSignup.signupActivate("autoEval");   
+		//	newAccountSignup.signupActivate("autoLibrarian");
+		//	newAccountSignup.signupActivate("autoUser");
 	}
-	
-	public void addSecurityRole () throws InterruptedException {
+
+	public void addSecurityRole() throws InterruptedException
+	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
-	// ***************	CHANGE THIS TO INCLUDE CHECK AND UNCHECK **********************
-			
+			// ***************	CHANGE THIS TO INCLUDE CHECK AND UNCHECK **********************
 			// Set up new Security Role, add user to role
-		//	newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
-		//	newSecurityRole.addRoleBasic(driver, "AUTO-User");
-		//	newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
-			newSecurityRole.deleteUserFromRole(driver, "AUTO-User", "admindude2");
+			//	newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
+			//	newSecurityRole.addRoleBasic(driver, "AUTO-User");
+			// ************ DO THIS FROM USER MANAGEMENT? *************
+			//	newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
 		}
 	}
-	
 
-	
-	public void setSecurityRoles () throws InterruptedException {
+	public void setSecurityRoles() throws InterruptedException
+	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
-		
-			/* permissions	"ADMIN-ALERT-MANAGEMENT", "ADMIN-ATTRIBUTE-MANAGEMENT", "ADMIN-BRANDING", "ADMIN-CONTACT-MANAGEMENT",
-				options:	"ADMIN-DATA-IMPORT-EXPORT", "ADMIN-ENTRY-MANAGEMENT", "ADMIN-ENTRY-TYPES", "ADMIN-ENTRY-TEMPLATES", 
-							"ADMIN-EVALUATION-MANAGEMENT",	"ADMIN-EVALUATION-TEMPLATE", "ADMIN-EVALUATION-TEMPLATE-CHECKLIST", 
-							"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", "ADMIN-EVALUATION-TEMPLATE-SECTION", "ADMIN-FEEDBACK",
-							"ADMIN-HIGHLIGHTS", ADMIN-INTEGRATION", "ADMIN-JOB-MANAGEMENT", "ADMIN-LOOKUPS", "ADMIN-MEDIA", 
-							"ADMIN-MESSAGE-MANAGEMENT", "ADMIN-ORGANIZATION", "ADMIN-QUESTIONS", "ADMIN-REVIEW", "ADMIN-SEARCH", 
-							"ADMIN-SECURITY", "ADMIN-ROLE-MANAGEMENT", "ADMIN-SYSTEM-MANAGEMENT", "ADMIN-TEMPMEDIA-MANAGEMENT", 
-							"ADMIN-TRACKING", "ADMIN-USER-MANAGEMENT", "ADMIN-USER-MANAGEMENT-PROFILES", "ADMIN-WATCHES", 
-							"ADMIN-ORGANIZATION-EXTRACTION", "API-DOCS", "ENTRY-TAG", "EVALUATIONS", "RELATION-VIEW-TOOL", 
-							"REPORTS", "REPORTS-ALL", "REPORTS-SCHEDULE", "USER-SUBMISSIONS"
-			*/				
-			// 'true' moves it to the RIGHT (active), 'false' to the LEFT (available)
-			permissions.put("ADMIN-ALERT-MANAGEMENT", false);
-			permissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", false);
-			permissions.put("ADMIN-BRANDING", false);
-			permissions.put("ADMIN-CONTACT-MANAGEMENT", false);
-			permissions.put("ADMIN-DATA-IMPORT-EXPORT", false);
-			permissions.put("ADMIN-ENTRY-MANAGEMENT", false);
-			permissions.put("ADMIN-ENTRY-TYPES", false);
-			permissions.put("ADMIN-ENTRY-TEMPLATES", false);
-			permissions.put("ADMIN-EVALUATION-MANAGEMENT", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION", false);
-			permissions.put("ADMIN-EVALUATION-TEMPLATE-SECTION", false);
-			permissions.put("ADMIN-FEEDBACK", false);
-			permissions.put("ADMIN-HIGHLIGHTS", false);
-			permissions.put("ADMIN-INTEGRATION", false);
-			permissions.put("ADMIN-JOB-MANAGEMENT", false);
-			permissions.put("ADMIN-LOOKUPS", false);
-			permissions.put("ADMIN-MEDIA", false);
-			permissions.put("ADMIN-MESSAGE-MANAGEMENT", false);
-			permissions.put("ADMIN-ORGANIZATION", false);
-			permissions.put("ADMIN-QUESTIONS", false);
-			permissions.put("ADMIN-REVIEW", false);
-			permissions.put("ADMIN-SEARCH", false);
-			permissions.put("ADMIN-SECURITY", false);
-			permissions.put("ADMIN-ROLE-MANAGEMENT", false);
-			permissions.put("ADMIN-SYSTEM-MANAGEMENT", false);
-			permissions.put("ADMIN-TEMPMEDIA-MANAGEMENT", false);
-			permissions.put("ADMIN-TRACKING", false);
-			permissions.put("ADMIN-USER-MANAGEMENT", false);
-			permissions.put("ADMIN-USER-MANAGEMENT-PROFILES", false);
-			permissions.put("ADMIN-WATCHES", false);
-			permissions.put("ADMIN-ORGANIZATION-EXTRACTION", false);
-			permissions.put("API-DOCS", false);
-			permissions.put("ENTRY-TAG", false);
-			permissions.put("EVALUATIONS", false);
-			permissions.put("RELATION-VIEW-TOOL", false);
-			permissions.put("REPORTS", false);
-			permissions.put("REPORTS-ALL", false);
-			permissions.put("REPORTS-SCHEDULE", false);
-			permissions.put("USER-SUBMISSIONS", false);
 
-			newSecurityRole.managePermissions(driver, "AUTO-User", permissions);
+			// For the "Role", Set Data Sources, Data Sensitivies, and Permissions
+			
+			// Change this one for a quick test
+			newSecurityRole.setDataSources(driver, "blahb", customizedDataSources);
+			newSecurityRole.setDataSensitivity(driver, "blahb", customizedDataSensitivities);
+			newSecurityRole.setPermissions(driver, "blahb", customizedPermissions);
+			
+			// DO NOT Change these
+			newSecurityRole.setDataSources(driver, "DEFAULT-GROUP", defaultDataSources);
+			newSecurityRole.setDataSensitivity(driver, "DEFAULT-GROUP", defaultDataSensitivities);
+			newSecurityRole.setPermissions(driver, "DEFAULT-GROUP", defaultPermissions);
 
+			newSecurityRole.setDataSources(driver, "AUTO-Admin", adminDataSources);
+			newSecurityRole.setDataSensitivity(driver, "AUTO-Admin", adminDataSensitivities);
+			newSecurityRole.setPermissions(driver, "AUTO-Admin", adminPermissions);
 
-			// dataSource options: "DI2E", "ER2"
-			// 'true' moves it to the RIGHT (active), 'false' to the LEFT (available)
-			dataSource.put("DI2E", true);
-			dataSource.put("ER2", false);
+			newSecurityRole.setDataSources(driver, "AUTO-Evaluator", evaluatorDataSources);
+			newSecurityRole.setDataSensitivity(driver, "AUTO-Evaluator", evaluatorDataSensitivities);
+			newSecurityRole.setPermissions(driver, "AUTO-Evaluator", evaluatorPermissions);
 
-			newSecurityRole.manageDataSources(driver, "AUTO-User", dataSource);
+			newSecurityRole.setDataSources(driver, "AUTO-Librarian", librarianDataSources);
+			newSecurityRole.setDataSensitivity(driver, "AUTO-Librarian", librarianDataSensitivities);
+			newSecurityRole.setPermissions(driver, "AUTO-Librarian", librarianPermissions);
+
+			newSecurityRole.setDataSources(driver, "AUTO-User", userDataSources);
+			newSecurityRole.setDataSensitivity(driver, "AUTO-User", userDataSensitivities);
+			newSecurityRole.setPermissions(driver, "AUTO-User", userPermissions);
 
 			
-			// dataSens options: "DISTROA", "DISTROB", "DISTROC", "DISTROD", "DISTROE", "DISTROF",
-			//					 "ITAR", "PUBLIC", "SENSITIVE"
-			// 'true' moves it to the RIGHT (active), 'false' to the LEFT (available)
-			dataSens.put("DISTROA", false);
-			dataSens.put("DISTROB", false);
-			dataSens.put("DISTROC", true);
-			dataSens.put("DISTROD", false);
-			dataSens.put("DISTROE", false);
-			dataSens.put("DISTROF", true);
-			dataSens.put("ITAR", false);
-			dataSens.put("PUBLIC", false);
-			dataSens.put("SENSITIVE", true);
-			
-			newSecurityRole.manageDataSensitivity(driver, "AUTO-User", dataSens);
 		}
 	}
-	
-    public void importDataRestrictionEntries () {
-    
-    }
-	
-	public void verifyPermissions () {
-		
+
+	public void importDataRestrictionEntries()
+	{
+
 	}
 
-}	
+	public void verifyPermissions()
+	{
+
+	}
+
+}
