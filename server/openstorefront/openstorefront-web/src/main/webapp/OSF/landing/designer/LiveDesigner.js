@@ -561,8 +561,38 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						type: 'up',
 						hidden: block.fixed ? true : false,
 						callback: function (panel) {
-							//find block and it's array that it's in
 							
+							//wrap
+							var moveBlock = function(blocks) {
+								if (Ext.Array.contains(blocks, panel.block)) {
+									var index = Ext.Array.indexOf(blocks, panel.block, 0);
+									Ext.Array.removeAt(blocks, index);
+									var newIndex = index - 1;
+									if (newIndex < 0) {
+										blocks.push(panel.block);
+									} else {
+										var newArray = [];
+										var originalLength = blocks.length;
+										for (var i=0; i<originalLength + 1; i++) {
+											if (i === newIndex) {
+												newArray.push(panel.block);
+											} else {
+												newArray.push(blocks.pop());
+											}
+										}
+										//can't reassign as it loses reference; fill the original reference
+										Ext.Array.each(newArray, function(item){
+											blocks.push(item);
+										});
+									}
+								} else {
+									Ext.Array.each(blocks, function(block) {
+										moveBlock(block.items);
+									});
+								}
+							};
+							moveBlock(designerPanel.components);
+							designerPanel.updateAll();
 						}
 					},
 					{
