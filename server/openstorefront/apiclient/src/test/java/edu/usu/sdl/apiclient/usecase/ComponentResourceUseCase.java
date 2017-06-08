@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.apiclient.test;
+package edu.usu.sdl.apiclient.usecase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ComponentService;
@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class ComponentResourceTestCase
+public class ComponentResourceUseCase
 {
 
 	private LoginModel loginModel = new LoginModel();
