@@ -112,8 +112,6 @@ public class SecurityRolesTest
 			newSecurityRole.setDataSources(driver, "AUTO-User", userDataSources);
 			newSecurityRole.setDataSensitivity(driver, "AUTO-User", userDataSensitivities);
 			newSecurityRole.setPermissions(driver, "AUTO-User", userPermissions);
-
-			
 		}
 	}
 
