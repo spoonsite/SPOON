@@ -117,7 +117,11 @@ Ext.define('OSF.landing.DefaultHeader', {
 			});
 
 		};
-		checkNotifications();		
+		checkNotifications();
+		
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+			headerPanel.queryById('homeTitle').update(branding.landingPageTitle);			
+		});
 		
 	}	
 	

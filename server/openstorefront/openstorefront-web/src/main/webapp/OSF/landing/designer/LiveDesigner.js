@@ -46,6 +46,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					xtype: 'panel',
 					itemId: 'uiComponents',
 					title: 'UI Components',
+					collapsible: true,
 					width: '100%',
 					flex: 1,
 					scrollable: true,
@@ -56,6 +57,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				{
 					xtype: 'grid',
 					itemId: 'properties',
+					collapsible: true,
 					disabled: true,
 					width: '100%',
 					title: 'Properties',					
@@ -100,7 +102,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 									handler: function() {
 										var grid = this.up('grid');
 										var record = grid.getSelection()[0];																			
-										grid.getStore().remove(record);										
+										grid.getStore().remove(record);
+										grid.applyChanges(grid);
 									}									
 								}
 							]
@@ -115,13 +118,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 									iconCls: 'fa fl-g fa-check icon-button-color-save',
 									handler: function() {
 										var grid = this.up('grid');
-
-										var config = {};
-										grid.getStore().each(function(record){
-											config[record.get('property')] = record.get('value');
-										});
-										grid.selectedBlock.config = config;																				
-										updateTemplate();
+										grid.applyChanges(grid);	
 									}
 								},								
 								{
@@ -515,12 +512,35 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 		designerPanel.queryById('uiComponents').updateLayout(true, true);
 		
 		var configBlock = function(block) {
-			designerPanel.queryById('properties').setDisabled(false);
-			designerPanel.queryById('properties').setTitle('Properties: ' + block.name);
+			var propertyGrid = designerPanel.queryById('properties');
+			propertyGrid.setDisabled(false);
+			propertyGrid.setTitle('Properties: ' + block.name);
 			
 			//load config
+			var data = [];
+			Ext.Object.each(block.config, function(key, value, myself) {
+				data.push({
+					property: key,
+					value: value
+				});
+			});
+			propertyGrid.selectedBlock = block;
+			propertyGrid.getStore().loadData(data);
+			propertyGrid.applyChanges = function(grid) {
+				var config = {};
+				grid.getStore().each(function(record){
+					config[record.get('property')] = record.get('value');
+				});
+				grid.selectedBlock.config = config;	
+				
+				designerPanel.updateAll();
+				grid.getStore().commitChanges();
+				Ext.toast('Apply Properties');				
+			};
+			
 			
 			//check for custom handler
+			
 			
 		};
 		
@@ -542,7 +562,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						hidden: block.fixed ? true : false,
 						callback: function (panel) {
 							//find block and it's array that it's in
-							//
+							
 						}
 					},
 					{
