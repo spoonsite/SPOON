@@ -38,7 +38,8 @@ public class NewSecurityRole
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-
+	private int dragAndDropActionSleepTime = 150;  // In milliseconds
+	
 	@BeforeClass
 	public static void setupTest()
 	{
@@ -98,6 +99,9 @@ public class NewSecurityRole
 
 	public void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException
 	{
+		// ********* OPTIMIZE with WebDriverWAIT *************************
+		// ********** ADD WAY TO CHECK AND UNCHECK ******************
+		
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
@@ -147,6 +151,11 @@ public class NewSecurityRole
 		}
 	}
 
+	public void deleteUserFromRole(WebDriver driver, String roleName, String userName) throws InterruptedException
+	{
+		// TODO
+	}		
+			
 	public void managePermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		// Go to Security Role page, wait for the table to load.
@@ -192,11 +201,11 @@ public class NewSecurityRole
 										= waitPermission.until(ExpectedConditions.elementToBeClickable(permissionsAvailableItem));
 								Actions builder = new Actions(driver);
 								builder.moveToElement(permissionTableLeft).perform();
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								builder.dragAndDrop(permissionTableLeft, currentRoleDivRight);
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								builder.perform();
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
 								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -211,7 +220,6 @@ public class NewSecurityRole
 				System.out.println(e + " *** Nothing in the LEFT-hand list (to move to the RIGHT), moving on... ***");
 			}
 
-			
 			// *** Move RIGHT TO LEFT (Permissions Available <-- Current Role Permissions, IF permissions in the HashMap is 'false') ***
 			try {  // avoid empty table error with catch below
 				// Get list of Codes on the RIGHT, use the autoEl tag from roleMangement.jsp and odd <tr> from the table to get Codes
@@ -238,11 +246,11 @@ public class NewSecurityRole
 										= waitPermission.until(ExpectedConditions.elementToBeClickable(currentRolePermissionItem));
 								Actions builder = new Actions(driver);
 								builder.moveToElement(permissionTableRight).perform();
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								builder.dragAndDrop(permissionTableRight, permissAvailDivLeft);
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								builder.perform();
-								sleep(200);
+								sleep(dragAndDropActionSleepTime);
 								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the PERMISSIONS AVAILABLE column, for \n'"
 								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -254,18 +262,17 @@ public class NewSecurityRole
 					}
 				}
 			} catch (Exception e) {
-				LOG.log(Level.WARNING, " *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" +e);
-				System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" +e);
+				LOG.log(Level.WARNING, " *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" + e);
+				System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" + e);
 			}
-			
-			
+
 			// Hit SAVE! (Permissions)
 			driver.findElement(By.cssSelector(".x-window.x-layer .x-btn.x-box-item.x-toolbar-item")).click();
-			WebDriverWait popupNotPresent = new WebDriverWait(driver, 5);
-			// Look for the mask of "Loading..." to be gone after save
-			
-			// ************ Slow here **************
-			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component x-border-box x-mask x-component-default")));
+			WebDriverWait waitTableUnderneath = new WebDriverWait(driver, 5);
+			// Look for the mask of "Loading..." to be gone after save, SLOWS it down (invisibility) 
+
+			// Wait until table is visible underneath
+			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Permissions Settings for: " + roleName + "---");
 
 		}
@@ -282,8 +289,8 @@ public class NewSecurityRole
 			driver.findElement(By.xpath("//span[contains(.,'Manage Data Restrictions')]")).click();
 
 			// Wait for Data Restrictions box to come up
-			WebDriverWait waitBox = new WebDriverWait(driver, 10);
-			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+			WebDriverWait waitRestrictionsBox = new WebDriverWait(driver, 10);
+			waitRestrictionsBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
 			// Click on Data Sources tab
 			List<WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
@@ -293,69 +300,96 @@ public class NewSecurityRole
 				}
 			}
 
-			// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
-			List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSourcesGrid-body td:nth-child(odd)"));
-			WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSourcesInRoleGrid-body"));
+			try {
+				// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
+				List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSourcesGrid-body td:nth-child(odd)"));
+				WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSourcesInRoleGrid-body"));
 
-			// Loop through restrictedList 
-			for (WebElement restrictedItem : restrictedList) {
-				//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+				// Loop through restrictedList 
+				for (WebElement restrictedItem : restrictedList) {
+					//	System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
 
-				// Loop through the user set data Hashmap
-				for (String userDataSource : dataSource.keySet()) {
-					//	System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+					// Loop through the user set data Hashmap
+					for (String dataSourceToSet : dataSource.keySet()) {
+						//	System.out.println(dataSourceToSet.toString() + " trying to match what is in the table to this that the user inputted.");
 
-					// If the User setting equals the setting in the Restricted List
-					if (userDataSource.equals(restrictedItem.getText())) {
-						// If it is supposed to be in Accessible or TRUE in hashmap
-						if (dataSource.get(userDataSource)) {
-							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSource + " *** READY TO BE MOVED to the LEFT ***");
-							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-							// LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
-							break;
+						// If the User setting equals the setting in the Restricted List
+						if (dataSourceToSet.equals(restrictedItem.getText())) {
+							// If it is supposed to be in Accessible or TRUE in hashmap
+							if (dataSource.get(dataSourceToSet)) {
+								// Move it to the right (Restricted to Accessible)
+								System.out.println(dataSourceToSet + " *** READY TO BE MOVED to the RIGHT ***");
+
+								Actions builder = new Actions(driver);
+								builder.moveToElement(restrictedItem).perform();
+								sleep(dragAndDropActionSleepTime);
+								builder.dragAndDrop(restrictedItem, accessibleTable);
+								sleep(dragAndDropActionSleepTime);
+								builder.perform();
+								sleep(dragAndDropActionSleepTime);
+
+								// (new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
+								// LOG.log(Level.INFO, "--- MOVED '" + dataSourceToSet + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							} else {
+								System.out.println("--- '" + dataSourceToSet + "' is 'FALSE' so it should remain "
+										+ "on the LEFT (Restricted) *NOT MOVED* ---");
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				System.out.println(" *** Nothing in the LEFT-hand list (to move to the LEFT), moving on... ***\n" + e);
 			}
 
-			// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
-			List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSourcesInRoleGrid-body td:nth-child(odd)"));
-			WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSourcesGrid-body"));
+			try {
+				// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
+				List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSourcesInRoleGrid-body td:nth-child(odd)"));
+				WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSourcesGrid-body"));
 
-			// Loop through accessibleList
-			for (WebElement accessibleItem : accessibleList) {
-				System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
+				// Loop through accessibleList
+				for (WebElement accessibleItem : accessibleList) {
+					// System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
 
-				// Loop through the user set data Hashmap
-				for (String userDataSource : dataSource.keySet()) {
-					System.out.println(userDataSource.toString() + " trying to match what is in the table to this that the user inputted.");
+					// Loop through the user set data Hashmap
+					for (String dataSourceToSet : dataSource.keySet()) {
+						//	System.out.println(dataSourceToSet.toString() + " trying to match what is in the table to this that the user inputted.");
 
-					// If the User setting equals the setting in the Restricted List
-					if (userDataSource.equals(accessibleItem.getText())) {
-						// If it is supposed to be in Restricted or FALSE in hashmap
-						if (!dataSource.get(userDataSource)) {
-							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSource + " *** READY TO BE MOVED to the RIGHT***");
-							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
-							// LOG.log(Level.INFO, "--- MOVED '" + userDataSource + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
-							break;
+						// If the User setting equals the setting in the Restricted List
+						if (dataSourceToSet.equals(accessibleItem.getText())) {
+							// If it is supposed to be in Restricted or FALSE in hashmap
+							if (!dataSource.get(dataSourceToSet)) {
+								// Move it to the right (Restricted to Accessible)
+								System.out.println(dataSourceToSet + " *** READY TO BE MOVED to the RIGHT***");
+								Actions builder = new Actions(driver);
+								builder.moveToElement(accessibleItem).perform();
+								sleep(dragAndDropActionSleepTime);
+								builder.dragAndDrop(accessibleItem, restrictedTable);
+								sleep(dragAndDropActionSleepTime);
+								builder.perform();
+								sleep(dragAndDropActionSleepTime);
+								// (new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
+								// LOG.log(Level.INFO, "--- MOVED '" + dataSourceToSet + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							} else {
+								System.out.println("--- '" + dataSourceToSet + "' is 'TRUE' so it should remain "
+										+ "on the RIGHT (Accessible) *NOT MOVED* ---");
+							}
 						}
 					}
+				}
+			}catch (Exception e) {
+					System.out.println(" *** Nothing in the RIGHT-hand list (to move to the LEFT), moving on... ***\n" + e);
 				}
 			}
 			// Hit SAVE! (Data Restrictions)
 			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
-
-			WebDriverWait popupNoPresent = new WebDriverWait(driver, 5);
-			popupNoPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
-
+			// wait for table underneath to be visible again
+			WebDriverWait waitTableUnderneath = new WebDriverWait(driver, 5);
+			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sourceitivity) Settings ---");
-
 		}
-	}
-
-	// Feed in a <List> of Data Distributions to Activate
+		// Feed in a <List> of Data Distributions to Activate
 	public void manageDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
@@ -369,70 +403,102 @@ public class NewSecurityRole
 			WebDriverWait waitBox = new WebDriverWait(driver, 10);
 			waitBox.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
-			// Click on Data Sensitvity tab
-			List<WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
-			for (WebElement tab : dataTabs) {
-				if (tab.getText().equals("Data Sensitivity")) {
-					tab.click();
+			try {
+				// Click on Data Sensitvity tab
+				List<WebElement> dataTabs = driver.findElements(By.cssSelector(".x-tab.x-unselectable.x-box-item.x-tab-default.x-top.x-tab-top.x-tab-default-top"));
+				for (WebElement tab : dataTabs) {
+					if (tab.getText().equals("Data Sensitivity")) {
+						tab.click();
+					}
 				}
-			}
 
-			// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
-			List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSensitivityGrid-body td:nth-child(odd)"));
-			WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSensitivitiesInRoleGrid-body"));
+				// Get list of Codes in the Restricted (Left) side.  Get table for Accessible (Right) side
+				List<WebElement> restrictedList = driver.findElements(By.cssSelector("#dataSensitivityGrid-body td:nth-child(odd)"));
+				WebElement accessibleTable = driver.findElement(By.cssSelector("#dataSensitivitiesInRoleGrid-body"));
 
-			// Loop through restrictedList 
-			for (WebElement restrictedItem : restrictedList) {
-				// System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
+				// Loop through restrictedList 
+				for (WebElement restrictedItem : restrictedList) {
+					// System.out.println(restrictedItem.getText() + " is in RESTRICTED list in the table");
 
-				// Loop through the user set data Hashmap
-				for (String userDataSens : dataSens.keySet()) {
-					// System.out.println(userDataSens.toString() + " trying to match what is in the table to this that the user inputted.");
+					// Loop through the user set data Hashmap
+					for (String dataSensitvToSet : dataSens.keySet()) {
+						// System.out.println(dataSensitvToSet.toString() + " trying to match what is in the table to this that the user inputted.");
+						// If the User setting equals the setting in the Restricted List
+						if (dataSensitvToSet.equals(restrictedItem.getText())) {
+							// If it is supposed to be in Accessible or TRUE in hashmap
+							if (dataSens.get(dataSensitvToSet)) {
+								// Move it to the right (Restricted to Accessible)
+								System.out.println(dataSensitvToSet + " *** READY TO BE MOVED to the RIGHT ***");
 
-					// If the User setting equals the setting in the Restricted List
-					if (userDataSens.equals(restrictedItem.getText())) {
-						// If it is supposed to be in Accessible or TRUE in hashmap
-						if (dataSens.get(userDataSens)) {
-							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSens + " *** READY TO BE MOVED to the RIGHT ***");
-							(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
-							// LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
-							break;
+								Actions builder = new Actions(driver);
+								builder.moveToElement(restrictedItem).perform();
+								sleep(dragAndDropActionSleepTime);
+								builder.dragAndDrop(restrictedItem, accessibleTable);
+								sleep(dragAndDropActionSleepTime);
+								builder.perform();
+								sleep(dragAndDropActionSleepTime);
+								//	(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
+								// LOG.log(Level.INFO, "--- MOVED '" + dataSensitvToSet + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							} else {
+								System.out.println("--- '" + dataSensitvToSet + "' is 'FALSE' so it should remain "
+										+ "on the LEFT (Restricted) *NOT MOVED* ---");
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				System.out.println(" *** Nothing in the LEFT-hand list (to move to the RIGHT), moving on... ***\n" + e);
 			}
 
-			// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
-			List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSensitivitiesInRoleGrid-body td:nth-child(odd)"));
-			WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSensitivityGrid-body"));
+			try {
+				// Get list of Codes in the Accessible (Right) side.  Get table for Restricted (Left) side
+				List<WebElement> accessibleList = driver.findElements(By.cssSelector("#dataSensitivitiesInRoleGrid-body td:nth-child(odd)"));
+				WebElement restrictedTable = driver.findElement(By.cssSelector("#dataSensitivityGrid-body"));
 
-			// Loop through accessibleList
-			for (WebElement accessibleItem : accessibleList) {
-				// System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
+				// Loop through accessibleList
+				for (WebElement accessibleItem : accessibleList) {
+					// System.out.println(accessibleItem.getText() + " is in ACCESSIBLE list in the table");
 
-				// Loop through the user set data Hashmap
-				for (String userDataSens : dataSens.keySet()) {
-					// System.out.println(userDataSens.toString() + " trying to match what is in the table to this that the user inputted.");
+					// Loop through the user set data Hashmap
+					for (String dataSensitvToSet : dataSens.keySet()) {
+						// System.out.println(dataSensitvToSet.toString() + " trying to match what is in the table to this that the user inputted.");
 
-					// If the User setting equals the setting in the Restricted List
-					if (userDataSens.equals(accessibleItem.getText())) {
-						// If it is supposed to be in Restricted or FALSE in hashmap
-						if (!dataSens.get(userDataSens)) {
-							// Move it to the right (Restricted to Accessible)
-							System.out.println(userDataSens + " *** READY TO BE MOVED to the LEFT ***");
-							(new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
-							// LOG.log(Level.INFO, "--- MOVED '" + userDataSens + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
-							break;
+						// If the User setting equals the setting in the Restricted List
+						if (dataSensitvToSet.equals(accessibleItem.getText())) {
+							// If it is supposed to be in Restricted or FALSE in hashmap
+							if (!dataSens.get(dataSensitvToSet)) {
+								// Move it to the right (Restricted to Accessible)
+								System.out.println(dataSensitvToSet + " *** READY TO BE MOVED to the LEFT ***");
+									
+								Actions builder = new Actions(driver);
+								builder.moveToElement(accessibleItem).perform();
+								sleep(dragAndDropActionSleepTime);
+								builder.dragAndDrop(accessibleItem, restrictedTable);
+								sleep(dragAndDropActionSleepTime);
+								builder.perform();
+								sleep(dragAndDropActionSleepTime);
+								// (new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
+								// LOG.log(Level.INFO, "--- MOVED '" + dataSensitvToSet + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
+								break;
+							} else {
+								System.out.println("--- '" + dataSensitvToSet + "' is 'TRUE' so it should remain "
+										+ "on the RIGHT (Accessible) *NOT MOVED* ---");
+							}
 						}
 					}
 				}
+			}catch (Exception e) {
+				System.out.println(" *** Nothing in the LEFT-hand list (to move to the RIGHT), moving on... ***\n" + e);
 			}
-			// Hit SAVE! (Data Restrictions)
+
+			// Hit SAVE! (Data Sensitivity)
 			driver.findElement(By.cssSelector(".x-window .x-btn.x-box-item.x-toolbar-item")).click();
-			WebDriverWait popupNotPresent = new WebDriverWait(driver, 5);
-			popupNotPresent.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
-			LOG.log(Level.INFO, "--- SAVED Data Restrictions (Data Sources & Data Sensitivity) Settings ---");
+
+			// wait for table underneath to be visible again
+			WebDriverWait waitTableUnderneath = new WebDriverWait(driver, 5);
+			waitTableUnderneath.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
+			LOG.log(Level.INFO, "--- SAVED Data Sensitivity (Data Sources & Data Sourceitivity) Settings ---");
 		}
 	}
 }
