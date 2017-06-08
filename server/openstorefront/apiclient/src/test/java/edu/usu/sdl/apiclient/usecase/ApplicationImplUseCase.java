@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.apiclient.rest.service;
+package edu.usu.sdl.apiclient.usecase;
 
+import edu.usu.sdl.apiclient.rest.service.ApplicationImpl;
 import edu.usu.sdl.openstorefront.core.view.LoggerView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import java.util.logging.Level;
@@ -29,10 +30,10 @@ import org.junit.Test;
  *
  * @author ccummings
  */
-public class ApplicationImplTest
+public class ApplicationImplUseCase
 {
 
-	public ApplicationImplTest()
+	public ApplicationImplUseCase()
 	{
 	}
 
