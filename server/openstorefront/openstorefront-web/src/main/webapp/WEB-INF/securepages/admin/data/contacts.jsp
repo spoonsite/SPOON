@@ -389,6 +389,7 @@
 								{
 									text: 'Add',
 									itemId: 'add',
+									id: 'contactMngAddBtn',
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
@@ -398,6 +399,7 @@
 								},								
 								{
 									text: 'Edit',
+									id: 'contactMngEditBtn',
 									itemId: 'edit',
 									scale: 'medium',
 									width: '100px',

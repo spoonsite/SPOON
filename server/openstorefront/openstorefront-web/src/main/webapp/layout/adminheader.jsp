@@ -423,6 +423,7 @@
 							items:[
 								{
 									text: 'Dashboard',
+									id: 'dashboardAdminHomeButton',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){

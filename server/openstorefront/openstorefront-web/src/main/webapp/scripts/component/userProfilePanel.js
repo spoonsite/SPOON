@@ -83,6 +83,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 					{
 						xtype: 'button',
 						itemId: 'emailSendBtn',
+						id: 'emailSendTestBtn',
 						width: '175',
 						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
@@ -168,6 +169,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				text: 'Save',
 				formBind: true,
+				id: 'saveProfileFormBtn',
 				iconCls: 'fa fa-lg fa-save icon-button-color-save',
 				handler: function () {
 					var data = profileForm.getValues();

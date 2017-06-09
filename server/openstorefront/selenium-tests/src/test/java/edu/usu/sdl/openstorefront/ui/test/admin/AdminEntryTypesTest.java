@@ -16,11 +16,16 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -45,14 +50,17 @@ public class AdminEntryTypesTest
 
 			setup(driver);
 			createEntryType(driver, "AMAZING-TEST", "An Amazing Test");
-			
+			editEntryTypes(driver, "AMAZING-TEST");
+			toggleStatusEntryType(driver, "AMAZING-TEST");
+			deleteEntryType(driver, "AMAZING-TEST");
+
 		}
 	}
 
 	public void setup(WebDriver driver)
 	{
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Entry-Types"));
-		
+
 		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
 			List<WebElement> titleElements = driverLocal.findElements(By.id("entryGrid_header-title-textEl"));
 			if (titleElements.size() > 0) {
@@ -66,19 +74,167 @@ public class AdminEntryTypesTest
 	public void createEntryType(WebDriver driver, String typeCode, String typeLabel) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#entryTypeAddBtn"))).click();
-		
-		
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#entryForm-type-inputEl"))).sendKeys(typeCode);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#entryForm-type-label-inputEl"))).sendKeys(typeLabel);
+
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#entryForm-type-description-inputCmp-iframeEl"))).sendKeys("An Amazing Test Description");
+
+		List<String> radioBtns = Arrays.asList("entryForm-radio-allow-on-sub-bodyEl", "entryForm-radio-attributes-bodyEl",
+				"entryForm-radio-relationships-bodyEl", "entryForm-radio-contacts-bodyEl", "entryForm-radio-resources-bodyEl",
+				"entryForm-radio-media-bodyEl", "entryForm-radio-dependencies-bodyEl", "entryForm-radio-metadata-bodyEl",
+				"entryForm-radio-eval-info-bodyEl", "entryForm-radio-reviews-bodyEl", "entryForm-radio-questions-bodyEl");
+
+		for (String btn : radioBtns) {
+
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#" + btn))).click();
+		}
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#entryTypeForm-save"))).click();
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Saving...']")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Saving...']")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	public void editEntryTypes(WebDriver driver, String typeCode) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		assertTrue(tableClickRowCol(".x-grid-item-container", typeCode, driver, 0));
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#lookupGrid-tools-edit"))).click();
+
+		driver.switchTo().frame(wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#entryForm-type-description-inputCmp-iframeEl"))));
+
+		((JavascriptExecutor) driver).executeScript("document.body.innerHTML='An Amazing Test Description - Edited'");
+		driver.switchTo().parentFrame();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#entryTypeForm-save"))).click();
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Saving...']")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Saving...']")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+	}
+
+	public void toggleStatusEntryType(WebDriver driver, String typeCode) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		assertTrue(tableClickRowCol(".x-grid-item-container", typeCode, driver, 0));
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#lookupGrid-tools-status"))).click();
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Updating Status...']")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Updating Status...']")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		List<WebElement> allRows = new ArrayList<WebElement>();
+		allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(".x-grid-item-container"), By.tagName("tr")));
+
+		int colIndex = getColumnHeaderIndex(driver, "Active Status");
+		if (colIndex == -1) {
+			assertTrue(false);
+		}
+
+		sleep(3000);
+		for (WebElement row : allRows) {
+
+			List<WebElement> cells = new ArrayList<WebElement>();
+			try {
+				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+				WebElement cell = cells.get(0);
+
+				if (cell.getText().equals("AMAZING-TEST")) {
+
+					WebElement cellActiveStatus = cells.get(colIndex);
+					if (cellActiveStatus.getText().equals("I")) {
+						assertTrue(true);
+						LOG.log(Level.INFO, "Successfully set code to inactive");
+					} else {
+						LOG.log(Level.SEVERE, "Unable to toggle status of code");
+						assertTrue(false);
+					}
+				}
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
 	}
 
 	public void deleteEntryType(WebDriver driver, String typeCode) throws InterruptedException
 	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
 		assertTrue(tableClickRowCol(".x-grid-item-container", typeCode, driver, 0));
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#lookupGrid-tools-remove"))).click();
+		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#moveExistingDataComboBox-inputEl"))).click();
+		
+		List<WebElement> typeChoices = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector("#moveExistingDataComboBox-picker-listEl"), By.tagName("li")));
+		for (WebElement type : typeChoices) {
+			if (type.getText().equals("DI2E Component")) {
+				type.click();
+			}
+		}
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#applyBtnDeleteEntryType"))).click();
+		
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Deleting entry type...']")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+		
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[aria-valuetext*='Deleting entry type...']")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+		
+		assertFalse(tableClickRowCol(".x-grid-item-container", typeCode, driver, 0));
 	}
 
-	public void editEntryTypes(WebDriver driver, String codeLabel) throws InterruptedException
+	public int getColumnHeaderIndex(WebDriver driver, String headerName)
 	{
 
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		List<WebElement> headers = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-column-header")));
+		int col = 0;
+		for (WebElement header : headers) {
+
+			if (header.getText().equals(headerName)) {
+				return col;
+			}
+			col++;
+		}
+		return -1;
 	}
+
 }
