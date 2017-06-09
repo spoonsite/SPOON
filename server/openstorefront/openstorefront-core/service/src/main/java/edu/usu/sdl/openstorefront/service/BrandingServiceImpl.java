@@ -87,7 +87,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getHomebackSplashUrl() == null) {
-					branding.setSecondaryLogoUrl("images/background_globe.jpg");
+					branding.setHomebackSplashUrl("images/background_globe.jpg");
 				}
 
 				if (branding.getLandingStatsText() == null) {
