@@ -54,6 +54,7 @@ Ext.define('OSF.landing.designer.Code', {
 		},
 		{
 			xtype: 'textarea',
+			itemId: 'generatedCode',
 			name: 'generatedCode',
 			flex: 1,
 			fieldLabel: 'Generated',
@@ -85,7 +86,27 @@ Ext.define('OSF.landing.designer.Code', {
 		
 	},
 	updateGeneratedCode: function(componentBlocks) {
+		var codePanel = this;		
+				
+		var generatedCode = codePanel.queryById('generatedCode');
+				
+		var renderedItems = '';
+		Ext.Array.each(componentBlocks, function(block){
+			renderedItems += block.renderCode() + '\n';
+		});
+		renderedItems += ';';
 		
+		generatedCode.setValue(renderedItems);		
+		
+		var data = codePanel.getValues();
+		var fullCode = data.structureStart + 
+						data.preCode +  
+						data.generatedCode +
+						data.postCode +
+						data.structureEnd;
+		
+		
+		return fullCode;
 	}
 	
 	
