@@ -16,10 +16,9 @@
 package edu.usu.sdl.apiclient;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.view.ComponentResourceView;
 import edu.usu.sdl.apiclient.view.LookupModel;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,38 +30,35 @@ public class ComponentService
 		extends AbstractService
 {
 
-	private static Logger log = Logger.getLogger(ComponentService.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentService.class.getName());
 
-	public ComponentService(LoginModel loginModel)
+	public ComponentService(ClientAPI client)
 	{
-		super(loginModel);
+		super(client);
+	}
+	
+	public ComponentService() {
+		
+		this(new ClientAPI(new ObjectMapper()));
 	}
 
 	public List<LookupModel> getComponentLookupList()
 	{
-		List<LookupModel> lookupModels = new ArrayList<>();
-		APIResponse response = callAPI("api/v1/resource/components/lookup/", null);
-		try {
-			lookupModels = getObjectMapper().readValue(response.getResponseBody(), new TypeReference<List<LookupModel>>()
+		List<LookupModel> lookupModels;
+		APIResponse response = client.httpGet("api/v1/resource/components/lookup/", null);
+		lookupModels = response.getList(new TypeReference<List<ComponentResourceView>>()
 			{
 			});
-		} catch (IOException ex) {
-			throw new HandlingException(ex);
-		}
 		return lookupModels;
 	}
 
 	public List<ComponentResourceView> getComponentResources(String componentId)
 	{
-		List<ComponentResourceView> resources = new ArrayList<>();
-		APIResponse response = callAPI("api/v1/resource/components/" + componentId + "/resources/view", null);
-		try {
-			resources = getObjectMapper().readValue(response.getResponseBody(), new TypeReference<List<ComponentResourceView>>()
+		List<ComponentResourceView> resources;
+		APIResponse response = client.httpGet("api/v1/resource/components/" + componentId + "/resources/view", null);
+		resources = response.getList(new TypeReference<List<ComponentResourceView>>()
 			{
 			});
-		} catch (IOException ex) {
-			throw new HandlingException(ex);
-		}
 		return resources;
 	}
 
@@ -73,15 +69,11 @@ public class ComponentService
 	 */
 	public List<ComponentResourceView> getComponentAllResources()
 	{
-		List<ComponentResourceView> resources = new ArrayList<>();
-		APIResponse response = callAPI("api/v1/resource/components/resources", null);
-		try {
-			resources = getObjectMapper().readValue(response.getResponseBody(), new TypeReference<List<ComponentResourceView>>()
+		List<ComponentResourceView> resources;
+		APIResponse response = client.httpGet("api/v1/resource/components/resources", null);
+		resources = response.getList(new TypeReference<List<ComponentResourceView>>()
 			{
 			});
-		} catch (IOException ex) {
-			throw new HandlingException(ex);
-		}
 		return resources;
 	}
 
