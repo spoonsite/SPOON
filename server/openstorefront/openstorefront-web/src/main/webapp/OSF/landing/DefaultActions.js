@@ -81,7 +81,7 @@ Ext.define('OSF.landing.DefaultActions', {
 				text: 'My Searches',
 				//icon: 'fa-share-alt',
 				tip: 'View and manage your saved searches',
-				imageSrc: 'images/relationship.png',
+				imageSrc: 'images/savedsearch.png',
 				handler: function(record, item) {
 					window.location.href = 'UserTool.action?load=Searches';
 				}

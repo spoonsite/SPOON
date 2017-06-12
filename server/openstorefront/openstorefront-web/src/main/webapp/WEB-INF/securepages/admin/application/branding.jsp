@@ -507,7 +507,8 @@
 															actionSaveBranding(form, function(response, opt){
 																Ext.toast('Saved Successfully');
 																actionRefresh();
-																win.close();
+																addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
+																//win.close();
 															});
 														}
 													},
@@ -536,10 +537,14 @@
 														xtype: 'tbfill'
 													},
 													{
-														text: 'Cancel',
+														text: 'Close',
 														iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 														scale: 'medium',
 														handler: function () {
+															
+															//check for unsaved state
+															var form = this.up('form');
+															
 															this.up('window').close();
 														}
 													}
@@ -549,7 +554,9 @@
 									},
 									{
 										xtype: 'ofs-landingPageDesigner',
-										title: 'Landing Page'
+										title: 'Landing Page',
+										itemId: 'landingPageTab',
+										disabled: true
 									},
 									{
 										xtype: 'panel',
@@ -578,6 +585,7 @@
 					
 					if (record) {
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
+						addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
 					}
 					
 				};

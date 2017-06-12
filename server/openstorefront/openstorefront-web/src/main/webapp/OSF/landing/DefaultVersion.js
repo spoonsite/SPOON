@@ -39,7 +39,8 @@ Ext.define('OSF.landing.DefaultVersion', {
 			url: 'api/v1/service/application/version',
 			success: function(response, opts) {
 				var version = response.responseText;
-				versionPanel.queryById('display').update({
+				console.log(versionPanel);
+				versionPanel.getComponent('display').update({
 					applicationVersion: version
 				});
 			}

@@ -246,8 +246,10 @@ Ext.define('OSF.landing.DefaultInfo', {
 			}
 		});
 		
-		
-		
+		infoPanel.on('beforedestroy', function(panel, opts) {
+			Ext.TaskManager.stop(infoPanel.highlightTask);
+		});
+				
 	}
 	
 });

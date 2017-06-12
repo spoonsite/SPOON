@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,6 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 public class LandingAction
 		extends BaseAction
 {
+
+	private static final String LANDING_PAGE_PREVIEW = "LANDING-PAGE-PREVIEW";
 
 	private String landingTemplate;
 	private String appVersion;
@@ -45,6 +48,18 @@ public class LandingAction
 			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/defaultLanding.jsp"));
 		}
 
+		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
+	}
+
+	@HandlesEvent("Preview")
+	public Resolution previewLandingPage()
+	{
+		appVersion = getApplicationVersion();
+		if (StringUtils.isBlank(landingTemplate)) {
+			landingTemplate = (String) getContext().getRequest().getSession().getAttribute(LANDING_PAGE_PREVIEW);
+		} else {
+			getContext().getRequest().getSession().setAttribute(LANDING_PAGE_PREVIEW, landingTemplate);
+		}
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
 	}
 

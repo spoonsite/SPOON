@@ -168,8 +168,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);					
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'fit'
+					});					
+					return commonCodeRender(this, config);							
 				}
 			},
 			{
@@ -188,8 +192,14 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						flex: 1
 					});					
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'hbox'
+					});					
+					return commonCodeRender(this, config, {
+						flex: 1
+					});							
 				}				
 			},
 			{
@@ -208,8 +218,14 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						flex: 1
 					});						
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'vbox'
+					});					
+					return commonCodeRender(this, config, {
+						flex: 1
+					});							
 				}				
 			},
 			{
@@ -225,8 +241,11 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);						
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			},			
 			{
@@ -243,8 +262,11 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);						
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			},
 			{
@@ -261,8 +283,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);							
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'center'
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			},
 			{
@@ -279,8 +305,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);						
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'accordion'
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			},
 			{
@@ -297,8 +327,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);							
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'anchor'
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			},
 			{
@@ -315,8 +349,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});
 					return commonDesignerRender(this, config);							
 				},
-				renderCode: function(){
-					
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'border'
+					});					
+					return commonCodeRender(this, config);							
 				}				
 			}			
 		];
@@ -725,10 +763,10 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 		};
 		
 		
-		var commonCodeRender = function(block, config) {	
+		var commonCodeRender = function(block, config, childConfig) {	
 			var itemsToAdd = [];
 			Ext.Array.each(block.items, function(childBlock){						
-				itemsToAdd.push(childBlock.renderCode(config));
+				itemsToAdd.push(childBlock.renderCode(childConfig));
 			});	
 
 			var generated = Ext.clone(Ext.apply(config, block.config));
@@ -741,10 +779,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					configString += key + ": " + value + ",\n";
 				}
 			});
-			configString += 'items: [\n' + itemsToAdd.join(',\n') + '\n]\n';
+			if (itemsToAdd.length > 0) {
+				configString += '\nitems: [\n' + itemsToAdd.join(',\n') + '\n]\n';
+			}
 
-			return ' Ext.create(\'' + block.className + '\', {' +
-					configString + "})";
+			return 'Ext.create(\'' + block.className + '\', {\n' +
+					configString + "\n})";
 		};
 		
 		Ext.defer(function(){
@@ -791,7 +831,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					},
 					renderCode: function(config){
 						config = config ? config : {};
-						config = Ext.apply(config, {						
+						config = Ext.apply(config, {
+							layout: 'border'
 						});					
 						return commonCodeRender(this, config);	
 					}				

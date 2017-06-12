@@ -72,9 +72,33 @@ Ext.define('OSF.landing.designer.Code', {
 			name: 'structureEnd',
 			flex: 1,
 			fieldLabel: 'Stucture End',
-			value: '});'
+			value: '});\n</script>'
 		}		
 		
+	],
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'top',
+			items: [
+				{
+					text: 'Update Preview',
+					iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+					handler: function() {
+						var codePanel = this.up('panel');
+						
+						var data = codePanel.getValues();
+						var fullCode = data.structureStart + 
+							data.preCode +  
+							data.generatedCode +
+							data.postCode +
+							data.structureEnd;
+						
+						codePanel.designerPanel.preview.updatePreview(fullCode);
+					}
+				}
+			]
+		}
 	],	
 	initComponent: function () {
 		this.callParent();		
@@ -94,6 +118,7 @@ Ext.define('OSF.landing.designer.Code', {
 		Ext.Array.each(componentBlocks, function(block){
 			renderedItems += block.renderCode() + '\n';
 		});
+		renderedItems = renderedItems.substring(0, renderedItems.length - 1);
 		renderedItems += ';';
 		
 		generatedCode.setValue(renderedItems);		
@@ -104,7 +129,6 @@ Ext.define('OSF.landing.designer.Code', {
 						data.generatedCode +
 						data.postCode +
 						data.structureEnd;
-		
 		
 		return fullCode;
 	}

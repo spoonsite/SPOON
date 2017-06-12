@@ -23,7 +23,7 @@ Ext.define('OSF.landing.designer.Preview', {
 	
 	bodyStyle: 'border: 10px solid lightgrey !important;',
 	layout: 'fit',
-	items: [
+	items: [		
 		{
 			xtype: 'osf-uxiframe',
 			itemId: 'content',		
@@ -40,6 +40,22 @@ Ext.define('OSF.landing.designer.Preview', {
 		
 	},
 	updatePreview: function (code) {
+		var previewPanel = this;		
+		
+		previewPanel.setLoading(true);
+		Ext.Ajax.request({
+			url: 'Landing.action?Preview',
+			params: {
+				landingTemplate: code
+			},
+			callback: function() {
+				previewPanel.setLoading(false);
+			},
+			success: function(response, opts){
+				var contentPanel = previewPanel.queryById('content');
+				contentPanel.load('Landing.action?Preview');				
+			}
+		});
 		
 		
 	}
