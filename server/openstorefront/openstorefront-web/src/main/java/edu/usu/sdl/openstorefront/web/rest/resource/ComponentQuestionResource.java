@@ -29,6 +29,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -49,10 +50,10 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all active questions posed by a user")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
-	@Path("/{username}/{status}")
+	@Path("/{username}")
 	public Response getQuestionsForUser(
 			@PathParam("username") String username,
-			@PathParam("status") @DefaultValue("A") String status
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
@@ -75,10 +76,10 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all active answers for a user.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponseView.class)
-	@Path("/responses/{username}/{status}")
+	@Path("/responses/{username}")
 	public Response getResponseForUser(
 			@PathParam("username") String username,
-			@PathParam("status") @DefaultValue("A") String status
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
@@ -100,10 +101,10 @@ public class ComponentQuestionResource
 	@APIDescription("Gets all responses for a question")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponseView.class)
-	@Path("/{questionId}/responses/{status}")
+	@Path("/{questionId}/responses")
 	public Response getResponseForQuestion(
 			@PathParam("questionId") String questionId,
-			@PathParam("status") @DefaultValue("A") String status
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();

@@ -130,22 +130,22 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public <T extends ComponentReview> T setReviewPending(Class<T> review, Object pk)
+	public ComponentReview setReviewPending(String ComponentReviewId)
 	{
-		return sub.setReviewPending(review, pk);
+		return sub.setReviewPending(ComponentReviewId);
 	}
 
 	@Override
-	public <T extends ComponentQuestion> T setQuestionPending(Class<T> question, Object pk)
+	public ComponentQuestion setQuestionPending(String ComponentQuestionResponseId)
 	{
-		return sub.setQuestionPending(question, pk);
+		return sub.setQuestionPending(ComponentQuestionResponseId);
 
 	}
 
 	@Override
-	public <T extends ComponentQuestionResponse> T setQuestionResponsePending(Class<T> answer, Object pk)
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId)
 	{
-		return sub.setQuestionResponsePending(answer, pk);
+		return sub.setQuestionResponsePending(ComponentQuestionResponseId);
 	}
 
 	@Override

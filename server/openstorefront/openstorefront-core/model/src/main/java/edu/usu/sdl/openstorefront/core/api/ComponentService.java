@@ -112,32 +112,26 @@ public interface ComponentService
 	/**
 	 * Set Review to pending
 	 *
-	 * @param <T>
-	 * @param review
-	 * @param pk
+	 * @param ComponentReviewId
 	 * @return
 	 */
-	public <T extends ComponentReview> T setReviewPending(Class<T> review, Object pk);
+	public ComponentReview setReviewPending(String ComponentReviewId);
 
 	/**
 	 * Set Review to pending
 	 *
-	 * @param <T>
-	 * @param question
-	 * @param pk
+	 * @param ComponentQuestionId
 	 * @return
 	 */
-	public <T extends ComponentQuestion> T setQuestionPending(Class<T> question, Object pk);
+	public ComponentQuestion setQuestionPending(String ComponentQuestionId);
 
 	/**
 	 * Set Review to pending
 	 *
-	 * @param <T>
-	 * @param answer
-	 * @param pk
+	 * @param ComponentQuestionResponseId
 	 * @return
 	 */
-	public <T extends ComponentQuestionResponse> T setQuestionResponsePending(Class<T> answer, Object pk);
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId);
 
 	/**
 	 * Deletes a base component

@@ -2665,7 +2665,7 @@ public class ComponentRESTResource
 
 		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
 		if (componentQuestion != null) {
-			service.getComponentService().setQuestionPending(ComponentQuestion.class, questionId);
+			service.getComponentService().setQuestionPending(questionId);
 			componentQuestion.setActiveStatus(ComponentQuestion.PENDING_STATUS);
 		}
 		return sendSingleEntityResponse(componentQuestion);
@@ -2862,7 +2862,7 @@ public class ComponentRESTResource
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			service.getComponentService().setQuestionResponsePending(ComponentQuestionResponse.class, responseId);
+			service.getComponentService().setQuestionResponsePending(responseId);
 			questionResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
 		}
 		return sendSingleEntityResponse(questionResponse);
@@ -3077,7 +3077,7 @@ public class ComponentRESTResource
 
 		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
 		if (componentReview != null) {
-			service.getComponentService().setReviewPending(ComponentReview.class, reviewId);
+			service.getComponentService().setReviewPending(reviewId);
 			componentReview.setActiveStatus(ComponentReview.PENDING_STATUS);
 		}
 		return sendSingleEntityResponse(componentReview);

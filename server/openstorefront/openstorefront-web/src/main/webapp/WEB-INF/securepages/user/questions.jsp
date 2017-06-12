@@ -92,7 +92,7 @@
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											responseGrid.getStore().load({
-												url: 'api/v1/resource/componentquestions/responses/${user}/' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
+												url: 'api/v1/resource/componentquestions/responses/${user}?status=' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
 											});
 										}
 									},
@@ -277,7 +277,7 @@
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											questionGrid.getStore().load({
-													url: 'api/v1/resource/componentquestions/${user}/' + Ext.getCmp('question-activeStatus').getSelection().getData().code
+													url: 'api/v1/resource/componentquestions/${user}?status=' + Ext.getCmp('question-activeStatus').getSelection().getData().code
 												});
 										}
 									},

@@ -945,15 +945,15 @@ public class SubComponentServiceImpl
 		});
 	}
 
-	public <T extends ComponentReview> T setReviewPending(Class<T> review, Object pk)
+	public ComponentReview setReviewPending(String ComponentReviewId)
 	{
-		T found = persistenceService.findById(review, pk);
+		ComponentReview found = persistenceService.findById(ComponentReview.class, ComponentReviewId);
 		if (found != null) {
 			if (found instanceof LoggableModel) {
-				componentService.getChangeLogService().logStatusChange(found, T.PENDING_STATUS);
+				componentService.getChangeLogService().logStatusChange(found, ComponentReview.PENDING_STATUS);
 			}
 
-			found.setActiveStatus(T.PENDING_STATUS);
+			found.setActiveStatus(ComponentReview.PENDING_STATUS);
 			found.populateBaseUpdateFields();
 			persistenceService.persist(found);
 
@@ -962,15 +962,15 @@ public class SubComponentServiceImpl
 		return found;
 	}
 
-	public <T extends ComponentQuestion> T setQuestionPending(Class<T> question, Object pk)
+	public ComponentQuestion setQuestionPending(String ComponentQuestionId)
 	{
-		T found = persistenceService.findById(question, pk);
+		ComponentQuestion found = persistenceService.findById(ComponentQuestion.class, ComponentQuestionId);
 		if (found != null) {
 			if (found instanceof LoggableModel) {
-				componentService.getChangeLogService().logStatusChange(found, T.PENDING_STATUS);
+				componentService.getChangeLogService().logStatusChange(found, ComponentQuestion.PENDING_STATUS);
 			}
 
-			found.setActiveStatus(T.PENDING_STATUS);
+			found.setActiveStatus(ComponentQuestion.PENDING_STATUS);
 			found.populateBaseUpdateFields();
 			persistenceService.persist(found);
 
@@ -979,15 +979,15 @@ public class SubComponentServiceImpl
 		return found;
 	}
 
-	public <T extends ComponentQuestionResponse> T setQuestionResponsePending(Class<T> answer, Object pk)
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId)
 	{
-		T found = persistenceService.findById(answer, pk);
+		ComponentQuestionResponse found = persistenceService.findById(ComponentQuestionResponse.class, ComponentQuestionResponseId);
 		if (found != null) {
 			if (found instanceof LoggableModel) {
-				componentService.getChangeLogService().logStatusChange(found, T.PENDING_STATUS);
+				componentService.getChangeLogService().logStatusChange(found, ComponentQuestionResponse.PENDING_STATUS);
 			}
 
-			found.setActiveStatus(T.PENDING_STATUS);
+			found.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
 			found.populateBaseUpdateFields();
 			persistenceService.persist(found);
 

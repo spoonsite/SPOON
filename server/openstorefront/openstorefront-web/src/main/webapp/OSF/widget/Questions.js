@@ -94,7 +94,7 @@ Ext.define('OSF.widget.Questions', {
 								change: function (filter, newValue, oldValue, opts) {
 									CoreService.userservice.getCurrentUser().then(function (userProfile) {
 										questionPanel.grid.getStore().load({
-											url: 'api/v1/resource/componentquestions/' + userProfile.username + '/' + newValue
+											url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + newValue
 										});
 									});
 								}
@@ -202,7 +202,7 @@ Ext.define('OSF.widget.Questions', {
 											change: function (filter, newValue, oldValue, opts) {
 												CoreService.userservice.getCurrentUser().then(function (userProfile) {
 													questionPanel.grid.getStore().load({
-														url: 'api/v1/resource/componentquestions/' + record.get('questionId') + '/responses/' + Ext.ComponentQuery.query('[itemId=answer-activeStatus]')[0].getSelection().getData().code
+														url: 'api/v1/resource/componentquestions/' + record.get('questionId') + '/responses?status=' + Ext.ComponentQuery.query('[itemId=answer-activeStatus]')[0].getSelection().getData().code
 													});
 												});
 											}
@@ -237,7 +237,7 @@ Ext.define('OSF.widget.Questions', {
 		questionPanel.add(questionPanel.grid);
 		CoreService.userservice.getCurrentUser().then(function (userProfile) {
 			questionPanel.grid.getStore().load({
-				url: 'api/v1/resource/componentquestions/' + userProfile.username + '/' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
+				url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
 			});
 		});
 
@@ -246,7 +246,7 @@ Ext.define('OSF.widget.Questions', {
 		var questionPanel = this;
 		CoreService.userservice.getCurrentUser().then(function (userProfile) {
 			questionPanel.grid.getStore().load({
-				url: 'api/v1/resource/componentquestions/' + userProfile.username + '/' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
+				url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
 			});
 		});
 	}
