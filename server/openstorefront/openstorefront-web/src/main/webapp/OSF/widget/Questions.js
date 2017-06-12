@@ -146,8 +146,10 @@ Ext.define('OSF.widget.Questions', {
 				items: [
 					{
 						xtype: 'grid',
+						itemId: 'answer-grid',
 						columnLines: true,
 						store: {
+							storeId: 'answerstore',
 							sorters: [{
 									property: 'componentName',
 									direction: 'ASC'
@@ -201,7 +203,7 @@ Ext.define('OSF.widget.Questions', {
 										listeners: {
 											change: function (filter, newValue, oldValue, opts) {
 												CoreService.userservice.getCurrentUser().then(function (userProfile) {
-													questionPanel.grid.getStore().load({
+													Ext.getStore('answerstore').load({
 														url: 'api/v1/resource/componentquestions/' + record.get('questionId') + '/responses?status=' + Ext.ComponentQuery.query('[itemId=answer-activeStatus]')[0].getSelection().getData().code
 													});
 												});
