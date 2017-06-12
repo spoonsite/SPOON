@@ -54,17 +54,36 @@ public class NewSecurityRole
 	// Delete if active
 	public void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException
 	{
+		WebDriverWait wait = new WebDriverWait(driver, 7);
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		sleep(1500);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
+
 		// Click on Table Row Col containing roleName
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
-			driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-			sleep(750);
-			driver.findElement(By.xpath("//span[contains(.,'Confirm')]")).click();
-			sleep(500);
 
-			// *** FIXES detached from page error message ***  TODO: Put in a seperate method if used again?
-			boolean breakIt = true;
+			// Click on Delete
+			List<WebElement> topButtons = driver.findElements
+				(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
+			for (WebElement aButton : topButtons) {
+				if (aButton.getText().equals("Delete")) {
+					aButton.click();
+				}
+			}
+			// Wait Delete Role confirmation box to come up.
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
+
+			// Click on Confirmation Button
+			List<WebElement> deleteOptions = driver.findElements
+				(By.cssSelector(".x-btn-inner.x-btn-inner-default-toolbar-small"));
+			for (WebElement theButton : deleteOptions) {
+				if (theButton.getText().equals("Confirm")) {
+					theButton.click();
+				}
+			}
+
+			// *** FIXES detached from page error message *** 
+	/*		boolean breakIt = true;
 			while (true) {
 				breakIt = true;
 				try {
@@ -82,7 +101,7 @@ public class NewSecurityRole
 					break;
 				}
 			}
-
+		*/
 			// Check to ensure deletion
 			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
@@ -96,22 +115,40 @@ public class NewSecurityRole
 
 	}
 
-	public void addRoleBasic(WebDriver driver, String roleName) throws InterruptedException
+	public void addSecurityRole(WebDriver driver, String roleName, boolean allowDataSource, boolean allowDataSensitivity)
+			throws InterruptedException
 	{
-		// ********* OPTIMIZE with WebDriverWAIT *************************
-		// ********** ADD WAY TO CHECK AND UNCHECK ******************
+		WebDriverWait wait = new WebDriverWait(driver, 7);
 
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		//driver.navigate().refresh();
-		sleep(1500);
-		driver.findElement(By.xpath("//span[contains(.,'Add')]")).click();
-		sleep(1250); // Give box time to come up
-		driver.findElement(By.xpath("//input[contains(@name,'roleName')]")).sendKeys(roleName);
-		driver.findElement(By.xpath("//input[@name='description']")).sendKeys("Created by automation");
-		driver.findElement(By.xpath("//input[@name='landingPage']")).sendKeys("/");
-		sleep(500);
-		driver.findElement(By.xpath("//span[contains(.,'Save')]")).click();
-		sleep(2000);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
+
+		// Select the +Add button, NOT the Refresh button
+		List<WebElement> buttonsTop = driver.findElements(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
+		for (WebElement topTwo : buttonsTop) {
+			if (topTwo.getText().equals("Add")) {
+				topTwo.click();
+			}
+		}
+		// Wait for Add/Edit Roles box to come up
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
+		driver.findElement(By.cssSelector("[name='roleName']")).sendKeys(roleName);
+		driver.findElement(By.cssSelector("[name='description']")).sendKeys("Created by SWAT automation");
+		driver.findElement(By.cssSelector("[name='landingPage']")).sendKeys("/");
+
+		// Check Allow Unspecified Data Source and/ or Allow Unspecified Data Sensitivity
+		if (allowDataSource) {
+			driver.findElement(By.cssSelector("[name*='allowUnspecifiedDataSource']")).click();
+		}
+		if (allowDataSensitivity) {
+			driver.findElement(By.cssSelector("[name*='allowUnspecifiedDataSensitivity']")).click();
+		}
+
+		driver.findElement(By.cssSelector(".x-window.x-layer .x-btn.x-box-item.x-toolbar-item")).click();
+		// Wait until table is visible underneath
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
+
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 			LOG.log(Level.INFO, "--- Added the role " + roleName + ". ---");
 		} else {
@@ -133,9 +170,8 @@ public class NewSecurityRole
 			sleep(1000);
 			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
 			sleep(1250);
-			
-			// TODO:  What if the user has not been created?  Error handling here.
 
+			// TODO:  What if the user has not been created?  Error handling here.
 			// Hit add button (when active?)
 			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
 			sleep(1250);
@@ -152,16 +188,11 @@ public class NewSecurityRole
 		}
 	}
 
-	public void deleteUserFromRole(WebDriver driver, String roleName, String userName) throws InterruptedException
-	{
-		// TODO
-	}
-
 	public void setPermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		// Global for this method, save a line of code many times over
 		WebDriverWait wait = new WebDriverWait(driver, 7);
-		
+
 		// Go to Security Role page, wait for the table to load.
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
@@ -283,7 +314,7 @@ public class NewSecurityRole
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
@@ -503,7 +534,7 @@ public class NewSecurityRole
 			// wait for table underneath to be visible again
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 			LOG.log(Level.INFO, "--- SAVED Data Sensitivity (Data Sources & Data Sourceitivity) Settings ---");
-		
+
 		} else {
 			LOG.log(Level.SEVERE, "!!!!! Could NOT find the Security Role '" + roleName + "'.  !!!!!"
 					+ "\n !!!!! Please ensure the role is created using a call to 'addSecurityRole' !!!!!");

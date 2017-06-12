@@ -56,7 +56,7 @@ public class AccountSignupActivateTest
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
-		signupActivate("autoTestDEFALT");
+		signupActivate("auto-test-default");
 	}
 
 	// Order of tests when running all of the way through
@@ -98,7 +98,8 @@ public class AccountSignupActivateTest
 			setApprovalStatus(approvalStatusDropDownText, driver);
 
 			// Drop-down selectors finished, now search for user in the table and delete if present
-			if (tableClickRowCol("[data-test='xPanelTable'] .x-panel-body", userName, driver, 0)) {
+			
+			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-item-container", userName, driver, 0)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 				
 				// WAIT for confirmation button to come up
@@ -151,8 +152,9 @@ public class AccountSignupActivateTest
 		setApprovalStatus("Pending", driver);
 
 		// Select and click Approve
-		if (tableClickRowCol(
-				"[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
+		
+		// ******** STILL SLOW ON EMPTY TABLE FINDING IT (BROWSER TEST BASE) **********
+		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
 
 			// Wait for Approving User Display Block to go away
@@ -163,8 +165,6 @@ public class AccountSignupActivateTest
 			setActiveStatus("Active", driver);
 			setApprovalStatus("Approved", driver);
 
-			// WAIT for drop-downs to finish updating *************
-			
 			// Verify user has been approved
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
@@ -174,7 +174,7 @@ public class AccountSignupActivateTest
 		}
 
 	// Login as newly created and approved user
-	login(userName, userName + "A1!");
+	login(userName, userName.toLowerCase() + "A1!");
 	LOG.log (Level.INFO,
 			
 

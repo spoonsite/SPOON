@@ -59,11 +59,12 @@ public class SecurityRolesTest
 		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
 
 		// Create new accounts and activate.  Log on as user then log back on as admin
-		newAccountSignup.signupActivate("autoCutomized");  // NOT ACTIVATING?!?  Not going to Locked/ Pending (stays on approved)
-//		newAccountSignup.signupActivate("autoAdmin");
-//		newAccountSignup.signupActivate("autoEval");
-//		newAccountSignup.signupActivate("autoLibrarian");
-//		newAccountSignup.signupActivate("autoUser");
+		// NOTE-- usernames get converted to lower case
+		newAccountSignup.signupActivate("auto-customized-user");
+		newAccountSignup.signupActivate("auto-admin-user");
+//		newAccountSignup.signupActivate("auto-eval-user");
+//		newAccountSignup.signupActivate("auto-librarian-user");
+//		newAccountSignup.signupActivate("auto-user-user");
 	}
 
 	public void addSecurityRole() throws InterruptedException
@@ -71,16 +72,17 @@ public class SecurityRolesTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
-			// ***************	CHANGE THIS TO INCLUDE CHECK AND UNCHECK **********************
 			// Set up new Security Role, add user to role
-//			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
-//			newSecurityRole.addRoleBasic(driver, "AUTO-User");
-			// ************ DO THIS FROM USER MANAGEMENT? *************
-//			newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-customized-role");
+			newSecurityRole.addSecurityRole(driver, "auto-customized-role", true, true);
 
-//			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-Customized");
-//			newSecurityRole.addRoleBasic(driver, "AUTO-Customized");
-//			newSecurityRole.addUserToRole(driver, "AUTO-Customized", "autoCustomized");  // NOT ADDING USER TO ROLE
+			// ************ DO THIS FROM USER MANAGEMENT? *************
+//			newSecurityRole.addUserToRole(driver, "auto-user-role", "autoUser");
+
+			// REPEAT HERE FOR OTHER ROLES AND USERS
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-admin-role");
+			newSecurityRole.addSecurityRole(driver, "auto-admin-role", true, true);
+
 		}
 	}
 
@@ -91,30 +93,30 @@ public class SecurityRolesTest
 
 			// For the "Role", Set Data Sources, Data Sensitivies, and Permissions
 			// Change this one for a quick test
-			newSecurityRole.setDataSources(driver, "AUTO-Customized", customizedDataSources);
-			newSecurityRole.setDataSensitivity(driver, "AUTO-Customized", customizedDataSensitivities);
-			newSecurityRole.setPermissions(driver, "AUTO-Customized", customizedPermissions);
+			newSecurityRole.setDataSources(driver, "auto-customized-role", customizedDataSources);
+			newSecurityRole.setDataSensitivity(driver, "auto-customized-role", customizedDataSensitivities);
+			newSecurityRole.setPermissions(driver, "auto-customized-role", customizedPermissions);
 
 			// DO NOT Change these
 			newSecurityRole.setDataSources(driver, "DEFAULT-GROUP", defaultDataSources);
 			newSecurityRole.setDataSensitivity(driver, "DEFAULT-GROUP", defaultDataSensitivities);
 			newSecurityRole.setPermissions(driver, "DEFAULT-GROUP", defaultPermissions);
 
-			newSecurityRole.setDataSources(driver, "AUTO-Admin", adminDataSources);
-			newSecurityRole.setDataSensitivity(driver, "AUTO-Admin", adminDataSensitivities);
-			newSecurityRole.setPermissions(driver, "AUTO-Admin", adminPermissions);
+			newSecurityRole.setDataSources(driver, "auto-admin-role", adminDataSources);
+			newSecurityRole.setDataSensitivity(driver, "auto-admin-role", adminDataSensitivities);
+			newSecurityRole.setPermissions(driver, "auto-admin-role", adminPermissions);
 
-			newSecurityRole.setDataSources(driver, "AUTO-Evaluator", evaluatorDataSources);
-			newSecurityRole.setDataSensitivity(driver, "AUTO-Evaluator", evaluatorDataSensitivities);
-			newSecurityRole.setPermissions(driver, "AUTO-Evaluator", evaluatorPermissions);
+			newSecurityRole.setDataSources(driver, "auto-evaluator-role", evaluatorDataSources);
+			newSecurityRole.setDataSensitivity(driver, "auto-evaluator-role", evaluatorDataSensitivities);
+			newSecurityRole.setPermissions(driver, "auto-evaluator-role", evaluatorPermissions);
 
-			newSecurityRole.setDataSources(driver, "AUTO-Librarian", librarianDataSources);
-			newSecurityRole.setDataSensitivity(driver, "AUTO-Librarian", librarianDataSensitivities);
-			newSecurityRole.setPermissions(driver, "AUTO-Librarian", librarianPermissions);
+			newSecurityRole.setDataSources(driver, "auto-librarian-role", librarianDataSources);
+			newSecurityRole.setDataSensitivity(driver, "auto-librarian-role", librarianDataSensitivities);
+			newSecurityRole.setPermissions(driver, "auto-librarian-role", librarianPermissions);
 
-			newSecurityRole.setDataSources(driver, "AUTO-User", userDataSources);
-			newSecurityRole.setDataSensitivity(driver, "AUTO-User", userDataSensitivities);
-			newSecurityRole.setPermissions(driver, "AUTO-User", userPermissions);
+			newSecurityRole.setDataSources(driver, "auto-user-role", userDataSources);
+			newSecurityRole.setDataSensitivity(driver, "auto-user-role", userDataSensitivities);
+			newSecurityRole.setPermissions(driver, "auto-user-role", userPermissions);
 		}
 	}
 
