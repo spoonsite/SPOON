@@ -105,7 +105,7 @@ permissionsQuery,  if needed.
 
 - securityManager.realms = \$realm
 
-#### 2.1.1.2 OPENAM (Request Header) 
+#### 2.1.1.2 OPENAM (Request Header)
 
 >\[main\]
 
@@ -280,6 +280,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the idle timeout. After the message appears.
 -  **system.archive.maxprocessminutes** -Max time for system archive process without making progress (**60**)
 -  **websockets.enabled** - Enables the use of websockets for server notifications ( **False** )
+-  **userreview.autoapprove** - Allows user reviews, Questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update ( **True** )
 
 # 3. Database Management
 -----

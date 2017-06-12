@@ -39,8 +39,13 @@ public class ApplicationInit
 	// inject Items that need started at sytem startup
 	@Inject
 	private CoreSystem coreSystem;
+	
 	@Context
 	private ServletContext context;
+	
+	public ApplicationInit()
+	{
+	}
 	
 	@PostConstruct
 	public void contextInitialized()

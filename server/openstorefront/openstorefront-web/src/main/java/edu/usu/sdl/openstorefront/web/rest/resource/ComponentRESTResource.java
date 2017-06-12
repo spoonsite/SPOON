@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -2644,6 +2645,32 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(componentQuestion);
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@APIDescription("Set a question to pending for the specified entity")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/pending")
+	public Response pendingComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
+	{
+		ComponentQuestion componentQuestionExample = new ComponentQuestion();
+		componentQuestionExample.setComponentId(componentId);
+		componentQuestionExample.setQuestionId(questionId);
+
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
+		if (componentQuestion != null) {
+			service.getComponentService().setQuestionPending(questionId);
+			componentQuestion.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(componentQuestion);
+	}
+
 	@POST
 	@APIDescription("Add a new question to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -2689,7 +2716,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+				question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			} else {
+				question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+			}
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -2809,6 +2840,35 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(questionResponse);
 	}
 
+	@PUT
+	@RequireSecurity
+	@APIDescription("Sets a response from the given question on the specified component to Pending")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/responses/{responseId}/pending")
+	public Response pendingComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId,
+			@PathParam("responseId")
+			@RequiredParam String responseId)
+	{
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		responseExample.setComponentId(componentId);
+		responseExample.setQuestionId(questionId);
+		responseExample.setResponseId(responseId);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
+		if (questionResponse != null) {
+			service.getComponentService().setQuestionResponsePending(responseId);
+			questionResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(questionResponse);
+	}
+
+
 	@POST
 	@APIDescription("Add a response to the given question on the specified component")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -2864,7 +2924,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+				response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			} else {
+				response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			}
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
@@ -2969,7 +3033,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
-	@APIDescription("Activate a review on  the specified component")
+	@APIDescription("Activate a review on the specified component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -2990,7 +3054,33 @@ public class ComponentRESTResource
 			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
 			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(componentReviewExample);
+		return sendSingleEntityResponse(componentReview);
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@APIDescription("Sets a review on the specified component to pending")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/reviews/{reviewId}/pending")
+	public Response pendingComponentReview(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("reviewId")
+			@RequiredParam String reviewId)
+	{
+		ComponentReview componentReviewExample = new ComponentReview();
+		componentReviewExample.setComponentId(componentId);
+		componentReviewExample.setComponentReviewId(reviewId);
+
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
+		if (componentReview != null) {
+			service.getComponentService().setReviewPending(reviewId);
+			componentReview.setActiveStatus(ComponentReview.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(componentReview);
 	}
 
 	@POST

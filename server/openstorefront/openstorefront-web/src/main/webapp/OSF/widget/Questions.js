@@ -23,63 +23,99 @@ Ext.define('OSF.widget.Questions', {
 	alias: 'osf.widget.Questions',
 
 	layout: 'fit',
-	
+
 	initComponent: function () {
 		this.callParent();
-		
+
 		var questionPanel = this;
-		
+
 		questionPanel.grid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: {
 				sorters: [{
-					property: 'componentName',
-					direction: 'ASC'
-				}],	
+						property: 'componentName',
+						direction: 'ASC'
+					}],
 				autoLoad: false,
 				fields: [
 					{
 						name: 'createDts',
-						type:	'date',
+						type: 'date',
 						dateFormat: 'c'
 					},
 					{
 						name: 'questionUpdateDts',
-						type:	'date',
+						type: 'date',
 						dateFormat: 'c'
 					}
 				],
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/componentquestions/'
-				}				
+				}
 			},
 			columns: [
-				{ text: 'Entry', dataIndex: 'componentName', width: 275 },
-				{ text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200 },
-				{ text: 'Post Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-				{ text: 'Update Date', dataIndex: 'questionUpdateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }				
+				{text: 'Entry', dataIndex: 'componentName', width: 275},
+				{text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200},
+				{text: 'Post Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+				{text: 'Update Date', dataIndex: 'questionUpdateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 			],
 			listeners: {
-				itemdblclick: function(grid, record, item, index, e, opts){
+				itemdblclick: function (grid, record, item, index, e, opts) {
 					viewResponse(record);
 				},
-				selectionchange: function(selectionModel, selected, opts){
+				selectionchange: function (selectionModel, selected, opts) {
 					var tools = this.getComponent('tools');
 
-					if (selected.length > 0) {	
+					if (selected.length > 0) {
 						tools.getComponent('view').setDisabled(false);
 					} else {
 						tools.getComponent('view').setDisabled(true);
 					}
 				}
-			},			
+			},
 			dockedItems: [
 				{
 					dock: 'top',
 					xtype: 'toolbar',
 					itemId: 'tools',
 					items: [
+						{
+							xtype: 'combobox',
+							itemId: 'question-activeStatus',
+							value: 'A',
+							editable: false,
+							fieldLabel: 'Show Entries with:',
+							labelWidth: '250px',
+							name: 'question-activeStatus',
+							displayField: 'description',
+							valueField: 'code',
+							listeners: {
+								change: function (filter, newValue, oldValue, opts) {
+									CoreService.userservice.getCurrentUser().then(function (userProfile) {
+										questionPanel.grid.getStore().load({
+											url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + newValue
+										});
+									});
+								}
+							},
+							store: Ext.create('Ext.data.Store', {
+								fields: [
+									'code',
+									'description'
+								],
+								data: [
+									{
+										code: 'A',
+										description: 'Active questions'
+									},
+									{
+										code: 'P',
+										description: 'Pending questions'
+									}
+								]
+							})
+						},
 						{
 							text: 'View Responses',
 							itemId: 'view',
@@ -88,17 +124,17 @@ Ext.define('OSF.widget.Questions', {
 							disabled: true,
 							iconCls: 'fa fa-2x fa-eye icon-vertical-correction-view icon-button-color-view',
 							handler: function () {
-								var record = this.up('grid').getSelectionModel().getSelection()[0];								
+								var record = this.up('grid').getSelectionModel().getSelection()[0];
 								viewResponse(record);
-							}							
+							}
 						}
 					]
 				}
 			]
 		});
-		
-		var viewResponse = function(record) {
-			
+
+		var viewResponse = function (record) {
+
 			var responseWin = Ext.create('Ext.window.Window', {
 				title: 'Responses',
 				modal: true,
@@ -110,64 +146,111 @@ Ext.define('OSF.widget.Questions', {
 				items: [
 					{
 						xtype: 'grid',
+						itemId: 'answer-grid',
 						columnLines: true,
 						store: {
+							storeId: 'answerstore',
 							sorters: [{
-								property: 'componentName',
-								direction: 'ASC'
-							}],	
+									property: 'componentName',
+									direction: 'ASC'
+								}],
 							autoLoad: true,
 							fields: [
 								{
 									name: 'createDts',
-									type:	'date',
+									type: 'date',
 									dateFormat: 'c'
 								},
 								{
 									name: 'updateDts',
-									type:	'date',
+									type: 'date',
 									dateFormat: 'c'
 								}
 							],
 							proxy: {
 								type: 'ajax',
 								url: 'api/v1/resource/componentquestions/' + record.get('questionId') + '/responses'
-							}		
+							}
 						},
 						columns: [
-							{ text: 'Entry', dataIndex: 'componentName', width: 275	},
-							{ text: 'Response', dataIndex: 'response', flex: 1, minWidth: 200 },
-							{ text: 'Post Date', dataIndex: 'answeredDate', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-							{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
-						],						
+							{text: 'Entry', dataIndex: 'componentName', width: 275},
+							{text: 'Response', dataIndex: 'response', flex: 1, minWidth: 200},
+							{text: 'Post Date', dataIndex: 'answeredDate', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+							{text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
+						],
 						dockedItems: [
 							{
 								dock: 'top',
 								xtype: 'panel',
 								data: record.data,
 								tpl: '<div style="padding: 10px; font-weight: bold;">{question}</div>'
-							}					
+							},
+							{
+								dock: 'top',
+								xtype: 'toolbar',
+								itemId: 'tools',
+								items: [
+									{
+										xtype: 'combobox',
+										itemId: 'answer-activeStatus',
+										value: 'A',
+										editable: false,
+										fieldLabel: 'Show Entries with:',
+										labelWidth: '250px',
+										name: 'answer-activeStatus',
+										displayField: 'description',
+										valueField: 'code',
+										listeners: {
+											change: function (filter, newValue, oldValue, opts) {
+												CoreService.userservice.getCurrentUser().then(function (userProfile) {
+													Ext.getStore('answerstore').load({
+														url: 'api/v1/resource/componentquestions/' + record.get('questionId') + '/responses?status=' + Ext.ComponentQuery.query('[itemId=answer-activeStatus]')[0].getSelection().getData().code
+													});
+												});
+											}
+										},
+										store: Ext.create('Ext.data.Store', {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [
+												{
+													code: 'A',
+													description: 'Active response'
+												},
+												{
+													code: 'P',
+													description: 'Pending response'
+												}
+											]
+										})
+									}
+								]
+							}
 						]
 					}
 				]
 			});
-				
+
 			responseWin.show();
-		};	
-		
+		};
+
 		questionPanel.add(questionPanel.grid);
-		
-		CoreService.userservice.getCurrentUser().then(function(userProfile){			
+		CoreService.userservice.getCurrentUser().then(function (userProfile) {
 			questionPanel.grid.getStore().load({
-				url: 'api/v1/resource/componentquestions/' + userProfile.username
+				url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
 			});
-			
-		});		
-		
+		});
+
 	},
-	refresh: function() {
+	refresh: function () {
 		var questionPanel = this;
-		questionPanel.grid.getStore().reload();		
+		CoreService.userservice.getCurrentUser().then(function (userProfile) {
+			questionPanel.grid.getStore().load({
+				url: 'api/v1/resource/componentquestions/' + userProfile.username + '?status=' + Ext.ComponentQuery.query('[itemId=question-activeStatus]')[0].getSelection().getData().code
+			});
+		});
 	}
-	
+
 });

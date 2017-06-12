@@ -108,6 +108,30 @@ public interface ComponentService
 	 * @return
 	 */
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk);
+	
+	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentReviewId
+	 * @return
+	 */
+	public ComponentReview setReviewPending(String ComponentReviewId);
+
+	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentQuestionId
+	 * @return
+	 */
+	public ComponentQuestion setQuestionPending(String ComponentQuestionId);
+
+	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentQuestionResponseId
+	 * @return
+	 */
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId);
 
 	/**
 	 * Deletes a base component
