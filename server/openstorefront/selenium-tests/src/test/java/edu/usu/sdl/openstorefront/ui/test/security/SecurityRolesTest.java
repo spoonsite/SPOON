@@ -59,11 +59,11 @@ public class SecurityRolesTest
 		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
 
 		// Create new accounts and activate.  Log on as user then log back on as admin
-		// TODO:  *** BREAK OUT INTO METHODS (DELETE, SIGNUPFORM, ACTIVATE)? ***
-		//	newAccountSignup.signupActivate("autoAdmin");  
-		//	newAccountSignup.signupActivate("autoEval");   
-		//	newAccountSignup.signupActivate("autoLibrarian");
-		//	newAccountSignup.signupActivate("autoUser");
+		newAccountSignup.signupActivate("autoCutomized");  // NOT ACTIVATING?!?  Not going to Locked/ Pending (stays on approved)
+//		newAccountSignup.signupActivate("autoAdmin");
+//		newAccountSignup.signupActivate("autoEval");
+//		newAccountSignup.signupActivate("autoLibrarian");
+//		newAccountSignup.signupActivate("autoUser");
 	}
 
 	public void addSecurityRole() throws InterruptedException
@@ -73,10 +73,14 @@ public class SecurityRolesTest
 
 			// ***************	CHANGE THIS TO INCLUDE CHECK AND UNCHECK **********************
 			// Set up new Security Role, add user to role
-			//	newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
-			//	newSecurityRole.addRoleBasic(driver, "AUTO-User");
+//			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-User");
+//			newSecurityRole.addRoleBasic(driver, "AUTO-User");
 			// ************ DO THIS FROM USER MANAGEMENT? *************
-			//	newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
+//			newSecurityRole.addUserToRole(driver, "AUTO-User", "autoUser");
+
+//			newSecurityRole.deleteRoleIfPresent(driver, "AUTO-Customized");
+//			newSecurityRole.addRoleBasic(driver, "AUTO-Customized");
+//			newSecurityRole.addUserToRole(driver, "AUTO-Customized", "autoCustomized");  // NOT ADDING USER TO ROLE
 		}
 	}
 
@@ -86,12 +90,11 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
 			// For the "Role", Set Data Sources, Data Sensitivies, and Permissions
-			
 			// Change this one for a quick test
-			newSecurityRole.setDataSources(driver, "blahb", customizedDataSources);
-			newSecurityRole.setDataSensitivity(driver, "blahb", customizedDataSensitivities);
-			newSecurityRole.setPermissions(driver, "blahb", customizedPermissions);
-			
+			newSecurityRole.setDataSources(driver, "AUTO-Customized", customizedDataSources);
+			newSecurityRole.setDataSensitivity(driver, "AUTO-Customized", customizedDataSensitivities);
+			newSecurityRole.setPermissions(driver, "AUTO-Customized", customizedPermissions);
+
 			// DO NOT Change these
 			newSecurityRole.setDataSources(driver, "DEFAULT-GROUP", defaultDataSources);
 			newSecurityRole.setDataSensitivity(driver, "DEFAULT-GROUP", defaultDataSensitivities);
