@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -62,8 +61,7 @@ public class NewSecurityRole
 		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 
 			// Click on Delete
-			List<WebElement> topButtons = driver.findElements
-				(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
+			List<WebElement> topButtons = driver.findElements(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
 			for (WebElement aButton : topButtons) {
 				if (aButton.getText().equals("Delete")) {
 					aButton.click();
@@ -72,36 +70,14 @@ public class NewSecurityRole
 			// Wait Delete Role confirmation box to come up.
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
-
 			// Click on Confirmation Button
-			List<WebElement> deleteOptions = driver.findElements
-				(By.cssSelector(".x-btn-inner.x-btn-inner-default-toolbar-small"));
+			List<WebElement> deleteOptions = driver.findElements(By.cssSelector(".x-btn-inner.x-btn-inner-default-toolbar-small"));
 			for (WebElement theButton : deleteOptions) {
 				if (theButton.getText().equals("Confirm")) {
 					theButton.click();
 				}
 			}
 
-			// *** FIXES detached from page error message *** 
-	/*		boolean breakIt = true;
-			while (true) {
-				breakIt = true;
-				try {
-					sleep(500);
-					// Command that was erring out (detached) earlier.
-					tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0);
-					LOG.log(Level.INFO, "--- Waiting for element to show up so that it is not detached ---");
-				} catch (Exception e) {
-					if (e.getMessage().contains("element is not attached")) {
-						breakIt = false;
-					}
-				}
-				if (breakIt) {
-					LOG.log(Level.INFO, "--- Successfully waited for detached element to show up, continuing on now --");
-					break;
-				}
-			}
-		*/
 			// Check to ensure deletion
 			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
 				LOG.log(Level.WARNING, "*** Could NOT delete  '" + roleName + "' ***");
@@ -156,8 +132,31 @@ public class NewSecurityRole
 		}
 	}
 
-	public void addUserToRole(WebDriver driver, String roleName, String userName) throws InterruptedException
+	public void onlyOneUserInRole(WebDriver driver, String roleName, String userName) throws InterruptedException
 	{
+		WebDriverWait wait = new WebDriverWait(driver, 7);
+		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='xxxxxxxxxxxxxxxxxxxxx'] .x-grid-view")));
+
+		if (tableClickRowCol("[data-test='xxxxxxxxxxxxxxxxxxx'] .x-grid-view", userName, driver, 0)) {
+
+			// Select the Manage Roles button at the top
+			List<WebElement> buttonsTop = driver.findElements(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
+			for (WebElement topTwo : buttonsTop) {
+				if (topTwo.getText().equals("Manage Roles")) {
+					topTwo.click();
+				}
+
+			}
+			// Wait for Roles for user: box to come up
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
+
+			// *********** ADD USER ****************
+			// *** DELETE ALL OTHER USERS **********
+			
+			
+		}
+		/*
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
 		sleep(1500);
@@ -186,6 +185,7 @@ public class NewSecurityRole
 		} else {
 			LOG.log(Level.SEVERE, "!!!!! Could not find the role " + roleName + " in order to add a managed user. !!!!!");
 		}
+		 */
 	}
 
 	public void setPermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException

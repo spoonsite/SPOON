@@ -60,8 +60,8 @@ public class SecurityRolesTest
 
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// NOTE-- usernames get converted to lower case
-		newAccountSignup.signupActivate("auto-customized-user");
-		newAccountSignup.signupActivate("auto-admin-user");
+//		newAccountSignup.signupActivate("auto-customized-user");
+//		newAccountSignup.signupActivate("auto-admin-user");
 //		newAccountSignup.signupActivate("auto-eval-user");
 //		newAccountSignup.signupActivate("auto-librarian-user");
 //		newAccountSignup.signupActivate("auto-user-user");
@@ -73,16 +73,14 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
 			// Set up new Security Role, add user to role
-			newSecurityRole.deleteRoleIfPresent(driver, "auto-customized-role");
-			newSecurityRole.addSecurityRole(driver, "auto-customized-role", true, true);
-
-			// ************ DO THIS FROM USER MANAGEMENT? *************
-//			newSecurityRole.addUserToRole(driver, "auto-user-role", "autoUser");
+//			newSecurityRole.deleteRoleIfPresent(driver, "auto-customized-role");
+//			newSecurityRole.addSecurityRole(driver, "auto-customized-role", true, true);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-user-role", "auto-customized-user");
 
 			// REPEAT HERE FOR OTHER ROLES AND USERS
-			newSecurityRole.deleteRoleIfPresent(driver, "auto-admin-role");
-			newSecurityRole.addSecurityRole(driver, "auto-admin-role", true, true);
-
+//			newSecurityRole.deleteRoleIfPresent(driver, "auto-admin-role");
+//			newSecurityRole.addSecurityRole(driver, "auto-admin-role", true, true);
+//			newSecurityRole.onlyOneUserInRole(driver, "auto-user-role", "auto-customized-user");	
 		}
 	}
 

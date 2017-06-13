@@ -98,7 +98,6 @@ public class AccountSignupActivateTest
 			setApprovalStatus(approvalStatusDropDownText, driver);
 
 			// Drop-down selectors finished, now search for user in the table and delete if present
-			
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-item-container", userName, driver, 0)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
 				
@@ -152,8 +151,6 @@ public class AccountSignupActivateTest
 		setApprovalStatus("Pending", driver);
 
 		// Select and click Approve
-		
-		// ******** STILL SLOW ON EMPTY TABLE FINDING IT (BROWSER TEST BASE) **********
 		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
 
