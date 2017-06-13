@@ -506,6 +506,35 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				className: 'OSF.landing.DefaultSearchTools',
 				designerClassName: 'OSF.landing.DefaultSearchTools',
 				config: {},
+				data: [
+					{
+						text: 'Tags',
+						tip: 'Search Tag Cloud',
+						icon: 'fa-cloud',
+						toolType: 'OSF.landing.TagCloud'
+					},
+					{
+						text: 'Organizations',
+						tip: 'Search by Entry Organization',
+						icon: 'fa-sitemap',
+						toolType: 'OSF.landing.OrganizationSearch'
+					},
+					{
+						text: 'Relationships',
+						tip: 'View relationships bewteen entries',
+						icon: 'fa-share-alt',
+						toolType: 'OSF.landing.RelationshipSearch'
+					},				
+					{
+						text: 'Advanced',
+						tip: 'Create Advanced Searches',
+						icon: 'fa-search-plus',
+						toolType: 'OSF.landing.AdvancedSearch'
+					}					
+				],
+				customConfigHandler: function(block) {
+					
+				},
 				items: [],
 				designerRender: function(config){
 					config = config ? config : {};
@@ -518,7 +547,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				},
 				renderCode: function(config){
 					config = config ? config : {};
-					config = Ext.apply(config, {						
+					config = Ext.apply(config, {
+						searchTools: this.data
 					});					
 					return commonCodeRender(this, config);					
 				}				
@@ -618,7 +648,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				
 				designerPanel.updateAll();
 				grid.getStore().commitChanges();
-				Ext.toast('Apply Properties');				
+				Ext.toast('Applied Properties');				
 			};
 			
 			
@@ -638,7 +668,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				border: true,
 				bodyStyle: 'padding: 10px;',
 				closable: block.fixed ? false : true,
-				block: block,
+				block: block,				
 				tools: [
 					{
 						type: 'up',
@@ -702,6 +732,9 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					}
 				}
 			}));
+			if (block.data) {
+				container.loadData(block.data);
+			}
 			setupContainerDropTarget(container, block);
 			
 			Ext.Array.each(block.items, function(child){
@@ -772,13 +805,18 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 			var generated = Ext.clone(Ext.apply(config, block.config));
 
 			var configString = '';
-			Ext.Object.each(generated, function(key, value, myself) {
-				if (Ext.isString(value)) {
-					configString += key + ": '" + value + "',\n";
-				} else {
-					configString += key + ": " + value + ",\n";
-				}
-			});
+			
+			var renderConfig = function(configObj) {
+				Ext.Object.each(configObj, function(key, value, myself) {
+					if (Ext.isString(value)) {
+						configString += key + ": '" + value + "',\n";
+					} else {
+						configString += key + ": " + value + ",\n";
+					}
+				});
+			};
+			renderConfig(generated);
+	
 			if (itemsToAdd.length > 0) {
 				configString += '\nitems: [\n' + itemsToAdd.join(',\n') + '\n]\n';
 			}
@@ -787,62 +825,63 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					configString + "\n})";
 		};
 		
-		Ext.defer(function(){
-			designerPanel.components.push(
-				{
-					name: 'Viewport',
-					description: 'Represent the page',
-					className: 'Ext.container.Viewport',					
-					fixed: true,
-					config: {},
-					items: [
-						{
-							name: 'Body',
-							description: 'Contents of the page',
-							className: 'Ext.panel.Panel',
-							fixed: true,
-							config: {
+		
+		designerPanel.components.push(
+		{
+				name: 'Viewport',
+				description: 'Represent the page',
+				className: 'Ext.container.Viewport',					
+				fixed: true,
+				config: {},
+				items: [
+					{
+						name: 'Body',
+						description: 'Contents of the page',
+						className: 'Ext.panel.Panel',
+						fixed: true,
+						config: {
+							region: 'center',
+							scrollable: true
+						},
+						items: [],
+						designerRender: function(config){
+							config = config ? config : {};
+							config = Ext.apply(config, {
 								region: 'center',
 								scrollable: true
-							},
-							items: [],
-							designerRender: function(config){
-								config = config ? config : {};
-								config = Ext.apply(config, {
-									region: 'center',
-									scrollable: true
-								});
-								return commonDesignerRender(this, config);
-							},
-							renderCode: function(config){
-								config = config ? config : {};
-								config = Ext.apply(config, {						
-								});					
-								return commonCodeRender(this, config);	
-							}				
-						}							
-					],
-					designerRender: function(config){
-						config = config ? config : {};
-						config = Ext.apply(config, {
-							layout: 'border'
-						});
-						return commonDesignerRender(this, config);
-					},
-					renderCode: function(config){
-						config = config ? config : {};
-						config = Ext.apply(config, {
-							layout: 'border'
-						});					
-						return commonCodeRender(this, config);	
-					}				
-				}	
-			);
-			
-			
-			designerPanel.updateAll();
-		}, 100);
+							});
+							return commonDesignerRender(this, config);
+						},
+						renderCode: function(config){
+							config = config ? config : {};
+							config = Ext.apply(config, {						
+							});					
+							return commonCodeRender(this, config);	
+						}				
+					}							
+				],
+				designerRender: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'border'
+					});
+					return commonDesignerRender(this, config);
+				},
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'border'
+					});					
+					return commonCodeRender(this, config);	
+				}				
+			}	
+		);			
+		
 				
+	},
+	initialize: function() {
+		var designerPanel = this;		
+		designerPanel.updateAll();
 	},
 	updateAll: function() {
 		var templatePanel = this;

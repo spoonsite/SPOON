@@ -101,8 +101,19 @@ Ext.define('OSF.landing.designer.Designer', {
 	afterRender: function() {
 		this.callParent();		
 		var designerPanel = this;			
-		
+				
+		//cycle through tab so every thing get rendered
+		designerPanel.setActiveItem(designerPanel.code);
+		designerPanel.setActiveItem(designerPanel.preview);
 		designerPanel.setActiveItem(designerPanel.liveDesigner);
+		
+		designerPanel.initialize();
+		
+	},
+	initialize: function() {
+		var designerPanel = this;		
+		designerPanel.liveDesigner.initialize();
+		
 	},
 	loadData: function (branding) {
 		var designerPanel = this;

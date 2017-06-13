@@ -60,37 +60,15 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 			}
 		}
 	],
+	searchTools: [],
 	initComponent: function () {
 		this.callParent();			
+		var searchToolsPanel = this;	
+		searchToolsPanel.queryById('dataview').getStore().loadData(searchToolsPanel.searchTools);
+	},
+	loadData: function(tools) {
 		var searchToolsPanel = this;
-				
-		var tools=[
-			{
-				text: 'Tags',
-				tip: 'Search Tag Cloud',
-				icon: 'fa-cloud',
-				toolType: 'OSF.landing.TagCloud'
-			},
-			{
-				text: 'Organizations',
-				tip: 'Search by Entry Organization',
-				icon: 'fa-sitemap',
-				toolType: 'OSF.landing.OrganizationSearch'
-			},
-			{
-				text: 'Relationships',
-				tip: 'View relationships bewteen entries',
-				icon: 'fa-share-alt',
-				toolType: 'OSF.landing.RelationshipSearch'
-			},				
-			{
-				text: 'Advanced',
-				tip: 'Create Advanced Searches',
-				icon: 'fa-search-plus',
-				toolType: 'OSF.landing.AdvancedSearch'
-			}					
-		];
-		
+		searchToolsPanel.searchTools = tools;
 		searchToolsPanel.queryById('dataview').getStore().loadData(tools);
 	}
 	
