@@ -1283,3 +1283,68 @@ to use set the ui: danger
 }
 
 
+.review-summary
+{
+	width:100%;
+}
+.review-section
+{
+	width:100%;
+	border-bottom-style:solid;
+	border-bottom-width: thin;
+	border-bottom-color:#000000;
+}
+
+.review-section .label,
+.review-summary .label
+{
+	font-weight: bold;
+}
+.review-section .title, 
+.review-section .rating
+{
+	font-weight: bold;
+	font-size: 2em;
+	padding: 10px 0px;
+}
+
+.review-section .comments
+{
+	padding-bottom: 20px;
+}
+
+.review-section .details,
+.review-section .pros,
+.review-section .cons,
+.review-summary .details,
+.review-summary .pros,
+.review-summary .cons
+{
+	display: inline-block;
+    vertical-align: top;
+	padding-bottom: 20px;
+}
+.review-section .pros,
+.review-section .cons,
+.review-summary .pros,
+.review-summary .cons
+{
+	width: 20%;
+}
+.review-section .details,
+.review-summary .details
+{
+	width: 58%;
+}
+@media (max-width: 520px) {
+	.review-section .details,
+	.review-section .pros,
+	.review-section .cons,
+	.review-summary .details,
+	.review-summary .pros,
+	.review-summary .cons
+	{
+		display: block;
+		width: 100%;
+	}
+}
