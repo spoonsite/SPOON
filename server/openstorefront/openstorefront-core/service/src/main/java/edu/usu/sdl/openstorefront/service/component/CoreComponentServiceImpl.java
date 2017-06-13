@@ -374,6 +374,14 @@ public class CoreComponentServiceImpl
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
 		List<ComponentReview> tempReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
+		String currentUser = SecurityUtil.getCurrentUserName();
+		tempPendingReviews.forEach(review
+				-> {
+			if (review.getCreateUser().equals(currentUser)) {
+				tempReviews.add(review);
+			}
+		});
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review
 				-> {
@@ -400,6 +408,13 @@ public class CoreComponentServiceImpl
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
+		List<ComponentQuestion> pendingQuestions = componentService.getBaseComponent(ComponentQuestion.class, componentId, ComponentQuestion.PENDING_STATUS);
+		pendingQuestions.forEach(question
+				-> {
+			if (question.getCreateUser().equals(currentUser)) {
+				questions.add(question);
+			}
+		});
 		questions.stream().forEach((question)
 				-> {
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
@@ -408,6 +423,13 @@ public class CoreComponentServiceImpl
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			List<ComponentQuestionResponse> responses = tempResponse.findByExample();
 			responses = FilterEngine.filter(responses);
+			
+			ComponentQuestionResponse tempPendingResponse = new ComponentQuestionResponse();
+			tempPendingResponse.setQuestionId(question.getQuestionId());
+			tempPendingResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			tempPendingResponse.setCreateUser(currentUser);
+			
+			responses.addAll(FilterEngine.filter(tempPendingResponse.findByExample()));
 
 			responseViews = ComponentQuestionResponseView.toViewList(responses);
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
