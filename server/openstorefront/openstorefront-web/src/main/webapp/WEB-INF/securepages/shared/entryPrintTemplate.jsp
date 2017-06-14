@@ -16,8 +16,8 @@ limitations under the License.
 
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%
-		String appVersion = PropertiesManager.getApplicationVersion();		
-		request.setAttribute("appVersion", appVersion);
+	String appVersion = PropertiesManager.getApplicationVersion();
+	request.setAttribute("appVersion", appVersion);
 %>
 
 <link href="../webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
@@ -62,7 +62,7 @@ limitations under the License.
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	
+
 	tr.print-table:nth-child(odd) {
 		background: whitesmoke;
 	}
@@ -99,8 +99,8 @@ limitations under the License.
 									<b>{label}</b>								
 								</td>
 								<td class="print-table alert-{highlightStyle}">
-									<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
-								</td>
+							<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
+							</td>
 							</tr>
 						</tpl>					
 					</table>			
@@ -119,18 +119,18 @@ limitations under the License.
 									Name
 								</td>
 								<td class="print-table">
-									<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
-									{organization}
-								</td>
+							<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
+							{organization}
+							</td>
 							</tr>
 							<tr class="print-table">
 								<td class="print-table">
 									Email / Phone 
 								</td>
 								<td class="print-table">
-									<tpl if="email">{email}</tpl><br>
-									<tpl if="phone">{phone}</tpl>
-								</td>
+							<tpl if="email">{email}</tpl><br>
+							<tpl if="phone">{phone}</tpl>
+							</td>
 							</tr>						
 						</table>
 					</tpl>								
@@ -143,66 +143,66 @@ limitations under the License.
 
 
 <!-- Left block -->
-	<tpl if="show.general || show.badges">
-		<div class="print-left-block print-general-block">
-			<tpl if="show.general">
-				<div class="print-section">
-					<b>Entry:</b> {componentName}<br>
-					<b>Organization:</b> {organization}<br>
-					<b>Last Activity Date:</b> {lastActivityDate:date("m/d/Y H:i:s")}<br>
-					<tpl if="show.views">
-						<b>Views:</b> {componentViews}<br>
-					</tpl>
-					<tpl if="securityMarkingType"><b>Highest Classification:</b> ({securityMarkingType})</tpl>
-					<tpl if="show.badges">
-						<tpl for="attributes">
-							<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>
-						</tpl>
-					</tpl>				
-				</div>
-			</tpl>	
-		</div>
-	</tpl>	
-	<tpl if="show.tags">
-		<div class="print-left-block print-general-block print-section" style="margin-top: -1px;" >
-			<tpl if="tags">
-				<b>Tags: </b>
-				<tpl for="tags">
-					<span class="print-tags">
-						<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{text}
-					</span>
+<tpl if="show.general || show.badges">
+	<div class="print-left-block print-general-block">
+		<tpl if="show.general">
+			<div class="print-section">
+				<b>Entry:</b> {componentName}<br>
+				<b>Organization:</b> {organization}<br>
+				<b>Last Activity Date:</b> {lastActivityDate:date("m/d/Y H:i:s")}<br>
+				<tpl if="show.views">
+					<b>Views:</b> {componentViews}<br>
 				</tpl>
+				<tpl if="securityMarkingType"><b>Highest Classification:</b> ({securityMarkingType})</tpl>
+				<tpl if="show.badges">
+					<tpl for="attributes">
+						<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>
+					</tpl>
+				</tpl>				
+			</div>
+		</tpl>	
+	</div>
+</tpl>	
+<tpl if="show.tags">
+	<div class="print-left-block print-general-block print-section" style="margin-top: -1px;" >
+		<tpl if="tags">
+			<b>Tags: </b>
+			<tpl for="tags">
+				<span class="print-tags">
+					<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{text}
+				</span>
 			</tpl>
-		</div>
-	</tpl>
-	<tpl if="show.description">
+		</tpl>
+	</div>
+</tpl>
+<tpl if="show.description">
+	<div class="print-left-block print-section">
+		<h3><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description: </h3>
+		{description}
+	</div>
+</tpl>
+<tpl if="show.resources">
+	<tpl if="resources && resources.length &gt; 0">
 		<div class="print-left-block print-section">
-			<h3><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description: </h3>
-			{description}
-		</div>
-	</tpl>
-	<tpl if="show.resources">
-		<tpl if="resources && resources.length &gt; 0">
-			<div class="print-left-block print-section">
-				<h3>Resources:</h3>			
-				<table class="print-table" style="width: 100%">
+			<h3>Resources:</h3>			
+			<table class="print-table" style="width: 100%">
+				<tr class="print-table">
+					<td class="print-table">
+						<b>Resource Type / Link</b>
+					</td>
+				</tr>					
+				<tpl for="resources">
 					<tr class="print-table">
 						<td class="print-table">
-							<b>Resource Type / Link</b>
-						</td>
-					</tr>					
-					<tpl for="resources">
-						<tr class="print-table">
-							<td class="print-table">
-								<b>{resourceTypeDesc}</b><br>
-								<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{link}
-							</td>
-						</tr>
-					</tpl>					
-				</table>				
-			</div>		
-		</tpl>
+							<b>{resourceTypeDesc}</b><br>
+					<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{link}
+					</td>
+					</tr>
+				</tpl>					
+			</table>				
+		</div>		
 	</tpl>
+</tpl>
 
 <tpl if="show.evaluation && evaluation && evaluation.evaluationSections &&evaluation.evaluationSections.length &gt; 0">
 	<tpl if="show.vitals ">
@@ -216,8 +216,8 @@ limitations under the License.
 								<b>{label}</b>								
 							</td>
 							<td class="print-table alert-{highlightStyle}">
-								<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
-							</td>
+						<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
+						</td>
 						</tr>
 					</tpl>					
 				</table>
@@ -238,18 +238,18 @@ limitations under the License.
 								Name
 							</td>
 							<td class="print-table">
-								<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
-								{organization}
-							</td>
+						<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
+						{organization}
+						</td>
 						</tr>
 						<tr class="print-table">
 							<td class="print-table">
 								Email / Phone 
 							</td>
 							<td class="print-table">
-								<tpl if="email">{email}</tpl><br>
-								<tpl if="phone">{phone}</tpl>
-							</td>
+						<tpl if="email">{email}</tpl><br>
+						<tpl if="phone">{phone}</tpl>
+						</td>
 						</tr>						
 					</table>
 				</tpl>			
@@ -258,119 +258,121 @@ limitations under the License.
 	</tpl>
 </tpl>
 
-	<tpl if="show.dependencies">
-		<tpl if="dependencies && dependencies.length &gt; 0">
-			<div class="print-left-block print-section">
-				<h3>Dependencies:</h3>				
-				<table class="print-table" style="width: 100%">										
-					<tpl for="dependencies">
-						<tr class="print-table">
-							<td class="print-table">
-								<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b><br>
-								{comment}
-							</td>
-						</tr>
-					</tpl>					
-				</table>				
-			</div>		
-		</tpl>
+<tpl if="show.dependencies">
+	<tpl if="dependencies && dependencies.length &gt; 0">
+		<div class="print-left-block print-section">
+			<h3>Dependencies:</h3>				
+			<table class="print-table" style="width: 100%">										
+				<tpl for="dependencies">
+					<tr class="print-table">
+						<td class="print-table">
+					<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b><br>
+					{comment}
+					</td>
+					</tr>
+				</tpl>					
+			</table>				
+		</div>		
 	</tpl>
-	<tpl if="show.relationships">
-		<tpl if="relationships && relationships.length &gt; 0">
-			<div class="print-left-block print-section">
-				<h3>Relationships:</h3>				
-				<table class="print-table" style="width: 100%">										
-					<tpl for="relationships">
-						<tr class="print-table">
-							<td class="print-table">
-								{ownerComponentName}								
-							</td>
-							<td class="print-table" style="text-align: center">
-								<b>{relationshipTypeDescription}</b>								
-							</td>
-							<td class="print-table">
-								{targetComponentName}								
-							</td>							
-						</tr>
-					</tpl>					
-				</table>				
-			</div>		
-		</tpl>
+</tpl>
+<tpl if="show.relationships">
+	<tpl if="relationships && relationships.length &gt; 0">
+		<div class="print-left-block print-section">
+			<h3>Relationships:</h3>				
+			<table class="print-table" style="width: 100%">										
+				<tpl for="relationships">
+					<tr class="print-table">
+						<td class="print-table">
+							{ownerComponentName}								
+						</td>
+						<td class="print-table" style="text-align: center">
+							<b>{relationshipTypeDescription}</b>								
+						</td>
+						<td class="print-table">
+							{targetComponentName}								
+						</td>							
+					</tr>
+				</tpl>					
+			</table>				
+		</div>		
 	</tpl>
+</tpl>
 
-	<tpl if="show.reviews">
-		<tpl if="reviews && reviews.length &gt; 0">
+<tpl if="show.reviews">
+	<tpl if="reviews && reviews.length &gt; 0">
 		<div class="pageBreak">
 			<h2>Reviews</h2>
 			<hr>
 			<tpl for="reviews">
-					<table style="width:100%"><tr>
-							<td valign="top">
-								<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>								
-								<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>
-								<b>Organization:</b> {organization}<br>
-								<b>Experience:</b> {userTimeCode}<br>							
-								<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>
-							<td>
-							<td valign="top" width="20%">
-						<tpl if="pros.length &gt; 0">					
-							<div class="review-pro-con-header">Pros</div>
-							<tpl for="pros">
-								- {text}<br>
-							</tpl></tpl>
-						<td>
+				<table style="width:100%">
+					<tpl if="activeStatus == 'P'"><tr><td colspan="3" class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</td></tr></tpl>
+					<tr>
+						<td valign="top">
+							<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>								
+							<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>
+							<b>Organization:</b> {organization}<br>
+							<b>Experience:</b> {userTimeCode}<br>							
+							<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>
+						</td>
 						<td valign="top" width="20%">
-						<tpl if="cons.length &gt; 0">
-							<div class="review-pro-con-header">Cons</div>
-							<tpl for="cons">
-								- {text}<br>
-							</tpl></tpl>
-						<td>
-						</tr></table>
-					<br><b>Comments:</b><br>{comment}
-					<br><br><hr>
-				</tpl>			
+							<tpl if="pros.length &gt; 0">					
+								<div class="review-pro-con-header">Pros</div>
+								<tpl for="pros">
+									- {text}<br>
+								</tpl></tpl>
+						</td>
+						<td valign="top" width="20%">
+							<tpl if="cons.length &gt; 0">
+								<div class="review-pro-con-header">Cons</div>
+								<tpl for="cons">
+									- {text}<br>
+								</tpl></tpl>
+						</td>
+					</tr></table>
+				<br><b>Comments:</b><br>{comment}
+				<br><br><hr>
+			</tpl>			
 		</div>
-		</tpl>
 	</tpl>
-	<tpl if="show.questions">
-		<tpl if="questions && questions.length &gt; 0">
-			<div class="pageBreak">
-				<h2>Questions</h2>
-				<hr>
-				<tpl for="questions">
-					<div class="question-question"><span class="question-response-letter-q">Q.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{question}</b></div>
-					<div class="question-info">
-						{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
-					</div>
-					<div style="padding-left: 10px; padding-right: 10px;">
+</tpl>
+<tpl if="show.questions">
+	<tpl if="questions && questions.length &gt; 0">
+		<div class="pageBreak">
+			<h2>Questions</h2>
+			<hr>
+			<tpl for="questions">
+				<div class="question-question"><span class="question-response-letter-q">Q.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{question}</b></div>
+				<div class="question-info">
+					{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
+				</div>
+				<div style="padding-left: 10px; padding-right: 10px;">
 					<tpl for="responses">
-							<div class="question-response"><span class="question-response-letter">A.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl>{response}</div>
-							<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
-							<hr>
+						<div class="question-response"><span class="question-response-letter">A.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl>{response}</div>
+						<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
+						<hr>
 					</tpl>
-					</div>
-				</tpl>
-			</div>	
-		</tpl>
+				</div>
+			</tpl>
+		</div>	
 	</tpl>
-	<tpl if="show.media">
-		<tpl if="componentMedia && componentMedia.length &gt; 0">
-			<div class="pageBreak">
-				<h2>Media</h2>
-				<hr>
-				<tpl for="componentMedia">
-					<tpl if="mediaTypeCode == 'IMG'">
-						<img src="{link}" style="width: 100%"><br>
-						<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption">{caption}<br></tpl>
-					</tpl>
-					<tpl if="mediaTypeCode != 'IMG'">
-						<b>Non-Printable:</b> {contentType}<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl><br>
-					</tpl>			
-					<br>
+</tpl>
+<tpl if="show.media">
+	<tpl if="componentMedia && componentMedia.length &gt; 0">
+		<div class="pageBreak">
+			<h2>Media</h2>
+			<hr>
+			<tpl for="componentMedia">
+				<tpl if="mediaTypeCode == 'IMG'">
+					<img src="{link}" style="width: 100%"><br>
+					<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption">{caption}<br></tpl>
 				</tpl>
-			</div>	
-		</tpl>
+				<tpl if="mediaTypeCode != 'IMG'">
+					<b>Non-Printable:</b> {contentType}<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl><br>
+				</tpl>			
+				<br>
+			</tpl>
+		</div>	
 	</tpl>
+</tpl>
 
 
