@@ -307,6 +307,11 @@ limitations under the License.
 	font-size: 16px;
 }
 
+.question-question .alert-warning {
+    color: #fcf8e3;
+    background-color: #8a6d3b;
+}
+
 .question-response {
 	font-weight: bold;
     font-size: 14px;

@@ -315,19 +315,19 @@ limitations under the License.
 							<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>
 						</td>
 						<td valign="top" width="20%">
-							<tpl if="pros.length &gt; 0">					
-								<div class="review-pro-con-header">Pros</div>
-								<tpl for="pros">
-									- {text}<br>
-								</tpl></tpl>
-						</td>
-						<td valign="top" width="20%">
-							<tpl if="cons.length &gt; 0">
-								<div class="review-pro-con-header">Cons</div>
-								<tpl for="cons">
-									- {text}<br>
-								</tpl></tpl>
-						</td>
+					<tpl if="pros.length &gt; 0">					
+						<div class="review-pro-con-header">Pros</div>
+						<tpl for="pros">
+							- {text}<br>
+						</tpl></tpl>
+					</td>
+					<td valign="top" width="20%">
+					<tpl if="cons.length &gt; 0">
+						<div class="review-pro-con-header">Cons</div>
+						<tpl for="cons">
+							- {text}<br>
+						</tpl></tpl>
+					</td>
 					</tr></table>
 				<br><b>Comments:</b><br>{comment}
 				<br><br><hr>
@@ -341,12 +341,14 @@ limitations under the License.
 			<h2>Questions</h2>
 			<hr>
 			<tpl for="questions">
+				<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
 				<div class="question-question"><span class="question-response-letter-q">Q.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{question}</b></div>
 				<div class="question-info">
 					{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
 				</div>
 				<div style="padding-left: 10px; padding-right: 10px;">
 					<tpl for="responses">
+						<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>
 						<div class="question-response"><span class="question-response-letter">A.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl>{response}</div>
 						<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
 						<hr>

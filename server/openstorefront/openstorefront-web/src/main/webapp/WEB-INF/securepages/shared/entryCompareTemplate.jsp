@@ -330,12 +330,14 @@ limitations under the License.
 											<section>
 												<h3 class="quickView">User Questions</h3>
 												<tpl for="questions">
+													<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
 													<div class="question-question"><span class="question-response-letter-q">Q.</span> <b>{question}</b></div>
 													<div class="question-info">
 														{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
 													</div>
 													<div style="padding-left: 10px; padding-right: 10px;">
 														<tpl for="responses">
+															<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>
 															<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>
 															<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
 															<hr>

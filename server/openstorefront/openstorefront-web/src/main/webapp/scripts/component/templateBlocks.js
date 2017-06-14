@@ -1059,8 +1059,12 @@ Ext.define('OSF.component.template.Questions', {
 				if (question.securityMarkingType) {
 					questionSecurity = '(' + question.securityMarkingType + ') '; 
 				}
-
-				var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
+				var pendingNotice = "";
+				if(question.activeStatus === "P")
+				{
+					pendingNotice = '<div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div>';
+				}
+				var text = '<div class="question-question">' + pendingNotice + '<span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
 				text += '<div class="question-info">' +
 						question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
 						'</div>';
@@ -1068,7 +1072,7 @@ Ext.define('OSF.component.template.Questions', {
 				Ext.Array.each(question.responses, function(response){
 					response.questionId = question.questionId;
 					response.componentId = question.componentId;
-					response.owner = (question.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
+					response.owner = (response.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
 				});
 
 
@@ -1080,7 +1084,8 @@ Ext.define('OSF.component.template.Questions', {
 					data: question.responses,
 					tpl: new Ext.XTemplate(							
 						'<tpl for=".">',
-						'	<tpl if="activeStatus === \'A\'">',
+						'	<tpl if="activeStatus === \'A\' || (activeStatus === \'P\' &amp;&amp; owner === true)">',
+						'		<tpl if="activeStatus === \'P\'"><div class="alert-warning" style="text-align: center;font-size:1.25em"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>',
 						'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
 						'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
 						'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
