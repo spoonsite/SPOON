@@ -40,7 +40,7 @@ Ext.define('OSF.landing.TagCloudView', {
 	scrollable: true,
 	maximizable: true,	
 	modal: true,
-	title: 'Tags',
+	title: 'Tags - Click on Tag to view Entries. The more Entries tagged the larger the text.',
 	iconCls: 'fa fa-lg fa-tags',
 	listeners: {
 		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {

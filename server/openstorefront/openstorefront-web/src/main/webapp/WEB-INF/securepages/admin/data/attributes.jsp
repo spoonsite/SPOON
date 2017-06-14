@@ -385,7 +385,7 @@
 						text: 'Important',
 						dataIndex: 'importantFlg',
 						flex: 1, 
-						tooltip: 'This shows on the summary page.',
+						tooltip: 'Shows on main page browse categories?',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},

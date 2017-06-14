@@ -212,7 +212,7 @@ limitations under the License.
 }
 
 .home-search-field-new {
-	font-size: 2.6em;
+	font-size: 2.4em;
 	height: 35px !important;
 	line-height: 35px;
 	color: #555555;

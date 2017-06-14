@@ -94,6 +94,15 @@ Ext.define('OSF.landing.DefaultActions', {
 				handler: function(record, item) {
 					window.location.href = 'UserTool.action';
 				}
+			},
+			{
+				text: 'Feedback',
+				//icon: 'fa-gears',
+				tip: 'Provide feedback about the site',
+				imageSrc: 'images/feedback.png',
+				handler: function(record, item) {
+					window.location.href = 'UserTool.action';
+				}
 			}			
 		];
 		

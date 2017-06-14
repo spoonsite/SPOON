@@ -61,7 +61,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					disabled: true,
 					width: '100%',
 					title: 'Properties',					
-					colunmLines: true,
+					columnLines: true,
 					flex: 1,
 					selModel: 'cellmodel',
 					plugins: {
@@ -77,6 +77,16 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 							field: 'textfield'
 						}
 					],
+					listeners: {
+						selectionchange: function(selectionModel, records, opts ) {	
+							var grid = this;
+							if (records.length > 0) {
+								grid.queryById('delete').setDisabled(false);
+							} else {
+								grid.queryById('delete').setDisabled(true);								
+							}
+						}
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -98,6 +108,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 								},
 								{
 									text: 'Delete',
+									itemId: 'delete',
+									disabled: true,
 									iconCls: 'fa fa-trash icon-button-color-warning',
 									handler: function() {
 										var grid = this.up('grid');
@@ -126,10 +138,10 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 								},
 								{
 									text: 'Custom',
+									itemId: 'custom',
 									iconCls: 'fa fa-cog icon-button-color-default',
 									disabled: true,
-									handler: function() {
-										
+									handler: function() {										
 									}
 								}
 							]
@@ -151,6 +163,11 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 		var designerPanel = this;
 				
 		designerPanel.components = [];
+		
+		var icons = [];
+		CoreService.iconservice.getAllIcons().then(function(iconClasses){
+			icons = iconClasses;
+		});
 		
 		//available layouts
 		var layoutComponents = [
@@ -368,6 +385,9 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				className: 'OSF.landing.DefaultActions',
 				designerClassName: 'OSF.landing.DefaultActions',
 				config: {},
+				data: [
+									
+				],
 				items: [],
 				designerRender: function(config){
 					config = config ? config : {};
@@ -521,7 +541,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					},
 					{
 						text: 'Relationships',
-						tip: 'View relationships bewteen entries',
+						tip: 'View relationships between entries',
 						icon: 'fa-share-alt',
 						toolType: 'OSF.landing.RelationshipSearch'
 					},				
@@ -532,7 +552,151 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						toolType: 'OSF.landing.AdvancedSearch'
 					}					
 				],
-				customConfigHandler: function(block) {
+				customConfigHandler: function(block) {					
+					var editWin = Ext.create('Ext.window.Window', {
+						title: 'Search Tool Config',
+						iconCls: 'fa fa-edit',
+						closeAction: 'destroy',
+						modal: true,
+						width: '80%',
+						height: 500,
+						layout: 'fit',						
+						items: [
+							{
+								xtype: 'grid',
+								itemId: 'grid',
+								store: {},
+								columnLines: true,
+								plugins: [{
+									ptype: 'cellediting',
+									clicksToEdit: 1
+								}],
+								viewConfig: {
+									plugins: {
+										ptype: 'gridviewdragdrop',
+										dragText: 'Drag and drop to reorder'												
+									},
+									listeners: {
+										drop: function(node, data, overModel, dropPostition, opts){													
+										}
+									}
+								},							
+								columns: [
+									{ text: 'label', dataIndex: 'text', width: 150,
+										editor: 'textfield'
+									},
+									{ text: 'Tip', dataIndex: 'tip', minWidth: 150, flex: 1,
+										editor: 'textfield'
+									},
+									{ text: 'Icon', dataIndex: 'icon', width: 200,
+										editor: {
+											xtype: 'combobox',
+											valueField: 'cls',
+											displayField: 'cls',
+											listConfig: {
+												getInnerTpl: function(displayField) {
+													return '{view}';
+												}
+											},
+											store: {
+												data: icons
+											}
+										}
+									},
+									{ text: 'Tool Type', dataIndex: 'toolType', width: 250,
+										editor: {
+											xtype: 'combobox',
+											valueField: 'classType',
+											displayField: 'classType',
+											store: {
+												data: [
+													{
+														classType: 'OSF.landing.TagCloud'
+													},
+													{
+														classType: 'OSF.landing.OrganizationSearch'
+													},
+													{
+														classType: 'OSF.landing.RelationshipSearch'
+													},
+													{
+														classType: 'OSF.landing.AdvancedSearch'
+													}													
+												]
+											}
+										}
+									}
+								]
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'top',
+								items: [
+									{
+										text: 'Add',
+										iconCls: 'fa fa-plus icon-button-color-save',
+										handler: function() {
+											var grid = editWin.queryById('grid');
+											grid.getStore().add({
+												property: '',
+												value: ''
+											});												
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Delete',
+										itemId: 'delete',
+										iconCls: 'fa fa-trash icon-button-color-warning',
+										handler: function() {											
+											var grid = editWin.queryById('grid');
+											var record = grid.getSelection()[0];																			
+											grid.getStore().remove(record);
+											grid.applyChanges(grid);											
+										}										
+									}
+								]
+							},
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Apply',
+										iconCls: 'fa fa-check icon-button-color-save',
+										handler: function() {
+											var win = this.up('window');
+											block.data = [];
+											editWin.queryById('grid').getStore().each(function(record){
+												var data = Ext.clone(record.data);
+												delete data.id;
+												block.data.push(data);
+											});
+											win.close();											
+											designerPanel.updateAll();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close icon-button-color-warning',
+										handler: function() {
+											this.up('window').close();
+										}										
+									}
+								]
+							}
+						]
+						
+					});
+					editWin.show();		
+					editWin.queryById('grid').getStore().loadRawData(Ext.clone(block.data));
 					
 				},
 				items: [],
@@ -649,11 +813,16 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				designerPanel.updateAll();
 				grid.getStore().commitChanges();
 				Ext.toast('Applied Properties');				
-			};
-			
-			
-			//check for custom handler
-			
+			};		
+						
+			if (block.customConfigHandler) {
+				propertyGrid.queryById('custom').setDisabled(false);
+				propertyGrid.queryById('custom').handler = function(){
+					block.customConfigHandler(block);
+				};
+			} else {
+				propertyGrid.queryById('custom').setDisabled(true);
+			}
 			
 		};
 		
@@ -668,10 +837,12 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				border: true,
 				bodyStyle: 'padding: 10px;',
 				closable: block.fixed ? false : true,
-				block: block,				
+				block: block,
+				closeToolText: 'Delete Section',
 				tools: [
 					{
 						type: 'up',
+						tooltip: 'Move this section up (wraps around)',
 						hidden: block.fixed ? true : false,
 						callback: function (panel) {
 							
@@ -710,6 +881,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					},
 					{
 						type: 'gear',
+						tooltip: 'configure',
 						callback: function (panel) {
 							configBlock(panel.block);							
 						}						
@@ -733,7 +905,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				}
 			}));
 			if (block.data) {
-				container.loadData(block.data);
+				container.loadData(Ext.clone(block.data));
 			}
 			setupContainerDropTarget(container, block);
 			
@@ -807,9 +979,13 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 			var configString = '';
 			
 			var renderConfig = function(configObj) {
-				Ext.Object.each(configObj, function(key, value, myself) {
+				Ext.Object.each(configObj, function(key, value, myself) {					
 					if (Ext.isString(value)) {
 						configString += key + ": '" + value + "',\n";
+					} else if (Ext.isArray(value)) {
+						configString += key + ": " + Ext.encode(value);						
+					} else if (Ext.isObject(value))	{				
+						onfigString += key + ": " + Ext.encode(value);	
 					} else {
 						configString += key + ": " + value + ",\n";
 					}

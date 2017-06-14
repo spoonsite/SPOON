@@ -152,7 +152,7 @@ public class BrandingServiceImpl
 
 				//Colors
 				if (branding.getPrimaryColor() == null) {
-					branding.setPrimaryColor("#1a0227");
+					branding.setPrimaryColor("#441e60"); //#1a0227
 				}
 
 				if (branding.getPrimaryTextColor() == null) {
