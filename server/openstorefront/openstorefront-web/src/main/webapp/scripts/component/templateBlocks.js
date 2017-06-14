@@ -699,6 +699,7 @@ Ext.define('OSF.component.template.Reviews', {
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',	
 				'<div class="review-section">',
+				'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</div></tpl>',
 				'	<div class="details">',
 				'		<div class="title"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title}</div>',
 				'		<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',

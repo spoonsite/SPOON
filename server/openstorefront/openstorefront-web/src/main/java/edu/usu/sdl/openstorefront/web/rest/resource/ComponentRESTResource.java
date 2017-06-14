@@ -2983,8 +2983,20 @@ public class ComponentRESTResource
 		reviewExample.setComponentId(componentId);
 
 		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
+		
+		if(filterQueryParams.getStatus().equals(ComponentReview.ACTIVE_STATUS))
+		{
+			ComponentReview pendingReviewExample = new ComponentReview();
+			pendingReviewExample.setActiveStatus(ComponentReview.PENDING_STATUS);
+			pendingReviewExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			pendingReviewExample.setComponentId(componentId);
+			
+			List<ComponentReview> pendingComponentReviews = service.getPersistenceService().queryByExample(pendingReviewExample);
+			componentReviews.addAll(pendingComponentReviews);
+		}
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
+		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
 
 		GenericEntity<List<ComponentReviewView>> entity = new GenericEntity<List<ComponentReviewView>>(views)
 		{

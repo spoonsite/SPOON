@@ -1336,6 +1336,15 @@ to use set the ui: danger
 {
 	width: 58%;
 }
+
+.review-section .alert-warning
+{
+	font-weight: bold;
+	font-size: 1.25em;
+	margin: 5px 0px;
+}
+
+
 @media (max-width: 520px) {
 	.review-section .details,
 	.review-section .pros,
