@@ -136,9 +136,9 @@ public class NewSecurityRole
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='xxxxxxxxxxxxxxxxxxxxx'] .x-grid-view")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] .x-grid-view")));
 
-		if (tableClickRowCol("[data-test='xxxxxxxxxxxxxxxxxxx'] .x-grid-view", userName, driver, 0)) {
+		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
 
 			// Select the Manage Roles button at the top
 			List<WebElement> buttonsTop = driver.findElements(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-toolbar-medium"));
@@ -148,14 +148,27 @@ public class NewSecurityRole
 				}
 
 			}
-			// Wait for Roles for user: box to come up
+			// Wait for Manage Roles table to come up
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
 
-			// *********** ADD USER ****************
-			// *** DELETE ALL OTHER USERS **********
+			// WAS clicking on delete, won't
+			tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "auto-customized-role", driver, 0);
 			
+			// *** DELETE ALL OTHER USERS (if they exist) ***
+			while (tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "delete", driver, 2)) {
+				System.out.println("*******Deleting established roles from this user *********");
+			}
+
+			// *********** identifiers ******
+			// data-qtip='delete' 
+			// ".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller.x-focus.x-grid-view-focus.x-grid-view-default-focus
+			
+			// *********** ADD USER ****************
 			
 		}
+		
+		
+		
 		/*
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();
