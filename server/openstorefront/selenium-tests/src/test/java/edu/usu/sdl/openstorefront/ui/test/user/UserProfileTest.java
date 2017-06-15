@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.apiclient.rest.resource.ContactResourceImpl;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -36,6 +38,16 @@ public class UserProfileTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static ContactResourceImpl apiContact = new ContactResourceImpl();
+
+	@BeforeClass
+	public static void setupTest()
+	{
+		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		apiContact.connect(username, password, server);
+	}
 
 	@Test
 	public void userProfileTest()
@@ -46,9 +58,9 @@ public class UserProfileTest
 			editProfile(driver, "cameron.cummings@sdl.usu.edu");
 			sendTestMessage(driver);
 		}
-		
+
 	}
-	
+
 	public void setup(WebDriver driver)
 	{
 		driver.get(webDriverUtil.getPage("UserTool.action"));
@@ -62,54 +74,53 @@ public class UserProfileTest
 			}
 		});
 	}
-	
+
 	public void editProfile(WebDriver driver, String email)
 	{
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#userHeaderProfileBtn"))).click();
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).clear();
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).sendKeys(email);
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#saveProfileFormBtn"))).click();
-		
+
 		try {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-mask-msg-text")));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}
-		
+
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg-text")));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}
 	}
-	
+
 	public void sendTestMessage(WebDriver driver)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#emailSendTestBtn"))).click();
-		
+
 		try {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-toast")));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}
-		
+
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-toast")));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#dashboardUserHomeButton"))).click();
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#dashPanel_header-title-textEl")));
 
 	}
 }
-

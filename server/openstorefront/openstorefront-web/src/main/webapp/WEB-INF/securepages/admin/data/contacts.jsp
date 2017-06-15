@@ -151,7 +151,10 @@
 									items: [
 										{											
 											text: 'Save',
-											formBind: true,											
+											formBind: true,
+											autoEl: {
+												'data-test': 'saveBtnAddContact'
+											},
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){	
 												var win = this.up('window');
@@ -377,7 +380,8 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
+									scale: 'medium',
+									id: 'contactRefreshBtn',
 									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefresh();
@@ -426,6 +430,9 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'togglestatus',
+									autoEl: {
+										'data-test': 'toggleStatusContactBtn'
+									},
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
@@ -449,6 +456,9 @@
 								{
 									text: 'Delete',
 									itemId: 'delete',
+									autoEl: {
+										'data-test': 'contactsDeleteBtn'
+									},
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',

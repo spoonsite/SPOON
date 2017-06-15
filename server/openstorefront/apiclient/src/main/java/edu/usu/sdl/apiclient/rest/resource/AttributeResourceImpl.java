@@ -15,7 +15,12 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
@@ -30,8 +35,20 @@ import javax.ws.rs.core.Response;
  *
  * @author ccummings
  */
-public class AttributeResourceImpl
+public class AttributeResourceImpl extends AbstractService
 {
+
+	String basePath = "api/v1/resource/attributes";
+	
+	public AttributeResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public AttributeResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public void activateCode(String type, String code)
 	{
@@ -163,9 +180,10 @@ public class AttributeResourceImpl
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
+	public AttributeType postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/attributetypes", attributeTypeSave, null);
+		return response.getResponse(AttributeType.class);
 	}
 
 	public Response postUserAttributeCode(AttributeCodeSave attributeCodeSave)

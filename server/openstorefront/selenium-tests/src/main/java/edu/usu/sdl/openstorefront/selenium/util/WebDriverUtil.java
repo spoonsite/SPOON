@@ -16,11 +16,7 @@
 package edu.usu.sdl.openstorefront.selenium.util;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,24 +40,20 @@ public class WebDriverUtil
 
 	private List<WebDriver> drivers = new ArrayList<>();
 	private String server;
-	private Properties properties = new Properties();
+	private Properties properties;
 
-	public WebDriverUtil()
+	public WebDriverUtil(Properties property)
 	{
+		properties = property;
 		init();
+		
 	}
 
 	private void init()
 	{
 		//load config
 		DriverPathLoaderFix.loadDriverPaths(null);
-
-		File propertyFile = FileSystemManager.getConfig("testconfig.properties");
-		try (InputStream in = new FileInputStream(propertyFile)) {
-			properties.load(in);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to load Configuration file.");
-		}
+		
 		server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
 		String driverKey = properties.getProperty("test.drivers", "EDGE");
 		try {

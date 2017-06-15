@@ -170,19 +170,30 @@
 	</build>		
 	
 	<dependencies>
+		
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>
 			<version>3.3.1</version>
 		</dependency>
-        <dependency>
-            <groupId>com.github.webdriverextensions</groupId>
-            <artifactId>webdriverextensions</artifactId>
-            <version>3.4.0</version>
-        </dependency>		
+		<dependency>
+			<groupId>com.github.webdriverextensions</groupId>
+			<artifactId>webdriverextensions</artifactId>
+			<version>3.4.0</version>
+		</dependency>		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>openstorefront-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>openstorefront-core-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>apiclient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -195,6 +206,6 @@
 				<version>2.19.1</version>
 			</plugin>
 		</plugins>
-</reporting> 
+	</reporting> 
 	
 </project>

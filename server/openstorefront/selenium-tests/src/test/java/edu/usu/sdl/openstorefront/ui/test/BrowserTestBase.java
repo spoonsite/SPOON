@@ -15,14 +15,21 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
@@ -42,7 +49,22 @@ public class BrowserTestBase
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-	protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
+	protected static WebDriverUtil webDriverUtil;
+	protected static Properties properties;
+
+	@BeforeClass
+	public static void setupBrowserTestBase()
+	{
+		properties = new Properties();
+		File propertyFile = FileSystemManager.getConfig("testconfig.properties");
+		try (InputStream in = new FileInputStream(propertyFile)) {
+			properties.load(in);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to load Configuration file.");
+		}
+
+		webDriverUtil = new WebDriverUtil(properties);
+	}
 
 	/*@BeforeClass
 	public static void setSize() throws Exception
@@ -60,13 +82,15 @@ public class BrowserTestBase
 
 	protected static void login()
 	{
-		login("admin", "Secret1@");
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		login(username, password);
 	}
 
 	protected static void login(String userName, String passWord)
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			WebDriverWait wait = new WebDriverWait(driver, 20);
 			// Make sure logged out before attempting login.
 			driver.get(webDriverUtil.getPage("Login.action?Logout"));

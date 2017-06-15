@@ -174,6 +174,7 @@ public class ComponentTypeResource
 	{
 		MediaType.APPLICATION_JSON
 	})
+	@DataType(ComponentType.class)
 	public Response createNewComponentType(
 			ComponentType componentType
 	)

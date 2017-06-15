@@ -81,6 +81,11 @@ public class ClientAPI
 			connected = true;
 		}
 	}
+	
+	public boolean isConnected()
+	{
+		return connected;
+	}
 
 	private void logon(LoginModel loginModel)
 	{

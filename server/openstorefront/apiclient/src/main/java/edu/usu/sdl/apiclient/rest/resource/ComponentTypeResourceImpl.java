@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import javax.ws.rs.core.Response;
 
@@ -22,22 +26,34 @@ import javax.ws.rs.core.Response;
  *
  * @author ccummings
  */
-public class ComponentTypeResourceImpl
+public class ComponentTypeResourceImpl extends AbstractService
 {
+	String basePath = "api/v1/resource/componenttypes";
+
+	public ComponentTypeResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public ComponentTypeResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public Response activateComponentType(String type)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response createNewComponentType(ComponentType componentType)
+	public ComponentType createNewComponentType(ComponentType componentType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath, componentType, null);
+		return response.getResponse(ComponentType.class);
 	}
 
 	public void deleteComponentType(String type, String newType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + type + "?newtype=" + newType, null);
 	}
 
 	public Response getComponentType(String status, boolean all)

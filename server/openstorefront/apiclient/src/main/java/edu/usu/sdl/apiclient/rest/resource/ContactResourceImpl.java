@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.List;
@@ -24,22 +28,34 @@ import javax.ws.rs.core.Response;
  *
  * @author ccummings
  */
-public class ContactResourceImpl
+public class ContactResourceImpl extends AbstractService
 {
+	String basePath = "api/v1/resource/contacts";
+
+	public ContactResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public ContactResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public Response activateContact(String contactId, boolean includeReferences)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response createContact(Contact contact)
+	public Contact createContact(Contact contact)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath, contact, null);
+		return response.getResponse(Contact.class);
 	}
 
 	public void deleteContact(String contactId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + contactId, null);
 	}
 
 	public List<Contact> getAllContacts()
