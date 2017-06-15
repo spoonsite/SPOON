@@ -149,7 +149,7 @@ public class BrowserTestBase
 	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
 		int fRow = -1;
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, 4);
 
 		try {
 			List<WebElement> allRows = new ArrayList<WebElement>();
