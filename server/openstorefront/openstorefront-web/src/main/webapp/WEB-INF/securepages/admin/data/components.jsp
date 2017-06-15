@@ -1568,7 +1568,8 @@
 							store.getProxy().extraParams = {
 								status: Ext.getCmp('componentGridFilter-ActiveStatus').getValue() ? Ext.getCmp('componentGridFilter-ActiveStatus').getValue() : 'ALL',
 								approvalState: Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() ? Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() : 'ALL',
-								componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL'
+								componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL',
+								componentName: Ext.getCmp('componentGridFilter-Name').getValue() ? Ext.getCmp('componentGridFilter-Name').getValue() : ''
 							};
 						}
 					}					
@@ -1805,7 +1806,24 @@
 											}
 										]
 									}
-								})
+								}),
+								{
+									xtype: 'textfield',
+									id: 'componentGridFilter-Name',
+									fieldLabel: 'Name',						
+									name: 'name',								
+									emptyText: 'Filter By Name',
+									labelAlign: 'top',
+									labelSeparator: '',
+									listeners: {
+										change: {
+											fn: function(field, newValue, oldValue, opts) {
+												actionRefreshComponentGrid();
+											},
+											buffer: 500
+										}
+									}
+								}
 							]
 						},
 						{
@@ -2130,7 +2148,8 @@
 						params: {
 							status: Ext.getCmp('componentGridFilter-ActiveStatus').getValue() ? Ext.getCmp('componentGridFilter-ActiveStatus').getValue() : 'ALL',
 							approvalState: Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() ? Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() : 'ALL',
-							componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL'
+							componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL',
+							componentName: Ext.getCmp('componentGridFilter-Name').getValue() ? Ext.getCmp('componentGridFilter-Name').getValue() : ''
 						}
 					});
 				};
