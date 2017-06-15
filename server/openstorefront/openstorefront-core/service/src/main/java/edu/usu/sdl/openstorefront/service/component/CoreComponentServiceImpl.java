@@ -81,6 +81,7 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -373,7 +374,17 @@ public class CoreComponentServiceImpl
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
-		List<ComponentReview> tempReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempReviews = new ArrayList();
+		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
+		String currentUser = SecurityUtil.getCurrentUserName();
+		tempPendingReviews.forEach(review
+				-> {
+			if (review.getCreateUser().equals(currentUser)) {
+				tempReviews.add(review);
+			}
+		});
+		tempReviews.addAll(tempApprovedReviews);
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review
 				-> {
@@ -395,19 +406,35 @@ public class CoreComponentServiceImpl
 
 			reviews.add(tempView);
 		});
+		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
 		result.setReviews(reviews);
 
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
+		List<ComponentQuestion> pendingQuestions = componentService.getBaseComponent(ComponentQuestion.class, componentId, ComponentQuestion.PENDING_STATUS);
+		pendingQuestions.forEach(question
+				-> {
+			if (question.getCreateUser().equals(currentUser)) {
+				questions.add(question);
+			}
+		});
 		questions.stream().forEach((question)
 				-> {
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
 			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-			List<ComponentQuestionResponse> responses = tempResponse.findByExample();
-			responses = FilterEngine.filter(responses);
+			List<ComponentQuestionResponse> activeResponses = tempResponse.findByExample();
+			activeResponses = FilterEngine.filter(activeResponses);
+
+			ComponentQuestionResponse tempPendingResponse = new ComponentQuestionResponse();
+			tempPendingResponse.setQuestionId(question.getQuestionId());
+			tempPendingResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			tempPendingResponse.setCreateUser(currentUser);
+
+			List<ComponentQuestionResponse> responses = FilterEngine.filter(tempPendingResponse.findByExample());
+			responses.addAll(activeResponses);
 
 			responseViews = ComponentQuestionResponseView.toViewList(responses);
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
