@@ -1400,8 +1400,22 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		QueryByExample queryByExample = new QueryByExample(componentExample);
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		
+		// If given, filter the search by name
+		if (StringUtils.isNotBlank(filter.getComponentName())) {
+				Component componentLikeExample = new Component();
+				componentLikeExample.setName("%" + filter.getComponentName().toLowerCase() + "%");
+				
+				// Define A Special Lookup Operation (ILIKE)
+				specialOperatorModel.setExample(componentLikeExample);
+				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+		}
 
+		QueryByExample queryByExample = new QueryByExample(componentExample);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		
 		//TODO: consider moving the filtering work to the DB
 		List<Component> components = persistenceService.queryByExample(queryByExample);
 
@@ -1433,7 +1447,7 @@ public class CoreComponentServiceImpl
 
 		QueryByExample queryPendingChanges = new QueryByExample(new Component());
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(pendingChangeExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
