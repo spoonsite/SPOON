@@ -42,6 +42,15 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 	title: 'Organizations',
 	iconCls: 'fa fa-lg fa-sitemap',
 	layout: 'fit',
+	listeners: {
+		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+			if (width < 568) {
+				this.maximize(false);
+			} else {
+				this.restore();
+			}		
+		}
+	},	
 	dockedItems: [
 		{
 			xtype: 'toolbar',

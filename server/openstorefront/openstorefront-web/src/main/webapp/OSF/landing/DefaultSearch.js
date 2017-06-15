@@ -24,13 +24,23 @@ Ext.define('OSF.landing.DefaultSearch', {
 	
 	width: '100%',	
 	layout: 'hbox',	
-	
+	listeners: {
+		resize: function(mainPanel, width, height, oldWidth, oldHeight, eOpts) {
+			var searchBar = mainPanel.queryById('searchBar');
+			if (width < 1024) {
+				searchBar.setWidth('100%');
+			} else {
+				searchBar.setWidth('75%');
+			}
+		}
+	},
 	items: [
 		{
 			flex: 1
 		},
 		{	
 			xtype: 'panel',
+			itemId: 'searchBar',
 			width: '75%',		
 			layout: {
 				type: 'hbox',

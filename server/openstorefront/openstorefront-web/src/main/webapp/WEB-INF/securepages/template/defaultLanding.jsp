@@ -31,15 +31,6 @@
 	Ext.onReady(function(){
 
 	
-		CoreService.brandingservice.getCurrentBranding().then(function(branding) {
-			Ext.create('Ext.Img', {	
-				id: 'topLogo',
-				alt: 'logo',
-				cls: 'home-page-top-logo',					
-				src: branding.secondaryLogoUrl,
-				renderTo: Ext.getBody()
-			});						
-		});		
 		
 
 		Ext.create('Ext.container.Viewport', {			

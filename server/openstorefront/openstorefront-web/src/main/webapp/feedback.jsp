@@ -1,3 +1,4 @@
+<%--
 /* 
  * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
@@ -15,36 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+<%-- 
+    Document   : feedback
+    Created on : Jun 15, 2017, 8:14:45 AM
+    Author     : dshurtleff
+--%>
 
-/* global Ext, CoreService */
-
-Ext.define('OSF.landing.DefaultVersion', {
-	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultversion',
-	
-	width: '100%',
-	layout: 'center',
-	bodyCls: 'home-footer',	
-	items: [
-		{
-			itemId: 'display',
-			tpl: '<div class="home-footer-version">{applicationVersion}</div>'
-		}
-	],
-	initComponent: function () {
-		this.callParent();			
-		var versionPanel = this;
-				
-		Ext.Ajax.request({
-			url: 'api/v1/service/application/version',
-			success: function(response, opts) {
-				var version = response.responseText;				
-				versionPanel.getComponent('display').update({
-					applicationVersion: version
-				});
-			}
-		});				
-	}	
-	
-});
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+    </body>
+</html>

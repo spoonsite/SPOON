@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.landing.DefaultHeader', {
 	extend: 'Ext.panel.Panel',
@@ -29,16 +29,30 @@ Ext.define('OSF.landing.DefaultHeader', {
 	dockedItems: [						
 		{
 			xtype: 'toolbar',
+			itemId: 'toolbar',
 			dock: 'top',								
 			cls: 'nav-back-color',			
 			listeners: {
 				resize: function(toolbar, width, height, oldWidth, oldHeight, eOpts) {
+					var headerPanel = toolbar.up('panel');					
 					if (width < 1024) {
 						toolbar.getComponent('spacer').setHidden(true);
-						toolbar.getComponent('notificationBtn').setText('');										
+						toolbar.getComponent('notificationBtn').setText('');						
+						toolbar.getComponent('userMenuBtn').setText('');
+						toolbar.getComponent('userMenuBtn').setIconCls('fa fa-2x fa-navicon');
+						toolbar.getComponent('userMenuBtn').setArrowVisible(false);
+						if (headerPanel.logo) {
+							headerPanel.logo.hide();
+						}
 					} else {
 						toolbar.getComponent('spacer').setHidden(false);										
 						toolbar.getComponent('notificationBtn').setText('Notifications');										
+						toolbar.getComponent('userMenuBtn').setText(toolbar.getComponent('userMenuBtn').originalText);
+						toolbar.getComponent('userMenuBtn').setIconCls(null);
+						toolbar.getComponent('userMenuBtn').setArrowVisible(true);
+						if (headerPanel.logo) {
+							headerPanel.logo.show();
+						}
 					}
 					toolbar.updateLayout(true, true);
 				}
@@ -80,9 +94,14 @@ Ext.define('OSF.landing.DefaultHeader', {
 				},		
 				{
 					xtype: 'osf-UserMenu',
+					itemId: 'userMenuBtn',
 					ui: 'default',
-					initCallBack: function(usercontext) {				
-						setupServerNotifications(usercontext);	
+					initCallBack: function(usercontext) {		
+						this.originalText = this.getText();
+						setupServerNotifications(usercontext);
+						var headerPanel = this.up('panel');		
+						var toolbar = headerPanel.queryById('toolbar');						
+						toolbar.fireEvent('resize', toolbar, toolbar.getWidth(), toolbar.getHeight());
 					}
 				}
 			]
@@ -120,9 +139,18 @@ Ext.define('OSF.landing.DefaultHeader', {
 		checkNotifications();
 		
 		CoreService.brandingservice.getCurrentBranding().then(function(branding){
-			headerPanel.queryById('homeTitle').update(branding.landingPageTitle);			
+			headerPanel.queryById('homeTitle').update(branding.landingPageTitle);
+			headerPanel.logo = Ext.create('Ext.Img', {					
+				alt: 'logo',
+				cls: 'home-page-top-logo',					
+				src: branding.secondaryLogoUrl,
+				renderTo: Ext.getBody()
+			});	
+			if (headerPanel.getWidth() < 1024){
+				headerPanel.logo.hide();
+			}
 		});
 		
-	}	
+	}
 	
 });

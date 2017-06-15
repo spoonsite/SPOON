@@ -44,9 +44,11 @@ Ext.define('OSF.landing.TagCloudView', {
 	iconCls: 'fa fa-lg fa-tags',
 	listeners: {
 		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
-			if (width < 565) {
+			if (width < 568) {
 				this.maximize(false);
-			} 		
+			} else {
+				this.restore();
+			}		
 		}
 	},	
 	

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.landing.DefaultActions', {
 	extend: 'Ext.panel.Panel',
@@ -44,69 +44,81 @@ Ext.define('OSF.landing.DefaultActions', {
 			),
 			listeners: {
 				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (record.data.handler) {
-						record.data.handler(record, item);
+					if (record.data.link) {
+						window.location.href = record.data.link;
 					} else {
-						Ext.log("Add Handler to item");
+						Ext.log("Add link to item");
 					}
 				}
 			}
 		}
 	],
+	actionTools: [
+		{
+			text: 'Dashboard',
+			//icon: 'fa-th-large',
+			tip: 'Access your dashboard',
+			imageSrc: 'images/dash.png',
+			link: 'UserTool.action?load=Dashboard'
+		},
+		{
+			text: 'Submissions',
+			//icon: 'fa-file-text-o',
+			imageSrc: 'images/submission.png',
+			tip: 'Add or update entries to the registry',
+			permission: 'USER-SUBMISSIONS',
+			link: 'UserTool.action?load=Submissions'
+		},
+		{
+			text: 'My Searches',
+			//icon: 'fa-share-alt',
+			tip: 'View and manage your saved searches',
+			imageSrc: 'images/savedsearch.png',
+			link: 'UserTool.action?load=Searches'
+		},
+		{
+			text: 'Tools',
+			//icon: 'fa-gears',
+			tip: 'Access user tools to update profile and manage your data.',
+			imageSrc: 'images/tools.png',
+			link: 'UserTool.action'
+		},
+		{
+			text: 'Feedback',
+			//icon: 'fa-gears',
+			tip: 'Provide feedback about the site',
+			imageSrc: 'images/feedback.png',
+			link: 'feedback.jsp'
+		}		
+	],
 	initComponent: function () {
 		this.callParent();			
-		var searchToolsPanel = this;
+		var actionToolsPanel = this;
 				
-		var tools=[
-			{
-				text: 'Dashboard',
-				//icon: 'fa-th-large',
-				tip: 'Access your dashboard',
-				imageSrc: 'images/dash.png',
-				handler: function(record, item) {
-					window.location.href = 'UserTool.action?load=Dashboard';
-				}
-			},
-			{
-				text: 'Submissions',
-				//icon: 'fa-file-text-o',
-				imageSrc: 'images/submission.png',
-				tip: 'Add or update entries to the registry',
-				permissions: [''],
-				handler: function(record, item) {
-					window.location.href = 'UserTool.action?load=Submissions';
-				}
-			},
-			{
-				text: 'My Searches',
-				//icon: 'fa-share-alt',
-				tip: 'View and manage your saved searches',
-				imageSrc: 'images/savedsearch.png',
-				handler: function(record, item) {
-					window.location.href = 'UserTool.action?load=Searches';
-				}
-			},
-			{
-				text: 'Tools',
-				//icon: 'fa-gears',
-				tip: 'Access user tools to update profile and manage your data.',
-				imageSrc: 'images/tools.png',
-				handler: function(record, item) {
-					window.location.href = 'UserTool.action';
-				}
-			},
-			{
-				text: 'Feedback',
-				//icon: 'fa-gears',
-				tip: 'Provide feedback about the site',
-				imageSrc: 'images/feedback.png',
-				handler: function(record, item) {
-					window.location.href = 'UserTool.action';
-				}
-			}			
-		];
+		//check permission
+		actionToolsPanel.loadActions = function(actions) {
+			CoreService.userservice.getCurrentUser(function(user){
+				var availableActions = [];
+				Ext.Array.each(actions, function(action){
+					var add = false;
+					if (action.permission) {
+						
+					}
+					if (add) {
+						
+					}
+				});
+				
+			});
+		};
+		actionToolsPanel.loadActions(actionToolsPanel.actionTools);
 		
-		searchToolsPanel.queryById('dataview').getStore().loadData(tools);
+		actionToolsPanel.queryById('dataview').getStore().loadData(actionToolsPanel.actionTools);
+	},
+	loadData: function(actions) {
+		var actionToolsPanel = this;
+		actionToolsPanel.actionTools = actions;
+		actionToolsPanel.queryById('dataview').getStore().loadData(actions);
 	}
 	
 });

@@ -43,6 +43,15 @@ Ext.define('OSF.landing.AdvancedSearchView', {
 	title: 'Advanced Search',
 	iconCls: 'fa fa-lg fa-search-plus',
 	maximizable: true,
+	listeners: {
+		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+			if (width < 568) {
+				this.maximize(false);
+			} else {
+				this.restore();
+			}		
+		}
+	},	
 	dockedItems: [
 		{
 			xtype: 'toolbar',

@@ -42,7 +42,16 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 	modal: true,
 	title: 'Relationship Select',
 	iconCls: 'fa fa-lg fa-share-alt',
-	layout: 'fit',	
+	layout: 'fit',
+	listeners: {
+		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+			if (width < 568) {
+				this.maximize(false);
+			} else {
+				this.restore();
+			}		
+		}
+	},	
 	items: [
 		{
 			xtype: 'panel',

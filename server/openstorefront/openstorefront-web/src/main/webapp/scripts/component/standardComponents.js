@@ -270,15 +270,16 @@ Ext.define('OSF.component.UserMenu', {
 	alias: 'widget.osf-UserMenu',
 		
 	scale: 'large',
-	ui: 'default',	
-	minWidth: 170,
+	ui: 'default',		
 	maxWidth: 250,
 	initCallBack: null,
 	showUserTools: true,
 	showAdminTools: true,
 	showEvaluatorTools: true,
 	showHelp: true,
-	menu: {},
+	menu: {
+		minWidth: 200
+	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow',{}),
 	
