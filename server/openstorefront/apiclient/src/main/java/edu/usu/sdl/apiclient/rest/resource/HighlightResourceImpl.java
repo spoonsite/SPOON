@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import javax.ws.rs.core.Response;
@@ -23,9 +26,21 @@ import javax.ws.rs.core.Response;
  *
  * @author ccummings
  */
-public class HighlightResourceImpl
+public class HighlightResourceImpl extends AbstractService
 {
 
+	String basePath = "api/v1/resource/highlights";
+
+	public HighlightResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public HighlightResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
+	
 	public void activateHighlight(String id)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

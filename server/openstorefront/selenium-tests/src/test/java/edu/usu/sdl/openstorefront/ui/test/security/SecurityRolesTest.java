@@ -1,8 +1,13 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
+import edu.usu.sdl.apiclient.rest.resource.SecurityRoleResourceImpl;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -30,6 +35,17 @@ public class SecurityRolesTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static List<String> securityRoleIDs = new ArrayList<>();
+	private static SecurityRoleResourceImpl apiSecurityRole = new SecurityRoleResourceImpl();
+
+	@BeforeClass
+	public static void setupTest()
+	{
+		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		apiSecurityRole.connect(username, password, server);
+	}
 
 	// located in SecurityTestBase, read this in to be used in setSecurityRoles method below
 	@Before
@@ -127,5 +143,14 @@ public class SecurityRolesTest
 	{
 
 	}
-
+	
+	@AfterClass
+	public static void cleanup()
+	{
+		for (String id : securityRoleIDs) {
+			
+		}
+		
+		apiSecurityRole.disconnect();
+	}
 }

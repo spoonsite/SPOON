@@ -16,10 +16,13 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 
+import edu.usu.sdl.apiclient.rest.resource.UserRegistrationResourceImpl;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -34,15 +37,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author dshurtleff
  */
 public class AccountSignupActivateTest
-		extends BrowserTestBase
+		extends SecurityTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static List<String> accountSignupIDs = new ArrayList<>();
+	private static UserRegistrationResourceImpl apiAccountSignup = new UserRegistrationResourceImpl();
 
 	@BeforeClass
 	public static void setupTest()
 	{
-		login();
+		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		apiAccountSignup.connect(username, password, server);
 	}
 
 	/**
@@ -100,13 +108,11 @@ public class AccountSignupActivateTest
 			// Drop-down selectors finished, now search for user in the table and delete if present
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-item-container", userName, driver, 0)) {
 				driver.findElement(By.xpath("//span[contains(.,'Delete')]")).click();
-				
-				// WAIT for confirmation button to come up
-				
-				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation button "YES"
-				
-				// WAIT for deletion
 
+				// WAIT for confirmation button to come up
+				driver.findElement(By.xpath("//span[@id='button-1037-btnInnerEl']")).click();  // Confirmation button "YES"
+
+				// WAIT for deletion
 				LOG.log(Level.INFO, "*** EXISTING User '" + userName + "' DELETED ***");
 				loop = 99;  // exit
 			}
@@ -131,16 +137,12 @@ public class AccountSignupActivateTest
 
 		// SUBMIT the form
 		driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
-		
+
 		// WAIT for signup to complete 
-		
-		
 		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
-		
 
 	}
-		
-				
+
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate
@@ -155,8 +157,19 @@ public class AccountSignupActivateTest
 			driver.findElement(By.xpath("//a[contains(.,'Approve')]")).click();
 
 			// Wait for Approving User Display Block to go away
-			WebDriverWait wait = new WebDriverWait(driver, 40);
-			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] x-component.x-border-box.x-mask.x-component-default")));
+			WebDriverWait wait = new WebDriverWait(driver, 20);
+
+			try {
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] .x-component.x-border-box.x-mask.x-component-default[aria-hidden*='false'] .x-mask-msg-text")));
+			} catch (Exception e) {
+				LOG.log(Level.INFO, e.toString());
+			}
+
+			try {
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text")));
+			} catch (Exception e) {
+				LOG.log(Level.INFO, e.toString());
+			}
 
 			// Change filter to Active and Approved 
 			setActiveStatus("Active", driver);
@@ -170,19 +183,17 @@ public class AccountSignupActivateTest
 			}
 		}
 
-	// Login as newly created and approved user
-	login(userName, userName.toLowerCase() + "A1!");
-	LOG.log (Level.INFO,
-			
+		// Login as newly created and approved user
+		login(userName, userName.toLowerCase() + "A1!");
+		LOG.log(Level.INFO,
+				"--- Logged in as new user '" + userName + "' ---");
+		login(); //logout and log back in as admin
+	}
 
-	"--- Logged in as new user '" + userName + "' ---");
-	login(); //logout and log back in as admin
-}
-
-public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
+	public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
 	{
-		WebDriverWait wait = new WebDriverWait (driver, 10);
-		
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+
 		// ActiveStatusDropDown arrow and get list of elements in it
 		WebElement ActiveStatArrow = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterActiveStatus-inputEl")));
 		ActiveStatArrow.click();
@@ -195,12 +206,11 @@ public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
 		}
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
 	}
-	
 
 	public void setApprovalStatus(String approvalStatusDropDownText, WebDriver driver)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		
+
 		WebElement ApprStatArrow = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#filterApprovalStatus-inputEl")));
 		ApprStatArrow.click();
 
@@ -213,5 +223,14 @@ public void setActiveStatus(String activeStatusDropDownText, WebDriver driver)
 		}
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
 	}
-	
+
+	@AfterClass
+	public static void cleanup()
+	{
+		for (String id : accountSignupIDs) {
+
+		}
+
+		apiAccountSignup.disconnect();
+	}
 }

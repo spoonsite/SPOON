@@ -18,20 +18,14 @@ package edu.usu.sdl.openstorefront.ui.test.security;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class HomePageTest
-		extends BrowserTestBase
+		extends SecurityTestBase
 {
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-    @BeforeClass
-    public static void setupTest(){
-        
-	login();
-    }
     
     /**
      *

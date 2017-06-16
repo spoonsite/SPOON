@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -38,12 +37,6 @@ public class NewSecurityRole
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private int dragAndDropActionSleepTime = 75;  // *** In milliseconds ***
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		login();
-	}
 
 	public NewSecurityRole()
 	{
@@ -153,7 +146,7 @@ public class NewSecurityRole
 
 			// WAS clicking on delete, won't
 			tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "auto-customized-role", driver, 0);
-			
+
 			// *** DELETE ALL OTHER USERS (if they exist) ***
 			while (tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "delete", driver, 2)) {
 				System.out.println("*******Deleting established roles from this user *********");
@@ -162,13 +155,9 @@ public class NewSecurityRole
 			// *********** identifiers ******
 			// data-qtip='delete' 
 			// ".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller.x-focus.x-grid-view-focus.x-grid-view-default-focus
-			
 			// *********** ADD USER ****************
-			
 		}
-		
-		
-		
+
 		/*
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
 		//driver.navigate().refresh();

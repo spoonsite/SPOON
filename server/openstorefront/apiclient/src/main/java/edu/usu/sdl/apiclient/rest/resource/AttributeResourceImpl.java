@@ -72,7 +72,7 @@ public class AttributeResourceImpl extends AbstractService
 
 	public void deleteAttributeType(String type)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/attributetypes/" + type, null);
 	}
 
 	public void deleteMappingType(String type)
@@ -172,7 +172,7 @@ public class AttributeResourceImpl extends AbstractService
 
 	public void hardDeleteAttributeType(String type)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/attributetypes/" + type + "/force", null);
 	}
 
 	public Response postAttributeCode(String type, AttributeCode attributeCode)

@@ -66,11 +66,12 @@ public class AdminAttributesTest
 			setupDriver(driver);
 			deleteAttribute(driver, "MyTestAttribute17");
 			createAttribute(driver, "MyTestAttribute17", "MYTESTATTR17");
-			createAPIAttribute();
+			createAPIAttributeType();
 			attributeManageCodes(driver, "MyTestAttribute17");
 			editManageCodes(driver, "MyTestCodeLabel11");
 			toggleStatusManageCodes(driver, "MyTestCodeLabel11");
 			deleteAttribute(driver, "MyTestAttribute17");
+			deleteAPIAttributeType("AAA-KING-TEST");
 		}
 	}
 
@@ -91,7 +92,7 @@ public class AdminAttributesTest
 		});
 	}
 	
-	private void createAPIAttribute()
+	private void createAPIAttributeType()
 	{
 		AttributeType type = new AttributeType();
 		type.setAttributeType("AAA-KING-TEST");
@@ -102,6 +103,11 @@ public class AdminAttributesTest
 		attributeTypeSave.setAttributeType(type);
 		
 		AttributeType apiType = apiAttribute.postAttributeType(attributeTypeSave);
+	}
+	
+	private void deleteAPIAttributeType(String type)
+	{
+		apiAttribute.hardDeleteAttributeType(type);
 	}
 
 	public void createAttribute(WebDriver driver, String attrName, String attrCode)

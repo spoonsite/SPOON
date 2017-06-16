@@ -15,9 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.apiclient.rest.resource.HighlightResourceImpl;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,11 +40,16 @@ public class AdminHighlightTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static List<String> highlightIDs = new ArrayList<>();
+	private static HighlightResourceImpl apiHighlight = new HighlightResourceImpl();
 
 	@BeforeClass
 	public static void setupTest()
 	{
-		login();
+		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		apiHighlight.connect(username, password, server);
 	}
 
 	@Test
@@ -142,7 +151,7 @@ public class AdminHighlightTest
 		}
 
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
-}
+	}
 
 	@After
 	public void cleanUpTest() throws InterruptedException
@@ -171,5 +180,15 @@ public class AdminHighlightTest
 				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
 			}
 		}
+	}
+	
+	@AfterClass
+	public static void cleanup()
+	{
+		for (String id : highlightIDs) {
+			
+		}
+		
+		apiHighlight.disconnect();
 	}
 }

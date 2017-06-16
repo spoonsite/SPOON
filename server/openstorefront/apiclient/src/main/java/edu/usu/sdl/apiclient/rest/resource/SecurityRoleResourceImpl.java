@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -24,9 +27,20 @@ import javax.ws.rs.core.Response;
 /**
  *
  * @author ccummings
- */
-public class SecurityRoleResourceImpl
+ */ 
+public class SecurityRoleResourceImpl extends AbstractService
 {
+	String basePath = "api/v1/resource/securityroles";
+
+	public SecurityRoleResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public SecurityRoleResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public Response addUserToRole(String rolename, UserRole userRole)
 	{

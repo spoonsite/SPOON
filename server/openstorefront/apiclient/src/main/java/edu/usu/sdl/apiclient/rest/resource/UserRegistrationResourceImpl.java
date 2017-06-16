@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import javax.ws.rs.core.Response;
@@ -23,9 +26,21 @@ import javax.ws.rs.core.Response;
  *
  * @author ccummings
  */
-public class UserRegistrationResourceImpl
+public class UserRegistrationResourceImpl extends AbstractService
 {
 
+	String basePath = "api/v1/resource/userregistrations";
+
+	public UserRegistrationResourceImpl(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public UserRegistrationResourceImpl()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
+	
 	public Response createUserRegistration(UserRegistration userRegistration)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

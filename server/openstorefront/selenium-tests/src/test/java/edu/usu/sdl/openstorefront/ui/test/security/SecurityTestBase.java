@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.junit.BeforeClass;
 
 /**
  *
@@ -27,6 +28,13 @@ import java.util.logging.Logger;
 public class SecurityTestBase
 		extends BrowserTestBase
 {
+	
+		
+	@BeforeClass
+	public static void setupBaseTest()
+	{
+		login();
+	}
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
@@ -53,7 +61,7 @@ public class SecurityTestBase
 	protected Map<String, Boolean> userDataSources = new HashMap<>();
 	protected Map<String, Boolean> userDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> userPermissions = new HashMap();
-	
+
 	
 	public void defineCustomizedSecurityRoles()
 	{
