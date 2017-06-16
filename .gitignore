@@ -1,77 +1,58 @@
-client/openstorefront/npm-debug.log
-/.idea
-/client/openstorefront/app/bower_components/
-/client/openstorefront/automation_logs
-/client/openstorefront/distwar/
-/client/openstorefront/dist/
-/client/openstorefront/nbproject/private/
-/client/openstorefront/screenshots
-/nbproject/private/
-/server/openstorefront/openstorefront-api/target/
-/server/openstorefront/openstorefront-web/src/main/webapp/views/
-/server/openstorefront/openstorefront-web/src/main/webapp/bower_components/
-/server/openstorefront/openstorefront-web/src/main/webapp/fonts/
-/server/openstorefront/openstorefront-web/src/main/webapp/styles/
-/server/openstorefront/openstorefront-web/src/main/webapp/404.html
-/server/openstorefront/openstorefront-web/src/main/webapp/favicon.ico
-/server/openstorefront/openstorefront-web/src/main/webapp/robots.txt
-/server/openstorefront/openstorefront-web/target/
-/site/mobile/nbproject/private/
-client/openstorefront/app/images/logo/DI2E (logo).eps
-client/openstorefront/app/images/logo/DI2E (logo).jpg
-client/openstorefront/app/images/logo/DI2E (logo).pdf
-client/openstorefront/app/images/logo/DI2E (logo).png
-client/openstorefront/app/images/logo/DI2E (logo).psd
-client/openstorefront/app/images/logo/DI2E (logo)-words.png
-client/openstorefront/app/images/logo/logo-words-only.gif
-client/openstorefront/app/images/logo/DI2E (logo)-words.pdf
-client/openstorefront/app/images/logo/DI2E (logo)-words-only-fade.svg
-client/openstorefront/app/images/logo/DI2E (logo)-words-only.pdf
-client/openstorefront/app/images/logo/DI2E (logo)-words-only.png
-client/openstorefront/app/images/logo/DI2E (logo)-words-only.svg
-client/openstorefront/app/images/logo/DI2E (logo)-words.eps
-client/openstorefront/app/images/logo/DI2E (logo)-words.svg
-client/openstorefront/app/images/logo/DI2E (logo).ai
-client/openstorefront/app/images/logo/DI2E (logo).tif
-client/openstorefront/app/images/logo/DI2E-(logo).gif
-/server/openstorefront/apiclient/target/
-/server/openstorefront/core/target/
-/server/openstorefront/core-modules/core/target/
-client/openstorefront/nbproject/project.properties.BACKUP.3328.properties
-client/openstorefront/nbproject/project.properties.BASE.3328.properties
-client/openstorefront/nbproject/project.properties.LOCAL.3328.properties
-client/openstorefront/nbproject/project.properties.REMOTE.3328.properties
-.gitignore
-*.dll
-project*.properties
-/server/openstorefront/wso2client/target/
-/server/openstorefront/openstorefront-core/core/target/
-/server/openstorefront/openstorefront-core/service/target/
-/server/openstorefront/openstorefront-plugin/openstorefront-plugin-wso2/target/
-/server/openstorefront/openstorefront-core/common/target/
-/server/openstorefront/openstorefront-core/model/target/
-/server/openstorefront/openstorefront-core/apidoc/target/
-/server/openstorefront/openstorefront-plugin/example/target/
-/server/openstorefront/XMLC/target/
-/server/openstorefront/er2-xmlparser/target/
-/client/metacatalog/target/
-/client/metaregistry/extjs/target/
-/client/metaregistry/metaregistry-web/target/
-/server/openstorefront/extjs/target/
-/server/openstorefront/atmosphere-socketio/target/
-/server/openstorefront/tinymcetextarea/target/
-/server/openstorefront/openstorefront-web/src/main/webapp/indexOld.html
-/server/openstorefront/openstorefront-web/src/main/webapp/submissionOld.html
-/server/openstorefront/describe/describe/target/
-/server/openstorefront/describe/target/
-/server/openstorefront/openstorefront-core/common/nbproject/
-/server/openstorefront/openstorefront-core/model/nbproject/
-/server/openstorefront/openstorefront-plugin/spoon-importer/target/
-/server/openstorefront/openstorefront-web/nbproject/
-/server/openstorefront/target/
-/server/openstorefront/openstorefront-core/target/
-/server/openstorefront/openstorefront-plugin/target/
-/server/openstorefront/loadgenerator/target/
-/server/openstorefront/selenium-tests/target/
+# Created by https://www.gitignore.io/api/java,maven,netbeans
+
+### Java ###
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# End of https://www.gitignore.io/api/java,maven,netbeans
+
+
+# intellij files (if someone is using IntelliJ you may want to update with settings from https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore)
+.idea
+
+
+# other files to ignore
 /server/openstorefront/selenium-tests/drivers
-/server/openstorefront/apiclient/nbproject/
+project*.properties

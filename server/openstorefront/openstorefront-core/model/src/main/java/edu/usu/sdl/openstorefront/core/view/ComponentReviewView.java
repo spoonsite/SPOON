@@ -43,6 +43,8 @@ public class ComponentReviewView
 		extends StandardEntityView
 {
 
+	public static final String UPDATE_DATE_FIELD = "updateDate";
+	
 	private String username;
 
 	@NotNull

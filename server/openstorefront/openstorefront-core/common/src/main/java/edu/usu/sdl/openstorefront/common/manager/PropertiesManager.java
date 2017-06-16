@@ -140,6 +140,8 @@ public class PropertiesManager
 	public static final String KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION = "ldapmanager.attribute.organization";
 	public static final String KEY_LDAP_MANAGER_ATTRIB_GUID = "ldapmanager.attribute.guid";
 
+	public static final String KEY_USER_REVIEW_AUTO_APPROVE = "userreview.autoapprove";
+
 	public static final String KEY_NODE_NAME = "node.name";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);

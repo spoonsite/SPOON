@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.component;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -860,8 +861,11 @@ public class SubComponentServiceImpl
 		}
 
 		if (validationResult.valid()) {
-
-			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+                review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+            } else {
+                review.setActiveStatus(ComponentReview.PENDING_STATUS);
+            }
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentReview(review, false);
@@ -939,6 +943,57 @@ public class SubComponentServiceImpl
 				-> {
 			updateComponentLastActivity(componentId);
 		});
+	}
+
+	public ComponentReview setReviewPending(String ComponentReviewId)
+	{
+		ComponentReview found = persistenceService.findById(ComponentReview.class, ComponentReviewId);
+		if (found != null) {
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, ComponentReview.PENDING_STATUS);
+			}
+
+			found.setActiveStatus(ComponentReview.PENDING_STATUS);
+			found.populateBaseUpdateFields();
+			persistenceService.persist(found);
+
+			updateComponentLastActivity(found.getComponentId());
+		}
+		return found;
+	}
+
+	public ComponentQuestion setQuestionPending(String ComponentQuestionId)
+	{
+		ComponentQuestion found = persistenceService.findById(ComponentQuestion.class, ComponentQuestionId);
+		if (found != null) {
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, ComponentQuestion.PENDING_STATUS);
+			}
+
+			found.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+			found.populateBaseUpdateFields();
+			persistenceService.persist(found);
+
+			updateComponentLastActivity(found.getComponentId());
+		}
+		return found;
+	}
+
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId)
+	{
+		ComponentQuestionResponse found = persistenceService.findById(ComponentQuestionResponse.class, ComponentQuestionResponseId);
+		if (found != null) {
+			if (found instanceof LoggableModel) {
+				componentService.getChangeLogService().logStatusChange(found, ComponentQuestionResponse.PENDING_STATUS);
+			}
+
+			found.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			found.populateBaseUpdateFields();
+			persistenceService.persist(found);
+
+			updateComponentLastActivity(found.getComponentId());
+		}
+		return found;
 	}
 
 }

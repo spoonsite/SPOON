@@ -153,13 +153,13 @@ limitations under the License.
 						<td class="quickView-tableall">{originalFileName}</td>
 						<td class="quickView-tableall">{caption}</td>
 						<td class="quickView-tableall">
-							<tpl if='mediaTypeCode == "IMG"'>
-								<img src="{link}" width="150" />
-							</tpl>
-							<tpl if='mediaTypeCode != "IMG"'>
-								<a href='{link}'>Download</a>
-							</tpl>
-						</td>
+					<tpl if='mediaTypeCode == "IMG"'>
+						<img src="{link}" width="150" />
+					</tpl>
+					<tpl if='mediaTypeCode != "IMG"'>
+						<a href='{link}'>Download</a>
+					</tpl>
+					</td>
 					</tr>			
 				</tpl>
 			</table>	
@@ -253,24 +253,27 @@ limitations under the License.
 						<td class="quickView-tableall">{username}</td>
 						<td class="quickView-tableall">{organization}</td>
 						<td class="quickView-tableall">
-							{title}<br>
-							{rating}<br><br>
-							{comment}<br>
-							<br>
-							PROs<br>
-							<ul>
-								<tpl for="pros">
-									<li>{text}</li>
-								</tpl>
-							</ul><br>
-							CONs<br>
-							<ul>
-								<tpl for="pros">
-									<li>{text}</li>
-								</tpl>
-							</ul><br>
+					<tpl if="activeStatus == 'P'">
+						<span class="alert-warning"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</span><br>
+					</tpl>
+					{title}<br>
+					{rating}<br><br>
+					{comment}<br>
+					<br>
+					PROs<br>
+					<ul>
+						<tpl for="pros">
+							<li>{text}</li>
+						</tpl>
+					</ul><br>
+					CONs<br>
+					<ul>
+						<tpl for="pros">
+							<li>{text}</li>
+						</tpl>
+					</ul><br>
 
-						</td>
+					</td>
 					</tr>
 				</tpl>
 			</table>	
@@ -290,14 +293,20 @@ limitations under the License.
 						<td class="quickView-tableall">{username}</td>
 						<td class="quickView-tableall">{organization}</td>
 						<td class="quickView-tableall">
-							{question}<br><br>
-							<b>Responses</b>
-							<ul>
-								<tpl for="responses">
-									<li>{response}</li>
-								</tpl>	
-							</ul>
-						</td>
+					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
+
+					{question}<br><br>
+					<b>Responses</b>
+					<ul>
+						<tpl for="responses">
+							<li>{response}
+							<tpl if="activeStatus == 'P'">
+								- <span class="alert-warning"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</span>
+							</tpl>
+							</li>
+						</tpl>	
+					</ul>
+					</td>
 					</tr>
 				</tpl>
 			</table>	
