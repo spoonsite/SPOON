@@ -383,32 +383,116 @@
 												},
 												items: [
 													{
-														xtype: 'textfield',
-														fieldLabel: 'Primary Logo URL <i class="fa fa-question-circle"  data-qtip="Home page Logo (625w x 200h)" ></i>',
-														name: 'primaryLogoUrl',
+														layout: 'hbox',
 														width: '100%',
-														allowBlank: false,
-														emptyText: 'Media.action?GeneralMedia&name=logo',											
-														maxLength: 255
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'primaryLogoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Primary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Home page Logo (625w x 200h)" ></i>',
+																name: 'primaryLogoUrl',
+																allowBlank: false,
+																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Media',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var primaryLogoUrl = this.up('panel').queryById('primaryLogoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			primaryLogoUrl.setValue(encodeURI(link));
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
 													},
 													{
-														xtype: 'textfield',
-														fieldLabel: 'Secondary Logo URL <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
-														name: 'secondaryLogoUrl',
+														layout: 'hbox',
 														width: '100%',
-														allowBlank: false,
-														emptyText: 'Media.action?GeneralMedia&name=logo',											
-														maxLength: 255
-													},
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'secondaryLogoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Secondary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
+																name: 'secondaryLogoUrl',
+																allowBlank: false,
+																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Media',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var secondaryLogoUrl = this.up('panel').queryById('secondaryLogoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			secondaryLogoUrl.setValue(encodeURI(link));
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},													
 													{
-														xtype: 'textfield',
-														fieldLabel: 'Backsplash URL <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
-														name: 'homebackSplashUrl',
+														layout: 'hbox',
 														width: '100%',
-														allowBlank: false,
-														emptyText: 'Media.action?GeneralMedia&name=logo',											
-														maxLength: 255
-													},										
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'homebackSplashUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Backsplash URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo ~(4000w x 1000h)" ></i>',
+																name: 'homebackSplashUrl',
+																allowBlank: false,
+																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Media',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var homebackSplashUrl = this.up('panel').queryById('homebackSplashUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			homebackSplashUrl.setValue(encodeURI(link));
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},													
 													{
 														xtype: 'colorfield',
 														width: '100%',

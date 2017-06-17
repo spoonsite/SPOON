@@ -277,6 +277,7 @@ Ext.define('OSF.component.UserMenu', {
 	showAdminTools: true,
 	showEvaluatorTools: true,
 	showHelp: true,
+	showFeedback: true,
 	menu: {
 		minWidth: 200
 	},
@@ -339,13 +340,15 @@ Ext.define('OSF.component.UserMenu', {
 			});		
 		}
 		
-		menuItems.push({
-			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
-			handler: function() {
-				userMenu.feedbackWin.show();
-			}		
-		});
+		if (userMenu.showFeedback) {
+			menuItems.push({
+				text: '<b>Feedback / issues</b>',
+				iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
+				handler: function() {
+					userMenu.feedbackWin.show();
+				}		
+			});
+		}
 		
 		menuItems.push({
 			xtype: 'menuseparator'		

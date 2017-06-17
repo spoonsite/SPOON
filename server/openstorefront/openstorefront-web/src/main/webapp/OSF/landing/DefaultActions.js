@@ -85,7 +85,7 @@ Ext.define('OSF.landing.DefaultActions', {
 		},
 		{
 			text: 'Feedback',
-			//icon: 'fa-gears',
+			//icon: 'fa-comments',
 			tip: 'Provide feedback about the site',
 			imageSrc: 'images/feedback.png',
 			link: 'feedback.jsp'
@@ -96,29 +96,31 @@ Ext.define('OSF.landing.DefaultActions', {
 		var actionToolsPanel = this;
 				
 		//check permission
-		actionToolsPanel.loadActions = function(actions) {
-			CoreService.userservice.getCurrentUser(function(user){
+		actionToolsPanel.loadActions = function(actions) {			
+			CoreService.userservice.getCurrentUser().then(function(user){
 				var availableActions = [];
 				Ext.Array.each(actions, function(action){
-					var add = false;
+					var add = true;
 					if (action.permission) {
-						
+						if (!CoreService.userservice.userHasPermisson(user, action.permission)) {
+							add = false;
+						}
 					}
 					if (add) {
-						
+						availableActions.push(action);
 					}
 				});
-				
+				actionToolsPanel.queryById('dataview').getStore().loadData(availableActions);
 			});
-		};
+		};	
 		actionToolsPanel.loadActions(actionToolsPanel.actionTools);
 		
-		actionToolsPanel.queryById('dataview').getStore().loadData(actionToolsPanel.actionTools);
+		
 	},
 	loadData: function(actions) {
 		var actionToolsPanel = this;
 		actionToolsPanel.actionTools = actions;
-		actionToolsPanel.queryById('dataview').getStore().loadData(actions);
+		actionToolsPanel.loadActions(actions);
 	}
 	
 });

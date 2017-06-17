@@ -386,8 +386,174 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				designerClassName: 'OSF.landing.DefaultActions',
 				config: {},
 				data: [
-									
+					{
+						text: 'Dashboard',
+						icon: null,
+						tip: 'Access your dashboard',
+						imageSrc: 'images/dash.png',
+						link: 'UserTool.action?load=Dashboard'
+					},
+					{
+						text: 'Submissions',
+						icon: null,
+						imageSrc: 'images/submission.png',
+						tip: 'Add or update entries to the registry',
+						permission: 'USER-SUBMISSIONS',
+						link: 'UserTool.action?load=Submissions'
+					},
+					{
+						text: 'My Searches',
+						icon: null,
+						tip: 'View and manage your saved searches',
+						imageSrc: 'images/savedsearch.png',
+						link: 'UserTool.action?load=Searches'
+					},
+					{
+						text: 'Tools',
+						icon: null,
+						tip: 'Access user tools to update profile and manage your data.',
+						imageSrc: 'images/tools.png',
+						link: 'UserTool.action'
+					},
+					{
+						text: 'Feedback',
+						icon: null,
+						tip: 'Provide feedback about the site',
+						imageSrc: 'images/feedback.png',
+						link: 'feedback.jsp'
+					}									
 				],
+				customConfigHandler: function(block) {					
+					var editWin = Ext.create('Ext.window.Window', {
+						title: 'Search Tool Config',
+						iconCls: 'fa fa-edit',
+						closeAction: 'destroy',
+						modal: true,
+						width: '80%',
+						height: 500,
+						layout: 'fit',						
+						items: [
+							{
+								xtype: 'grid',
+								itemId: 'grid',
+								store: {},
+								columnLines: true,
+								plugins: [{
+									ptype: 'cellediting',
+									clicksToEdit: 1,
+									id: 'editor'
+								}],
+								viewConfig: {
+									plugins: {
+										ptype: 'gridviewdragdrop',
+										dragText: 'Drag and drop to reorder'												
+									},
+									listeners: {
+										drop: function(node, data, overModel, dropPostition, opts){													
+										}
+									}
+								},							
+								columns: [
+									{ text: 'Label', dataIndex: 'text', width: 150,
+										editor: 'textfield'
+									},
+									{ text: 'Tip', dataIndex: 'tip', minWidth: 150, flex: 1,
+										editor: 'textfield'
+									},
+									{ text: 'Icon', dataIndex: 'icon', width: 200,
+										editor: {
+											xtype: 'combobox',
+											valueField: 'cls',
+											displayField: 'cls',
+											listConfig: {
+												getInnerTpl: function(displayField) {
+													return '{view}';
+												}
+											},
+											store: {
+												data: icons
+											}
+										}
+									},
+									{ text: 'Image', dataIndex: 'imageSrc', minWidth: 150, flex: 1,
+										editor: 'textfield'
+									},
+									{ text: 'link', dataIndex: 'link', minWidth: 150, flex: 1,
+										editor: 'textfield'
+									}
+								]
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'top',
+								items: [
+									{
+										text: 'Add',
+										iconCls: 'fa fa-plus icon-button-color-save',
+										handler: function() {
+											var grid = editWin.queryById('grid');
+											grid.getStore().add({
+												property: '',
+												value: ''
+											});												
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Delete',
+										itemId: 'delete',
+										iconCls: 'fa fa-trash icon-button-color-warning',
+										handler: function() {											
+											var grid = editWin.queryById('grid');
+											var record = grid.getSelection()[0];																			
+											grid.getStore().remove(record);
+											grid.applyChanges(grid);											
+										}										
+									}
+								]
+							},
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Apply',
+										iconCls: 'fa fa-check icon-button-color-save',
+										handler: function() {
+											var win = this.up('window');
+											block.data = [];
+											editWin.queryById('grid').getStore().each(function(record){
+												var data = Ext.clone(record.data);
+												delete data.id;
+												block.data.push(data);
+											});
+											win.close();											
+											designerPanel.updateAll();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close icon-button-color-warning',
+										handler: function() {
+											this.up('window').close();
+										}										
+									}
+								]
+							}
+						]
+						
+					});
+					editWin.show();		
+					editWin.queryById('grid').getStore().loadRawData(Ext.clone(block.data));
+					
+				},				
 				items: [],
 				designerRender: function(config){
 					config = config ? config : {};
@@ -400,7 +566,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 				},
 				renderCode: function(config){
 					config = config ? config : {};
-					config = Ext.apply(config, {						
+					config = Ext.apply(config, {	
+						actionTools: this.data
 					});					
 					return commonCodeRender(this, config);
 				}				
