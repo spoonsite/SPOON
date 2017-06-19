@@ -192,6 +192,9 @@ public class Branding
 	private String overrideCSS;
 
 	@ConsumeField
+	private Boolean useDefaultLandingPage;
+
+	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
@@ -242,6 +245,9 @@ public class Branding
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
 		setOverrideCSS(branding.getOverrideCSS());
+
+		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
+		setLandingTemplate(branding.getLandingTemplate());
 	}
 
 	public String getBrandingId()
@@ -592,6 +598,16 @@ public class Branding
 	public void setSecondaryColor(String secondaryColor)
 	{
 		this.secondaryColor = secondaryColor;
+	}
+
+	public Boolean getUseDefaultLandingPage()
+	{
+		return useDefaultLandingPage;
+	}
+
+	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
+	{
+		this.useDefaultLandingPage = useDefaultLandingPage;
 	}
 
 }

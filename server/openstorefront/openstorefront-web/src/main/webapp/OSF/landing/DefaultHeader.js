@@ -107,6 +107,9 @@ Ext.define('OSF.landing.DefaultHeader', {
 			]
 		}						
 	],
+	renderLogo: true,
+	customMenuItems: [		
+	],
 	initComponent: function () {
 		this.callParent();			
 		var headerPanel = this;
@@ -140,17 +143,25 @@ Ext.define('OSF.landing.DefaultHeader', {
 		
 		CoreService.brandingservice.getCurrentBranding().then(function(branding){
 			headerPanel.queryById('homeTitle').update(branding.landingPageTitle);
-			headerPanel.logo = Ext.create('Ext.Img', {					
-				alt: 'logo',
-				cls: 'home-page-top-logo',					
-				src: branding.secondaryLogoUrl,
-				renderTo: Ext.getBody()
-			});	
-			if (headerPanel.getWidth() < 1024){
-				headerPanel.logo.hide();
+			if (headerPanel.renderLogo) {
+				headerPanel.logo = Ext.create('Ext.Img', {					
+					alt: 'logo',
+					cls: 'home-page-top-logo',					
+					src: branding.secondaryLogoUrl,
+					renderTo: Ext.getBody()
+				});	
+				if (headerPanel.getWidth() < 1024){
+					headerPanel.logo.hide();
+				}
 			}
 		});
+		headerPanel.loadData(headerPanel.customMenuItems);		
 		
+	},
+	loadData: function(customMenuItems) {
+		var headerPanel = this;
+		var userMenu = headerPanel.queryById('userMenuBtn');
+		userMenu.refreshMenu(customMenuItems);
 	}
 	
 });

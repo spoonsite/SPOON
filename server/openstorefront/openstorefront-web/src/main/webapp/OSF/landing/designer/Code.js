@@ -32,7 +32,7 @@ Ext.define('OSF.landing.designer.Code', {
 	items: [
 		{
 			xtype: 'textarea',
-			name: 'structureStart',
+			name: 'preStructureCode',
 			flex: 1,
 			fieldLabel: 'Stucture Start',
 			value: '<script type="text/javascript"> \n' +			
@@ -48,7 +48,7 @@ Ext.define('OSF.landing.designer.Code', {
 		},
 		{
 			xtype: 'textarea',
-			name: 'preCode',
+			name: 'preTemplateCode',
 			flex: 1,
 			fieldLabel: 'Pre'
 		},
@@ -63,13 +63,13 @@ Ext.define('OSF.landing.designer.Code', {
 		},		
 		{
 			xtype: 'textarea',
-			name: 'postCode',
+			name: 'postTemplateCode',
 			flex: 1,
 			fieldLabel: 'Post'
 		},		
 		{
 			xtype: 'textarea',
-			name: 'structureEnd',
+			name: 'postStructureCode',
 			flex: 1,
 			fieldLabel: 'Stucture End',
 			value: '});\n</script>'
@@ -87,19 +87,23 @@ Ext.define('OSF.landing.designer.Code', {
 					handler: function() {
 						var codePanel = this.up('panel');
 						
-						var data = codePanel.getValues();
-						var fullCode = data.structureStart + 
-							data.preCode +  
-							data.generatedCode +
-							data.postCode +
-							data.structureEnd;
-						
+						var fullCode = codePanel.getFullTemplate();						
 						codePanel.designerPanel.preview.updatePreview(fullCode);
 					}
 				}
 			]
 		}
 	],	
+	getFullTemplate: function(){
+		var codePanel = this;
+		var data = codePanel.getValues();
+		var fullCode = data.preStructureCode + 
+			data.preTemplateCode +  
+			data.generatedCode +
+			data.postTemplateCode +
+			data.postStructureCode;
+		return fullCode;
+	},
 	initComponent: function () {
 		this.callParent();		
 		var codePanel = this;
@@ -107,7 +111,18 @@ Ext.define('OSF.landing.designer.Code', {
 		
 	},	
 	loadData: function (branding) {
-		
+		var codePanel = this;
+		if (branding && branding.landingTemplate) {
+			
+			var model = Ext.create('Ext.data.Model', {				
+			});
+			model.set(branding.landingTemplate);
+			codePanel.loadRecord(model);
+		}
+	},
+	getTemplate: function() {
+		var codePanel = this;
+		return codePanel.getValues();		
 	},
 	updateGeneratedCode: function(componentBlocks) {
 		var codePanel = this;		
@@ -123,12 +138,7 @@ Ext.define('OSF.landing.designer.Code', {
 		
 		generatedCode.setValue(renderedItems);		
 		
-		var data = codePanel.getValues();
-		var fullCode = data.structureStart + 
-						data.preCode +  
-						data.generatedCode +
-						data.postCode +
-						data.structureEnd;
+		var fullCode = codePanel.getFullTemplate();	
 		
 		return fullCode;
 	}

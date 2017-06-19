@@ -48,18 +48,16 @@ Ext.define('OSF.landing.designer.Designer', {
 					iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
 					scale: 'medium',				
 					handler: function () {
-						var designer = this.up('panel');
-						
-						//gather all the template
-						
-						designer.saveHandler();
+						var designer = this.up('panel');												
+						var landingTemplate = designer.code.getTemplate();
+						designer.saveHandler(landingTemplate);
 					}
 				},
 				{
 					xtype: 'tbfill'
 				},
 				{
-					text: 'Cancel',
+					text: 'Close',
 					iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 					scale: 'medium',
 					handler: function () {					
@@ -70,6 +68,16 @@ Ext.define('OSF.landing.designer.Designer', {
 			]
 		}
 	],
+	isDirty: function() {
+		var designerPanel = this;
+		return !(designerPanel.loadedTemplate === designerPanel.code.getFullTemplate());
+	},
+	getTemplate: function() {
+		var designerPanel = this;
+		var template = designerPanel.code.getTemplate();
+		template.templateBlocks = designerPanel.liveDesigner.components;
+		return template;
+	},
 	initComponent: function () {
 		this.callParent();
 		
@@ -117,6 +125,13 @@ Ext.define('OSF.landing.designer.Designer', {
 	},
 	loadData: function (branding) {
 		var designerPanel = this;
+		
+		designerPanel.code.loadData(branding);
+		
+		if (branding.landingTemplate && branding.landingTemplate.templateBlocks) {
+			designerPanel.updateAll(branding.landingTemplate.templateBlocks);
+		}		
+		designerPanel.loadedTemplate = designerPanel.code.getFullTemplate();
 		
 	},
 	updateAll: function(componentBlocks) {

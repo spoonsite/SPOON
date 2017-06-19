@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -42,8 +43,17 @@ public class LandingAction
 		appVersion = getApplicationVersion();
 		Branding branding = loadBranding();
 		LandingTemplate landingTemplateFull = branding.getLandingTemplate();
-		if (getLandingTemplate() != null && StringUtils.isNotBlank(landingTemplateFull.getTemplate())) {
-			setLandingTemplate(landingTemplateFull.getTemplate());
+		boolean useDefault = true;
+		if (getLandingTemplate() != null
+				&& Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
+			String fullTemplate = landingTemplateFull.fullTemplate();
+			if (StringUtils.isNotBlank(fullTemplate)) {
+				useDefault = false;
+			}
+		}
+		if (!useDefault) {
+			String fullTemplate = landingTemplateFull.fullTemplate();
+			setLandingTemplate(fullTemplate);
 		} else {
 			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/defaultLanding.jsp"));
 		}

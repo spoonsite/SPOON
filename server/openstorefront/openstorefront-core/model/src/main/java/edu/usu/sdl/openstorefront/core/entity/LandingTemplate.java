@@ -15,10 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,7 +34,35 @@ public class LandingTemplate
 		implements Serializable
 {
 
-	private String template;
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
+	@ConsumeField
+	@APIDescription("This holds generated template code")
+	private String generatedCode;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("Holds the structure code of the start of the template")
+	private String preStructureCode;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("Holds pre template code")
+	private String preTemplateCode;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("Holds pre template code")
+	private String postTemplateCode;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("Holds the structure code of the end of the template")
+	private String postStructureCode;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@APIDescription("This is used to persist the visual designer")
+	private String templateBlocks;
 
 	@Version
 	private String storageVersion;
@@ -39,14 +71,16 @@ public class LandingTemplate
 	{
 	}
 
-	public String getTemplate()
+	public String fullTemplate()
 	{
-		return template;
-	}
+		String fullTemplate
+				= StringProcessor.blankIfNull(getPreStructureCode())
+				+ StringProcessor.blankIfNull(getPreTemplateCode())
+				+ StringProcessor.blankIfNull(getGeneratedCode())
+				+ StringProcessor.blankIfNull(getPostTemplateCode())
+				+ StringProcessor.blankIfNull(getPostStructureCode());
 
-	public void setTemplate(String template)
-	{
-		this.template = template;
+		return fullTemplate;
 	}
 
 	public String getStorageVersion()
@@ -57,6 +91,66 @@ public class LandingTemplate
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public String getPreStructureCode()
+	{
+		return preStructureCode;
+	}
+
+	public void setPreStructureCode(String preStructureCode)
+	{
+		this.preStructureCode = preStructureCode;
+	}
+
+	public String getPreTemplateCode()
+	{
+		return preTemplateCode;
+	}
+
+	public void setPreTemplateCode(String preTemplateCode)
+	{
+		this.preTemplateCode = preTemplateCode;
+	}
+
+	public String getPostTemplateCode()
+	{
+		return postTemplateCode;
+	}
+
+	public void setPostTemplateCode(String postTemplateCode)
+	{
+		this.postTemplateCode = postTemplateCode;
+	}
+
+	public String getPostStructureCode()
+	{
+		return postStructureCode;
+	}
+
+	public void setPostStructureCode(String postStructureCode)
+	{
+		this.postStructureCode = postStructureCode;
+	}
+
+	public String getTemplateBlocks()
+	{
+		return templateBlocks;
+	}
+
+	public void setTemplateBlocks(String templateBlocks)
+	{
+		this.templateBlocks = templateBlocks;
+	}
+
+	public String getGeneratedCode()
+	{
+		return generatedCode;
+	}
+
+	public void setGeneratedCode(String generatedCode)
+	{
+		this.generatedCode = generatedCode;
 	}
 
 }

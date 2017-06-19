@@ -94,6 +94,14 @@
 						listeners: {
 							show: function() {        
 								this.removeCls("x-unselectable");    
+							},
+							beforeClose: function() {
+								if (addEditBrandingWin.proceedWithClosing){
+									return true;
+								} else {
+									actionCloseBranding();
+									return false;
+								}
 							}
 						},						
 						items: [
@@ -105,6 +113,7 @@
 										title: 'Branding',
 										itemId: 'brandingForm',
 										scrollable: true,
+										trackResetOnLoad: true,
 										items: [
 											{
 												xtype: 'panel',
@@ -570,7 +579,25 @@
 														name: 'overrideCSS',
 														grow: true,
 														maxLength: 1048576
-													}										
+													},
+													{
+														xtype: 'checkbox',
+														width: '100%',
+														boxLabel: 'Use Default Landing Page',
+														name: 'useDefaultLandingPage',
+														listeners: {
+															change: function(field, newValue, oldValue) {							
+																
+																if (record) {
+																	if (newValue) {
+																		addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
+																	} else {
+																		addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
+																	}
+																}
+															}
+														}
+													}	
 												]
 											}
 										],
@@ -588,11 +615,7 @@
 															var win = this.up('window');
 															var form = this.up('form');
 
-															actionSaveBranding(form, function(response, opt){
-																Ext.toast('Saved Successfully');
-																actionRefresh();
-																addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
-																//win.close();
+															actionSaveBranding(form, function(response, opt){																
 															});
 														}
 													},
@@ -640,7 +663,16 @@
 										xtype: 'ofs-landingPageDesigner',
 										title: 'Landing Page',
 										itemId: 'landingPageTab',
-										disabled: true
+										disabled: true,
+										saveHandler: function(landingTemplate) {
+											var form = addEditBrandingWin.queryById('brandingForm');
+											var landingTab = addEditBrandingWin.queryById('landingPageTab');
+											actionSaveBranding(form, function(response, opt){
+											}, landingTemplate);
+										},
+										cancelHandler: function() {
+											addEditBrandingWin.close();
+										}
 									},
 									{
 										xtype: 'panel',
@@ -656,7 +688,14 @@
 												data = '<pre>' + data + '</pre>';	
 												loader.getTarget().update(data);
 											 }
-										}
+										},
+										dockedItems: [
+											{
+												xtype: 'panel',
+												dock: 'top',
+												html: '<b>Read-Only</b>'
+											}
+										]
 									}
 								]
 							}
@@ -669,12 +708,49 @@
 					
 					if (record) {
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
-						addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
+						if (record.get('useDefaultLandingPage')) {
+							addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
+						} else {
+							addEditBrandingWin.queryById('landingPageTab').setDisabled(false);							
+							addEditBrandingWin.queryById('landingPageTab').loadData(record.data);
+						}
 					}
 					
 				};
 				
-				var actionSaveBranding = function(form, successHandler) {
+				var actionCloseBranding = function() {
+					var brandingWin = Ext.getCmp('addEditBrandingWin');
+					var form = brandingWin.queryById('brandingForm');
+					var landingTab = brandingWin.queryById('landingPageTab');
+					var formDirty = form.isDirty();
+					var landingTabDirty = landingTab.isDirty();
+					if (formDirty || landingTabDirty)  {
+						Ext.Msg.show({
+							title:'Save Changes?',
+							message: 'You are closing a form that has unsaved changes. Would you like to save your changes?',
+							buttons: Ext.Msg.YESNOCANCEL,
+							icon: Ext.Msg.QUESTION,
+							fn: function(btn) {
+								if (btn === 'yes') {
+									actionSaveBranding(form, function(response, opt){										
+										brandingWin.proceedWithClosing = true;
+										brandingWin.close();
+									}, landingTab.getTemplate());
+								} else if (btn === 'no') {
+									brandingWin.proceedWithClosing = true;
+									brandingWin.close();
+								} 
+							}
+						});
+			
+					} else {
+						brandingWin.proceedWithClosing = true;
+						brandingWin.close();
+					}
+				}
+				
+				
+				var actionSaveBranding = function(form, successHandler, template) {
 					var data = form.getValues();
 					
 					var method='POST';
@@ -690,6 +766,12 @@
 						}
 					});
 					
+					if (!template) {
+						var landingTab = addEditBrandingWin.queryById('landingPageTab');
+						template = landingTab.getTemplate();
+					}
+					data.landingTemplate = template;
+					
 					CoreUtil.submitForm({						
 						url: 'api/v1/resource/branding' + endUrl,
 						method: method,
@@ -698,7 +780,15 @@
 							branding: data
 						},
 						success: function(response, opts){
-							successHandler(response, opts);
+							Ext.toast('Saved Successfully');												
+							actionRefresh();
+							var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
+							if (data.useDefaultLandingPage) {
+								landingTab.setDisabled(true);
+							} else {
+								landingTab.setDisabled(false);														
+							}	
+							successHandler(response, opts);		
 						},
 						failure: function(response, opts) {
 							Ext.Msg.show({
