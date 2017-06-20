@@ -80,12 +80,44 @@
 					}
 				}
 				
+			},
+			displayEvalChecklistDetails: function (title, content) {
+				var evaluationChecklistWindow = Ext.create('Ext.window.Window', {
+				    title: title,
+				    height: 400,
+				    width: '60%',
+				    bodyPadding: 30,
+				    //layout: 'fit',
+				    html: content,
+				    modal: true,
+				    dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Close',
+									iconCls: 'fa fa-lg fa-close',
+									handler: function() {
+										evaluationChecklistWindow.close()
+									}
+								},
+								{
+									xtype: 'tbfill'
+								}
+							]
+						}
+					]
+				});
+				evaluationChecklistWindow.show();
 			}
 		};
 
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){	
-
 
 			var savedSearchId = '${param.savedSearchId}';
 			
@@ -223,7 +255,16 @@
 												success: function(response, opts) {
 													var data = Ext.decode(response.responseText);
 													data = CoreUtil.processEntry(data);
-													comparePanel.update(data);
+
+													CoreUtil.calculateEvalutationScore({
+														fullEvaluations: data.fullEvaluations,
+														evaluation: data.fullEvaluations,
+														success: function (newData) {
+															Object.assign(data, newData);
+															console.log("NEW DATA: ", data);
+															comparePanel.update(data);
+														}
+													});
 												}
 											});	
 										} else {

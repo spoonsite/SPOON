@@ -101,6 +101,23 @@ limitations under the License.
 		margin: 5px 0px;
 	}
 
+	.clearfix:after { 
+	   content: "."; 
+	   visibility: hidden; 
+	   display: block; 
+	   height: 0; 
+	   clear: both;
+	}
+
+	.version-description {
+		font-size: 11px;
+		color: #a3a3a3;
+	}
+	.evaluation-section {
+		width: 97%;
+		margin-left: 3%;
+	}
+
 </style>
 <tpl if="name">
 	<h1>{name}</h1>
@@ -126,8 +143,7 @@ limitations under the License.
 	</tpl>	
 	<br>
 	<br>
-	<b>Description</b>
-	<hr>
+	<h3 class="quickView">Description</h3>
 	<section>
 		<p>{description}</p>
 	</section>
@@ -206,7 +222,7 @@ limitations under the License.
 										<tpl if="resources && resources.length &gt; 0">
 											<section>
 												<h3 class="quickView">Resources</h3>
-												<table class="quickView-table" border="1" >	
+												<table class="quickView-table" border="1" >
 													<tr>
 														<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>															
 														<th class="quickView-tableheader quickView-tableall quickView-table-padding">Link</th>					
@@ -345,6 +361,127 @@ limitations under the License.
 													</div>			
 												</tpl>	
 											</section>
+										</tpl>
+										<tpl for="fullEvaluations">
+											<tpl if="evaluationCount &gt; 1">
+												<!-- {evaluationCount} -->
+												<h2 class="quickView">Evaluation<div class="version-description">version - {evaluation.version}</div></h3>
+												<div class="evaluation-section clearfix">
+											</tpl>
+											<tpl if="evaluationScores && evaluationScores.length &gt; 0">
+												<section>
+													<h3 class="quickView">Reusability Factors (5=best)</h3>
+													<div class="rolling-container clearfix">			
+														<div class="rolling-container-row">
+															<tpl for="evaluationScores">	
+																<div class="rolling-container-block">
+																	<div class="detail-eval-item ">
+																		<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>
+																		<span class="detail-eval-score" data-qtip="{average}">{display}</span>
+																	</div>	
+																</div>
+															</tpl>
+														</div>
+													</div>
+												</section>	
+											</tpl>
+											<tpl if="checkListAll.evaluationChecklist.summary">
+												<section>
+													<h3 class="quickView">Evaluation Checklist Summary</h3>
+													{checkListAll.evaluationChecklist.summary}
+												</section>	
+											</tpl>
+											<tpl if="checkListAll.recommendations && checkListAll.recommendations.length &gt; 0">
+												<h3 class="quickView">Evaluation Recommendations</h3>
+												<table class="quickView-table" width="100%">
+													<tr><th class="details-table">Type</th><th class="details-table">Recommendation</th><th class="details-table">Reason</th></tr>
+													<tpl for="checkListAll.recommendations">
+														<tr class="details-table">
+															<td class="details-table"><b>{recommendationTypeDescription}</b></td>
+															<td class="details-table" style="text-align: center"><b>{recommendation}</b></td>
+															<td class="details-table">{reason}</td>
+														</tr>
+													</tpl>
+												</table>
+											</tpl>
+											<tpl if="contentSections && contentSections.length &gt; 0">
+												<tpl for="contentSections">
+													<h3 class="quickView">{section.title}</h3>
+													<div>{section.content}</div>
+													<tpl if="subsections.length &gt; 0">
+														<tpl for="subsections">
+															<div>
+																<b>{title}</b>
+															</div>
+															{content}
+														</tpl>
+													</tpl>
+												</tpl>
+											</tpl>
+											<tpl if="checkListAll.responses && checkListAll.responses.length &gt; 0">
+												<h3 class="quickView">Evaluation Checklist Details</h3>
+												<table class="quickView-table" width="100%">
+													<tr>
+														<th class="details-table">QID</th>
+														<th class="details-table">Section</th>
+														<th class="details-table">Question</th>
+														<th class="details-table">Score</th>
+														<th class="details-table">Response</th>
+													</tr>
+													<tpl for="checkListAll.responses">
+														<tr class="details-table">
+															<!-- QID - Question Details -->
+															<td class="details-table">
+																<b><a href="#" onclick="
+																	// Create template for Question Details
+																	(function () {
+																		var template = '';
+																		if ('{question.objective}') {
+																			template += '<b>Question Objective:</b><br /><br />{question.objective}<br/><br/>';
+																		}
+																		if ('{question.narrative}') {
+																			template += '<b>Narrative:</b><br /><br />{question.narrative}';
+																		}
+																		if (!'{question.objective}' && !'{question.narrative}') {
+																			template += 'No addtional details';
+																		}
+																		SearchPage.displayEvalChecklistDetails('Question Details', template);
+																	}());">{question.qid}
+																</a></b>
+															</td>
+															
+															<!-- Section -->
+															<td class="details-table" style="text-align: center">{question.evaluationSectionDescription}</td>
+
+															<!-- Question -->
+															<td class="details-table">{question.question}</td>
+
+															<!-- Score - Score Details -->
+															<td class="details-table">
+																<b><a href="#" onclick="
+																	// Create template for Score Details
+																	(function () {
+																		var template = '';
+																		if ('{question.scoreCriteria}') {
+																			template += '<b>Scoring Criteria:</b> <br /><br />{question.scoreCriteria}';
+																		}
+																		else {
+																			template += 'No addtional details';
+																		}
+																		SearchPage.displayEvalChecklistDetails('Scoring Details', template)
+																	}());">{score}
+																</a></b>
+															</td>
+
+															<!-- Response -->
+															<td class="details-table">{response}</td>
+														</tr>
+													</tpl>
+												</table>
+											</tpl>
+											<tpl if="evaluationCount &gt; 1">
+												</div>
+											</tpl>
 										</tpl>
 									</tpl>
 
