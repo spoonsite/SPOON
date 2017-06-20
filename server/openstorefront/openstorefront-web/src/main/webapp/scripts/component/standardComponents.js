@@ -299,7 +299,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Home',
 				iconCls: 'fa fa-2x fa-home icon-button-color-default',
-				href: 'index.jsp'			
+				href: 'Landing.action'			
 			});
 
 			if (userMenu.showAdminTools) {

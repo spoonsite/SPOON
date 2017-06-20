@@ -49,7 +49,7 @@ Ext.define('OSF.landing.designer.Designer', {
 					scale: 'medium',				
 					handler: function () {
 						var designer = this.up('panel');												
-						var landingTemplate = designer.code.getTemplate();
+						var landingTemplate = designer.getTemplate();
 						designer.saveHandler(landingTemplate);
 					}
 				},
@@ -70,12 +70,16 @@ Ext.define('OSF.landing.designer.Designer', {
 	],
 	isDirty: function() {
 		var designerPanel = this;
-		return !(designerPanel.loadedTemplate === designerPanel.code.getFullTemplate());
+		if (designerPanel.loadedTemplate) {
+			return !(designerPanel.loadedTemplate === designerPanel.code.getFullTemplate());
+		} else {
+			return false;
+		}
 	},
 	getTemplate: function() {
 		var designerPanel = this;
 		var template = designerPanel.code.getTemplate();
-		template.templateBlocks = designerPanel.liveDesigner.components;
+		template.templateBlocks = Ext.encode(designerPanel.liveDesigner.components);
 		return template;
 	},
 	initComponent: function () {
@@ -121,7 +125,9 @@ Ext.define('OSF.landing.designer.Designer', {
 	initialize: function() {
 		var designerPanel = this;		
 		designerPanel.liveDesigner.initialize();
-		
+		if (designerPanel.initializeCallback) {
+			designerPanel.initializeCallback();
+		}
 	},
 	loadData: function (branding) {
 		var designerPanel = this;
@@ -129,7 +135,13 @@ Ext.define('OSF.landing.designer.Designer', {
 		designerPanel.code.loadData(branding);
 		
 		if (branding.landingTemplate && branding.landingTemplate.templateBlocks) {
-			designerPanel.updateAll(branding.landingTemplate.templateBlocks);
+			try{
+				var decodedBlocks = Ext.decode(branding.landingTemplate.templateBlocks);
+				designerPanel.liveDesigner.restoreBlocks(decodedBlocks);
+			} catch (e) {
+				Ext.log(e.message);
+				Ext.log(e);
+			}
 		}		
 		designerPanel.loadedTemplate = designerPanel.code.getFullTemplate();
 		

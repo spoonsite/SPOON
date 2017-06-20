@@ -17,7 +17,8 @@ package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
+import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
@@ -36,23 +38,23 @@ import net.java.truevfs.access.TFileOutputStream;
  *
  * @author dshurtleff
  */
-public class HighlightExporter
+public class BrandingExporter
 		extends BaseExporter
 {
 
-	private static final Logger LOG = Logger.getLogger(HighlightExporter.class.getName());
-	private static final String DATA_DIR = "/highlights/";
+	private static final Logger LOG = Logger.getLogger(BrandingExporter.class.getName());
+	private static final String DATA_DIR = "/branding/";
 
 	@Override
 	public int getPriority()
 	{
-		return 13;
+		return 14;
 	}
 
 	@Override
 	public String getExporterSupportEntity()
 	{
-		return Highlight.class.getSimpleName();
+		return Branding.class.getSimpleName();
 	}
 
 	@Override
@@ -60,29 +62,56 @@ public class HighlightExporter
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
 		exporters.add(new GeneralMediaExporter());
-		exporters.add(new SavedSearchExporter());
+		exporters.add(new BrandingExporter());
 		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
+	public long getTotalRecords()
+	{
+		long records = 0;
+		for (SystemArchiveOption option : archive.getArchiveOptions()) {
+			if (Branding.class.getSimpleName().equals(option.getPrimaryEntity())) {
+				records++;
+			}
+		}
+		return records;
+	}
+
+	private boolean include(String brandingId)
+	{
+		boolean include = false;
+		for (SystemArchiveOption option : archive.getArchiveOptions()) {
+			if (Branding.class.getSimpleName().equals(option.getPrimaryEntity())) {
+				if (option.getEntityId().equals(brandingId)) {
+					include = true;
+				}
+			}
+		}
+		return include;
+	}
+
+	@Override
 	public void exportRecords()
 	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		List<Highlight> highlights = highlightExample.findByExample();
+		Branding brandingExample = new Branding();
+		List<Branding> branding = brandingExample.findByExample();
+		branding = branding.stream()
+				.filter(b -> include(b.getBrandingId()))
+				.collect(Collectors.toList());
 
-		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "highlights.json");
+		File brandingFile = new TFile(archiveBasePath + DATA_DIR + "branding.json");
 
-		try (OutputStream out = new TFileOutputStream(highlightFile)) {
-			StringProcessor.defaultObjectMapper().writeValue(out, highlights);
+		try (OutputStream out = new TFileOutputStream(brandingFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, branding);
 		} catch (IOException ex) {
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to export highlights.{0}", ex));
-			addError("Unable to export highlights");
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export branding.{0}", ex));
+			addError("Unable to export branding");
 		}
 
-		archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
-		archive.setStatusDetails("Exported " + highlights.size() + " highlights");
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + branding.size());
+		archive.setStatusDetails("Exported " + branding.size() + " branding records");
 		archive.save();
 	}
 
@@ -97,30 +126,24 @@ public class HighlightExporter
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
-					List<Highlight> highlights = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<Highlight>>()
+					List<Branding> brandings = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<Branding>>()
 					{
 					});
-					service.getSystemService().saveHighlight(highlights);
+					for (Branding branding : brandings) {
+						service.getBrandingService().saveBranding(branding);
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + brandings.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load highlights", ex);
-					addError("Unable to load highlights: " + dataFile.getName());
+					LOG.log(Level.WARNING, "Failed to Load branding", ex);
+					addError("Unable to load branding: " + dataFile.getName());
 				}
 			}
 		} else {
 			LOG.log(Level.FINE, "No entry types to load.");
 		}
-	}
-
-	@Override
-	public long getTotalRecords()
-	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		return service.getPersistenceService().countByExample(highlightExample);
 	}
 
 }

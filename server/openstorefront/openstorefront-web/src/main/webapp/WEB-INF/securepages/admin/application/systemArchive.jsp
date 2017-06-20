@@ -267,7 +267,7 @@
 						modal: true,
 						closeAction: 'destroy',
 						width: 700,
-						height: 560,
+						height: '90%',
 						layout: 'fit',
 						items: [
 							{
@@ -403,7 +403,54 @@
 												itemId: 'attributes',
 												name: 'attributes',
 												boxLabel: 'Attributes'										
-											}												
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'branding',
+												name: 'branding',
+												boxLabel: 'Branding',
+												listeners: {
+													change: function(field, newValue, oldValue, opts) {
+														var form = field.up('form');
+														if (newValue) {
+															form.queryById('brandingSelectGrid').setDisabled(false);		
+														} else {
+															form.queryById('brandingSelectGrid').setDisabled(true);		
+														}
+													}
+												}												
+											},
+											{
+												xtype: 'grid',
+												itemId: 'brandingSelectGrid',
+												title: 'Select Branding',
+												maxHeight: 175,
+												disabled: true,
+												columnLines: true,
+												selModel: {
+													selType: 'checkboxmodel'
+												},
+												store: {
+													autoLoad: true,
+													sorters: [
+														new Ext.util.Sorter({
+															property: 'description',
+															direction: 'ASC'
+														})
+													],
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/branding'							
+													}											
+												},
+												columns: [
+													{text: 'Branding', dataIndex: 'name', flex: 1,
+														filter: {
+															type: 'string'
+														}
+													}
+												]												
+											}
 										]
 									}								
 								],
@@ -444,6 +491,14 @@
 													if (data.attributes) {
 														archiveOptions.push({
 															primaryEntity: 'AttributeType'
+														});
+													}	
+													if (data.branding) {
+														Ext.Array.each(generateWin.queryById('brandingSelectGrid').getSelection(), function(record){
+															archiveOptions.push({
+																primaryEntity: 'Branding',
+																entityId: record.get('brandingId')
+															});	
 														});
 													}													
 													data.archiveOptions = archiveOptions;

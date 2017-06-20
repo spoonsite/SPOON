@@ -45,7 +45,8 @@ public class LandingAction
 		LandingTemplate landingTemplateFull = branding.getLandingTemplate();
 		boolean useDefault = true;
 		if (getLandingTemplate() != null
-				&& Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
+				|| Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
+
 			String fullTemplate = landingTemplateFull.fullTemplate();
 			if (StringUtils.isNotBlank(fullTemplate)) {
 				useDefault = false;

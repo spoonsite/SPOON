@@ -37,12 +37,7 @@
 			cls: 'home-viewport',
 			layout: 'border',
 			listeners: {
-				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
-					//if (width < 565) {
-					//	comp.hide();
-					//} else {
-					//	comp.show();
-					//}					
+				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {								
 					view.updateLayout(true, true);
 				}
 			},			

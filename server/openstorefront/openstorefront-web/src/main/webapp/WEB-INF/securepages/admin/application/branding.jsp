@@ -707,12 +707,15 @@
 					}, 250);
 					
 					if (record) {
+						var landingTab = addEditBrandingWin.queryById('landingPageTab');
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
 						if (record.get('useDefaultLandingPage')) {
-							addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
+							landingTab.setDisabled(true);
 						} else {
-							addEditBrandingWin.queryById('landingPageTab').setDisabled(false);							
-							addEditBrandingWin.queryById('landingPageTab').loadData(record.data);
+							landingTab.setDisabled(false);
+							landingTab.initializeCallback = function() {
+								landingTab.loadData(record.data);
+							}
 						}
 					}
 					
@@ -936,27 +939,6 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'Import',									
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-upload icon-button-color-default',
-									handler: function () {
-										
-									}
-								},
-								{
-									text: 'Export',
-									itemId: 'export',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download icon-button-color-default',
-									disabled: true,
-									handler: function () {
-										
-									}									
-								},
-								{
 									xtype: 'tbfill'
 								},
 								{
@@ -994,8 +976,7 @@
 							if (selectionModel.getCount() > 0) {
 								tools.getComponent('edit').setDisabled(false);
 								Ext.getCmp('duplicateSelected').setDisabled(false);
-								tools.getComponent('delete').setDisabled(false);
-								tools.getComponent('export').setDisabled(false);								
+								tools.getComponent('delete').setDisabled(false);																
 
 								var record = selection[0];
 								if (record.get('activeStatus') === 'I') {
@@ -1007,8 +988,7 @@
 								tools.getComponent('edit').setDisabled(true);
 								Ext.getCmp('duplicateSelected').setDisabled(true);
 								tools.getComponent('delete').setDisabled(false);
-								tools.getComponent('activate').setDisabled(true);
-								tools.getComponent('export').setDisabled(true);
+								tools.getComponent('activate').setDisabled(true);								
 							}
 						}
 					}

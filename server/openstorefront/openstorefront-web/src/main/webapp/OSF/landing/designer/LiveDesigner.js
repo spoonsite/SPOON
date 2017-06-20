@@ -1055,49 +1055,99 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					});					
 					return commonCodeRender(this, config);					
 				}				
+			},
+			{
+				name: 'Viewport',
+				description: 'Represent the page',
+				className: 'Ext.container.Viewport',					
+				fixed: true,
+				config: {},
+				items: [],
+				designerRender: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'border'
+					});
+					return commonDesignerRender(this, config);
+				},
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						layout: 'border'
+					});					
+					return commonCodeRender(this, config);	
+				}
+			},
+			{
+				name: 'Body',
+				description: 'Contents of the page',
+				className: 'Ext.panel.Panel',
+				fixed: true,
+				config: {
+					region: 'center',
+					scrollable: true
+				},
+				items: [],
+				designerRender: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {
+						region: 'center',
+						scrollable: true
+					});
+					return commonDesignerRender(this, config);
+				},
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});					
+					return commonCodeRender(this, config);	
+				}					
 			}
+			
 		];					
 		
-		var allComponents = [];
-		allComponents = layoutComponents.concat(availableComponents);
-		allComponents.sort(function(a, b){
+		designerPanel.allComponents = [];
+		designerPanel.allComponents = layoutComponents.concat(availableComponents);
+		designerPanel.allComponents.sort(function(a, b){
 			return a.name.localeCompare(b.name);
 		});
 		
 		//add rendered stub 
 		var componentBlocks = [];
-		Ext.Array.each(allComponents, function(item){
+		Ext.Array.each(designerPanel.allComponents, function(item){
 			
-			var cpmponentPanel = Ext.create('Ext.panel.Panel', {
-				xtype: 'panel',
-				title: item.name + ' <i class="fa fa-question-circle" data-qtip="' + item.description + '"></i>',				
-				header: {
-					cls: item.layout ? 'landing-designer-layout' : 'landing-designer-comp'
-				},
-				componentConfig: Ext.clone(item),
-				listeners: {
-					afterrender: function(blockPanel, opts) {
-						blockPanel.dragSource = new Ext.drag.Source(Ext.apply({
-								block: item
-							}, {
-							element: cpmponentPanel.getEl(),
-							proxy: {
-								type: 'placeholder',
-								cls: 'entry-template-drag-proxy',
-								invalidCls: 'entry-template-drag-proxy-invalid',
-								validCls: 'entry-template-drag-proxy-valid',
-								html: '<b>' + item.name + '</b>'														
-							}
-						}));												
+			if (!item.fixed) {
+				var componentPanel = Ext.create('Ext.panel.Panel', {
+					xtype: 'panel',
+					title: item.name + ' <i class="fa fa-question-circle" data-qtip="' + item.description + '"></i>',				
+					header: {
+						cls: item.layout ? 'landing-designer-layout' : 'landing-designer-comp'
 					},
-					destroy: function(blockPanel, opts) {
-						if (blockPanel.dragSource) {
-							Ext.destroy(blockPanel.dragSource);
+					componentConfig: Ext.clone(item),
+					listeners: {
+						afterrender: function(blockPanel, opts) {
+							blockPanel.dragSource = new Ext.drag.Source(Ext.apply({
+									block: item
+								}, {
+								element: componentPanel.getEl(),
+								proxy: {
+									type: 'placeholder',
+									cls: 'entry-template-drag-proxy',
+									invalidCls: 'entry-template-drag-proxy-invalid',
+									validCls: 'entry-template-drag-proxy-valid',
+									html: '<b>' + item.name + '</b>'														
+								}
+							}));												
+						},
+						destroy: function(blockPanel, opts) {
+							if (blockPanel.dragSource) {
+								Ext.destroy(blockPanel.dragSource);
+							}
 						}
-					}
-				}				
-			});
-			componentBlocks.push(cpmponentPanel);
+					}				
+				});
+				componentBlocks.push(componentPanel);
+			}
 			
 		});
 				
@@ -1299,15 +1349,15 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 					if (Ext.isString(value)) {
 						configString += key + ": '" + value + "',\n";
 					} else if (Ext.isArray(value)) {
-						configString += key + ": " + Ext.encode(value);						
+						configString += key + ": " + Ext.encode(value)+ ",\n";						
 					} else if (Ext.isObject(value))	{				
-						onfigString += key + ": " + Ext.encode(value);	
+						configString += key + ": " + Ext.encode(value)+ ",\n";	
 					} else {
 						configString += key + ": " + value + ",\n";
 					}
 				});
 			};
-			renderConfig(generated);
+			renderConfig(generated);			
 	
 			if (itemsToAdd.length > 0) {
 				configString += '\nitems: [\n' + itemsToAdd.join(',\n') + '\n]\n';
@@ -1374,6 +1424,42 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 	initialize: function() {
 		var designerPanel = this;		
 		designerPanel.updateAll();
+	},
+	restoreBlocks: function(loadedConfigBlocks) {
+		var designerPanel = this;
+		
+		if (loadedConfigBlocks) {
+			try {
+				//restore state and function				
+				var restoreBlocks = function(blocks, childblock, parentBlock) {
+					Ext.Array.each(blocks, function(blockConfig) {					
+					
+						Ext.Array.each(designerPanel.allComponents, function(block) {
+							if (blockConfig.name === block.name) {
+
+								Ext.applyIf(blockConfig, block);
+								
+								//make sure ids are still good
+								blockConfig.blockId = Ext.id().replace('-', '_');																											
+								
+							}
+						});						
+						if (blockConfig.items && blockConfig.items.length > 0) {
+							//childblocks
+							restoreBlocks(blockConfig.items, true, blockConfig);
+						}
+					});
+				};
+				restoreBlocks(loadedConfigBlocks, false);
+
+			} catch(e) {
+				Ext.log(e.message);
+				Ext.log(e);
+			}			
+			designerPanel.components = loadedConfigBlocks;
+			designerPanel.updateAll();
+		}	
+		
 	},
 	updateAll: function() {
 		var templatePanel = this;

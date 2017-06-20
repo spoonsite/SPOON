@@ -94,7 +94,7 @@ Ext.define('OSF.ux.IFrame', {
             try {
                 doc = this.getDoc();
                 if (doc) {
-                    Ext.get(doc).un(this._docListeners);
+                    doc.un(this._docListeners);
                     if (destroying) {
                         for (prop in doc) {
                             if (doc.hasOwnProperty && doc.hasOwnProperty(prop)) {
