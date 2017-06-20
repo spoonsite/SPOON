@@ -17,9 +17,9 @@
  */
 /* global Ext, CoreService, CoreUtil */
 
-Ext.define('OSF.component.AdvanceSearchPanel', {
+Ext.define('OSF.component.AdvancedSearchPanel', {
 	extend: 'Ext.panel.Panel',
-	alias: 'osf.widget.AdvanceSearchPanel',
+	alias: 'osf.widget.AdvancedSearchPanel',
 	layout: 'fit',
 	
 	initComponent: function () {

@@ -30,13 +30,13 @@
 		<stripes:layout-render name="../../../layout/userheader.jsp">		
 		</stripes:layout-render>			
 		
-		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/advancedSearch.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function() {
 				
-				var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
+				var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {
 					id: 'advanceSearch'
 				});
 	
@@ -219,9 +219,11 @@
 							if (selected.length > 0) {	
 								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
+								tools.getComponent('search').setDisabled(false);								
 							} else {
 								tools.getComponent('edit').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);
+								tools.getComponent('search').setDisabled(true);
 							}
 						}
 					},
@@ -263,7 +265,20 @@
 									handler: function () {
 										actionEdit(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
 									}									
-								},								
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Search',
+									itemId: 'search',
+									scale: 'medium',
+									disabled: true,									
+									iconCls: 'fa fa-2x fa-search',
+									handler: function () {
+										actionSearch(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
+									}										
+								},
 								{
 									xtype: 'tbfill'
 								},
@@ -324,6 +339,23 @@
 							} 
 						}
 					});						
+				};
+				
+				var actionSearch = function(record) {
+					
+					var searchObj = Ext.decode(record.get('searchRequest'));
+
+					if (searchObj) {
+						var searchRequest = {
+							type: 'Advance',
+							query: searchObj
+						};
+						CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+						window.location.href = 'searchResults.jsp';
+					} else {
+						Ext.toast('Missing search record. Check saved search.');
+					}			
+					
 				};
 						
 				addComponentToMainViewPort(searchGrid);

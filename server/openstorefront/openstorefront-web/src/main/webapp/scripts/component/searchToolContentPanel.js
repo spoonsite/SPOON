@@ -321,7 +321,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 			]
 		});
 
-		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
+		var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {
 			title: 'Advanced',
 			iconCls: 'fa fa-lg fa-search-plus icon-small-vertical-correction',
 			saveHook: function (response, opts) {
@@ -383,87 +383,11 @@ Ext.define('OSF.component.SearchToolWindow', {
 			]
 		});
 
-		var savedSearches = Ext.create('Ext.grid.Panel', {
-			title: 'Saved Searches',
-			iconCls: 'fa fa-lg fa-save icon-small-vertical-correction',
-			itemId: 'savedGrid',
-			columnLines: true,
-			store: {
-				autoLoad: true,
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/usersavedsearches/user/current'
-				}
-			},
-			columns: [
-				{text: 'Select Search', dataIndex: 'searchName', flex: 1, minWidth: 200,
-					renderer: function (value, meta) {
-						meta.tdStyle = 'font-size: 16px';
-						return value;
-					}
-				}
-			],
-			listeners: {
-				selectionchange: function (selModel, selected, opts) {
-					var tools = savedSearches.getComponent('btools');
-					if (selModel.getCount() >= 1) {
-						tools.getComponent('search').setDisabled(false);
-					} else {
-						tools.getComponent('search').setDisabled(true);
-					}
-				}
-			},
-			dockedItems: [
-				{
-					xtype: 'toolbar',
-					dock: 'top',
-					items: [
-						{
-							xtype: 'tbfill'
-						},
-						{
-							text: 'Manage Searches',
-							iconCls: 'fa fa-lg fa-gear icon-button-color-default',
-							href: 'UserTool.action?load=Searches',
-							hrefTarget: ''
-						}
-					]
-				},
-				{
-					xtype: 'toolbar',
-					itemId: 'btools',
-					dock: 'bottom',
-					items: [
-						{
-							text: 'Search',
-							scale: 'medium',
-							iconCls: 'fa fa-2x fa-search icon-button-color-refresh icon-vertical-correction',
-							width: '110px',
-							itemId: 'search',
-							disabled: true,
-							handler: function () {
-
-								var grid = this.up('grid');
-								var record = grid.getSelectionModel().getSelection()[0];
-								var searchObj = Ext.decode(record.get('searchRequest'));
-
-								if (searchObj) {
-									var win = this.up('window');
-									var searchRequest = {
-										type: 'Advance',
-										query: searchObj
-									};
-									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-									window.location.href = 'searchResults.jsp';
-
-									//close window
-									win.close();
-								}
-							}
-						}
-					]
-				}
-			]
+		var savedSearches = Ext.create('OSF.landing.SavedSearchPanel', {
+			searchCallback: function() {
+				var win = this.up('window');
+				win.close();
+			}
 		});
 
 		//

@@ -530,8 +530,11 @@ Ext.define('OSF.component.template.Media', {
 			var mediaToShow = [];
 			Ext.Array.each(entry.componentMedia, function(media) {
 				if (!media.hideInDisplay) mediaToShow.push(media);
-			});
+			});			
 			MediaViewer.mediaList = mediaToShow;
+			if (mediaToShow.length === 0) {
+				this.setHidden(true);
+			}
 			
 			var updated = false;
 			Ext.Array.each(entry.componentMedia, function(item){

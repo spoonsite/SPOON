@@ -790,4 +790,20 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component mergePendingChange(String componentIdOfPendingChange);
 
+	/**
+	 * Quick look up the entry icon
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public String resolveComponentIcon(String componentId);
+
+	/**
+	 * Quick look up the entry type icon
+	 *
+	 * @param componentType
+	 * @return
+	 */
+	public String resolveComponentTypeIcon(String componentType);
+
 }

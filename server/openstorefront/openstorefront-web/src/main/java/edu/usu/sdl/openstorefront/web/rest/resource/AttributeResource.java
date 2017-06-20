@@ -123,7 +123,8 @@ public class AttributeResource
 	public List<AttributeTypeView> getAttributeView(
 			@QueryParam("all")
 			@APIDescription("Setting all to true will pull both active and inactive records")
-			@DefaultValue("false") boolean all)
+			@DefaultValue("false") boolean all,
+			@QueryParam("important") Boolean important)
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 
@@ -131,6 +132,8 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
+		attributeTypeExample.setImportantFlg(important);		
+		
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 
 		String codeStatus = null;

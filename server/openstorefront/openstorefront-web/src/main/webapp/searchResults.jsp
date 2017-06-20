@@ -23,7 +23,8 @@
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 			
-	<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>		
+	<script src="scripts/component/advancedSearch.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/savedSearchPanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<form id="exportForm" action="api/v1/service/search/export" method="POST">		
@@ -35,6 +36,7 @@
 		var SearchPage = {
 			viewDetails: function(componentId, resultId) {
 				SearchPage.detailPanel.expand();
+				SearchPage.filterPanel.collapse();
 				
 				//load component
 				if (!SearchPage.currentLoadedComponent ||  SearchPage.currentLoadedComponent !== componentId) { 
@@ -547,6 +549,7 @@
 					}
 				]
 			});
+			SearchPage.filterPanel = filterPanel;
 
 			var filterMode;
 			var filterResults = function() {
@@ -663,12 +666,12 @@
 						sort = {
 							field: filter.sortBy.field,
 							dir: filter.sortBy.dir
-						}
+						};
 					} else {
 						sort = {
 							field: 'name',
 							dir: 'ASC'
-						}
+						};
 					}
 					
 					//Transform Filters into search elements.
@@ -777,6 +780,16 @@
 			
 			var currentDataSet;
 			var processResults = function(data) {
+				//handle logo
+				Ext.Array.each(data, function(result){
+					//check entry logo first
+					if (result.componentIconId) {
+						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
+					} else if (result.componentTypeIconUrl) {
+						result.logo = result.componentTypeIconUrl;
+					}
+				});
+				
 				currentDataSet = data;
 				Ext.getCmp('resultsDisplayPanel').update(data);				
 		
@@ -794,7 +807,7 @@
 									typeLabel: dataItem.componentTypeDescription,
 									type: dataItem.componentType,
 									count: 1
-								}
+								};
 							}
 						});
 						
@@ -811,6 +824,7 @@
 			
 			
 			var displaySections = [					
+				{ text: 'Logo', section: 'logo', display: true },
 				{ text: 'Organization', section: 'organization', display: true },
 				{ text: 'Badges', section: 'badges', display: true },
 				{ text: 'Description', section: 'description', display: true },
@@ -1018,6 +1032,9 @@
 				'<tpl for=".">',
 				' <div id="result-{componentId}" class="searchresults-item">',
 				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</h2>',
+				'	<tpl if="show.logo && logo">',
+				'		<img src="{logo}" width=100 />',				
+				'	</tpl>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',
 				'	</tpl>',
@@ -1385,7 +1402,7 @@
 											
 											var ids = '';
 											searchResultsStore.each(function(record){
-												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />'
+												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />';
 											});
 											exportFormIds.innerHTML = ids;
 											exportForm.submit();
@@ -1491,7 +1508,7 @@
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('index.jsp');
+												window.location.replace('Landing.action');
 											}
 										}
 									}
@@ -1590,7 +1607,7 @@
 													var searchRequest = {
 														type: 'SIMPLE',
 														query: CoreUtil.searchQueryAdjustment(query)
-													}
+													};
 													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 												} else {
 													delete CoreUtil.sessionStorage().searchRequest;

@@ -29,6 +29,17 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
 				
+				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
+
+					isEditor: false,
+					mediaSelectionUrl: 'api/v1/resource/generalmedia',
+					closeAction: 'hide',
+					mediaHandler: function(link) {
+						Ext.getCmp('iconUrlField').setValue(encodeURI(link));
+					}
+				});				
+				
+				
 				var addEditWin = Ext.create('Ext.window.Window', {
 					id: 'addEditWin',
 					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
@@ -150,7 +161,37 @@
 											} 
 										]
 									}
-								})
+								}),
+								{
+									xtype: 'label',
+									text: 'Icon URL:',
+									margin: '0 5 0 0',
+									style: {
+										fontWeight: 'bold'
+									}
+								},
+								{
+									layout: 'hbox',
+									width: '100%',
+									margin: '5px 0 0 0',
+									items: [
+										{
+											xtype: 'textfield',
+											id: 'iconUrlField',
+											name: 'iconUrl',
+											flex: 4
+										},
+										{
+											xtype: 'button',
+											text: 'Insert Media',
+											flex: 1,
+											handler: function() {
+
+												mediaWindow.show();
+											}
+										}
+									]
+								}								
 							],
 							dockedItems: [
 								{

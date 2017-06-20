@@ -36,11 +36,31 @@
 			/* global Ext, CoreService, CoreApp */	
 			Ext.onReady(function(){	
 
-				var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
-					title: 'View Relationships <i class="fa fa-lg fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>'
-				});
+				var initViewOptions = Ext.Object.fromQueryString(window.location.search);
 
+				var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
+					title: 'View Relationships <i class="fa fa-lg fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>',					
+					visualPanelConfig: {
+						viewType: initViewOptions ? null : 'RELATION'
+					}
+				});
+				
 				addComponentToMainViewPort(visualPanel);
+				
+				//init view if requested	
+				if (initViewOptions) {
+					visualPanel.setViewType(initViewOptions.viewType, false);
+					
+					if (initViewOptions.viewType === 'RELATION') {
+						visualPanel.visualPanel.loadRelationships(initViewOptions.entityId, initViewOptions.entityName, 0);
+					} else if (initViewOptions.viewType === 'ORG') {
+						visualPanel.visualPanel.loadOrganizations(initViewOptions.entityId, initViewOptions.entityName);
+					} else if (initViewOptions.viewType === 'ATT') {
+						visualPanel.visualPanel.loadAttributes(initViewOptions.entityId, initViewOptions.entityName);
+					} else if (initViewOptions.viewType === 'TAGS') {
+						visualPanel.visualPanel.loadTags(initViewOptions.entityId);
+					}
+				}
 
 			});
 

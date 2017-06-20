@@ -52,6 +52,8 @@ public class ComponentPrintView
 	private String componentSecurityMarkingDescription;
 	private Integer componentSecurityMarkingRank;
 	private String componentSecurityMarkingStyle;
+	private String componentIconId;
+	private String componentTypeIconUrl;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 	private List<ComponentQuestionView> questions = new ArrayList<>();
@@ -80,13 +82,16 @@ public class ComponentPrintView
 		setOrganization(component.getOrganization());
 		setLastActivityDate(component.getLastActivityDts());
 		setComponentType(component.getComponentType());
+
+		Service service = ServiceProxyFactory.getServiceProxy();
+		setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
+		setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+
 		toStandardView(component);
 
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
 		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
-
-			Service service = ServiceProxyFactory.getServiceProxy();
 			SecurityMarkingType securityMarkingType = service.getLookupService().getLookupEnity(SecurityMarkingType.class, componentSecurityMarkingType);
 
 			if (securityMarkingType != null) {
@@ -110,6 +115,8 @@ public class ComponentPrintView
 		view.setOrganization(component.getOrganization());
 		view.setLastActivityDate(component.getLastActivityDts());
 		view.setComponentType(component.getComponentType());
+		view.setComponentIconId(component.getComponentIconId());
+		view.setComponentTypeIconUrl(component.getComponentTypeIconUrl());
 		view.setLastViewedDate(component.getLastViewedDts());
 		view.setEvaluation(component.getEvaluation());
 		view.setQuestions(component.getQuestions());
@@ -501,4 +508,25 @@ public class ComponentPrintView
 	{
 		this.componentSecurityMarkingStyle = componentSecurityMarkingStyle;
 	}
+
+	public String getComponentIconId()
+	{
+		return componentIconId;
+	}
+
+	public void setComponentIconId(String componentIconId)
+	{
+		this.componentIconId = componentIconId;
+	}
+
+	public String getComponentTypeIconUrl()
+	{
+		return componentTypeIconUrl;
+	}
+
+	public void setComponentTypeIconUrl(String componentTypeIconUrl)
+	{
+		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
 }

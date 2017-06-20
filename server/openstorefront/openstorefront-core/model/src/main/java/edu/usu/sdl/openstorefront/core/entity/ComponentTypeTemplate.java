@@ -34,7 +34,7 @@ public class ComponentTypeTemplate
 {
 
 	@PK(generated = true)
-	@NotNull	
+	@NotNull
 	private String templateId;
 
 	@NotNull
@@ -45,19 +45,19 @@ public class ComponentTypeTemplate
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@ConsumeField
-	@APIDescription("This content the full template code")
+	@APIDescription("This contains the full template code")
 	private String template;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@ConsumeField
 	@APIDescription("This is used to persist the template design")
 	private String preTemplateCode;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@ConsumeField
 	@APIDescription("This is used to persist the template design")
 	private String postTemplateCode;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@APIDescription("This is used to persist the visual designer")
@@ -71,13 +71,13 @@ public class ComponentTypeTemplate
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);
-		
+
 		ComponentTypeTemplate componentTypeTemplate = (ComponentTypeTemplate) entity;
 		this.setName(componentTypeTemplate.getName());
 		this.setTemplate(componentTypeTemplate.getTemplate());
 		this.setPreTemplateCode(componentTypeTemplate.getPreTemplateCode());
 		this.setPostTemplateCode(componentTypeTemplate.getPostTemplateCode());
-		this.setTemplateBlocks(componentTypeTemplate.getTemplateBlocks());		
+		this.setTemplateBlocks(componentTypeTemplate.getTemplateBlocks());
 	}
 
 	public String getTemplateId()

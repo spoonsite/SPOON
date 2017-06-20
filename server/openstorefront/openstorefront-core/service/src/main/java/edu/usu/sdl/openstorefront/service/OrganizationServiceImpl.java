@@ -41,6 +41,11 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,10 +85,12 @@ public class OrganizationServiceImpl
 	}
 
 	@Override
-	public void saveOrganization(Organization organization)
+	public Organization saveOrganization(Organization organization)
 	{
 		Objects.requireNonNull(organization, "Organization is required");
 		Objects.requireNonNull(organization.getName(), "Organization name is required");
+
+		Organization savedOrganization;
 
 		Organization organizationExisting = persistenceService.findById(Organization.class, organization.getOrganizationId());
 		if (organizationExisting == null) {
@@ -98,7 +105,7 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new ComponentContact(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new Contact(), organizationExisting.getName(), organization);
 				int usersChanged = updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);
-				
+
 				if (usersChanged > 0) {
 					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
 					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit()) == false) {
@@ -112,13 +119,38 @@ public class OrganizationServiceImpl
 			}
 
 			organizationExisting.updateFields(organization);
-			persistenceService.persist(organizationExisting);
+			savedOrganization = persistenceService.persist(organizationExisting);
 		} else {
 			organization.setOrganizationId(organization.nameToKey());
 			organization.populateBaseCreateFields();
-			persistenceService.persist(organization);
+			savedOrganization = persistenceService.persist(organization);
 		}
 
+		return savedOrganization;
+	}
+
+	@Override
+	public void saveOrganizationLogo(Organization organization, InputStream fileInput)
+	{
+		Objects.requireNonNull(organization);
+		Objects.requireNonNull(organization.getOrganizationId());
+		Objects.requireNonNull(organization.getName());
+		Objects.requireNonNull(organization.getLogoOriginalFileName());
+		Objects.requireNonNull(organization.getLogoMimeType());
+		Objects.requireNonNull(fileInput);
+
+		Organization savedOrganization = persistenceService.findById(Organization.class, organization.getOrganizationId());
+		savedOrganization.setLogoMimeType(organization.getLogoMimeType());
+		savedOrganization.setLogoOriginalFileName(organization.getLogoOriginalFileName());
+		savedOrganization.setLogoFileName(organization.nameToKey());
+		savedOrganization.populateBaseUpdateFields();
+		persistenceService.persist(savedOrganization);
+
+		try (InputStream in = fileInput) {
+			Files.copy(in, savedOrganization.pathToLogo(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store organization logo.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
 	}
 
 	private void clearOrganizationCaches()
@@ -168,14 +200,14 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new ComponentContact(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new Contact(), organizationMerge.getName(), organizationTarget);
 				int usersChanged = updateOrganizationOnEntity(new UserProfile(), organizationMerge.getName(), organizationTarget);
-				
+
 				if (usersChanged > 0) {
 					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
 					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit()) == false) {
 						LOG.log(Level.WARNING, "Users are being managed externally. So they may change or recreate groups if they don't match after the user sync.  Users were moved in this application only.");
-					}				
+					}
 				}
-				
+
 				updateOrganizationOnEntity(new ComponentReview(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
@@ -386,10 +418,34 @@ public class OrganizationServiceImpl
 		if (references.isEmpty()) {
 			Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
 			if (organizationFound != null) {
+				deleteOrganizationLogo(organizationId);
 				persistenceService.delete(organizationFound);
 			}
 		} else {
 			throw new AttachedReferencesException();
+		}
+	}
+
+	@Override
+	public void deleteOrganizationLogo(String organizationId)
+	{
+		Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
+		if (organizationFound != null) {
+			Path path = organizationFound.pathToLogo();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					if (!path.toFile().delete()) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete logo. File might be in use. Path: {0}", path.toString()));
+					}
+				}
+			}
+			organizationFound.setLogoFileName(null);
+			organizationFound.setLogoMimeType(null);
+			organizationFound.setLogoOriginalFileName(null);
+			organizationFound.populateBaseUpdateFields();
+			persistenceService.persist(organizationFound);
+		} else {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find organization. Check Id: ", organizationId));
 		}
 	}
 

@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -27,60 +26,49 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Branding (dynamic pages)
+ *
  * @author dshurtleff
  */
 public class BrandingAction
-	extends BaseAction
+		extends BaseAction
 {
-	@Validate(required = true, on="CSS")
+
+	@Validate(required = true, on = "CSS")
 	private String template;
-	
-	private String brandingId;
-	
+
 	private Branding branding;
-	
+
 	@HandlesEvent("CSS")
-	public Resolution cssPage() 
-	{		
-		loadBranding();
+	public Resolution cssPage()
+	{
+		branding = loadBranding();
 		if (branding != null) {
 			return new ForwardResolution("/WEB-INF/securepages/css/" + template);
 		} else {
-			return new ErrorResolution(404);			
+			return new ErrorResolution(404);
 		}
 	}
-	
-	private void loadBranding() 
+
+	@HandlesEvent("Override")
+	public Resolution brandingCssOverride()
 	{
-		if (StringUtils.isNotBlank(brandingId)) {
-			branding = new Branding();
-			branding.setBrandingId(brandingId);
-			branding = branding.find();
-		} else  {
-			branding = service.getBrandingService().getCurrentBrandingView();
-		}
-	}
-	
-	@HandlesEvent("Override") 
-	public Resolution brandingCssOverride() 
-	{
-		loadBranding();
+		branding = loadBranding();
 		if (branding != null) {
 			String overrideCss = "";
 			if (StringUtils.isNotBlank(branding.getOverrideCSS())) {
 				overrideCss = branding.getOverrideCSS();
-			}			
+			}
 			return new StreamingResolution("text/css", overrideCss);
 		} else {
-			return new ErrorResolution(404);			
-		}	
+			return new ErrorResolution(404);
+		}
 	}
-		
-	@HandlesEvent("Preview") 
-	public Resolution previewBranding() 
+
+	@HandlesEvent("Preview")
+	public Resolution previewBranding()
 	{
 		return new ForwardResolution("/WEB-INF/securepages/admin/application/brandingPreview.jsp");
-	}	
+	}
 
 	public String getTemplate()
 	{
@@ -92,16 +80,6 @@ public class BrandingAction
 		this.template = template;
 	}
 
-	public String getBrandingId()
-	{
-		return brandingId;
-	}
-
-	public void setBrandingId(String brandingId)
-	{
-		this.brandingId = brandingId;
-	}
-
 	public Branding getBranding()
 	{
 		return branding;
@@ -111,5 +89,5 @@ public class BrandingAction
 	{
 		this.branding = branding;
 	}
-	
+
 }

@@ -130,7 +130,7 @@ public class LoginAction
 
 	private String startPage()
 	{
-		String startPage = "/";
+		String startPage = "/Landing.action";
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {

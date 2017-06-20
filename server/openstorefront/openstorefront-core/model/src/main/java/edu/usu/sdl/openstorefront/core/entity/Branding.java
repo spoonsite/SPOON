@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import javax.persistence.Embedded;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,6 +58,11 @@ public class Branding
 	@ConsumeField
 	private String secondaryLogoUrl;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String homebackSplashUrl;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
@@ -70,11 +77,11 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String landingPageTitle;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
-	private String landingStatsText;	
+	private String landingStatsText;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
@@ -89,10 +96,10 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String analyticsTrackingCode;
-	
+
 	@ConsumeField
 	private Boolean hideArchitectureSearchFlg;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
@@ -105,80 +112,92 @@ public class Branding
 
 	@ConsumeField
 	private Boolean allowSecurityMarkingsFlg;
-	
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(HTMLSanitizer.class)	
-	private String securityBannerText;
-	
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
-	@Sanitize(TextSanitizer.class)	
-	private String securityBannerBackgroundColor;	
-	
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
-	@Sanitize(TextSanitizer.class)	
-	private String securityBannerTextColor;	
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(HTMLSanitizer.class)	
-	private String userInputWarning;	
-	
+	@Sanitize(HTMLSanitizer.class)
+	private String securityBannerText;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)
+	private String securityBannerBackgroundColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)
+	private String securityBannerTextColor;
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(HTMLSanitizer.class)	
+	@Sanitize(HTMLSanitizer.class)
+	private String userInputWarning;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)
 	private String submissionFormWarning;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(HTMLSanitizer.class)	
-	private String changeRequestWarning;	
-	
+	@Sanitize(HTMLSanitizer.class)
+	private String changeRequestWarning;
+
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = FeedbackHandleType.class)
 	private String feedbackHandler;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String primaryColor;	
+	private String primaryColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String primaryTextColor;	
-	
+	private String primaryTextColor;
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String secondaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String accentColor;
-	
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String quoteColor;
-	
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String linkColor;
-	
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
-	private String linkVisitedColor;	
-	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String linkVisitedColor;
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String linkhoverColor;
-	
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String panelHeaderColor;
-	
+
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
-	private String panelHeaderTextColor;	
-			
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String panelHeaderTextColor;
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	private String overrideCSS;
+
+	@ConsumeField
+	private Boolean useDefaultLandingPage;
+
+	@ConsumeField
+	@Embedded
+	@OneToOne(orphanRemoval = true)
+	private LandingTemplate landingTemplate;
 
 	public Branding()
 	{
@@ -193,37 +212,42 @@ public class Branding
 
 		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
 		setApplicationName(branding.getApplicationName());
-		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());		
+		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());
 		setArchitectureSearchLabel(branding.getArchitectureSearchLabel());
 		setArchitectureSearchType(branding.getArchitectureSearchType());
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
-		setLandingStatsText(branding.getLandingStatsText());		
+		setLandingStatsText(branding.getLandingStatsText());
 		setLoginWarning(branding.getLoginWarning());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
-		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());		
-		
+		setHomebackSplashUrl(branding.getHomebackSplashUrl());
+		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
+
 		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
 		setSecurityBannerText(branding.getSecurityBannerText());
 		setSecurityBannerTextColor(branding.getSecurityBannerTextColor());
 		setUserInputWarning(branding.getUserInputWarning());
 		setSubmissionFormWarning(branding.getSubmissionFormWarning());
-		setChangeRequestWarning(branding.getChangeRequestWarning());		
+		setChangeRequestWarning(branding.getChangeRequestWarning());
 		setFeedbackHandler(branding.getFeedbackHandler());
-				
+
 		setPrimaryColor(branding.getPrimaryColor());
-		setPrimaryTextColor(branding.getPrimaryTextColor());		
+		setPrimaryTextColor(branding.getPrimaryTextColor());
+		setSecondaryColor(branding.getSecondaryColor());
 		setAccentColor(branding.getAccentColor());
 		setQuoteColor(branding.getQuoteColor());
 		setLinkColor(branding.getLinkColor());
-		setLinkVisitedColor(branding.getLinkVisitedColor());		
+		setLinkVisitedColor(branding.getLinkVisitedColor());
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
 		setOverrideCSS(branding.getOverrideCSS());
+
+		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
+		setLandingTemplate(branding.getLandingTemplate());
 	}
 
 	public String getBrandingId()
@@ -544,6 +568,46 @@ public class Branding
 	public void setChangeRequestWarning(String changeRequestWarning)
 	{
 		this.changeRequestWarning = changeRequestWarning;
+	}
+
+	public LandingTemplate getLandingTemplate()
+	{
+		return landingTemplate;
+	}
+
+	public void setLandingTemplate(LandingTemplate landingTemplate)
+	{
+		this.landingTemplate = landingTemplate;
+	}
+
+	public String getHomebackSplashUrl()
+	{
+		return homebackSplashUrl;
+	}
+
+	public void setHomebackSplashUrl(String homebackSplashUrl)
+	{
+		this.homebackSplashUrl = homebackSplashUrl;
+	}
+
+	public String getSecondaryColor()
+	{
+		return secondaryColor;
+	}
+
+	public void setSecondaryColor(String secondaryColor)
+	{
+		this.secondaryColor = secondaryColor;
+	}
+
+	public Boolean getUseDefaultLandingPage()
+	{
+		return useDefaultLandingPage;
+	}
+
+	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
+	{
+		this.useDefaultLandingPage = useDefaultLandingPage;
 	}
 
 }

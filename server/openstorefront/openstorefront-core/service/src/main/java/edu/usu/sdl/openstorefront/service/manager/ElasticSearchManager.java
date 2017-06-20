@@ -157,8 +157,6 @@ public class ElasticSearchManager
 		ComponentSearchWrapper componentSearchWrapper = new ComponentSearchWrapper();
 
 		IndexSearchResult indexSearchResult = doIndexSearch(searchQuery.getQuery(), filter);
-		
-		
 
 		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
 
@@ -258,7 +256,7 @@ public class ElasticSearchManager
 			// Create Standard Query
 			esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, queryString.toString()));
 			esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, queryString.toString()));
-                        esQuery.should(QueryBuilders.matchPhraseQuery("description", queryString.toString()));
+			esQuery.should(QueryBuilders.matchPhraseQuery("description", queryString.toString()));
 			esQuery.should(QueryBuilders.wildcardQuery(ELASTICSEARCH_ALL_FIELDS, queryString.toString()));
 			esQuery.should(QueryBuilders.fuzzyQuery(ELASTICSEARCH_ALL_FIELDS, queryString.toString()));
 		}
@@ -268,7 +266,7 @@ public class ElasticSearchManager
 
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
-                        esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase));
+			esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase));
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
 				.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
@@ -297,7 +295,7 @@ public class ElasticSearchManager
 					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
 				} else {
 					LOG.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));
-					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults()-1);
+					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults() - 1);
 					deleteById(view.getComponentId());
 				}
 			} catch (IOException ex) {
@@ -305,12 +303,12 @@ public class ElasticSearchManager
 			}
 		}
 		indexSearchResult.applyDataFilter();
-		
+
 		return indexSearchResult;
 	}
 
 	@Override
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
 		List<SearchSuggestion> searchSuggestions = new ArrayList<>();
 
@@ -327,11 +325,26 @@ public class ElasticSearchManager
 		};
 		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
 
-		//apply weight to items
+		if (StringUtils.isNotBlank(componentType)) {
+			indexSearchResult.setResultsList(
+					indexSearchResult.getResultsList()
+							.stream()
+							.filter((result) -> componentType.equals(result.getComponentType()))
+							.collect(Collectors.toList())
+			);
+			indexSearchResult.setSearchViews(
+					indexSearchResult.getSearchViews()
+							.stream()
+							.filter((result) -> componentType.equals(result.getComponentType()))
+							.collect(Collectors.toList())
+			);
+		}
+
 		if (StringUtils.isBlank(query)) {
 			query = "";
 		}
 
+		//apply weight to items
 		String queryNoWild = query.replace("*", "").toLowerCase();
 		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
 			int score = 0;

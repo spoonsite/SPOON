@@ -59,6 +59,7 @@ public class ShiroAdjustedFilter
 
 			Set<String> whiteListRedirectPages = new HashSet();
 			whiteListRedirectPages.add("index.jsp");
+			whiteListRedirectPages.add("Landing.action");
 			whiteListRedirectPages.add("AdminTool.action");
 			whiteListRedirectPages.add("UserTool.action");
 			whiteListRedirectPages.add("EvaluationTool.action");
