@@ -525,6 +525,11 @@ limitations under the License.
 	font-size: 16px;
 }
 
+.question-question .alert-warning {
+    color: #fcf8e3;
+    background-color: #8a6d3b;
+}
+
 .question-response {
 	font-weight: bold;
     font-size: 14px;
@@ -1451,3 +1456,77 @@ table.confluenceTable td.numberingColumn {
 }
 
 
+.review-summary
+{
+	width:100%;
+}
+.review-section
+{
+	width:100%;
+	border-bottom-style:solid;
+	border-bottom-width: thin;
+	border-bottom-color:#000000;
+}
+
+.review-section .label,
+.review-summary .label
+{
+	font-weight: bold;
+}
+.review-section .title, 
+.review-section .rating
+{
+	font-weight: bold;
+	font-size: 2em;
+	padding: 10px 0px;
+}
+
+.review-section .comments
+{
+	padding-bottom: 20px;
+}
+
+.review-section .details,
+.review-section .pros,
+.review-section .cons,
+.review-summary .details,
+.review-summary .pros,
+.review-summary .cons
+{
+	display: inline-block;
+    vertical-align: top;
+	padding-bottom: 20px;
+}
+.review-section .pros,
+.review-section .cons,
+.review-summary .pros,
+.review-summary .cons
+{
+	width: 20%;
+}
+.review-section .details,
+.review-summary .details
+{
+	width: 58%;
+}
+
+.review-section .alert-warning
+{
+	font-weight: bold;
+	font-size: 1.25em;
+	margin: 5px 0px;
+}
+
+
+@media (max-width: 520px) {
+	.review-section .details,
+	.review-section .pros,
+	.review-section .cons,
+	.review-summary .details,
+	.review-summary .pros,
+	.review-summary .cons
+	{
+		display: block;
+		width: 100%;
+	}
+}

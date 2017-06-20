@@ -16,7 +16,8 @@
 package edu.usu.sdl.openstorefront.web.rest;
 
 import edu.usu.sdl.core.CoreSystem;
-import edu.usu.sdl.openstorefront.web.init.*;
+import edu.usu.sdl.openstorefront.web.init.AppStart;
+import edu.usu.sdl.openstorefront.web.init.ApplicationInit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
@@ -27,6 +28,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 /**
  *
  * @author dshurtleff
+ * @author kbair
  */
 @ApplicationPath("api")
 public class RestConfiguration
@@ -38,18 +40,22 @@ public class RestConfiguration
 	@Inject
 	public RestConfiguration(ServiceLocator locator)
 	{
-		// jersy 2 does not support @Immediate once https://java.net/jira/browse/JERSEY-2291 is reolcved for the version we are using
-		// replace register(new ApplicationInit()); with ServiceLocatorUtilities.enableImmediateScope(locator);
-		register(new ApplicationInit());
+		// jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is resolved for the version we are using
+		// replace register(new AppStart()); with ServiceLocatorUtilities.enableImmediateScope(locator);
+
+		register(new AppStart());
 		register(new AbstractBinder()
 		{
 			@Override
 			protected void configure()
 			{
+				// NOTE (KB): do not add anymore bind calls until a solution is found for getting stripes (ActionBeans) access to the jersey/hk2 Request Scope.
 				bind(CoreSystem.class).to(CoreSystem.class).in(Singleton.class);
+				bind(ApplicationInit.class).to(ApplicationInit.class).in(Singleton.class);
 			}
 		});
 		packages(true, "edu.usu.sdl.openstorefront");
+		//ApplicationInit init = locator.createAndInitialize(ApplicationInit.class);
 	}
 
 }

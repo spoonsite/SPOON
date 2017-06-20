@@ -34,6 +34,12 @@ Ext.define('OSF.component.QuestionWindow', {
 			dock: 'top',
 			itemId: 'userInputWarning',
 			html: ''
+		},
+		{
+			xtype: 'panel',
+			dock: 'top',
+			itemId: 'pendingQuestionNotice',
+			html: ''
 		}
 	],
 	initComponent: function () {
@@ -137,7 +143,14 @@ Ext.define('OSF.component.QuestionWindow', {
 				questionWindow.form.getComponent('securityMarkings').setHidden(false);
 			}
 		});	
-				
+		//Query Properties
+		CoreService.systemservice.getConfigProperties("userreview.autoapprove").then(function (property) {
+			if (property.description === "false")
+			{
+				questionWindow.getComponent('pendingQuestionNotice').update('<h3 class="alert-warning" style="text-align: center;">' +
+						'<i class="fa fa-warning"></i> All questions need admin approval before being made public.</h3>');
+			}
+		});
 		//Query User
 		CoreService.userservice.getCurrentUser().then(function(user){
 			questionWindow.user = user;
@@ -201,6 +214,12 @@ Ext.define('OSF.component.ResponseWindow', {
 			xtype: 'panel',
 			dock: 'top',
 			itemId: 'userInputWarning',
+			html: ''
+		},
+		{
+			xtype: 'panel',
+			dock: 'top',
+			itemId: 'pendingAnswerNotice',
 			html: ''
 		}
 	],
@@ -307,7 +326,14 @@ Ext.define('OSF.component.ResponseWindow', {
 				responseWindow.form.getComponent('securityMarkings').setHidden(false);
 			}
 		});
-		
+				//Query Properties
+		CoreService.systemservice.getConfigProperties("userreview.autoapprove").then(function (property) {
+			if (property.description === "false")
+			{
+				responseWindow.getComponent('pendingAnswerNotice').update('<h3 class="alert-warning" style="text-align: center;">' +
+						'<i class="fa fa-warning"></i> All answers to questions need admin approval before being made public.</h3>');
+			}
+		});
 		//Query User
 		CoreService.userservice.getCurrentUser().then(function(user){
 			responseWindow.user = user;

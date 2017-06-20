@@ -24,10 +24,12 @@ import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,11 +52,16 @@ public class ComponentQuestionResource
 	@DataType(ComponentQuestionView.class)
 	@Path("/{username}")
 	public Response getQuestionsForUser(
-			@PathParam("username") String username
+			@PathParam("username") String username,
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
-		componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionExample.setCreateUser(username);
 
 		List<ComponentQuestion> questions = componentQuestionExample.findByExample();
@@ -71,13 +78,17 @@ public class ComponentQuestionResource
 	@DataType(ComponentQuestionResponseView.class)
 	@Path("/responses/{username}")
 	public Response getResponseForUser(
-			@PathParam("username") String username
+			@PathParam("username") String username,
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionResponseExample.setCreateUser(username);
-
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
 
 		GenericEntity<List<ComponentQuestionResponseView>> entity = new GenericEntity<List<ComponentQuestionResponseView>>(ComponentQuestionResponseView.toViewList(responses))
@@ -92,11 +103,16 @@ public class ComponentQuestionResource
 	@DataType(ComponentQuestionResponseView.class)
 	@Path("/{questionId}/responses")
 	public Response getResponseForQuestion(
-			@PathParam("questionId") String questionId
+			@PathParam("questionId") String questionId,
+			@QueryParam("status") @DefaultValue("A") String status
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		} else {
+			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
 		componentQuestionResponseExample.setQuestionId(questionId);
 
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
