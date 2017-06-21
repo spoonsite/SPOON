@@ -97,9 +97,13 @@ public class WebDriverUtil
 		//TODO: Save artifact to report directory
 	}
 
-	public String getPage(String page)
+	public void getPage(WebDriver driver, String page)
 	{
-		return server + page;
+		String fullPath = server + page;
+		if (!driver.getCurrentUrl().equals(fullPath)) {
+			driver.get(fullPath);
+		}
+		
 	}
 
 	public List<WebDriver> getDrivers()

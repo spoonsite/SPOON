@@ -46,7 +46,7 @@ public class ComponentService
 	{
 		List<LookupModel> lookupModels;
 		APIResponse response = client.httpGet("api/v1/resource/components/lookup/", null);
-		lookupModels = response.getList(new TypeReference<List<ComponentResourceView>>()
+		lookupModels = response.getList(new TypeReference<List<LookupModel>>()
 			{
 			});
 		return lookupModels;

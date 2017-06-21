@@ -16,9 +16,8 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 
-import edu.usu.sdl.apiclient.rest.resource.UserRegistrationResourceImpl;
+import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,16 +40,12 @@ public class AccountSignupActivateTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> accountSignupIDs = new ArrayList<>();
-	private static UserRegistrationResourceImpl apiAccountSignup = new UserRegistrationResourceImpl();
+	private static APIClient apiClient;
 
 	@BeforeClass
 	public static void setupTest()
 	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiAccountSignup.connect(username, password, server);
+		apiClient = new APIClient();
 	}
 
 	/**
@@ -80,7 +75,7 @@ public class AccountSignupActivateTest
 	// Delete if active
 	private void deleteUserIfPresent(WebDriver driver, String userName) throws InterruptedException
 	{
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=User-Management");
 
 		// TODO:  Per STORE-1658, we need an ALL in the drop-down boxes.  
 		for (int loop = 0; loop < 3; loop++) {
@@ -122,7 +117,7 @@ public class AccountSignupActivateTest
 	public void signupForm(WebDriver driver, String userName)
 	{
 		// Navigate to the registration page
-		driver.get(webDriverUtil.getPage("registration.jsp"));
+		webDriverUtil.getPage(driver, "registration.jsp");
 		sleep(2000);
 		// Fill out the form
 		driver.findElement(By.xpath("//input[@name='username']")).sendKeys(userName);
@@ -146,7 +141,7 @@ public class AccountSignupActivateTest
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=User-Management");
 		// Switch to activeStatus = Locked/Disabled and approvalStatus = Pending so it can be approved
 
 		setActiveStatus("Locked/Disabled", driver);
@@ -227,10 +222,6 @@ public class AccountSignupActivateTest
 	@AfterClass
 	public static void cleanup()
 	{
-		for (String id : accountSignupIDs) {
-
-		}
-
-		apiAccountSignup.disconnect();
+		apiClient.cleanup();
 	}
 }

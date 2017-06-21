@@ -47,7 +47,7 @@ public class NewSecurityRole
 	public void deleteRoleIfPresent(WebDriver driver, String roleName) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		// Click on Table Row Col containing roleName
@@ -89,7 +89,7 @@ public class NewSecurityRole
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
 
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		// Select the +Add button, NOT the Refresh button
@@ -128,7 +128,7 @@ public class NewSecurityRole
 	public void onlyOneUserInRole(WebDriver driver, String roleName, String userName) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=User-Management"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=User-Management");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='xPanelTable'] .x-grid-view")));
 
 		if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
@@ -196,7 +196,7 @@ public class NewSecurityRole
 		WebDriverWait wait = new WebDriverWait(driver, 7);
 
 		// Go to Security Role page, wait for the table to load.
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
 		// Click on the roleName (like AUTO-user) and then Manage Permissions		
@@ -233,12 +233,10 @@ public class NewSecurityRole
 								WebElement permissionTableLeft
 										= wait.until(ExpectedConditions.elementToBeClickable(permissionsAvailableItem));
 								Actions builder = new Actions(driver);
-								builder.moveToElement(permissionTableLeft).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(permissionTableLeft, currentRoleDivRight);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+
+								builder.moveToElement(permissionTableLeft)
+										.dragAndDrop(permissionTableLeft, currentRoleDivRight)
+										.perform();
 								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the CURRENT ROLE PERMISSIONS column, for \n'"
 								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -277,12 +275,9 @@ public class NewSecurityRole
 								WebElement permissionTableRight
 										= wait.until(ExpectedConditions.elementToBeClickable(currentRolePermissionItem));
 								Actions builder = new Actions(driver);
-								builder.moveToElement(permissionTableRight).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(permissionTableRight, permissAvailDivLeft);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+								builder.moveToElement(permissionTableRight)
+										.dragAndDrop(permissionTableRight, permissAvailDivLeft)
+										.perform();
 								// LOG.log(Level.INFO, "\n--- MOVED '" + permissionToSet + "' to the PERMISSIONS AVAILABLE column, for \n'"
 								//		+ roleName + "', per permissions.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -315,7 +310,7 @@ public class NewSecurityRole
 	public void setDataSources(WebDriver driver, String roleName, Map<String, Boolean> dataSource) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
@@ -354,12 +349,9 @@ public class NewSecurityRole
 								System.out.println(dataSourceToSet + " *** READY TO BE MOVED to the RIGHT ***");
 
 								Actions builder = new Actions(driver);
-								builder.moveToElement(restrictedItem).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(restrictedItem, accessibleTable);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+								builder.moveToElement(restrictedItem)
+										.dragAndDrop(restrictedItem, accessibleTable)
+										.perform();
 
 								// (new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
 								// LOG.log(Level.INFO, "--- MOVED '" + dataSourceToSet + "' to the ACCESSIBLE Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
@@ -395,12 +387,10 @@ public class NewSecurityRole
 								// Move it to the right (Restricted to Accessible)
 								System.out.println(dataSourceToSet + " *** READY TO BE MOVED to the RIGHT***");
 								Actions builder = new Actions(driver);
-								builder.moveToElement(accessibleItem).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(accessibleItem, restrictedTable);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+								builder.moveToElement(accessibleItem)
+										.dragAndDrop(accessibleItem, restrictedTable)
+										.perform();
+
 								// (new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
 								// LOG.log(Level.INFO, "--- MOVED '" + dataSourceToSet + "' to the RESTRICTED Data Sources column, Security Role '" + roleName + "', per dataSource.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -431,7 +421,7 @@ public class NewSecurityRole
 	public void setDataSensitivity(WebDriver driver, String roleName, Map<String, Boolean> dataSens) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 7);
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='securityRolesTable'] .x-grid-view")));
 
@@ -469,12 +459,9 @@ public class NewSecurityRole
 								System.out.println(dataSensitvToSet + " *** READY TO BE MOVED to the RIGHT ***");
 
 								Actions builder = new Actions(driver);
-								builder.moveToElement(restrictedItem).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(restrictedItem, accessibleTable);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+								builder.moveToElement(restrictedItem)
+										.dragAndDrop(restrictedItem, accessibleTable)
+										.perform();
 								//	(new Actions(driver)).dragAndDrop(restrictedItem, accessibleTable).perform();
 								// LOG.log(Level.INFO, "--- MOVED '" + dataSensitvToSet + "' to the ACCESSIBLE Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;
@@ -510,12 +497,10 @@ public class NewSecurityRole
 								System.out.println(dataSensitvToSet + " *** READY TO BE MOVED to the LEFT ***");
 
 								Actions builder = new Actions(driver);
-								builder.moveToElement(accessibleItem).perform();
-								sleep(dragAndDropActionSleepTime);
-								builder.dragAndDrop(accessibleItem, restrictedTable);
-								sleep(dragAndDropActionSleepTime);
-								builder.perform();
-								sleep(dragAndDropActionSleepTime);
+								builder.moveToElement(accessibleItem)
+										.dragAndDrop(accessibleItem, restrictedTable)
+										.perform();
+
 								// (new Actions(driver)).dragAndDrop(accessibleItem, restrictedTable).perform();
 								// LOG.log(Level.INFO, "--- MOVED '" + dataSensitvToSet + "' to the RESTRICTED Data Sensitivity column, Security Role '" + roleName + "', per dataSens.put in method 'setSecurityRoles' in SecurityRolesTest.java ---");
 								break;

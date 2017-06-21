@@ -15,12 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
-import edu.usu.sdl.apiclient.rest.resource.ContactResourceImpl;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -38,16 +36,6 @@ public class UserProfileTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static ContactResourceImpl apiContact = new ContactResourceImpl();
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiContact.connect(username, password, server);
-	}
 
 	@Test
 	public void userProfileTest()
@@ -63,7 +51,7 @@ public class UserProfileTest
 
 	public void setup(WebDriver driver)
 	{
-		driver.get(webDriverUtil.getPage("UserTool.action"));
+		webDriverUtil.getPage(driver, "UserTool.action");
 
 		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
 			List<WebElement> titleElements = driverLocal.findElements(By.id("dashPanel_header-title-textEl"));
@@ -81,20 +69,24 @@ public class UserProfileTest
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#userHeaderProfileBtn"))).click();
 
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='phone']"))).clear();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='phone']"))).sendKeys("000-000-0000");
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).clear();
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).sendKeys(email);
 
-		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#saveProfileFormBtn"))).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#saveProfileFormBtn"))).click();
 
 		try {
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-mask-msg-text")));
+			wait.until(ExpectedConditions.textToBePresentInElementValue(By.cssSelector(".x-autocontainer-innerCt"), "Updated User Profile"));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}
 
 		try {
-			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-mask-msg-text")));
+			wait.until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".x-mask-msg-text"), "Updated User Profile"));
 		} catch (Exception e) {
 			LOG.log(Level.INFO, e.toString());
 		}

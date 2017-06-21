@@ -15,15 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import edu.usu.sdl.apiclient.rest.resource.HighlightResourceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -40,35 +39,37 @@ public class AdminHighlightTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> highlightIDs = new ArrayList<>();
-	private static HighlightResourceImpl apiHighlight = new HighlightResourceImpl();
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiHighlight.connect(username, password, server);
-	}
 
 	@Test
-	public void adminHighlightTest() throws InterruptedException
+	public void adminHighlightTest() throws InterruptedException, JsonProcessingException
 	{
 
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			createHighlight(driver);
+			createAPIHighlight();
+			createAPISavedSearch();
 			editHighlight(driver);
+			addSavedSearchToHighlight(driver);
 			deleteHighlight(driver);
 
 		}
 	}
 
+	public void createAPIHighlight()
+	{
+		apiClient.getHighlightTestClient().createAPIHighlight();
+	}
+
+	public void createAPISavedSearch() throws JsonProcessingException
+	{
+		apiClient.getSystemSearchTestClient().createAPISystemSearch();
+	}
+
 	public void createHighlight(WebDriver driver) throws InterruptedException
 	{
 
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Highlights"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Highlights");
 		WebDriverWait wait = new WebDriverWait(driver, 5);
 
 		// Click add button
@@ -129,6 +130,44 @@ public class AdminHighlightTest
 		}
 	}
 
+	public void addSavedSearchToHighlight(WebDriver driver) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		// locate highlight in table and edit
+		Assert.assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0));
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-edit"))).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".mce-ico.mce-i-none"))).click();
+
+		try {
+			wait.until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector("x-title-text.x-title-text-default.x-title-item"), "Insert Link to Saved Search"));
+
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		Assert.assertTrue(tableClickRowCol("#linkToSaveSearchWindow-body .x-grid-item-container", "An API Test Admin Saved Search", driver, 0));
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#insertLinkBtn"))).click();
+		
+		sleep(2000);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test = 'addEditHighlightSave']"))).click();
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
 	public void deleteHighlight(WebDriver driver) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -156,39 +195,12 @@ public class AdminHighlightTest
 	@After
 	public void cleanUpTest() throws InterruptedException
 	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			WebDriverWait wait = new WebDriverWait(driver, 5);
-			if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
-
-				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-delete"))).click();
-
-				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".x-message-box .x-window-bodyWrap .x-btn:not([style*='display'])"))).click();
-
-				try {
-					wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
-				} catch (Exception e) {
-					System.out.println(e);
-				}
-
-				try {
-					wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#highlightGrid-body .x-component.x-border-box.x-mask")));
-				} catch (Exception e) {
-					System.out.println(e);
-				}
-
-				wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
-			}
-		}
 	}
-	
+
 	@AfterClass
 	public static void cleanup()
 	{
-		for (String id : highlightIDs) {
-			
-		}
-		
-		apiHighlight.disconnect();
+		apiClient.cleanup();
 	}
 }

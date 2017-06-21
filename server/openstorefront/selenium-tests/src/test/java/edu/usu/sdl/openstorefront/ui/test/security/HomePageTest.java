@@ -38,7 +38,7 @@ public class HomePageTest
     // Output build version at bottom of the page
     public void versionUnderTest(){
         for (WebDriver driver : webDriverUtil.getDrivers()) { 
-              driver.get(webDriverUtil.getPage("index.jsp"));
+              webDriverUtil.getPage(driver, "index.jsp");
               String vers = driver.findElement(By.xpath("//div[@class='home-footer-version']")).getText();
               //TODO:  Replace with Logger Out
               LOG.log(Level.INFO, "*******   VERSION UNDER TEST:  {0}   *******", vers);

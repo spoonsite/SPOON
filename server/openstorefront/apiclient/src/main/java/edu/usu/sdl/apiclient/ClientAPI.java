@@ -50,7 +50,7 @@ public class ClientAPI
 
 	private static final String MEDIA_TYPE_JSON = "application/json";
 	private static final String CONTENT_TYPE = "Content-Type";
-
+	private static final String CSRF_TOKEN = "X-Csrf-Token";
 	private LoginModel loginModel;
 
 	private CloseableHttpClient httpclient;
@@ -64,12 +64,26 @@ public class ClientAPI
 		this.objectMapper = objectMapper;
 	}
 
-	/**
-	 * Connect to server if not already connected
-	 *
-	 * @param loginModel provides login info for REST API
-	 */
-	public void connect(LoginModel loginModel)
+	public void connect(String username, String password, String serverURL)
+	{
+
+		if (!isConnected()) {
+			loginModel = new LoginModel();
+			loginModel.setServerUrl(serverURL);
+			loginModel.setSecurityUrl(serverURL + "/Login.action?Login");
+			loginModel.setLogoffUrl(serverURL + "/Login.action?Logout");
+
+			loginModel.setUsernameField("username");
+			loginModel.setUsername(username);
+
+			loginModel.setPasswordField("password");
+			loginModel.setPassword(password);
+
+			connect(loginModel);
+		}
+	}
+	
+	private void connect(LoginModel loginModel)
 	{
 		if (httpclient == null) {
 			cookieStore = new BasicCookieStore();
@@ -228,20 +242,33 @@ public class ClientAPI
 
 		return response;
 	}
+	
+	private String getCookieValue(String cookieKey)
+	{
+		String value = null;
+		
+		List<Cookie> cookies = cookieStore.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals(cookieKey)) {
+				value = cookie.getValue();
+			}
+		}
+		return value;
+	}
 
 	public <T extends Object> APIResponse httpPost(String apiPath, T value, Map<String, String> parameters)
 	{
-
 		APIResponse response = null;
 		try {
 			StringEntity entity = new StringEntity(objectMapper.writeValueAsString(value));
 
 			RequestConfig defaultRequestConfig = RequestConfig.custom()
 					.setCircularRedirectsAllowed(true).build();
-
+			
 			RequestBuilder builder = RequestBuilder.post()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig)
 					.setEntity(entity);
 
@@ -284,6 +311,7 @@ public class ClientAPI
 			RequestBuilder builder = RequestBuilder.delete()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig);
 
 			if (parameters != null) {
@@ -327,6 +355,7 @@ public class ClientAPI
 			RequestBuilder builder = RequestBuilder.put()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig);
 
 			if (value != null) {

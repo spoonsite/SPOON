@@ -21,7 +21,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.SavedSearchLinkInsertWindow',
 	layout: 'fit',
-
+	id: 'linkToSaveSearchWindow',
 	title: 'Insert Link to Saved Search',
 	closeMode: 'destroy',
 	alwaysOnTop: true,
@@ -77,6 +77,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						{
 							text: 'Insert Link',
 							itemId: 'insert',
+							id: 'insertLinkBtn',
 							iconCls: 'fa fa-lg fa-link icon-button-color-default',
 							disabled: true,
 							handler: function(button) {

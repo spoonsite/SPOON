@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import edu.usu.sdl.apiclient.rest.resource.ContactResourceImpl;
-import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -42,17 +39,6 @@ public class AdminContactsTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> contactIds = new ArrayList<>();
-	private static ContactResourceImpl apiContact = new ContactResourceImpl();
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiContact.connect(username, password, server);
-	}
 
 	@Test
 	public void adminContactsTest() throws InterruptedException
@@ -61,32 +47,23 @@ public class AdminContactsTest
 
 			setupDriver(driver);
 			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", "cameron.cummings-testA@sdl.usu.edu");
-//			createContact(driver, "BBB-TesterFirst", "BBB-TesterLast", "MyAmazing - OrgTest", "cameron.cummings-testB@sdl.usu.edu");
 			createAPIContact();
 			editContact(driver, "AAA-TesterFirst", "000-000-0000");
 			toggleStatusContact(driver, "AAA-TesterFirst", "Active");
 			Assert.assertTrue(verifyStatus(driver, "AAA-TesterFirst", "Inactive"));
 			deleteContact(driver, "AAA-TesterFirst", "Inactive");
-//			toggleStatusContact(driver, "AAA-TesterFirst", "Inactive");
-			sleep(3000);
+			sleep(1000);
 		}
 	}
 
 	private void createAPIContact()
 	{
-		Contact contact = new Contact();
-		contact.setFirstName("BBB-TesterFirst");
-		contact.setLastName("BBB-TesterLast");
-		contact.setEmail("cameron.cummings-testB@sdl.usu.edu");
-		contact.setOrganization("MyAmazingTest-Organization");
-
-		Contact contactAPI = apiContact.createContact(contact);
-		contactIds.add(contactAPI.getContactId());
+		apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "cameron.cummings-testB@sdl.usu.edu", "MyAmazingTest-Organization");
 	}
-
+	
 	public void setupDriver(WebDriver driver)
 	{
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Contacts"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Contacts");
 
 		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
 			List<WebElement> titleElements = driverLocal.findElements(By.id("contactGrid_header-title-textEl"));
@@ -382,10 +359,6 @@ public class AdminContactsTest
 	@AfterClass
 	public static void cleanup()
 	{
-		for (String id : contactIds) {
-			apiContact.deleteContact(id);
-		}
-		
-		apiContact.disconnect();
+		apiClient.cleanup();
 	}
 }

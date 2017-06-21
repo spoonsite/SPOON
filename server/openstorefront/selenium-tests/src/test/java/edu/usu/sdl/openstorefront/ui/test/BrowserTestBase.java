@@ -15,14 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
+import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -48,22 +45,16 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-
+	protected static APIClient apiClient;
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
 	@BeforeClass
 	public static void setupBrowserTestBase()
 	{
-		properties = new Properties();
-		File propertyFile = FileSystemManager.getConfig("testconfig.properties");
-		try (InputStream in = new FileInputStream(propertyFile)) {
-			properties.load(in);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to load Configuration file.");
-		}
-
+		properties = PropertiesUtil.getProperties();
 		webDriverUtil = new WebDriverUtil(properties);
+		apiClient = new APIClient();
 	}
 
 	/*@BeforeClass
@@ -93,10 +84,10 @@ public class BrowserTestBase
 
 			WebDriverWait wait = new WebDriverWait(driver, 20);
 			// Make sure logged out before attempting login.
-			driver.get(webDriverUtil.getPage("Login.action?Logout"));
+			webDriverUtil.getPage(driver, "Login.action?Logout");
 
 			// Now log in
-			driver.get(webDriverUtil.getPage("login.jsp"));
+			webDriverUtil.getPage(driver, "login.jsp");
 
 			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
 			userNameElement.sendKeys(userName);
@@ -120,7 +111,7 @@ public class BrowserTestBase
 	protected static void logout()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			driver.get(webDriverUtil.getPage("Login.action?Logout"));
+			webDriverUtil.getPage(driver, "Login.action?Logout");
 
 			//TODO: confirm logout, return -1 or 0 or a boolean?
 		}

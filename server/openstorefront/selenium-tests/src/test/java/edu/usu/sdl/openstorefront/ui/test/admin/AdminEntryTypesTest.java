@@ -15,17 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import edu.usu.sdl.apiclient.rest.resource.ComponentTypeResourceImpl;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -44,17 +42,6 @@ public class AdminEntryTypesTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> entryTypeIds = new ArrayList<>();
-	private static ComponentTypeResourceImpl apiComponentType = new ComponentTypeResourceImpl();
-	
-	@BeforeClass
-	public static void setupTest()
-	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiComponentType.connect(username, password, server);
-	}
 
 	@Test
 	public void adminEntryTypesTest() throws InterruptedException
@@ -68,28 +55,17 @@ public class AdminEntryTypesTest
 			editEntryTypes(driver, "AMAZING-TEST");
 			toggleStatusEntryType(driver, "AMAZING-TEST");
 			deleteEntryType(driver, "AMAZING-TEST");
-			deleteAPIComponentType("WAAABOOOM", "COMP");
 		}
 	}
-	
+
 	private void createAPIComponentType()
 	{
-		ComponentType compType = new ComponentType();
-		compType.setComponentType("WAAABOOOM");
-		compType.setLabel("This Waaaboom Label");
-		compType.setDescription("Waaabooom Description");
-		
-		ComponentType apiCompType = apiComponentType.createNewComponentType(compType);
-	}
-	
-	private void deleteAPIComponentType(String type, String newType)
-	{
-		apiComponentType.deleteComponentType(type, newType);
+		apiClient.getComponentTypeTestClient().createAPIComponentType();
 	}
 
 	public void setupDriver(WebDriver driver)
 	{
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Entry-Types"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Entry-Types");
 
 		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
 			List<WebElement> titleElements = driverLocal.findElements(By.id("entryGrid_header-title-textEl"));
@@ -265,6 +241,12 @@ public class AdminEntryTypesTest
 			col++;
 		}
 		return -1;
+	}
+
+	@AfterClass
+	public static void cleanup()
+	{
+		apiClient.cleanup();
 	}
 
 }

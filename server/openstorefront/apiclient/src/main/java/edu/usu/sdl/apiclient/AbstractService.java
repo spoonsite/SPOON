@@ -31,29 +31,4 @@ public abstract class AbstractService
 	{
 		this.client = client;
 	}
-
-	public void connect(String username, String password, String serverURL)
-	{
-
-		if (!client.isConnected()) {
-			LoginModel loginModel = new LoginModel();
-			loginModel.setServerUrl(serverURL);
-			loginModel.setSecurityUrl(serverURL + "/Login.action?Login");
-			loginModel.setLogoffUrl(serverURL + "/Login.action?Logout");
-
-			loginModel.setUsernameField("username");
-			loginModel.setUsername(username);
-
-			loginModel.setPasswordField("password");
-			loginModel.setPassword(password);
-
-			client.connect(loginModel);
-		}
-
-	}
-	
-	public void disconnect()
-	{
-		client.disconnect();
-	}
 }

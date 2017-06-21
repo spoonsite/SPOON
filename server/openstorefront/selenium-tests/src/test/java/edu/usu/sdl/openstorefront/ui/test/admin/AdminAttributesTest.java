@@ -15,15 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import edu.usu.sdl.apiclient.rest.resource.AttributeResourceImpl;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -44,18 +40,6 @@ public class AdminAttributesTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> attributeIds = new ArrayList<>();
-	private static AttributeResourceImpl apiAttribute = new AttributeResourceImpl();
-	
-	@BeforeClass
-	public static void setupTest()
-	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiAttribute.connect(username, password, server);
-	}
-
 
 	@Test
 	public void adminAttributesTest() throws InterruptedException
@@ -71,14 +55,13 @@ public class AdminAttributesTest
 			editManageCodes(driver, "MyTestCodeLabel11");
 			toggleStatusManageCodes(driver, "MyTestCodeLabel11");
 			deleteAttribute(driver, "MyTestAttribute17");
-			deleteAPIAttributeType("AAA-KING-TEST");
 		}
 	}
 
 	public void setupDriver(WebDriver driver)
 	{
 
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Attributes"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Attributes");
 
 		//attributeGrid_header-title-textEl
 		//text = Manage Attributes
@@ -94,20 +77,7 @@ public class AdminAttributesTest
 	
 	private void createAPIAttributeType()
 	{
-		AttributeType type = new AttributeType();
-		type.setAttributeType("AAA-KING-TEST");
-		type.setDescription("King Test Attribute Storefront");
-		type.setVisibleFlg(Boolean.TRUE);
-		type.setImportantFlg(Boolean.TRUE);
-		AttributeTypeSave attributeTypeSave = new AttributeTypeSave();
-		attributeTypeSave.setAttributeType(type);
-		
-		AttributeType apiType = apiAttribute.postAttributeType(attributeTypeSave);
-	}
-	
-	private void deleteAPIAttributeType(String type)
-	{
-		apiAttribute.hardDeleteAttributeType(type);
+		apiClient.getAttributeTestClient().createAPIAttribute();
 	}
 
 	public void createAttribute(WebDriver driver, String attrName, String attrCode)
@@ -303,5 +273,11 @@ public class AdminAttributesTest
 
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#manageCodesCloseBtn"))).click();
 		}
+	}
+	
+	@AfterClass
+	public static void cleanup()
+	{
+		apiClient.cleanup();
 	}
 }

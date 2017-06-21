@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,29 +36,32 @@ public class AdminSavedSearchTest
 		extends AdminTestBase
 {
 
-	@BeforeClass
-	public static void setupTest()
-	{
-		login();
-	}
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
 	@Test
-	public void adminSavedSearchTest()
+	public void adminSavedSearchTest() throws JsonProcessingException
 	{
 
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			createSavedSearch(driver);
+			createAPISavedSearch();
 			editSavedSearch(driver);
+			sleep(2000);
 			deleteSavedSearch(driver);
 		}
 
+	}
+	
+	public void createAPISavedSearch() throws JsonProcessingException
+	{
+		apiClient.getSystemSearchTestClient().createAPISystemSearch();
 	}
 
 	public void createSavedSearch(WebDriver driver)
 	{
 
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Searches"));
+		webDriverUtil.getPage(driver, "AdminTool.action?load=Searches");
 		WebDriverWait wait = new WebDriverWait(driver, 5);
 		// click add button
 		WebElement addBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addBtnSearches']")));
@@ -107,13 +112,13 @@ public class AdminSavedSearchTest
 		// save search
 		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
 		saveCriteriaBtn.click();
-		
+
 		try {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
@@ -134,7 +139,7 @@ public class AdminSavedSearchTest
 	public void editSavedSearch(WebDriver driver)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		
+
 		// find search
 		WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
 		List<WebElement> searchesList = driver.findElements(By.tagName("td"));
@@ -166,7 +171,7 @@ public class AdminSavedSearchTest
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
@@ -212,13 +217,13 @@ public class AdminSavedSearchTest
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		// Check to see if deleted/inactive
 		List<WebElement> mySearchesList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view.x-grid-with-col-lines"), By.tagName("td")));
 		boolean inList = false;
@@ -238,7 +243,7 @@ public class AdminSavedSearchTest
 	public void cleanUpTest()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			WebDriverWait wait = new WebDriverWait(driver, 5);
 			WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
 
@@ -258,5 +263,6 @@ public class AdminSavedSearchTest
 			}
 
 		}
+		apiClient.cleanup();
 	}
 }

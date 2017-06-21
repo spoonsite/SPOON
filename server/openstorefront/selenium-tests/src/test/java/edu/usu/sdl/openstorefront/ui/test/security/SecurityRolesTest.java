@@ -1,9 +1,7 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
-import edu.usu.sdl.apiclient.rest.resource.SecurityRoleResourceImpl;
+import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,16 +33,12 @@ public class SecurityRolesTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static List<String> securityRoleIDs = new ArrayList<>();
-	private static SecurityRoleResourceImpl apiSecurityRole = new SecurityRoleResourceImpl();
+	private static APIClient apiClient;
 
 	@BeforeClass
 	public static void setupTest()
 	{
-		String server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		apiSecurityRole.connect(username, password, server);
+		apiClient = new APIClient();
 	}
 
 	// located in SecurityTestBase, read this in to be used in setSecurityRoles method below
@@ -66,7 +60,7 @@ public class SecurityRolesTest
 		signupForAccounts();
 		addSecurityRole();
 		setSecurityRoles();
-		//	importDataRestrictionEntries ();
+//			importDataRestrictionEntries ();
 		//	verifyPermissions();
 	}
 
@@ -134,7 +128,7 @@ public class SecurityRolesTest
 		}
 	}
 
-	public void importDataRestrictionEntries()
+//	public void importDataRestrictionEntries()
 	{
 
 	}
@@ -147,10 +141,6 @@ public class SecurityRolesTest
 	@AfterClass
 	public static void cleanup()
 	{
-		for (String id : securityRoleIDs) {
-			
-		}
-		
-		apiSecurityRole.disconnect();
+		apiClient.cleanup();
 	}
 }
