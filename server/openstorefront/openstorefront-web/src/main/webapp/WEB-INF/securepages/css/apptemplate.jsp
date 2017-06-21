@@ -235,7 +235,7 @@ limitations under the License.
 }
 
 .home-footer {
-	background-color: ${actionBean.branding.primaryColor};	
+	background-color: ${actionBean.branding.secondaryColor};	
 }
 
 .home-footer-contents {	
@@ -828,12 +828,6 @@ td.info-table {
 	background-position: center top;
     background-repeat: no-repeat;
 	background-image: url('${actionBean.branding.homebackSplashUrl}');
-}
-
-.home-footer {
-	/* Secondary-dark */
-	
-	background-color: #2D0D41;
 }
 
 .home-footer-item {

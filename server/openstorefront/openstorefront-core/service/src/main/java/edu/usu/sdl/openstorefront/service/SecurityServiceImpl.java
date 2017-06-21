@@ -260,6 +260,7 @@ public class SecurityServiceImpl
 			userProfile.setLastName(userRegistration.getLastName());
 			userProfile.setOrganization(userRegistration.getOrganization());
 			userProfile.setPhone(userRegistration.getPhone());
+			userProfile.setPositionTitle(userRegistration.getPositionTitle());
 			if (StringUtils.isNotBlank(userRegistration.getUserTypeCode())) {
 				userProfile.setUserTypeCode(userRegistration.getUserTypeCode());
 			} else {

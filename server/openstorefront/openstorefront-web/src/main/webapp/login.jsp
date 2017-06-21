@@ -165,16 +165,59 @@
 				background-color: beige;
 				background-image: url(images/grid.png);
 				background-repeat: repeat;
+				margin: 0px;
 			}
 			.hidden {
 				display: none; 
 				visibility: hidden;
 			}
+			
+			.login-header {
+			   width: 100%;
+			   height: 56px;
+			   background-color: ${branding.primaryColor};
+			}
+			
+			.login-header h1 {
+				margin: auto;
+				text-align: center;
+				color: ${branding.primaryTextColor};
+				padding-top: 10px;
+				font-size: 32px;
+				font-style: normal;
+				letter-spacing: 1px;
+				font-weight: 400;
+			}
+
+			.sub-header {
+				width: 100%;
+				height: 59px;
+				background-color: ${branding.quoteColor};
+				border-top: solid 3px ${branding.accentColor};
+			}
+			
+			.sub-header h2 {
+				margin: auto;
+				text-align: center;
+				color: ${branding.primaryTextColor};
+				padding-top: 15px;
+				font-size: 18px;
+				font-style: italic;
+				letter-spacing: 1px;
+				font-weight: 100;
+			}			
+			
 		</style>
 	</head>
 	<body>
 
-		
+ 	<div class="login-header">	
+    	<h1>${branding.landingPageTitle}</h1>        
+    </div>
+    
+    <div class="sub-header">
+      	<h2>${branding.landingPageBanner}</h2>
+    </div>		
 	<div class="auth-forms">
 	  <div class="auth-content">
 		<div class="row" style="padding-left: 20px;padding-right: 20px;">
