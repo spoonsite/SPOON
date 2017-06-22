@@ -22,12 +22,12 @@ limitations under the License.
 		border: 1px solid #ddd;
 		font-size: 20px;
 		padding-top: 5px;
-		padding-bottom: 5px;		
+		padding-bottom: 5px;
 	}
 	.quickView-tableheader {
 		background-color: lightgrey;
 	}
-	.quickView-tableall {    
+	.quickView-tableall {
 		border: 1px solid #ddd;
 		text-align: left;
 		padding: 5px;
@@ -44,11 +44,11 @@ limitations under the License.
 
 	.quickView-table:nth-child(even) {
 		background: whitesmoke;
-	}	
+	}
 
 	.quickView-table-padding {
 		padding: 15px;
-	}	
+	}
 
 	.review-section
 	{
@@ -62,7 +62,7 @@ limitations under the License.
 	{
 		font-weight: bold;
 	}
-	.review-section .title, 
+	.review-section .title,
 	.review-section .rating
 	{
 		font-weight: bold;
@@ -101,11 +101,11 @@ limitations under the License.
 		margin: 5px 0px;
 	}
 
-	.clearfix:after { 
-	   content: "."; 
-	   visibility: hidden; 
-	   display: block; 
-	   height: 0; 
+	.clearfix:after {
+	   content: ".";
+	   visibility: hidden;
+	   display: block;
+	   height: 0;
 	   clear: both;
 	}
 
@@ -136,8 +136,8 @@ limitations under the License.
 		margin-right: 12px;
 	}
 
-	.evaluation-container {
-		overflow-y: scroll;
+	h3.quickView {
+		background-color: #6c6c6c;
 	}
 
 </style>
@@ -163,8 +163,8 @@ limitations under the License.
 			<span class="searchresults-tag">
 				{text}
 			</span>
-		</tpl>		
-	</tpl>	
+		</tpl>
+	</tpl>
 	<br>
 	<br>
 	<div>
@@ -179,22 +179,22 @@ limitations under the License.
 		<div>
 			<h3 class="quickView toggle-collapse">Evaluation Information <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
-				<table class="quickView-table" border="1" >	
+				<table class="quickView-table" border="1" >
 					<tr>
 						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Name</th>
 						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Score</th>
-					</tr>		
-					<tpl for="evaluation.evaluationSections">			
+					</tr>
+					<tpl for="evaluation.evaluationSections">
 						<tr>
 							<td class="quickView-tableall">{name}</td>
 							<td class="quickView-tableall">{display}</td>
 						</tr>
 					</tpl>
-				</table>		
+				</table>
 				<tpl if="evalLevels && (evalLevels.level || evalLevels.state || evalLevels.intent)">
 					<section>
 						<br>
-						<table class="details-table" width="100%">					
+						<table class="details-table" width="100%">
 							<tpl if="evalLevels.level">
 								<tr class="details-table">
 									<th class="details-table"><b>{evalLevels.level.typeDesciption}</b></th>
@@ -213,22 +213,22 @@ limitations under the License.
 									<td class="details-table highlight-{evalLevels.intent.highlightStyle}" ><h3>{evalLevels.intent.label}</h3>{evalLevels.intent.description}</td>
 								</tr>
 							</tpl>
-						</table>		
-					</section>		
+						</table>
+					</section>
 				</tpl>
 			</section>
 		</div>
-	</tpl>		
+	</tpl>
 	<tpl if="componentMedia && componentMedia.length &gt; 0">
 		<div>
 			<h3 class="quickView toggle-collapse">Media <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table><tr><td>
-					<tpl for="componentMedia">				
+					<tpl for="componentMedia">
 						<div class="detail-media-block-quick">
 							<tpl switch="mediaTypeCode">
 								<tpl case="IMG">
-									<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}"  />		
+									<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}"  />
 								<tpl case="AUD">
 									<i class="fa fa-file-sound-o" style="font-size: 11em;"></i><br><br>
 								<tpl case="VID">
@@ -241,12 +241,12 @@ limitations under the License.
 									<i class="fa fa-file-o" style="font-size: 11em;" ></i><br><br>
 							</tpl>
 							<tpl if="caption"><p class="detail-media-caption">{caption}</p></tpl>
-						</div>					
+						</div>
 					</tpl>
-					</td></tr>	
-				</table>				
+					</td></tr>
+				</table>
 
-			</section>		
+			</section>
 		</div>
 	</tpl>
 	<tpl if="resources && resources.length &gt; 0">
@@ -255,27 +255,27 @@ limitations under the License.
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1" >
 					<tr>
-						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>															
-						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Link</th>					
-					</tr>		
+						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
+						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Link</th>
+					</tr>
 					<tpl for="resources">
 						<tr class="quickView-table">
-							<td class="quickView-tableall" style="width: 175px;">{resourceTypeDesc}</td>						
+							<td class="quickView-tableall" style="width: 175px;">{resourceTypeDesc}</td>
 							<td class="quickView-tableall">
 								<a href='{actualLink}' target="_blank">{originalLink}</a><br>
 								{description}
 							</td>
-						</tr>			
+						</tr>
 					</tpl>
-				</table>	
-			</section>		
+				</table>
+			</section>
 		</div>
-	</tpl>	
-	<tpl if="contacts && contacts.length &gt; 0">	
+	</tpl>
+	<tpl if="contacts && contacts.length &gt; 0">
 		<div>
 			<h3 class="quickView toggle-collapse">Contacts <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
-				<table class="quickView-table" border="1">	
+				<table class="quickView-table" border="1">
 					<tr>
 						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Position</th>
 						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Info</th>
@@ -289,9 +289,9 @@ limitations under the License.
 								{email}<br>
 								{phone}
 							</td>
-						</tr>			
+						</tr>
 					</tpl>
-				</table>	
+				</table>
 			</section>
 		</div>
 	</tpl>
@@ -303,30 +303,30 @@ limitations under the License.
 					<tpl for="dependencies">
 						<tr class="quickView-table">
 							<td class="details-table"><b>{dependencyName} {version}</b> <br>
-						<tpl if="dependancyReferenceLink"><a href="{dependancyReferenceLink}" class="details-table" target="_blank">{dependancyReferenceLink}</a><br></tpl> 
-						<tpl if="comment">{comment}</tpl> 
+						<tpl if="dependancyReferenceLink"><a href="{dependancyReferenceLink}" class="details-table" target="_blank">{dependancyReferenceLink}</a><br></tpl>
+						<tpl if="comment">{comment}</tpl>
 						</td>
 						</tr>
 					</tpl>
-				</table>	
-			</section>		
+				</table>
+			</section>
 		</div>
 	</tpl>
 	<tpl if="vitals && vitals.length &gt; 0">
 		<div>
 			<h3 class="quickView toggle-collapse">Entry Vitals <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
-				<table class="quickView-table" border="1">				
+				<table class="quickView-table" border="1">
 					<tpl for="vitals">
 						<tr class="quickView-table">
 							<td class="quickView-tableall" style="width: 30%;"><b>{label}</b></td>
 							<td class="quickView-tableall">{value}</td>
-						</tr>			
+						</tr>
 					</tpl>
 				</table>
-			</section>		
+			</section>
 		</div>
-	</tpl>	
+	</tpl>
 	<tpl if="relationships && relationships.length &gt; 0">
 		<div>
 			<h3 class="quickView toggle-collapse">Relationships <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
@@ -340,8 +340,8 @@ limitations under the License.
 							<td class="details-table"><a href="view.jsp?id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>
 						</tr>
 					</tpl>
-				</table>			
-			</section>	
+				</table>
+			</section>
 		</div>
 	</tpl>
 	<tpl if="reviews && reviews.length &gt; 0">
@@ -355,33 +355,33 @@ limitations under the License.
 							<div class="title">{title}</div>
 							<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>
 							<div class="review-who-section">
-								{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <strong>Recommend</strong></tpl>	
+								{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <strong>Recommend</strong></tpl>
 							</div>
 							<div><span class="label">Organization:</span> {organization}</div>
-							<div><span class="label">Experience:</span> {userTimeCode}</div>							
+							<div><span class="label">Experience:</span> {userTimeCode}</div>
 							<div><span class="label">Last Used:</span> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}</div>
-						</div>			
+						</div>
 						<div class="pros">
-							<tpl if="pros.length &gt; 0">					
+							<tpl if="pros.length &gt; 0">
 								<div class="review-pro-con-header">Pros</div>
 								<tpl for="pros">
 									- {text}<br>
 								</tpl></tpl>
-						</div>		
+						</div>
 						<div class="cons">
 							<tpl if="cons.length &gt; 0">
 								<div class="review-pro-con-header">Cons</div>
 								<tpl for="cons">
 									- {text}<br>
 								</tpl></tpl>
-						</div>				
+						</div>
 						<div class="comments">
-							<span class="label">Comments:</span>			
+							<span class="label">Comments:</span>
 							<div>{comment}</div>
-						</div>				
+						</div>
 					</div>
 				</tpl>
-			</section>		
+			</section>
 		</div>
 	</tpl>
 	<tpl if="questions && questions.length &gt; 0">
@@ -398,11 +398,11 @@ limitations under the License.
 						<tpl for="responses">
 							<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>
 							<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>
-							<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
+							<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>
 							<hr>
 						</tpl>
-					</div>			
-				</tpl>	
+					</div>
+				</tpl>
 			</section>
 		</div>
 	</tpl>
@@ -421,27 +421,27 @@ limitations under the License.
 						<div>
 							<h3 class="quickView toggle-collapse">Reusability Factors (5=best) <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
-								<div class="rolling-container clearfix">			
+								<div class="rolling-container clearfix">
 									<div class="rolling-container-row">
-										<tpl for="evaluationScores">	
+										<tpl for="evaluationScores">
 											<div class="rolling-container-block">
 												<div class="detail-eval-item ">
 													<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>
 													<span class="detail-eval-score" data-qtip="{average}">{display}</span>
-												</div>	
+												</div>
 											</div>
 										</tpl>
 									</div>
 								</div>
 							</section>
-						</div>	
+						</div>
 					</tpl>
 					<tpl if="checkListAll.evaluationChecklist.summary">
 						<div>
 							<h3 class="quickView toggle-collapse">Evaluation Checklist Summary <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
 								{checkListAll.evaluationChecklist.summary}
-							</section>	
+							</section>
 						</div>
 					</tpl>
 					<tpl if="checkListAll.recommendations && checkListAll.recommendations.length &gt; 0">
@@ -497,7 +497,7 @@ limitations under the License.
 											<td class="details-table">
 												<b>{question.qid}</b>
 											</td>
-											
+
 											<!-- Section -->
 											<td class="details-table" style="text-align: center">{question.evaluationSectionDescription}</td>
 
