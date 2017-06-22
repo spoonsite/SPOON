@@ -44,6 +44,7 @@ public class AdminSavedSearchTest
 
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
+			webDriverUtil.getPage(driver, "AdminTool.action?load=Searches");
 			createSavedSearch(driver);
 			createAPISavedSearch();
 			editSavedSearch(driver);
@@ -52,7 +53,7 @@ public class AdminSavedSearchTest
 		}
 
 	}
-	
+
 	public void createAPISavedSearch() throws JsonProcessingException
 	{
 		apiClient.getSystemSearchTestClient().createAPISystemSearch();
@@ -60,8 +61,6 @@ public class AdminSavedSearchTest
 
 	public void createSavedSearch(WebDriver driver)
 	{
-
-		webDriverUtil.getPage(driver, "AdminTool.action?load=Searches");
 		WebDriverWait wait = new WebDriverWait(driver, 5);
 		// click add button
 		WebElement addBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addBtnSearches']")));

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test;
 
 import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
+import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
@@ -32,6 +33,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -124,6 +126,27 @@ public class BrowserTestBase
 			Thread.sleep(mills);
 		} catch (InterruptedException ex) {
 			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
+	protected void driverWait(DriverWork work, long maxMilliSeconds) 
+	{
+		boolean done = false;
+		long startTime = System.currentTimeMillis();
+		
+				
+		while (!done || (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
+			try {
+				work.performWork();
+				done = true;
+			} catch (WebDriverException ex) {
+				sleep(500);
+				LOG.log(Level.WARNING, ex.getMessage() + " Retrying...");
+			}
+		}
+		
+		if (!done) {
+			throw new WebDriverException("Browser failure");
 		}
 	}
 
