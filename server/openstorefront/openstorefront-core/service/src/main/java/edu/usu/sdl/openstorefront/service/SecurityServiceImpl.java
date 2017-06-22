@@ -720,6 +720,11 @@ public class SecurityServiceImpl
 			persistenceService.delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));
+		} else {
+			//delete registration; still existing
+			UserRegistration userRegistration = new UserRegistration();
+			userRegistration.setUsername(username);
+			persistenceService.deleteByExample(userRegistration);
 		}
 	}
 

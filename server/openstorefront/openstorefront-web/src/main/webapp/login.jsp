@@ -14,15 +14,20 @@
 	Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 	request.setAttribute("branding", branding);
 	
+	//Media needs to blocked; Branding is open...restrict to branding media;
+	String loginLogo = branding.getPrimaryLogoUrl().replace("Media.action", "Branding.action");
+	request.setAttribute("loginLogo", loginLogo);
+	
 	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 	
 %>
 <html>
 	<head>
-		
+		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<title>${branding.getApplicationName()}</title>
 		
 		<script type="text/javascript">
 		   try {
@@ -144,7 +149,7 @@
 				-webkit-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 			}
 			.loginError {
-				display: block;
+				display: block !important;
 				color: red;
 				padding: 5px;
 				width: 100%;
@@ -205,7 +210,11 @@
 				font-style: italic;
 				letter-spacing: 1px;
 				font-weight: 100;
-			}			
+			}	
+			
+			.logos {
+			   margin-bottom: 20px;
+			}
 			
 		</style>
 	</head>
@@ -222,24 +231,33 @@
 	  <div class="auth-content">
 		<div class="row" style="padding-left: 20px;padding-right: 20px;">
 		  <h2>Log In</h2>
+		  <div class="logos">
+			  <map name="pagemap">
+					<area shape="rect" coords="0,0,150,200" href="https://www.nasa.gov" target="_blank" alt="Nasa">
+					<area shape="rect" coords="150,0,560,200" href="https://www.nasa.gov/smallsat-institute" target="_blank" alt="Nasa S3VI">
+					<area shape="rect" coords="560,0,710,200" href="http://www.wpafb.af.mil/afrl/" target="_blank" alt="AFRL">
+			  </map>	  
+			  			  
+			  <img src="${loginLogo}" usemap="pagemap" />
+		  </div>		  
 		  <form id="loginForm" action="Login.action?Login" method="POST">
 			 <%=branding.getLoginWarning() %>				 
 			<div style="width: 500px; margin: 0px auto;">
 				<p id="serverError" class="clearError" >
-					Unable to connect to server.  Refresh page and try again.
+					Unable to connect to server or server failure.  Refresh page and try again.
 				</p>	
-			
+				
 				
 				
 				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
 				Username <br>
 				<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
-				<p id="usernameError" class="clearError"></p> 				
+				<p id="usernameError" class="clearError" style="color: red; font-weight: bold"></p> 				
 				<br>
 				<br>
 				Password <br>
 				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ submitForm(); } ">
-				<p id="passwordError" class="clearError"></p>					
+				<p id="passwordError" class="clearError" style="color: red; font-weight: bold"></p>					
 				<br>
 				<br>
 				<input type="button" value="Log in" style="width: 100px;" class="btn btn-primary" onclick="submitForm();" />									
@@ -302,9 +320,33 @@
 				$("#passwordError").addClass("clearError");				
 				$("#serverError").addClass("clearError");
 				 	
-				 $.ajax({
+					
+				function getCookie(cname) {
+					var name = cname + "=";
+					var decodedCookie = decodeURIComponent(document.cookie);
+					var ca = decodedCookie.split(';');
+					for(var i = 0; i <ca.length; i++) {
+						var c = ca[i];
+						while (c.charAt(0) === ' ') {
+							c = c.substring(1);
+						}
+						if (c.indexOf(name) === 0) {
+							return c.substring(name.length, c.length);
+						}
+					}
+					return "";
+				}					
+				
+				var token = getCookie('X-Csrf-Token');
+		
+				$.ajax({
 					 type: "POST",
 					 url: 'Login.action?Login',
+					 headers: [
+						{
+							'X-Csrf-Token':	token
+						}
+					 ],
 					 data: {
 						username: $('#username').val(),
 						password: $('#password').val(),
@@ -335,8 +377,12 @@
 							}
 						 }						 
 					 },
-					 error: function(xhr, status, errorThrown) {	
-						$("#serverError").addClass("loginError");							
+					 error: function(xhr, status, errorThrown) {
+						if (xhr.status === 403) {
+							alert('403 - Already logged in on this browser. Logout and try again.');
+						} else {
+							$("#serverError").addClass("loginError");							
+						}
 					 }
 				 });
 			}			
