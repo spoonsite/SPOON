@@ -20,6 +20,110 @@
 
 var CoreUtil = {	
 	pageActions: {},
+	toggleEventListener: function (event) {
+		var el = event.target;
+
+		// find the parent div
+		var parentDiv = typeof el.parentElement.getElementsByTagName('section')[0] !== 'undefined' ? el.parentElement : el.parentElement.parentElement;
+		var caret = parentDiv.getElementsByTagName('h3')[0].getElementsByTagName('div')[0];
+		var section = parentDiv.getElementsByTagName('section')[0];
+
+    	// Toggle the class
+    	if (section.className === 'eval-visible-true') {
+    		section.className = 'eval-visible-false';
+    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
+    		caret.setAttribute('data-qtip', 'Expand panel');
+    	}
+    	else {
+    		section.className = 'eval-visible-true';
+    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
+    		caret.setAttribute('data-qtip', 'Collapse panel');
+    	}
+	},
+	calculateEvalutationScore: function (obj) {
+		// obj.data.fullEvaluation requires the key: checkListAll
+		var fullEvaluations = obj.fullEvaluations
+		var data = obj.data;
+		var callBack = obj.success;
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/lookuptypes/EvaluationSection',
+			success: function(response, opts){
+				var sectionLookup = Ext.decode(response.responseText);
+				
+				var findSectionDesc = function(sectionKey) {
+					var desc = null;
+					Ext.Array.each(sectionLookup, function(lookup) {
+						if (lookup.code === sectionKey) {
+							desc = lookup.detailedDescription;
+						}
+					});
+					return desc;
+				};
+
+				for (let ii = 0; ii < fullEvaluations.length; ii += 1) {
+					//group by section
+					var groupStatus = {};				
+					Ext.Array.each(fullEvaluations[ii].checkListAll.responses, function(response){
+						if (groupStatus[response.question.evaluationSection]) {
+							var stat = groupStatus[response.question.evaluationSection];						
+							if (!response.notApplicable) {
+								stat.count++;
+								stat.totalScore += response.score;
+							}
+						} else {
+							groupStatus[response.question.evaluationSection] = {
+								title: response.question.evaluationSectionDescription,
+								sectionDescription: findSectionDesc(response.question.evaluationSection),
+								count: 1,									
+								totalScore: response.score ? response.score : 0
+							};
+						}
+					});
+					
+
+					//average and add dots
+					var sections = [];
+					Ext.Object.eachValue(groupStatus, function(section) {
+						if (isNaN(section.count)) {
+							section.count = 0;
+						}
+						if (section.count > 0) {
+							section.average = Math.round((section.totalScore/section.count)*10) / 10;
+							
+							var score = Math.round(section.average);
+							section.display = "";
+							for (var i= 0; i<score; i++){
+								section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+							}								
+						} else {
+							section.average = 0;								
+						}
+						if (isNaN(section.average) || section.average < 1) {
+							section.average = 0;
+							section.display = 'N/A';
+						}
+						
+						sections.push(section);
+					});
+					Ext.Array.sort(sections, function(a, b){
+						return a.title.localeCompare(b.title);
+					});
+
+					fullEvaluations[ii].evaluationScores = sections;
+					fullEvaluations[ii].evaluationCount = fullEvaluations.length;
+				}
+				
+				// if obj.success was not defined, just return the data
+				if (typeof obj.success !== 'undefined') {
+					callBack({fullEvaluations:fullEvaluations}, data);
+				}
+				else {
+					return {fullEvaluations:fullEvaluations};
+				}
+			}
+		});
+	},
 	showContextMenu: function (menu, event) {
 
 		event.stopEvent();
