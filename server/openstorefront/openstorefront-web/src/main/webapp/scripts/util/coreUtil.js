@@ -24,7 +24,7 @@ var CoreUtil = {
 		// obj.data.fullEvaluation requires the key: checkListAll
 		// var data = obj.data;
 		var fullEvaluations = obj.fullEvaluations
-		var data = {};
+		var data = obj.data;
 		var callBack = obj.success;
 
 		Ext.Ajax.request({
@@ -97,7 +97,7 @@ var CoreUtil = {
 				
 				// if obj.success was not defined, just return the data
 				if (typeof obj.success !== 'undefined') {
-					callBack({fullEvaluations:fullEvaluations});
+					callBack({fullEvaluations:fullEvaluations}, data);
 				}
 				else {
 					return {fullEvaluations:fullEvaluations};

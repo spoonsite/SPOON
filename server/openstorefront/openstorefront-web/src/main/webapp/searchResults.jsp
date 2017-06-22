@@ -113,6 +113,24 @@
 					]
 				});
 				evaluationChecklistWindow.show();
+			},
+			toggleEventListener: function (event) {
+				var el = event.target;
+
+				// find the parent div
+				var parentDiv = typeof el.parentElement.getElementsByTagName('section')[0] !== 'undefined' ? el.parentElement : el.parentElement.parentElement;
+				var caret = parentDiv.getElementsByTagName('h3')[0].getElementsByTagName('div')[0];
+				var section = parentDiv.getElementsByTagName('section')[0];
+
+		    	// Toggle the class
+		    	if (section.className === 'eval-visible-true') {
+		    		section.className = 'eval-visible-false';
+		    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
+		    	}
+		    	else {
+		    		section.className = 'eval-visible-true';
+		    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
+		    	}
 			}
 		};
 
@@ -197,7 +215,21 @@
 												success: function(response, opts) {
 													var data = Ext.decode(response.responseText);
 													data = CoreUtil.processEntry(data);
-													comparePanel.update(data);
+													
+													CoreUtil.calculateEvalutationScore({
+														fullEvaluations: data.fullEvaluations,
+														evaluation: data.fullEvaluations,
+														success: function (newData) {
+															Object.assign(data, newData);
+															comparePanel.update(data);
+
+															// Add event listeners for toggle-able containers
+															document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
+															  	el.removeEventListener('click', SearchPage.toggleEventListener);
+															  	el.addEventListener('click', SearchPage.toggleEventListener);
+															});
+														}
+													});
 												}
 											});
 										} else {
@@ -261,8 +293,13 @@
 														evaluation: data.fullEvaluations,
 														success: function (newData) {
 															Object.assign(data, newData);
-															console.log("NEW DATA: ", data);
 															comparePanel.update(data);
+
+															// Add event listeners for toggle-able containers
+															document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
+															  	el.removeEventListener('click', SearchPage.toggleEventListener);
+															  	el.addEventListener('click', SearchPage.toggleEventListener);
+															});
 														}
 													});
 												}
