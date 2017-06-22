@@ -112,7 +112,21 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
 						data = CoreUtil.processEntry(data);
-						visPanel.viewWin.update(data);
+						
+						CoreUtil.calculateEvalutationScore({
+							fullEvaluations: data.fullEvaluations,
+							evaluation: data.fullEvaluations,
+							success: function (newData) {
+								Object.assign(data, newData);
+								visPanel.viewWin.update(data);
+
+								// Add event listeners for toggle-able containers
+								document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
+								  	el.removeEventListener('click', CoreUtil.toggleEventListener);
+								  	el.addEventListener('click', CoreUtil.toggleEventListener);
+								});
+							}
+						});
 					}
 				});
 				

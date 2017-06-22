@@ -134,10 +134,18 @@ limitations under the License.
 	}
 	.eval-toggle-caret {
 		margin-right: 12px;
+		color: #e2e2e2;
+	}
+	.eval-toggle-caret:hover {
+		color: #fff;
+		cursor: pointer;
 	}
 
 	h3.quickView {
 		background-color: #6c6c6c;
+		cursor: pointer;
+		height: 50px;
+		padding-top: 0.75em;
 	}
 
 </style>
@@ -168,7 +176,7 @@ limitations under the License.
 	<br>
 	<br>
 	<div>
-		<h3 class="quickView toggle-collapse">Description <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret" role="presentation"></div></h3>
+		<h3 class="quickView toggle-collapse">Description <div data-qtip="Collapse panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret" role="presentation"></div></h3>
 		<section class="eval-visible-true">
 			<p>{description}</p>
 			<br>
@@ -177,7 +185,7 @@ limitations under the License.
 	</div>
 	<tpl if="evaluation.evaluationSections && evaluation.evaluationSections.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Evaluation Information <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Evaluation Information <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1" >
 					<tr>
@@ -221,7 +229,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="componentMedia && componentMedia.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Media <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Media <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table><tr><td>
 					<tpl for="componentMedia">
@@ -251,7 +259,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="resources && resources.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Resources <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Resources <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1" >
 					<tr>
@@ -273,7 +281,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="contacts && contacts.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Contacts <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Contacts <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1">
 					<tr>
@@ -297,7 +305,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="dependencies && dependencies.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Dependencies <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Dependencies <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="details-table" width="100%">
 					<tpl for="dependencies">
@@ -314,7 +322,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="vitals && vitals.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Entry Vitals <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Entry Vitals <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1">
 					<tpl for="vitals">
@@ -329,7 +337,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="relationships && relationships.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">Relationships <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">Relationships <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" width="100%">
 					<tr><th class="details-table">Entry</th><th class="details-table">Relationship Type</th><th class="details-table">Related Entry</th></tr>
@@ -346,7 +354,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="reviews && reviews.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">User Reviews <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">User Reviews <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<tpl for="reviews">
 					<div class="review-section">
@@ -386,7 +394,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="questions && questions.length &gt; 0">
 		<div>
-			<h3 class="quickView toggle-collapse">User Questions <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+			<h3 class="quickView toggle-collapse">User Questions <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<tpl for="questions">
 					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
@@ -410,7 +418,7 @@ limitations under the License.
 	<!-- Evaluations -->
 	<tpl for="fullEvaluations">
 		<div>
-			<h3 class="quickView toggle-collapse">Evaluation <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div>
+			<h3 class="quickView toggle-collapse">Evaluation <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div>
 				<tpl if="evaluationCount &gt; 1">
 					<div class="version-description">version - {evaluation.version}</div>
 				</tpl>
@@ -419,7 +427,7 @@ limitations under the License.
 				<section class="eval-visible-false">
 					<tpl if="evaluationScores && evaluationScores.length &gt; 0">
 						<div>
-							<h3 class="quickView toggle-collapse">Reusability Factors (5=best) <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+							<h3 class="quickView toggle-collapse">Reusability Factors (5=best) <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
 								<div class="rolling-container clearfix">
 									<div class="rolling-container-row">
@@ -438,7 +446,7 @@ limitations under the License.
 					</tpl>
 					<tpl if="checkListAll.evaluationChecklist.summary">
 						<div>
-							<h3 class="quickView toggle-collapse">Evaluation Checklist Summary <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+							<h3 class="quickView toggle-collapse">Evaluation Checklist Summary <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
 								{checkListAll.evaluationChecklist.summary}
 							</section>
@@ -446,7 +454,7 @@ limitations under the License.
 					</tpl>
 					<tpl if="checkListAll.recommendations && checkListAll.recommendations.length &gt; 0">
 						<div>
-							<h3 class="quickView toggle-collapse">Evaluation Recommendations <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+							<h3 class="quickView toggle-collapse">Evaluation Recommendations <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
 								<table class="quickView-table" width="100%">
 									<tr><th class="details-table">Type</th><th class="details-table">Recommendation</th><th class="details-table">Reason</th></tr>
@@ -464,7 +472,7 @@ limitations under the License.
 					<tpl if="contentSections && contentSections.length &gt; 0">
 						<tpl for="contentSections">
 							<div>
-								<h3 class="quickView toggle-collapse">{section.title} <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+								<h3 class="quickView toggle-collapse">{section.title} <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 								<section class="eval-visible-false">
 									<div>{section.content}</div>
 									<tpl if="subsections.length &gt; 0">
@@ -481,7 +489,7 @@ limitations under the License.
 					</tpl>
 					<tpl if="checkListAll.responses && checkListAll.responses.length &gt; 0">
 						<div>
-							<h3 class="quickView toggle-collapse">Evaluation Checklist Details <div style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+							<h3 class="quickView toggle-collapse">Evaluation Checklist Details <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 							<section class="eval-visible-false">
 								<table class="quickView-table" width="100%">
 									<tr>

@@ -20,9 +20,28 @@
 
 var CoreUtil = {	
 	pageActions: {},
+	toggleEventListener: function (event) {
+		var el = event.target;
+
+		// find the parent div
+		var parentDiv = typeof el.parentElement.getElementsByTagName('section')[0] !== 'undefined' ? el.parentElement : el.parentElement.parentElement;
+		var caret = parentDiv.getElementsByTagName('h3')[0].getElementsByTagName('div')[0];
+		var section = parentDiv.getElementsByTagName('section')[0];
+
+    	// Toggle the class
+    	if (section.className === 'eval-visible-true') {
+    		section.className = 'eval-visible-false';
+    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
+    		caret.setAttribute('data-qtip', 'Expand panel');
+    	}
+    	else {
+    		section.className = 'eval-visible-true';
+    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
+    		caret.setAttribute('data-qtip', 'Collapse panel');
+    	}
+	},
 	calculateEvalutationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
-		// var data = obj.data;
 		var fullEvaluations = obj.fullEvaluations
 		var data = obj.data;
 		var callBack = obj.success;

@@ -113,24 +113,6 @@
 					]
 				});
 				evaluationChecklistWindow.show();
-			},
-			toggleEventListener: function (event) {
-				var el = event.target;
-
-				// find the parent div
-				var parentDiv = typeof el.parentElement.getElementsByTagName('section')[0] !== 'undefined' ? el.parentElement : el.parentElement.parentElement;
-				var caret = parentDiv.getElementsByTagName('h3')[0].getElementsByTagName('div')[0];
-				var section = parentDiv.getElementsByTagName('section')[0];
-
-		    	// Toggle the class
-		    	if (section.className === 'eval-visible-true') {
-		    		section.className = 'eval-visible-false';
-		    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
-		    	}
-		    	else {
-		    		section.className = 'eval-visible-true';
-		    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
-		    	}
 			}
 		};
 
@@ -225,8 +207,8 @@
 
 															// Add event listeners for toggle-able containers
 															document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
-															  	el.removeEventListener('click', SearchPage.toggleEventListener);
-															  	el.addEventListener('click', SearchPage.toggleEventListener);
+															  	el.removeEventListener('click', CoreUtil.toggleEventListener);
+															  	el.addEventListener('click', CoreUtil.toggleEventListener);
 															});
 														}
 													});
@@ -297,8 +279,8 @@
 
 															// Add event listeners for toggle-able containers
 															document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
-															  	el.removeEventListener('click', SearchPage.toggleEventListener);
-															  	el.addEventListener('click', SearchPage.toggleEventListener);
+															  	el.removeEventListener('click', CoreUtil.toggleEventListener);
+															  	el.addEventListener('click', CoreUtil.toggleEventListener);
 															});
 														}
 													});
