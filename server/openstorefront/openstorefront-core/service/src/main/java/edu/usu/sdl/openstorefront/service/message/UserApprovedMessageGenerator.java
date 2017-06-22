@@ -24,13 +24,13 @@ import org.codemonkey.simplejavamail.email.Email;
  * @author dshurtleff
  */
 public class UserApprovedMessageGenerator
-	extends BaseMessageGenerator
+		extends BaseMessageGenerator
 {
-	
+
 	public UserApprovedMessageGenerator(MessageContext messageContext)
 	{
 		super(messageContext);
-	}	
+	}
 
 	@Override
 	protected String getSubject()
@@ -42,14 +42,17 @@ public class UserApprovedMessageGenerator
 	protected String generateMessageInternal(Email email)
 	{
 		UserProfile userProfile = messageContext.getUserProfile();
-		
+
 		StringBuilder message = new StringBuilder();
-		message.append("Your user account request for " + userProfile.getUsername() + " has been approved.<br><br>");
-		
+		message.append("Your user account request for ")
+				.append(userProfile.getUsername())
+				.append(" has been approved.<br><br>");
+
 		String externalHostUrl = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
-		message.append("Login to use the system. <a href='"+ externalHostUrl+"'>" + externalHostUrl + "</a><br>");
-		
-	
+		message.append("Login to use the system. <a href='")
+				.append(externalHostUrl).append("'>")
+				.append(externalHostUrl).append("</a><br>");
+
 		return message.toString();
 	}
 
@@ -58,5 +61,5 @@ public class UserApprovedMessageGenerator
 	{
 		return "If you are not the intended user of this message, please delete this message. ";
 	}
-	
+
 }

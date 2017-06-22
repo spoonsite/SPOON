@@ -41,7 +41,7 @@ public class UserProfile
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String username;
-	
+
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
@@ -61,6 +61,11 @@ public class UserProfile
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String phone;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String positionTitle;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -248,6 +253,16 @@ public class UserProfile
 	public void setSearchResultView(String searchResultView)
 	{
 		this.searchResultView = searchResultView;
+	}
+
+	public String getPositionTitle()
+	{
+		return positionTitle;
+	}
+
+	public void setPositionTitle(String positionTitle)
+	{
+		this.positionTitle = positionTitle;
 	}
 
 }

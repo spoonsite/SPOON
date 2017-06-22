@@ -167,10 +167,17 @@
 													url: 'api/v1/resource/organizations/lookup'
 												}
 											}
-										},							
+										},	
 										{
 											xtype: 'textfield',
-											fieldLabel: 'Email <span class="field-required" />',
+											fieldLabel: 'Position Title',
+											name: 'positionTitle',											
+											allowBlank: false,
+											maxLength: 255
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Business Email <span class="field-required" />',
 											name: 'email',
 											vtype: 'email',
 											allowBlank: false,
@@ -178,7 +185,7 @@
 										},	
 										{
 											xtype: 'textfield',
-											fieldLabel: 'Phone <span class="field-required" />',
+											fieldLabel: 'Business Phone <span class="field-required" />',
 											name: 'phone',
 											allowBlank: false,
 											maxLength: 80

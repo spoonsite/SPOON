@@ -770,7 +770,7 @@
 					});
 					
 					if (!template) {
-						var landingTab = addEditBrandingWin.queryById('landingPageTab');
+						var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
 						template = landingTab.getTemplate();
 					}
 					data.landingTemplate = template;
@@ -783,7 +783,8 @@
 							branding: data
 						},
 						success: function(response, opts){
-							Ext.toast('Saved Successfully');												
+							Ext.toast('Saved Successfully');
+							form.getForm().setValues(form.getValues());
 							actionRefresh();
 							var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
 							if (data.useDefaultLandingPage) {

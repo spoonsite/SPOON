@@ -290,9 +290,10 @@ Ext.onReady(function() {
 	});	
 	
 	Ext.Ajax.on('requestcomplete', function (conn, response, options, eOpts) {
-		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
+		if (response.responseText && response.responseText.indexOf('***USER-NOT-LOGIN***') !== -1) {
 			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
-			if (response.request.url.indexOf('service/security/shiroconfig') === -1) {			
+			if (response.request.url.indexOf('service/security/shiroconfig') === -1 &&					
+				response.request.url.indexOf('resource/errortickets') === -1) {	
 				currentlocation = currentlocation + window.parent.location.search;
 				window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
 			}

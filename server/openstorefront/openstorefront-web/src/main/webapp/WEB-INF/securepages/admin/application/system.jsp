@@ -2134,9 +2134,7 @@
 				actionLoadRecentChangesInfo();
 
 				var systemMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'System Management &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
-					width: 400,
-					height: 400,
+					title: 'System Management &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',					
 					items: [
 						statusPanel,
 						errorTicketsGrid,
