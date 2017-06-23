@@ -59,6 +59,7 @@ public class FileSystemManager
 	public static final String TEMPORARY_MEDIA_DIR = MAIN_PERM_DIR + "/temporarymedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
+	public static final String ORGANIZATION_DIR = MAIN_PERM_DIR + "/organization";
 	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
 	public static final String PLUGIN_DIR = MAIN_PERM_DIR + "/plugins";
 	public static final String COMPONENT_VERSION_DIR = MAIN_PERM_DIR + "/componentversion";

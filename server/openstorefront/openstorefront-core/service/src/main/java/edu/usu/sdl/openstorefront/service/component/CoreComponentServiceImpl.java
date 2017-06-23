@@ -2604,4 +2604,43 @@ public class CoreComponentServiceImpl
 		}
 	}
 
+	public String resolveComponentIcon(String componentId)
+	{
+		String iconMediaId = null;
+		Element element = OSFCacheManager.getComponentIconCache().get(componentId);
+		if (element != null) {
+			String componentMediaId = (String) element.getObjectValue();
+			if (StringUtils.isNotBlank(componentMediaId)) {
+				iconMediaId = componentMediaId;
+			}
+		} else {
+			ComponentMedia componentMediaExample = new ComponentMedia();
+			componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+			componentMediaExample.setIconFlag(Boolean.TRUE);
+
+			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
+			for (ComponentMedia componentMedia : allIconMedia) {
+				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
+				OSFCacheManager.getComponentIconCache().put(newElement);
+				if (componentMedia.getComponentId().equals(componentId)) {
+					iconMediaId = componentMedia.getComponentMediaId();
+				}
+			}
+		}
+		return iconMediaId;
+	}
+
+	public String resolveComponentTypeIcon(String componentType)
+	{
+		String typeIcon = null;
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		for (ComponentType componentTypeLocal : componentTypes) {
+			if (componentTypeLocal.getComponentType().equals(componentType)) {
+				typeIcon = componentTypeLocal.getIconUrl();
+			}
+		}
+
+		return typeIcon;
+	}
+
 }

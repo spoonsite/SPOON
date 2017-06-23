@@ -28,7 +28,7 @@ var CoreService = {
 
 			var haveUser = false;
 
-			//page level cache (safe but, minimual impact as it only help complex nested components)
+			//page level cache (safe but, minimual impact as it only helps complex nested components)
 			if (userservice.user && !forceReload) {
 				deferred.resolve(userservice.user);
 				haveUser = true;
@@ -279,9 +279,48 @@ var CoreService = {
 			});
 			return promise;
 		}
+	},
+	iconservice: {
+
+		/**
+		 * This will return array of icon classes
+		 * @returns {Ext.Deferred.promise}
+		 */
+		getAllIcons: function () {
+
+			var deferred = new Ext.Deferred();
+
+
+			//this will pull font awesome icons
+			var currentFontAwesome = 'webjars/font-awesome/4.7.0/css/font-awesome.css';
+			Ext.Ajax.request({
+				url: currentFontAwesome,
+				success: function (response, opts) {
+					var iconsClasses = [];
+					var lines = response.responseText.split('\n');
+					Ext.Array.each(lines, function (line) {
+						if (line.indexOf(':before') !== -1) {
+							var iconCls = line.replace(':before {', '').replace('.', '').replace(':before,', '');
+							iconsClasses.push({
+								cls: iconCls,
+								view: '<i class="fa ' + iconCls + '" ></i> ' + iconCls
+							});
+						}
+					});
+					iconsClasses.sort(function (a, b) {
+						return a.cls.localeCompare(b.cls);
+					});
+					deferred.resolve(iconsClasses);
+				},
+				failure: function (response, opts) {
+					deferred.reject("Error loading user.");
+				}
+			});
+
+			return deferred.promise;
+		}
 
 	}
-
 
 };
 

@@ -385,7 +385,7 @@
 						text: 'Important',
 						dataIndex: 'importantFlg',
 						flex: 1, 
-						tooltip: 'This shows on the summary page.',
+						tooltip: 'Shows on main page browse categories?',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -2269,7 +2269,7 @@
 									deferEmptyText: false,
 									emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
 								},
-								search: {
+								search: {									
 									field: 'description',
 									bodyStyle: 'background: white;',
 									store: Ext.create('Ext.data.Store', {

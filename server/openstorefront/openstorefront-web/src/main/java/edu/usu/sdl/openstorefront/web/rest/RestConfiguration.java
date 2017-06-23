@@ -40,13 +40,15 @@ public class RestConfiguration
 	@Inject
 	public RestConfiguration(ServiceLocator locator)
 	{
-		// jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is reolcved for the version we are using
+		// jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is resolved for the version we are using
 		// replace register(new AppStart()); with ServiceLocatorUtilities.enableImmediateScope(locator);
 
 		register(new AppStart());
-		register(new AbstractBinder(){
+		register(new AbstractBinder()
+		{
 			@Override
-            protected void configure() {
+			protected void configure()
+			{
 				// NOTE (KB): do not add anymore bind calls until a solution is found for getting stripes (ActionBeans) access to the jersey/hk2 Request Scope.
 				bind(CoreSystem.class).to(CoreSystem.class).in(Singleton.class);
 				bind(ApplicationInit.class).to(ApplicationInit.class).in(Singleton.class);

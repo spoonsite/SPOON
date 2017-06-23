@@ -46,6 +46,7 @@ public class OSFCacheManager
 	private static Cache componentApprovalCache;
 	private static Cache componentDataRestrictionCache;
 	private static Cache componentTypeCache;
+	private static Cache componentIconCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
 	private static Cache searchCache;
@@ -95,6 +96,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentApprovalCache", 50000, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
+
+			memoryOnlyCache = new Cache("componentIconCache", 50000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentIconCache = singletonManager.getCache("componentIconCache");
 
 			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
@@ -209,6 +214,11 @@ public class OSFCacheManager
 	public static Cache getChecklistQuestionCache()
 	{
 		return checklistQuestionCache;
+	}
+
+	public static Cache getComponentIconCache()
+	{
+		return componentIconCache;
 	}
 
 	@Override

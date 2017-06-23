@@ -93,6 +93,11 @@ public class ComponentMedia
 	@DefaultValue("false")
 	private Boolean usedInline;
 
+	@ConsumeField
+	@APIDescription("Specific the media to be used as an icon; Only one active icon should exist.")
+	@DefaultValue("false")
+	private Boolean iconFlag;
+
 	public ComponentMedia()
 	{
 	}
@@ -109,6 +114,8 @@ public class ComponentMedia
 				+ getHideInDisplay()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getUsedInline()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getIconFlag()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
 		return key;
@@ -142,6 +149,7 @@ public class ComponentMedia
 		this.setMediaTypeCode(media.getMediaTypeCode());
 		this.setHideInDisplay(media.getHideInDisplay());
 		this.setUsedInline(media.getUsedInline());
+		this.setIconFlag(media.getIconFlag());
 	}
 
 	@Override
@@ -271,6 +279,16 @@ public class ComponentMedia
 	public void setUsedInline(Boolean usedInline)
 	{
 		this.usedInline = usedInline;
+	}
+
+	public Boolean getIconFlag()
+	{
+		return iconFlag;
+	}
+
+	public void setIconFlag(Boolean iconFlag)
+	{
+		this.iconFlag = iconFlag;
 	}
 
 }

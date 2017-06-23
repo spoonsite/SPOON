@@ -267,21 +267,23 @@ Ext.define('OSF.component.DataSourceComboBox', {
 
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',
-	alias: 'osf.widget.UserMenu',
+	alias: 'widget.osf-UserMenu',
 		
 	scale: 'large',
-	ui: 'default',	
-	minWidth: 170,
+	ui: 'default',		
 	maxWidth: 250,
 	initCallBack: null,
 	showUserTools: true,
 	showAdminTools: true,
 	showEvaluatorTools: true,
 	showHelp: true,
-	menu: {},
+	showFeedback: true,
+	menu: {
+		minWidth: 200
+	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow',{}),
-	
+	customMenuItems: [],	
 	initComponent: function() {
 		this.callParent();
 		
@@ -289,74 +291,88 @@ Ext.define('OSF.component.UserMenu', {
 		
 		var menu = userMenu.getMenu();
 				
-		var menuItems = [];
-		
-		menuItems.push({
-			text: 'Home',
-			iconCls: 'fa fa-2x fa-home icon-button-color-default',
-			href: 'index.jsp'			
-		});
-		
-		if (userMenu.showAdminTools) {
+		userMenu.loadMenu = function() {		
+			menu.removeAll();
+				
+			var menuItems = [];
+
 			menuItems.push({
-				text: 'Admin Tools',
-				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-2x fa-gear icon-button-color-default',
-				hidden: true,
-				href: 'AdminTool.action'	
+				text: 'Home',
+				iconCls: 'fa fa-2x fa-home icon-button-color-default',
+				href: 'Landing.action'			
 			});
-		}		
-		
-		if (userMenu.showUserTools) {
-			menuItems.push({
-				text: 'User Tools',
-				iconCls: 'fa fa-2x fa-user icon-button-color-default',
-				href: 'UserTool.action'		
-			});
-		}			
-		
-		if (userMenu.showEvaluatorTools) {
-			menuItems.push({
-				text: 'Evaluation Tools',
-				itemId: 'menuEvalTools',
-				hidden: true,
-				iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
-				href: 'EvaluationTool.action'		
-			});
-		}	
-		menuItems.push({
-			xtype: 'menuseparator'		
-		});	
-		
-		if (userMenu.showHelp) {
-			menuItems.push({
-				text: '<b>Help</b>',
-				iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
-				handler: function() {
-					userMenu.helpWin.show();
-				}			
-			});		
-		}
-		
-		menuItems.push({
-			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
-			handler: function() {
-				userMenu.feedbackWin.show();
+
+			if (userMenu.showAdminTools) {
+				menuItems.push({
+					text: 'Admin Tools',
+					itemId: 'menuAdminTools',
+					iconCls: 'fa fa-2x fa-gear icon-button-color-default',
+					hidden: true,
+					href: 'AdminTool.action'	
+				});
 			}		
-		});
+
+			if (userMenu.showUserTools) {
+				menuItems.push({
+					text: 'User Tools',
+					iconCls: 'fa fa-2x fa-user icon-button-color-default',
+					href: 'UserTool.action'		
+				});
+			}			
+
+			if (userMenu.showEvaluatorTools) {
+				menuItems.push({
+					text: 'Evaluation Tools',
+					itemId: 'menuEvalTools',
+					hidden: true,
+					iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
+					href: 'EvaluationTool.action'		
+				});
+			}	
+			menuItems.push({
+				xtype: 'menuseparator'		
+			});	
+
+			if (userMenu.customMenuItems && userMenu.customMenuItems.length > 0) {
+				menuItems = menuItems.concat(userMenu.customMenuItems);
+				menuItems.push({
+					xtype: 'menuseparator'		
+				});	
+			}
+
+			if (userMenu.showHelp) {
+				menuItems.push({
+					text: '<b>Help</b>',
+					iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+					handler: function() {
+						userMenu.helpWin.show();
+					}			
+				});		
+			}
+
+			if (userMenu.showFeedback) {
+				menuItems.push({
+					text: '<b>Feedback / issues</b>',
+					iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
+					handler: function() {
+						userMenu.feedbackWin.show();
+					}		
+				});
+			}
+
+			menuItems.push({
+				xtype: 'menuseparator'		
+			});		
+
+			menuItems.push({
+				text: 'Logout',
+				iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
+				href: 'Login.action?Logout'			
+			});
+			menu.add(menuItems);
+		};
+		userMenu.loadMenu();
 		
-		menuItems.push({
-			xtype: 'menuseparator'		
-		});		
-		
-		menuItems.push({
-			text: 'Logout',
-			iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
-			href: 'Login.action?Logout'			
-		});
-		
-		menu.add(menuItems);
 		
 		menu.on('beforerender', function () {
 			this.setWidth(this.up('button').getWidth());
@@ -424,7 +440,14 @@ Ext.define('OSF.component.UserMenu', {
 					userMenu.initCallBack(usercontext);	
 				}
 		});
-	}	
+	},
+	refreshMenu: function(customMenuItems) {
+		var userMenu = this;
+		if (customMenuItems) {
+			userMenu.customMenuItems = customMenuItems;
+		}
+		userMenu.loadMenu();
+	}
 	
 });
 

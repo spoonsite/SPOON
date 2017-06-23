@@ -124,7 +124,7 @@
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('index.jsp');
+												window.location.replace('Landing.action');
 											}
 										}
 									}

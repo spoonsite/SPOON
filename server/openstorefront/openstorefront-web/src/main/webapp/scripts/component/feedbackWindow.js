@@ -29,7 +29,8 @@ Ext.define('OSF.component.FeedbackWindow', {
 	y: 40,
 	modal: true,
 	maximizable: false,
-	layout: 'fit',
+	layout: 'fit',	
+	buttonSize: 'small',
 	initComponent: function () {
 		this.callParent();
 
@@ -53,6 +54,12 @@ Ext.define('OSF.component.FeedbackWindow', {
 		//  Feedback Panel
 		//  This is the panel tab for the topic search tool
 		//
+		var iconSize = 'fa-lg';
+		if (feedbackWin.buttonSize === 'medium') {
+			iconSize = 'fa-2x';
+		} else if (feedbackWin.buttonSize === 'large') {
+			iconSize = 'fa-2x';
+		}	
 
 		var formPanel = Ext.create('Ext.form.Panel', {
 			layout: 'vbox',
@@ -67,9 +74,11 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'toolbar',
 					items: [
 						{
-							text: 'Send',
+							text: 'Send Feedback',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
+							iconCls: 'fa ' + iconSize + ' fa-envelope-o icon-button-color-save',
+							scale: feedbackWin.buttonSize,
+							minWidth: 150,							
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
@@ -105,8 +114,12 @@ Ext.define('OSF.component.FeedbackWindow', {
 									success: function (response, opts) {
 										Ext.toast('Sent Successfully', 'Thanks', 'br');
 										feedbackForm.setLoading(false);
-										feedbackForm.reset();										
-										feedbackWin.close();
+										feedbackForm.reset();	
+										if (feedbackWin.successHandler){
+											feedbackWin.successHandler(feedbackWin);
+										} else {
+											feedbackWin.close();
+										}
 									}
 								});
 							}
@@ -116,9 +129,14 @@ Ext.define('OSF.component.FeedbackWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+							iconCls: 'fa ' + iconSize + ' fa-close icon-button-color-warning',
+							scale: feedbackWin.buttonSize,
 							handler: function () {
-								feedbackWin.close();
+								if (feedbackWin.closeHandler){
+									feedbackWin.closeHandler(feedbackWin);
+								} else {
+									feedbackWin.close();
+								}
 							}
 						}
 					]

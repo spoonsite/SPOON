@@ -682,4 +682,14 @@ public class Application
 		return CoreSystem.getStatus();
 	}
 
+	@GET
+	@APIDescription("Gets the application version")
+	@Produces({MediaType.TEXT_PLAIN})
+	@DataType(ThreadStatus.class)
+	@Path("/version")
+	public String getApplicationVersion()
+	{
+		return PropertiesManager.getApplicationVersion();
+	}
+
 }

@@ -252,7 +252,7 @@ public class Search
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
-		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());		
+		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
@@ -308,10 +308,11 @@ public class Search
 			@QueryParam("query")
 			@DefaultValue("*") String query,
 			@QueryParam("max")
-			@DefaultValue("6") int maxResults
+			@DefaultValue("6") int maxResults,
+			@QueryParam("componentType") String componentType
 	)
 	{
-		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults, componentType);
 		return suggestions;
 	}
 

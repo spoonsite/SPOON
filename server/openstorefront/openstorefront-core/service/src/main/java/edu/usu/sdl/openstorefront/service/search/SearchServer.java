@@ -28,64 +28,70 @@ import java.util.List;
  */
 public interface SearchServer
 {
+
 	/**
 	 * Performs search
+	 *
 	 * @param indexQuery
-	 * @return 
+	 * @return
 	 */
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter);
-	
+
 	/**
 	 * Performs the actual search
+	 *
 	 * @param query
 	 * @param filter
-	 * @return 
+	 * @return
 	 */
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter);
-	
+
 	/**
 	 * Performs the actual search
+	 *
 	 * @param query
 	 * @param filter
 	 * @param addtionalFieldsToReturn
-	 * @return 
+	 * @return
 	 */
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn);
-	
+
 	/**
 	 * Finds search suggestions
+	 *
 	 * @param query
 	 * @param maxResult
-	 * @return 
+	 * @return
 	 */
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult);	
-	
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType);
+
 	/**
 	 * Indexes components (Requires additional querying to build index)
-	 * @param components 
+	 *
+	 * @param components
 	 */
 	public void index(List<Component> components);
-	
-	
+
 	/**
 	 * Delete an index by the Index id
-	 * @param id 
+	 *
+	 * @param id
 	 */
 	public void deleteById(String id);
-	
+
 	/**
 	 * Deletes all indexes
 	 */
 	public void deleteAll();
-	
+
 	/**
 	 * Save all to index
 	 */
 	public void saveAll();
-	
+
 	/**
 	 * Re-indexes all records
 	 */
 	public void resetIndexer();
-		
+
 }

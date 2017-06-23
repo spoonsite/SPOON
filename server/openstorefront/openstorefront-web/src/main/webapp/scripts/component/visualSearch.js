@@ -487,6 +487,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}
 	},
 
+	initialLoad: true,
 	reset: function () {
 		var visPanel = this;
 
@@ -509,16 +510,18 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.layerData.clear();
 		visPanel.pendingAjaxRequests = 0;
 		visPanel.viewData = [];
-		if (visPanel.viewType === "RELATION") {
-			var containerPanel = this.up('panel');
-			containerPanel.getComponent('tools').getComponent('entryLevel').reset();
-			visPanel.loadRelationships();
-		} else if (visPanel.viewType === "TAGS") {
-			visPanel.loadTags();
-		} else if (visPanel.viewType === "ORG") {
-			visPanel.loadOrganizations();
-		} else if (visPanel.viewType === "ATT") {
-			visPanel.loadAttributes();
+		if (visPanel.initialLoad) {
+			if (visPanel.viewType === "RELATION") {
+				var containerPanel = this.up('panel');
+				containerPanel.getComponent('tools').getComponent('entryLevel').reset();
+				visPanel.loadRelationships();
+			} else if (visPanel.viewType === "TAGS") {
+				visPanel.loadTags();
+			} else if (visPanel.viewType === "ORG") {
+				visPanel.loadOrganizations();
+			} else if (visPanel.viewType === "ATT") {
+				visPanel.loadAttributes();
+			}
 		}
 	},
 
@@ -1998,6 +2001,8 @@ Ext.define('OSF.component.VisualContainerPanel', {
 	alias: 'osf.widget.VisualContainerPanel',
 
 	scrollable: false,
+	visualPanelConfig: {		
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -2006,7 +2011,26 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			style: 'background: darkgrey;',
 			items: [
 				{
+					text: 'Reset',
+					iconCls: 'fa fa-lg fa-undo icon-button-color-refresh',
+					handler: function () {
+						var containerPanel = this.up('panel');
+
+						containerPanel.getComponent('tools').getComponent('attributeType').reset();
+						containerPanel.getComponent('tools').getComponent('organization').reset();
+						containerPanel.getComponent('tools').getComponent('entry').reset();
+						containerPanel.getComponent('tools').getComponent('tag').reset();
+						containerPanel.getComponent('tools').getComponent('find').reset();
+
+						containerPanel.visualPanel.reset();
+					}
+				},				
+				{
+					xtype: 'tbseparator'
+				}, 
+				{
 					xtype: 'combo',
+					itemId: 'initialView',
 					fieldLabel: 'Initial View',
 					labelAlign: 'right',
 					valueField: 'code',
@@ -2263,13 +2287,13 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							}
 						}
 					}
-				}, // Add Tag
+				},
 				{
 					xtype: 'tbfill'
-				}, // fill
+				},
 				{
 					text: 'Download Image',
-					iconCls: 'fa fa-lg fa-download icon-button-color-default icon-small-vertical-correction-load',
+					iconCls: 'fa fa-lg fa-download icon-button-color-default',
 					handler: function () {
 						var containerPanel = this.up('panel');
 						var data = containerPanel.visualPanel.getImage('png');
@@ -2289,25 +2313,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						form.destroy();
 
 					}
-				}, // Download Image
-				{
-					xtype: 'tbseparator'
-				}, // separator
-				{
-					text: 'Reset',
-					iconCls: 'fa fa-lg fa-undo icon-button-color-refresh',
-					handler: function () {
-						var containerPanel = this.up('panel');
-
-						containerPanel.getComponent('tools').getComponent('attributeType').reset();
-						containerPanel.getComponent('tools').getComponent('organization').reset();
-						containerPanel.getComponent('tools').getComponent('entry').reset();
-						containerPanel.getComponent('tools').getComponent('tag').reset();
-						containerPanel.getComponent('tools').getComponent('find').reset();
-
-						containerPanel.visualPanel.reset();
-					}
-				} // Reset
+				}
 			]
 		}
 	],
@@ -2317,13 +2323,13 @@ Ext.define('OSF.component.VisualContainerPanel', {
 
 		var containerPanel = this;
 
-		containerPanel.visualPanel = Ext.create('OSF.component.VisualSearchPanel', {
+		containerPanel.visualPanel = Ext.create('OSF.component.VisualSearchPanel', Ext.apply(containerPanel.visualPanelConfig, {
 			completedInit: function (nodes) {
 				var findCB = containerPanel.getComponent('tools').getComponent('find');
 				findCB.getStore().setData(nodes);
 			},
 			allowExpand: true
-		});
+		}));
 
 		containerPanel.add(containerPanel.visualPanel);
 
@@ -2345,7 +2351,19 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			containerPanel.visualPanel.setWidth(containerPanel.getWidth());
 			containerPanel.visualPanel.setHeight(containerPanel.getHeight() - 40);
 		}, 100);
+	},
+	setViewType: function(viewType, initialLoad) {
+		var containerPanel = this;
+		
+		if (viewType) {
+			var initViewCB = containerPanel.queryById('initialView');
+	
+			containerPanel.visualPanel.viewType = viewType;		
+			containerPanel.visualPanel.initialLoad = initialLoad;
+			initViewCB.setValue(viewType);					
+			containerPanel.visualPanel.initialLoad = true;
+		}
+		
 	}
-
 
 });

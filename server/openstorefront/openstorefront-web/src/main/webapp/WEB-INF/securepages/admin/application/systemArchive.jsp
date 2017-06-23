@@ -267,12 +267,12 @@
 						modal: true,
 						closeAction: 'destroy',
 						width: 700,
-						height: 560,
+						height: '90%',
 						layout: 'fit',
 						items: [
 							{
 								xtype: 'form',
-								scollable: true,
+								scrollable: true,
 								bodyStyle: 'padding: 10px;',
 								layout: 'anchor',
 								defaults: {
@@ -303,90 +303,156 @@
 											change: function(field, newValue, oldValue, opts) {
 												var form = field.up('form');
 												if (newValue === 'DBEXPORT') {
-													form.queryById('component').setDisabled(true);
-													form.queryById('highlight').setDisabled(true);													
-												} else if (newValue === 'GENERAL') {
-													form.queryById('component').setDisabled(false);
-													form.queryById('highlight').setDisabled(false);													
+													form.queryById('options').setDisabled(true);																									
+												} else if (newValue === 'GENERAL') {													
+													form.queryById('options').setDisabled(false);													
+												}
+												if (!form.queryById('component').getValue()) {
+													form.queryById('entrySelectGrid').setDisabled(false);
+													form.queryById('entrySelectGrid').setDisabled(true);
 												}
  											}
 										}
-									}),									
+									}),
 									{
-										xtype: 'checkbox',
-										itemId: 'component',
-										name: 'component',
-										margin: '0 0 0 0',
+										xtype: 'panel',
+										itemId: 'options',
 										disabled: true,
-										boxLabel: 'Entries (Related Data)',
-										listeners: {
-											change: function(field, newValue, oldValue, opts) {
-												var form = field.up('form');
-												if (newValue) {
-													form.queryById('entrySelectGrid').setDisabled(false);		
-												} else {
-													form.queryById('entrySelectGrid').setDisabled(true);		
-												}
-											}
-										}
-									},
-									{
-										xtype: 'grid',
-										itemId: 'entrySelectGrid',
-										title: 'Select By Entry',
-										maxHeight: 250,
-										disabled: true,
-										columnLines: true,
-										selModel: {
-											selType: 'checkboxmodel'
-										},
-										store: {
-											autoLoad: true,
-											sorters: [
-												new Ext.util.Sorter({
-													property: 'description',
-													direction: 'ASC'
-												})
-											],
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/components/lookup?approvalState=ALL'							
-											}											
-										},
-										columns: [
-											{text: 'Entry Name', dataIndex: 'description', flex: 1,
-												filter: {
-													type: 'string'
-												}
-											}
-										],										
-										dockedItems: [
+										items: [
 											{
-												xtype: 'textfield',
-												dock: 'top',
-												name: 'filterForEntries',																					
-												emptyText: 'Filter entries by name',
-												width: '100%',
-												maxLength: 30,
+												xtype: 'checkbox',
+												itemId: 'component',
+												name: 'component',
+												margin: '0 0 0 0',												
+												boxLabel: 'Entries (Related Data)',
 												listeners: {
-													change: function (field, newVal, oldVal, opts) {
-														var grid = field.up('grid');
-														grid.getStore().filter([{
-																property: 'description',
-																value: newVal
-														}]);
+													change: function(field, newValue, oldValue, opts) {
+														var form = field.up('form');
+														if (newValue) {
+															form.queryById('entrySelectGrid').setDisabled(false);		
+														} else {
+															form.queryById('entrySelectGrid').setDisabled(true);		
+														}
 													}
 												}
+											},
+											{
+												xtype: 'grid',
+												itemId: 'entrySelectGrid',
+												title: 'Select Entries',
+												maxHeight: 250,
+												disabled: true,
+												columnLines: true,
+												selModel: {
+													selType: 'checkboxmodel'
+												},
+												store: {
+													autoLoad: true,
+													sorters: [
+														new Ext.util.Sorter({
+															property: 'description',
+															direction: 'ASC'
+														})
+													],
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/components/lookup?approvalState=ALL'							
+													}											
+												},
+												columns: [
+													{text: 'Entry Name', dataIndex: 'description', flex: 1,
+														filter: {
+															type: 'string'
+														}
+													}
+												],										
+												dockedItems: [
+													{
+														xtype: 'textfield',
+														dock: 'top',
+														name: 'filterForEntries',																					
+														emptyText: 'Filter entries by name',
+														width: '100%',
+														maxLength: 30,
+														listeners: {
+															change: function (field, newVal, oldVal, opts) {
+																var grid = field.up('grid');
+																grid.getStore().filter([{
+																		property: 'description',
+																		value: newVal
+																}]);
+															}
+														}
+													}
+												]
+											},									
+											{
+												xtype: 'checkbox',
+												itemId: 'highlight',
+												name: 'highlight',												
+												boxLabel: 'Highlights (Related Data)'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'organization',
+												name: 'organization',											
+												boxLabel: 'Organizations'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'attributes',
+												name: 'attributes',
+												boxLabel: 'Attributes'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'branding',
+												name: 'branding',
+												boxLabel: 'Branding',
+												listeners: {
+													change: function(field, newValue, oldValue, opts) {
+														var form = field.up('form');
+														if (newValue) {
+															form.queryById('brandingSelectGrid').setDisabled(false);		
+														} else {
+															form.queryById('brandingSelectGrid').setDisabled(true);		
+														}
+													}
+												}												
+											},
+											{
+												xtype: 'grid',
+												itemId: 'brandingSelectGrid',
+												title: 'Select Branding',
+												maxHeight: 175,
+												disabled: true,
+												columnLines: true,
+												selModel: {
+													selType: 'checkboxmodel'
+												},
+												store: {
+													autoLoad: true,
+													sorters: [
+														new Ext.util.Sorter({
+															property: 'description',
+															direction: 'ASC'
+														})
+													],
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/branding'							
+													}											
+												},
+												columns: [
+													{text: 'Branding', dataIndex: 'name', flex: 1,
+														filter: {
+															type: 'string'
+														}
+													}
+												]												
 											}
 										]
-									},									
-									{
-										xtype: 'checkbox',
-										itemId: 'highlight',
-										name: 'highlight',
-										disabled: true,
-										boxLabel: 'Highlights (Related Data)'										
-									}
+									}								
 								],
 								dockedItems: [
 									{
@@ -417,6 +483,24 @@
 															primaryEntity: 'Highlight'
 														});
 													}
+													if (data.organization) {
+														archiveOptions.push({
+															primaryEntity: 'Organization'
+														});
+													}	
+													if (data.attributes) {
+														archiveOptions.push({
+															primaryEntity: 'AttributeType'
+														});
+													}	
+													if (data.branding) {
+														Ext.Array.each(generateWin.queryById('brandingSelectGrid').getSelection(), function(record){
+															archiveOptions.push({
+																primaryEntity: 'Branding',
+																entityId: record.get('brandingId')
+															});	
+														});
+													}													
 													data.archiveOptions = archiveOptions;
 													
 													CoreUtil.submitForm({

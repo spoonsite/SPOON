@@ -100,40 +100,41 @@ public interface SearchService
 	public void resetIndexer();
 
 	/**
-	 * This will try to find suggestions based on the query and then 
-	 * weight the results.
-	 * 
+	 * This will try to find suggestions based on the query and then weight the
+	 * results.
+	 *
 	 * @param query
 	 * @param maxResult
-	 * @return 
+	 * @param componentType (Optional)
+	 * @return
 	 */
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult);
-		
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType);
+
 	/**
 	 * Saves a public/global Search
-	 * 
+	 *
 	 * @param systemSearch
 	 * @return the saved search record
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public SystemSearch saveSearch(SystemSearch systemSearch);
-	
+
 	/**
-	 * Inactivate public/global search
-	 * To avoid issues with existing links we just want to inactivate.
-	 * Note: Existing links would be still valid and would need to be manually updated if desired.
-	 * 
-	 * @param searchId 
+	 * Inactivate public/global search To avoid issues with existing links we
+	 * just want to inactivate. Note: Existing links would be still valid and
+	 * would need to be manually updated if desired.
+	 *
+	 * @param searchId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void inactivateSearch(String searchId);	
-	
+	public void inactivateSearch(String searchId);
+
 	/**
 	 * Activates public/global search
-	 * 
-	 * @param searchId 
+	 *
+	 * @param searchId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void activateSearch(String searchId);	
-	
+	public void activateSearch(String searchId);
+
 }

@@ -16,19 +16,20 @@
 package edu.usu.sdl.openstorefront.web.model;
 
 /**
- * 
+ *
  * @author dshurtleff
  */
 public class PageModel
 {
+
 	private String page;
 	private String roles[];
 
 	public PageModel()
 	{
 	}
-	
-	public PageModel(String page) 
+
+	public PageModel(String page)
 	{
 		this.page = page;
 	}
@@ -37,8 +38,8 @@ public class PageModel
 	{
 		this.page = page;
 		this.roles = roles;
-	}	
-	
+	}
+
 	public String getPage()
 	{
 		return page;

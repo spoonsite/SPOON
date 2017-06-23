@@ -56,6 +56,8 @@ public class ComponentSearchView
 	private String articleAttributeCode;
 	private String componentType;
 	private String componentTypeDescription;
+	private String componentIconId;
+	private String componentTypeIconUrl;	
 	private Integer averageRating;
 	private Date releaseDate;
 	private Date approvedDts;
@@ -93,7 +95,7 @@ public class ComponentSearchView
 		example.setComponentAttributePk(pk);
 		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
-		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
+		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());		
 		return toView(component, attributes, reviews, tags);
 	}
 
@@ -116,6 +118,11 @@ public class ComponentSearchView
 		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
 		view.setDataSource(component.getDataSource());
 		view.setDataSensitivity(component.getDataSensitivity());
+		
+		Service service = ServiceProxyFactory.getServiceProxy();
+		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
+		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		
 		
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -150,8 +157,7 @@ public class ComponentSearchView
 
 		view.setListingSecurityMarkingType(component.getSecurityMarkingType());
 
-		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
-			Service service = ServiceProxyFactory.getServiceProxy();
+		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {			
 			SecurityMarkingType securityMarkingType = service.getLookupService().getLookupEnity(SecurityMarkingType.class, component.getSecurityMarkingType());
 
 			if (securityMarkingType != null) {
@@ -546,14 +552,36 @@ public class ComponentSearchView
 		this.dataSource = dataSource;
 	}
 
+	@Override
 	public String getDataSensitivity()
 	{
 		return dataSensitivity;
 	}
 
+	@Override
 	public void setDataSensitivity(String dataSensitivity)
 	{
 		this.dataSensitivity = dataSensitivity;
+	}
+
+	public String getComponentIconId()
+	{
+		return componentIconId;
+	}
+
+	public void setComponentIconId(String componentIconId)
+	{
+		this.componentIconId = componentIconId;
+	}
+
+	public String getComponentTypeIconUrl()
+	{
+		return componentTypeIconUrl;
+	}
+
+	public void setComponentTypeIconUrl(String componentTypeIconUrl)
+	{
+		this.componentTypeIconUrl = componentTypeIconUrl;
 	}
 
 }

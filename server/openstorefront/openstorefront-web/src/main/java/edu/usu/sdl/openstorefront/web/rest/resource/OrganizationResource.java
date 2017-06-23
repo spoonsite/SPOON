@@ -78,7 +78,11 @@ public class OrganizationResource
 	@APIDescription("Gets organization records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(OrganizationWrapper.class)
-	public Response getOrganizations(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getOrganizations(
+			@BeanParam FilterQueryParams filterQueryParams,
+			@APIDescription("This does not support paging as the total may not be accurate")
+			@QueryParam("componentOnly") boolean componentOnly
+	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -124,6 +128,25 @@ public class OrganizationResource
 		organizationWrapper.getData().addAll(OrganizationView.toView(organizations));
 		organizationWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
+		if (componentOnly) {
+			//filter results
+			Component componentExample = new Component();
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+			componentExample.setApprovalState(ApprovalStatus.APPROVED);
+
+			List<Component> components = componentExample.findByExample();
+			Set<String> componentOrg = components
+					.stream()
+					.map(Component::getOrganization)
+					.collect(Collectors.toSet());
+
+			organizationWrapper.setData(organizationWrapper.getData()
+					.stream()
+					.filter((org) -> componentOrg.contains(org.getName()))
+					.collect(Collectors.toList()));
+
+			organizationWrapper.setTotalNumber(organizationWrapper.getData().size());
+		}
 		return sendSingleEntityResponse(organizationWrapper);
 	}
 
@@ -377,10 +400,21 @@ public class OrganizationResource
 	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
-	public void deleteReport(
+	public void deleteOrganization(
 			@PathParam("id") String organizationid) throws AttachedReferencesException
 	{
 		service.getOrganizationService().removeOrganization(organizationid);
+	}
+
+	@DELETE
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@APIDescription("Deletes an organization logo only")
+	@Path("/{id}/logo")
+	public void deleteOrganizationLogo(
+			@PathParam("id") String organizationId
+	)
+	{
+		service.getOrganizationService().deleteOrganizationLogo(organizationId);
 	}
 
 }
