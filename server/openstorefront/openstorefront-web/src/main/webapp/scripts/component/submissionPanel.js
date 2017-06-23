@@ -2765,10 +2765,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 						// the template has refreshed
 						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
 							clearInterval(templateStateCheckInterval);
-							document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
-							  	el.removeEventListener('click', CoreUtil.toggleEventListener);
-							  	el.addEventListener('click', CoreUtil.toggleEventListener);
-							});
+							var toggleElements = document.querySelectorAll('.toggle-collapse');
+							for (ii = 0; ii < toggleElements.length; ii += 1) {
+								toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+								toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+							}
 						}
 					}, 100);
 				}
@@ -3131,7 +3132,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											fullEvaluations: data.fullEvaluations,
 											evaluation: data.fullEvaluations,
 											success: function (newData) {
-												Object.assign(data, newData);
+												data.fullEvaluations = newData.fullEvaluations;
 												// Display Complete Record Data
 												reviewEntryPanel.update(data);
 											}
