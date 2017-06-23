@@ -392,6 +392,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Delete',
 							itemId: 'tbDelete',
+							id: 'integrationDeleteBtn',
 							disabled: true,							
 							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 							handler: function(){

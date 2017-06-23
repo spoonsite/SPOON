@@ -128,23 +128,24 @@ public class BrowserTestBase
 			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-	
-	protected void driverWait(DriverWork work, long maxMilliSeconds) 
+
+	protected void driverWait(DriverWork work, long maxMilliSeconds)
 	{
 		boolean done = false;
 		long startTime = System.currentTimeMillis();
-		
-				
-		while (!done || (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
+		System.out.println("********** START TIME: " + startTime);
+
+		while (!done && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			try {
 				work.performWork();
 				done = true;
 			} catch (WebDriverException ex) {
 				sleep(500);
 				LOG.log(Level.WARNING, ex.getMessage() + " Retrying...");
+				System.out.println("Current TIME ******** " + System.currentTimeMillis());
 			}
 		}
-		
+
 		if (!done) {
 			throw new WebDriverException("Browser failure");
 		}
@@ -163,10 +164,14 @@ public class BrowserTestBase
 	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
 		int fRow = -1;
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, 1);
 
 		try {
 			List<WebElement> allRows = new ArrayList<WebElement>();
+			driverWait(() -> {
+				wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+			}, 5000);
+
 			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
 
 			int theRow = 0;
