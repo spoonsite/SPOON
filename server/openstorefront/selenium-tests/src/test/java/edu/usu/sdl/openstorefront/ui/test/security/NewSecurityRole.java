@@ -143,20 +143,14 @@ public class NewSecurityRole
 			}
 			// Wait for Manage Roles table to come up
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
-
-			// WAS clicking on delete, won't
-			tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "auto-customized-role", driver, 0);
-
+			
 			// *** DELETE ALL OTHER USERS (if they exist) ***
-			while (tableClickRowCol(".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item", "delete", driver, 2)) {
-				System.out.println("*******Deleting established roles from this user *********");
-			}
-
-			// *********** identifiers ******
-			// data-qtip='delete' 
-			// ".x-grid-view.x-grid-with-col-lines.x-grid-with-row-lines.x-fit-item.x-grid-view-default.x-unselectable.x-scroller.x-focus.x-grid-view-focus.x-grid-view-default-focus
-			// *********** ADD USER ****************
+			tableDeleteAllRoles(".x-window.x-layer", driver, 2);
+			
 		}
+
+			// *********** ADD USER ****************
+	}
 
 		/*
 		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
@@ -188,7 +182,7 @@ public class NewSecurityRole
 			LOG.log(Level.SEVERE, "!!!!! Could not find the role " + roleName + " in order to add a managed user. !!!!!");
 		}
 		 */
-	}
+	
 
 	public void setPermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
