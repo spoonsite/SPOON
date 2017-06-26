@@ -691,3 +691,106 @@ Use the following steps to create the agent profile.
 >-   Server URL: http://(host):8080/openam
 
 >-   Agent URL: http://(host):8081/agentsample
+
+# 2 CentOS 7 Install with Apache proxy Example
+----
+
+Run as sudo:
+
+yum install nano
+
+Install Java 1.8:
+1)	yum install java-1.8.0-openjdk
+
+Install apache 2.4
+1)	yum clean all
+2)	yum -y update
+3)	yum -y install httpd
+4)	firewall-cmd --permanent --add-port=80/tcp
+5)	firewall-cmd --permanent --add-port=443/tcp
+6)	firewall-cmd –reload
+7)	systemctl start httpd
+8)	systemctl enable httpd
+
+**Start:** systemctl start httpd
+
+**Stop:** systemctl stop httpd
+
+	
+Install elasticsearch 2.x
+1)	rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo
+[elasticsearch-2.x]
+name=Elasticsearch repository for 2.x packages
+baseurl=https://packages.elastic.co/elasticsearch/2.x/centos
+gpgcheck=1
+gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+
+3)	yum install elasticsearch
+4)	systemctl daemon-reload
+5)	systemctl enable elasticsearch.service
+
+**Start:** systemctl start elasticsearch.service
+
+**Stop:**  systemctl stop elasticsearch.service
+
+Install tomcat 7 
+(https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum)
+1)	yum install tomcat
+2)	systemctl enable tomcat
+
+**Start:** systemctl start tomcat
+
+**Stop:**  systemctl stop tomcat
+
+**Install dir:**  /usr/share/tomcat/
+
+Configure Apache proxy 
+(https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-centos-7)
+	Install mod-proxy : already installed	
+	
+	Install web socket support: already installed
+	
+	**Setup proxy:**
+		nano /etc/httpd/conf.d/default-site.conf
+		
+**Add:**
+
+<VirtualHost *:80>
+   ProxyPreserveHost On	
+ #SSLProxyEngine on
+ RewriteEngine on
+
+#Openstorefront
+ProxyPass /openstorefront http://localhost:8080/openstorefront
+ProxyPassReverse /openstorefront http://localhost:8080/openstorefront
+
+ProxyPass /openstorefront ws://localhost:8080/openstorefront
+ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
+
+    RedirectMatch ^/$ /openstorefront/
+</VirtualHost>
+
+**systemctl restart httpd**
+
+Configure Tomcat
+
+**Set memory**
+	
+1)	nano /usr/share/tomcat/conf/tomcat.conf
+Add
+JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx4g -XX:+UseConcMarkSweepGC"
+	Update networking
+		nano /usr/share/tomcat/conf/server.xml
+		edit: <Connector port="8080"…     to 
+<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               connectionTimeout="20000"
+               maxThreads="250" minSpareThreads="25"
+               compression="on" compressableMimeType="text/html,text/xml,text/plain,application/json,text/css,application/javascript"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100"
+               redirectPort="8443" />
+
+2)	systemctl restart tomcat
+
