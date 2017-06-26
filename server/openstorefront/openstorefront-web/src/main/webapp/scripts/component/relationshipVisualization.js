@@ -117,14 +117,15 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 							fullEvaluations: data.fullEvaluations,
 							evaluation: data.fullEvaluations,
 							success: function (newData) {
-								Object.assign(data, newData);
+								data.fullEvaluations = newData.fullEvaluations;
 								visPanel.viewWin.update(data);
 
 								// Add event listeners for toggle-able containers
-								document.querySelectorAll('.toggle-collapse').forEach(function(el,i){
-								  	el.removeEventListener('click', CoreUtil.toggleEventListener);
-								  	el.addEventListener('click', CoreUtil.toggleEventListener);
-								});
+								var toggleElements = document.querySelectorAll('.toggle-collapse');
+								for (ii = 0; ii < toggleElements.length; ii += 1) {
+									toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+									toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+								}
 							}
 						});
 					}
