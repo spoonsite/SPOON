@@ -34,6 +34,7 @@ public class SearchModel
 	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private int startOffset;
 	private int max = Integer.MAX_VALUE;
+	private String userSessionKey;
 
 	@ConsumeField
 	@DataType(SearchElement.class)
@@ -42,14 +43,14 @@ public class SearchModel
 	public SearchModel()
 	{
 	}
-	
-	public String searchKey() 
+
+	public String searchKey()
 	{
 		StringBuilder key = new StringBuilder();
 		key.append(toString());
 		for (SearchElement searchElement : searchElements) {
 			key.append(searchElement.toString());
-		}		
+		}
 		return key.toString();
 	}
 
@@ -58,7 +59,7 @@ public class SearchModel
 	{
 		return "SearchModel{" + "sortField=" + sortField + ", sortDirection=" + sortDirection + ", startOffset=" + startOffset + ", max=" + max + '}';
 	}
-	
+
 	public String getSortField()
 	{
 		return sortField;
@@ -107,6 +108,16 @@ public class SearchModel
 	public void setSearchElements(List<SearchElement> searchElements)
 	{
 		this.searchElements = searchElements;
+	}
+
+	public String getUserSessionKey()
+	{
+		return userSessionKey;
+	}
+
+	public void setUserSessionKey(String userSessionKey)
+	{
+		this.userSessionKey = userSessionKey;
 	}
 
 }

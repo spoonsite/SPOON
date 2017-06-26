@@ -10,7 +10,7 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 - Does this license affect the data?  No, it only applies to the software. See GPL FAQ
 
-- Can modify Branding with having to release changes? Yes, that would be consider data.
+- Can modify Branding without having to release changes? Yes, that would be consider data.
 
 - Does this restrict deploying the application?  No, you can deploy internally and publicly.  
 
@@ -20,7 +20,7 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 - What about server application extension? External plugins if standalone they can have their own license.  If they constitute the whole of the application than the need to comply to GPL license. (See GPL FAQ)
 
-- Does this affect external programs using the REST API? No, external programs can have their own licenses.  This is not using AGPL license.  The license does not apply to the data.
+- Does this affect external programs using the REST API? No, external programs can have their own licenses.  This project is not using AGPL license.  The license does not apply to the data.
 
 - Can I use openstorefront as part of larger application?  Yes, you can integrate it with other applications.  You can use it internally and expose a different interface publicly that is closed source.  In this case it would be similar to Mysql. 
 
@@ -76,7 +76,7 @@ passay dual licensed under both the LGPL v3 and Apache 2
 Testing only:
 
 Selenium Apache V2
-geckodriver MPL V2  (https://github.com/mozilla/geckodriver for source)
+
 
 
 

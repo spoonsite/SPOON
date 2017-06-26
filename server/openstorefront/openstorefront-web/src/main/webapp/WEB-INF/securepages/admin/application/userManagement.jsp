@@ -73,11 +73,14 @@
 						{ text: 'First name', dataIndex: 'firstName', width: 200 },
 						{ text: 'Last name', dataIndex: 'lastName', width: 200 },
 						{ text: 'Organization', dataIndex: 'organization', width: 200 },
+						{ text: 'Position Title', dataIndex: 'positionTitle', width: 200 },						
 						{ text: 'Email', dataIndex: 'email', flex: 1, minWidth: 200 },
 						{ text: 'Phone', dataIndex: 'phone', width: 200 },
 						{ text: 'User Type', dataIndex: 'userTypeCode', align: 'center', width: 200, 
 							renderer: function(value, meta, record) {
-								meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
+								if (record.get('userTypeDescription')) {
+									meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
+								}
 								return value;
 							}
 						},
@@ -306,6 +309,13 @@
 												allowBlank: false,
 												maxLength: 80
 											},
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Position Title',
+												name: 'positionTitle',
+												allowBlank: false,
+												maxLength: 255
+											},											
 											{
 												xtype: 'combobox',
 												fieldLabel: 'User Type',

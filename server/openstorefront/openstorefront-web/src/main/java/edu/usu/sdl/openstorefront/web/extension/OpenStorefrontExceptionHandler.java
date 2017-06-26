@@ -28,6 +28,7 @@ import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.exception.DefaultExceptionHandler;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Translate Errors into something the front-end can handle
@@ -42,8 +43,9 @@ public class OpenStorefrontExceptionHandler
 	{
 		//ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
 
-		if (error == null
-				|| error.getMessage().startsWith("Could not locate an ActionBean that is bound to the URL")) {
+		if (error != null
+				&& StringUtils.isNotBlank(error.getMessage())
+				&& error.getMessage().startsWith("Could not locate an ActionBean that is bound to the URL")) {
 			return new ErrorResolution(Response.Status.NOT_FOUND.getStatusCode());
 		} else {
 

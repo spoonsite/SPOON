@@ -47,9 +47,11 @@ public class LandingAction
 		if (getLandingTemplate() != null
 				|| Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
 
-			String fullTemplate = landingTemplateFull.fullTemplate();
-			if (StringUtils.isNotBlank(fullTemplate)) {
-				useDefault = false;
+			if (landingTemplateFull != null) {
+				String fullTemplate = landingTemplateFull.fullTemplate();
+				if (StringUtils.isNotBlank(fullTemplate)) {
+					useDefault = false;
+				}
 			}
 		}
 		if (!useDefault) {

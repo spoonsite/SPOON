@@ -117,7 +117,7 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
 
-			memoryOnlyCache = new Cache("searchCache", 50, false, false, 1800, 1800);
+			memoryOnlyCache = new Cache("searchCache", 250, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			searchCache = singletonManager.getCache("searchCache");
 
