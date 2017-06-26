@@ -171,8 +171,7 @@
 										{
 											xtype: 'textfield',
 											fieldLabel: 'Position Title',
-											name: 'positionTitle',											
-											allowBlank: false,
+											name: 'positionTitle',																					
 											maxLength: 255
 										},
 										{
