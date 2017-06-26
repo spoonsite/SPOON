@@ -67,6 +67,20 @@ limitations under the License.
 		background: whitesmoke;
 	}
 
+	.version-description {
+		font-size: 11px;
+		color: #a3a3a3;
+	}
+
+	.score-td {
+		padding: 5px 15px 5px 15px;
+	}
+
+	.score-average {
+		text-align: center;
+		font-weight: bold;
+	}
+
 </style>
 
 <!-- Right Block -->
@@ -377,4 +391,106 @@ limitations under the License.
 	</tpl>
 </tpl>
 
+<!-- Evaluation Details -->
+<tpl for="fullEvaluations">
+	<div class="pageBreak" style="clear: both;">
+		<tpl if="parent.show['evaluationDetails'+evaluation.version]">
+			<br />
+			<h2 class="quickView toggle-collapse">Evaluation
+				<tpl if="evaluationCount &gt; 1">
+					<div class="version-description">version - {evaluation.version}</div>
+				</tpl>
+			</h2>
 
+			<!-- Reusability Factors -->
+			<tpl if="parent.show['evalReusability'+evaluation.version] && evaluationScores && evaluationScores.length &gt; 0">
+				<h3 class="quickView toggle-collapse">Reusability Factors (5=best) <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+				<table class="score-table">
+					<tr>
+						<tpl for="evaluationScores">
+								<td class="score-td">&nbsp;&nbsp;{title}:</td>
+								<td class="score-average">{average}</td>
+								{[xindex%3==0?'</tr><tr>':'']}
+						</tpl>
+					</tr>
+				</table>
+			</tpl>
+
+			<!-- Checklist Summary -->
+			<tpl if="parent.show['evalChecklistSummary'+evaluation.version] && checkListAll.evaluationChecklist.summary">
+				<div>
+					<h3 class="quickView toggle-collapse">Evaluation Checklist Summary:</h3>
+					<p>{checkListAll.evaluationChecklist.summary}</p>
+				</div>
+			</tpl>
+
+			<!-- Evaluation Recommendations -->
+			<tpl if="parent.show['evalRecommendations'+evaluation.version] && checkListAll.recommendations && checkListAll.recommendations.length &gt; 0">
+				<h3 class="quickView toggle-collapse">Evaluation Recommendations <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+				<table class="quickView-table" width="100%">
+					<tr><th class="details-table">Type</th><th class="details-table">Recommendation</th><th class="details-table">Reason</th></tr>
+					<tpl for="checkListAll.recommendations">
+						<tr class="details-table">
+							<td class="details-table">{recommendationTypeDescription}</td>
+							<td class="details-table" style="text-align: center">{recommendation}</td>
+							<td class="details-table">{reason}</td>
+						</tr>
+					</tpl>
+				</table>
+			</tpl>
+
+			<!-- Content Sections -->
+			<tpl if="parent.show['evalContentSections'+evaluation.version] && contentSections && contentSections.length &gt; 0">
+				<tpl for="contentSections">
+					<h3 class="quickView toggle-collapse">{section.title}</h3>
+					<div>{section.content}</div>
+					<tpl if="subsections.length &gt; 0">
+						<tpl for="subsections">
+							<div>
+								<b>{title}</b>
+							</div>
+							{content}
+						</tpl>
+					</tpl>
+				</tpl>
+			</tpl>
+
+			<!-- Evaluation Checklist Details -->
+			<tpl if="parent.show['evalChecklistDetails'+evaluation.version] && checkListAll.responses && checkListAll.responses.length &gt; 0">
+				<h3 class="quickView toggle-collapse">Evaluation Checklist Details <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
+				<table class="quickView-table" width="100%">
+					<tr>
+						<th class="details-table">QID</th>
+						<th class="details-table">Section</th>
+						<th class="details-table">Question</th>
+						<th class="details-table">Score</th>
+						<th class="details-table">Response</th>
+					</tr>
+					<tpl for="checkListAll.responses">
+						<tr class="details-table">
+							<!-- QID - Question Details -->
+							<td class="details-table">
+								<b>{question.qid}</b>
+							</td>
+
+							<!-- Section -->
+							<td class="details-table" style="text-align: center">{question.evaluationSectionDescription}</td>
+
+							<!-- Question -->
+							<td class="details-table">{question.question}</td>
+
+							<!-- Score - Score Details -->
+							<td class="details-table">
+								<b>{score}</b>
+							</td>
+
+							<!-- Response -->
+							<td class="details-table">{response}</td>
+						</tr>
+						<tr><td></td></tr>
+					</tpl>
+				</table>
+			</tpl>
+		</tpl>
+	</div>
+</tpl>
