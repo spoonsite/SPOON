@@ -104,7 +104,7 @@
 											xtype: 'panel',
 											html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
 												  '<li>At least 1 Number</li>' +
-												  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+												  '<li>At least 1 Special Character (i.e. ?!@#$%*)</li></ul>'
 										},
 										{
 											xtype: 'textfield',
@@ -216,6 +216,53 @@
 									]
 								}
 							]
+						},
+						{
+							xtype: 'panel',
+							title: '<span style="">Verification Code</span>',
+							titleAlign: 'center',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							margin: '20 0 0 0',
+							layout: 'center',	
+							height: 200,
+							items: [
+								{
+									xtype: 'panel',
+									layout: 'anchor',
+									defaults: {
+										width: 600,
+										labelSeparator: '',
+										labelAlign: 'top',
+										msgTarget: 'under'
+									},	
+									items: [ {
+											xtype: 'label',
+											forId: 'verificationCode',
+											cls: 'x-form-item-label x-form-item-label-default field-label-basic x-form-item-label-top x-unselectable',
+											text:  'Click on the "Get Verification Code" button and a verification code will be sent to your email address'
+										},
+										{
+											xtype: 'button',
+											text: "Get Verification Code",
+											name: 'verificationCode',
+											iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction-check',
+											allowBlank: false,
+											width: 200,
+											handler: function(){										
+												var form = this.up('form');
+												var data = form.getValues();
+											}
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Enter the verification code from your your email here <span class="field-required" />',
+											name: 'verification Code',
+											allowBlank: false,
+											maxLength: 80
+										}										
+									]
+								}
+							]
 						}
 					],
 					dockedItems: [
@@ -303,14 +350,9 @@
 														]
 													});
 													accountRegWin.show();
-													
 												}
 											});
-											
 										}
-										
-										
-										
 									}
 								},
 								{
