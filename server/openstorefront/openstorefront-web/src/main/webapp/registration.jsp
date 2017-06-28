@@ -236,8 +236,11 @@
 										msgTarget: 'under'
 									},	
 									items: [ {
+											xtype: 'hiddenfield',
+											name: 'registrationId'
+										},
+										{
 											xtype: 'label',
-											forId: 'verificationCode',
 											cls: 'x-form-item-label x-form-item-label-default field-label-basic x-form-item-label-top x-unselectable',
 											text:  'Click on the "Get Verification Code" button and a verification code will be sent to your email address'
 										},
@@ -251,6 +254,36 @@
 											handler: function(){										
 												var form = this.up('form');
 												var data = form.getValues();
+
+												if (data.password !== data.confirmPassword) {
+													Ext.Msg.show({
+														title:'Validation',
+														message: 'Password and the Confirm Password must match',
+														buttons: Ext.Msg.OK,
+														icon: Ext.Msg.Error,
+														fn: function(btn) {
+														}
+													});
+													form.getForm().markInvalid({
+														confirmPassword: 'Must match password'
+													});											
+												} else {
+
+													if (data.userTypeCode === '') {
+														delete data.userTypeCode;
+													}
+
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/userregistrations',
+														method: 'POST',
+														data: data,
+														form: form,
+														success: function(response, opts) {
+															var registration = Ext.decode(response.responseText);
+															Ext.getCmp('registrationId').setValue(registration.registrationId);
+														}
+													});
+												}
 											}
 										},
 										{
@@ -303,7 +336,7 @@
 											
 											CoreUtil.submitForm({
 												url: 'api/v1/resource/userregistrations',
-												method: 'POST',
+												method: 'PUT',
 												data: data,
 												form: form,
 												success: function(action, opts) {

@@ -30,12 +30,15 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,9 +53,9 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 @Path("v1/resource/userregistrations")
 @APIDescription("Handles user registration")
 public class UserRegistrationResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@APIDescription("Gets user registeration records.")
@@ -108,7 +111,7 @@ public class UserRegistrationResource
 
 		return sendSingleEntityResponse(userRegistrationWrapper);
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@APIDescription("Gets a user registeration record.")
@@ -116,53 +119,92 @@ public class UserRegistrationResource
 	@DataType(UserRegistrationView.class)
 	@Path("/{registrationId}")
 	public Response getUserRegistration(
-		@PathParam("registrationId") String registrationId
-	) 
+			@PathParam("registrationId") String registrationId
+	)
 	{
 		UserRegistration registration = new UserRegistration();
 		registration.setRegistrationId(registrationId);
 		registration = registration.find();
 		return sendSingleEntityResponse(UserRegistrationView.toView(registration));
 	}
-		
+
 	@POST
-	@APIDescription("Creates a user registration")	
-	@Produces({MediaType.APPLICATION_JSON})	
-	@Consumes({MediaType.APPLICATION_JSON})	
-	public Response createUserRegistration(
+	@APIDescription("Creates a user registration")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	public Response sendVerificationCode(
 			UserRegistration userRegistration
 	)
 	{
 		ValidationResult validationResult = userRegistration.validate();
-		if (validationResult.valid()) {			
-			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration));			
-		} 
-		
+		if (validationResult.valid()) {
+			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration));
+		}
+
 		if (validationResult.valid()) {
 			UserRegistration savedRegistration = new UserRegistration();
 			savedRegistration.setUsername(userRegistration.getUsername());
 			savedRegistration = savedRegistration.find();
-			
-			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();			
+			// sendEmail();
+
+			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
+	@PUT
+	@APIDescription("Creates a user registration")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	public Response createUserRegistration(
+			@PathParam("registrationId") String registrationId,
+			UserRegistration userRegistration
+	)
+	{
+		UserRegistration savedRegistration = new UserRegistration();
+		savedRegistration.setRegistrationId(registrationId);
+		savedRegistration = savedRegistration.find();
+		
+		ValidationResult validationResult = userRegistration.validate();
+		if (validationResult.valid()) {
+			validationResult.merge(service.getSecurityService().processNewUser(userRegistration));
+
+			UserRegistration registration = new UserRegistration();
+			registration.setUsername(userRegistration.getUsername());
+			registration = registration.find();
+
+
+			if ((!registration.getEmail().equals(savedRegistration.getEmail()))
+					|| (!registration.getUsername().equals(savedRegistration.getUsername()))) {
+				Map<String, String> error = new HashMap<>();
+				error.put("code", "Invalid Verification Code");
+				validationResult.addToErrors(error);
+			}
+		}
+
+		if (validationResult.valid()) {
+
+			return Response.created(URI.create("v1/resource/userregistrations/" + registrationId)).entity(savedRegistration).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
-	@APIDescription("Deletes a user registeration record and the associated user.")		
+	@APIDescription("Deletes a user registeration record and the associated user.")
 	@Path("/{registrationId}")
 	public void deleteUserRegistration(
-		@PathParam("registrationId") String registrationId
-	) 
+			@PathParam("registrationId") String registrationId
+	)
 	{
 		UserRegistration registration = new UserRegistration();
 		registration.setRegistrationId(registrationId);
 		registration = registration.find();
 		if (registration != null) {
-			service.getSecurityService().deletesUser(registration.getUsername());			
+			service.getSecurityService().deletesUser(registration.getUsername());
 		}
-	}	
-	
+	}
+
 }

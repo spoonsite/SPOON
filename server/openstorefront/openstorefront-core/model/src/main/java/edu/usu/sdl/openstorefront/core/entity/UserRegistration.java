@@ -93,6 +93,10 @@ public class UserRegistration
 	@APIDescription("This is used to flag the built in admin account; on first creation")
 	private Boolean usingDefaultPassword;
 
+	@NotNull
+	@ConsumeField
+	private String verificationCode;
+	
 	public UserRegistration()
 	{
 	}
@@ -205,6 +209,16 @@ public class UserRegistration
 	public void setPositionTitle(String positionTitle)
 	{
 		this.positionTitle = positionTitle;
+	}
+
+	public void setVerificationCode(String verificationCode)
+	{
+		this.verificationCode = verificationCode;
+	}
+
+	public String getVerificationCode()
+	{
+		return verificationCode;
 	}
 
 }

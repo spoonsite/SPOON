@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -223,13 +224,35 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
-
-			SecurityPolicy securityPolicy = getSecurityPolicy();
-
 			userRegistration.setRegistrationId(persistenceService.generateId());
+			userRegistration.setVerificationCode(generateRandomString(8));
 			userRegistration.populateBaseCreateFields();
 			persistenceService.persist(userRegistration);
+		}
+		return validationResult;
+	}
+	private String generateRandomString(int length)
+	{       
+		if (length < 1) {
+            throw new IllegalArgumentException("length < 1: " + length);
+        }
+		String symbols = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+		Random random = new Random();
+        StringBuilder buffer = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+            buffer.append(symbols.charAt(random.nextInt(symbols.length())));
+        }
+        return buffer.toString();
+	}
 
+	@Override
+	public ValidationResult processNewUser(UserRegistration userRegistration)
+	{
+		Objects.requireNonNull(userRegistration);
+		ValidationResult validationResult = validateRegistration(userRegistration);
+		if (validationResult.valid()) {
+			SecurityPolicy securityPolicy = getSecurityPolicy();
+			
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();
 			String encryptedValue = passwordService.encryptPassword(userRegistration.getPassword());

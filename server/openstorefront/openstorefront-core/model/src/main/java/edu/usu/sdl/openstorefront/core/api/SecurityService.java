@@ -72,13 +72,21 @@ public interface SecurityService
 	ValidationResult validateRegistration(UserRegistration userRegistration);
 
 	/**
-	 * Handle processing the application into user and user profile
+	 * Handle processing the application and generating a verification email
 	 *
 	 * @param userRegistration
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewRegistration(UserRegistration userRegistration);
-
+	
+	/**
+	 * Handle processing the application into user and user profile
+	 *
+	 * @param userRegistration
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	ValidationResult processNewUser(UserRegistration userRegistration);
+	
 	/**
 	 * Approve Registration
 	 *

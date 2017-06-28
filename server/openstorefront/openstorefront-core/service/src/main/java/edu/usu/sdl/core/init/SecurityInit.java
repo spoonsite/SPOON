@@ -232,6 +232,7 @@ public class SecurityInit
 		userRegistration.setUsername(adminUsername);
 		userRegistration.setUsingDefaultPassword(Boolean.TRUE);
 		service.getSecurityService().processNewRegistration(userRegistration);
+		service.getSecurityService().processNewUser(userRegistration);
 		LOG.log(Level.CONFIG, "Register Admin User");
 
 		//approve admin user
