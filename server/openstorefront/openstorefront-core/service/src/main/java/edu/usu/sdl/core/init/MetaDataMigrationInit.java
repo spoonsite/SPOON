@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,38 @@
  */
 package edu.usu.sdl.core.init;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Remove after 2.0
+ * Remove after 2.4
+ *
  * @author dshurtleff
  */
-public class ContactExtractInit
-	extends ApplyOnceInit
+public class MetaDataMigrationInit
+		extends ApplyOnceInit
 {
-	private static final Logger LOG = Logger.getLogger(ContactExtractInit.class.getName());	
-	
-	public ContactExtractInit()
+
+	private static final Logger LOG = Logger.getLogger(MetaDataMigrationInit.class.getName());
+
+	public MetaDataMigrationInit()
 	{
-		super("Convert Contacts");
-	}	
-	
+		super("Migrate Metadata");
+	}
+
 	@Override
 	protected String internalApply()
 	{
 		StringBuilder results = new StringBuilder();
-		try
-		{
-			service.getContactService().convertContacts();
-			results.append("Converted Contacts");
-		} catch (Exception e) {
-			LOG.log(Level.WARNING, "Failed Converted Contacts", e);
-		}
-		
+//		try
+//		{
+//			service.getContactService().convertContacts();
+//			results.append("Converted Contacts");
+//		} catch (Exception e) {
+//			LOG.log(Level.WARNING, "Failed Converted Contacts", e);
+//		}
+
 		return results.toString();
+
 	}
-	
+
 }

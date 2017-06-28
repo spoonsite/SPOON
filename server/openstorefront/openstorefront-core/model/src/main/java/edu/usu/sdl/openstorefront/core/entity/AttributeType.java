@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
@@ -109,41 +111,40 @@ public class AttributeType
 	@APIDescription("Default attribute code")
 	private String defaultAttributeCode;
 
+	@ConsumeField
+	@APIDescription("Defines the value type of code descriptions")
+	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
+	@FK(AttributeValueType.class)
+	private AttributeValueType attributeValueType;
+
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 
 	public AttributeType()
 	{
 	}
-	
-	public void updateNullFlags() 
+
+	public void updateNullFlags()
 	{
-		if (this.getAllowMultipleFlg() == null) 
-		{
+		if (this.getAllowMultipleFlg() == null) {
 			this.setAllowMultipleFlg(false);
 		}
-		if (this.getArchitectureFlg() == null) 
-		{
+		if (this.getArchitectureFlg() == null) {
 			this.setArchitectureFlg(false);
 		}
-		if (this.getImportantFlg() == null) 
-		{
+		if (this.getImportantFlg() == null) {
 			this.setImportantFlg(false);
 		}
-		if (this.getRequiredFlg() == null) 
-		{
+		if (this.getRequiredFlg() == null) {
 			this.setRequiredFlg(false);
 		}
-		if (this.getVisibleFlg()== null) 
-		{
+		if (this.getVisibleFlg() == null) {
 			this.setVisibleFlg(false);
-		}		
-		if (this.getAllowUserGeneratedCodes()== null) 
-		{
+		}
+		if (this.getAllowUserGeneratedCodes() == null) {
 			this.setAllowUserGeneratedCodes(false);
 		}
-		if (this.getHideOnSubmission()== null) 
-		{
+		if (this.getHideOnSubmission() == null) {
 			this.setHideOnSubmission(false);
 		}
 	}
@@ -340,6 +341,16 @@ public class AttributeType
 	public void setAllowUserGeneratedCodes(Boolean allowUserGeneratedCodes)
 	{
 		this.allowUserGeneratedCodes = allowUserGeneratedCodes;
+	}
+
+	public AttributeValueType getAttributeValueType()
+	{
+		return attributeValueType;
+	}
+
+	public void setAttributeValueType(AttributeValueType attributeValueType)
+	{
+		this.attributeValueType = attributeValueType;
 	}
 
 }

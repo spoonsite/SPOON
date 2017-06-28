@@ -214,7 +214,7 @@
 								border: true,
 								xtype: 'grid',
 								split: true,
-								maxHeight: 350,
+								height: 350,
 								dockedItems: [
 									{
 										xtype: 'panel',

@@ -75,7 +75,7 @@ public interface AttributeService
 	 * @param code a string representing the attribute code
 	 * @return true if code the code exists for the given type
 	 */
-	public Boolean checkIfCodeExistsForType(String type, String code); 
+	public Boolean checkIfCodeExistsForType(String type, String code);
 
 	/**
 	 * Gets the codes for a type Note active codes are cached.
@@ -140,6 +140,7 @@ public interface AttributeService
 	 */
 	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
+	//public Lis
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *
