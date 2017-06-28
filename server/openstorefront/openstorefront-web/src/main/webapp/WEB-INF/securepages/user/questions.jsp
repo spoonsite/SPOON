@@ -184,7 +184,9 @@
 				});
 				
 				var actionRefreshResponses = function() {
-					Ext.getCmp('responseGrid').getStore().load();
+					Ext.getCmp('responseGrid').getStore().load({
+						url: 'api/v1/resource/componentquestions/responses/${user}?status=' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
+					});
 				};
 						
 				var responseWindow = Ext.create('OSF.component.ResponseWindow', {
@@ -391,7 +393,9 @@
 				};
 				
 				var actionRefreshQuestions = function() {
-					Ext.getCmp('questionGrid').getStore().load();
+					Ext.getCmp('questionGrid').getStore().load({
+						url: 'api/v1/resource/componentquestions/${user}?status=' + Ext.getCmp('question-activeStatus').getSelection().getData().code
+					});
 				};
 						
 				var questionWindow = Ext.create('OSF.component.QuestionWindow', {

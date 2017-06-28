@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.component;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -47,6 +48,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -740,6 +742,18 @@ public class SubComponentServiceImpl
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample(example));
+		
+		
+			ComponentReview pendingReviewExample = new ComponentReview();
+			pendingReviewExample.setCreateUser(username);
+			pendingReviewExample.setActiveStatus(ComponentReview.PENDING_STATUS);
+			
+			List<ComponentReview> pendingComponentReviews = persistenceService.queryByExample(pendingReviewExample);
+			tempReviews.addAll(pendingComponentReviews);
+			
+		
+		
+		
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review
 				-> {
@@ -762,7 +776,10 @@ public class SubComponentServiceImpl
 			reviews.add(tempView);
 		});
 
-		//filter out unapproved
+		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
+		
+		
+		//filter out unapproved components
 		for (int i = reviews.size() - 1; i >= 0; i--) {
 			ComponentReviewView reviewView = reviews.get(i);
 			if (core.checkComponentApproval(reviewView.getComponentId()) == false) {
