@@ -757,20 +757,19 @@ Configure Apache proxy
 		
 **Add:**
 
-<VirtualHost *:80>
-   ProxyPreserveHost On	
- #SSLProxyEngine on
- RewriteEngine on
+	<VirtualHost *:80>
+	   ProxyPreserveHost On	    
+	   RewriteEngine on
 
-#Openstorefront
-ProxyPass /openstorefront http://localhost:8080/openstorefront
-ProxyPassReverse /openstorefront http://localhost:8080/openstorefront
+	   #Openstorefront
+	    ProxyPass /openstorefront http://localhost:8080/openstorefront
+	    ProxyPassReverse /openstorefront http://localhost:8080/openstorefront
 
-ProxyPass /openstorefront ws://localhost:8080/openstorefront
-ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
+	    ProxyPass /openstorefront ws://localhost:8080/openstorefront
+	    ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
 
-    RedirectMatch ^/$ /openstorefront/
-</VirtualHost>
+	    RedirectMatch ^/$ /openstorefront/
+	</VirtualHost>
 
 **systemctl restart httpd**
 
@@ -780,11 +779,14 @@ Configure Tomcat
 	
 1)	nano /usr/share/tomcat/conf/tomcat.conf
 Add
+
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx4g -XX:+UseConcMarkSweepGC"
+
 	Update networking
 		nano /usr/share/tomcat/conf/server.xml
 		edit: <Connector port="8080"…     to 
-<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
+		
+	<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
                connectionTimeout="20000"
                maxThreads="250" minSpareThreads="25"
                compression="on" compressableMimeType="text/html,text/xml,text/plain,application/json,text/css,application/javascript"
@@ -793,4 +795,15 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
                redirectPort="8443" />
 
 2)	systemctl restart tomcat
+
+Deploy code
+-------
+
+mkdir /var/openstorefront
+
+chown -R tomcat:tomcat /var/openstorefront
+
+copy openstorefront.war (from https://github.com/di2e/openstorefront/releases/download/<version tag>/openstorefront.war) to /usr/share/tomcat/webapps 
+
+Before copying chown tomcat:tomcat openstorefront.war
 
