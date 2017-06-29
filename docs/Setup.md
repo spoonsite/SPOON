@@ -867,3 +867,4 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
     example: ```curl -LO https://github.com/di2e/openstorefront/releases/download/v2.3/openstorefront.war```
 4)	chown tomcat:tomcat openstorefront.war
 5)	mv openstorefront.war /usr/share/tomcat/webapps 
+6) 	systemctl restart tomcat
