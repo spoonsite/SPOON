@@ -60,8 +60,8 @@ public class SecurityRolesTest
 		signupForAccounts();
 		addSecurityRole();
 		setSecurityRoles();
-//			importDataRestrictionEntries ();
-		//	verifyPermissions();
+//	TODO:	importDataRestrictionEntries ();	
+//	TODO:	verifyPermissions();				
 	}
 
 	public void signupForAccounts() throws InterruptedException
@@ -70,11 +70,11 @@ public class SecurityRolesTest
 
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// NOTE-- usernames get converted to lower case
-//		newAccountSignup.signupActivate("auto-customized-user");
-//		newAccountSignup.signupActivate("auto-admin-user");
-//		newAccountSignup.signupActivate("auto-eval-user");
-//		newAccountSignup.signupActivate("auto-librarian-user");
-//		newAccountSignup.signupActivate("auto-user-user");
+		newAccountSignup.signupActivate("auto-customized-user");
+		newAccountSignup.signupActivate("auto-admin-user");
+		newAccountSignup.signupActivate("auto-evaluator-user");
+		newAccountSignup.signupActivate("auto-librarian-user");
+		newAccountSignup.signupActivate("auto-user-user");
 	}
 
 	public void addSecurityRole() throws InterruptedException
@@ -83,14 +83,27 @@ public class SecurityRolesTest
 			NewSecurityRole newSecurityRole = new NewSecurityRole();
 
 			// Set up new Security Role, add user to role
-//			newSecurityRole.deleteRoleIfPresent(driver, "auto-customized-role");
-//			newSecurityRole.addSecurityRole(driver, "auto-customized-role", true, true);
-			newSecurityRole.onlyOneUserInRole(driver, "auto-user-role", "auto-customized-user");
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-customized-role");
+			newSecurityRole.addSecurityRole(driver, "auto-customized-role", false, false);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-customized-role", "auto-customized-user");
 
 			// REPEAT HERE FOR OTHER ROLES AND USERS
-//			newSecurityRole.deleteRoleIfPresent(driver, "auto-admin-role");
-//			newSecurityRole.addSecurityRole(driver, "auto-admin-role", true, true);
-//			newSecurityRole.onlyOneUserInRole(driver, "auto-user-role", "auto-customized-user");	
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-admin-role");
+			newSecurityRole.addSecurityRole(driver, "auto-admin-role", false, false);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-admin-role", "auto-admin-user");	
+			
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-evaluator-role");
+			newSecurityRole.addSecurityRole(driver, "auto-evaluator-role", false, false);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-evaluator-role", "auto-evaluation-user");	
+			
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-librarian-role");
+			newSecurityRole.addSecurityRole(driver, "auto-librarian-role", false, false);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-librarian-role", "auto-librarian-user");	
+			
+			newSecurityRole.deleteRoleIfPresent(driver, "auto-user-role");
+			newSecurityRole.addSecurityRole(driver, "auto-user-role", false, false);
+			newSecurityRole.onlyOneUserInRole(driver, "auto-user-role", "auto-user-user");	
+			
 		}
 	}
 
@@ -102,7 +115,7 @@ public class SecurityRolesTest
 			// For the "Role", Set Data Sources, Data Sensitivies, and Permissions
 			// Change this one for a quick test
 			newSecurityRole.setDataSources(driver, "auto-customized-role", customizedDataSources);
-			newSecurityRole.setDataSensitivity(driver, "auto-customized-role", customizedDataSensitivities);
+    		newSecurityRole.setDataSensitivity(driver, "auto-customized-role", customizedDataSensitivities);
 			newSecurityRole.setPermissions(driver, "auto-customized-role", customizedPermissions);
 
 			// DO NOT Change these
@@ -128,14 +141,14 @@ public class SecurityRolesTest
 		}
 	}
 
-//	public void importDataRestrictionEntries()
+	public void importDataRestrictionEntries()
 	{
-
+		// *** To be worked on for Storefront v2.5 ***
 	}
 
 	public void verifyPermissions()
 	{
-
+		// *** To be worked on for Storefront v2.5 ***
 	}
 	
 	@AfterClass

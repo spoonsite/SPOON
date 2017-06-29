@@ -16,10 +16,19 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.BeforeClass;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  *
@@ -28,8 +37,7 @@ import org.junit.BeforeClass;
 public class SecurityTestBase
 		extends BrowserTestBase
 {
-	
-		
+
 	@BeforeClass
 	public static void setupBaseTest()
 	{
@@ -45,31 +53,30 @@ public class SecurityTestBase
 	protected Map<String, Boolean> defaultDataSources = new HashMap<>();
 	protected Map<String, Boolean> defaultDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> defaultPermissions = new HashMap();
-	
+
 	protected Map<String, Boolean> adminDataSources = new HashMap<>();
 	protected Map<String, Boolean> adminDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> adminPermissions = new HashMap();
-	
+
 	protected Map<String, Boolean> evaluatorDataSources = new HashMap<>();
 	protected Map<String, Boolean> evaluatorDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> evaluatorPermissions = new HashMap();
-	
+
 	protected Map<String, Boolean> librarianDataSources = new HashMap<>();
 	protected Map<String, Boolean> librarianDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> librarianPermissions = new HashMap();
-	
+
 	protected Map<String, Boolean> userDataSources = new HashMap<>();
 	protected Map<String, Boolean> userDataSensitivities = new HashMap<>();
 	protected Map<String, Boolean> userPermissions = new HashMap();
 
-	
 	public void defineCustomizedSecurityRoles()
 	{
 		// FEEL FREE to change this one for whatever you need for a customized test
-		
+
 		customizedDataSources.put("DI2E", true);
 		customizedDataSources.put("ER2", false);
-		
+
 		customizedDataSensitivities.put("DISTROA", true);
 		customizedDataSensitivities.put("DISTROB", false);
 		customizedDataSensitivities.put("DISTROC", true);
@@ -122,11 +129,11 @@ public class SecurityTestBase
 		customizedPermissions.put("REPORTS-SCHEDULE", false);
 		customizedPermissions.put("USER-SUBMISSIONS", true);
 	}
-	
+
 	public void defineDefaultSecurityRoles()
 	{
 		//	!!! PLEASE DO NOT CHANGE unless the manual regression test is also updated !!!
-		
+
 		defaultDataSources.put("DI2E", false);
 		defaultDataSources.put("ER2", false);
 
@@ -139,7 +146,7 @@ public class SecurityTestBase
 		defaultDataSensitivities.put("ITAR", false);
 		defaultDataSensitivities.put("PUBLIC", false);
 		defaultDataSensitivities.put("SENSITIVE", false);
-		
+
 		defaultPermissions.put("ADMIN-ALERT-MANAGEMENT", false);
 		defaultPermissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", false);
 		defaultPermissions.put("ADMIN-BRANDING", false);
@@ -186,10 +193,10 @@ public class SecurityTestBase
 	public void defineAdminSecurityRoles()
 	{
 		//	!!! PLEASE DO NOT CHANGE unless the manual regression test is also updated !!!
-		
+
 		adminDataSources.put("DI2E", true);
 		adminDataSources.put("ER2", true);
-		
+
 		adminDataSensitivities.put("DISTROA", true);
 		adminDataSensitivities.put("DISTROB", true);
 		adminDataSensitivities.put("DISTROC", true);
@@ -199,7 +206,7 @@ public class SecurityTestBase
 		adminDataSensitivities.put("ITAR", true);
 		adminDataSensitivities.put("PUBLIC", true);
 		adminDataSensitivities.put("SENSITIVE", true);
-		
+
 		adminPermissions.put("ADMIN-ALERT-MANAGEMENT", true);
 		adminPermissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", true);
 		adminPermissions.put("ADMIN-BRANDING", true);
@@ -246,7 +253,7 @@ public class SecurityTestBase
 	public void defineEvaluatorSecurityRoles()
 	{
 		//	!!! PLEASE DO NOT CHANGE unless the manual regression test is also updated !!!
-		
+
 		evaluatorDataSources.put("DI2E", false);
 		evaluatorDataSources.put("ER2", true);
 
@@ -259,7 +266,7 @@ public class SecurityTestBase
 		evaluatorDataSensitivities.put("ITAR", false);
 		evaluatorDataSensitivities.put("PUBLIC", false);
 		evaluatorDataSensitivities.put("SENSITIVE", false);
-		
+
 		evaluatorPermissions.put("ADMIN-ALERT-MANAGEMENT", false);
 		evaluatorPermissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", false);
 		evaluatorPermissions.put("ADMIN-BRANDING", false);
@@ -306,10 +313,10 @@ public class SecurityTestBase
 	public void defineLibrarianSecurityRoles()
 	{
 		//	!!! PLEASE DO NOT CHANGE unless the manual regression test is also updated !!!
-		
+
 		librarianDataSources.put("DI2E", true);
 		librarianDataSources.put("ER2", true);
-		
+
 		librarianDataSensitivities.put("DISTROA", true);
 		librarianDataSensitivities.put("DISTROB", false);
 		librarianDataSensitivities.put("DISTROC", false);
@@ -319,7 +326,7 @@ public class SecurityTestBase
 		librarianDataSensitivities.put("ITAR", true);
 		librarianDataSensitivities.put("PUBLIC", true);
 		librarianDataSensitivities.put("SENSITIVE", true);
-		
+
 		librarianPermissions.put("ADMIN-ALERT-MANAGEMENT", true);
 		librarianPermissions.put("ADMIN-ATTRIBUTE-MANAGEMENT", true);
 		librarianPermissions.put("ADMIN-BRANDING", false);
@@ -366,10 +373,10 @@ public class SecurityTestBase
 	public void defineUserSecurityRoles()
 	{
 		//	!!! PLEASE DO NOT CHANGE unless the manual regression test is also updated !!!
-		
+
 		userDataSources.put("DI2E", true);
 		userDataSources.put("ER2", false);
-		
+
 		userDataSensitivities.put("DISTROA", false);
 		userDataSensitivities.put("DISTROB", false);
 		userDataSensitivities.put("DISTROC", true);
@@ -421,6 +428,51 @@ public class SecurityTestBase
 		userPermissions.put("REPORTS-ALL", false);
 		userPermissions.put("REPORTS-SCHEDULE", false);
 		userPermissions.put("USER-SUBMISSIONS", false);
+	}
+
+	public void tableDeleteAllRoles(String cssSelector, WebDriver driver, int columnClickOn)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+
+		try {
+			List<WebElement> allRows = new ArrayList<WebElement>();
+			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+			
+			// ************** Need to refresh up here, only deletes 1, need to account for > 1 role in the table **********************
+			
+			for (WebElement row : allRows) {
+
+				List<WebElement> cells = new ArrayList<WebElement>();
+				try {
+					cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+
+					WebElement clickCol = cells.get(columnClickOn);
+					Actions builder = new Actions(driver);
+					builder.moveToElement(clickCol).perform();
+					sleep(100);
+					builder.click().perform();
+
+					// Click Yes on confirmation pop-up box; deleting role from user
+					try {
+						List<WebElement> confButtons = driver.findElements(By.cssSelector(".x-btn-inner.x-btn-inner-default-small"));
+						for (WebElement button : confButtons) {
+							if (button.getText().equals("Yes")) {
+								button.click();
+							}
+						}
+					} catch (Exception e) {
+						LOG.log(Level.SEVERE, "*** Could not find confirmation button 'YES' to click. ***");
+					}
+				} catch (Exception e) {
+
+				}
+			}
+		} catch (Exception e) {
+			LOG.log(Level.WARNING,
+					"*** Not able to click on column " + columnClickOn + " searching by this cssSelector for a table: \n"
+					+ cssSelector + " ***");
+			System.out.println(e);
+		}
 	}
 
 }
