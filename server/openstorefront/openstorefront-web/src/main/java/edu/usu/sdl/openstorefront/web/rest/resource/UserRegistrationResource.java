@@ -143,9 +143,8 @@ public class UserRegistrationResource
 
 		if (validationResult.valid()) {
 			UserRegistration savedRegistration = new UserRegistration();
-			savedRegistration.setUsername(userRegistration.getUsername());
+			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
 			savedRegistration = savedRegistration.find();
-			// sendEmail();
 
 			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
 		} else {
@@ -176,7 +175,8 @@ public class UserRegistrationResource
 
 
 			if ((!registration.getEmail().equals(savedRegistration.getEmail()))
-					|| (!registration.getUsername().equals(savedRegistration.getUsername()))) {
+					|| (!registration.getUsername().equals(savedRegistration.getUsername()))
+					|| (!registration.getVerificationCode().equals(savedRegistration.getVerificationCode()))) {
 				Map<String, String> error = new HashMap<>();
 				error.put("code", "Invalid Verification Code");
 				validationResult.addToErrors(error);

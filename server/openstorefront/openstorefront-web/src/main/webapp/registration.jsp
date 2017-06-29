@@ -237,6 +237,7 @@
 									},	
 									items: [ {
 											xtype: 'hiddenfield',
+											id: 'registrationId',
 											name: 'registrationId'
 										},
 										{
@@ -247,7 +248,7 @@
 										{
 											xtype: 'button',
 											text: "Get Verification Code",
-											name: 'verificationCode',
+											name: 'verificationCodeButton',
 											iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction-check',
 											allowBlank: false,
 											width: 200,
@@ -289,7 +290,7 @@
 										{
 											xtype: 'textfield',
 											fieldLabel: 'Enter the verification code from your your email here <span class="field-required" />',
-											name: 'verification Code',
+											name: 'verificationCode',
 											allowBlank: false,
 											maxLength: 80
 										}										

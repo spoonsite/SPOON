@@ -224,10 +224,24 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
-			userRegistration.setRegistrationId(persistenceService.generateId());
+			
+			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty()) ?
+				persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
+			
+			if(existing != null)
+			{
+				existing.updateFields(userRegistration);	
+				userRegistration = existing;
+			}
+			else
+			{
+				userRegistration.setRegistrationId(persistenceService.generateId());
+				userRegistration.populateBaseCreateFields();
+			}
 			userRegistration.setVerificationCode(generateRandomString(8));
-			userRegistration.populateBaseCreateFields();
 			persistenceService.persist(userRegistration);
+			
+			// sendEmail();
 		}
 		return validationResult;
 	}

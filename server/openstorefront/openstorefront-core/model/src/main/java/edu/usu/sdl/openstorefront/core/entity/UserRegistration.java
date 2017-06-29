@@ -93,7 +93,6 @@ public class UserRegistration
 	@APIDescription("This is used to flag the built in admin account; on first creation")
 	private Boolean usingDefaultPassword;
 
-	@NotNull
 	@ConsumeField
 	private String verificationCode;
 	
@@ -220,5 +219,22 @@ public class UserRegistration
 	{
 		return verificationCode;
 	}
+	
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
 
+		UserRegistration userRegistrationUpdate = (UserRegistration) entity;
+		this.setPassword(userRegistrationUpdate.getPassword());
+		this.setUsername(userRegistrationUpdate.getUsername());
+		this.setFirstName(userRegistrationUpdate.getFirstName());
+		this.setLastName(userRegistrationUpdate.getLastName());
+		this.setOrganization(userRegistrationUpdate.getOrganization());
+		this.setPositionTitle(userRegistrationUpdate.getPositionTitle());
+		this.setEmail(userRegistrationUpdate.getEmail());
+		this.setPhone(userRegistrationUpdate.getPhone());
+		this.setUserTypeCode(userRegistrationUpdate.getUserTypeCode());
+		this.setVerificationCode(userRegistrationUpdate.getVerificationCode());
+	}
 }
