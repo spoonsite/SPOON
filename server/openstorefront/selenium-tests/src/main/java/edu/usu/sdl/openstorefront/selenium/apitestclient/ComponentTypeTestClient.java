@@ -18,8 +18,8 @@ package edu.usu.sdl.openstorefront.selenium.apitestclient;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.ComponentTypeClient;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -30,35 +30,36 @@ public class ComponentTypeTestClient
 {
 
 	private ComponentTypeClient apiComponentType;
-	private static List<String> componentTypeIds = new ArrayList<>();
+	private static Set<String> componentTypeIds = new HashSet<>();
 
 	public ComponentTypeTestClient(ClientAPI client, APIClient apiClient)
 	{
 		super(client, apiClient);
 		apiComponentType = new ComponentTypeClient(client);
 	}
-	
-	public ComponentType createAPIComponentType()
+
+	public ComponentType createAPIComponentType(String componentType)
 	{
 		ComponentType compType = new ComponentType();
-		compType.setComponentType("WAAABOOOM");
-		compType.setLabel("This Waaaboom Label");
-		compType.setDescription("Waaabooom Description");
-		
+		compType.setComponentType(componentType);
+		compType.setLabel(componentType + " - cool label");
+		compType.setDescription(componentType + " - cool description");
+
 		ComponentType apiCompType = apiComponentType.createNewComponentType(compType);
-		componentTypeIds.add(compType.getComponentType());
+		componentTypeIds.add(apiCompType.getComponentType());
 		return apiCompType;
 	}
 
 	public void deleteAPIEntryType(String type)
 	{
-		apiComponentType.deleteComponentType(type, "COMP");
+		apiComponentType.deleteComponentType(type, ComponentType.ARTICLE);
 	}
-	
+
 	@Override
 	public void cleanup()
 	{
 		for (String id : componentTypeIds) {
+			System.out.println("****@@@ In ComponentTYpe cleanup");
 			deleteAPIEntryType(id);
 		}
 	}

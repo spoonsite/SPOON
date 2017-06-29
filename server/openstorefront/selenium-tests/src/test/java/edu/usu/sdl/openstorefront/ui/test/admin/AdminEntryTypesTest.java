@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -60,7 +59,7 @@ public class AdminEntryTypesTest
 
 	private void createAPIComponentType()
 	{
-		apiClient.getComponentTypeTestClient().createAPIComponentType();
+		apiClient.getComponentTypeTestClient().createAPIComponentType("AAA-ENTRYTYPE-API");
 	}
 
 	public void setupDriver(WebDriver driver)
@@ -242,11 +241,4 @@ public class AdminEntryTypesTest
 		}
 		return -1;
 	}
-
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
-	}
-
 }

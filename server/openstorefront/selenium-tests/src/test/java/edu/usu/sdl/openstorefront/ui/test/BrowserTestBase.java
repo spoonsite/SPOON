@@ -58,6 +58,14 @@ public class BrowserTestBase
 		webDriverUtil = new WebDriverUtil(properties);
 		apiClient = new APIClient();
 	}
+	
+	@AfterClass
+	public static void cleanup() throws Exception
+	{
+		LOG.log(Level.INFO, "Starting cleanup");
+		apiClient.cleanup();
+		tearDown();
+	}
 
 	/*@BeforeClass
 	public static void setSize() throws Exception
@@ -65,8 +73,8 @@ public class BrowserTestBase
 		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
 	}
 	 */
-	@AfterClass
-	public static void tearDown() throws Exception
+	
+	private static void tearDown() throws Exception
 	{
 		//Bot.driver().quit();
 		//WebDriverExtensionsContext.removeDriver();
@@ -164,12 +172,12 @@ public class BrowserTestBase
 	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
 		int fRow = -1;
-		WebDriverWait wait = new WebDriverWait(driver, 1);
+		WebDriverWait wait = new WebDriverWait(driver, 3);
 
 		try {
 			List<WebElement> allRows = new ArrayList<WebElement>();
 			driverWait(() -> {
-				wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(cssSelector)));
 			}, 5000);
 
 			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));

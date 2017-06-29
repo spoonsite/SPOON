@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.APIResponse;
 import edu.usu.sdl.apiclient.AbstractService;
@@ -29,22 +30,24 @@ import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**
  *
  * @author ccummings
  */
-public class AttributeClient extends AbstractService
+public class AttributeClient
+		extends AbstractService
 {
 
 	String basePath = "api/v1/resource/attributes";
-	
+
 	public AttributeClient(ClientAPI client)
 	{
 		super(client);
 	}
-	
+
 	public AttributeClient()
 	{
 		this(new ClientAPI(new ObjectMapper()));
@@ -115,9 +118,14 @@ public class AttributeClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getAttributeCodes(String type, FilterQueryParams filterQueryParams)
+	public List<AttributeCode> getAttributeCodes(String type, FilterQueryParams filterQueryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
+		APIResponse response = client.httpGet(basePath + "/attributetypes/" + type + "/attributecodes", parameters);
+		List<AttributeCode> attrCodeList = response.getList(new TypeReference<List<AttributeCode>>()
+		{
+		});
+		return attrCodeList;
 	}
 
 	public Response getAttributeRelationships(String filterAttributeType)
@@ -160,9 +168,13 @@ public class AttributeClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getRequiredAttributeTypes(String componentType)
+	public List<AttributeType> getRequiredAttributeTypes(String componentType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpGet(basePath + "/attributetypes/required?componentType=" + componentType, null);
+		List<AttributeType> attrTypeList = response.getList(new TypeReference<List<AttributeType>>()
+		{
+		});
+		return attrTypeList;
 	}
 
 	public void hardDeleteAttributeCode(String type, String code)

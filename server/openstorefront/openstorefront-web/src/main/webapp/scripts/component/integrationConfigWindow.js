@@ -308,6 +308,9 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Refresh',							
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+							autoEl: {
+								'data-test': 'refreshBtnIntegrationWindow'
+							},
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}							

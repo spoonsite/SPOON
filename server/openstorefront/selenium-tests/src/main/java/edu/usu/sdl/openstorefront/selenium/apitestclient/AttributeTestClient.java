@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.selenium.apitestclient;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,16 @@ public class AttributeTestClient extends BaseTestClient
 	public void deleteAPIAttribute(String type)
 	{
 		apiAttribute.hardDeleteAttributeType(type);
+	}
+	
+	public List<AttributeType> getReqAttributeTypes(String componentType)
+	{
+		return apiAttribute.getRequiredAttributeTypes(componentType);
+	}
+	
+	public List<AttributeCode> getListAttributeCodes(String attrType, FilterQueryParams params)
+	{
+		return apiAttribute.getAttributeCodes(attrType, params);
 	}
 
 	@Override

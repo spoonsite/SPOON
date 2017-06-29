@@ -36,6 +36,7 @@ public class APIClient
 	private HighlightTestClient apiHighlightClient;
 	private UserSavedSearchTestClient apiUserSavedSearchClient;
 	private SystemSearchTestClient apiSystemSearchClient;
+	private ComponentRESTTestClient apiComponentRESTClient;
 
 	public APIClient()
 	{
@@ -44,6 +45,15 @@ public class APIClient
 		String username = PropertiesUtil.getProperties().getProperty("test.username");
 		String password = PropertiesUtil.getProperties().getProperty("test.password");
 		client.connect(username, password, server);
+	}
+	
+	public ComponentRESTTestClient getComponentRESTTestClient() 
+	{
+		if (apiComponentRESTClient == null) {
+			apiComponentRESTClient = new ComponentRESTTestClient(client, this);
+			testClients.add(apiComponentRESTClient);
+		}
+		return apiComponentRESTClient;
 	}
 	
 	public SystemSearchTestClient getSystemSearchTestClient()
@@ -103,6 +113,7 @@ public class APIClient
 	public void cleanup()
 	{
 		for (BaseTestClient client : testClients) {
+			System.out.println("##### In BaseTestClient Cleanup");
 			client.cleanup();
 		}
 		

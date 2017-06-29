@@ -16,9 +16,11 @@
 package edu.usu.sdl.apiclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -201,6 +204,15 @@ public class ClientAPI
 			}
 		}
 	}
+	
+	public Map<String,String>  translateFilterQueryParams(FilterQueryParams params)
+	{
+		try {
+			return BeanUtils.describe(params);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException exs) {
+			throw new RuntimeException(exs);
+		}
+	}
 
 	public APIResponse httpGet(String apiPath, Map<String, String> parameters)
 	{
@@ -260,7 +272,8 @@ public class ClientAPI
 	{
 		APIResponse response = null;
 		try {
-			StringEntity entity = new StringEntity(objectMapper.writeValueAsString(value));
+			String entityRawValue = objectMapper.writeValueAsString(value);
+			StringEntity entity = new StringEntity(entityRawValue);
 
 			RequestConfig defaultRequestConfig = RequestConfig.custom()
 					.setCircularRedirectsAllowed(true).build();

@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -34,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
@@ -45,6 +50,7 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.TagView;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.Response;
 
@@ -53,7 +59,20 @@ import javax.ws.rs.core.Response;
  * @author ccummings
  */
 public class ComponentRESTClient
+		extends AbstractService
 {
+
+	String basePath = "api/v1/resource/components";
+
+	public ComponentRESTClient(ClientAPI client)
+	{
+		super(client);
+	}
+
+	public ComponentRESTClient()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public Response activateComponent(String componentId)
 	{
@@ -220,9 +239,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response createComponent(RequiredForComponent component)
+	public RequiredForComponent createComponent(RequiredForComponent component)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath, component, null);
+		return response.getResponse(RequiredForComponent.class);
 	}
 
 	public void deleteAllComponentEvaluationSections(String componentId)
@@ -235,9 +255,9 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response deleteComponent(String componentId)
+	public void deleteComponent(String componentId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + componentId + "/cascade", null);
 	}
 
 	public Response deleteComponentAttribute(String componentId, String attributeType, String attributeCode)
@@ -475,9 +495,12 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getComponentList(ComponentFilterParams filterQueryParams)
+	public ComponentAdminWrapper getComponentList(FilterQueryParams filterQueryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
+		APIResponse response = client.httpGet(basePath + "/filterable", parameters);
+		ComponentAdminWrapper compAdminWrapper = response.getResponse(ComponentAdminWrapper.class);
+		return compAdminWrapper;
 	}
 
 	public Response getComponentLookupList(ComponentFilterParams filterQueryParams)
