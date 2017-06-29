@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -143,47 +144,43 @@ public class NewSecurityRole
 			}
 			// Wait for Manage Roles table to come up
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-layer")));
-			
+
 			// *** DELETE ALL OTHER USERS (if they exist) ***
 			tableDeleteAllRoles(".x-window.x-layer", driver, 2);
-			
-		}
 
 			// *********** ADD USER ****************
+			webDriverUtil.getPage(driver, "AdminTool.action?load=Security-Roles");
+			sleep(1500);
+			if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
+				driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
+				sleep(250); //Users with xxxx role is now up
+
+				// Start typing in the Add User drop down box, then hit ENTER
+				driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(userName);
+				sleep(1000);
+				driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
+				sleep(1250);
+
+				// TODO:  What if the user has not been created?  Error handling here.
+				// Hit add button (when active?)
+				driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
+				sleep(1250);
+
+				// Verify it is in the list of added usernames
+				boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() + "')]")).isDisplayed();
+				if (wasAdded) {
+					LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName + " role. ---");
+				} else {
+					LOG.log(Level.SEVERE, "!!!!! Could not add the user " + userName.toLowerCase() + " to the role " + roleName + " !!!!!");
+				}
+			} else {
+				LOG.log(Level.SEVERE, "!!!!! Could not find the role " + roleName + " in order to add a managed user. !!!!!");
+			}
+
+		}
 	}
 
-		/*
-		driver.get(webDriverUtil.getPage("AdminTool.action?load=Security-Roles"));
-		//driver.navigate().refresh();
-		sleep(1500);
-		if (tableClickRowCol("[data-test='securityRolesTable'] .x-grid-view", roleName, driver, 0)) {
-			driver.findElement(By.xpath("//span[contains(.,'Manage Users')]")).click();
-			sleep(250); //Users with xxxx role is now up
-
-			// Start typing in the Add User drop down box, then hit ENTER
-			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(userName);
-			sleep(1000);
-			driver.findElement(By.xpath("//input[contains(@name,'username')]")).sendKeys(Keys.ENTER);
-			sleep(1250);
-
-			// TODO:  What if the user has not been created?  Error handling here.
-			// Hit add button (when active?)
-			driver.findElement(By.xpath("//span[@class='x-btn-button x-btn-button-default-toolbar-small x-btn-text  x-btn-icon x-btn-icon-left x-btn-button-center ']")).click();
-			sleep(1250);
-
-			// Verify it is in the list of added usernames
-			boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() + "')]")).isDisplayed();
-			if (wasAdded) {
-				LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName + " role. ---");
-			} else {
-				LOG.log(Level.SEVERE, "!!!!! Could not add the user " + userName.toLowerCase() + " to the role " + roleName + " !!!!!");
-			}
-		} else {
-			LOG.log(Level.SEVERE, "!!!!! Could not find the role " + roleName + " in order to add a managed user. !!!!!");
-		}
-		 */
 	
-
 	public void setPermissions(WebDriver driver, String roleName, Map<String, Boolean> permissions) throws InterruptedException
 	{
 		// Global for this method, save a line of code many times over

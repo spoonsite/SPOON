@@ -437,7 +437,8 @@ public class SecurityTestBase
 		try {
 			List<WebElement> allRows = new ArrayList<WebElement>();
 			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
-			// Need to refresh up here
+			
+			// ************** Need to refresh up here, only deletes 1, need to account for > 1 role in the table **********************
 			
 			for (WebElement row : allRows) {
 
