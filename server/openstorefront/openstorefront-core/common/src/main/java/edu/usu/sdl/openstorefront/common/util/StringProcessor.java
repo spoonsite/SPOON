@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.common.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -48,9 +49,9 @@ import org.jsoup.nodes.Document;
 public class StringProcessor
 {
 
-	private static final Logger log = Logger.getLogger(StringProcessor.class.getName());
+	private static final Logger LOG = Logger.getLogger(StringProcessor.class.getName());
 
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private static final int MAX_RESOURCE_NAME = 35;
 
@@ -61,8 +62,9 @@ public class StringProcessor
 	 */
 	public static ObjectMapper defaultObjectMapper()
 	{
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		return objectMapper;
+		OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return OBJECT_MAPPER;
 	}
 
 	public static String getResourceNameFromUrl(String url)

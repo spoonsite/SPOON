@@ -168,7 +168,8 @@
 			var loadEntry = function(){
 				contentPanel.setLoading(true);
 				Ext.Ajax.request({
-					url: 'api/v1/resource/components/' + componentId + '/detail?type=print',
+					// url: 'api/v1/resource/components/' + componentId + '/detail?type=print',
+					url: 'api/v1/resource/components/' + componentId + '/detail',
 					callback: function(){
 						contentPanel.setLoading(false);							
 					},
@@ -176,59 +177,127 @@
 						var entry = Ext.decode(response.responseText);						
 						
 						entry = CoreUtil.processEntry(entry);
-						
-						//build custom menu
-						entry.show = {};
-						var menuItems = [];
-						
-						var sections = [
-							{ text: 'Badges', section: 'badges' },
-							{ text: 'Contacts', section: 'contacts' },
-							{ text: 'Dependencies', section: 'dependencies' },
-							{ text: 'Description', section: 'description' },
-							{ text: 'Evaluation', section: 'evaluation' },
-							{ text: 'General', section: 'general' },							
-							{ text: 'Media', section: 'media' },
-							{ text: 'Questions', section: 'questions' },
-							{ text: 'Relationships', section: 'relationships' },
-							{ text: 'Resources', section: 'resources' },
-							{ text: 'Reviews', section: 'reviews' },
-							{ text: 'Tags', section: 'tags' },
-							{ text: 'Views', section: 'views' },
-							{ text: 'Vitals', section: 'vitals' }
-						];
-						
-						Ext.Array.each(sections, function(item){
-							entry.show[item.section] = true;
-							menuItems.push({
-								xtype: 'menucheckitem',
-								text: item.text,
-								checked: true,
-								listeners: {
-									checkchange: function(menuItem, checked, opts) {	
-										entry.show[item.section] = checked;
-										Ext.getCmp('contentInfo').update(entry);										
-										contentPanel.updateLayout(true, true);
+
+						CoreUtil.calculateEvalutationScore({
+							fullEvaluations: entry.fullEvaluations,
+							evaluation: entry.fullEvaluations,
+							success: function (newData) {
+								entry.fullEvaluations = newData.fullEvaluations;
+
+								//build custom menu
+								entry.show = {};
+								entry.evaluations = [];
+								var menuItems = [];
+								
+								var sections = [
+									{ text: 'Badges', section: 'badges' },
+									{ text: 'Contacts', section: 'contacts' },
+									{ text: 'Dependencies', section: 'dependencies' },
+									{ text: 'Description', section: 'description' },
+									{ text: 'Evaluation', section: 'evaluation' },
+									{ text: 'General', section: 'general' },							
+									{ text: 'Media', section: 'media' },
+									{ text: 'Questions', section: 'questions' },
+									{ text: 'Relationships', section: 'relationships' },
+									{ text: 'Resources', section: 'resources' },
+									{ text: 'Reviews', section: 'reviews' },
+									{ text: 'Tags', section: 'tags' },
+									{ text: 'Views', section: 'views' },
+									{ text: 'Vitals', section: 'vitals' }
+								];
+
+								// for each evaluation of this component, add a section for it (indicating it's version)
+								for (var ii = 0; ii < entry.fullEvaluations.length; ii += 1) {
+									var evalVersion = entry.fullEvaluations.length > 1 ? ' - version: ' + entry.fullEvaluations[ii].evaluation.version : '';
+									var rawVersion = entry.fullEvaluations[ii].evaluation.version;
+
+									sections.push({ text: 'Evaluation Details' + evalVersion, section: 'evaluationDetails' + rawVersion, sections: [
+										{ text: 'Reusability Factors', section: 'evalReusability' + rawVersion },
+										{ text: 'Checklist Summary', section: 'evalChecklistSummary' + rawVersion },
+										{ text: 'Recommendations', section: 'evalRecommendations' + rawVersion },
+										{ text: 'Content Sections', section: 'evalContentSections' + rawVersion },
+										{ text: 'Checklist Details', section: 'evalChecklistDetails' + rawVersion }
+									]});
+								}
+								
+								Ext.Array.each(sections, function(item){
+
+									// If the item being pushed is NOT part of evaluation details
+									if (item.text.indexOf('Evaluation Details') === -1) {
+										entry.show[item.section] = true;
+										menuItems.push({
+											// xtype: 'menucheckitem',
+											text: item.text,
+											checked: true,
+											listeners: {
+												checkchange: function(menuItem, checked, opts) {	
+													entry.show[item.section] = checked;
+													Ext.getCmp('contentInfo').update(entry);										
+													contentPanel.updateLayout(true, true);
+												}
+											}
+										});							
 									}
-								}
-							});							
-						});
-						
-						Ext.getCmp('customTemplateBtn').setMenu({
-							items: menuItems,
-							listeners: {
-								beforerender: function () {
-									this.setWidth(this.up('button').getWidth());
-								}
+
+									// If the item being pushed IS part of evaluation details
+									else {
+										entry.show[item.section] = true;
+										var evaluationMenu = {
+											text: item.text,
+											checked: true,
+											xtype: 'menucheckitem',
+											menu: {
+												xtype: 'menu',
+												items: []
+											},
+											listeners: {
+												checkchange: function(menuItem, checked, opts) {	
+													entry.show[item.section] = checked;
+													Ext.getCmp('contentInfo').update(entry);										
+													contentPanel.updateLayout(true, true);
+												}
+											}
+										};
+
+										// push each subsection of the evaluation detail
+										Ext.Array.each(item.sections, function (subItem) {
+											entry.show[subItem.section] = true;
+											evaluationMenu.menu.items.push({
+												xtype: 'menucheckitem',
+												text: subItem.text,
+												checked: true,
+												listeners: {
+													checkchange: function(menuItem, checked, opts) {	
+														entry.show[subItem.section] = checked;
+														Ext.getCmp('contentInfo').update(entry);										
+														contentPanel.updateLayout(true, true);
+													}
+												}
+											});
+										});
+										menuItems.push(evaluationMenu);	
+									}
+								});
+								
+								Ext.getCmp('customTemplateBtn').setMenu({
+									items: menuItems,
+									listeners: {
+										beforerender: function () {
+											this.setWidth(this.up('button').getWidth()*2);
+										}
+									}
+								}, true);
+								
+								Ext.getCmp('contentInfo').update(entry);
+								Ext.defer(function(){							
+									//Ext.getCmp('contentInfo').update(entry);
+									contentPanel.updateLayout(true, true);
+									viewport.updateLayout(true, true);
+								}, 500);
 							}
-						}, true);
+						});
+
 						
-						Ext.getCmp('contentInfo').update(entry);
-						Ext.defer(function(){							
-							//Ext.getCmp('contentInfo').update(entry);
-							contentPanel.updateLayout(true, true);
-							viewport.updateLayout(true, true);
-						}, 500);
 					}
 				});				
 			};			

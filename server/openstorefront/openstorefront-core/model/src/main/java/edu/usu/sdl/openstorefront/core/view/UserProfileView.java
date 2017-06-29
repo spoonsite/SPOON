@@ -54,6 +54,9 @@ public class UserProfileView
 	private String phone;
 
 	@ConsumeField
+	private String positionTitle;
+
+	@ConsumeField
 	private String organization;
 
 	@NotNull
@@ -116,6 +119,7 @@ public class UserProfileView
 		UserProfileView view = new UserProfileView();
 		view.setEmail(profile.getEmail());
 		view.setPhone(profile.getPhone());
+		view.setPositionTitle(profile.getPositionTitle());
 		view.setFirstName(profile.getFirstName());
 		view.setLastName(profile.getLastName());
 		view.setOrganization(profile.getOrganization());
@@ -276,17 +280,11 @@ public class UserProfileView
 		this.notifyOfNew = notifyOfNew;
 	}
 
-	/**
-	 * @return the activeStatus
-	 */
 	public String getActiveStatus()
 	{
 		return activeStatus;
 	}
 
-	/**
-	 * @param activeStatus the activeStatus to set
-	 */
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
@@ -330,6 +328,16 @@ public class UserProfileView
 	public void setRoles(List<SecurityRole> roles)
 	{
 		this.roles = roles;
+	}
+
+	public String getPositionTitle()
+	{
+		return positionTitle;
+	}
+
+	public void setPositionTitle(String positionTitle)
+	{
+		this.positionTitle = positionTitle;
 	}
 
 }

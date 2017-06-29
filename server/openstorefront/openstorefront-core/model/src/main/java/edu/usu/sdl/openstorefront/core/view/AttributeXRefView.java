@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
@@ -27,8 +28,10 @@ import java.util.List;
 public class AttributeXRefView
 {
 
+	@ConsumeField
 	private AttributeXRefType type;
 
+	@ConsumeField
 	@DataType(AttributeXRefMap.class)
 	private List<AttributeXRefMap> map;
 

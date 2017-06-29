@@ -2761,6 +2761,25 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		submissionPanel.reviewPanel = Ext.create('Ext.panel.Panel', {
 			layout: 'vbox',
+			listeners: {
+				activate: function () {
+					var initialToggleElement = document.querySelectorAll('.toggle-collapse')[0];
+
+					// Wait until the the template has been rendered
+					var templateStateCheckInterval = setInterval(function () {
+
+						// the template has refreshed
+						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
+							clearInterval(templateStateCheckInterval);
+							var toggleElements = document.querySelectorAll('.toggle-collapse');
+							for (ii = 0; ii < toggleElements.length; ii += 1) {
+								toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+								toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+							}
+						}
+					}, 100);
+				}
+			},
 			items: [
 				{
 					xtype: 'panel',
@@ -2791,7 +2810,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					border: true,
 					autoScroll: true,
 					bodyStyle: 'padding: 10px;',
-					tpl: reviewViewTemplate					
+					tpl: reviewViewTemplate
 				}
 			]			
 		});		
@@ -3092,7 +3111,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 										reviewEntryPanel.setLoading(false);
 									},
 									success: function(response, opts){
-
 										// Get Response Data
 										var data = Ext.decode(response.responseText);
 
@@ -3116,8 +3134,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 										// Process Complete Record Data
 										data = CoreUtil.processEntry(data);
 
-										// Display Complete Record Data
-										reviewEntryPanel.update(data);
+										CoreUtil.calculateEvalutationScore({
+											fullEvaluations: data.fullEvaluations,
+											evaluation: data.fullEvaluations,
+											success: function (newData) {
+												data.fullEvaluations = newData.fullEvaluations;
+												// Display Complete Record Data
+												reviewEntryPanel.update(data);
+											}
+										});
 								
 									}
 								});

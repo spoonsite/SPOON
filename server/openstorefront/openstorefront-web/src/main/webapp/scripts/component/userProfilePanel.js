@@ -119,6 +119,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				itemId: 'phone',
 				name: 'phone',
 				fieldLabel: 'Phone',
+				labelSeparator: '',
 				width: '100%',
 				maxLength: 80
 			},
@@ -136,6 +137,15 @@ Ext.define('OSF.component.UserProfilePanel', {
 					url: 'api/v1/resource/organizations/lookup'
 				}
 			}),
+			{
+				xtype: 'textfield',
+				itemId: 'positionTitle',
+				name: 'positionTitle',
+				fieldLabel: 'Position Title',
+				labelSeparator: '',
+				width: '100%',
+				maxLength: 255
+			},			
 			Ext.create('OSF.component.StandardComboBox', {
 				itemId: 'userTypeCodeCB',
 				name: 'userTypeCode',
@@ -237,6 +247,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 						profileForm.queryById('emailSendBtn').setDisabled(true);
 						profileForm.queryById('phone').setDisabled(true);
 						profileForm.queryById('organization').setDisabled(true);
+						profileForm.queryById('positionTitle').setDisabled(true);
 						
 						if (policy.externalUserManagementText) {
 							profileForm.queryById('externalManagementMessage').update('<br><br><i class="fa fa-2x fa-warning text-warning"></i> ' + policy.externalUserManagementText);

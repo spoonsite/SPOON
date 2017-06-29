@@ -114,6 +114,12 @@ Ext.define('OSF.landing.DefaultSearch', {
 					emptyCls: 'home-search-field-cat',
 					store: {						
 						autoLoad: true,
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'description',
+								direction: 'ASC'
+							})
+						],
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/componenttypes/lookup'

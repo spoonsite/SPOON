@@ -73,6 +73,11 @@ public class UserRegistration
 	@ConsumeField
 	private String phone;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String positionTitle;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
@@ -190,6 +195,16 @@ public class UserRegistration
 	public void setUsingDefaultPassword(Boolean usingDefaultPassword)
 	{
 		this.usingDefaultPassword = usingDefaultPassword;
+	}
+
+	public String getPositionTitle()
+	{
+		return positionTitle;
+	}
+
+	public void setPositionTitle(String positionTitle)
+	{
+		this.positionTitle = positionTitle;
 	}
 
 }
