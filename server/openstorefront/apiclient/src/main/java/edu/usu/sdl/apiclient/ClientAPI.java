@@ -16,9 +16,11 @@
 package edu.usu.sdl.apiclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -50,7 +53,7 @@ public class ClientAPI
 
 	private static final String MEDIA_TYPE_JSON = "application/json";
 	private static final String CONTENT_TYPE = "Content-Type";
-
+	private static final String CSRF_TOKEN = "X-Csrf-Token";
 	private LoginModel loginModel;
 
 	private CloseableHttpClient httpclient;
@@ -64,12 +67,26 @@ public class ClientAPI
 		this.objectMapper = objectMapper;
 	}
 
-	/**
-	 * Connect to server if not already connected
-	 *
-	 * @param loginModel provides login info for REST API
-	 */
-	public void connect(LoginModel loginModel)
+	public void connect(String username, String password, String serverURL)
+	{
+
+		if (!isConnected()) {
+			loginModel = new LoginModel();
+			loginModel.setServerUrl(serverURL);
+			loginModel.setSecurityUrl(serverURL + "/Login.action?Login");
+			loginModel.setLogoffUrl(serverURL + "/Login.action?Logout");
+
+			loginModel.setUsernameField("username");
+			loginModel.setUsername(username);
+
+			loginModel.setPasswordField("password");
+			loginModel.setPassword(password);
+
+			connect(loginModel);
+		}
+	}
+	
+	private void connect(LoginModel loginModel)
 	{
 		if (httpclient == null) {
 			cookieStore = new BasicCookieStore();
@@ -80,6 +97,11 @@ public class ClientAPI
 			logon(loginModel);
 			connected = true;
 		}
+	}
+	
+	public boolean isConnected()
+	{
+		return connected;
 	}
 
 	private void logon(LoginModel loginModel)
@@ -182,6 +204,15 @@ public class ClientAPI
 			}
 		}
 	}
+	
+	public Map<String,String>  translateFilterQueryParams(FilterQueryParams params)
+	{
+		try {
+			return BeanUtils.describe(params);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException exs) {
+			throw new RuntimeException(exs);
+		}
+	}
 
 	public APIResponse httpGet(String apiPath, Map<String, String> parameters)
 	{
@@ -223,20 +254,34 @@ public class ClientAPI
 
 		return response;
 	}
+	
+	private String getCookieValue(String cookieKey)
+	{
+		String value = null;
+		
+		List<Cookie> cookies = cookieStore.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals(cookieKey)) {
+				value = cookie.getValue();
+			}
+		}
+		return value;
+	}
 
 	public <T extends Object> APIResponse httpPost(String apiPath, T value, Map<String, String> parameters)
 	{
-
 		APIResponse response = null;
 		try {
-			StringEntity entity = new StringEntity(objectMapper.writeValueAsString(value));
+			String entityRawValue = objectMapper.writeValueAsString(value);
+			StringEntity entity = new StringEntity(entityRawValue);
 
 			RequestConfig defaultRequestConfig = RequestConfig.custom()
 					.setCircularRedirectsAllowed(true).build();
-
+			
 			RequestBuilder builder = RequestBuilder.post()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig)
 					.setEntity(entity);
 
@@ -279,6 +324,7 @@ public class ClientAPI
 			RequestBuilder builder = RequestBuilder.delete()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig);
 
 			if (parameters != null) {
@@ -322,6 +368,7 @@ public class ClientAPI
 			RequestBuilder builder = RequestBuilder.put()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
+					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig);
 
 			if (value != null) {

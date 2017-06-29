@@ -70,7 +70,8 @@
 									maxLength: 20									
 								},
 								{
-									xtype: 'textfield',									
+									xtype: 'textfield',
+									id: 'entryForm-type-label',
 									fieldLabel: 'Label<span class="field-required" />',
 									name: 'label',
 									allowBlank: false,
@@ -80,6 +81,7 @@
 								{
 									xtype: 'htmleditor',
 									name: 'description',
+									id: 'entryForm-type-description',
 									fieldLabel: ' Description<span class="field-required" />',
 									allowBlank: false,
 									width: '100%',
@@ -94,57 +96,68 @@
 								{
 									xtype: 'checkbox',
 									boxLabel: '<b>Allow On Submission Form</b>',
-									name: 'allowOnSubmission'
+									name: 'allowOnSubmission',
+									id: 'entryForm-radio-allow-on-sub'
 								},								
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Attributes',
-									name: 'dataEntryAttributes'
+									name: 'dataEntryAttributes',
+									id: 'entryForm-radio-attributes'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Relationships ',
-									name: 'dataEntryRelationships'
+									name: 'dataEntryRelationships',
+									id: 'entryForm-radio-relationships'									
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Contacts',
-									name: 'dataEntryContacts'
+									name: 'dataEntryContacts',
+									id: 'entryForm-radio-contacts'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Resources',
-									name: 'dataEntryResources'
+									name: 'dataEntryResources',
+									id: 'entryForm-radio-resources'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Media',
-									name: 'dataEntryMedia'
+									name: 'dataEntryMedia',
+									id: 'entryForm-radio-media'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Dependencies',
-									name: 'dataEntryDependencies'
+									name: 'dataEntryDependencies',
+									id: 'entryForm-radio-dependencies'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Metadata',
-									name: 'dataEntryMetadata'
+									name: 'dataEntryMetadata',
+									id: 'entryForm-radio-metadata'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Evaluation Information',
-									name: 'dataEntryEvaluationInformation'
+									name: 'dataEntryEvaluationInformation',
+									id: 'entryForm-radio-eval-info'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Reviews',
-									name: 'dataEntryReviews'
+									name: 'dataEntryReviews',
+									id: 'entryForm-radio-reviews'
 								},
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Questions',
-									name: 'dataEntryQuestions'
+									name: 'dataEntryQuestions',
+									id: 'entryForm-radio-questions'
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'componentTypeTemplate',																		
@@ -201,6 +214,7 @@
 										{
 											text: 'Save',
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											id: 'entryTypeForm-save',
 											formBind: true,
 											handler: function(){
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
@@ -282,6 +296,7 @@
 							items: [
 								{
 									text: 'Refresh',
+									id: 'entryTypeRefreshBtn',
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
@@ -293,6 +308,7 @@
 								},
 								{
 									text: 'Add',
+									id: 'entryTypeAddBtn',
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
@@ -434,6 +450,7 @@
 											{
 												text: 'Apply',
 												formBind: true,
+												id: 'applyBtnDeleteEntryType',
 												iconCls: 'fa fa-lg fa-check icon-button-color-save',
 												handler: function(){
 													var form = this.up('form');
@@ -473,6 +490,7 @@
 										xtype: 'combobox',
 										anchor: '100% 10%',
 										name: 'componentType',
+										id: 'moveExistingDataComboBox',
 										labelAlign: 'top',
 										fieldLabel: 'Move existing data to<span class="field-required" />',
 										valueField: 'code',

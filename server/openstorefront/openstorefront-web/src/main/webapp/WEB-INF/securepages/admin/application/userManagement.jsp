@@ -67,7 +67,8 @@
 					store: registrationGridStore,
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
 					columns: [
 						{ text: 'Username', dataIndex: 'username', width: 200 },
 						{ text: 'First name', dataIndex: 'firstName', width: 200 },
@@ -97,7 +98,8 @@
 								tools.getComponent('message').setDisabled(true);
 							}
 						}
-					},					
+					},	
+					
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -330,6 +332,7 @@
 														type: 'ajax',
 														url: 'api/v1/resource/lookuptypes/UserTypeCode'
 													},
+													
 													listeners: {
 														load: function(store, records, opts) {
 															store.add({
@@ -490,7 +493,12 @@
 					],
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
+					autoEl: {
+						'data-test' : 'xPanelTable'
+					},
+					
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {
 							var tools = userGrid.getComponent('tools');
@@ -542,7 +550,10 @@
 									name: 'activeStatus',									
 									typeAhead: false,
 									editable: false,
-									width: 200,							
+									width: 200,	
+									autoEl: {
+										'data-test' : 'userActiveStatus'
+									},
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshUsers();
@@ -743,7 +754,7 @@
 									}									
 								}
 							]
-						},						
+						},
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',

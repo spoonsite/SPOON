@@ -653,6 +653,7 @@ public class ComponentRESTResource
 	@POST
 	@APIDescription("Creates a component")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(RequiredForComponent.class)
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{

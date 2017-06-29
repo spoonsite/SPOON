@@ -335,7 +335,7 @@ public class AttributeResource
 
 			boolean keep = true;
 
-			if (attributeType.getAssociatedComponentTypes() != null) {
+			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 				keep = false;
 				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
 					if (restriction.getComponentType().equals(componentType)) {
@@ -346,7 +346,7 @@ public class AttributeResource
 
 			//check required
 			if (keep) {
-				if (attributeType.getRequiredRestrictions() != null) {
+				if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 						if (restriction.getComponentType().equals(componentType)) {
 							requiredAttributes.add(attributeType);

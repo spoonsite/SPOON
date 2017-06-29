@@ -125,6 +125,7 @@
 						items: [
 							{
 								text: 'Refresh',
+								id: 'componentConfigGrid-tools-refresh',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {

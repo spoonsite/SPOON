@@ -375,7 +375,7 @@
 					},
 					{
 						text: 'Visible', 
-						dataIndex: 'visibleFlg', 
+						dataIndex: 'visibleFlg',
 						flex: 1, 
 						tooltip: 'Show in the list of filters?',
 						align: 'center',
@@ -481,6 +481,9 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
+								autoEl: {
+									"data-test": "attributesRefreshBtn"
+								},
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									attributeStore.load();
@@ -791,6 +794,9 @@
 								xtype: 'radiogroup',
 								id: 'set-flags-visible-group',
 								fieldLabel: 'Visible',
+								autoEl: {
+									"data-test": "visibleFlagBox"
+								},
 								labelAlign: 'top',
 								width: '100%',
 								columns: 3,
@@ -1261,7 +1267,7 @@
 						if (btn === 'yes') {
 							
 							// Inform User Of Update Process
-							attributeGrid.mask('Deleting...');
+							attributeGrid.setLoading('Deleting...');
 
 							// Initialize Update Counter
 							var attributeDeleteCount = 0;
@@ -1280,6 +1286,9 @@
 									
 									url: url,
 									method: 'DELETE',
+									callback: function() {
+										attributeGrid.setLoading(false);
+									},
 									success: function(response, opts) {
 
 										// Check If We Are On The Final Request
@@ -1294,7 +1303,7 @@
 												attributeStore.load();
 
 												// Unmask Grid
-												attributeGrid.unmask();
+												
 
 											}).delay(2000);
 										}
@@ -1571,6 +1580,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
+								id: 'refreshAttrCodes',
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									codesStore.load();
@@ -1581,6 +1591,7 @@
 							},
 							{
 								text: 'Add New Code',
+								id: 'addNewCodeAttr',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								handler: function () {
@@ -2021,6 +2032,28 @@
 				layout: 'fit',
 				items: [
 					codesGrid
+//				]
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill',
+							},
+							{
+								text: 'Close',
+								id: 'manageCodesCloseBtn',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									
+									// Hide Manage Codes Window
+									Ext.getCmp('manageCodesWin').close();
+								}
+							}
+						]
+					}
 				]
 			});
 
@@ -2271,6 +2304,9 @@
 								},
 								search: {									
 									field: 'description',
+									autoEl: {
+										"data-test": "reqAttrList"
+									},
 									bodyStyle: 'background: white;',
 									store: Ext.create('Ext.data.Store', {
 										id: 'requiredTypesSearchStore',

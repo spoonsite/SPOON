@@ -15,6 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 /**
  *
  * @author dshurtleff
@@ -23,8 +35,84 @@ public class UserProfileTest
 		extends UserTestBase
 {
 
-	public UserProfileTest()
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+
+	@Test
+	public void userProfileTest()
 	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+
+			setup(driver);
+			editProfile(driver, "cameron.cummings@sdl.usu.edu");
+			sendTestMessage(driver);
+		}
+
 	}
 
+	public void setup(WebDriver driver)
+	{
+		webDriverUtil.getPage(driver, "UserTool.action");
+
+		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
+			List<WebElement> titleElements = driverLocal.findElements(By.id("dashPanel_header-title-textEl"));
+			if (titleElements.size() > 0) {
+				return titleElements.get(0).isDisplayed();
+			} else {
+				return false;
+			}
+		});
+	}
+
+	public void editProfile(WebDriver driver, String email)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#userHeaderProfileBtn"))).click();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='phone']"))).clear();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='phone']"))).sendKeys("000-000-0000");
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).clear();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).sendKeys(email);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#saveProfileFormBtn"))).click();
+
+		try {
+			wait.until(ExpectedConditions.textToBePresentInElementValue(By.cssSelector(".x-autocontainer-innerCt"), "Updated User Profile"));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".x-mask-msg-text"), "Updated User Profile"));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+	}
+
+	public void sendTestMessage(WebDriver driver)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#emailSendTestBtn"))).click();
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-toast")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".x-window.x-toast")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#dashboardUserHomeButton"))).click();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#dashPanel_header-title-textEl")));
+
+	}
 }

@@ -30,11 +30,11 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
- // AdminTestSuite.class,
- // EvaluatorTestSuite.class,
- // SearchTestSuite.class,
-    SecurityTestSuite.class
- // UserToolTestSuite.class
+  AdminTestSuite.class,
+  EvaluatorTestSuite.class,
+  SearchTestSuite.class,
+  SecurityTestSuite.class,
+  UserToolTestSuite.class
 })
 public class MasterTestSuite
 {
