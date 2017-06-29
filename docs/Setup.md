@@ -695,50 +695,90 @@ Use the following steps to create the agent profile.
 # 2 CentOS 7 Install with Apache proxy Example
 ----
 
-Run as sudo:
+Run the following as sudo:
 
-yum install nano
+### Optionally install nano. Otherwise use vi.
+1)	yum install nano
 
-Install Java 1.8:
+### Install Java 1.8:
 1)	yum install java-1.8.0-openjdk
 
-Install apache 2.4
+### Install apache 2.4:
 1)	yum clean all
 2)	yum -y update
 3)	yum -y install httpd
 4)	firewall-cmd --permanent --add-port=80/tcp
 5)	firewall-cmd --permanent --add-port=443/tcp
-6)	firewall-cmd –reload
+6)	firewall-cmd --reload
+
+    NOTE)   If firewall-cmd doesn't exist then run 
+
+    a) yum install firewalld -y
+
+    b) systemctl start firewalld
+
+    c) systemctl enable firewalld
+
 7)	systemctl start httpd
 8)	systemctl enable httpd
+
+apache service command reference (apache should be running at this point):
 
 **Start:** systemctl start httpd
 
 **Stop:** systemctl stop httpd
 
-	
-Install elasticsearch 2.x
+**Test:** curl localhost
+
+should return a bunch of html to the console
+
+### Install elasticsearch 2.x
 1)	rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
-2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo
+2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example ```/etc/yum.repos.d/elasticsearch.repo```
+
+```
 [elasticsearch-2.x]
 name=Elasticsearch repository for 2.x packages
 baseurl=https://packages.elastic.co/elasticsearch/2.x/centos
 gpgcheck=1
 gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
-
+```
 3)	yum install elasticsearch
 4)	systemctl daemon-reload
 5)	systemctl enable elasticsearch.service
+
+elasticsearch service command reference (elasticsearch should be running at this point):
 
 **Start:** systemctl start elasticsearch.service
 
 **Stop:**  systemctl stop elasticsearch.service
 
-Install tomcat 7 
+**Test:** curl -XGET 'localhost:9200/?pretty'
+
+should give you a response something like this:
+```
+{
+  "name" : "Cp8oag6",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "AT69_T_DTp-1qgIJlatQqA",
+  "version" : {
+    "number" : "5.4.3",
+    "build_hash" : "f27399d",
+    "build_date" : "2016-03-30T09:51:41.449Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.5.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+### Install tomcat 7 
 (https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum)
 1)	yum install tomcat
 2)	systemctl enable tomcat
+
+tomcat service command reference (tomcat should be running at this point):
 
 **Start:** systemctl start tomcat
 
@@ -746,18 +786,20 @@ Install tomcat 7
 
 **Install dir:**  /usr/share/tomcat/
 
-Configure Apache proxy 
+**Test:** curl localhost:8080
+
+should return a bunch of html to the console
+
+### Configure Apache proxy 
 (https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-centos-7)
-	Install mod-proxy : already installed	
-	
-	Install web socket support: already installed
-	
-	**Setup proxy:**
-		nano /etc/httpd/conf.d/default-site.conf
-		
+1)	Install mod-proxy : already installed	
+2)	Install web socket support: already installed
+3)	nano /etc/httpd/conf.d/default-site.conf
+
 **Add:**
 
-	<VirtualHost *:80>
+```
+<VirtualHost *:80>
 	   ProxyPreserveHost On	    
 	   RewriteEngine on
 
@@ -769,23 +811,25 @@ Configure Apache proxy
 	    ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
 
 	    RedirectMatch ^/$ /openstorefront/
-	</VirtualHost>
+</VirtualHost>
+```
+4)  systemctl restart httpd
 
-**systemctl restart httpd**
-
-Configure Tomcat
+### Configure Tomcat
 
 **Set memory**
-	
+
 1)	nano /usr/share/tomcat/conf/tomcat.conf
-Add
-
+Add the following to the existing file
+```
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx4g -XX:+UseConcMarkSweepGC"
+```
 
-	Update networking
-		nano /usr/share/tomcat/conf/server.xml
+**Update networking**
+
+2)	nano /usr/share/tomcat/conf/server.xml
 		edit: <Connector port="8080"…     to 
-		
+```	
 	<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
                connectionTimeout="20000"
                maxThreads="250" minSpareThreads="25"
@@ -793,17 +837,16 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
                enableLookups="false" disableUploadTimeout="true"
                acceptCount="100"
                redirectPort="8443" />
+```
 
-2)	systemctl restart tomcat
+3)	systemctl restart tomcat
 
-Deploy code
--------
+## Deploy code
 
-mkdir /var/openstorefront
-
-chown -R tomcat:tomcat /var/openstorefront
-
-copy openstorefront.war (from https://github.com/di2e/openstorefront/releases/download/<version tag>/openstorefront.war) to /usr/share/tomcat/webapps 
-
-Before copying chown tomcat:tomcat openstorefront.war
-
+1)	mkdir /var/openstorefront
+2)	chown -R tomcat:tomcat /var/openstorefront
+3)	Download storefront webapp from ```https://github.com/di2e/openstorefront/releases/download/<version tag>/openstorefront.war```
+	
+    example: ```curl -LO https://github.com/di2e/openstorefront/releases/download/v2.3/openstorefront.war```
+4)	chown tomcat:tomcat openstorefront.war
+5)	mv -a openstorefront.war /usr/share/tomcat/webapps 
