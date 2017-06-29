@@ -43,7 +43,7 @@ public class AttributeType
 
 	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeType;
@@ -115,7 +115,7 @@ public class AttributeType
 	@APIDescription("Defines the value type of code descriptions")
 	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
 	@FK(AttributeValueType.class)
-	private AttributeValueType attributeValueType;
+	private String attributeValueType;
 
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
@@ -155,18 +155,19 @@ public class AttributeType
 		super.updateFields(entity);
 
 		AttributeType attributeTypeUpdate = (AttributeType) entity;
-		this.setAllowMultipleFlg(attributeTypeUpdate.getAllowMultipleFlg());
-		this.setArchitectureFlg(attributeTypeUpdate.getArchitectureFlg());
-		this.setDescription(attributeTypeUpdate.getDescription());
-		this.setImportantFlg(attributeTypeUpdate.getImportantFlg());
-		this.setRequiredFlg(attributeTypeUpdate.getRequiredFlg());
-		this.setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
-		this.setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
-		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
-		this.setAllowUserGeneratedCodes(attributeTypeUpdate.getAllowUserGeneratedCodes());
-		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
-		this.setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
-		this.setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
+		setAllowMultipleFlg(attributeTypeUpdate.getAllowMultipleFlg());
+		setArchitectureFlg(attributeTypeUpdate.getArchitectureFlg());
+		setDescription(attributeTypeUpdate.getDescription());
+		setImportantFlg(attributeTypeUpdate.getImportantFlg());
+		setRequiredFlg(attributeTypeUpdate.getRequiredFlg());
+		setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
+		setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
+		setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
+		setAllowUserGeneratedCodes(attributeTypeUpdate.getAllowUserGeneratedCodes());
+		setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
+		setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
+		setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
+		setAttributeValueType(attributeTypeUpdate.getAttributeValueType());
 
 	}
 
@@ -343,12 +344,12 @@ public class AttributeType
 		this.allowUserGeneratedCodes = allowUserGeneratedCodes;
 	}
 
-	public AttributeValueType getAttributeValueType()
+	public String getAttributeValueType()
 	{
 		return attributeValueType;
 	}
 
-	public void setAttributeValueType(AttributeValueType attributeValueType)
+	public void setAttributeValueType(String attributeValueType)
 	{
 		this.attributeValueType = attributeValueType;
 	}

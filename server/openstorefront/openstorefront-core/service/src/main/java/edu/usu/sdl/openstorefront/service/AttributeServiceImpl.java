@@ -16,12 +16,14 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
+import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -34,20 +36,24 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -83,6 +89,8 @@ public class AttributeServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(AttributeServiceImpl.class.getName());
+
+	private static final int MAX_USERCODE_CONFLICTS = 100;
 
 	@Override
 	public List<AttributeType> getRequiredAttributes()
@@ -320,6 +328,58 @@ public class AttributeServiceImpl
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to delete attribute attatchment. File might be in use. Path: {0}", path.toString()));
 			}
 		}
+	}
+
+	@Override
+	public List<AttributeCode> saveUserCodes(AttributeCodeSave attributeCodeSave)
+	{
+		List<AttributeCode> updatedCodes = new ArrayList<>();
+		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
+
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+
+			AttributeCode newAttributeCode = new AttributeCode();
+			newAttributeCode.setLabel(saveCode.getAttributeCodeLabel());
+			AttributeCodePk newAttributeCodePk = new AttributeCodePk();
+			newAttributeCodePk.setAttributeType(saveCode.getAttributeType());
+			newAttributeCodePk.setAttributeCode(key);
+			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
+
+			AttributeType attributeType = getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
+			if (attributeType != null) {
+				// The attribute type must allow user-generated codes to continue
+				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+
+					//see if it already exist...if so do nothing. So we don't alert.
+					AttributeCode existing = getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);
+					if (existing == null) {
+						ValidationModel validationModel = new ValidationModel(newAttributeCode);
+						validationModel.setConsumeFieldsOnly(true);
+						ValidationResult validationResult = ValidationUtil.validate(validationModel);
+						if (validationResult.valid()) {
+							saveAttributeCode(newAttributeCode, false);
+
+							AlertContext alertContext = new AlertContext();
+							alertContext.setAlertType(AlertType.USER_DATA);
+							alertContext.setDataTrigger(newAttributeCode);
+							getAlertService().checkAlert(alertContext);
+							updatedCodes.add(newAttributeCode);
+						} else {
+							LOG.log(Level.WARNING, MessageFormat.format("Attribute Code (label) failed: {0} Message: {1}", new Object[]{newAttributeCode.getLabel(), validationResult.toString()}));
+						}
+					} else {
+						updatedCodes.add(newAttributeCode);
+					}
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Attribute type does not support user codes Type: {0}", saveCode.getAttributeType()));
+				}
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
+			}
+		}
+
+		return updatedCodes;
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
@@ -140,7 +141,15 @@ public interface AttributeService
 	 */
 	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
-	//public Lis
+	/**
+	 * Save user generated code which require special handling
+	 *
+	 * @param attributeCodeSave
+	 * @return Attribute Codes changed
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public List<AttributeCode> saveUserCodes(AttributeCodeSave attributeCodeSave);
+
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *

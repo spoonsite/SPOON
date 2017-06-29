@@ -37,14 +37,71 @@ public class MetaDataMigrationInit
 	protected String internalApply()
 	{
 		StringBuilder results = new StringBuilder();
-//		try
-//		{
-//			service.getContactService().convertContacts();
-//			results.append("Converted Contacts");
-//		} catch (Exception e) {
-//			LOG.log(Level.WARNING, "Failed Converted Contacts", e);
-//		}
 
+//		Component componentExample = new Component();
+//		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+//
+//		List<Component> components = componentExample.findByExample();
+//		Set<String> addedAttributes = new HashSet<>();
+//		for (Component component : components) {
+//			LOG.log(Level.INFO, "Working on: " + component.getName());
+//
+//			ComponentMetadata componentMetadataExample = new ComponentMetadata();
+//			componentMetadataExample.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
+//			componentMetadataExample.setComponentId(component.getComponentId());
+//
+//			List<ComponentMetadata> componentMetaData = componentMetadataExample.findByExampleProxy();
+//			for (ComponentMetadata metaData : componentMetaData) {
+//
+//				String fullKey = metaData.uniqueKey();
+//
+//				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+//
+//				String attributeType = sanitizer.santize(StringUtils.left(metaData.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+//				String attributeCode = sanitizer.santize(StringUtils.left(metaData.getValue().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+//
+//				if (addedAttributes.contains(fullKey) == false) {
+//					//create attribute
+//					AttributeType attributeTypeFull = new AttributeType();
+//					attributeTypeFull.setAttributeType(attributeType);
+//					attributeTypeFull.setDescription(metaData.getLabel());
+//					attributeTypeFull.setAllowUserGeneratedCodes(Boolean.TRUE);
+//					attributeTypeFull.setAllowMultipleFlg(Boolean.TRUE);
+//					attributeTypeFull.setArchitectureFlg(Boolean.FALSE);
+//					attributeTypeFull.setHideOnSubmission(Boolean.FALSE);
+//					attributeTypeFull.setImportantFlg(Boolean.FALSE);
+//					attributeTypeFull.setRequiredFlg(Boolean.FALSE);
+//					attributeTypeFull.setVisibleFlg(Boolean.FALSE);
+//
+//					//determine value type
+//					BigDecimal numberValue = Convert.toBigDecimal(metaData.getValue());
+//					if (numberValue != null) {
+//						//attributeTypeFull.setAttributeValueType(Attribute);
+//					}
+//
+//					service.getAttributeService().saveAttributeType(attributeTypeFull, false);
+//
+//					addedAttributes.add(fullKey);
+//				}
+//
+//				service.getPersistenceService().delete(metaData);
+//
+//				ComponentAttribute componentAttribute = new ComponentAttribute();
+//				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+//				componentAttributePk.setAttributeType(attributeType);
+//				componentAttributePk.setAttributeCode(attributeCode);
+//				componentAttributePk.setComponentId(component.getComponentId());
+//				componentAttribute.setComponentAttributePk(componentAttributePk);
+//				service.getPersistenceService().persist(componentAttribute);
+//			}
+//		}
+//		service.getSearchService().resetIndexer();
+//
+//		results.append("Migrated ")
+//				.append(components.size())
+//				.append(" Component. Added ")
+//				.append(addedAttributes.size())
+//				.append(" Attributes ");
 		return results.toString();
 
 	}

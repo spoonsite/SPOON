@@ -17,8 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -28,7 +26,6 @@ import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -41,7 +38,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
@@ -60,26 +56,22 @@ import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -99,7 +91,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -132,8 +123,8 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
-		attributeTypeExample.setImportantFlg(important);		
-		
+		attributeTypeExample.setImportantFlg(important);
+
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 
 		String codeStatus = null;
@@ -824,49 +815,7 @@ public class AttributeResource
 	public Response postUserAttributeCode(
 			AttributeCodeSave attributeCodeSave)
 	{
-		List<AttributeCode> updatedCodes = new ArrayList<>();
-		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
-
-			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
-
-			AttributeCode newAttributeCode = new AttributeCode();
-			newAttributeCode.setLabel(saveCode.getAttributeCodeLabel());
-			AttributeCodePk newAttributeCodePk = new AttributeCodePk();
-			newAttributeCodePk.setAttributeType(saveCode.getAttributeType());
-			newAttributeCodePk.setAttributeCode(key);
-			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
-			updatedCodes.add(newAttributeCode);
-
-			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
-			if (attributeType != null) {
-				// The attribute type must allow user-generated codes to continue
-				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
-
-					//see if it already exist...if so do nothing. So we don't alert.
-					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);
-					if (existing == null) {
-						ValidationModel validationModel = new ValidationModel(newAttributeCode);
-						validationModel.setConsumeFieldsOnly(true);
-						ValidationResult validationResult = ValidationUtil.validate(validationModel);
-						if (validationResult.valid()) {
-							service.getAttributeService().saveAttributeCode(newAttributeCode, false);
-
-							AlertContext alertContext = new AlertContext();
-							alertContext.setAlertType(AlertType.USER_DATA);
-							alertContext.setDataTrigger(newAttributeCode);
-							service.getAlertService().checkAlert(alertContext);
-						} else {
-							LOG.log(Level.WARNING, validationResult.toString());
-						}
-					}
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Attribute type doesn''t support user codes Type: {0}", saveCode.getAttributeType()));
-				}
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
-			}
-		}
+		List<AttributeCode> updatedCodes = service.getAttributeService().saveUserCodes(attributeCodeSave);
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
 		{
 		};

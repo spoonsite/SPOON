@@ -1820,7 +1820,7 @@
 											fn: function(field, newValue, oldValue, opts) {
 												actionRefreshComponentGrid();
 											},
-											buffer: 500
+											buffer: 1500
 										}
 									}
 								}
