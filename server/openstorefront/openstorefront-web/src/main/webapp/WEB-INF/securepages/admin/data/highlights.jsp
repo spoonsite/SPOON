@@ -101,6 +101,9 @@
 									text: 'Refresh',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
+									autoEl: {
+										'data-test': 'highlightRefreshBtn'
+									},
 									handler: function () {
 										Ext.getCmp('highlightGrid').getStore().load();
 									}
@@ -282,33 +285,39 @@
 
 				};
 
-				
-
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
-					var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Highlight?</span>';
-					var msg = 'Are you sure you want to delete "' + record.data.title + '"?';
-					Ext.MessageBox.confirm(title, msg, function (btn) {
-						if (btn === 'yes') {
-							var highlightId = record.data.highlightId;
-							var url = 'api/v1/resource/highlights';
-							url += '/' + highlightId + '/delete';
-							var method = 'DELETE';
-							Ext.Ajax.request({
-								url: url,
-								method: method,
-								success: function (response, opts) {
-									var message = 'Successfully deleted highlight: "'+ record.data.title + '"';
-									Ext.toast(message, '', 'tr');
-									Ext.getCmp('highlightGrid').getStore().load();
-									Ext.getCmp('highlightGrid-tools-edit').disable();
-									Ext.getCmp('highlightGrid-tools-delete').disable();
-								},
-								failure: function (response, opts) {
-									Ext.MessageBox.alert('Failed to delete highlight',
-									'Error: Could not delete highlight: "' + record.data.title + '"');
-								}
-							});	
+					Ext.Msg.show({
+						title: '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Highlight?</span>',
+						message: 'Are you sure you want to delete <b>"' + record.data.title + '"</b>?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						minHeight: '175',
+						autoEl: {
+							'data-test': 'deleteHighlightWindow'
+						},
+						fn: function(btn) {
+							if (btn === 'yes') {
+								var highlightId = record.data.highlightId;
+								var url = 'api/v1/resource/highlights';
+								url += '/' + highlightId + '/delete';
+								var method = 'DELETE';
+								Ext.Ajax.request({
+									url: url,
+									method: method,
+									success: function (response, opts) {
+										var message = 'Successfully deleted highlight: "'+ record.data.title + '"';
+										Ext.toast(message, '', 'tr');
+										Ext.getCmp('highlightGrid').getStore().load();
+										Ext.getCmp('highlightGrid-tools-edit').disable();
+										Ext.getCmp('highlightGrid-tools-delete').disable();
+									},
+									failure: function (response, opts) {
+										Ext.MessageBox.alert('Failed to delete highlight',
+										'Error: Could not delete highlight: "' + record.data.title + '"');
+									}
+								});
+							}
 						}
 					});
 				};
@@ -393,6 +402,9 @@
 											text: 'Save',
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
+											autoEl: {
+												"data-test": "addEditHighlightSave"
+											},
 											handler: function () {
 												var form = Ext.getCmp('editHighlightForm');
 												// Submit Data

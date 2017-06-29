@@ -16,16 +16,16 @@
 package edu.usu.sdl.openstorefront.selenium.util;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -40,34 +40,53 @@ public class WebDriverUtil
 
 	private List<WebDriver> drivers = new ArrayList<>();
 	private String server;
-	private Properties properties = new Properties();
+	private Properties properties;
 
-	public WebDriverUtil()
+	public WebDriverUtil(Properties property)
 	{
+		properties = property;
 		init();
+		
 	}
 
 	private void init()
 	{
 		//load config
 		DriverPathLoaderFix.loadDriverPaths(null);
-
-		File propertyFile = FileSystemManager.getConfig("testconfig.properties");
-		try (InputStream in = new FileInputStream(propertyFile)) {
-			properties.load(in);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to load Configuration file.");
-		}
-		server = properties.getProperty("test.server", "http://store-accept.usu.di2e.net/openstorefront/");
+		
+		server = properties.getProperty("test.server", "http://localhost:8080/openstorefront/");
 		String driverKey = properties.getProperty("test.drivers", "EDGE");
 		try {
 			WebDriverType webDriverType = WebDriverType.valueOf(driverKey.toUpperCase().trim());
 			drivers.addAll(Arrays.asList(webDriverType.getDrivers()));
 		} catch (Exception e) {
-			throw new OpenStorefrontRuntimeException("Unable to find web driver or it not supported.", "Check configuration.  Key test.drivers = " + driverKey);
+			throw new OpenStorefrontRuntimeException("Unable to find web driver or it not supported.", "Check configuration.  Key test.drivers = " + driverKey, e);
+		}
+		for (WebDriver driver : drivers){
+			setBrowserSize(driver);
+			setBrowserPosition(driver);
+			setImplicitWaitTimeSeconds(driver);
 		}
 	}
 
+	private void setBrowserSize(WebDriver driver) {
+		String width = properties.getProperty("browser.size.width", "1200");
+		String height = properties.getProperty("browser.size.height", "1080");
+		driver.manage().window().setSize(new Dimension(Convert.toInteger(width), Convert.toInteger(height)));	
+	}
+	
+	private void setBrowserPosition(WebDriver driver) {
+		String xPos = properties.getProperty("browser.position.x.fromTopLeft", "0");
+		String yPos = properties.getProperty("browser.position.x.fromTopLeft", "0");
+		driver.manage().window().setPosition(new Point(Convert.toInteger(xPos), Convert.toInteger(yPos)));
+	}
+	
+	private void setImplicitWaitTimeSeconds(WebDriver driver) {
+		String iWaitSecs = properties.getProperty("implicitWait.default.seconds","10");
+		driver.manage().timeouts().implicitlyWait(Convert.toInteger(iWaitSecs), TimeUnit.SECONDS);
+	}
+	
+	
 	/**
 	 * This will close the stream when done.
 	 *
@@ -78,9 +97,13 @@ public class WebDriverUtil
 		//TODO: Save artifact to report directory
 	}
 
-	public String getPage(String page)
+	public void getPage(WebDriver driver, String page)
 	{
-		return server + page;
+		String fullPath = server + page;
+		if (!driver.getCurrentUrl().equals(fullPath)) {
+			driver.get(fullPath);
+		}
+		
 	}
 
 	public List<WebDriver> getDrivers()

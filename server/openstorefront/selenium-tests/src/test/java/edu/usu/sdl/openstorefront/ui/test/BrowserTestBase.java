@@ -15,19 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
+import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
+import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
+import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
+import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -38,11 +47,34 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	protected static APIClient apiClient;
+	protected static WebDriverUtil webDriverUtil;
+	protected static Properties properties;
 
-	protected static WebDriverUtil webDriverUtil = new WebDriverUtil();
-
+	@BeforeClass
+	public static void setupBrowserTestBase()
+	{
+		properties = PropertiesUtil.getProperties();
+		webDriverUtil = new WebDriverUtil(properties);
+		apiClient = new APIClient();
+	}
+	
 	@AfterClass
-	public static void tearDown() throws Exception
+	public static void cleanup() throws Exception
+	{
+		LOG.log(Level.INFO, "Starting cleanup");
+		apiClient.cleanup();
+		tearDown();
+	}
+
+	/*@BeforeClass
+	public static void setSize() throws Exception
+	{
+		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
+	}
+	 */
+	
+	private static void tearDown() throws Exception
 	{
 		//Bot.driver().quit();
 		//WebDriverExtensionsContext.removeDriver();
@@ -51,50 +83,138 @@ public class BrowserTestBase
 
 	protected static void login()
 	{
-	    LOG.log(Level.INFO,"Starting the AccountsSignupActivateTest");
-            for (WebDriver driver : webDriverUtil.getDrivers()) {
-			driver.get(webDriverUtil.getPage("login.jsp"));
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		login(username, password);
+	}
 
-			WebElement element = driver.findElement(By.name("username"));
-			element.sendKeys("admin");
+	protected static void login(String userName, String passWord)
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+
+			WebDriverWait wait = new WebDriverWait(driver, 20);
+			// Make sure logged out before attempting login.
+			webDriverUtil.getPage(driver, "Login.action?Logout");
+
+			// Now log in
+			webDriverUtil.getPage(driver, "login.jsp");
+
+			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
+			userNameElement.sendKeys(userName);
+
 			// Enter password and hit ENTER since submit does not seem to work.
-			driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
+			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+			userPassword.sendKeys(passWord, Keys.ENTER);
 
-			//confirm login
-			//TODO: make sure it can handle different landing pages
-			(new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>()
-			{
-				public Boolean apply(WebDriver driverLocal)
-				{
-					//login check may be home page or tool page
-					List<WebElement> titleElements = driverLocal.findElements(By.id("homeTitle"));
-					if (titleElements.size() > 0) {
-						return titleElements.get(0).isDisplayed();
-					} else {
-						titleElements = driverLocal.findElements(By.id("titleTextId"));
-						if (titleElements.size() > 0) {
-							return titleElements.get(0).isDisplayed();
-						} else {
-							return false;
-						}
-					}
-				}
-			});
+			// Look for the titleText
+			try {
+				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
+				LOG.log(Level.INFO, "*** Sucessfully logged in as '" + userName + "' ***");
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "--- EXCEPTION --- " + e);
+				String message = driver.findElement(By.cssSelector(".showError")).getText();
+				LOG.log(Level.WARNING, "--- Problem logging in as '" + userName + "' ---\n Login Page MESSAGE is: --- '" + message + "' ---");
+			}
 		}
 	}
 
 	protected static void logout()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			driver.get(webDriverUtil.getPage("Login.action?Logout"));
+			webDriverUtil.getPage(driver, "Login.action?Logout");
 
-			WebElement element = driver.findElement(By.name("username"));
-			element.sendKeys("admin");
-			// Enter password and hit ENTER since submit does not seem to work.
-			driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
-
-			//TODO: confirm logout
+			//TODO: confirm logout, return -1 or 0 or a boolean?
 		}
+	}
+
+	// Making Tread.sleep "universal"
+	protected void sleep(int mills)
+	{
+		try {
+			Thread.sleep(mills);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	protected void driverWait(DriverWork work, long maxMilliSeconds)
+	{
+		boolean done = false;
+		long startTime = System.currentTimeMillis();
+		System.out.println("********** START TIME: " + startTime);
+
+		while (!done && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
+			try {
+				work.performWork();
+				done = true;
+			} catch (WebDriverException ex) {
+				sleep(500);
+				LOG.log(Level.WARNING, ex.getMessage() + " Retrying...");
+				System.out.println("Current TIME ******** " + System.currentTimeMillis());
+			}
+		}
+
+		if (!done) {
+			throw new WebDriverException("Browser failure");
+		}
+	}
+
+	/**
+	 * Used to located item in table
+	 *
+	 * @param cssSelector cssSelector used to find table
+	 * @param searchFor text in the cell to find
+	 * @param driver Selenium webdriver
+	 * @param columnIndex index of the column being searched
+	 * @return true if cell is found, false otherwise
+	 * @throws InterruptedException
+	 */
+	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
+	{
+		int fRow = -1;
+		WebDriverWait wait = new WebDriverWait(driver, 3);
+
+		try {
+			List<WebElement> allRows = new ArrayList<WebElement>();
+			driverWait(() -> {
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(cssSelector)));
+			}, 5000);
+
+			allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(cssSelector), By.tagName("tr")));
+
+			int theRow = 0;
+			for (WebElement row : allRows) {
+
+				List<WebElement> cells = new ArrayList<WebElement>();
+				try {
+					cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
+					theRow++;
+
+					WebElement cell = cells.get(columnIndex);
+					// Iterate through cells
+					if (cell.getText().equals(searchFor)) {
+						fRow = theRow;
+						LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ". ---");
+						Actions builder = new Actions(driver);
+						builder.moveToElement(row).perform();
+						sleep(100);
+						builder.click().perform();
+						return true;
+						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
+					}
+				} catch (Exception e) {
+
+				}
+			}
+
+		} catch (Exception e) {
+			LOG.log(Level.WARNING,
+					"*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
+			System.out.println(e);
+		}
+
+		return false;
+		//return new TableItem(fRow, fColumn);
 	}
 
 	/**
@@ -112,8 +232,7 @@ public class BrowserTestBase
 			//TODO: save
 			//webDriverUtil.saveReportArtifact(in);
 		} else {
-			LOG.log(Level.WARNING, "Unable to create Screenshot; no driver support for {0}", driver.getClass().getName());
+			LOG.log(Level.WARNING, "*** Unable to create Screenshot; no driver support for {0} ***", driver.getClass().getName());
 		}
 	}
-
 }

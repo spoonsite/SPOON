@@ -84,6 +84,9 @@
 								items: [
 									{
 										text: 'Save',
+										autoEl: {
+											'data-test': 'saveSearchCritBtn'
+										},
 										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										handler: function(){
 											actionSaveSearch();
@@ -293,6 +296,9 @@
 									itemId: 'add',
 									scale: 'medium',
 									width: '100px',
+									autoEl: {
+										"data-test": "addBtnSearches"
+									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 									handler: function () {
 										actionAdd();										
@@ -304,6 +310,9 @@
 									scale: 'medium',
 									width: '100px',
 									disabled: true,
+									autoEl: {
+										"data-test": "editBtnSearches"
+									},
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEdit(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
@@ -315,6 +324,9 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'togglestatus',
+									autoEl: {
+										"data-test": "toggleBtnSearches"
+									},
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',

@@ -126,7 +126,7 @@ public class RequiredForComponent
 				matchedAttributes.add(type);
 			}
 		}
-
+		System.out.println("!!!! matchedAttributes size = " + matchedAttributes.size() + "  requiredTypeMap size = " + requiredTypeMap.size());
 		if (matchedAttributes.size() < requiredTypeMap.size())
 		{
 			RuleResult ruleResult = new RuleResult();
