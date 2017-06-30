@@ -38,6 +38,8 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.service.manager.ReportManager;
+import freemarker.template.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.logging.Level;
 
 /**
  *
@@ -326,224 +331,179 @@ public class ComponentDetailReport
 	}
 
 	private void generateHtml()
-	{
+	{	
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
-
-		htmlGenerator.addLine("Component Details Report: " + sdf.format(TimeUtil.currentDate()));
-		htmlGenerator.addSpace();
-
-		htmlGenerator.addStyleBlock(
-				"body{ font-family: Helvetica, Verdana, Arial, sans-serif; } "
-				+ "h1 { background-color: #F1F1F1; } "
-				+ "table{ "
-				+ "border: 1px black solid; "
-				+ "border-collapse: collapse;"
-				+ "border-spacing: 0;"
-				+ "} "
-				+ "table td,th { "
-				+ "padding-left: 5px; "
-				+ "padding-right: 5px; "
-				+ "} "
-				+ "th { "
-				+ "color: white; "
-				+ "background-color: #414e68; "
-				+ "border: 1px lightgray solid; "
-				+ " } "
-				+ " td { "
-				+ "border: 1px lightgray solid; "
-				+ " padding: 5px; "
-				+ " } "
-				+ " tr:nth-child(odd) { "
-				+ " background-color: #eeeeee "
-				+ " } "
-				+ " tr:nth-child(even) {  "
-				+ " background-color: white; "
-				+ " } "
-				+ "@media print {"
-				+ " .pageBreak { "
-				+ "    page-break-after: always; "
-				+ " }}"
-		);
-
-		htmlGenerator.addLine("Entries (" + components.size() + ")");
-		htmlGenerator.addRuleLine();
-
-		for (Component component : components) {
-
-			String securityMarking = "";
-			if (getBranding().getAllowSecurityMarkingsFlg()) {
-				securityMarking = "(" + component.getSecurityMarkingType() + ") ";
-			}				
+		try
+		{
+			Configuration templateConfig = ReportManager.getTemplateConfig();
+			Map root = new HashMap();
 			
-			htmlGenerator.addMainHeader(component.getName());
-			htmlGenerator.addLine("<b>" + component.getOrganization() + "</b>");
-			htmlGenerator.addSpace();
-			htmlGenerator.addSpace();
-			htmlGenerator.addLine(securityMarking + component.getDescription());
-			htmlGenerator.addSpace();
+			// create a list of components
+			List<Map> componentList = new ArrayList<>();
+			for (Component component : components)
+			{
+				String securityMarking = "";
+				Map componentRoot = new HashMap();
+				
+				// Generate vitals data
+				Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
+				if (attributeMap != null) {
 
-			Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
-
-			if (attributeMap != null) {
-				htmlGenerator.addLine("<h2>Vitals</h2>");
-
-				Map<String, String> typeDescriptionMap = new HashMap<>();
-				for (String type : attributeMap.keySet()) {
-					String typeLabel = service.getAttributeService().findType(type).getDescription();
-					typeDescriptionMap.put(typeLabel, type);
-				}
-
-				List<String> attributeTypeList = new ArrayList<>(typeDescriptionMap.keySet());
-				attributeTypeList.sort(null);
-
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Vital</th>");
-				htmlGenerator.addLine("<th>Value</th>");
-				htmlGenerator.addLine("</tr>");
-				for (String typeLabel : attributeTypeList) {
-					String type = typeDescriptionMap.get(typeLabel);
-					List<ComponentAttribute> attributes = attributeMap.get(type);
-
-					if (attributes != null) {
-
-						for (ComponentAttribute componentAttribute : attributes) {
-							AttributeCodePk attributeCodePk = new AttributeCodePk();
-
-							attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
-							attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-							String attributeLabel;
-							if (attributeCode != null) {
-								securityMarking = "";
-								if (getBranding().getAllowSecurityMarkingsFlg() && 
-									StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
-								{
-									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
-								}
-								attributeLabel = securityMarking + attributeCode.getLabel();
-							} else {
-								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
-							}
-							htmlGenerator.addLine("<tr>");
-							htmlGenerator.addLine("<td><b>" + typeLabel + "</b></td>");
-							htmlGenerator.addLine("<td>" + attributeLabel + "</td>");
-							htmlGenerator.addLine("</tr>");
-						}
-
+					Map<String, String> typeDescriptionMap = new HashMap<>();
+					for (String type : attributeMap.keySet()) {
+						String typeLabel = service.getAttributeService().findType(type).getDescription();
+						typeDescriptionMap.put(typeLabel, type);
 					}
-				}
-				htmlGenerator.addLine("</table>");
-			}
 
-			//meta data
-			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
-			if (metaData != null) {
-				metaData = FilterEngine.filter(metaData);
+					List<String> attributeTypeList = new ArrayList<>(typeDescriptionMap.keySet());
+					attributeTypeList.sort(null);
+					
+					// Make a list of all the vitals
+					List<Map> vitalsList = new ArrayList<>();
+					for (String typeLabel : attributeTypeList) {
+						String type = typeDescriptionMap.get(typeLabel);
+						List<ComponentAttribute> attributes = attributeMap.get(type);
+
+						if (attributes != null) {
+
+							for (ComponentAttribute componentAttribute : attributes) {
+								AttributeCodePk attributeCodePk = new AttributeCodePk();
+
+								attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
+								attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+								AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+								String attributeLabel;
+								if (attributeCode != null) {
+									securityMarking = "";
+									if (getBranding().getAllowSecurityMarkingsFlg() && 
+										StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
+									{
+										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+									}
+									attributeLabel = securityMarking + attributeCode.getLabel();
+								} else {
+									attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+								}
+								
+								// Add to the list of vitals
+								Map vitalsHash = new HashMap();
+								vitalsHash.put("typeLabel", typeLabel);
+								vitalsHash.put("attributeLabel", attributeLabel);
+								vitalsList.add(vitalsHash);
+							}
+
+						}
+					}
+					componentRoot.put("vitals", vitalsList);
+				}
 				
-				htmlGenerator.addLine("<h2>MetaData</h2>");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
-
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Label</th>");
-				htmlGenerator.addLine("<th>Value</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentMetadata metadataItem : metaData) {
-
-					securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
-					{
-						securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
-					}						
+				// Generate Meta Data
+				List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
+				if (metaData != null) {
+					metaData = FilterEngine.filter(metaData);
+					metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 					
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + metadataItem.getLabel() + "</b></td>");
-					htmlGenerator.addLine("<td>"   + securityMarking + metadataItem.getValue() + "</td>");
-					htmlGenerator.addLine("</tr>");
-				}
-				htmlGenerator.addLine("</table>");
-			}
+					// Make a list of meta data
+					List<Map> metaDataList = new ArrayList<>();
+					for (ComponentMetadata metadataItem : metaData) {
 
-			//contacts
-			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
-			if (contacts != null) {
-				contacts = FilterEngine.filter(contacts);
+						securityMarking = "";
+						if (getBranding().getAllowSecurityMarkingsFlg() && 
+							StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
+						{
+							securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
+						}
+						
+						// Add to the meta data list
+						Map metaDataHash = new HashMap();
+						metaDataHash.put("label", metadataItem.getLabel());
+						metaDataHash.put("value", securityMarking + metadataItem.getValue());
+						metaDataList.add(metaDataHash);
+					}
+					
+					componentRoot.put("metaData", metaDataList);
+				}
 				
-				htmlGenerator.addLine("<h2>Contacts</h2>");
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Type</th>");
-				htmlGenerator.addLine("<th>Firstname</th>");
-				htmlGenerator.addLine("<th>Lastname</th>");
-				htmlGenerator.addLine("<th>Organization</th>");
-				htmlGenerator.addLine("<th>Email</th>");
-				htmlGenerator.addLine("<th>Phone</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentContact contact : contacts) {
-
-					securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(contact.getSecurityMarkingType()))
-					{
-						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
-					}				
+				// Generate Contancts
+				List<ComponentContact> contacts = contactMap.get(component.getComponentId());
+				if (contacts != null) {
+					contacts = FilterEngine.filter(contacts);
 					
-					Contact contactFull = contact.fullContact();
-					
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getLastName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getOrganization()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getEmail()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getPhone()) + "</td>");
-					htmlGenerator.addLine("</tr>");
+					// make a list of contacts
+					List<Map> contactsList = new ArrayList<>();
+					for (ComponentContact contact : contacts) {
 
+						securityMarking = "";
+						if (getBranding().getAllowSecurityMarkingsFlg() && 
+							StringUtils.isNotBlank(contact.getSecurityMarkingType()))
+						{
+							securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
+						}				
+
+						// Add to the contacts list
+						Contact contactFull = contact.fullContact();
+						Map contactsHash = new HashMap();
+						contactsHash.put("type", TranslateUtil.translate(ContactType.class, contact.getContactType()));
+						contactsHash.put("firstName", StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()));
+						contactsHash.put("lastName", StringProcessor.blankIfNull(contactFull.getLastName()));
+						contactsHash.put("org", StringProcessor.blankIfNull(contactFull.getOrganization()));
+						contactsHash.put("email", StringProcessor.blankIfNull(contactFull.getEmail()));
+						contactsHash.put("phone", StringProcessor.blankIfNull(contactFull.getPhone()));
+						
+						contactsList.add(contactsHash);
+					}
+					componentRoot.put("contacts", contactsList);
 				}
-				htmlGenerator.addLine("</table>");
-			}
-
-			//resources
-			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
-			if (resources != null) {
-				resources = FilterEngine.filter(resources);
 				
-				htmlGenerator.addLine("<h2>Resources</h2>");
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Type</th>");
-				htmlGenerator.addLine("<th>Description</th>");
-				htmlGenerator.addLine("<th>Link</th>");
-				htmlGenerator.addLine("<th>Restricted (requires login/CAC)</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentResource resource : resources) {
+				// Generate Resources
+				List<ComponentResource> resources = resourceMap.get(component.getComponentId());
+				if (resources != null) {
+					resources = FilterEngine.filter(resources);
 
-					securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(resource.getSecurityMarkingType()))
-					{
-						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
-					}					
-					
-					ComponentResourceView view = ComponentResourceView.toView(resource);
+					// make a list of resources
+					List<Map> resourcesList = new ArrayList<>();
+					for (ComponentResource resource : resources) {
 
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ResourceType.class, view.getResourceType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getDescription()) + "</td>");
-					htmlGenerator.addLine("<td>" + securityMarking + view.getLink() + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getRestricted()) + "</td>");
-					htmlGenerator.addLine("</tr>");
+						securityMarking = "";
+						if (getBranding().getAllowSecurityMarkingsFlg() && 
+							StringUtils.isNotBlank(resource.getSecurityMarkingType()))
+						{
+							securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
+						}					
+
+						ComponentResourceView view = ComponentResourceView.toView(resource);
+						Map resourcesHash = new HashMap();
+						
+						// Add to the resources list
+						resourcesHash.put("type", TranslateUtil.translate(ResourceType.class, view.getResourceType()));
+						resourcesHash.put("description", StringProcessor.blankIfNull(view.getDescription()));
+						resourcesHash.put("link", securityMarking + view.getLink());
+						resourcesHash.put("restricted", StringProcessor.blankIfNull(view.getRestricted()));
+						
+						resourcesList.add(resourcesHash);
+					}
+					componentRoot.put("resources", resourcesList);
 				}
-				htmlGenerator.addLine("</table>");
+				
+				componentRoot.put("component", component);
+				componentList.add(componentRoot);
 			}
-
-			htmlGenerator.addRuleLine();
-			htmlGenerator.addSpace();
-			htmlGenerator.addLine("<span class='pageBreak'></span>");
+			
+			// generate the template
+			root.put("components", componentList);
+			root.put("report", report);
+			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
+			root.put("reportSize", components.size());
+			root.put("reportDate", sdf.format(TimeUtil.currentDate()));
+			Template template = templateConfig.getTemplate("detailReport.ftl");
+			Writer writer = new StringWriter();
+			template.process(root, writer);
+			String renderedTemplate = writer.toString();
+			htmlGenerator.addLine(renderedTemplate);
 		}
-
+		catch (Exception e)
+		{
+			log.log(Level.WARNING, MessageFormat.format("There was a problem when generating a detail report: {0}", e));
+		}
 	}
-
 }
