@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -62,6 +63,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -224,39 +226,51 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
-			
-			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty()) ?
-				persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
-			
-			if(existing != null)
-			{
-				existing.updateFields(userRegistration);	
+
+			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty())
+					? persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
+
+			if (existing != null) {
+				existing.updateFields(userRegistration);
 				userRegistration = existing;
-			}
-			else
-			{
+			} else {
 				userRegistration.setRegistrationId(persistenceService.generateId());
 				userRegistration.populateBaseCreateFields();
 			}
 			userRegistration.setVerificationCode(generateRandomString(8));
 			persistenceService.persist(userRegistration);
-			
+
+			if (StringUtils.isNotBlank(userRegistration.getEmail())) {
+				Map data = new HashMap();
+				String subject = "Email Verification Code";
+				data.put("verificationCode", userRegistration.getVerificationCode());
+				data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+				data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+				data.put("title", subject);
+				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
+				email.setSubject(subject);
+				email.addRecipient(userRegistration.getFirstName(), userRegistration.getEmail(), Message.RecipientType.TO);
+				MailManager.send(email);
+			} else {
+				LOG.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
+			}
 			// sendEmail();
 		}
 		return validationResult;
 	}
+
 	private String generateRandomString(int length)
-	{       
+	{
 		if (length < 1) {
-            throw new IllegalArgumentException("length < 1: " + length);
-        }
+			throw new IllegalArgumentException("length < 1: " + length);
+		}
 		String symbols = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 		Random random = new Random();
-        StringBuilder buffer = new StringBuilder(length);
+		StringBuilder buffer = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-            buffer.append(symbols.charAt(random.nextInt(symbols.length())));
-        }
-        return buffer.toString();
+			buffer.append(symbols.charAt(random.nextInt(symbols.length())));
+		}
+		return buffer.toString();
 	}
 
 	@Override
@@ -266,7 +280,7 @@ public class SecurityServiceImpl
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
 			SecurityPolicy securityPolicy = getSecurityPolicy();
-			
+
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();
 			String encryptedValue = passwordService.encryptPassword(userRegistration.getPassword());

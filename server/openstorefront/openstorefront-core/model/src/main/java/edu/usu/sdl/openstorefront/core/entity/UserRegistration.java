@@ -35,6 +35,8 @@ public class UserRegistration
 		extends StandardEntity<UserRegistration>
 {
 
+	public static final String VERIFICATION_CODE_FIELD = "verificationCode";
+	
 	@PK(generated = true)
 	@NotNull
 	private String registrationId;

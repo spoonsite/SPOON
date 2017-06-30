@@ -27,12 +27,11 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationView;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -157,35 +156,22 @@ public class UserRegistrationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response createUserRegistration(
-			@PathParam("registrationId") String registrationId,
 			UserRegistration userRegistration
 	)
 	{
-		UserRegistration savedRegistration = new UserRegistration();
-		savedRegistration.setRegistrationId(registrationId);
-		savedRegistration = savedRegistration.find();
-		
 		ValidationResult validationResult = userRegistration.validate();
+		validationResult.merge(validateCode(userRegistration));
 		if (validationResult.valid()) {
 			validationResult.merge(service.getSecurityService().processNewUser(userRegistration));
-
-			UserRegistration registration = new UserRegistration();
-			registration.setUsername(userRegistration.getUsername());
-			registration = registration.find();
-
-
-			if ((!registration.getEmail().equals(savedRegistration.getEmail()))
-					|| (!registration.getUsername().equals(savedRegistration.getUsername()))
-					|| (!registration.getVerificationCode().equals(savedRegistration.getVerificationCode()))) {
-				Map<String, String> error = new HashMap<>();
-				error.put("code", "Invalid Verification Code");
-				validationResult.addToErrors(error);
-			}
 		}
 
 		if (validationResult.valid()) {
 
-			return Response.created(URI.create("v1/resource/userregistrations/" + registrationId)).entity(savedRegistration).build();
+			UserRegistration savedRegistration = new UserRegistration();
+			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
+			savedRegistration = savedRegistration.find();
+
+			return Response.created(URI.create("v1/resource/userregistrations/" + userRegistration.getRegistrationId())).entity(savedRegistration).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -207,4 +193,24 @@ public class UserRegistrationResource
 		}
 	}
 
+	private ValidationResult validateCode(UserRegistration userRegistration)
+
+	{
+		ValidationResult result = new ValidationResult();
+
+		UserRegistration savedRegistration = new UserRegistration();
+		savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
+		savedRegistration = savedRegistration.find();
+		if ((!userRegistration.getEmail().equals(savedRegistration.getEmail()))
+				|| (!userRegistration.getUsername().equals(savedRegistration.getUsername()))
+				|| (!userRegistration.getVerificationCode().equals(savedRegistration.getVerificationCode()))) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(UserRegistration.class.getSimpleName());
+			ruleResult.setFieldName(UserRegistration.VERIFICATION_CODE_FIELD);
+			ruleResult.setMessage("Invalid or Expired Verification Code");
+			result.getRuleResults().add(ruleResult);
+		}
+
+		return result;
+	}
 }

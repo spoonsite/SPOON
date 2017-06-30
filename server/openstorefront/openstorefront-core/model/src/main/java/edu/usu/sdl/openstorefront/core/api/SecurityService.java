@@ -75,6 +75,7 @@ public interface SecurityService
 	 * Handle processing the application and generating a verification email
 	 *
 	 * @param userRegistration
+	 * @return validation results
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewRegistration(UserRegistration userRegistration);
@@ -83,6 +84,7 @@ public interface SecurityService
 	 * Handle processing the application into user and user profile
 	 *
 	 * @param userRegistration
+	 * @return validation results
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewUser(UserRegistration userRegistration);
@@ -108,7 +110,6 @@ public interface SecurityService
 	/**
 	 * Approves user password reset
 	 *
-	 * @param username
 	 * @param approvalCode (Assumes it Base64 encoded for web)
 	 * @return true if successful (see log for false reasons which shouldn't be
 	 * pass to the user)
