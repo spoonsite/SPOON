@@ -130,6 +130,8 @@
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
 				autoLoad: true,
+				pageSize: 100,
+				remoteSort: true,
 				fields: [
 					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
 						if (data.defaultAttributeCode) {
@@ -150,12 +152,20 @@
 						direction: 'ASC'
 					})
 				],	
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/attributes/attributetypes?all=true',
+				proxy:  CoreUtil.pagingProxy({					
+					url: 'api/v1/resource/attributes/attributetypes',
 					reader: {
 						type: 'json',
-						rootProperty: 'data'
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					beforeLoad: function(store, operation, eOpts){
+						store.getProxy().extraParams = {
+							status: Ext.getCmp('attributeTypeGridFilter-activeStatus').getValue(),
+							attributeTypeDescription: Ext.getCmp('attributeTypeGridFilter-description').getValue()
+						};
 					}
 				}
 			});
@@ -311,7 +321,7 @@
 			///////////////////
 
 
-			var gridColorRenderer = function gridColorRenderer(value, metadata, record) {
+			var gridColorRenderer = function(value, metadata, record) {
 				if (value) 
 					metadata.tdCls = 'alert-success';
 				else 
@@ -327,6 +337,12 @@
 				selModel: {
 					selType: 'checkboxmodel'        
 				},
+				bbar: Ext.create('Ext.PagingToolbar', {
+					store: attributeStore,
+					displayInfo: true,
+					displayMsg: 'Displaying Attributes {0} - {1} of {2}',
+					emptyMsg: "No attributes to display"
+				}),				
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						
@@ -439,18 +455,14 @@
 						xtype: 'toolbar',
 						items: [
 							Ext.create('OSF.component.StandardComboBox', {
-								id: 'attributeFilter-activeStatus',
+								id: 'attributeTypeGridFilter-activeStatus',
 								emptyText: 'Show All',
 								fieldLabel: 'Active Status',
 								name: 'activeStatus',
+								value: 'A',
 								listeners: {
 									change: function (filter, newValue, oldValue, opts) {
-										if (newValue === 'A') {
-											attributeStore.filter('activeStatus','A');
-										}
-										else {
-											attributeStore.filter('activeStatus', 'I');
-										}
+										attributeStore.reload();
 									}
 								},
 								storeConfig: {
@@ -471,7 +483,25 @@
 										]
 									}
 								}
-							})
+							}),
+							{
+								xtype: 'textfield',
+								id: 'attributeTypeGridFilter-description',
+								fieldLabel: 'Description',						
+								name: 'description',								
+								emptyText: 'Filter By Description',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: 250,
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											attributeStore.reload();
+										},
+										buffer: 1500
+									}
+								}
+							}
 						]
 					},
 					{
@@ -630,7 +660,7 @@
 			});			
 			
 
-			var actionAddAttribute = function actionAddAttribute() {
+			var actionAddAttribute = function() {
 				Ext.getCmp('editAttributeForm').reset();
 				editAttributeWin.edit = false;
 				editAttributeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
@@ -1146,7 +1176,7 @@
 				}
 			});
 
-			var actionToggleAttributeStatus = function actionToggleAttributeStatus() {
+			var actionToggleAttributeStatus = function() {
 				
 				// Store Selection
 				var selection = attributeGrid.getSelection();
@@ -1230,7 +1260,7 @@
 				}
 			};
 
-			var actionDeleteAttribute = function actionDeleteAttribute() {
+			var actionDeleteAttribute = function() {
 				
 				// Get Selection
 				var selection = Ext.getCmp('attributeGrid').getSelection();
@@ -1327,11 +1357,11 @@
 				});
 			};
 
-			var actionImportAttribute = function actionImportAttribute() {
+			var actionImportAttribute = function() {
 				importWindow.show();
 			};
 
-			var actionExportAttribute = function actionExportAttribute(records) {
+			var actionExportAttribute = function(records) {
 				
 				// Initialize Export Types
 				var attributeTypes = "";
@@ -1370,21 +1400,15 @@
 				}
 			});
 
-			var actionManageCodes = function actionManageCodes(record) {
+			var actionManageCodes = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes';
-				url += '/' + record.data.attributeType + '/attributecodeviews?all=true';
-				codesStore.setProxy({
-					type: 'ajax',
-					url: url,
-					reader: {
-						type: 'json',
-						rootProperty: 'data'
-					}
+				url += '/' + record.data.attributeType + '/attributecodeviews';
+					
+				codesStore.load({
+					url: url
 				});
-				codesStore.filter('activeStatus', 'A');
-				codesStore.load();
-				manageCodesWin.attributeType = record.data.attributeType;
-				Ext.getCmp('codesFilter-activeStatus').setValue('A');
+				manageCodesWin.attributeType = record.data.attributeType;			
+				manageCodesWin.attributeTypeFull = record.data;
 				
 				manageCodesWin.show();
 			};
@@ -1450,7 +1474,7 @@
 											success: function () {
 												Ext.toast('Successfully uploaded attachment.', '', 'tr');
 												attachmentUploadWindow.hide();
-												codesStore.load();
+												codesStore.reload();
 											},
 											failure: function () {
 												Ext.toast('Failed to upload attachment.');
@@ -1476,7 +1500,32 @@
 			});
 
 			var codesStore = Ext.create('Ext.data.Store', {
-				id: 'codesStore'
+				id: 'codesStore',
+				pageSize: 100,
+				remoteSort: true,
+				autoLoad: false,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'label',
+						direction: 'ASC'
+					})
+				],	
+				proxy:  CoreUtil.pagingProxy({					
+					url: 'api/v1/resource/attributes/attributetypes',
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					beforeLoad: function(store, operation, eOpts){
+						store.getProxy().extraParams = {
+							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
+							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
+						};
+					}
+				}				
 			});
 
 			var codesGrid = Ext.create('Ext.grid.Panel', {
@@ -1520,6 +1569,12 @@
 						}
 					}
 				},
+				bbar: Ext.create('Ext.PagingToolbar', {
+					store: codesStore,
+					displayInfo: true,
+					displayMsg: 'Displaying Codes {0} - {1} of {2}',
+					emptyMsg: "No codes to display"
+				}),					
 				dockedItems: [
 					{
 						dock: 'top',
@@ -1530,17 +1585,10 @@
 								emptyText: 'Active',
 								fieldLabel: 'Active Status',
 								name: 'activeStatus',
+								value: 'A',
 								listeners: {
 									change: function (filter, newValue, oldValue, opts) {
-										if (newValue === 'A') {
-											codesStore.filter('activeStatus','A');
-										}
-										else if (newValue === 'I') {
-											codesStore.filter('activeStatus', 'I');
-										}
-										else {
-											codesStore.clearFilter();
-										}
+										codesStore.reload();
 									}
 								},
 								storeConfig: {
@@ -1561,7 +1609,25 @@
 										]
 									}
 								}
-							})
+							}),
+							{
+								xtype: 'textfield',
+								id: 'codesFilter-label',
+								fieldLabel: 'Label',						
+								name: 'label',								
+								emptyText: 'Filter By Label',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: 250,
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											codesStore.reload();
+										},
+										buffer: 1500
+									}
+								}
+							}							
 						]
 					},
 					{
@@ -1573,7 +1639,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
-									codesStore.load();
+									codesStore.reload();
 								}
 							},
 							{
@@ -1767,14 +1833,24 @@
 								xtype: 'textfield',
 								id: 'editCodeForm-label',
 								fieldLabel: 'Label<span class="field-required" />',
+								allowBlank: false,
 								name: 'label'
 							},
+							{
+								xtype: 'numberfield',
+								id: 'editCodeForm-labelNumber',
+								fieldLabel: 'Label Number<span class="field-required" />',
+								name: 'label',
+								allowBlank: false,
+								allowDecimal: true,
+								hidden: true
+							},								
 							{
 								xtype: 'textfield',
 								id: 'editCodeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
 								name: 'typeCode'
-							},
+							},						
 							{
 								xtype: 'panel',
 								html: '<b>Description</b>'
@@ -1893,7 +1969,7 @@
 													form: Ext.getCmp('editCodeForm'),
 													success: function (response, opts) {
 														Ext.toast('Saved Successfully', '', 'tr');
-														codesStore.load();
+														codesStore.reload();
 														Ext.getCmp('editCodeForm').reset();
 														editCodeWin.hide();
 													},
@@ -1923,26 +1999,48 @@
 						]
 			});
 
-			var actionAddCode = function actionAddCode(parentAttributeRecord) {
+			var actionAddCode = function(parentAttributeRecord) {
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
+				editCodeWin.attributeTypeFull = parentAttributeRecord.data;
 				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
+				
+				
+				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
+					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+				} else {
+					Ext.getCmp('editCodeForm-label').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);					
+				}				
+				
 				editCodeWin.show();
 			};
 
-			var actionEditCode = function actionEditCode(record) {
+			var actionEditCode = function(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
-				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
+				Ext.getCmp('editCodeForm-code').setValue(record.data.code);			
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
+				editCodeWin.attributeTypeFull = manageCodesWin.attributeTypeFull;
 				editCodeWin.setTitle('<i class="fa fa-edit"></i>' + '<span class="shift-window-text-right">Edit Code - </span>' + record.data.code);
 				Ext.getCmp('editCodeForm-code').setEditable(false);
+				Ext.getCmp('editCodeForm-codeNumber').setEditable(false);
+				
+				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
+					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+				} else {
+					Ext.getCmp('editCodeForm-label').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);					
+				}				
+				
 				editCodeWin.show();
 			};
 
-			var actionToggleCode = function acitionToggleCode(record) {
+			var actionToggleCode = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -1959,7 +2057,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully ' + what + 'd attribute code', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to ' + what + ' attribute code', '', 'tr');
@@ -1967,7 +2065,7 @@
 				});
 			};
 
-			var actionDeleteCode = function acitionDeleteCode(record) {
+			var actionDeleteCode = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -1978,7 +2076,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully sent deletion request for attribute code', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to send deletion request for attribute code', '', 'tr');
@@ -1987,7 +2085,7 @@
 
 			};
 
-			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+			var actionDeleteCodeAttachment = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -1998,7 +2096,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully deleted attachment', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to delete attachment', '', 'tr');
@@ -2029,11 +2127,18 @@
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
 				modal: true,
-				width: '60%',
-				height: '80%',
+				width: '75%',
+				height: '90%',
 				maximizable: true,
 				y: '2em',
 				layout: 'fit',
+				listeners: {
+					show: function(win) {
+						Ext.defer(function(){
+							win.down('form').updateLayout(true, true);
+						}, 500);
+					}
+				},
 				items: [
 					{
 						xtype: 'form',
@@ -2085,6 +2190,22 @@
 								maxLength: 255,
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Code Label Value Type',							
+								displayField: 'description',
+								valueField: 'code',
+								typeAhead: false,
+								editable: false,
+								name: 'attributeValueType',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/lookuptypes/AttributeValueType'
+									}
+								}
+							},	
 							{
 								xtype: 'panel',
 								html: '<b>Associated Entry Types:</b>'
@@ -2919,26 +3040,9 @@
 
 										// Build URL For Retrieving Attribute Codes
 										var url = 'api/v1/resource/attributes/attributetypes';
-										url += '/' + record.get('attributeType') + '/attributecodeviews?all=true';
+										url += '/' + record.get('attributeType') + '/attributecodeviews';
 
-										// Configure Code Store With New URL
-										codesStore.setProxy({
-
-											type: 'ajax',
-											url: url,
-											reader: {
-
-												type: 'json',
-												rootProperty: 'data'
-											}
-										});
-
-										// Filter Code Store Based On Active Status
-										// (Only Show Active Records)
-										codesStore.filter('activeStatus', 'A');
-
-										// Load Data In Store
-										codesStore.load();
+										codesStore.reload();
 
 										// Enable Code Selection Combo Box
 										Ext.getCmp('manageAssignmentsForm-code').enable();

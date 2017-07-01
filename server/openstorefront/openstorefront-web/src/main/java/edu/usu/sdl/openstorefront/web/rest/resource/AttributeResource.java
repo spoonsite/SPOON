@@ -49,6 +49,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
+import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
@@ -294,7 +295,7 @@ public class AttributeResource
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
 	public Response getAttributeTypes(
-			@BeanParam FilterQueryParams filterQueryParams
+			@BeanParam AttributeFilterParams filterQueryParams
 	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -475,7 +476,7 @@ public class AttributeResource
 	public Response getAttributeCodeViews(
 			@PathParam("type")
 			@RequiredParam String type,
-			@BeanParam FilterQueryParams filterQueryParams)
+			@BeanParam AttributeFilterParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {

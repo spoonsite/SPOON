@@ -50,7 +50,7 @@ public class AttributeCode
 		extends StandardEntity<AttributeCode>
 {
 
-	public static final String FIELD_LABEL = "label";
+	public static final String FIELD_LABEL = "label";	
 
 	@PK
 	@NotNull

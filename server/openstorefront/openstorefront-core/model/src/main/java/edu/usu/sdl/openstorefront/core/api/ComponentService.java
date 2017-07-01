@@ -261,6 +261,14 @@ public interface ComponentService
 	 * @param attribute
 	 */
 	public void saveComponentAttribute(ComponentAttribute attribute);
+	
+	/**
+	 * Saves a component Attribute
+	 *
+	 * @param attribute
+	 * @param updateLastActivity
+	 */
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);	
 
 	/**
 	 *

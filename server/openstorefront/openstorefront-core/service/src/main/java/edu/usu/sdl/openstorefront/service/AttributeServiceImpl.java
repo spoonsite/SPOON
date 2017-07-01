@@ -21,8 +21,10 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
@@ -46,9 +48,9 @@ import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
@@ -258,7 +260,7 @@ public class AttributeServiceImpl
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 
-		ValidationResult validationResult = existing.customValidation(this);
+		ValidationResult validationResult = attributeCode.customValidation(this);
 		if (validationResult.valid() == false) {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
@@ -904,7 +906,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter)
+	public AttributeTypeWrapper getFilteredTypes(AttributeFilterParams filter)
 	{
 		AttributeTypeWrapper result = new AttributeTypeWrapper();
 
@@ -912,8 +914,20 @@ public class AttributeServiceImpl
 		if (filter.getAll() == null || filter.getAll() == false) {
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
-
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		
+		
+		// If given, filter the search by name
+		if (StringUtils.isNotBlank(filter.getAttributeTypeDescription())) {
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			AttributeType attributeTypeLikeExample = new AttributeType();
+			attributeTypeLikeExample.setDescription("%" + filter.getAttributeTypeDescription().toLowerCase() + "%");				
+
+			specialOperatorModel.setExample(attributeTypeLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
 
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());
@@ -940,7 +954,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type)
+	public AttributeCodeWrapper getFilteredCodes(AttributeFilterParams filter, String type)
 	{
 		AttributeCodeWrapper result = new AttributeCodeWrapper();
 		AttributeCodePk pk = new AttributeCodePk();
@@ -950,9 +964,20 @@ public class AttributeServiceImpl
 		if (filter.getAll() == null || filter.getAll() == false) {
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
-
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
+				
+		// If given, filter the search by name
+		if (StringUtils.isNotBlank(filter.getAttributeCodeLabel())) {
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			AttributeCode attributeCodeLikeExample = new AttributeCode();
+			attributeCodeLikeExample.setLabel("%" + filter.getAttributeCodeLabel().toLowerCase() + "%");
 
+			specialOperatorModel.setExample(attributeCodeLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}			
+		
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());
 		queryByExample.setSortDirection(filter.getSortOrder());

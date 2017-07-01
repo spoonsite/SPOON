@@ -77,7 +77,7 @@ public class ComponentServiceImpl
 		implements ComponentService, ComponentServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentServiceImpl.class.getName());
 
 	private CoreComponentServiceImpl core;
 	private SubComponentServiceImpl sub;

@@ -125,12 +125,7 @@
 									xtype: 'checkbox',
 									boxLabel: 'Dependencies',
 									name: 'dataEntryDependencies'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Metadata',
-									name: 'dataEntryMetadata'
-								},
+								},								
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Evaluation Information',

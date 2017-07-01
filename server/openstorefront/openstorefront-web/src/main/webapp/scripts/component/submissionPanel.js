@@ -458,8 +458,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								sectionPanel.getComponent('contactGrid').setHidden(true);
 								sectionPanel.getComponent('resourceGrid').setHidden(true);							
 								sectionPanel.getComponent('mediaGrid').setHidden(true);							
-								sectionPanel.getComponent('dependenciesGrid').setHidden(true);
-								sectionPanel.getComponent('metadataGrid').setHidden(true);
+								sectionPanel.getComponent('dependenciesGrid').setHidden(true);								
 								sectionPanel.getComponent('relationshipsGrid').setHidden(true);
 								sectionPanel.getComponent('tagGrid').setHidden(true);							
 								
@@ -467,8 +466,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								sectionPanel.getComponent('contactGrid-help').setHidden(true);
 								sectionPanel.getComponent('resourceGrid-help').setHidden(true);							
 								sectionPanel.getComponent('mediaGrid-help').setHidden(true);							
-								sectionPanel.getComponent('dependenciesGrid-help').setHidden(true);
-								sectionPanel.getComponent('metadataGrid-help').setHidden(true);
+								sectionPanel.getComponent('dependenciesGrid-help').setHidden(true);								
 								sectionPanel.getComponent('relationshipsGrid-help').setHidden(true);
 								sectionPanel.getComponent('tagGrid-help').setHidden(true);							
 								
@@ -493,10 +491,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 								if (record.get('dataEntryDependancies')){							
 									sectionPanel.getComponent('dependenciesGrid').setHidden(false);
 									sectionPanel.getComponent('dependenciesGrid-help').setHidden(false);
-								} 
-								if (record.get('dataEntryMetadata')){
-									sectionPanel.getComponent('metadataGrid').setHidden(false);
-									sectionPanel.getComponent('metadataGrid-help').setHidden(false);
 								} 
 								if (record.get('dataEntryRelationships')){
 									sectionPanel.getComponent('relationshipsGrid').setHidden(false);
@@ -1651,145 +1645,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('depForm').loadRecord(record);
 			}			
 		};
-		
-		var addEditMetadata = function(record, grid){		
-			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destroy',
-				modal: true,
-				alwaysOnTop: true,
-				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Metadata</span>',
-				width: '50%',
-				height: 350,
-				layout: 'fit',
-				items: [
-					{
-						xtype: 'form',
-						scrollable: true,
-						itemId: 'metaForm',
-						bodyStyle: 'padding: 10px;',
-						defaults: {
-							labelAlign: 'top',
-							labelSeparator: '',
-							width: '100%'
-						},
-						items: [
-							{
-								xtype: 'hidden',
-								name: 'metadataId'
-							},
-							{
-								xtype: 'combobox',
-								itemId: 'metadataLabelComboBox',
-								fieldLabel: 'Label <span class="field-required" />',
-								allowBlank: false,									
-								maxLength: '255',									
-								name: 'label',
-								valueField: 'code',
-								displayField: 'description',
-								typeAhead: 'true',
-								store: Ext.create('Ext.data.Store', {
-									storeId: 'metadataLabelStore',
-									proxy: {
-										type: 'ajax',
-										url: 'api/v1/resource/componentmetadata/lookup'
-									},
-									autoLoad: true
-								}),
-								listeners: {
-									change: {																			
-										fn: function (combo, newValue, oldValue, eOpts) {
-											var valueStore = this.up('form').getComponent('metadataValueComboBox').getStore();
-											valueStore.getProxy().setUrl('api/v1/resource/componentmetadata/lookup/values');
-											valueStore.getProxy().setExtraParams({label: newValue});
-											valueStore.load();
-										},
-										buffer: 500
-									}
-								}
-							},
-							{
-								xtype: 'combobox',
-								itemId: 'metadataValueComboBox',
-								fieldLabel: 'Value <span class="field-required" />',
-								allowBlank: false,									
-								maxLength: '255',									
-								name: 'value',
-								valueField: 'code',
-								displayField: 'description',
-								typeAhead: 'true',
-								store: Ext.create('Ext.data.Store', {									
-									proxy: {
-										type: 'ajax'
-									}
-								})
-							},
-							Ext.create('OSF.component.SecurityComboBox', {	
-								itemId: 'securityMarkings',
-								hidden: submissionPanel.hideSecurityMarkings
-							}),
-							Ext.create('OSF.component.DataSensitivityComboBox', {			
-								width: '100%'
-							})							
-						],
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Save',
-										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-save',
-										handler: function(){
-											var metaWindow = this.up('window');
-											var form = this.up('form');
-											var data = form.getValues();
-											var componentId = submissionPanel.componentId;
-
-											var method = 'POST';
-											var update = '';
-											if (data.metadataId) {
-												update = '/' + data.metadataId;
-												method = 'PUT';
-											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/components/' + componentId + '/metadata' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function(){
-													grid.getStore().load({
-														url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
-													});
-													Ext.getStore('metadataLabelStore').load();
-													metaWindow.close();
-												}
-											});
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Cancel',										
-										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-										handler: function(){
-											this.up('window').close();
-										}
-									}
-								]
-							}																
-						]															
-					}
-				]
-			}).show();			
-		
-			if (record) {
-				addWindow.getComponent('metaForm').loadRecord(record);
-			}			
-		};
-		
+	
 		var addEditRelationship = function(record, grid) {
 
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -2405,92 +2261,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 													grid: this.up('grid'),
 													idField: 'dependencyId',
 													entity: 'dependencies'
-												});
-											}
-										}								
-									]
-								}
-							]
-						},
-						{
-							xtype: 'panel',
-							itemId: 'metadataGrid-help',
-							html: '<h3>Add relavant feature support or other metadata to describe the entry. Eg. Label: DIB Compatible  Value: 4.1+</h3>'
-						},						
-						{
-							xtype: 'grid',
-							itemId: 'metadataGrid',
-							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAPI Compatible   Value: 1.3+)"></i>',
-							collapsible: true,
-							titleCollapse: true,
-							margin: '0 0 20 0',
-							frame: true,	
-							border: true,
-							columnLines: true,
-							store: Ext.create('Ext.data.Store', {
-								autoLoad: false,
-								proxy: {
-									type: 'ajax'							
-								}
-							}),
-							forceFit: true,
-							columns: [
-								{ text: 'Label', dataIndex: 'label',  width: 200 },
-								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
-								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
-							],
-							listeners: {						
-								afterrender: function(grid, opts){
-									grid.getSelectionModel().grid = grid;
-								},
-								selectionchange:  function(selectionModel, selection, opts){
-									var tools = selectionModel.grid.getComponent('tools');
-									if (selectionModel.getCount() > 0) {
-										tools.getComponent('removeBtn').setDisabled(false);
-										tools.getComponent('editBtn').setDisabled(false);
-									} else {
-										tools.getComponent('removeBtn').setDisabled(true);
-										tools.getComponent('editBtn').setDisabled(true);
-									}
-								}
-							},
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									itemId: 'tools',
-									items: [
-										{
-											text: 'Add',
-											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-											handler: function(){
-												var grid = this.up('grid');
-												addEditMetadata(null, grid);
-											}
-										},
-										{
-											text: 'Edit',
-											itemId: 'editBtn',
-											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
-											disabled: true,
-											handler: function(){
-												var grid = this.up('grid');
-												var record = this.up('grid').getSelectionModel().getSelection()[0];
-												addEditMetadata(record, grid);
-											}
-										},										
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Delete',	
-											itemId: 'removeBtn',
-											disabled: true,
-											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
-											handler: function(){
-												actionSubComponentRemove({
-													grid: this.up('grid'),
-													idField: 'metadataId',
-													entity: 'metadata'
 												});
 											}
 										}								

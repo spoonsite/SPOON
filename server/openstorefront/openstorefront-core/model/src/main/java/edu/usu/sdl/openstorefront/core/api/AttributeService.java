@@ -25,9 +25,9 @@ import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public interface AttributeService
 	 * @param filter
 	 * @return
 	 */
-	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter);
+	public AttributeTypeWrapper getFilteredTypes(AttributeFilterParams filter);
 
 	/**
 	 * This used to page filter results
@@ -67,7 +67,7 @@ public interface AttributeService
 	 * @param type
 	 * @return
 	 */
-	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type);
+	public AttributeCodeWrapper getFilteredCodes(AttributeFilterParams filter, String type);
 
 	/**
 	 * Checks if a code exists for a given type
