@@ -16,6 +16,7 @@
 package edu.usu.sdl.apiclient.rest.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
 import edu.usu.sdl.apiclient.AbstractService;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
@@ -56,9 +57,11 @@ public class UserRegistrationClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getUserRegistration(String registrationId)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public UserRegistration getUserRegistration(String registrationId)
+	{	
+		APIResponse response = client.httpGet(basePath + "/" + registrationId, null);
+		UserRegistration registration = response.getResponse(UserRegistration.class);
+		return registration;
 	}
 
 }

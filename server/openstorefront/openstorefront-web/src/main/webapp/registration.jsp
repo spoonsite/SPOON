@@ -249,6 +249,7 @@
 											xtype: 'button',
 											text: "Get Verification Code",
 											name: 'verificationCodeButton',
+											id: 'verificationCodeButton',
 											iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction-check',
 											allowBlank: false,
 											width: 200,
@@ -310,6 +311,7 @@
 								},
 								{
 									text: 'Signup',
+									id: 'Signup',
 									iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 									scale: 'medium',
 									formBind: true,

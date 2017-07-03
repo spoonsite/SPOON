@@ -16,15 +16,16 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
+import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
+import edu.usu.sdl.openstorefront.selenium.apitestclient.UserRegistrationTestClient;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -40,13 +41,6 @@ public class AccountSignupActivateTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static APIClient apiClient;
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		apiClient = new APIClient();
-	}
 
 	/**
 	 *
@@ -55,7 +49,7 @@ public class AccountSignupActivateTest
 	{
 
 	}
-
+	
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
@@ -118,20 +112,54 @@ public class AccountSignupActivateTest
 	{
 		// Navigate to the registration page
 		webDriverUtil.getPage(driver, "registration.jsp");
-		sleep(2000);
-		// Fill out the form
-		driver.findElement(By.xpath("//input[@name='username']")).sendKeys(userName);
-		driver.findElement(By.xpath("//input[@name='password']")).sendKeys(userName + "A1!");
-		driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys(userName + "A1!");
-		driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys(userName);
-		driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys(userName);
-		driver.findElement(By.xpath("//input[@name='organization']")).sendKeys("Air Force");
-		driver.findElement(By.xpath("//input[@name='email']")).sendKeys("blaine.esplin@sdl.usu.edu");
-		driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("435-555-5555");
-		sleep(500);
 
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='username']")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+
+		// Fill out the form
+		driver.findElement(By.cssSelector("input[name='username']")).sendKeys(userName);
+		driver.findElement(By.cssSelector("input[name='password']")).sendKeys(userName + "A1!");
+		driver.findElement(By.cssSelector("input[name='confirmPassword']")).sendKeys(userName + "A1!");
+		driver.findElement(By.cssSelector("input[name='firstName']")).sendKeys(userName);
+		driver.findElement(By.cssSelector("input[name='lastName']")).sendKeys(userName);
+		driver.findElement(By.cssSelector("input[name='organization']")).sendKeys("Air Force");
+		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(properties.getProperty("test.newuseremail"));
+		driver.findElement(By.cssSelector("input[name='phone']")).sendKeys("435-555-5555");
+
+		// generate the email verification code
+		driver.findElement(By.id("verificationCodeButton")).click();
+		try {
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text")));
+		} catch (Exception e) {
+			LOG.log(Level.INFO, e.toString());
+		}
+		// Get the code from the API because we can't automate reading emails
+
+		/**
+		 * https://github.com/SeleniumHQ/selenium/wiki/Frequently-Asked-Questions
+		 * Q. Why is it not possible to interact with hidden elements A: Since a
+		 * user cannot read text in a hidden element, WebDriver will not allow
+		 * access to it as well.
+		 *
+		 * However, it is possible to use Javascript execution abilities to call
+		 * getText directly from the element:
+		 */
+		sleep(500);
+		WebElement element = driver.findElement(By.id("registrationId-inputEl"));
+		String registrationId = (String)((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
+		Assert.assertNotEquals(registrationId, "");
+		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
+		UserRegistration registration = client.getUserRegistration(registrationId);
+		
+		
+		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
+		
 		// SUBMIT the form
-		driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
+		driver.findElement(By.id("Signup")).click();
 
 		// WAIT for signup to complete 
 		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
@@ -217,11 +245,5 @@ public class AccountSignupActivateTest
 			}
 		}
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[data-ref='msgWrapEl']")));
-	}
-
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
 	}
 }
