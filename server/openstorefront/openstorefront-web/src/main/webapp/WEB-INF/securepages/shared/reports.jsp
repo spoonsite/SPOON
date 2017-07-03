@@ -632,6 +632,7 @@
 						//Hide and clear data from all the form elements at first and turn them on based on what rtype is selected
 						Ext.getCmp('filterForEntries').setHidden(true);
 						Ext.getCmp('scheduleOptionsGrid').setHidden(true);
+						Ext.getCmp('detailReportCategories').setHidden(true);
 						Ext.getCmp('categorySelect').setHidden(true);
 						Ext.getCmp('waitSeconds').setHidden(true);
 						Ext.getCmp('startDate').setHidden(true);
@@ -649,10 +650,12 @@
 						Ext.getCmp('previousDaysSelect').clearValue();
 
 						var rType = Ext.getCmp('reportType').value;
+
 						if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
 
 							Ext.getCmp('filterForEntries').setHidden(false);
 							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+							Ext.getCmp('detailReportCategories').setHidden(false);
 						}
 						else if (rType === 'CATCOMP') {
 							Ext.getCmp('categorySelect').setHidden(false);														
@@ -755,6 +758,16 @@
 													}
 												
 													data.reportOption = reportOpt;
+
+													// retrieve each report category flag
+													for (var ii = 1; ii < 4; ii += 1) {
+														var detailCats = Ext.getCmp('detailReportCol' + ii).items.items;
+														for (var jj = 0; jj < detailCats.length; jj += 1) {
+
+															// mold the name of each value to match that of the API
+															data.reportOption['display' + detailCats[jj].name[0].toUpperCase() + detailCats[jj].name.slice(1)] = detailCats[jj].value;
+														}
+													}
 
 													if (data.scheduleIntervalDays === null)
 													{
@@ -1039,7 +1052,158 @@
 												}
 											}
 										}									
-									},									
+									},
+									{
+										xtype: 'fieldcontainer',
+										fieldLabel: 'Included Report Categories',
+										id: 'detailReportCategories',
+										hidden: true,
+										width: '100%',
+										items: [
+											{
+												layout: 'column',
+												items: [
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',
+														id: 'detailReportCol1',
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'Description',
+																inputValue: '1',
+																id: 'showDetailReportDescription',
+																name: 'description',
+																value: true
+															},
+															{
+																boxLabel: 'Contacts',
+																inputValue: '1',
+																id: 'showDetailReportContacts',
+																name: 'contacts',
+																value: true
+															},
+															{
+																boxLabel: 'Resources',
+																inputValue: '1',
+																id: 'showDetailReportResources',
+																name: 'resources',
+																value: true
+															},
+															{
+																boxLabel: 'Vitals',
+																inputValue: '1',
+																id: 'showDetailReportVitals',
+																name: 'vitals',
+																value: true
+															},
+															{
+																boxLabel: 'Dependencies',
+																inputValue: '1',
+																id: 'showDetailReportDependencies',
+																name: 'dependencies',
+																value: true
+															}
+														]
+													},
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',
+														id: 'detailReportCol2',
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'Relationships',
+																inputValue: '1',
+																id: 'showDetailReportRelationships',
+																name: 'relationships',
+																value: true
+															},
+															{
+																boxLabel: 'Tags',
+																inputValue: '1',
+																id: 'showDetailReportTags',
+																name: 'tags',
+																value: true
+															},
+															{
+																boxLabel: 'Organization Data',
+																inputValue: '1',
+																id: 'showDetailReportOrgData',
+																name: 'orgData',
+																value: true,
+																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
+															},
+															{
+																boxLabel: 'Evaluation Summary',
+																inputValue: '1',
+																id: 'showDetailReportEvalSummary',
+																name: 'evalSummary',
+																value: true,
+																inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
+																listeners: {
+																	change: function (me, newVal, oldVal) {
+																		if (newVal === true) {
+																			Ext.getCmp('showDetailReportEvalDetails').setValue(false);
+																		}
+																	}
+																}
+															},
+															{
+																boxLabel: 'Evaluation Details',
+																inputValue: '1',
+																id: 'showDetailReportEvalDetails',
+																name: 'details',
+																inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
+																listeners: {
+																	change: function (me, newVal, oldVal) {
+																		if (newVal === true) {
+																			Ext.getCmp('showDetailReportEvalSummary').setValue(false);
+																		}
+																	}
+																}
+															}
+														]
+													},
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',
+														id: 'detailReportCol3',
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'All Evaluation Versions',
+																inputValue: '1',
+																id: 'showDetailReportEvalVersions',
+																name: 'evalVersions'
+															},
+															{
+																boxLabel: 'Reviews',
+																inputValue: '1',
+																id: 'showDetailReportReviews',
+																name: 'reportReviews'
+															},
+															{
+																boxLabel: 'Q/A',
+																inputValue: '1',
+																id: 'showDetailReportQA',
+																name: 'QA'
+															},
+															{
+																boxLabel: 'Meta Data',
+																inputValue: '1',
+																id: 'showDetailReportMetaData',
+																name: 'metaData'
+															}
+														]
+													}
+												]
+											}
+										]
+									},					
 									{
 										xtype: 'gridpanel',
 										title: 'Restrict By Entry',

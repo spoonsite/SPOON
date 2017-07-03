@@ -491,7 +491,7 @@ public class ComponentDetailReport
 			
 			// generate the template
 			root.put("components", componentList);
-			root.put("report", report);
+			root.put("reportOptions", report.getReportOption());
 			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
 			root.put("reportSize", components.size());
 			root.put("reportDate", sdf.format(TimeUtil.currentDate()));

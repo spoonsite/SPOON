@@ -47,20 +47,29 @@
 	</div>
 	<hr />
 	<#list components as component>
-		<h1>${component.component.getName()}</h1>
-		<p><b>${component.component.getOrganization()}</b></p>
-		<br>
-		<br>
+	
+		<!--Organization Description-->
+		<#if reportOptions.getDisplayOrgData() == true>
+			<h1>${component.component.getName()}</h1>
+			<p><b>${component.component.getOrganization()}</b></p>
+			<br>
+			<br>
+		</#if>
 		<div>
 			<#if allowSecurityMargkingsFlg == true>
 				${component.component.getSecurityMarkingType()}
 			</#if>
-			${component.component.getDescription()}
-
 		</div>
 		
+		<!--Description-->
+		<#if reportOptions.getDisplayDescription()>
+			<div>
+				${component.component.getDescription()}
+			</div>
+		</#if>
+		
 		<!--Vitals-->
-		<#if component.vitals?has_content>
+		<#if component.vitals?has_content && reportOptions.getDisplayVitals() == true>
 			<h2>Vitals</h2>
 			<table>
 				<tr>
@@ -81,7 +90,7 @@
 		</#if>
 			
 		<!--Meta Data-->
-		<#if component.metaData?has_content>
+		<#if component.metaData?has_content && reportOptions.getDisplayMetaData() == true>
 			<h2>MetaData</h2>
 			<table>
 				<tr>
@@ -98,7 +107,7 @@
 		</#if>
 			
 		<!--Contacts-->
-		<#if component.contacts?has_content>
+		<#if component.contacts?has_content && reportOptions.getDisplayContacts() == true>
 			<h2>Contacts</h2>
 			<table>
 				<tr>
@@ -123,7 +132,7 @@
 		</#if>
 			
 		<!--Resources-->
-		<#if component.resources?has_content>
+		<#if component.resources?has_content && reportOptions.getDisplayResources() == true>
 			<h2>Resources</h2>
 			<table>
 				<tr>
