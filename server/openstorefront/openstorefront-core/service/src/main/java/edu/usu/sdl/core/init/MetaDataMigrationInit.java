@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class MetaDataMigrationInit
 		List<Component> components = componentExample.findByExample();
 		Set<String> addedAttributes = new HashSet<>();
 		for (Component component : components) {
-			LOG.log(Level.INFO, "Working on: " + component.getName());
+			LOG.log(Level.INFO, MessageFormat.format("Working on: {0}", component.getName()));
 
 			ComponentMetadata componentMetadataExample = new ComponentMetadata();
 			componentMetadataExample.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
@@ -74,14 +75,21 @@ public class MetaDataMigrationInit
 
 				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 
-				String attributeType = sanitizer.santize(StringUtils.left(metaData.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
-				String attributeCode = sanitizer.santize(StringUtils.left(metaData.getValue().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+				String value = metaData.getValue().trim();
+				String label = metaData.getLabel();
+				if (value.contains("%")) {
+					value = value.replace("%", "");
+					label += " %";
+				}
+
+				String attributeType = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+				String attributeCode = sanitizer.santize(StringUtils.left(value.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
 
 				if (addedAttributes.contains(fullKey) == false) {
 					//create attribute
 					AttributeType attributeTypeFull = new AttributeType();
 					attributeTypeFull.setAttributeType(attributeType);
-					attributeTypeFull.setDescription(metaData.getLabel());
+					attributeTypeFull.setDescription(label);
 					attributeTypeFull.setAllowUserGeneratedCodes(Boolean.TRUE);
 					attributeTypeFull.setAllowMultipleFlg(Boolean.TRUE);
 					attributeTypeFull.setArchitectureFlg(Boolean.FALSE);
@@ -90,24 +98,24 @@ public class MetaDataMigrationInit
 					attributeTypeFull.setRequiredFlg(Boolean.FALSE);
 					attributeTypeFull.setVisibleFlg(Boolean.FALSE);
 
-					BigDecimal numberValue = Convert.toBigDecimal(metaData.getValue());
+					BigDecimal numberValue = Convert.toBigDecimal(value);
 					if (numberValue != null) {
 						attributeTypeFull.setAttributeValueType(AttributeValueType.NUMBER);
 					} else {
 						attributeTypeFull.setAttributeValueType(AttributeValueType.TEXT);
 					}
 					service.getAttributeService().saveAttributeType(attributeTypeFull, false);
-					
+
 					AttributeCode attributeCodeFull = new AttributeCode();
 					AttributeCodePk attributeCodePk = new AttributeCodePk();
 					attributeCodePk.setAttributeCode(attributeCode);
 					attributeCodePk.setAttributeType(attributeType);
 					attributeCodeFull.setAttributeCodePk(attributeCodePk);
-					attributeCodeFull.setLabel(metaData.getValue());					
-					service.getAttributeService().saveAttributeCode(attributeCodeFull, false);									
+					attributeCodeFull.setLabel(value);
+					service.getAttributeService().saveAttributeCode(attributeCodeFull, false);
 
 					addedAttributes.add(fullKey);
-				}				
+				}
 
 				ComponentAttribute componentAttribute = new ComponentAttribute();
 				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
@@ -115,13 +123,13 @@ public class MetaDataMigrationInit
 				componentAttributePk.setAttributeCode(attributeCode);
 				componentAttributePk.setComponentId(component.getComponentId());
 				componentAttribute.setComponentAttributePk(componentAttributePk);
-				componentAttribute.setComponentId(component.getComponentId());				
+				componentAttribute.setComponentId(component.getComponentId());
 				service.getComponentService().saveComponentAttribute(componentAttribute, false);
-				
-				
+
 				service.getPersistenceService().delete(metaData);
 			}
 		}
+		LOG.log(Level.INFO, "Updating Index");
 		service.getSearchService().resetIndexer();
 
 		results.append("Migrated ")
@@ -129,6 +137,8 @@ public class MetaDataMigrationInit
 				.append(" Component. Added ")
 				.append(addedAttributes.size())
 				.append(" Attributes ");
+
+		LOG.log(Level.INFO, results.toString());
 		return results.toString();
 
 	}

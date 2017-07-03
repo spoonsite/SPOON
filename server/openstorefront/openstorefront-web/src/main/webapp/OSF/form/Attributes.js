@@ -127,20 +127,44 @@ Ext.define('OSF.form.Attributes', {
 									attributeType: data.attributeType,
 									attributeCode: data.attributeCode
 								};
-
-								var method = 'POST';
-								var update = '';										
-
-								CoreUtil.submitForm({
-									url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
-									method: method,
-									data: data,
-									form: form,
-									success: function(){										
-										attributePanel.loadComponentAttributes();
-										form.reset();
+								var valid = true;
+								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
+								var attributeType = selectedAttributes.data;
+								if (attributeType.attributeValueType === 'NUMBER') {
+									if (!Ext.isNumeric(data.attributeCode)) {
+										valid = false;
 									}
-								});
+								}								
+								
+								if (!valid) {
+									Ext.Msg.show({
+										title:'Validation Error',
+										message: 'Attribute Code must be numberic for this attribute type',
+										buttons: Ext.Msg.OK,
+										icon: Ext.Msg.ERROR,
+										fn: function(btn) {
+											if (btn === 'OK') {
+												form.getForm().markInvalid({
+													attributeCode: 'Must be a number for this attribute Type'
+												});
+											} 
+										}
+									});
+								} else {
+									var method = 'POST';
+									var update = '';										
+
+									CoreUtil.submitForm({
+										url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
+										method: method,
+										data: data,
+										form: form,
+										success: function(){										
+											attributePanel.loadComponentAttributes();
+											form.reset();
+										}
+									});
+								}
 							}
 						},
 						{
@@ -223,8 +247,7 @@ Ext.define('OSF.form.Attributes', {
 							xtype: 'combobox',
 							itemId: 'attributeCodeCB',
 							fieldLabel: 'Attribute Code <span class="field-required" />',
-							name: 'attributeCode',
-							forceSelection: true,	
+							name: 'attributeCode',							
 							queryMode: 'local',
 							editable: false,
 							typeAhead: false,										

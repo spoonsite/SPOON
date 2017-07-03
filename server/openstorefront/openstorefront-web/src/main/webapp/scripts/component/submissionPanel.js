@@ -799,7 +799,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 												});
 											};
 
-											var type = form.getComponent('attributeTypeCB').getSelection();
+											var type = form.getComponent('attributeTypeCB').getSelection();											
 											
 											// The attribute may allow user generated codes. If so, the code
 											// may not already exist.
@@ -815,40 +815,64 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 												if (!found) {
 													
-													// Build Request Data
-													var newAttributeData = {														
-														userAttributes: [
-															{
-																attributeCodeLabel: label,
-																attributeType: data.type
-															}
-														]
-													};
-													
-													form.setLoading("Add new attribute...");
-													Ext.Ajax.request({
-														url: 'api/v1/resource/attributes/attributetypes/usercodes',
-														method: 'POST',
-														jsonData: newAttributeData,
-														callback: function() {
-															form.setLoading(false);
-														},
-														success: function(response, opts) {
-															Ext.toast('Successfully added user attribute code.', '', 'tr');																														
-															CoreService.attributeservice.labelToCode(label).then(function(response, opts) {
-																handleSaveAttribute(response.responseText); 
-																loadAllAttributes();
-															});						
-														},
-														failure: function(response, opts) {
-															Ext.MessageBox.show({
-																title:'Failed to Save',
-																message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
-																buttons: Ext.Msg.OK,
-																icon: Ext.Msg.ERROR										
-															});
+													//check
+													var valid = true;
+													if (type.get('attributeValueType') === 'NUMBER') {
+														if (!Ext.isNumeric(label)) {
+															valid = false;
 														}
-													});													
+													}
+													
+													if (!valid) {
+														Ext.Msg.show({
+															title:'Validation Error',
+															message: 'Attribute Code must be numberic for this attribute type',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {
+																if (btn === 'OK') {
+																	form.getForm().markInvalid({
+																		attributeCode: 'Must be a number for this attribute Type'
+																	});
+																} 
+															}
+														});															
+													} else {													
+														// Build Request Data
+														var newAttributeData = {														
+															userAttributes: [
+																{
+																	attributeCodeLabel: label,
+																	attributeType: data.type
+																}
+															]
+														};
+
+														form.setLoading("Add new attribute...");
+														Ext.Ajax.request({
+															url: 'api/v1/resource/attributes/attributetypes/usercodes',
+															method: 'POST',
+															jsonData: newAttributeData,
+															callback: function() {
+																form.setLoading(false);
+															},
+															success: function(response, opts) {
+																Ext.toast('Successfully added user attribute code.', '', 'tr');																														
+																CoreService.attributeservice.labelToCode(label).then(function(response, opts) {
+																	handleSaveAttribute(response.responseText); 
+																	loadAllAttributes();
+																});						
+															},
+															failure: function(response, opts) {
+																Ext.MessageBox.show({
+																	title:'Failed to Save',
+																	message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
+																	buttons: Ext.Msg.OK,
+																	icon: Ext.Msg.ERROR										
+																});
+															}
+														});	
+													}	
 												} else {
 													handleSaveAttribute();
 												}
@@ -1525,8 +1549,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('mediaForm').loadRecord(record);
 			}			
 		};
-
-		
 		
 		var addEditDependency = function(record, grid){
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -1985,7 +2007,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							itemId: 'resourceGrid-help',
-							html: '<h3>Add direct links external to Documentation, Binaries, Source Code, etc... where appropriate.</h3>'
+							html: '<h3>Add direct links to external Documentation, Binaries, Source Code, etc... where appropriate.</h3>'
 						},						
 						{
 							xtype: 'grid',
@@ -2725,8 +2747,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					sections.getComponent('contactGrid').down('#securityMarking').setHidden(false);
 					sections.getComponent('resourceGrid').down('#securityMarking').setHidden(false);
 					sections.getComponent('mediaGrid').down('#securityMarking').setHidden(false);
-					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);
-					sections.getComponent('metadataGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);					
 					sections.getComponent('tagGrid').down('#securityMarking').setHidden(false);						
 				});
 			}
@@ -3346,9 +3367,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('relationshipsGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/relationships'
 		});
-		detailSection.getComponent('metadataGrid').getStore().load({
-			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
-		});
 		detailSection.getComponent('dependenciesGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/dependencies/view'
 		});		
@@ -3409,8 +3427,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		//clear details
 		var detailSection = submissionPanel.detailsPanel.getComponent('detailSections');
 		detailSection.getComponent('tagGrid').getStore().removeAll();
-		detailSection.getComponent('relationshipsGrid').getStore().removeAll();
-		detailSection.getComponent('metadataGrid').getStore().removeAll();
+		detailSection.getComponent('relationshipsGrid').getStore().removeAll();		
 		detailSection.getComponent('dependenciesGrid').getStore().removeAll();
 		detailSection.getComponent('mediaGrid').getStore().removeAll();
 		detailSection.getComponent('resourceGrid').getStore().removeAll();

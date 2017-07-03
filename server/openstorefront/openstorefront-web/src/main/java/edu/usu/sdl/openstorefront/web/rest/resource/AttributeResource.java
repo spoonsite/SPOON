@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -50,6 +51,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeMetadata;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
@@ -61,6 +63,7 @@ import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -92,6 +95,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -574,6 +578,7 @@ public class AttributeResource
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
+
 	@Path("/attributetypes")
 	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
@@ -593,6 +598,45 @@ public class AttributeResource
 		}
 
 		return handleAttributePostPutType(attributeType, true);
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.ALLOW_USER_ATTRIBUTE_TYPE_CREATION)
+	@APIDescription("Adds a new metadata attribute type with user-code")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/metadata")
+	public Response createMetaDataAttributeType(AttributeTypeMetadata attributeTypeMetadata)
+	{
+		ValidationModel validationModel = new ValidationModel(attributeTypeMetadata);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			String attributeTypeCode = sanitizer.santize(StringUtils.left(attributeTypeMetadata.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+
+			AttributeType attributeType = new AttributeType();
+			attributeType.setAttributeType(attributeTypeCode);
+			attributeType.setAttributeValueType(attributeTypeMetadata.getAttributeValueType());
+			attributeType.setDescription(attributeTypeMetadata.getLabel());
+			attributeType.setDetailedDescription(attributeTypeMetadata.getDetailedDescription());
+			attributeType.setAllowUserGeneratedCodes(Boolean.TRUE);
+			attributeType.setAllowMultipleFlg(Boolean.TRUE);
+			attributeType.setArchitectureFlg(Boolean.FALSE);
+			attributeType.setHideOnSubmission(Boolean.FALSE);
+			attributeType.setImportantFlg(Boolean.FALSE);
+			attributeType.setRequiredFlg(Boolean.FALSE);
+			attributeType.setVisibleFlg(Boolean.FALSE);
+
+			service.getAttributeService().saveAttributeType(attributeType);
+
+			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
+			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
+					+ StringProcessor.urlEncode(attributeType.getAttributeType()))).entity(attributeTypeCreated).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@PUT

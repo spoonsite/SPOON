@@ -41,13 +41,13 @@ public class ComponentAttributePk
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@FK(AttributeType.class)
 	private String attributeType;
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@FK(AttributeCode.class)
 	private String attributeCode;
 

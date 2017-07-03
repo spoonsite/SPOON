@@ -41,6 +41,8 @@ public class AttributeType
 		extends StandardEntity<AttributeType>
 {
 
+	public static final String FIELD_ATTRIBUTE_TYPE = "attributeType";
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

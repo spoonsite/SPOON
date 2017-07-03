@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.component;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -47,10 +48,13 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
+import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -267,14 +271,10 @@ public class SubComponentServiceImpl
 		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeCode(), "Requires Component Attrubute PK Attribute Code");
 		Objects.requireNonNull(attribute.getComponentAttributePk().getComponentId(), "Requires Component Attrubute PK Component Id");
 
-		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+		ValidationResult validationResult = checkComponentAttribute(attribute);
 
-		AttributeCodePk pk = new AttributeCodePk();
-		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
-		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-		AttributeCode code = persistenceService.findById(AttributeCode.class, pk);
-
-		if (type != null && code != null) {
+		if (validationResult.valid()) {
+			AttributeType type = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
 			if (type.getAllowMultipleFlg() == false) {
 				ComponentAttribute example = new ComponentAttribute();
 				example.setComponentAttributePk(new ComponentAttributePk());
@@ -301,18 +301,10 @@ public class SubComponentServiceImpl
 			}
 
 		} else {
-			StringBuilder error = new StringBuilder();
-			if (type == null) {
-				error.append("Attribute type not found.  Type: ").append(attribute.getComponentAttributePk().getAttributeType());
-			}
-
-			if (code == null) {
-				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
-			}
 			if (skipMissingAttribute) {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", validationResult.toString()));
 			} else {
-				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check data passed in.");
 			}
 		}
 	}
@@ -706,18 +698,42 @@ public class SubComponentServiceImpl
 		}
 	}
 
-	public Boolean checkComponentAttribute(ComponentAttribute attribute)
+	public ValidationResult checkComponentAttribute(ComponentAttribute attribute)
 	{
+		ValidationResult validationResult = new ValidationResult();
+
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-		if (persistenceService.findById(AttributeCode.class, pk) == null) {
-			return Boolean.FALSE;
+
+		AttributeType attributeType = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+		if (attributeType == null) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ComponentAttributePk.class.getSimpleName());
+			ruleResult.setFieldName(AttributeType.FIELD_ATTRIBUTE_TYPE);
+			ruleResult.setMessage("Attribute type not found");
+			validationResult.getRuleResults().add(ruleResult);
+		} else {
+			AttributeCode attributeCode = componentService.getAttributeService().findCodeForType(pk);
+			if (attributeCode == null) {
+				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+					AttributeCodeSave attributeCodeSave = new AttributeCodeSave();
+					NewAttributeCode newAttributeCode = new NewAttributeCode();
+					newAttributeCode.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+					newAttributeCode.setAttributeCodeLabel(attribute.getComponentAttributePk().getAttributeCode());
+					attributeCodeSave.getUserAttributes().add(newAttributeCode);
+					componentService.getAttributeService().saveUserCodes(attributeCodeSave);
+				} else {
+					RuleResult ruleResult = new RuleResult();
+					ruleResult.setEntityClassName(ComponentAttributePk.class.getSimpleName());
+					ruleResult.setFieldName(AttributeCodePk.FIELD_ATTRIBUTE_CODE);
+					ruleResult.setMessage("Attribute code not found");
+					validationResult.getRuleResults().add(ruleResult);
+				}
+			}
 		}
-		if (persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType()) == null) {
-			return Boolean.FALSE;
-		}
-		return Boolean.TRUE;
+
+		return validationResult;
 	}
 
 	public List<ComponentTag> getTagCloud()
@@ -862,10 +878,10 @@ public class SubComponentServiceImpl
 
 		if (validationResult.valid()) {
 			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
-                review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-            } else {
-                review.setActiveStatus(ComponentReview.PENDING_STATUS);
-            }
+				review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+			} else {
+				review.setActiveStatus(ComponentReview.PENDING_STATUS);
+			}
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentReview(review, false);

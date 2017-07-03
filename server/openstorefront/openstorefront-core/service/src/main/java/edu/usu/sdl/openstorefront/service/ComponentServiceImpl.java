@@ -323,7 +323,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public Boolean checkComponentAttribute(ComponentAttribute attribute)
+	public ValidationResult checkComponentAttribute(ComponentAttribute attribute)
 	{
 		return sub.checkComponentAttribute(attribute);
 	}
