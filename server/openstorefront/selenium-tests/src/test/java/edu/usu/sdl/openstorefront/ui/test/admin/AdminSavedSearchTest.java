@@ -262,6 +262,5 @@ public class AdminSavedSearchTest
 			}
 
 		}
-		apiClient.cleanup();
 	}
 }

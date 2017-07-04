@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
 import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -58,7 +57,7 @@ public class BrowserTestBase
 		webDriverUtil = new WebDriverUtil(properties);
 		apiClient = new APIClient();
 	}
-	
+
 	@AfterClass
 	public static void cleanup() throws Exception
 	{
@@ -73,7 +72,6 @@ public class BrowserTestBase
 		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
 	}
 	 */
-	
 	private static void tearDown() throws Exception
 	{
 		//Bot.driver().quit();
@@ -108,12 +106,13 @@ public class BrowserTestBase
 
 			// Look for the titleText
 			try {
+				wait.until(ExpectedConditions.stalenessOf(userNameElement));
 				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
-				LOG.log(Level.INFO, "*** Sucessfully logged in as '" + userName + "' ***");
+				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
 			} catch (Exception e) {
-				LOG.log(Level.WARNING, "--- EXCEPTION --- " + e);
+				LOG.log(Level.WARNING, "--- EXCEPTION --- {0}", e);
 				String message = driver.findElement(By.cssSelector(".showError")).getText();
-				LOG.log(Level.WARNING, "--- Problem logging in as '" + userName + "' ---\n Login Page MESSAGE is: --- '" + message + "' ---");
+				LOG.log(Level.WARNING, "--- Problem logging in as ''{0}'' ---\n Login Page MESSAGE is: --- ''{1}'' ---", new Object[]{userName, message});
 			}
 		}
 	}
@@ -149,7 +148,7 @@ public class BrowserTestBase
 				done = true;
 			} catch (WebDriverException ex) {
 				sleep(500);
-				LOG.log(Level.WARNING, ex.getMessage() + " Retrying...");
+				LOG.log(Level.WARNING, "{0} Retrying...", ex.getMessage());
 				System.out.println("Current TIME ******** " + System.currentTimeMillis());
 			}
 		}
@@ -171,11 +170,10 @@ public class BrowserTestBase
 	 */
 	public boolean tableClickRowCol(String cssSelector, String searchFor, WebDriver driver, int columnIndex) throws InterruptedException
 	{
-		int fRow = -1;
 		WebDriverWait wait = new WebDriverWait(driver, 3);
 
 		try {
-			List<WebElement> allRows = new ArrayList<WebElement>();
+			List<WebElement> allRows;
 			driverWait(() -> {
 				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(cssSelector)));
 			}, 5000);
@@ -185,7 +183,7 @@ public class BrowserTestBase
 			int theRow = 0;
 			for (WebElement row : allRows) {
 
-				List<WebElement> cells = new ArrayList<WebElement>();
+				List<WebElement> cells;
 				try {
 					cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 					theRow++;
@@ -193,8 +191,7 @@ public class BrowserTestBase
 					WebElement cell = cells.get(columnIndex);
 					// Iterate through cells
 					if (cell.getText().equals(searchFor)) {
-						fRow = theRow;
-						LOG.log(Level.INFO, "--- Clicking on the table at: ROW " + fRow + ". ---");
+						LOG.log(Level.INFO, "--- Clicking on the table at: ROW {0}. ---", theRow);
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();
 						sleep(100);
@@ -208,8 +205,7 @@ public class BrowserTestBase
 			}
 
 		} catch (Exception e) {
-			LOG.log(Level.WARNING,
-					"*** The text '" + searchFor + "' was NOT FOUND in table " + cssSelector + ", with current filters set. ***");
+			LOG.log(Level.WARNING, "*** The text ''{0}'' was NOT FOUND in table {1}, with current filters set. ***", new Object[]{searchFor, cssSelector});
 			System.out.println(e);
 		}
 

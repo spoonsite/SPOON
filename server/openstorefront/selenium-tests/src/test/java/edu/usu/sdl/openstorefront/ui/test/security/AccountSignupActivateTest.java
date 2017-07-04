@@ -49,7 +49,7 @@ public class AccountSignupActivateTest
 	{
 
 	}
-	
+
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
@@ -132,37 +132,42 @@ public class AccountSignupActivateTest
 
 		// generate the email verification code
 		driver.findElement(By.id("verificationCodeButton")).click();
-		try {
-			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text")));
-		} catch (Exception e) {
-			LOG.log(Level.INFO, e.toString());
-		}
-		// Get the code from the API because we can't automate reading emails
+		driverWait(() -> wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text"))), 5000);
 
+		// Get the code from the API because we can't automate reading emails
 		/**
 		 * https://github.com/SeleniumHQ/selenium/wiki/Frequently-Asked-Questions
-		 * Q. Why is it not possible to interact with hidden elements A: Since a
-		 * user cannot read text in a hidden element, WebDriver will not allow
-		 * access to it as well.
+		 * Q. Why is it not possible to interact with hidden elements
+		 *
+		 * A: Since a user cannot read text in a hidden element, WebDriver will
+		 * not allow access to it as well.
 		 *
 		 * However, it is possible to use Javascript execution abilities to call
 		 * getText directly from the element:
 		 */
-		sleep(500);
+		boolean done = false;
+		long startTime = System.currentTimeMillis();
+		long maxMilliSeconds = 1000;
+		String registrationId = "";
 		WebElement element = driver.findElement(By.id("registrationId-inputEl"));
-		String registrationId = (String)((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
-		Assert.assertNotEquals(registrationId, "");
+		while (registrationId.equals("") && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
+			registrationId = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
+
+		}
+
+		Assert.assertNotEquals("faild to load registration ID",registrationId, "");
 		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
 		UserRegistration registration = client.getUserRegistration(registrationId);
-		
-		
+
 		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
-		
+
+		LOG.log(Level.INFO, "--- verification Code ''{0}'' CREATED ---", registration.getVerificationCode());
+
 		// SUBMIT the form
-		driver.findElement(By.id("Signup")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
 
 		// WAIT for signup to complete 
-		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
+		LOG.log(Level.INFO, "--- User ''{0}'' CREATED ---", userName);
 
 	}
 
@@ -200,9 +205,9 @@ public class AccountSignupActivateTest
 
 			// Verify user has been approved
 			if (tableClickRowCol("[data-test='xPanelTable'] .x-grid-view", userName, driver, 0)) {
-				LOG.log(Level.INFO, "--- User '" + userName + "' APPROVED and in the Active, Approved User Management List ---");
+				LOG.log(Level.INFO, "--- User ''{0}'' APPROVED and in the Active, Approved User Management List ---", userName);
 			} else {
-				LOG.log(Level.SEVERE, "!!! User '" + userName + "' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user " + userName);
+				LOG.log(Level.SEVERE, "!!! User ''{0}'' was NOT approved !!!  Check the User Mangement page under Active Status = Locked/ Disabled and Approval Status = Pending.  MANUALLY approve the user {1}", new Object[]{userName, userName});
 			}
 		}
 
