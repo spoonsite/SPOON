@@ -70,15 +70,26 @@ public interface SecurityService
 	 * @return validation results
 	 */
 	ValidationResult validateRegistration(UserRegistration userRegistration);
-
+	
+	/**
+	 * Handle processing the application and generating a verification email
+	 *
+	 * @param userRegistration
+	 * @param sendEmail
+	 * @return validation results
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail);
+	
 	/**
 	 * Handle processing the application into user and user profile
 	 *
 	 * @param userRegistration
+	 * @return validation results
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	ValidationResult processNewRegistration(UserRegistration userRegistration);
-
+	ValidationResult processNewUser(UserRegistration userRegistration);
+	
 	/**
 	 * Approve Registration
 	 *
@@ -100,7 +111,6 @@ public interface SecurityService
 	/**
 	 * Approves user password reset
 	 *
-	 * @param username
 	 * @param approvalCode (Assumes it Base64 encoded for web)
 	 * @return true if successful (see log for false reasons which shouldn't be
 	 * pass to the user)
@@ -141,7 +151,16 @@ public interface SecurityService
 	 * @param username
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void deletesUser(String username);
+	void deleteUser(String username);
+
+
+	/**
+	 * Delete User Registration
+	 *
+	 * @param userRegistrationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void deleteUserRegistration(String userRegistrationId);
 
 	/**
 	 * Make sure role name is unique (This is for a new one only)

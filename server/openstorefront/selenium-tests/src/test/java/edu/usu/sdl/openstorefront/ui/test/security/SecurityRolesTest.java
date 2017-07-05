@@ -1,11 +1,8 @@
 package edu.usu.sdl.openstorefront.ui.test.security;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -33,13 +30,6 @@ public class SecurityRolesTest
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static APIClient apiClient;
-
-	@BeforeClass
-	public static void setupTest()
-	{
-		apiClient = new APIClient();
-	}
 
 	// located in SecurityTestBase, read this in to be used in setSecurityRoles method below
 	@Before
@@ -149,11 +139,5 @@ public class SecurityRolesTest
 	public void verifyPermissions()
 	{
 		// *** To be worked on for Storefront v2.5 ***
-	}
-	
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
 	}
 }
