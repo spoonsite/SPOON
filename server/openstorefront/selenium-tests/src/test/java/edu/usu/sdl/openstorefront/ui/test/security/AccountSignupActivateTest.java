@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.ui.test.security;
 
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.selenium.apitestclient.UserRegistrationTestClient;
-import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +39,7 @@ public class AccountSignupActivateTest
 		extends SecurityTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static final Logger LOG = Logger.getLogger(AccountSignupActivateTest.class.getName());
 
 	/**
 	 *
@@ -166,7 +165,7 @@ public class AccountSignupActivateTest
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
 
 		// WAIT for signup to complete 
-		LOG.log(Level.INFO, "--- User '{0}' CREATED ---", userName);
+		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
 
 	}
 
