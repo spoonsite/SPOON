@@ -383,7 +383,7 @@
 														}
 
 														CoreUtil.submitForm({
-															url: 'api/v1/resource/userregistrations?verifyEmail=false',
+															url: 'api/v1/resource/userregistrations',
 															method: 'POST',
 															data: data,
 															form: form,

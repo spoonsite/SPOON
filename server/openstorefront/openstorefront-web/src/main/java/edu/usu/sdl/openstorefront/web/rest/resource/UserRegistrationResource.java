@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationView;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -35,14 +36,12 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -134,12 +133,10 @@ public class UserRegistrationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response createUserRegistration(
-			UserRegistration userRegistration,
-			@QueryParam("verifyEmail")
-			@DefaultValue("true")
-			@APIDescription("Pass 'false' to skip email Verification and create user immediately") Boolean verifyEmail
+			UserRegistration userRegistration
 	)
 	{
+		boolean verifyEmail = !SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 		ValidationResult validationResult = userRegistration.validate();
 		if (validationResult.valid()) {
 			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, verifyEmail));

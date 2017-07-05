@@ -43,7 +43,7 @@ public class UserRegistrationClient extends AbstractService
 		this(new ClientAPI(new ObjectMapper()));
 	}
 	
-	public UserRegistration createUserRegistration(UserRegistration userRegistration, Boolean verifyEmail)
+	public UserRegistration createUserRegistration(UserRegistration userRegistration)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
