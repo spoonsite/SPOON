@@ -2,18 +2,14 @@
 ## Base Image ##
 ################
 
-FROM centos:7
+FROM tomcat:7-jre8-alpine
 
-##########
-## Java ##
-##########
+MAINTAINER "Kent Bair <kent.bair@sdl.usu.edu>"
 
-RUN yum update -y \
-  && yum -y install unzip java-1.8.0-openjdk-devel \
-  && yum clean all
 
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0
-ENV PATH "$PATH":/${JAVA_HOME}/bin:.:
+RUN apk update
+RUN apk upgrade
+RUN apk add curl libc6-compat
 
 ###################
 ## ElasticSearch ##
@@ -27,7 +23,9 @@ ENV ES_TGZ_URL https://download.elastic.co/$ES_NAME/release/org/$ES_NAME/distrib
 RUN mkdir -p "$ES_HOME" \
 	&& chmod 755 -R "$ES_HOME"
 
-RUN useradd -rU $ES_NAME -d $ES_HOME
+RUN addgroup $ES_NAME
+
+RUN adduser -Ss /bin/sh -h $ES_HOME -G $ES_NAME $ES_NAME 
 
 WORKDIR $ES_HOME
 
@@ -37,40 +35,24 @@ RUN set -x \
 	&& rm $ES_NAME.tar.gz* \
 	&& chown -R $ES_NAME:$ES_NAME $ES_HOME
 
-############
-## Tomcat ##
-############
-
-ENV CATALINA_HOME /usr/local/share/tomcat
-ENV TOMCAT_MAJOR 7
-ENV TOMCAT_PORT 8080
-ENV TOMCAT_VERSION 7.0.75
-ENV TOMCAT_TGZ_URL http://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
-ENV CATALINA_OPTS -Xmx2048m
-ENV CATALINA_PID $CATALINA_HOME/catalina.pid
-
-RUN mkdir -p "$CATALINA_HOME" \
-	&& chmod 755 -R "$CATALINA_HOME" \
-	&& touch $CATALINA_PID \
-	&& chmod 644 $CATALINA_PID
-
-WORKDIR $CATALINA_HOME
-
-RUN set -x \
-	&& curl -fSL "$TOMCAT_TGZ_URL" -o tomcat.tar.gz \
-	&& tar -zxvf tomcat.tar.gz --strip-components=1 \
-	&& rm tomcat.tar.gz* \
-	&& rm -rf webapps/*
-	
-EXPOSE $TOMCAT_PORT
 
 ################
 ## StoreFront ##
 ################
 
+RUN echo -e "<?xml version='1.0' encoding='utf-8'?>\n" \
+"<tomcat-users>" \
+"        <role rolename=\"manager-gui\"/>\n" \
+"        <role rolename=\"manager-gui\"/>\n" \
+"        <role rolename=\"manager-script\"/>\n" \
+"        <user username=\"admin\" password=\"Secret1@\" roles=\"manager,manager-gui,manager-script\" />\n" \
+"</tomcat-users>\n" > $CATALINA_HOME/conf/tomcat-users.xml 
+
 ENV STOREFRONT_HOME /usr/local/share/openstorefront
 ENV STOREFRONT_VERSION 2.0
 ENV STOREFRONT_WAR_URL https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
+
+ENV CATALINA_OPTS -Xmx2048m
 
 WORKDIR $CATALINA_HOME/webapps
 
@@ -83,9 +65,9 @@ WORKDIR $CATALINA_HOME/webapps
 # (It should only be used locally during development when the WAR file can be built first)
 # (Be sure to build the WAR file first before building the docker image)
 
-#RUN curl -fSL "$STOREFRONT_WAR_URL" -o ROOT.war
+RUN curl -fSL "$STOREFRONT_WAR_URL" -o openstorefront.war
 
-COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
+#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
 
 ####################
 ## Startup Script ##
@@ -96,7 +78,8 @@ RUN mkdir -p "$STOREFRONT_HOME" \
 
 WORKDIR $STOREFRONT_HOME
 
-RUN echo -e '#!/bin/bash \n' \
+
+RUN echo -e '#!/bin/sh \n' \
             "\n" \
             "for i in \"\$@\" \n" \
             "do \n" \
@@ -128,16 +111,14 @@ RUN echo -e '#!/bin/bash \n' \
             "  If you upgraded, please wait a few moments for the new version to initialize. \n" \
             "  \n" \
             "  You may exit the terminal by entering \"exit\" (without quotes) and pressing Enter. \n" \
-			"  ' \n" \
-            "" > upgrade.sh
+	    "  '" > upgrade.sh
 
-RUN echo -e '#!/bin/bash \n' \
+RUN echo -e '#!/bin/sh \n' \
             "\n" \
-            "runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\" \n" \
+            "su - $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\" \n" \
             "$CATALINA_HOME/bin/catalina.sh start \n" \
 	        "\n" \
-	        "tail -f ../tomcat/logs/catalina.out \n" \
-	        "" > startup.sh
+	        "tail -f $CATALINA_HOME/logs/catalina.out \n" > startup.sh
 
 RUN chmod +x upgrade.sh startup.sh
 
@@ -145,4 +126,4 @@ RUN chmod +x upgrade.sh startup.sh
 ## Start Services ##
 ####################
 
-ENTRYPOINT startup.sh
+ENTRYPOINT ./startup.sh 

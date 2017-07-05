@@ -56,3 +56,5 @@ nbdist/
 # other files to ignore
 /server/openstorefront/selenium-tests/drivers
 project*.properties
+*.swp
+*~
