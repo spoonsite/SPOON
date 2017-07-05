@@ -221,7 +221,7 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public ValidationResult processNewRegistration(UserRegistration userRegistration)
+	public ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail)
 	{
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
@@ -237,24 +237,25 @@ public class SecurityServiceImpl
 				userRegistration.setRegistrationId(persistenceService.generateId());
 				userRegistration.populateBaseCreateFields();
 			}
-			userRegistration.setVerificationCode(generateRandomString(8));
-			persistenceService.persist(userRegistration);
+			if (sendEmail) {
+				userRegistration.setVerificationCode(generateRandomString(8));
 
-			if (StringUtils.isNotBlank(userRegistration.getEmail())) {
-				Map data = new HashMap();
-				String subject = "Email Verification Code";
-				data.put("verificationCode", userRegistration.getVerificationCode());
-				data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
-				data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
-				data.put("title", subject);
-				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
-				email.setSubject(subject);
-				email.addRecipient(userRegistration.getFirstName(), userRegistration.getEmail(), Message.RecipientType.TO);
-				MailManager.send(email);
-			} else {
-				LOG.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
+				if (StringUtils.isNotBlank(userRegistration.getEmail())) {
+					Map data = new HashMap();
+					String subject = "Email Verification Code";
+					data.put("verificationCode", userRegistration.getVerificationCode());
+					data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+					data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+					data.put("title", subject);
+					Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
+					email.setSubject(subject);
+					email.addRecipient(userRegistration.getFirstName(), userRegistration.getEmail(), Message.RecipientType.TO);
+					MailManager.send(email);
+				} else {
+					LOG.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
+				}
 			}
-			// sendEmail();
+			persistenceService.persist(userRegistration);
 		}
 		return validationResult;
 	}
@@ -279,6 +280,16 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
+			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty())
+					? persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
+
+			if (existing != null) {
+				existing.updateFields(userRegistration);
+				persistenceService.persist(existing);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
+			}
+
 			SecurityPolicy securityPolicy = getSecurityPolicy();
 
 			UserSecurity userSecurity = new UserSecurity();

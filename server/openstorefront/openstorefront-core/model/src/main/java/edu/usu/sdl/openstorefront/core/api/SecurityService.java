@@ -70,15 +70,16 @@ public interface SecurityService
 	 * @return validation results
 	 */
 	ValidationResult validateRegistration(UserRegistration userRegistration);
-
+	
 	/**
 	 * Handle processing the application and generating a verification email
 	 *
 	 * @param userRegistration
+	 * @param sendEmail
 	 * @return validation results
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	ValidationResult processNewRegistration(UserRegistration userRegistration);
+	ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail);
 	
 	/**
 	 * Handle processing the application into user and user profile

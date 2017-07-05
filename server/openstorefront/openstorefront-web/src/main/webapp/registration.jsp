@@ -280,8 +280,8 @@
 														method: 'POST',
 														data: data,
 														form: form,
-														success: function(response, opts) {
-															var registration = Ext.decode(response.responseText);
+														success: function(action, opts) {
+															var registration = Ext.decode(action.responseText);
 															Ext.getCmp('registrationId').setValue(registration.registrationId);
 														}
 													});

@@ -147,27 +147,26 @@ public class AccountSignupActivateTest
 		 */
 		boolean done = false;
 		long startTime = System.currentTimeMillis();
-		long maxMilliSeconds = 1000;
+		long maxMilliSeconds = 5000;
 		String registrationId = "";
 		WebElement element = driver.findElement(By.id("registrationId-inputEl"));
 		while (registrationId.equals("") && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			registrationId = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
-
 		}
 
-		Assert.assertNotEquals("faild to load registration ID",registrationId, "");
+		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
 		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
 		UserRegistration registration = client.getUserRegistration(registrationId);
 
 		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
 
-		LOG.log(Level.INFO, "--- verification Code ''{0}'' CREATED ---", registration.getVerificationCode());
+		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
 
 		// SUBMIT the form
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
 
 		// WAIT for signup to complete 
-		LOG.log(Level.INFO, "--- User ''{0}'' CREATED ---", userName);
+		LOG.log(Level.INFO, "--- User '{0}' CREATED ---", userName);
 
 	}
 

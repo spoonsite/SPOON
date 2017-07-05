@@ -35,12 +35,14 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -131,13 +133,19 @@ public class UserRegistrationResource
 	@APIDescription("Creates a user registration")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response sendVerificationCode(
-			UserRegistration userRegistration
+	public Response createUserRegistration(
+			UserRegistration userRegistration,
+			@QueryParam("verifyEmail")
+			@DefaultValue("true")
+			@APIDescription("Pass 'false' to skip email Verification and create user immediately") Boolean verifyEmail
 	)
 	{
 		ValidationResult validationResult = userRegistration.validate();
 		if (validationResult.valid()) {
-			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration));
+			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, verifyEmail));
+		}
+		if (!verifyEmail && validationResult.valid()) {
+			validationResult.merge(service.getSecurityService().processNewUser(userRegistration));
 		}
 
 		if (validationResult.valid()) {
@@ -152,10 +160,10 @@ public class UserRegistrationResource
 	}
 
 	@PUT
-	@APIDescription("Creates a user registration")
+	@APIDescription("Creates a user from an existing Registration")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response createUserRegistration(
+	public Response createUser(
 			UserRegistration userRegistration
 	)
 	{
@@ -176,7 +184,7 @@ public class UserRegistrationResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-
+	
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@APIDescription("Deletes a user registeration record and the associated user.")

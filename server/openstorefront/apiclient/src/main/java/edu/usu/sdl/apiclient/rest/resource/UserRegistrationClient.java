@@ -21,7 +21,8 @@ import edu.usu.sdl.apiclient.AbstractService;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.core.view.UserRegistrationView;
+import edu.usu.sdl.openstorefront.core.view.UserRegistrationWrapper;
 
 /**
  *
@@ -42,7 +43,12 @@ public class UserRegistrationClient extends AbstractService
 		this(new ClientAPI(new ObjectMapper()));
 	}
 	
-	public Response createUserRegistration(UserRegistration userRegistration)
+	public UserRegistration createUserRegistration(UserRegistration userRegistration, Boolean verifyEmail)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+	
+	public UserRegistration createUser(UserRegistration userRegistration)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
@@ -52,15 +58,15 @@ public class UserRegistrationClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getUserRegistration(FilterQueryParams filterQueryParams)
+	public UserRegistrationWrapper getUserRegistration(FilterQueryParams filterQueryParams)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public UserRegistration getUserRegistration(String registrationId)
+	public UserRegistrationView getUserRegistration(String registrationId)
 	{	
 		APIResponse response = client.httpGet(basePath + "/" + registrationId, null);
-		UserRegistration registration = response.getResponse(UserRegistration.class);
+		UserRegistrationView registration = response.getResponse(UserRegistrationView.class);
 		return registration;
 	}
 
