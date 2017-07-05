@@ -1120,7 +1120,7 @@ types can be added, edited, activated, made inactive, and removed here.
 On the Add form, data entry can be selected, such as whether or not to allow on the 
 submission form, and to allow or not allow the following to be displayed:
 
-*Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
+*Attributes, Relationships, Contacts, Resources, Media, Dependencies,
 Evaluation Information, Reviews, and Questions.*
 
 Entry Types can be made active or inactive by using the Toggle Status button.
@@ -1350,12 +1350,6 @@ the form is complete.
 **Downloading Media:** select the media and click **Download** in the toolbar.
 
 **Viewing Media:** select the media and click **View** in the toolbar.  Some media formats have no preview available.
-
-
-### 3.2.11 Metadata @ADMIN-ENTRY-MANAGEMENT
---------
-
-**See the Glossary for definition of Metadata**
 
 
 ### 3.2.12 Organizations @ADMIN-ORGANIZATION
@@ -1885,4 +1879,3 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Attribute Code**   -  A specific value for a type.
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
--  **Entry Metadata**   -  is used to capture non-structure data with variable values.  Metadata consists of a label and Value.  An example is: "Content Collection size:  200".  The label is "Content Collection" and 200 is the value.  Note: Metadata is not indexed or filterable.   

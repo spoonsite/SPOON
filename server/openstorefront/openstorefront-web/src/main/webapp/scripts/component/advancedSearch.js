@@ -298,13 +298,61 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							},
 							listeners: {
 								change: function(cb, newValue, oldValue, opts){
-									var codeCb = cb.up('panel').getComponent('keyValue');
-									codeCb.reset();
-									codeCb.getStore().load({
-										url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
-									});
+									var panel = cb.up('panel');
+									var attributeType = null;
+									if (cb.getSelection()) {
+										attributeType = cb.getSelection().data;										
+									}									
+									if (attributeType && attributeType.attributeValueType === 'NUMBER') {
+											panel.queryById('keyValue').setHidden(true);
+											panel.queryById('keyValue').setDisabled(true);
+											
+											panel.queryById('keyValueNumber').setHidden(false);										
+											panel.queryById('numberOperation').setHidden(false);
+											panel.queryById('keyValueNumber').setDisabled(false);
+											panel.queryById('numberOperation').setDisabled(false);
+										
+											panel.queryById('keyValueNumber').reset();
+											panel.queryById('numberOperation').reset();
+									} else {
+										
+										var codeCb = panel.queryById('keyValue');
+										codeCb.setHidden(false);
+										panel.queryById('keyValue').setDisabled(false);
+										
+										codeCb.reset();
+										codeCb.getStore().load({
+											url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
+										});	
+									}							
+									
 								}
 							} 
+						},
+						{
+							xtype: 'numberfield',
+							itemId: 'keyValueNumber',
+							fieldLabel: 'Value',
+							name: 'keyValue',
+							width: '100%',
+							hidden: true,
+							allowDecimals: true
+						},
+						{
+							xtype: 'combobox',
+							itemId: 'numberOperation',
+							width: '100%',
+							name: 'numberOperation',
+							fieldLabel: 'Number Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							hidden: true,
+							store: {
+								data: numberOperationData
+							}							
 						},
 						{
 							xtype: 'combobox', 
@@ -501,59 +549,7 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 				});
 					return optPanel;
 				}
-			},
-			{
-				searchType: 'METADATA',
-				label: 'Meta Data',
-				options: function(){
-					var optPanel = Ext.create('Ext.panel.Panel', {
-					defaults: {
-						labelAlign: 'top',
-						labelSeparator: ''
-					},	
-					items: [
-						{
-							xtype: 'textfield',
-							itemId: 'keyField',
-							name: 'keyField',
-							width: '100%',
-							fieldLabel: 'Key Field <span class="field-required" />',
-							allowBlank: false,
-							maxLength: 1024
-						},						
-						{
-							xtype: 'textfield',
-							itemId: 'keyValue',
-							name: 'keyValue',
-							width: '100%',
-							fieldLabel: 'Key Value',
-							maxLength: 1024
-						},
-						{
-							xtype: 'checkbox',
-							name: 'caseInsensitive',
-							boxLabel: 'Case Insensitive'
-						},
-						{								
-							xtype: 'combobox',
-							itemId: 'stringOperation',
-							width: '100%',
-							name: 'stringOperation',
-							fieldLabel: 'String Operation',
-							queryMode: 'local',
-							displayField: 'description',
-							valueField: 'code',
-							value: 'CONTAINS',					
-							editable: false,
-							store: {
-								data: stringOperationData
-							}					
-						}						
-					]
-				});
-					return optPanel;
-				}
-			},
+			},			
 			{
 				searchType: 'USER_RATING',
 				label: 'User Rating',

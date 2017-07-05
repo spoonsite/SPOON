@@ -232,11 +232,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 		});
 		
 		var allAttributes = [];
-		var loadAllAttributes = function(){
+		var loadAllAttributes = function(callback){
 			Ext.Ajax.request({
 				url: 'api/v1/resource/attributes',
 				success: function(response, opts){
 					allAttributes = Ext.decode(response.responseText);
+					if (callback) {
+						callback();
+					}
 				}
 			});
 		};
@@ -287,6 +290,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 		};
 
 		var handleAttributes = function(componentType) {
+			if (!componentType) {
+				componentType = submissionPanel.componentTypeSelected;
+			}
 
 			var requiredAttributes = [];
 			var optionalAttributes = [];
@@ -449,8 +455,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 					},
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
-							if (newValue) {
+							if (newValue) {								
 								handleAttributes(newValue);
+								submissionPanel.componentTypeSelected = newValue;
 
 								var sectionPanel = submissionPanel.detailsPanel.getComponent('detailSections');
 
@@ -624,95 +631,220 @@ Ext.define('OSF.component.SubmissionPanel', {
 						},
 						items: [
 							{
-								xtype: 'combobox',
-								itemId: 'attributeTypeCB',
-								fieldLabel: 'Attribute Type <span class="field-required" />',
-								name: 'type',
-								labelWidth: 150,
-								forceSelection: true,
-								queryMode: 'local',
-								editable: false,
-								typeAhead: false,
-								allowBlank: false,
-								valueField: 'attributeType',
-								displayField: 'description',
-								store: Ext.create('Ext.data.Store', {
-									sorters: [
-										{
-											property: 'description',
-											direction: 'ASC',
-											transform: function(item) {
-												if (item) {
-													item = item.toLowerCase();
+								xtype: 'panel',
+								layout: 'hbox',
+								margin: '0 0 10 0',
+								items: [
+									{
+										xtype: 'combobox',
+										itemId: 'attributeTypeCB',
+										fieldLabel: 'Attribute Type <span class="field-required" />',
+										name: 'type',
+										flex: 1,
+										labelWidth: 150,
+										labelAlign: 'right',
+										labelSeparator: '',
+										forceSelection: true,
+										queryMode: 'local',
+										editable: true,
+										typeAhead: true,
+										allowBlank: false,
+										valueField: 'attributeType',
+										displayField: 'description',
+										store: Ext.create('Ext.data.Store', {
+											sorters: [
+												{
+													property: 'description',
+													direction: 'ASC',
+													transform: function(item) {
+														if (item) {
+															item = item.toLowerCase();
+														}
+														return item;
+													}
 												}
-												return item;
-											}
-										}
-									],
-									fields: [
-										"attributeType",
-										"description"
-									],
-									data: submissionPanel.optionalAttributes
-								}),
-								listeners: {
-									
-									change: function (field, newValue, oldValue, opts) {
-										
-										// Clear Previously Selected Code
-										var codeField = field.up('form').getComponent('attributeCodeCB');
-										codeField.clearValue();
-														
-										codeField.setLoading(true);
-										Ext.Ajax.request({
-											url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes',
-											callback: function(){
-												codeField.setLoading(false);
-											},
-											success: function(response, opts) {
-												var attributeCodes = Ext.decode(response.responseText);
-												
-												var lookUpCodes = [];
-												Ext.Array.each(attributeCodes, function(attributeCode) {
-													lookUpCodes.push({
-														code: attributeCode.attributeCodePk.attributeCode,
-														label: attributeCode.label
-													});
+											],
+											fields: [
+												"attributeType",
+												"description"
+											],
+											data: submissionPanel.optionalAttributes
+										}),
+										listeners: {
+
+											change: function (field, newValue, oldValue, opts) {
+
+												// Clear Previously Selected Code
+												var codeField = field.up('form').getComponent('attributeCodeCB');
+												codeField.clearValue();
+
+												codeField.setLoading(true);
+												Ext.Ajax.request({
+													url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes',
+													callback: function(){
+														codeField.setLoading(false);
+													},
+													success: function(response, opts) {
+														var attributeCodes = Ext.decode(response.responseText);
+
+														var lookUpCodes = [];
+														Ext.Array.each(attributeCodes, function(attributeCode) {
+															lookUpCodes.push({
+																code: attributeCode.attributeCodePk.attributeCode,
+																label: attributeCode.label
+															});
+														});
+														codeField.getStore().loadData(lookUpCodes);
+													}
 												});
-												codeField.getStore().loadData(lookUpCodes);
-											}
-										});
-										
-										var record = field.getSelection();
-										
-										// Check For Selected Type
-										if (record) {
-											
-											// Check For User-Generated Codes Being Enabled
-											if (record.get("allowUserGeneratedCodes")) {												
-												// Allow Editing Of ComboBox
-												codeField.setEditable(true);
-											}
-											else {
-												// Disallow Editing Of ComboBox
-												codeField.setEditable(false);
+
+												var record = field.getSelection();
+
+												// Check For Selected Type
+												if (record) {
+
+													// Check For User-Generated Codes Being Enabled
+													if (record.get("allowUserGeneratedCodes")) {												
+														// Allow Editing Of ComboBox
+														codeField.setEditable(true);
+													}
+													else {
+														// Disallow Editing Of ComboBox
+														codeField.setEditable(false);
+													}
+												}
+												else {
+
+													// Nothing Selcted, Remove All Codes
+													codeField.getStore().removeAll();
+												}
 											}
 										}
-										else {
+									},
+									{
+										xtype: 'button',
+										itemId: 'addAttributeType',
+										text: 'Add',
+										iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+										minWidth: 100,
+										hidden: true,
+										handler: function() {
+											var attributeTypeCb = addWindow.queryById('attributeTypeCB');
 											
-											// Nothing Selcted, Remove All Codes
-											codeField.getStore().removeAll();
+											
+											var addTypeWin = Ext.create('Ext.window.Window', {
+												title: 'Add Type',
+												iconCls: 'fa fa-plus',
+												closeAction: 'destroy',
+												alwaysOnTop: true,
+												modal: true,
+												width: 400,
+												height: 380,
+												layout: 'fit',
+												items: [
+													{
+														xtype: 'form',
+														scrollable: true,
+														layout: 'anchor',
+														bodyStyle: 'padding: 10px',
+														defaults: {
+															labelAlign: 'top',
+															labelSeparator: '',
+															width: '100%'															
+														},
+														items: [
+															{
+																xtype: 'textfield',
+																name: 'label',
+																fieldLabel: 'Label <span class="field-required" />',
+																allowBlank: false,
+																maxLength: 255
+															},
+															{
+																xtype: 'textarea',
+																name: 'detailedDescription',
+																fieldLabel: 'Description',
+																maxLength: 255																
+															},
+															{
+																xtype: 'combobox',
+																fieldLabel: 'Code Label Value Type <span class="field-required" />',							
+																displayField: 'description',
+																valueField: 'code',
+																typeAhead: false,
+																editable: false,
+																allowBlank: false,
+																name: 'attributeValueType',
+																store: {
+																	autoLoad: true,
+																	proxy: {
+																		type: 'ajax',
+																		url: 'api/v1/resource/lookuptypes/AttributeValueType'
+																	}
+																}
+															}
+														],
+														dockedItems: [
+															{
+																xtype: 'toolbar',
+																dock: 'bottom',
+																items: [
+																	{
+																		text: 'Save',
+																		formBind: true,
+																		iconCls: 'fa fa-lg fa-save icon-button-color-save',
+																		handler: function () {
+																			var form = this.up('form');
+																			var data = form.getValues();
+																			var addTypeWin = this.up('window');
+																			
+																			CoreUtil.submitForm({
+																				url: 'api/v1/resource/attributes/attributetypes/metadata',
+																				method: 'POST',
+																				data: data,
+																				form: form,
+																				success: function (response, opts) {
+																					loadAllAttributes(function(){
+																						handleAttributes();
+																					});						
+																					
+																					var newAttribute = Ext.decode(response.responseText);
+																					attributeTypeCb.getStore().add(newAttribute);	
+																					addTypeWin.close();
+																				}
+																			});
+																			
+																		}
+																	},
+																	{
+																		xtype: 'tbfill'
+																	},																	
+																	{
+																		text: 'Cancel',
+																		iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																		handler: function () {
+																			this.up('window').close();
+																		}																		
+																	}
+																]
+															}
+														]
+													}
+												]
+											});
+											addTypeWin.show();
+											
 										}
 									}
-								}
-							},
+								]
+							},							
 							{
 								xtype: 'combobox',
 								itemId: 'attributeCodeCB',
 								fieldLabel: 'Attribute Code <span class="field-required" />',
 								name: 'code',
 								queryMode: 'local',
-								labelWidth: 150,
+								labelWidth: 150,								
 								editable: false,
 								typeAhead: false,
 								allowBlank: false,
@@ -901,7 +1033,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 			
 			if (record) {
 				addWindow.getComponent('attributeForm').loadRecord(record);
-			}			
+			}	
+						
+			CoreService.userservice.getCurrentUser().then(function(user){
+
+				if (CoreService.userservice.userHasPermisson(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
+					addWindow.queryById('addAttributeType').setHidden(false);
+				}
+
+			});			
+			
 		};		
 		
 		var addEditContact = function(record, grid) {
@@ -2752,7 +2893,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				});
 			}
 		});
-		
+	
 		
 		submissionPanel.currentStep = 1;
 		submissionPanel.changeSteps = function(forceProceed) {	
@@ -3056,7 +3197,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.detailsPanel);
 					
 					// Update Panel
-					submissionPanel.detailsPanel.updateLayout(true, true);
+					Ext.defer(function(){
+						submissionPanel.detailsPanel.updateLayout(true, true);
+					}, 250);					
 				}
 				else if (submissionPanel.currentStep === 4) {
 					
