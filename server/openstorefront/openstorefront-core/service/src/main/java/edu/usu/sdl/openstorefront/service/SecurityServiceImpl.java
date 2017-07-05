@@ -252,7 +252,7 @@ public class SecurityServiceImpl
 					email.addRecipient(userRegistration.getFirstName(), userRegistration.getEmail(), Message.RecipientType.TO);
 					MailManager.send(email);
 				} else {
-					LOG.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
+					LOG.log(Level.WARNING, "Missing email address unable to send verification code");
 				}
 			}
 			persistenceService.persist(userRegistration);
@@ -280,8 +280,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
-			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty())
-					? persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
+			UserRegistration existing = persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId());
 
 			if (existing != null) {
 				existing.updateFields(userRegistration);
