@@ -193,12 +193,7 @@ public class UserRegistrationResource
 			@PathParam("registrationId") String registrationId
 	)
 	{
-		UserRegistration registration = new UserRegistration();
-		registration.setRegistrationId(registrationId);
-		registration = registration.find();
-		if (registration != null) {
-			service.getSecurityService().deletesUser(registration.getUsername());
-		}
+		service.getSecurityService().deleteUserRegistration(registrationId);
 	}
 
 	private ValidationResult validateCode(UserRegistration userRegistration)

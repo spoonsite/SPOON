@@ -76,7 +76,7 @@
 						{ text: 'Organization', dataIndex: 'organization', width: 200 },
 						{ text: 'Position Title', dataIndex: 'positionTitle', width: 200 },						
 						{ text: 'Email', dataIndex: 'email', flex: 1, minWidth: 200 },
-						{ text: 'Phone', dataIndex: 'phone', width: 200 },
+						{ text: 'Phone', dataIndex: 'phone', width: 150 },
 						{ text: 'User Type', dataIndex: 'userTypeCode', align: 'center', width: 200, 
 							renderer: function(value, meta, record) {
 								if (record.get('userTypeDescription')) {
@@ -85,7 +85,12 @@
 								return value;
 							}
 						},
-						{ text: 'Registration Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Registration Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Status', dataIndex: 'userProfileId', align: 'center', width: 150, 
+							renderer: function(value, meta, record) {
+								return (record.get('userProfileId')) ? "Complete" : "Pending";
+							}
+						}
 					],
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {

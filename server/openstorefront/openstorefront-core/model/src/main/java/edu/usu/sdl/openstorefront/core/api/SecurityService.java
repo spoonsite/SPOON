@@ -151,7 +151,16 @@ public interface SecurityService
 	 * @param username
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void deletesUser(String username);
+	void deleteUser(String username);
+
+
+	/**
+	 * Delete User Registration
+	 *
+	 * @param userRegistrationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void deleteUserRegistration(String userRegistrationId);
 
 	/**
 	 * Make sure role name is unique (This is for a new one only)

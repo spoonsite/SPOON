@@ -285,7 +285,7 @@ public class SecurityServiceImpl
 
 			if (existing != null) {
 				existing.updateFields(userRegistration);
-				persistenceService.persist(existing);
+				userRegistration = existing;
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
@@ -329,7 +329,10 @@ public class SecurityServiceImpl
 				userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
-			getUserService().saveUserProfile(userProfile);
+			UserProfile savedUserProfile = getUserService().saveUserProfile(userProfile);
+
+			userRegistration.setUserProfileId(savedUserProfile.getInternalGuid());
+			persistenceService.persist(userRegistration);
 
 			AlertContext alertContext = new AlertContext();
 			alertContext.setAlertType(AlertType.USER_MANAGEMENT);
@@ -761,7 +764,15 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public void deletesUser(String username)
+	public void deleteUserRegistration(String userRegistrationId)
+	{
+		UserRegistration userRegistration = new UserRegistration();
+		userRegistration.setRegistrationId(userRegistrationId);
+		persistenceService.deleteByExample(userRegistration);
+	}
+
+	@Override
+	public void deleteUser(String username)
 	{
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
@@ -771,10 +782,12 @@ public class SecurityServiceImpl
 			UserRole userRole = new UserRole();
 			userRole.setUsername(username);
 			persistenceService.deleteByExample(userRole);
-
-			UserRegistration userRegistration = new UserRegistration();
-			userRegistration.setUsername(username);
-			persistenceService.deleteByExample(userRegistration);
+			UserProfile userProfile = persistenceService.findById(UserProfile.class, username);
+			if (userProfile != null) {
+				UserRegistration userRegistration = new UserRegistration();
+				userRegistration.setUserProfileId(userProfile.getInternalGuid());
+				persistenceService.deleteByExample(userRegistration);
+			}
 
 			getUserService().deleteProfile(username);
 
@@ -782,11 +795,6 @@ public class SecurityServiceImpl
 			persistenceService.delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {1}. ", username, SecurityUtil.getCurrentUserName()));
-		} else {
-			//delete registration; still existing
-			UserRegistration userRegistration = new UserRegistration();
-			userRegistration.setUsername(username);
-			persistenceService.deleteByExample(userRegistration);
 		}
 	}
 

@@ -97,6 +97,9 @@ public class UserRegistration
 
 	@ConsumeField
 	private String verificationCode;
+
+	@ConsumeField
+	private String userProfileId;
 	
 	public UserRegistration()
 	{
@@ -221,6 +224,16 @@ public class UserRegistration
 	{
 		return verificationCode;
 	}
+
+	public String getUserProfileId()
+	{
+		return userProfileId;
+	}
+
+	public void setUserProfileId(String userProfileId)
+	{
+		this.userProfileId = userProfileId;
+	}
 	
 	@Override
 	public void updateFields(StandardEntity entity)
@@ -238,5 +251,6 @@ public class UserRegistration
 		this.setPhone(userRegistrationUpdate.getPhone());
 		this.setUserTypeCode(userRegistrationUpdate.getUserTypeCode());
 		this.setVerificationCode(userRegistrationUpdate.getVerificationCode());
+		this.setUserProfileId(userRegistrationUpdate.getUserProfileId());
 	}
 }
