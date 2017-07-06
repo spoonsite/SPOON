@@ -825,7 +825,7 @@ should give you a response something like this:
    
    # Openstorefront web socket reverse proxy
    ProxyPass "/openstorefront/" "ws://localhost:8080/openstorefront/"
-   ProxyPassReverse "/openstorefront/" ws://localhost:8080/openstorefront/"
+   ProxyPassReverse "/openstorefront/" "ws://localhost:8080/openstorefront/"
    
    # changes <hostname>/ to <hostname>/openstorefront/
    RedirectMatch ^/$ /openstorefront/
