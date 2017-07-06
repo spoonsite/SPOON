@@ -77,10 +77,6 @@ COPY tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
 
 RUN chmod +x upgrade.sh startup.sh
 
-RUN echo "STOREFRONT_WAR_URL = $STOREFRONT_WAR_URL"
-RUN echo "BUILD = $BUILD"
-
-
 ####################
 ## Start Services ##
 ####################
