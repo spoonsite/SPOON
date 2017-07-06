@@ -708,9 +708,8 @@ Run the following as sudo:
 2)	yum -y update
 3)	yum -y install httpd
 4)	firewall-cmd --permanent --add-port=80/tcp
-5)	firewall-cmd --permanent --add-port=8080/tcp
-6)	firewall-cmd --permanent --add-port=443/tcp
-7)	firewall-cmd --reload
+5)	firewall-cmd --permanent --add-port=443/tcp
+6)	firewall-cmd --reload
 
     NOTE)   If firewall-cmd doesn't exist then run 
 
@@ -720,8 +719,8 @@ Run the following as sudo:
 
     c) systemctl enable firewalld
 
-8)	systemctl start httpd
-9)	systemctl enable httpd
+7)	systemctl start httpd
+8)	systemctl enable httpd
 
 apache service command reference (apache should be running at this point):
 
@@ -820,17 +819,23 @@ should give you a response something like this:
    ProxyPreserveHost On	    
    RewriteEngine on
 
-   #Openstorefront
-   ProxyPass /openstorefront http://localhost:8080/openstorefront
-   ProxyPassReverse /openstorefront http://localhost:8080/openstorefront
-
-   ProxyPass /openstorefront ws://localhost:8080/openstorefront
-   ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
-
+   # Openstorefront reverse proxy
+   ProxyPass "/openstorefront/" "http://localhost:8080/openstorefront/"
+   ProxyPassReverse "/openstorefront/" "http://localhost:8080/openstorefront/"
+   
+   # Openstorefront web socket reverse proxy
+   ProxyPass "/openstorefront/" "ws://localhost:8080/openstorefront/"
+   ProxyPassReverse "/openstorefront/" ws://localhost:8080/openstorefront/"
+   
+   # changes <hostname>/ to <hostname>/openstorefront/
    RedirectMatch ^/$ /openstorefront/
 </VirtualHost>
 ```
-4)  systemctl restart httpd
+4)	If you have SELinux running (which is installed by default on CentOS) then we need the instructions from here (http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/)
+
+    a)	/usr/sbin/setsebool -P httpd_can_network_connect 1
+    
+5) 	systemctl restart httpd
 
 ### Configure Tomcat:
 
