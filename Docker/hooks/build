@@ -1,15 +1,11 @@
 #!/bin/sh
-
-echo "***** image name ******"
-echo $IMAGE_NAME
-echo "***** image name ******"
-
 if [ "$IMAGE_NAME" = "latest" ]; then
 	BUILD_WAR="TRUE"
 	WAR_VERSION="x" #WAR_VERSION not used if built from source
 else
         BUILD_WAR="FALSE"
-	WAR_VERSION="${IMAGE_NAME/release-/}"
+	arrayImageParts=
+	WAR_VERSION="${IMAGE_NAME#*-}"
 fi
 
 docker build --build-arg BUILD=$BUILD_WAR --build-arg STOREFRONT_VERSION=$WAR_VERSION -t $IMAGE_NAME .
