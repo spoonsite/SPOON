@@ -2,6 +2,8 @@
 if [ "$IMAGE_NAME" = "latest" ]; then
 	BUILD_WAR="TRUE"
 	WAR_VERSION="x" #WAR_VERSION not used if built from source
+	echo "building latest not yet supported"
+	exit
 else
         BUILD_WAR="FALSE"
 	arrayImageParts=

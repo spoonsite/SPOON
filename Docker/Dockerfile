@@ -58,6 +58,7 @@ ARG STOREFRONT_WAR_URL=https://github.com/di2e/openstorefront/releases/download/
 # (Be sure to build the WAR file first before building the docker image)
 
 RUN if [ "$BUILD" = "TRUE" ]; then echo "build not configured"; fi 
+RUN if [ "$BUILD" = "FALSE" ]; then echo "downloading $STOREFRONT_VERSION release from $STOREFRONT_WAR_URL"; fi
 RUN if [ "$BUILD" = "FALSE" ]; then curl -fSL "$STOREFRONT_WAR_URL" -o openstorefront.war; fi
 
 #COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
