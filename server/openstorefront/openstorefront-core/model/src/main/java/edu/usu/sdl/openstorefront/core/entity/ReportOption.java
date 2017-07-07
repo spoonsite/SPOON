@@ -53,7 +53,7 @@ public class ReportOption
 	private boolean displayDescription;
 	
 	@ConsumeField
-	private boolean displayDetails;
+	private boolean displayEvalDetails;
 	
 	@ConsumeField
 	private boolean displayEvalSummary;
@@ -224,14 +224,14 @@ public class ReportOption
 		this.displayDescription = displayDescription;
 	}
 
-	public boolean getDisplayDetails()
+	public boolean getDisplayEvalDetails()
 	{
-		return displayDetails;
+		return displayEvalDetails;
 	}
 
-	public void setDisplayDetails(boolean displayDetails)
+	public void setDisplayEvalDetails(boolean displayEvalDetails)
 	{
-		this.displayDetails = displayDetails;
+		this.displayEvalDetails = displayEvalDetails;
 	}
 
 	public boolean getDisplayEvalSummary()

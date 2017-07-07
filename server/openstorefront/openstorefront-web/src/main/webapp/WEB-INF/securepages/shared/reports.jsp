@@ -1155,7 +1155,7 @@
 																boxLabel: 'Evaluation Details',
 																inputValue: '1',
 																id: 'showDetailReportEvalDetails',
-																name: 'details',
+																name: 'evalDetails',
 																inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
 																listeners: {
 																	change: function (me, newVal, oldVal) {

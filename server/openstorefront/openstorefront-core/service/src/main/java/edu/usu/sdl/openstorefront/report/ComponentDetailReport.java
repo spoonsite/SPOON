@@ -35,7 +35,12 @@ import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
+import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
@@ -49,6 +54,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.text.MessageFormat;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 /**
@@ -344,6 +351,82 @@ public class ComponentDetailReport
 			{
 				String securityMarking = "";
 				Map componentRoot = new HashMap();
+				
+				// Generate evaluation data
+				List<EvaluationAll> allEvals = service.getComponentService().getComponentDetails(component.getComponentId()).getFullEvaluations();
+				if (allEvals != null) {
+					
+					List<Map> evalList = new ArrayList<>();
+					for (EvaluationAll evaluationView : allEvals) {
+						Evaluation evaluation = evaluationView.getEvaluation();
+						securityMarking = "";
+						if (getBranding().getAllowSecurityMarkingsFlg() && StringUtils.isNotBlank(evaluation.getSecurityMarkingType())) {
+							securityMarking = "(" + evaluation.getSecurityMarkingType() + ") ";
+						}
+						
+						Map evalHash = new HashMap();
+						
+						EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluation.getEvaluationId());
+						ChecklistAll checklistAll = evaluationAll.getCheckListAll();
+						List<EvaluationChecklistRecommendationView> allChecklistRecommendations = checklistAll.getRecommendations();
+						
+						evalHash.put("checklistSummary", checklistAll.getEvaluationChecklist().getSummary());
+						evalHash.put("version", evaluation.getVersion());
+						
+						// Recommendations
+						List<Map> checklistRecommendations = new ArrayList<>();
+						for (EvaluationChecklistRecommendationView recommendation : allChecklistRecommendations) {
+							Map recommendationHash = new HashMap();
+							recommendationHash.put("recommendation", recommendation.getRecommendation());
+							recommendationHash.put("reason", recommendation.getReason());
+							recommendationHash.put("type", recommendation.getRecommendationType());
+							recommendationHash.put("typeDescription", recommendation.getRecommendationTypeDescription());
+							
+							checklistRecommendations.add(recommendationHash);
+						}
+						evalHash.put("recommendations", checklistRecommendations);
+						
+						// Reusability Scores
+						List<Map> reusabilityScores = new ArrayList<>();
+						
+						// get the score sections (and group them)
+						Map<String, List<ChecklistResponseView>> scoreSections = 
+							checklistAll
+							.getResponses()
+							.stream()
+							.collect(Collectors.groupingBy(
+								p -> p.getQuestion().getEvaluationSectionDescription()
+							));
+						
+						// get the average and base scores, and the reusability factor
+						Set<String> scoreKeyset = new TreeSet(scoreSections.keySet());
+						for (String key : scoreKeyset) {
+							Double averageScore = scoreSections.get(key)
+								.stream()
+								.filter(p -> p.getScore() != null)
+								.collect(Collectors.averagingDouble(
+									p -> p.getScore().doubleValue()
+								));
+							
+							Map scoreHash = new HashMap();
+							scoreHash.put("factor", key);
+							scoreHash.put("averageScore", (averageScore > 0) ? Math.round(averageScore*10.0)/10.0 : 0);
+							scoreHash.put("score", (averageScore > 0) ? averageScore.intValue() : "N/A");
+							
+							reusabilityScores.add(scoreHash);
+						}
+						evalHash.put("scores", reusabilityScores);
+						
+						//TODO: sections
+						
+						//TODO: Evaluation checklist details (has a QID)
+						
+						// Add this evaluation to the evaluation list
+						evalList.add(evalHash);
+					}
+					componentRoot.put("evaluations", evalList);
+				}
+				
 				
 				// Generate vitals data
 				Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
