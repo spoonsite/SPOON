@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -57,10 +58,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -218,17 +221,75 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public ValidationResult processNewRegistration(UserRegistration userRegistration)
+	public ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail)
 	{
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
 
-			SecurityPolicy securityPolicy = getSecurityPolicy();
+			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty())
+					? persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
 
-			userRegistration.setRegistrationId(persistenceService.generateId());
-			userRegistration.populateBaseCreateFields();
+			if (existing != null) {
+				existing.updateFields(userRegistration);
+				userRegistration = existing;
+			} else {
+				userRegistration.setRegistrationId(persistenceService.generateId());
+				userRegistration.populateBaseCreateFields();
+			}
+			if (sendEmail) {
+				userRegistration.setVerificationCode(generateRandomString(8));
+
+				if (StringUtils.isNotBlank(userRegistration.getEmail())) {
+					Map data = new HashMap();
+					String subject = "Email Verification Code";
+					data.put("verificationCode", userRegistration.getVerificationCode());
+					data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+					data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+					data.put("title", subject);
+					Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
+					email.setSubject(subject);
+					email.addRecipient(userRegistration.getFirstName(), userRegistration.getEmail(), Message.RecipientType.TO);
+					MailManager.send(email);
+				} else {
+					LOG.log(Level.WARNING, "Missing email address unable to send verification code");
+				}
+			}
 			persistenceService.persist(userRegistration);
+		}
+		return validationResult;
+	}
+
+	private String generateRandomString(int length)
+	{
+		if (length < 1) {
+			throw new IllegalArgumentException("length < 1: " + length);
+		}
+		String symbols = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+		Random random = new Random();
+		StringBuilder buffer = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			buffer.append(symbols.charAt(random.nextInt(symbols.length())));
+		}
+		return buffer.toString();
+	}
+
+	@Override
+	public ValidationResult processNewUser(UserRegistration userRegistration)
+	{
+		Objects.requireNonNull(userRegistration);
+		ValidationResult validationResult = validateRegistration(userRegistration);
+		if (validationResult.valid()) {
+			UserRegistration existing = persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId());
+
+			if (existing != null) {
+				existing.updateFields(userRegistration);
+				userRegistration = existing;
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
+			}
+
+			SecurityPolicy securityPolicy = getSecurityPolicy();
 
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();
@@ -267,7 +328,10 @@ public class SecurityServiceImpl
 				userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
-			getUserService().saveUserProfile(userProfile);
+			UserProfile savedUserProfile = getUserService().saveUserProfile(userProfile);
+
+			userRegistration.setUserProfileId(savedUserProfile.getInternalGuid());
+			persistenceService.persist(userRegistration);
 
 			AlertContext alertContext = new AlertContext();
 			alertContext.setAlertType(AlertType.USER_MANAGEMENT);
@@ -699,7 +763,15 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public void deletesUser(String username)
+	public void deleteUserRegistration(String userRegistrationId)
+	{
+		UserRegistration userRegistration = new UserRegistration();
+		userRegistration.setRegistrationId(userRegistrationId);
+		persistenceService.deleteByExample(userRegistration);
+	}
+
+	@Override
+	public void deleteUser(String username)
 	{
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
@@ -709,22 +781,19 @@ public class SecurityServiceImpl
 			UserRole userRole = new UserRole();
 			userRole.setUsername(username);
 			persistenceService.deleteByExample(userRole);
-
-			UserRegistration userRegistration = new UserRegistration();
-			userRegistration.setUsername(username);
-			persistenceService.deleteByExample(userRegistration);
+			UserProfile userProfile = persistenceService.findById(UserProfile.class, username);
+			if (userProfile != null) {
+				UserRegistration userRegistration = new UserRegistration();
+				userRegistration.setUserProfileId(userProfile.getInternalGuid());
+				persistenceService.deleteByExample(userRegistration);
+			}
 
 			getUserService().deleteProfile(username);
 
 			//Evaluation assigned to user should be fine and can be reassigned later. There profile will just be inactive.
 			persistenceService.delete(userSecurity);
 
-			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));
-		} else {
-			//delete registration; still existing
-			UserRegistration userRegistration = new UserRegistration();
-			userRegistration.setUsername(username);
-			persistenceService.deleteByExample(userRegistration);
+			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {1}. ", username, SecurityUtil.getCurrentUserName()));
 		}
 	}
 

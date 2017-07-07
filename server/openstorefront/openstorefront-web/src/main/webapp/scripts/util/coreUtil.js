@@ -18,7 +18,7 @@
 
 /* global Ext, URL */
 
-var CoreUtil = {	
+var CoreUtil = {
 	pageActions: {},
 	toggleEventListener: function (event) {
 		var el = event.target;
@@ -28,17 +28,16 @@ var CoreUtil = {
 		var caret = parentDiv.getElementsByTagName('h3')[0].getElementsByTagName('div')[0];
 		var section = parentDiv.getElementsByTagName('section')[0];
 
-    	// Toggle the class
-    	if (section.className === 'eval-visible-true') {
-    		section.className = 'eval-visible-false';
-    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
-    		caret.setAttribute('data-qtip', 'Expand panel');
-    	}
-    	else {
-    		section.className = 'eval-visible-true';
-    		caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
-    		caret.setAttribute('data-qtip', 'Collapse panel');
-    	}
+		// Toggle the class
+		if (section.className === 'eval-visible-true') {
+			section.className = 'eval-visible-false';
+			caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret';
+			caret.setAttribute('data-qtip', 'Expand panel');
+		} else {
+			section.className = 'eval-visible-true';
+			caret.className = 'x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret';
+			caret.setAttribute('data-qtip', 'Collapse panel');
+		}
 	},
 	calculateEvalutationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
@@ -48,12 +47,12 @@ var CoreUtil = {
 
 		Ext.Ajax.request({
 			url: 'api/v1/resource/lookuptypes/EvaluationSection',
-			success: function(response, opts){
+			success: function (response, opts) {
 				var sectionLookup = Ext.decode(response.responseText);
-				
-				var findSectionDesc = function(sectionKey) {
+
+				var findSectionDesc = function (sectionKey) {
 					var desc = null;
-					Ext.Array.each(sectionLookup, function(lookup) {
+					Ext.Array.each(sectionLookup, function (lookup) {
 						if (lookup.code === sectionKey) {
 							desc = lookup.detailedDescription;
 						}
@@ -63,10 +62,10 @@ var CoreUtil = {
 
 				for (let ii = 0; ii < fullEvaluations.length; ii += 1) {
 					//group by section
-					var groupStatus = {};				
-					Ext.Array.each(fullEvaluations[ii].checkListAll.responses, function(response){
+					var groupStatus = {};
+					Ext.Array.each(fullEvaluations[ii].checkListAll.responses, function (response) {
 						if (groupStatus[response.question.evaluationSection]) {
-							var stat = groupStatus[response.question.evaluationSection];						
+							var stat = groupStatus[response.question.evaluationSection];
 							if (!response.notApplicable) {
 								stat.count++;
 								stat.totalScore += response.score;
@@ -75,51 +74,50 @@ var CoreUtil = {
 							groupStatus[response.question.evaluationSection] = {
 								title: response.question.evaluationSectionDescription,
 								sectionDescription: findSectionDesc(response.question.evaluationSection),
-								count: 1,									
+								count: 1,
 								totalScore: response.score ? response.score : 0
 							};
 						}
 					});
-					
+
 
 					//average and add dots
 					var sections = [];
-					Ext.Object.eachValue(groupStatus, function(section) {
+					Ext.Object.eachValue(groupStatus, function (section) {
 						if (isNaN(section.count)) {
 							section.count = 0;
 						}
 						if (section.count > 0) {
-							section.average = Math.round((section.totalScore/section.count)*10) / 10;
-							
+							section.average = Math.round((section.totalScore / section.count) * 10) / 10;
+
 							var score = Math.round(section.average);
 							section.display = "";
-							for (var i= 0; i<score; i++){
+							for (var i = 0; i < score; i++) {
 								section.display += '<i class="fa fa-circle detail-evalscore"></i>';
-							}								
+							}
 						} else {
-							section.average = 0;								
+							section.average = 0;
 						}
 						if (isNaN(section.average) || section.average < 1) {
 							section.average = 0;
 							section.display = 'N/A';
 						}
-						
+
 						sections.push(section);
 					});
-					Ext.Array.sort(sections, function(a, b){
+					Ext.Array.sort(sections, function (a, b) {
 						return a.title.localeCompare(b.title);
 					});
 
 					fullEvaluations[ii].evaluationScores = sections;
 					fullEvaluations[ii].evaluationCount = fullEvaluations.length;
 				}
-				
+
 				// if obj.success was not defined, just return the data
 				if (typeof obj.success !== 'undefined') {
-					callBack({fullEvaluations:fullEvaluations}, data);
-				}
-				else {
-					return {fullEvaluations:fullEvaluations};
+					callBack({fullEvaluations: fullEvaluations}, data);
+				} else {
+					return {fullEvaluations: fullEvaluations};
 				}
 			}
 		});
@@ -191,9 +189,9 @@ var CoreUtil = {
 		var blob = new Blob([csvContent], {
 			type: "text/csv;charset=" + charset + ";"
 		});
-		if (window.navigator.msSaveOrOpenBlob) {			
+		if (window.navigator.msSaveOrOpenBlob) {
 			window.navigator.msSaveBlob(blob, filename);
-		} else {			
+		} else {
 			var link = document.createElement("a");
 			if (link.download !== undefined) { // feature detection
 				// Browsers that support HTML5 download attribute
@@ -217,15 +215,15 @@ var CoreUtil = {
 		var lengthCheck = 3;
 		var lengthCheckFlag = 0;
 
-        var csv= Ext.util.CSV.decode(csvData);
-		
-		for (ctr=0; ctr<csv.length; ctr++){
-			if(csv[ctr][0] === '' && csv[ctr].length === 1)
+		var csv = Ext.util.CSV.decode(csvData);
+
+		for (ctr = 0; ctr < csv.length; ctr++) {
+			if (csv[ctr][0] === '' && csv[ctr].length === 1)
 			{
-			  csv.splice(ctr,1);
-			  continue;
+				csv.splice(ctr, 1);
+				continue;
 			}
-			if(csv[ctr].length>maxCols){
+			if (csv[ctr].length > maxCols) {
 				maxCols = csv[ctr].length;
 			}
 		}
@@ -236,27 +234,25 @@ var CoreUtil = {
 				' tr.reportview-table:nth-child(even) { background: whitesmoke;} ' +
 				' .reportview-td{border: 1px black solid; padding:5px;}' +
 				' .reportview-th{padding:5px;}' +
-				'</style>'+
+				'</style>' +
 				'</head><body><table class="reportview-table">';
 
 		for (ctr = 0; ctr < csv.length; ctr++) {
 			for (ctr2 = 0; ctr2 < csv[ctr].length; ctr2++) {
-				if(typeof csv[ctr][ctr2]=== 'undefined'){
+				if (typeof csv[ctr][ctr2] === 'undefined') {
 					csv[ctr][ctr2] = '&nbsp;';
 				}
-				
-				var colDiff = maxCols-ctr2;
+
+				var colDiff = maxCols - ctr2;
 				if (ctr2 === 0) { //Start new row
 
 					if ((ctr2 + 1) === csv[ctr].length) {
-						if(colDiff !==0 ){
-							htmlData += '<tr class="reportview-table"><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
-						}
-						else{
+						if (colDiff !== 0) {
+							htmlData += '<tr class="reportview-table"><td class="reportview-td" colspan="' + colDiff + '">' + csv[ctr][ctr2] + '</td></tr>';
+						} else {
 							htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
-					}
-					else{
+					} else {
 						htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 					}
 
@@ -265,22 +261,20 @@ var CoreUtil = {
 
 				if ((ctr2 + 1) === csv[ctr].length) { //End row
 					if (ctr2 !== 0) {
-						if(colDiff !==0 ){
-							htmlData += '<td class="reportview-td"  colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
-						}
-						else{
+						if (colDiff !== 0) {
+							htmlData += '<td class="reportview-td"  colspan="' + colDiff + '">' + csv[ctr][ctr2] + '</td></tr>';
+						} else {
 							htmlData += '<td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
-				}
-				else if (ctr2 !== 0) { //Normal Data
+				} else if (ctr2 !== 0) { //Normal Data
 
 					htmlData += '<td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 				}
 			}
 		}
 		htmlData += '</table></body></html>';
-		htmlData = htmlData.replace(/<td class="reportview-td" ><\/td>/g, '<td>&nbsp</td>');        
+		htmlData = htmlData.replace(/<td class="reportview-td" ><\/td>/g, '<td>&nbsp</td>');
 		return htmlData;
 	},
 	popupMessage: function (title, message, delay) {
@@ -318,8 +312,7 @@ var CoreUtil = {
 				for (var i = 0; i < options.maskComponents.length; i++) {
 					options.maskComponents[i].setLoading(true);
 				}
-			}
-			else
+			} else
 			{
 				options.maskComponents.setLoading(true);
 			}
@@ -334,8 +327,7 @@ var CoreUtil = {
 					for (var i = 0; i < options.maskComponents.length; i++) {
 						options.maskComponents[i].setLoading(false);
 					}
-				}
-				else
+				} else
 				{
 					options.maskComponents.setLoading(false);
 				}
@@ -358,8 +350,7 @@ var CoreUtil = {
 				}
 
 			}
-		}
-		else
+		} else
 		{
 			options.stores.on('load', loadFormFunc, options);
 		}
@@ -417,11 +408,13 @@ var CoreUtil = {
 			//If the request timesout then there won't be a response
 			if (errorResponse) {
 				var errorObj = {};
-				Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-					errorObj[item.key] = item.value;
-				});
+				if (errorResponse.errors !== undefined) {
+					Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+						errorObj[item.key] = item.value;
+					});
+				}
 				options.form.getForm().markInvalid(errorObj);
-		    }
+			}
 			if (options.failure) {
 				options.failure(response, opts);
 			}
@@ -440,7 +433,7 @@ var CoreUtil = {
 			success: function (response, opts) {
 				options.form.setLoading(false);
 				if (response) {
-					if (response.status === 304){
+					if (response.status === 304) {
 						options.success(response, opts);
 					} else {
 						if (response.responseText) {
@@ -487,67 +480,67 @@ var CoreUtil = {
 	 * of additional plugins to add to the config (optional)
 	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
 	 */
-	tinymceConfigNoMedia: function(additionalPlugins) {
+	tinymceConfigNoMedia: function (additionalPlugins) {
 		var defaultConfig = {
 			plugins: [
-			"advlist autolink lists link charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code osffullscreen",
-			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder"
+				"advlist autolink lists link charmap print preview hr anchor pagebreak",
+				"searchreplace wordcount visualblocks visualchars code osffullscreen",
+				"insertdatetime media nonbreaking save table contextmenu directionality",
+				"emoticons template paste textcolor placeholder"
 			],
 
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen",
 
-			content_css : "contents.css",
+			content_css: "contents.css",
 
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
-			+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: { border: 'solid 1px #ddd' }
+					+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: {border: 'solid 1px #ddd'}
 		};
 
 		if (additionalPlugins) {
 			defaultConfig.plugins.push(additionalPlugins);
 		}
-		
+
 		return defaultConfig;
-	},	
-	
+	},
+
 	/**
 	 *  Return predfined configs
 	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
 	 * of additional plugins to add to the config (optional)
 	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
 	 */
-	tinymceConfig: function(additionalPlugins) {
+	tinymceConfig: function (additionalPlugins) {
 		var defaultConfig = {
 			plugins: [
-			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code osffullscreen",
-			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
+				"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+				"searchreplace wordcount visualblocks visualchars code osffullscreen",
+				"insertdatetime media nonbreaking save table contextmenu directionality",
+				"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
 			],
 
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
 
-			content_css : "contents.css",
+			content_css: "contents.css",
 
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
-			+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: { border: 'solid 1px #ddd' }
+					+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: {border: 'solid 1px #ddd'}
 		};
 
 		if (additionalPlugins) {
 			defaultConfig.plugins.push(additionalPlugins);
 		}
-		
+
 		return defaultConfig;
 	},
 	/**
@@ -555,27 +548,27 @@ var CoreUtil = {
 	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
 	 * @returns {CoreUtil.tinymceConfig.searchEntryConfig}
 	 */
-	tinymceSearchEntryConfig: function(additionalPlugins) {
+	tinymceSearchEntryConfig: function (additionalPlugins) {
 		var searchEntryConfig = {
 			plugins: [
-			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code osffullscreen",
-			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
+				"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+				"searchreplace wordcount visualblocks visualchars code osffullscreen",
+				"insertdatetime media nonbreaking save table contextmenu directionality",
+				"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
 			],
 
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
 
-			content_css : "contents.css",
+			content_css: "contents.css",
 
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
-			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]' 
-			+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: { border: 'solid 1px #ddd' }
-			
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
+					+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: {border: 'solid 1px #ddd'}
+
 		};
 
 		if (additionalPlugins) {
@@ -590,8 +583,8 @@ var CoreUtil = {
 	 * @param {string} query 
 	 * 
 	 */
-	searchQueryAdjustment: function(query) {
-		if (query && !Ext.isEmpty(query)) {	
+	searchQueryAdjustment: function (query) {
+		if (query && !Ext.isEmpty(query)) {
 			if (query.indexOf('"') === -1) {
 				query = "*" + query + "*";
 			}
@@ -609,18 +602,18 @@ var CoreUtil = {
 	 * @param {type} codeHasAttachment
 	 * @returns {undefined}
 	 */
-	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId, codeHasAttachment) {
-		
+	showRelatedVitalWindow: function (attributeType, attributeCode, description, vitalType, tip, componentId, codeHasAttachment) {
+
 		var relatedStore = Ext.create('Ext.data.Store', {
 			pageSize: 50,
 			autoLoad: false,
 			remoteSort: true,
 			sorters: [
 				new Ext.util.Sorter({
-				property: 'name',
-				direction: 'ASC'
+					property: 'name',
+					direction: 'ASC'
 				})
-			],				
+			],
 			proxy: CoreUtil.pagingProxy({
 				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
 				reader: {
@@ -630,8 +623,8 @@ var CoreUtil = {
 				}
 			}),
 			listeners: {
-				load: function(store, records) {
-					store.filterBy(function(record){
+				load: function (store, records) {
+					store.filterBy(function (record) {
 						return record.get('componentId') !== componentId;
 					});
 				}
@@ -642,11 +635,11 @@ var CoreUtil = {
 		var attachmentLinkHTML = '';
 		if (codeHasAttachment === 'true') {
 			attachmentLinkHTML += '<p style="text-align: center;">' +
-				'<i class="fa fa-paperclip"></i> ' +
-				'<a href="api/v1/resource/attributes/attributetypes/{attributeType}' +
-				'/attributecodes/{attributeCode}/attachment">' +
-				'Download Attachment' +
-				'</a></p>';
+					'<i class="fa fa-paperclip"></i> ' +
+					'<a href="api/v1/resource/attributes/attributetypes/{attributeType}' +
+					'/attributecodes/{attributeCode}/attachment">' +
+					'Download Attachment' +
+					'</a></p>';
 		}
 
 		var relatedWindow = Ext.create('Ext.window.Window', {
@@ -664,23 +657,23 @@ var CoreUtil = {
 					columnLines: true,
 					store: relatedStore,
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+						{text: 'Name', dataIndex: 'name', flex: 2, minWidth: 250, cellWrap: true,
 							renderer: function (value, meta, record) {
 								return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
 							}
 						},
-						{ text: 'Description', dataIndex: 'description', flex: 2,
+						{text: 'Description', dataIndex: 'description', flex: 2,
 							cellWrap: true,
 							renderer: function (value) {
 								value = Ext.util.Format.stripTags(value);
 								return Ext.String.ellipsis(value, 300);
 							}
-						},							
-						{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
+						},
+						{text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150}
 					],
 					dockedItems: [
 						{
-							xtype: 'pagingtoolbar',							
+							xtype: 'pagingtoolbar',
 							dock: 'bottom',
 							store: relatedStore,
 							displayInfo: true
@@ -692,17 +685,17 @@ var CoreUtil = {
 							bodyStyle: 'padding-left: 5px; padding-right: 5px;',
 							scrollable: true,
 							tpl: new Ext.XTemplate(
-								'<h2 style="text-align: center;">{description}</h2>',
-								attachmentLinkHTML,
-								'<hr>',
-								'{tip}'
-							)
+									'<h2 style="text-align: center;">{description}</h2>',
+									attachmentLinkHTML,
+									'<hr>',
+									'{tip}'
+									)
 						}
-					]						
-				}				
-			]			
-		});		
-		
+					]
+				}
+			]
+		});
+
 
 
 		relatedWindow.getComponent('grid').getComponent('description').update({
@@ -750,32 +743,32 @@ var CoreUtil = {
 
 			return request;
 		};
-		store.loadPage(1);		
-		
+		store.loadPage(1);
+
 	},
-	
+
 	/**
 	 * Sort and transfer entry for display
 	 * @param {type} entry (componentAll)
 	 */
-	processEntry: function(entry) {
-		
+	processEntry: function (entry) {
+
 		//sort and process						
-		Ext.Array.sort(entry.resources, function(a, b){
-			return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
-		});	
+		Ext.Array.sort(entry.resources, function (a, b) {
+			return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);
+		});
 
-		Ext.Array.sort(entry.contacts, function(a, b){
-			return a.name.localeCompare(b.name);	
-		});		
+		Ext.Array.sort(entry.contacts, function (a, b) {
+			return a.name.localeCompare(b.name);
+		});
 
-		Ext.Array.sort(entry.dependencies, function(a, b){
-			return a.dependencyName.localeCompare(b.dependencyName);	
-		});							
+		Ext.Array.sort(entry.dependencies, function (a, b) {
+			return a.dependencyName.localeCompare(b.dependencyName);
+		});
 
 		var vitals = [];
 		if (entry.attributes) {
-			Ext.Array.each(entry.attributes, function(item){
+			Ext.Array.each(entry.attributes, function (item) {
 				vitals.push({
 					label: item.typeDescription,
 					value: item.codeDescription,
@@ -785,68 +778,68 @@ var CoreUtil = {
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
-				});				
+				});
 			});
 		}
 
 		if (entry.metadata) {
-			Ext.Array.each(entry.metadata, function(item){
+			Ext.Array.each(entry.metadata, function (item) {
 				vitals.push({
 					label: item.label,
 					value: item.value,
 					securityMarkingType: item.securityMarkingType,
 					updateDts: item.updateDts
-				});			
+				});
 			});
 		}
 
-		Ext.Array.sort(vitals, function(a, b){
-			return a.label.localeCompare(b.label);	
+		Ext.Array.sort(vitals, function (a, b) {
+			return a.label.localeCompare(b.label);
 		});
-		entry.vitals = vitals;	
+		entry.vitals = vitals;
 
-		Ext.Array.each(entry.evaluation.evaluationSections, function(section){
+		Ext.Array.each(entry.evaluation.evaluationSections, function (section) {
 			if (section.notAvailable || section.actualScore <= 0) {
 				section.display = "N/A";
 			} else {
 				var score = Math.round(section.actualScore);
 				section.display = "";
-				for (var i= 0; i<score; i++){
+				for (var i = 0; i < score; i++) {
 					section.display += '<i class="fa fa-circle detail-evalscore"></i>';
 				}
-			}				
+			}
 		});
 
 
-		Ext.Array.sort(entry.evaluation.evaluationSections, function(a, b){
-			return a.name.localeCompare(b.name);	
+		Ext.Array.sort(entry.evaluation.evaluationSections, function (a, b) {
+			return a.name.localeCompare(b.name);
 		});
 
 
-		Ext.Array.each(entry.reviews, function(review){
-			Ext.Array.sort(review.pros, function(a, b){
-				return a.text.localeCompare(b.text);	
+		Ext.Array.each(entry.reviews, function (review) {
+			Ext.Array.sort(review.pros, function (a, b) {
+				return a.text.localeCompare(b.text);
 			});
-			Ext.Array.sort(review.cons, function(a, b){
-				return a.text.localeCompare(b.text);	
-			});	
+			Ext.Array.sort(review.cons, function (a, b) {
+				return a.text.localeCompare(b.text);
+			});
 
 			review.ratingStars = [];
-			for (var i=0; i<5; i++){					
-				review.ratingStars.push({						
+			for (var i = 0; i < 5; i++) {
+				review.ratingStars.push({
 					star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
 				});
-			}	
+			}
 		});
-		
+
 		if (entry.attributes && entry.attributes.length > 0) {
-			var evalLevels = {};	
-			Ext.Array.each(entry.attributes, function(item){
+			var evalLevels = {};
+			Ext.Array.each(entry.attributes, function (item) {
 				if (item.type === 'DI2ELEVEL') {
 					evalLevels.level = {};
-					evalLevels.level.typeDesciption = item.typeDescription; 
-					evalLevels.level.code = item.code; 
-					evalLevels.level.label = item.codeDescription; 
+					evalLevels.level.typeDesciption = item.typeDescription;
+					evalLevels.level.code = item.code;
+					evalLevels.level.label = item.codeDescription;
 					evalLevels.level.description = item.codeLongDescription;
 					evalLevels.level.highlightStyle = item.highlightStyle;
 					if (item.updateDts > entry.lastViewedDts) {
@@ -854,34 +847,34 @@ var CoreUtil = {
 					}
 				} else if (item.type === 'DI2ESTATE') {
 					evalLevels.state = {};
-					evalLevels.state.typeDesciption = item.typeDescription; 
-					evalLevels.state.code = item.code; 
-					evalLevels.state.label = item.codeDescription; 
+					evalLevels.state.typeDesciption = item.typeDescription;
+					evalLevels.state.code = item.code;
+					evalLevels.state.label = item.codeDescription;
 					evalLevels.state.description = item.codeLongDescription;
 					evalLevels.state.highlightStyle = item.highlightStyle;
 					if (item.updateDts > entry.lastViewedDts) {
 						updated = true;
-					}					
+					}
 				} else if (item.type === 'DI2EINTENT') {
 					evalLevels.intent = {};
-					evalLevels.intent.typeDesciption = item.typeDescription; 
-					evalLevels.intent.code = item.code; 
-					evalLevels.intent.label = item.codeDescription; 
-					evalLevels.intent.description = item.codeLongDescription; 
+					evalLevels.intent.typeDesciption = item.typeDescription;
+					evalLevels.intent.code = item.code;
+					evalLevels.intent.label = item.codeDescription;
+					evalLevels.intent.description = item.codeLongDescription;
 					evalLevels.intent.highlightStyle = item.highlightStyle;
 					if (item.updateDts > entry.lastViewedDts) {
 						updated = true;
-					}					
+					}
 				}
-			});	
-			entry.evalLevels = evalLevels;	
+			});
+			entry.evalLevels = evalLevels;
 		}
-	
-		
+
+
 		return entry;
 	},
-	securityBannerPanel: function(branding) {
-		
+	securityBannerPanel: function (branding) {
+
 		if (branding && branding.securityBannerText) {
 			var securityBanner = Ext.create('Ext.panel.Panel', {
 				bodyCls: 'security-banner',
@@ -894,34 +887,34 @@ var CoreUtil = {
 		return null;
 	},
 	maxFileSize: 1048576000,
-	handleMaxFileLimit: function(field, value, opts) {
+	handleMaxFileLimit: function (field, value, opts) {
 		var el = field.fileInputEl.dom;
-		
-		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';				
+
+		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';
 		field.setFieldLabel(field.getFieldLabel().replace(errorMessage, ''));
-		
+
 		if (el.files && el.files.length > 0) {
 			var file = el.files[0];
-			if (file.size >  CoreUtil.maxFileSize) {
-				Ext.defer(function(){
+			if (file.size > CoreUtil.maxFileSize) {
+				Ext.defer(function () {
 					field.reset();
 					field.markInvalid('File exceeds size limit.');
-					field.setFieldLabel(field.getFieldLabel() + errorMessage);					
+					field.setFieldLabel(field.getFieldLabel() + errorMessage);
 				}, 250);
 			}
 		}
-		
+
 	},
-	descriptionOfAdvancedSearch : function(searchElements) {
+	descriptionOfAdvancedSearch: function (searchElements) {
 		if (searchElements) {
 			var desc = '';
-			var count =0;
-			
-			Ext.Array.each(searchElements, function(element) {
-				
+			var count = 0;
+
+			Ext.Array.each(searchElements, function (element) {
+
 				if (element.searchType) {
 					desc += '<b>Search Type: </b>' + element.searchType + '<br>';
-				}				
+				}
 				if (element.field) {
 					desc += '<b>Field: </b>' + element.field + '<br>';
 				}
@@ -939,7 +932,7 @@ var CoreUtil = {
 				}
 				if (element.endDate) {
 					desc += '<b>End Date: </b>' + element.endDate + '<br>';
-				}								
+				}
 				if (element.caseInsensitive) {
 					desc += '<b>Case Insensitive: </b>' + element.caseInsensitive + '<br>';
 				}
@@ -949,21 +942,21 @@ var CoreUtil = {
 				if (element.stringOperation) {
 					desc += '<b>String Operation: </b>' + element.stringOperation + '<br>';
 				}
-				
+
 				if (count !== 0) {
 					desc += '<br>' + element.mergeCondition + '<br><br>';
 				}
-				
+
 				count++;
 			});
 			return desc;
 		}
 		return '';
 	},
-	actionSubComponentToggleStatus: function(grid, idField, entity, subEntityId, subEntity, forceDelete, successFunc) {
+	actionSubComponentToggleStatus: function (grid, idField, entity, subEntityId, subEntity, forceDelete, successFunc) {
 		var status = grid.getSelection()[0].get('activeStatus');
 		var recordId = grid.getSelection()[0].get(idField);
-		var componentId = grid.getSelection()[0].get('componentId'); 
+		var componentId = grid.getSelection()[0].get('componentId');
 		if (!componentId) {
 			if (grid.componentRecord) {
 				componentId = grid.componentRecord.get('componentId');
@@ -980,7 +973,7 @@ var CoreUtil = {
 		if (status === 'I') {
 			urlEnding = '/activate';
 			method = 'PUT';
-		} 
+		}
 
 		if (forceDelete)
 		{
@@ -992,10 +985,10 @@ var CoreUtil = {
 		Ext.Ajax.request({
 			url: 'api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
 			method: method,
-			callback: function(opt, success, response){
+			callback: function (opt, success, response) {
 				grid.setLoading(false);
 			},
-			success: function(response, opts){
+			success: function (response, opts) {
 				if (successFunc) {
 					successFunc();
 				} else {
@@ -1003,9 +996,9 @@ var CoreUtil = {
 				}
 			}
 		});
-	},	
-	showSavedSearchWindow: function(searchId) {
-		var searchWin = Ext.create('OSF.component.SearchPopupResultsWindow', {					
+	},
+	showSavedSearchWindow: function (searchId) {
+		var searchWin = Ext.create('OSF.component.SearchPopupResultsWindow', {
 			closeAction: 'destroy',
 			alwaysOnTop: true
 		});
@@ -1013,8 +1006,8 @@ var CoreUtil = {
 
 	},
 	renderer: {
-		
-		booleanRenderer: function(value, meta, record) {
+
+		booleanRenderer: function (value, meta, record) {
 			if (value) {
 				meta.tdCls = 'alert-success';
 				return '<i class="fa fa-check"></i>';
@@ -1024,5 +1017,5 @@ var CoreUtil = {
 			}
 		}
 	}
-	
+
 };

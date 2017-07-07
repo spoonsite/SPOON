@@ -37,6 +37,7 @@ public class APIClient
 	private UserSavedSearchTestClient apiUserSavedSearchClient;
 	private SystemSearchTestClient apiSystemSearchClient;
 	private ComponentRESTTestClient apiComponentRESTClient;
+	private UserRegistrationTestClient apiUserRegistrationClient;
 
 	public APIClient()
 	{
@@ -108,6 +109,15 @@ public class APIClient
 			testClients.add(apiComponentTypeClient);
 		}
 		return apiComponentTypeClient;
+	}
+	
+	public UserRegistrationTestClient getUserRegistrationClient()
+	{
+		if (apiUserRegistrationClient == null) {
+			apiUserRegistrationClient = new UserRegistrationTestClient(client, this);
+			testClients.add(apiUserRegistrationClient);
+		}
+		return apiUserRegistrationClient;
 	}
 	
 	public void cleanup()

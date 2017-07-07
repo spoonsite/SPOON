@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import freemarker.template.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +44,26 @@ public class ReportManager
 	private static final Logger LOG = Logger.getLogger(ReportManager.class.getName());
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static final long MAX_WORKING_RETRY_TIME_MILLIS = 1440 * 60 * 1000;
+	
+	// configuration for reports templating engine
+	private static Configuration templateConfig = null;
 
 	public static void init()
 	{
+		// Initialize templating engine configurations
+		try
+		{
+			templateConfig = new Configuration(Configuration.VERSION_2_3_26);
+			templateConfig.setClassForTemplateLoading(ReportManager.class, "/templates/reports");
+			templateConfig.setDefaultEncoding("UTF-8");
+			templateConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+			templateConfig.setLogTemplateExceptions(false);
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.WARNING,"While configuring the report template, the follow error was caught: " + e);
+		}
+		
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		//Restart any pending or working reports
 		List<Report> allReports = getInprogessReports(serviceProxy);
@@ -120,6 +138,11 @@ public class ReportManager
 		allReports.addAll(reports);
 
 		return allReports;
+	}
+	
+	public static Configuration getTemplateConfig ()
+	{
+		return templateConfig;
 	}
 
 	public static void cleanup()

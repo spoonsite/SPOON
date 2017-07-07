@@ -332,7 +332,7 @@
     background-position: 0 0;
     opacity: 0.5;
     -moz-opacity: 0.5;
-    filter: opacity=50;
+    filter: alpha(opacity=50);
     cursor: default;
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:2 */

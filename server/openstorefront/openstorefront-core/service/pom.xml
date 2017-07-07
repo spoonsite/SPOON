@@ -73,6 +73,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.26-incubating</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 			<version>2.3.3</version>

@@ -62,16 +62,20 @@ public class ComponentRESTTestClient
 		if (views.isEmpty()) {
 			return null;
 		} else {
-			System.out.println("******Views: " + views.get(0));
 			return views.get(0);
 		}
 	}
 
 	public Component createAPIComponent(String componentName)
 	{
+		return createAPIComponent(componentName, "AAA-BATMAN-AAA", "This an API test component", componentName + " - organization");
+	}
+
+	public Component createAPIComponent(String componentName, String componentType, String description, String organization)
+	{
 		Component component;
 		ComponentTypeTestClient componentTypeClient = apiClient.getComponentTypeTestClient();
-		ComponentType type = componentTypeClient.createAPIComponentType("AAA-KENTBAIR-AAA");
+		ComponentType type = componentTypeClient.createAPIComponentType(componentType);
 
 		ComponentAdminView adminView = getComponentByName(componentName);
 		if (adminView != null) {
@@ -79,9 +83,9 @@ public class ComponentRESTTestClient
 		} else {
 			component = new Component();
 			component.setName(componentName);
-			component.setDescription("This an API test component");
+			component.setDescription(description);
 			component.setComponentType(type.getComponentType());
-			component.setOrganization(componentName + " - organization");
+			component.setOrganization(organization);
 			component.setApprovalState(ApprovalStatus.APPROVED);
 			component.setLastActivityDts(TimeUtil.currentDate());
 

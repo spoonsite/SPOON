@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.selenium.apitestclient;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.UserRegistrationClient;
+import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,12 @@ public class UserRegistrationTestClient extends BaseTestClient
 		super(client, apiClient);
 		apiAccountSignup = new UserRegistrationClient(client);
 	}
-
+	
+	public UserRegistration getUserRegistration(String registrationId)
+	{
+		return apiAccountSignup.getUserRegistration(registrationId);
+	}
+	
 	@Override
 	public void cleanup()
 	{
