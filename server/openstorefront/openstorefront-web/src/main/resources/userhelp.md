@@ -1109,7 +1109,9 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the entry or article*
 
 From the **Action** drop-down menu in the toolbar, an administrator can change the ownership or
-type of an entry.  He/she can also view change requests and merge entries together.
+type of an entry.  He/she can also view change requests and merge entries together.  
+
+-----
   
 ### 3.2.4 Entry Types @ADMIN-ENTRY-TYPES
 ------
@@ -1137,35 +1139,22 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
           Removing entry type that has attribute restriction can change the behavior of the require
           attributes. It may only be required for entries of type A but when type A is removed then
           the attribute will be required for all entries. 
-          (It will require an admin to manually update the attributed if that is not the correct behavior).
-  
-		  
+          (It will require an admin to manually update the attributed if that is not the correct behavior).  
+
+-----  
 		  
 ### 3.2.5 Entry Templates @ADMIN-ENTRY-TEMPLATES
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
 
- 1. How to create an **Entry Template**:
-
-	a.  Click on the **Add** button in the toolbar. 
+For a step-by-step guide on how to create an entry template go to **Admin Guides** under the **Guides** section in the Help menu. Look for **How to Create an Entry Template**.
   
-    b.  Add Template Blocks to see the visual arrangement and order of fields that will be displayed.
-	
-	c.  Select some Sample Data from an existing entry to see how the data will be represented in the Visual Design tab.
-	
-	d.  The **Code** tab allows for pre and post code to be added.
-	
-	e.  The **Preview** tab shows what an entry using this template will look like.
-	
-	f.  Name the template and click Save/Continue when finished.
-	
-	g.  The name should now appear in the Entry Templates table.  Ensure that the template is Active.
+Note:  
 
-To remove a template click on the template name and click **Delete** on the right-hand side of the toolbar.
-To edit a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and
-click **Save/Continue** at the bottom.
-	
+ - To __remove__ a template click on the template name and click **Delete** on the right-hand side of the toolbar.  
+ - To __edit__ a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and click **Save/Continue** at the bottom. Click **Close**.  
+-----  
   
 ### 3.2.6 Highlights @ADMIN-HIGHLIGHTS
 -------
@@ -1879,9 +1868,46 @@ pairs that could be optionally added are described below:
 
 **Recent Changes E-mail** -     Allows for sending/previewing a recent change email.
 
+-----  
 
+### 3.3.8 System Archives @ADMIN-TRACKING  
+-----  
 
-### 3.3.8 Security @ADMIN-TRACKING
+Allows administrator to generate either an entire database archive (OrientDB) or a general archive that is specified by the administrator.  
+
+To generate a complete archive of the database (OrientDB) do the following:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on the **+ Generate Archive** button.  
+  2. Give the archive a unique name.  
+  3. Under **Archive Type** select **DB Export** from the drop down menu.  
+  4. Click on the **+ Generate** button at the bottom of the form.  
+  5. Optional - Once the archive has a status of *Complete*, you can download the archive and save it to your file system.  This is done by selecting the archive you generated and clicking the **Download** button.    
+
+To generate a more customized archive that is site specific do the following:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on the **+ Generate Archive** button.  
+  2. Give the archive a unique name.  
+  3. Under **Archive Type** select **General** from the drop down menu.  
+  4. To select specific entries with their related data check the **Entries (Related Data)** box and select your entries.  
+  5. Other options include highlights, organizations, attributes, and branding.  If branding is selected you will need to select one or more of the brandings under **Select Branding**.  
+  6. Click the **Generate** button.  
+  7. Optional - Once the archive has a status of *Complete*, you can download the archive and save it to your file system.  This is done by selecting the archive you generated and clicking the **Download** button.    
+
+To import an archive that had previously been generated:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on **Import Archive**.  
+  2. Select **Merge** from the **Import Mode** drop down menu.  
+  3. Click on the **Select Archive** button and select the archive from your file system.  
+  4. Click on the **Import** button.  
+  5. Note: Importing database archives will temporarily interrupt the application and may cause some jobs to fail.  Please wait several minutes for the database to stabilize after import has completed.  
+
+If you experience any errors when generating an archive, you can select the archive and click on the **View Errors** button in the toolbar.  
+
+To delete an archive, select the archive you want to delete and click the **Delete** button on the right side of the toolbar.  
+
+------
+
+### 3.3.9 Security @ADMIN-TRACKING
 
 The Security Management area consists of the Security Policy and the Shiro Config.
 
@@ -1891,7 +1917,7 @@ Some policies only apply to the built-in security realm.
 Shiro Config is used for troubleshoot security realm configuration as well as making it easier to update URL policies.  The application will need to be restarted to apply the changes.  
 Also, note the application will create a backup file of the current policy so an admin can roll it back, if needed.   Only the previous version is backed up.
 
-### 3.3.9 Security Roles @ADMIN-TRACKING
+### 3.3.10 Security Roles @ADMIN-TRACKING
 
 This section is used to match up Roles with Users, Permissions, and Data Restrictions.
 
@@ -1906,7 +1932,7 @@ A table is shown of all of the Security Roles which can be edited and managed.
 **NOTE:**  Data Sources and Data Sensitivity values can be managed from the Data Management->Lookups, see section 3.2.9.
 
 
-### 3.3.10 Tracking @ADMIN-TRACKING
+### 3.3.11 Tracking @ADMIN-TRACKING
 
 The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
@@ -1918,8 +1944,10 @@ The primary tracking events can be viewed using the Tracking Admin Tool.
 The events are also aggregated into various system generated reports which
 are accessible via the Reports Admin Tool.
 
+### 3.3.12 User Management @ADMIN-TRACKING
 
-### 3.3.11 API Documentation @API-DOCS
+
+### 3.3.13 API Documentation @API-DOCS
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
@@ -1991,7 +2019,7 @@ Contains definitions of terms used in the application and in the help documentat
 ##6.1 Admin Guides
 -----------------
 
-###6.1.1 How to Create an Entry Template
+### 6.1.1 How to Create an Entry Template
 -----------------  
 
 This is a step-by-step guide on how to create an entry template.  The entry used 
