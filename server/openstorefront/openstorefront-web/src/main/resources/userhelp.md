@@ -1145,16 +1145,14 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
-To create and implement a template:
 
  1. How to create an **Entry Template**:
 
-	a.  Click on the **Add** button in the toolbar.
- 
+	a.  Click on the **Add** button in the toolbar. 
+  
     b.  Add Template Blocks to see the visual arrangement and order of fields that will be displayed.
 	
-	c.  Select some Sample Data from an existing entry to see how the data will be represented in
-	    the Visual Design tab.
+	c.  Select some Sample Data from an existing entry to see how the data will be represented in the Visual Design tab.
 	
 	d.  The **Code** tab allows for pre and post code to be added.
 	
@@ -1986,3 +1984,88 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
 -  **Entry Metadata**   -  is used to capture non-structure data with variable values.  Metadata consists of a label and Value.  An example is: "Content Collection size:  200".  The label is "Content Collection" and 200 is the value.  Note: Metadata is not indexed or filterable.   
+
+# 6. Guides
+------
+
+##6.1 Admin Guides
+-----------------
+
+###6.1.1 How to Create an Entry Template
+-----------------  
+
+This is a step-by-step guide on how to create an entry template.  The entry used 
+is *The Hunt for Red October*, and the data is based on the 1990 film.  A movie
+theme layout will be used similar to that of the popular movie site IMDb.com.  
+The guide assumes the user has already created an entry but wants to customize its layout.  
+To create an entry template click on **Data Management &rarr; Entry Template** and follow the steps below.
+
+**Step 1) &nbsp;Template Setup**  
+
+  1. Click on the **+Add** button on the Entry Template.
+  2. Give the template a unique name (see **Figure 1** - Yellow highlight).
+  3. Click on the **Data** tab and select the entry whose layout will be customized (see **Figure 1** - green and blue highlights). &nbsp;Note: The data fields will populate after entry is selected.
+
+![Image](../webapp/images/help/entry-template-title-data-entry.png)  
+
+**(Figure 1 - Template Setup)**  
+<br><br>
+
+**Step 2) &nbsp;Template Block Layout**   
+
+  1. Click on the **Template Blocks** tab (see **Figure 2** - green highlight).   
+  2. Select the main layout for the entry (E.g. fit, scroll, accordion).  In this example a scroll layout will be used.  
+  3. To add a layout click on the __+__ icon on the layout block (see **Figure 2** - blue highlight).  It will appear on the right side under the **Visual Design** tab (see **Figure 2** - red highlight).
+
+![Image](../webapp/images/help/entrytemplate-addLayoutScroll.png)  
+**(Figure 2 - Template Block Layout)**   
+<br><br>
+
+**Step 3) &nbsp;Adding Template Blocks to Layout**   
+
+  1. Click on the template block that should appear first in the entry template.  Drag and drop the block to the layout block on the right side (see **Figure 3**). <br>In this example, **Vitals** will be the first template block.  
+  2. Continue to add template blocks in the order you want them to show up in the entry template.
+  3. Once you have added all the blocks for your template, click **Save/Continue** button at the bottom of the window.
+
+![Image](../webapp/images/help/entrytemplate-dragVitals.png)   
+**(Figure 3 - Add Blocks to Layout)**   
+<br><br>
+
+**Step 4) Change the Title of Template Block - Optional**  
+
+  1. To change the title of the template block click on the **Block Config** tab (see **Figure 4** - green highlight).<br>
+  2. From the drop down menu, select the name of the template block whose title you want to change.
+  3. Click **+ Add Property** (see **Figure 4** - blue highlight).  
+  4. In the property text field, enter "title" (see **Figure 4** - red highlight).   
+  5. In the value text field, enter the new title (see **Figure 4** - purple highlight).  
+  6. Click **Apply** (see **Figure 4** - yellow highlight).  In this example, **Entry Vitals** will be changed to **Details**.
+
+![Image](../webapp/images/help/change-block-title-name.png)  
+**(Figure 4 - Change Template Block Title)**  
+<br><br>  
+
+**Step 5) Preview Entry Template - Optional**  
+
+  1. At any point during the construction of an entry template, you can preview what an entry will look like.
+  2. Click on the **Preview** tab (see **Figure 5** - green highlight).   
+  3. Depending on the layout chosen, you can collapse and expand blocks, scroll, click on tabs, etc.  
+
+![Image](../webapp/images/help/entry-preview-for-template.png)  
+**(Figure 5 - Template Preview)**  
+<br><br>
+
+**Step 6) Add the Entry Template to an Entry Type**   
+
+  1. Before closing the **Add/Edit Template** window, click on the **Save/Continue** button to make sure all changes have been saved.  
+  2. Close the **Add/Edit Template** window.
+  3. Navigate to your list of entry types ( **Data Management &rarr; Entry Types**).  
+  4. Select an entry type.  Note: all entries associated with this entry type will be affected by this change.  
+  5. Click the **Edit** button.  
+  6. At the bottom of the **Add/Edit Entry Type** window, click on the drop down arrow under **Override Template** (see **Figure 6** - red and blue highlights).  Select the entry template you just created.  
+  7. Click the **Save** button.  Now any entry of this type  has the layout of the template you created.
+
+![Image](../webapp/images/help/add-template-to-entry-type.png)  
+**(Figure 6 - Add Entry Template to an Entry Type)**  
+<br><br>
+
+-------

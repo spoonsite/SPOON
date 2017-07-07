@@ -43,7 +43,7 @@ public class UserProfileTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			setup(driver);
-			editProfile(driver, "cameron.cummings@sdl.usu.edu");
+			editProfile(driver, properties.getProperty("test.newuseremail"));
 			sendTestMessage(driver);
 		}
 

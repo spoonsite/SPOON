@@ -594,9 +594,9 @@ public class AttributeResource
 		}
 
 		if (attributeTypeSave.getAssociatedComponentTypes() != null
-				&& attributeTypeSave.getAssociatedComponentTypes().isEmpty() == false) {
+				&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-		} else if (attributeTypeSave.getAssociatedComponentTypes() == null) {
+		} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
 		}
 
@@ -623,9 +623,9 @@ public class AttributeResource
 				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
 			}
 			if (attributeTypeSave.getAssociatedComponentTypes() != null
-					&& attributeTypeSave.getAssociatedComponentTypes().isEmpty() == false) {
+					&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-			} else if (attributeTypeSave.getAssociatedComponentTypes() == null) {
+			} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
 			}
 			attributeType.setAttributeType(type);

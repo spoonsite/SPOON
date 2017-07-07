@@ -131,7 +131,7 @@ public class AccountSignupActivateTest
 		sleep(500);
 
 		// SUBMIT the form
-		driver.findElement(By.xpath("//span[@id='button-1026-btnInnerEl']")).click();
+		driver.findElement(By.cssSelector("#signupRegistrationBtn")).click();
 
 		// WAIT for signup to complete 
 		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");

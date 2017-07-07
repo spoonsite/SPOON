@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -36,7 +35,7 @@ public class AdminSavedSearchTest
 		extends AdminTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private static final Logger LOG = Logger.getLogger(AdminSavedSearchTest.class.getName());
 
 	@Test
 	public void adminSavedSearchTest() throws JsonProcessingException
@@ -262,6 +261,5 @@ public class AdminSavedSearchTest
 			}
 
 		}
-		apiClient.cleanup();
 	}
 }
