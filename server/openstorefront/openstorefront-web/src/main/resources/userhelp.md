@@ -1888,7 +1888,7 @@ To generate a more customized archive that is site specific do the following:
   1. Go to **Application Management &rarr; System Archives** and click on the **+ Generate Archive** button.  
   2. Give the archive a unique name.  
   3. Under **Archive Type** select **General** from the drop down menu.  
-  4. To select specific entries with their related data check the **Entries (Related Data)** box and select your entries.  
+  4. To select specific entries with their related data check the **Entries (Related Data)** box and select your entries.  Note: Only active reviews and question/answers are exported.
   5. Other options include highlights, organizations, attributes, and branding.  If branding is selected you will need to select one or more of the brandings under **Select Branding**.  
   6. Click the **Generate** button.  
   7. Optional - Once the archive has a status of *Complete*, you can download the archive and save it to your file system.  This is done by selecting the archive you generated and clicking the **Download** button.    
