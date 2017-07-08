@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
@@ -29,6 +30,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
@@ -40,6 +43,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
+import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
@@ -390,8 +394,7 @@ public class ComponentDetailReport
 						List<Map> reusabilityScores = new ArrayList<>();
 						
 						// get the score sections (and group them)
-						Map<String, List<ChecklistResponseView>> scoreSections = 
-							checklistAll
+						Map<String, List<ChecklistResponseView>> scoreSections = checklistAll
 							.getResponses()
 							.stream()
 							.collect(Collectors.groupingBy(
@@ -417,9 +420,50 @@ public class ComponentDetailReport
 						}
 						evalHash.put("scores", reusabilityScores);
 						
-						//TODO: sections
+						// Sections
+						List<ContentSectionAll> evaluationSectionsAll = evaluationAll.getContentSections();
+						List<Map> evaluationSections = new ArrayList<>();
+						for (ContentSectionAll sectionAll : evaluationSectionsAll) {
+							ContentSection section = sectionAll.getSection();
+							Map sectionHash = new HashMap();
+							
+							// get sub sections
+							List<Map> evaluationSubSections = new ArrayList<>();
+							for (ContentSubSection subSection : sectionAll.getSubsections()) {
+								Map subSectionHash = new HashMap();
+								subSectionHash.put("title", subSection.getTitle());
+								subSectionHash.put("content", subSection.getContent());
+								subSectionHash.put("isPrivate", subSection.getPrivateSection());
+								subSectionHash.put("hideTitle", subSection.getHideTitle());
+								subSectionHash.put("hideContent", subSection.getNoContent());
+								
+								evaluationSubSections.add(subSectionHash);
+							}
+							
+							sectionHash.put("subSections", evaluationSubSections);
+							sectionHash.put("title", section.getTitle());
+							sectionHash.put("content", section.getContent());
+							sectionHash.put("isPrivate", section.getPrivateSection());
+							sectionHash.put("hideContent", section.getNoContent());
+							
+							evaluationSections.add(sectionHash);
+						}
+						evalHash.put("evaluationSections", evaluationSections);
 						
-						//TODO: Evaluation checklist details (has a QID)
+						// Evaluation checklist details
+						List<ChecklistResponseView> checklistDetailsAll = evaluationAll.getCheckListAll().getResponses();
+						List<Map> checklistDetails = new ArrayList<>();
+						for (ChecklistResponseView detail : checklistDetailsAll) {
+							Map detailHash = new HashMap();
+							detailHash.put("qId", detail.getQuestion().getQid());
+							detailHash.put("question", detail.getQuestion().getQuestion());
+							detailHash.put("score", detail.getScore());
+							detailHash.put("response", detail.getResponse());
+							detailHash.put("section", detail.getQuestion().getEvaluationSectionDescription());
+							
+							checklistDetails.add(detailHash);
+						}
+						evalHash.put("checklistDetails", checklistDetails);
 						
 						// Add this evaluation to the evaluation list
 						evalList.add(evalHash);

@@ -276,7 +276,58 @@
 								
 					<!--Evaluation Details-->
 					<#if reportOptions.getDisplayEvalDetails() == true>
-						
+						<div class="evaluation-section">
+							<!--Evaluation Sections-->
+							<#if eval.evaluationSections?has_content>
+								<#list eval.evaluationSections as section>
+									<#if section.isPrivate == false>
+										<h3 class="eval-header">${section.title}</h3>
+										<#if section.hideContent == false>
+											${section.content}
+										</#if>
+
+										<!--Sub Sections-->
+										<#if section.subSections?has_content>
+											<#list section.subSections as subSection>
+												<#if subSection.isPrivate == false>
+													<div class="evaluation-section">
+														<#if subSection.hideTitle == false>
+															<h3 class="eval-header">${subSection.title}</h3>
+														</#if>
+														<#if subSection.hideContent == false>
+															${subSection.content}
+														</#if>
+													</div>
+												</#if>
+											</#list>
+										</#if>
+									</#if>
+								</#list>
+							</#if>
+							
+							<!--Checklist Details-->
+							<#if eval.checklistDetails?has_content>
+								<h3 class="eval-header">Evaluation Checklist Details</h3>
+								<table>
+									<tr>
+										<th style="width: 2.5%;">QID</th>
+										<th style="width: 5%;">Section</th>
+										<th style="width: 45%;">Question</th>
+										<th style="width: 2.5%;">Score</th>
+										<th style="width: 45%;">Response</th>
+									</tr>
+									<#list eval.checklistDetails as detail>
+										<tr>
+											<td><#if detail.qId?has_content>${detail.qId}</#if></td>
+											<td><#if detail.section?has_content>${detail.section}</#if></td>
+											<td><#if detail.question?has_content>${detail.question}</#if></td>
+											<td><#if detail.score?has_content>${detail.score}</#if></td>
+											<td><#if detail.response?has_content>${detail.response}</#if></td>
+										</tr>
+									</#list>
+								</table>
+							</#if>
+						</div>
 					</#if>
 
 					<#if reportOptions.getDisplayEvalVersions() != true>
