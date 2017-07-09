@@ -32,9 +32,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
@@ -57,7 +54,6 @@ import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
-import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -538,40 +534,6 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 
 		return sendSingleEntityResponse(attributeCode);
-	}
-
-	@GET
-	@APIDescription("Get the components which contain a specified attribute type and code")
-	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(AttributeCode.class)
-	@Path("/attributetypes/{type}/attributecodes/{code}/components")
-	public List<ComponentView> getComponentsWithAttributeCode(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code)
-	{
-		List<ComponentView> components = new ArrayList<>();
-
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType(type);
-		componentAttributePk.setAttributeCode(code);
-		componentAttributeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
-		for (ComponentAttribute attributeComponent : attributeComponents) {
-
-			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
-
-			ComponentView view = ComponentView.toView(component);
-
-			if (view != null) {
-
-				components.add(view);
-			}
-		}
-		return components;
 	}
 
 	@POST

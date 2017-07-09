@@ -83,7 +83,7 @@ public class AttributeSearchHandler
 				if (attributeType != null) {
 					if (AttributeValueType.NUMBER.equals(attributeType.getAttributeValueType())) {
 						List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
-						componentAttributes.stream()
+						attributes = componentAttributes.stream()
 								.filter((attribute) -> {
 									boolean keep = false;
 									BigDecimal value = Convert.toBigDecimal(attribute.getComponentAttributePk().getAttributeCode());

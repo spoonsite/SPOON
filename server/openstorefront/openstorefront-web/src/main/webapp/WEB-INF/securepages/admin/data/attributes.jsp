@@ -25,7 +25,8 @@
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 	</stripes:layout-render>
 		
-	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
+	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/attributeAssignment.js?v=${appVersion}" type="text/javascript"></script>	
 
 	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
@@ -562,7 +563,9 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
-									actionManageAssignments();
+									var entryWin = Ext.create('OSF.component.AttributeAssignment', {										
+									});
+									entryWin.show();
 								}
 							},
 							{
@@ -2010,10 +2013,14 @@
 				
 				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
 					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-label').setDisabled(true);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
 				} else {
 					Ext.getCmp('editCodeForm-label').setHidden(false);
-					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);					
+					Ext.getCmp('editCodeForm-label').setDisabled(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
 				}				
 				
 				editCodeWin.show();
