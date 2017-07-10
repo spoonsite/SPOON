@@ -1870,7 +1870,7 @@ pairs that could be optionally added are described below:
 
 -----  
 
-### 3.3.8 System Archives @ADMIN-TRACKING  
+### 3.3.8 System Archives @ADMIN-SYSTEM-MANAGEMENT  
 -----  
 
 Allows administrator to generate either an entire database archive (OrientDB) or a general archive that is specified by the administrator.  
@@ -1907,7 +1907,7 @@ To delete an archive, select the archive you want to delete and click the **Dele
 
 ------
 
-### 3.3.9 Security @ADMIN-TRACKING
+### 3.3.9 Security @ADMIN-SECURITY
 
 The Security Management area consists of the Security Policy and the Shiro Config.
 
@@ -1917,7 +1917,7 @@ Some policies only apply to the built-in security realm.
 Shiro Config is used for troubleshoot security realm configuration as well as making it easier to update URL policies.  The application will need to be restarted to apply the changes.  
 Also, note the application will create a backup file of the current policy so an admin can roll it back, if needed.   Only the previous version is backed up.
 
-### 3.3.10 Security Roles @ADMIN-TRACKING
+### 3.3.10 Security Roles @ADMIN-ROLE-MANAGEMENT
 
 This section is used to match up Roles with Users, Permissions, and Data Restrictions.
 
@@ -1944,8 +1944,79 @@ The primary tracking events can be viewed using the Tracking Admin Tool.
 The events are also aggregated into various system generated reports which
 are accessible via the Reports Admin Tool.
 
-### 3.3.12 User Management @ADMIN-TRACKING
+-----  
 
+### 3.3.12 User Management @ADMIN-USER-MANAGEMENT  
+-----   
+
+Administrator can add users, send messages to individual users, approve new user accounts, lock/unlock user accounts, delete user accounts, and manage the roles of users.  
+
+-----  
+
+#### 3.3.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+When a user registers for a new account, it is the responsibility of the administrator to approve the account.  
+To approve a new account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab. 
+  2. In the **Active Status** drop down menu, select *Locked/Disabled*.
+  3. In the **Approval Status** drop down menu, select *Pending*.  A list will be displayed of accounts awaiting approval.  
+  4. Select a *Pending* account you want to approve and click the **Approve** button.  
+  5. To verify account has been activated, select *Active* from the **Active Status** drop down menu and *Approved* from the **Approval Status** drop down menu.
+
+-----  
+
+#### 3.3.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+Locking a user account only deactivates/disables it.  To lock a user account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the account you want to lock/disable and click on the **Lock Account** button.  
+  3. To verify the account has been disabled, click on *Locked/Disabled* in the **Active Status** drop down menu.  
+
+To unlock/reactivate an account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. In the **Active Status** drop down menu, select *Locked/Disabled*.  
+  3. Select the account you want to unlock/reactivate and click on the **Unlock Account** button.  
+  4. To verify the account has been reactivated, click on *Active* in the **Active Status** drop down.  
+
+-----  
+
+#### 3.3.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT  
+ 
+Administrator can add users to specific groups/roles that have been created in **Security Role Management**.  Each group in **Security Role Management** has a list of permissions and data restrictions.  
+<br>To add a role to a user:
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the user you would like to add a role to and click on the **Manage Roles** button.  
+  3. Select a role from the **Add Role** drop down menu and click the **Add** button.  
+  4. A list of the user's current roles is shown below.  
+
+To remove a role from a user:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the user you would like to remove a role from and click on the **Manage Roles** button.  
+  3. Click on the trash can icon to the right of the role you want to remove.  Click **Yes** to confirm deletion of role.
+
+-----  
+
+#### 3.3.12.4 Adding/Deleting User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+Administrator can create a user account by doing the following:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Registrations** tab.  
+  2. Click on the **Add** button.  
+  3. Fill in the required information and click on the **Signup** button.  
+  4. The new user account will be listed in the list of active accounts.  
+
+To delete a user account:  
+
+  1. Go to **Application Management &rarr; User Management**.  
+  2. Select the account you want to delete (Note: this will permanently delete the account).  
+  3. Click the **Delete** button in the toolbar and then click **Yes** to confirm deletion.  
+
+-----  
 
 ### 3.3.13 API Documentation @API-DOCS
 ------
@@ -1954,7 +2025,7 @@ This contains the documentation for the Application Programming Interface, or AP
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @ADMIN-SYSTEM-MANAGEMENT 
+# 4.  Evaluator Tools @ADMIN-EVALUATION-MANAGEMENT 
 ------
 
 **NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
@@ -1964,28 +2035,28 @@ This section covers Evaluation Management as it exists in Admin Tools.  For eval
 **Evaluation Management within Admin Tools**
 The Evaluation Management menu consists of Evaluations and Templates.
 
-## 4.1 Evaluations @ADMIN-SYSTEM-MANAGEMENT 
+## 4.1 Evaluations @ADMIN-EVALUATION-MANAGEMENT 
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
 
-## 4.2 Templates @ADMIN-SYSTEM-MANAGEMENT 
+## 4.2 Templates @ADMIN-EVALUATION-TEMPLATE 
 
 The templates section lets you manipulate various templates for evaluation input and display.
 
-### 4.2.1 Evaluation Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.1 Evaluation Templates @ADMIN-EVALUATION-TEMPLATE 
 
 This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
 
-### 4.2.2 Checklist Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.2 Checklist Templates @ADMIN-EVALUATION-TEMPLATE-CHECKLIST 
 
 A checklist template lets you add various questions as a checklist.
 
-### 4.2.3 Checklist Questions @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.3 Checklist Questions @ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION   
 
 Here you formulate the questions to be asked on a template.
 
-### 4.2.4 Section Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.4 Section Templates @ADMIN-EVALUATION-TEMPLATE-SECTION  
 
 Section templates can be created for further customization.
 
@@ -2019,7 +2090,7 @@ Contains definitions of terms used in the application and in the help documentat
 ##6.1 Admin Guides
 -----------------
 
-### 6.1.1 How to Create an Entry Template
+### 6.1.1 How to Create an Entry Template @ADMIN-ENTRY-MANAGEMENT
 -----------------  
 
 This is a step-by-step guide on how to create an entry template.  The entry used 
