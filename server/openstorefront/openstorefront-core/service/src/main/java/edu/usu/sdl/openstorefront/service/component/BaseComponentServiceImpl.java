@@ -78,6 +78,7 @@ public abstract class BaseComponentServiceImpl
 		OSFCacheManager.getComponentApprovalCache().remove(componentId);
 		OSFCacheManager.getComponentDataRestrictionCache().remove(componentId);
 		OSFCacheManager.getComponentIconCache().remove(componentId);
+		OSFCacheManager.getComponentTypeComponentCache().remove(componentId);
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 

@@ -217,7 +217,7 @@ public class SearchServiceImpl
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
 			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
 			if (element != null) {
-			//	return searchResult = (AdvanceSearchResult) element.getObjectValue();
+				return searchResult = (AdvanceSearchResult) element.getObjectValue();
 			}
 		}
 

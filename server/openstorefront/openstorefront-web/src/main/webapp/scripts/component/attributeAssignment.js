@@ -101,18 +101,136 @@ Ext.define('OSF.component.AttributeAssignment', {
 									"code",
 									"label"
 								]																							
-							})									
+							}),
+							listeners: {
+								change: function(field, newValue, oldValue, opts) {
+									assignPanel.actionRefreshData();
+								}
+							}
 						}
 					]
 				}
 			]
 		});
 		
+		assignPanel.actionPullEntries = function(callback) {
+			
+			if (!assignPanel.allEntries) {
+				layoutPanel.setLoading(true);
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/filterable',
+					callback: function() {
+						layoutPanel.setLoading(false);
+					},
+					success: function(response, opts) {
+						assignPanel.allEntries = Ext.decode(response.responseText).components;
+						if (callback) {
+							callback();
+						}
+					}
+
+				});			
+			} else {
+				if (callback) {
+					callback();
+				}
+			}	
+		};
+		assignPanel.actionPullEntries();
+		
+		assignPanel.actionRefreshData = function() {
+				
+			var attributeType = layoutPanel.queryById('attributeTypeCB').getValue();	
+			var attributeCode = layoutPanel.queryById('attributeCodeCB').getValue();	
+			layoutPanel.setLoading(true);	
+			Ext.Ajax.request({
+				url: 'api/v1/resource/componentattributes?attributeType=' + attributeType + '&attributeCode=' + attributeCode,
+				callback: function() {
+					layoutPanel.setLoading(false);
+				},
+				success: function(response, opt) {
+					var assignedRaw = Ext.decode(response.responseText);
+					assignedRaw = assignedRaw.data;
+					
+					var unassigned = [];
+					var assigned = [];
+					Ext.Array.each(assignPanel.allEntries, function(entry){
+						
+						var found = Ext.Array.findBy(assignedRaw, function(item) {
+							if (entry.component.componentId === item.componentId) {
+								return true;
+							}							
+						});
+						
+						if (found) {
+							assigned.push(entry);
+						} else {
+							unassigned.push(entry);
+						}
+						
+					});
+					
+					assignPanel.unassignedGrid.getStore().loadRawData(unassigned);
+					assignPanel.assignedGrid.getStore().loadRawData(assigned);
+					
+					assignPanel.actionApplyFilter();
+				}
+			});
+			
+		};
+		
+		assignPanel.actionApplyFilter = function() {
+			assignPanel.unassignedGrid.getStore().clearFilter();					
+
+			var componentTypes = assignPanel.unassignedGrid.queryById('filterType').getValue();
+			var filterName = assignPanel.unassignedGrid.queryById('filterName').getValue();
+			var filters = [];
+			if (componentTypes && componentTypes.length > 0) {
+				
+				filters.push({
+					property: 'componentType',
+					value: componentTypes,
+					operator: 'in'
+				});					
+			}
+			
+			if (filterName) {
+				filters.push({
+					property: 'name',
+					value: filterName,
+					operator: 'like'
+				});
+			}
+			assignPanel.unassignedGrid.getStore().filter(filters);				
+			
+		};
+		
+		assignPanel.actionAssign = function() {
+			
+		};
+		
+		assignPanel.actionUnassign = function() {
+			
+		};
+		
+		
 		assignPanel.unassignedGrid = Ext.create('Ext.grid.Panel', {
 			width: '50%',
 			title: 'Unassigned Entries',
 			margin: '0 5 0 0',
-			store: {				
+			frame: true,
+			store: {	
+				fields: [
+					{ name: 'componentId', mapping: function(data) {
+						return data.component.componentId;
+					}},					
+					{ name: 'name', mapping: function(data) {
+						return data.component.name;
+					}},
+					{ name: 'componentType', mapping: function(data) {
+						return data.component.componentType;
+					}}
+				]				
 			},
 			columnLines: true,
 			selModel: {
@@ -121,17 +239,28 @@ Ext.define('OSF.component.AttributeAssignment', {
 			columns: [
 				{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 100 }
 			],
+			listeners: {
+				selectionchange: function(grid, records) {
+					if (records.length > 0) {
+						assignPanel.unassignedGrid.queryById('assignEntriesBtn').setDisabled(false);
+					} else {
+						assignPanel.unassignedGrid.queryById('assignEntriesBtn').setDisabled(true);
+					}
+				}
+			},
 			dockedItems: [
 				{
 					xtype: 'panel',
 					dock: 'top',
 					layout: 'anchor',
+					bodyStyle: 'padding: 5px',
 					items: [
 						{
-							xtype: 'combobox',
+							xtype: 'tagfield',
+							itemId: 'filterType',
 							valueField: 'code',
 							displayField: 'description',
-							fieldLabel: 'Entry Type',
+							fieldLabel: 'Entry Type',							
 							width: '100%',
 							store: {
 								autoLoad: true,
@@ -140,20 +269,21 @@ Ext.define('OSF.component.AttributeAssignment', {
 									url: 'api/v1/resource/componenttypes/lookup'
 								}
 							},
-							listerns: {
+							listeners: {
 								change: function(field, newValue, oldValue) {
-									
+									assignPanel.actionApplyFilter();
 								}
 							}
 						},
 						{
 							xtype: 'textfield',
+							itemId: 'filterName',
 							name: 'filter',
 							fieldLabel: 'Filter Name',
 							width: '100%',
-							listerns: {
+							listeners: {
 								change: function(field, newValue, oldValue) {
-									
+									assignPanel.actionApplyFilter();
 								}
 							}							
 						}
@@ -165,8 +295,37 @@ Ext.define('OSF.component.AttributeAssignment', {
 					items: [
 						{
 							text: 'Assign Entries',
-							items: 'assignEntriesBtn',
-							handle: function() {
+							itemId: 'assignEntriesBtn',
+							iconCls: 'fa fa-lg fa-arrow-left',							
+							disabled: true,
+							handler: function() {
+								var records = assignPanel.unassignedGrid.getSelection();								
+								
+								var ids = [];
+								Ext.Array.each(records, function(record){
+									ids.push(record.get('componentId'));
+								});
+								
+								var data = {
+									ids: ids
+								};								
+								
+								var attributeType = layoutPanel.queryById('attributeTypeCB').getValue();	
+								var attributeCode = layoutPanel.queryById('attributeCodeCB').getValue();
+								
+								layoutPanel.setLoading('Assigning Entries...');
+								Ext.Ajax.request({
+									url: 'api/v1/resource/componentattributes/' + attributeType + '/' + attributeCode,
+									method: 'POST',
+									jsonData: data,
+									callback: function() {										
+										layoutPanel.setLoading(false);
+									},
+									success: function(response, opt) {
+										Ext.toast('Assigned Attributes Successfully');
+										assignPanel.actionRefreshData();										
+									}
+								});
 								
 							}
 						}
@@ -178,7 +337,16 @@ Ext.define('OSF.component.AttributeAssignment', {
 		assignPanel.assignedGrid = Ext.create('Ext.grid.Panel', {
 			width: '50%',
 			title: 'Assigned Entries',
-			store: {				
+			frame: true,
+			store: {	
+				fields: [
+					{ name: 'componentId', mapping: function(data) {
+						return data.component.componentId;
+					}},					
+					{ name: 'name', mapping: function(data) {
+						return data.component.name;
+					}}
+				]
 			},
 			columnLines: true,
 			selModel: {
@@ -187,16 +355,55 @@ Ext.define('OSF.component.AttributeAssignment', {
 			columns: [
 				{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 100 }
 			],
+			listeners: {
+				selectionchange: function(grid, records) {
+					if (records.length > 0) {
+						assignPanel.assignedGrid.queryById('unassignEntriesBtn').setDisabled(false);
+					} else {
+						assignPanel.assignedGrid.queryById('unassignEntriesBtn').setDisabled(true);
+					}
+				}
+			},			
 			dockedItems: [
 				{
 					xtype: 'toolbar',
 					dock: 'bottom',
 					items: [
 						{
-							text: 'Unassign Entries',							
-							items: 'assignEntriesBtn',
-							handle: function() {
+							text: 'Unassign Entries',		
+							iconCls: 'fa fa-lg fa-arrow-right',
+							iconAlign: 'right',
+							itemId: 'unassignEntriesBtn',
+							disabled: true,
+							handler: function() {
+								var records = assignPanel.assignedGrid.getSelection();
 								
+								var ids = [];
+								Ext.Array.each(records, function(record){
+									ids.push(record.get('componentId'));
+								});
+								
+								var data = {
+									ids: ids
+								};
+								
+								
+								var attributeType = layoutPanel.queryById('attributeTypeCB').getValue();	
+								var attributeCode = layoutPanel.queryById('attributeCodeCB').getValue();
+								
+								layoutPanel.setLoading('Removing attributes from entries...');
+								Ext.Ajax.request({
+									url: 'api/v1/resource/componentattributes/' + attributeType + '/' + attributeCode,
+									method: 'DELETE',
+									jsonData: data,
+									callback: function() {										
+										layoutPanel.setLoading(false);
+									},
+									success: function(response, opt) {
+										Ext.toast('Unassigned Attributes Successfully');
+										assignPanel.actionRefreshData();
+									}
+								});								
 							}
 						}
 					]					

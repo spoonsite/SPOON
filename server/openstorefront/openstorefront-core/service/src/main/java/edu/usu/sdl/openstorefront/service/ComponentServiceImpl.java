@@ -679,4 +679,10 @@ public class ComponentServiceImpl
 		return core.resolveComponentTypeIcon(componentType);
 	}
 
+	@Override
+	public String getComponentType(String componentId)
+	{
+		return core.getComponentType(componentId);
+	}
+
 }

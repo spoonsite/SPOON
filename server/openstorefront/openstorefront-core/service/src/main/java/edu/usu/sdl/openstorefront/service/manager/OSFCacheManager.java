@@ -46,6 +46,7 @@ public class OSFCacheManager
 	private static Cache componentApprovalCache;
 	private static Cache componentDataRestrictionCache;
 	private static Cache componentTypeCache;
+	private static Cache componentTypeComponentCache;
 	private static Cache componentIconCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
@@ -108,6 +109,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentTypeCache", 1, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentTypeCache = singletonManager.getCache("componentTypeCache");
+
+			memoryOnlyCache = new Cache("componentTypeComponentCache", 50000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentTypeComponentCache = singletonManager.getCache("componentTypeComponentCache");
 
 			memoryOnlyCache = new Cache("applicationCache", 100, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
@@ -219,6 +224,11 @@ public class OSFCacheManager
 	public static Cache getComponentIconCache()
 	{
 		return componentIconCache;
+	}
+
+	public static Cache getComponentTypeComponentCache()
+	{
+		return componentTypeComponentCache;
 	}
 
 	@Override

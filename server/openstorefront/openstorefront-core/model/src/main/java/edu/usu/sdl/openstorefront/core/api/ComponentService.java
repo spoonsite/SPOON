@@ -175,6 +175,14 @@ public interface ComponentService
 	public String getComponentName(String componentId);
 
 	/**
+	 * High-speed component type lookup
+	 *
+	 * @param componentId
+	 * @return ComponentType Code or null if not found
+	 */
+	public String getComponentType(String componentId);
+
+	/**
 	 * High-speed check for approval
 	 *
 	 * @param componentId
