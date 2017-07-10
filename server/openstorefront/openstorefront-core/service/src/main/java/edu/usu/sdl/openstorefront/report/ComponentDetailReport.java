@@ -21,13 +21,13 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
-import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
@@ -44,6 +44,13 @@ import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
@@ -355,9 +362,141 @@ public class ComponentDetailReport
 			{
 				String securityMarking = "";
 				Map componentRoot = new HashMap();
+				ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(component.getComponentId());
+				
+				// Generate dependencies
+				List<ComponentExternalDependencyView> allDependencies = componentDetail.getDependencies();
+				if (allDependencies != null) {
+					
+					List<Map> dependenciesList = new ArrayList<>();
+					for (ComponentExternalDependencyView dependent : allDependencies) {
+						
+						Map dependentHash = new HashMap();
+						dependentHash.put("name", dependent.getDependencyName());
+						dependentHash.put("version", dependent.getVersion());
+						dependentHash.put("link", dependent.getDependancyReferenceLink());
+						dependentHash.put("comment", dependent.getComment());
+						
+						dependenciesList.add(dependentHash);
+					}
+					
+					componentRoot.put("dependencies", dependenciesList);
+				}
+				
+				// Generate tags
+				List<ComponentTag> allTags = componentDetail.getTags();
+				if (allTags != null) {
+					
+					List<Map> tagsList = new ArrayList<>();
+					for (ComponentTag tag : allTags) {
+						
+						Map tagHash = new HashMap();
+						tagHash.put("text", tag.getText());
+						tagsList.add(tagHash);
+					}
+					
+					componentRoot.put("tags", tagsList);
+				}
+				
+				// Generate relationships
+				List<ComponentRelationshipView> allRelationships = componentDetail.getRelationships();
+				if (allRelationships != null) {
+					
+					List<Map> relationsList = new ArrayList<>();
+					for (ComponentRelationshipView relation : allRelationships) {
+						
+						Map relationHash = new HashMap();
+						relationHash.put("type", relation.getRelationshipTypeDescription());
+						//relationHash.put("type", relation.getRelationshipType());
+						relationHash.put("targetName", relation.getTargetComponentName());
+						relationHash.put("componentName", component.getName());
+						relationsList.add(relationHash);
+					}
+					
+					componentRoot.put("relationships", relationsList);
+				}
+				
+				// Generate reviews
+				List<ComponentReviewView> allReviews = componentDetail.getReviews();
+				if (allReviews != null) {
+					
+					List<Map> reviewsList = new ArrayList<>();
+					for (ComponentReviewView review : allReviews) {
+						
+						Map reviewHash = new HashMap();
+						reviewHash.put("rating", review.getRating());
+						reviewHash.put("title", review.getTitle());
+						reviewHash.put("username", review.getUsername());
+						reviewHash.put("lastUsed", review.getLastUsed());
+						reviewHash.put("organization", review.getOrganization());
+						reviewHash.put("timeDescription", review.getUserTimeDescription());
+						reviewHash.put("comment", review.getComment());
+						reviewHash.put("recommended", review.isRecommend());
+						
+						List<ComponentReviewProCon> allReviewPros = review.getPros();
+						List<ComponentReviewProCon> allReviewCons = review.getCons();
+						List<Map> reviewPros = new ArrayList<>();
+						if (allReviewPros != null) {
+							for (ComponentReviewProCon pro : allReviewPros) {
+								Map proHash = new HashMap();
+								proHash.put("pro", pro.getText());
+								reviewPros.add(proHash);
+							}
+						}
+						
+						List<Map> reviewCons = new ArrayList<>();
+						if (allReviewCons != null) {
+							for (ComponentReviewProCon con : allReviewCons) {
+								Map conHash = new HashMap();
+								conHash.put("con", con.getText());
+								reviewCons.add(conHash);
+							}
+						}
+						
+						reviewHash.put("pros", reviewPros);
+						reviewHash.put("cons", reviewCons);
+						reviewsList.add(reviewHash);
+					}
+					
+					componentRoot.put("reviews", reviewsList);
+				}
+				
+				// Generate Q/A
+				List<ComponentQuestionView> allQuestions = componentDetail.getQuestions();
+				if (allQuestions != null) {
+					
+					List<Map> questionsList = new ArrayList<>();
+					for (ComponentQuestionView question : allQuestions) {
+						
+						Map questionHash = new HashMap();
+						questionHash.put("question", question.getQuestion());
+						questionHash.put("username", question.getUsername());
+						questionHash.put("date", question.getCreateDts());
+						
+						List<ComponentQuestionResponseView> allResponses = question.getResponses();
+						if (allResponses != null) {
+							
+							List<Map> responsesList = new ArrayList<>();
+							for (ComponentQuestionResponseView response : allResponses) {
+								
+								Map responseHash = new HashMap();
+								responseHash.put("response", response.getResponse());
+								responseHash.put("username", response.getUsername());
+								responseHash.put("date", response.getAnsweredDate());
+								responsesList.add(responseHash);
+							}
+							
+							questionHash.put("responses", responsesList);
+						}
+						
+						questionsList.add(questionHash);
+					}
+					
+					componentRoot.put("QA", questionsList);
+				}
 				
 				// Generate evaluation data
-				List<EvaluationAll> allEvals = service.getComponentService().getComponentDetails(component.getComponentId()).getFullEvaluations();
+				List<EvaluationAll> allEvals = componentDetail.getFullEvaluations();
 				if (allEvals != null) {
 					
 					List<Map> evalList = new ArrayList<>();
@@ -613,6 +752,7 @@ public class ComponentDetailReport
 				}
 				
 				componentRoot.put("component", component);
+				componentRoot.put("name", component.getName());
 				componentList.add(componentRoot);
 			}
 			

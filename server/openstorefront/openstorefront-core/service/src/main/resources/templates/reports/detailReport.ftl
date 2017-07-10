@@ -98,6 +98,25 @@
 			float: right;
 			margin-right: 15px;
 		}
+		.component-tag {
+			font-weight: bold;
+			background-color: #5d5d5d;
+			border-radius: 100%;
+			padding: 5px;
+			font-style: normal;
+			color: #FFF;
+		}
+		.section-indent {
+			margin-left: 25px;
+		}
+		.qa-metadata {
+			margin-top: 0px;
+			padding-top: 0px;
+			font-size: 0.75em;
+			color: #9a9a9a;
+		}
+		.qa-header {
+			display: inline;
 	</style>
 </head>
 <body>
@@ -120,6 +139,15 @@
 				${component.component.getSecurityMarkingType()}
 			</#if>
 		</div>
+			
+		<#if component.tags?has_content && reportOptions.getDisplayTags() == true>
+			<div>
+				<b>Tags: </b>
+				<#list component.tags as tag>
+					<i class="component-tag">${tag.text}</i>
+				</#list>
+			</div>
+		</#if>
 		
 		<!--Description-->
 		<#if reportOptions.getDisplayDescription()>
@@ -212,7 +240,120 @@
 			</table>
 		</#if>
 			
-		<#if component.evaluations?has_content>
+		<!--Dependencies-->
+		<#if component.dependencies?has_content && reportOptions.getDisplayDependencies() == true>
+			<h2>Dependencies</h2>
+			<table>
+				<#list component.dependencies as dependent>
+					<tr>
+						<td>
+							<div><b>${dependent.name}</b> - ${dependent.version}</div>
+							<#if dependent.link?has_content><div>${dependent.link}</div></#if>
+							<div>${dependent.comment}</div>
+						</td>
+					</tr>
+				</#list>
+			</table>
+		</#if>
+			
+		<!--Relationships-->
+		<#if component.relationships?has_content && reportOptions.getDisplayRelationships() == true>
+			<h2>Relationships</h2>
+			<table>
+				<tr>
+					<th>Entry</th>
+					<th>Relationship Type</th>
+					<th>Related Entry</th>
+				</tr>
+				
+				<#list component.relationships as relationship>
+					<tr>
+						<td>${relationship.componentName}</td>
+						<td><b>${relationship.type}</b></td>
+						<td>${relationship.targetName}</td>
+					</tr>
+				</#list>
+			</table>
+		</#if>
+			
+		<!--Reviews-->
+		<#if component.reviews?has_content && reportOptions.getDisplayReportReviews() == true>
+			<h2>Reviews</h2>
+			<table>
+				<tr>
+					<!--<th>Title</th>-->
+					<th>User</th>
+					<th>Rating</th>
+					<th>Last Used</th>
+					<th>Recommended</th>
+					<th>Pros</th>
+					<th>Cons</th>
+					<th>Comment</th>
+				</tr>
+				<#list component.reviews as review>
+					<tr>
+						<td>${review.username}</td>
+						<td>${review.rating}/5</td>
+						<td>${review.lastUsed?string('MM/yyyy')}</td>
+						<td>${review.recommended?c}</td>
+						
+						<!--Pros-->
+						<td>
+							<#if review.pros?has_content>
+								<#list review.pros as pro>
+									<p>- ${pro.pro}</p>
+								</#list>
+							</#if>
+						</td>
+						
+						<!--Cons-->
+						<td>
+							<#if review.cons?has_content>
+								<#list review.cons as con>
+									<p>- ${con.con}</p>
+								</#list>
+							</#if>
+						</td>
+						
+						<td>${review.comment}</td>
+					</tr>
+				</#list>
+			</table>
+		</#if>
+			
+		<!--Q/A-->
+		<#if component.QA?has_content && reportOptions.getDisplayQA() == true>
+			<h2>Questions & Answers</h2>
+			
+			<!--questions-->
+			<#list component.QA as qa>
+				<div>
+					<div>
+						<h3 class="qa-header">Q. </h3>${qa.question}
+					</div>
+					<div class="qa-metadata">
+						${qa.username} - ${qa.date?string('MM/DD/yyyy')}
+					</div>
+					
+					<!--responses-->
+					<#if qa.responses?has_content>
+						<#list qa.responses as response>
+							<div class="section-indent">
+								<div>
+									<h3 class="qa-header">A. </h3>${response.response}
+								</div>
+								<div class="qa-metadata">
+									${response.username} - ${response.date?string('MM/dd/yyyy')}
+								</div>
+							</div>
+						</#list>
+					</#if>
+				</div>
+			</#list>
+		</#if>
+			
+		<!--Evaluation-->
+		<#if component.evaluations?has_content && (reportOptions.getDisplayEvalSummary() == true || reportOptions.getDisplayEvalDetails() == true)>
 			<#assign flag = true>
 			<#list component.evaluations as eval>
 				<#if flag == true>
