@@ -33,6 +33,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -42,6 +44,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -55,6 +58,12 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 public class UserRegistrationResource
 		extends BaseResource
 {
+
+	@Context
+	HttpServletRequest request;
+
+	@Context
+	HttpServletResponse response;
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
@@ -129,6 +138,36 @@ public class UserRegistrationResource
 	}
 
 	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@APIDescription("Creates a user registration by administrator")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/admin")
+	public Response adminCreateUserRegistration(
+			UserRegistration userRegistration
+	)
+	{
+		ValidationResult validationResult = userRegistration.validate();
+		if (validationResult.valid()) {
+			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, false));
+		}
+		if (validationResult.valid()) {
+			validationResult.merge(service.getSecurityService().processNewUser(userRegistration));
+		}
+
+		if (validationResult.valid()) {
+			UserRegistration savedRegistration = new UserRegistration();
+			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
+			savedRegistration = savedRegistration.find();
+
+			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+
+	}
+
+	@POST
 	@APIDescription("Creates a user registration")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -136,13 +175,13 @@ public class UserRegistrationResource
 			UserRegistration userRegistration
 	)
 	{
-		boolean verifyEmail = !SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+		if (SecurityUtil.isLoggedIn()) {
+			SecurityUtil.logout(request, response);
+		}
+
 		ValidationResult validationResult = userRegistration.validate();
 		if (validationResult.valid()) {
-			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, verifyEmail));
-		}
-		if (!verifyEmail && validationResult.valid()) {
-			validationResult.merge(service.getSecurityService().processNewUser(userRegistration));
+			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, true));
 		}
 
 		if (validationResult.valid()) {
@@ -164,6 +203,10 @@ public class UserRegistrationResource
 			UserRegistration userRegistration
 	)
 	{
+		if (SecurityUtil.isLoggedIn()) {
+			SecurityUtil.logout(request, response);
+		}
+
 		ValidationResult validationResult = userRegistration.validate();
 		validationResult.merge(validateCode(userRegistration));
 		if (validationResult.valid()) {
@@ -181,7 +224,7 @@ public class UserRegistrationResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@APIDescription("Deletes a user registeration record and the associated user.")
