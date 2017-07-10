@@ -201,7 +201,8 @@ public class UserRegistrationResource
 		UserRegistration savedRegistration = new UserRegistration();
 		savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
 		savedRegistration = savedRegistration.find();
-		if ((!userRegistration.getEmail().equals(savedRegistration.getEmail()))
+		if (savedRegistration == null
+				|| (!userRegistration.getEmail().equals(savedRegistration.getEmail()))
 				|| (!userRegistration.getUsername().equals(savedRegistration.getUsername()))
 				|| (!userRegistration.getVerificationCode().equals(savedRegistration.getVerificationCode()))) {
 			RuleResult ruleResult = new RuleResult();
