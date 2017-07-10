@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.3
+Version 2.4
                                                      
 
 # 1. Overview
@@ -28,29 +28,28 @@ licensed under GPL V3.**
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
-## 1.1 Release Notes for v2.3
+## 1.1 Release Notes for v2.4
 ------
 
-Version 2.3 incorporates:
+Version 2.4 incorporates:
 
- * Fixes for several small bugs.
- * Password management, new user sign up management.
- * New tools for evaluators.
- * New administrative tools, including the introduction of roles and permissions.
+* New Landing Page Design - Search Tools, Quick Launch, Browse by Category
+* Search tools include tag cloud, organization, relationships, etc.
+* Quick Launch includes dashboard, user submissions, saved searches, etc.
+* Ability to print evaluations
+* Side by side comparison of evaluations
+* Entry detail reports will have evaluation results
 
 
-### 1.1.1 Administrator Release Notes, v2.3 @ADMIN-SYSTEM-MANAGEMENT
+### 1.1.1 Administrator Release Notes, v2.4 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
-*What's new in v2.3*
+*What's new in v2.4*
 
- * Forgot password, password management, and sign up management.
- * Evaluator Tools added
- * Admin- Adding Roles and Permissions to Users
- * Admin- System Export/Import
- * IE9 is now not officially supported.  A warning will come up for IE9 users, advising them to upgrade their browser.
- 
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+* Support for customizing the landing page
+* Support for metadata has been merged with attributes
+
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.4" target="_blank">v2.4</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
 ## 1.2 Known Issues, v2.3 @ADMIN-SYSTEM-MANAGEMENT 
