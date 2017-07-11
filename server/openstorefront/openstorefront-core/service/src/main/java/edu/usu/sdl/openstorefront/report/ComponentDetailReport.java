@@ -27,17 +27,36 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
+import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
+import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.service.manager.ReportManager;
+import freemarker.template.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +64,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
 /**
  *
@@ -321,220 +345,397 @@ public class ComponentDetailReport
 	}
 
 	private void generateHtml()
-	{
+	{	
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
-
-		htmlGenerator.addLine("Component Details Report: " + sdf.format(TimeUtil.currentDate()));
-		htmlGenerator.addSpace();
-
-		htmlGenerator.addStyleBlock(
-				"body{ font-family: Helvetica, Verdana, Arial, sans-serif; } "
-				+ "h1 { background-color: #F1F1F1; } "
-				+ "table{ "
-				+ "border: 1px black solid; "
-				+ "border-collapse: collapse;"
-				+ "border-spacing: 0;"
-				+ "} "
-				+ "table td,th { "
-				+ "padding-left: 5px; "
-				+ "padding-right: 5px; "
-				+ "} "
-				+ "th { "
-				+ "color: white; "
-				+ "background-color: #414e68; "
-				+ "border: 1px lightgray solid; "
-				+ " } "
-				+ " td { "
-				+ "border: 1px lightgray solid; "
-				+ " padding: 5px; "
-				+ " } "
-				+ " tr:nth-child(odd) { "
-				+ " background-color: #eeeeee "
-				+ " } "
-				+ " tr:nth-child(even) {  "
-				+ " background-color: white; "
-				+ " } "
-				+ "@media print {"
-				+ " .pageBreak { "
-				+ "    page-break-after: always; "
-				+ " }}"
-		);
-
-		htmlGenerator.addLine("Entries (" + components.size() + ")");
-		htmlGenerator.addRuleLine();
-
-		for (Component component : components) {
-
-			String securityMarking = "";
-			if (getBranding().getAllowSecurityMarkingsFlg()) {
-				securityMarking = "(" + component.getSecurityMarkingType() + ") ";
+		try
+		{
+			Configuration templateConfig = ReportManager.getTemplateConfig();
+			Map root = new HashMap();
+			
+			// create a list of components
+			List<Map> componentList = new ArrayList<>();
+			for (Component component : components)
+			{
+				String securityMarking = "";
+				Map componentRoot = new HashMap();
+				ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(component.getComponentId());
+				
+				// Generate dependencies
+				List<ComponentExternalDependencyView> allDependencies = componentDetail.getDependencies();
+				if (allDependencies != null) {
+					
+					List<Map> dependenciesList = new ArrayList<>();
+					for (ComponentExternalDependencyView dependent : allDependencies) {
+						
+						Map dependentHash = new HashMap();
+						dependentHash.put("name", dependent.getDependencyName());
+						dependentHash.put("version", dependent.getVersion());
+						dependentHash.put("link", dependent.getDependancyReferenceLink());
+						dependentHash.put("comment", dependent.getComment());
+						
+						dependenciesList.add(dependentHash);
 			}
 
-			htmlGenerator.addMainHeader(component.getName());
-			htmlGenerator.addLine("<b>" + component.getOrganization() + "</b>");
-			htmlGenerator.addSpace();
-			htmlGenerator.addSpace();
-			htmlGenerator.addLine(securityMarking + component.getDescription());
-			htmlGenerator.addSpace();
-
-			Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
-
-			if (attributeMap != null) {
-				htmlGenerator.addLine("<h2>Vitals</h2>");
-
-				Map<String, String> typeDescriptionMap = new HashMap<>();
-				for (String type : attributeMap.keySet()) {
-					String typeLabel = service.getAttributeService().findType(type).getDescription();
-					typeDescriptionMap.put(typeLabel, type);
+					componentRoot.put("dependencies", dependenciesList);
 				}
+				
+				// Generate tags
+				List<ComponentTag> allTags = componentDetail.getTags();
+				if (allTags != null) {
+					
+					List<Map> tagsList = new ArrayList<>();
+					for (ComponentTag tag : allTags) {
+						
+						Map tagHash = new HashMap();
+						tagHash.put("text", tag.getText());
+						tagsList.add(tagHash);
+					}
+					
+					componentRoot.put("tags", tagsList);
+				}
+				
+				// Generate relationships
+				List<ComponentRelationshipView> allRelationships = componentDetail.getRelationships();
+				if (allRelationships != null) {
+					
+					List<Map> relationsList = new ArrayList<>();
+					for (ComponentRelationshipView relation : allRelationships) {
+						
+						Map relationHash = new HashMap();
+						relationHash.put("type", relation.getRelationshipTypeDescription());
+						//relationHash.put("type", relation.getRelationshipType());
+						relationHash.put("targetName", relation.getTargetComponentName());
+						relationHash.put("componentName", component.getName());
+						relationsList.add(relationHash);
+					}
+					
+					componentRoot.put("relationships", relationsList);
+				}
+				
+				// Generate reviews
+				List<ComponentReviewView> allReviews = componentDetail.getReviews();
+				if (allReviews != null) {
+					
+					List<Map> reviewsList = new ArrayList<>();
+					for (ComponentReviewView review : allReviews) {
+						
+						Map reviewHash = new HashMap();
+						reviewHash.put("rating", review.getRating());
+						reviewHash.put("title", review.getTitle());
+						reviewHash.put("username", review.getUsername());
+						reviewHash.put("lastUsed", review.getLastUsed());
+						reviewHash.put("organization", review.getOrganization());
+						reviewHash.put("timeDescription", review.getUserTimeDescription());
+						reviewHash.put("comment", review.getComment());
+						reviewHash.put("recommended", review.isRecommend());
+						
+						List<ComponentReviewProCon> allReviewPros = review.getPros();
+						List<ComponentReviewProCon> allReviewCons = review.getCons();
+						List<Map> reviewPros = new ArrayList<>();
+						if (allReviewPros != null) {
+							for (ComponentReviewProCon pro : allReviewPros) {
+								Map proHash = new HashMap();
+								proHash.put("pro", pro.getText());
+								reviewPros.add(proHash);
+							}
+						}
+						
+						List<Map> reviewCons = new ArrayList<>();
+						if (allReviewCons != null) {
+							for (ComponentReviewProCon con : allReviewCons) {
+								Map conHash = new HashMap();
+								conHash.put("con", con.getText());
+								reviewCons.add(conHash);
+							}
+						}
+						
+						reviewHash.put("pros", reviewPros);
+						reviewHash.put("cons", reviewCons);
+						reviewsList.add(reviewHash);
+					}
+					
+					componentRoot.put("reviews", reviewsList);
+				}
+				
+				// Generate Q/A
+				List<ComponentQuestionView> allQuestions = componentDetail.getQuestions();
+				if (allQuestions != null) {
+					
+					List<Map> questionsList = new ArrayList<>();
+					for (ComponentQuestionView question : allQuestions) {
+						
+						Map questionHash = new HashMap();
+						questionHash.put("question", question.getQuestion());
+						questionHash.put("username", question.getUsername());
+						questionHash.put("date", question.getCreateDts());
+						
+						List<ComponentQuestionResponseView> allResponses = question.getResponses();
+						if (allResponses != null) {
+							
+							List<Map> responsesList = new ArrayList<>();
+							for (ComponentQuestionResponseView response : allResponses) {
+								
+								Map responseHash = new HashMap();
+								responseHash.put("response", response.getResponse());
+								responseHash.put("username", response.getUsername());
+								responseHash.put("date", response.getAnsweredDate());
+								responsesList.add(responseHash);
+							}
+							
+							questionHash.put("responses", responsesList);
+						}
+						
+						questionsList.add(questionHash);
+					}
+					
+					componentRoot.put("QA", questionsList);
+				}
+				
+				// Generate evaluation data
+				List<EvaluationAll> allEvals = componentDetail.getFullEvaluations();
+				if (allEvals != null) {
+					
+					List<Map> evalList = new ArrayList<>();
+					for (EvaluationAll evaluationView : allEvals) {
+						Evaluation evaluation = evaluationView.getEvaluation();
+						securityMarking = "";
+						if (getBranding().getAllowSecurityMarkingsFlg() && StringUtils.isNotBlank(evaluation.getSecurityMarkingType())) {
+							securityMarking = "(" + evaluation.getSecurityMarkingType() + ") ";
+						}
+						
+						Map evalHash = new HashMap();
+						
+						EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluation.getEvaluationId());
+						ChecklistAll checklistAll = evaluationAll.getCheckListAll();
+						List<EvaluationChecklistRecommendationView> allChecklistRecommendations = checklistAll.getRecommendations();
+						
+						evalHash.put("checklistSummary", checklistAll.getEvaluationChecklist().getSummary());
+						evalHash.put("version", evaluation.getVersion());
+						
+						// Recommendations
+						List<Map> checklistRecommendations = new ArrayList<>();
+						for (EvaluationChecklistRecommendationView recommendation : allChecklistRecommendations) {
+							Map recommendationHash = new HashMap();
+							recommendationHash.put("recommendation", recommendation.getRecommendation());
+							recommendationHash.put("reason", recommendation.getReason());
+							recommendationHash.put("type", recommendation.getRecommendationType());
+							recommendationHash.put("typeDescription", recommendation.getRecommendationTypeDescription());
+							
+							checklistRecommendations.add(recommendationHash);
+						}
+						evalHash.put("recommendations", checklistRecommendations);
+						
+						// Reusability Scores
+						List<Map> reusabilityScores = new ArrayList<>();
+						
+						// get the score sections (and group them)
+						Map<String, List<ChecklistResponseView>> scoreSections = checklistAll
+							.getResponses()
+							.stream()
+							.collect(Collectors.groupingBy(
+								p -> p.getQuestion().getEvaluationSectionDescription()
+							));
+						
+						// get the average and base scores, and the reusability factor
+						Set<String> scoreKeyset = new TreeSet(scoreSections.keySet());
+						for (String key : scoreKeyset) {
+							Double averageScore = scoreSections.get(key)
+								.stream()
+								.filter(p -> p.getScore() != null)
+								.collect(Collectors.averagingDouble(
+									p -> p.getScore().doubleValue()
+								));
+							
+							Map scoreHash = new HashMap();
+							scoreHash.put("factor", key);
+							scoreHash.put("averageScore", (averageScore > 0) ? Math.round(averageScore*10.0)/10.0 : 0);
+							scoreHash.put("score", (averageScore > 0) ? averageScore.intValue() : "N/A");
+							
+							reusabilityScores.add(scoreHash);
+						}
+						evalHash.put("scores", reusabilityScores);
+						
+						// Sections
+						List<ContentSectionAll> evaluationSectionsAll = evaluationAll.getContentSections();
+						List<Map> evaluationSections = new ArrayList<>();
+						for (ContentSectionAll sectionAll : evaluationSectionsAll) {
+							ContentSection section = sectionAll.getSection();
+							Map sectionHash = new HashMap();
+							
+							// get sub sections
+							List<Map> evaluationSubSections = new ArrayList<>();
+							for (ContentSubSection subSection : sectionAll.getSubsections()) {
+								Map subSectionHash = new HashMap();
+								subSectionHash.put("title", subSection.getTitle());
+								subSectionHash.put("content", subSection.getContent());
+								subSectionHash.put("isPrivate", subSection.getPrivateSection());
+								subSectionHash.put("hideTitle", subSection.getHideTitle());
+								subSectionHash.put("hideContent", subSection.getNoContent());
+								
+								evaluationSubSections.add(subSectionHash);
+							}
+							
+							sectionHash.put("subSections", evaluationSubSections);
+							sectionHash.put("title", section.getTitle());
+							sectionHash.put("content", section.getContent());
+							sectionHash.put("isPrivate", section.getPrivateSection());
+							sectionHash.put("hideContent", section.getNoContent());
+							
+							evaluationSections.add(sectionHash);
+						}
+						evalHash.put("evaluationSections", evaluationSections);
+						
+						// Evaluation checklist details
+						List<ChecklistResponseView> checklistDetailsAll = evaluationAll.getCheckListAll().getResponses();
+						List<Map> checklistDetails = new ArrayList<>();
+						for (ChecklistResponseView detail : checklistDetailsAll) {
+							Map detailHash = new HashMap();
+							detailHash.put("qId", detail.getQuestion().getQid());
+							detailHash.put("question", detail.getQuestion().getQuestion());
+							detailHash.put("score", detail.getScore());
+							detailHash.put("response", detail.getResponse());
+							detailHash.put("section", detail.getQuestion().getEvaluationSectionDescription());
+							
+							checklistDetails.add(detailHash);
+						}
+						evalHash.put("checklistDetails", checklistDetails);
+						
+						// Add this evaluation to the evaluation list
+						evalList.add(evalHash);
+					}
+					componentRoot.put("evaluations", evalList);
+				}
+				
+				
+				// Generate vitals data
+				Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
+				if (attributeMap != null) {
 
-				List<String> attributeTypeList = new ArrayList<>(typeDescriptionMap.keySet());
-				attributeTypeList.sort(null);
+					Map<String, String> typeDescriptionMap = new HashMap<>();
+					for (String type : attributeMap.keySet()) {
+						String typeLabel = service.getAttributeService().findType(type).getDescription();
+						typeDescriptionMap.put(typeLabel, type);
+					}
 
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Vital</th>");
-				htmlGenerator.addLine("<th>Value</th>");
-				htmlGenerator.addLine("</tr>");
-				for (String typeLabel : attributeTypeList) {
-					String type = typeDescriptionMap.get(typeLabel);
-					List<ComponentAttribute> attributes = attributeMap.get(type);
+					List<String> attributeTypeList = new ArrayList<>(typeDescriptionMap.keySet());
+					attributeTypeList.sort(null);
+					
+					// Make a list of all the vitals
+					List<Map> vitalsList = new ArrayList<>();
+					for (String typeLabel : attributeTypeList) {
+						String type = typeDescriptionMap.get(typeLabel);
+						List<ComponentAttribute> attributes = attributeMap.get(type);
 
-					if (attributes != null) {
+						if (attributes != null) {
 
-						for (ComponentAttribute componentAttribute : attributes) {
-							AttributeCodePk attributeCodePk = new AttributeCodePk();
+							for (ComponentAttribute componentAttribute : attributes) {
+								AttributeCodePk attributeCodePk = new AttributeCodePk();
 
-							attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
-							attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-							String attributeLabel;
-							if (attributeCode != null) {
-								securityMarking = "";
+								attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
+								attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+								AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+								String attributeLabel;
+								if (attributeCode != null) {
+									securityMarking = "";
 								if (getBranding().getAllowSecurityMarkingsFlg()
 										&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
-									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+									}
+									attributeLabel = securityMarking + attributeCode.getLabel();
+								} else {
+									attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
 								}
-								attributeLabel = securityMarking + attributeCode.getLabel();
-							} else {
-								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+								
+								// Add to the list of vitals
+								Map vitalsHash = new HashMap();
+								vitalsHash.put("typeLabel", typeLabel);
+								vitalsHash.put("attributeLabel", attributeLabel);
+								vitalsList.add(vitalsHash);
 							}
-							htmlGenerator.addLine("<tr>");
-							htmlGenerator.addLine("<td><b>" + typeLabel + "</b></td>");
-							htmlGenerator.addLine("<td>" + attributeLabel + "</td>");
-							htmlGenerator.addLine("</tr>");
+
+
 						}
-
 					}
+					componentRoot.put("vitals", vitalsList);
 				}
-				htmlGenerator.addLine("</table>");
-			}
+				
+				// Generate Contancts
+				List<ComponentContactView> contacts = componentDetail.getContacts();
+				if (contacts != null) {
 
-			//meta data
-			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
-			if (metaData != null) {
-				metaData = FilterEngine.filter(metaData);
+					// make a list of contacts
+					List<Map> contactsList = new ArrayList<>();
+					for (ComponentContactView contact : contacts) {
 
-				htmlGenerator.addLine("<h2>MetaData</h2>");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
-
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Label</th>");
-				htmlGenerator.addLine("<th>Value</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentMetadata metadataItem : metaData) {
-
-					securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg()
-							&& StringUtils.isNotBlank(metadataItem.getSecurityMarkingType())) {
-						securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
-					}
-
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + metadataItem.getLabel() + "</b></td>");
-					htmlGenerator.addLine("<td>" + securityMarking + metadataItem.getValue() + "</td>");
-					htmlGenerator.addLine("</tr>");
-				}
-				htmlGenerator.addLine("</table>");
-			}
-
-			//contacts
-			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
-			if (contacts != null) {
-				contacts = FilterEngine.filter(contacts);
-
-				htmlGenerator.addLine("<h2>Contacts</h2>");
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Type</th>");
-				htmlGenerator.addLine("<th>Firstname</th>");
-				htmlGenerator.addLine("<th>Lastname</th>");
-				htmlGenerator.addLine("<th>Organization</th>");
-				htmlGenerator.addLine("<th>Email</th>");
-				htmlGenerator.addLine("<th>Phone</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentContact contact : contacts) {
-
-					securityMarking = "";
+						securityMarking = "";
 					if (getBranding().getAllowSecurityMarkingsFlg()
 							&& StringUtils.isNotBlank(contact.getSecurityMarkingType())) {
-						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
+							securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
 					}
 
-					Contact contactFull = contact.fullContact();
-
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getLastName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getOrganization()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getEmail()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getPhone()) + "</td>");
-					htmlGenerator.addLine("</tr>");
-
+						// Add to the contacts list
+						Map contactsHash = new HashMap();
+						contactsHash.put("type", contact.getContactType());
+						contactsHash.put("firstName", securityMarking + contact.getFirstName());
+						contactsHash.put("lastName", contact.getLastName());
+						contactsHash.put("org", contact.getOrganization());
+						contactsHash.put("email", contact.getEmail());
+						contactsHash.put("phone", contact.getPhone());
+						
+						contactsList.add(contactsHash);
+					}
+					componentRoot.put("contacts", contactsList);
 				}
-				htmlGenerator.addLine("</table>");
-			}
+				
+				// Generate Resources
+				List<ComponentResource> resources = resourceMap.get(component.getComponentId());
+				if (resources != null) {
+					resources = FilterEngine.filter(resources);
 
-			//resources
-			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
-			if (resources != null) {
-				resources = FilterEngine.filter(resources);
+					// make a list of resources
+					List<Map> resourcesList = new ArrayList<>();
+					for (ComponentResource resource : resources) {
 
-				htmlGenerator.addLine("<h2>Resources</h2>");
-				htmlGenerator.addLine("<table>");
-				htmlGenerator.addLine("<tr>");
-				htmlGenerator.addLine("<th>Type</th>");
-				htmlGenerator.addLine("<th>Description</th>");
-				htmlGenerator.addLine("<th>Link</th>");
-				htmlGenerator.addLine("<th>Restricted (requires login/CAC)</th>");
-				htmlGenerator.addLine("</tr>");
-				for (ComponentResource resource : resources) {
-
-					securityMarking = "";
+						securityMarking = "";
 					if (getBranding().getAllowSecurityMarkingsFlg()
 							&& StringUtils.isNotBlank(resource.getSecurityMarkingType())) {
-						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
+							securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
 					}
 
-					ComponentResourceView view = ComponentResourceView.toView(resource);
-
-					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ResourceType.class, view.getResourceType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getDescription()) + "</td>");
-					htmlGenerator.addLine("<td>" + securityMarking + view.getLink() + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getRestricted()) + "</td>");
-					htmlGenerator.addLine("</tr>");
+						ComponentResourceView view = ComponentResourceView.toView(resource);
+						Map resourcesHash = new HashMap();
+						
+						// Add to the resources list
+						resourcesHash.put("type", TranslateUtil.translate(ResourceType.class, view.getResourceType()));
+						resourcesHash.put("description", StringProcessor.blankIfNull(view.getDescription()));
+						resourcesHash.put("link", securityMarking + view.getLink());
+						resourcesHash.put("restricted", StringProcessor.blankIfNull(view.getRestricted()));
+						
+						resourcesList.add(resourcesHash);
+					}
+					componentRoot.put("resources", resourcesList);
 				}
-				htmlGenerator.addLine("</table>");
+				
+				componentRoot.put("component", component);
+				componentRoot.put("name", component.getName());
+				componentList.add(componentRoot);
 			}
-
-			htmlGenerator.addRuleLine();
-			htmlGenerator.addSpace();
-			htmlGenerator.addLine("<span class='pageBreak'></span>");
+			
+			// generate the template
+			root.put("components", componentList);
+			root.put("reportOptions", report.getReportOption());
+			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
+			root.put("reportSize", components.size());
+			root.put("reportDate", sdf.format(TimeUtil.currentDate()));
+			Template template = templateConfig.getTemplate("detailReport.ftl");
+			Writer writer = new StringWriter();
+			template.process(root, writer);
+			String renderedTemplate = writer.toString();
+			htmlGenerator.addLine(renderedTemplate);
 		}
-
+		catch (Exception e)
+		{
+			log.log(Level.WARNING, MessageFormat.format("There was a problem when generating a detail report: {0}", e));
+		}
 	}
-
 }
