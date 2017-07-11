@@ -444,6 +444,11 @@
 						flex: 1
 					},
 					{
+						text: 'Value type',
+						dataIndex: 'attributeValueType',
+						flex: 1
+					},				
+					{
 						text: 'Status',
 						dataIndex: 'activeStatus',
 						align: 'center',

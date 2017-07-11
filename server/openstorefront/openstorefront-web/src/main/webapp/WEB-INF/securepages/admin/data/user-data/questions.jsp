@@ -297,7 +297,11 @@
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
-											answerPanel.getStore().filter('activeStatus', newValue);
+											//answerPanel.getStore().clearFilter();
+											//answerPanel.getStore().filter('activeStatus', newValue);
+											var componentId = componentPanel.getSelection()[0].data.componentId;
+											var questionId = questionPanel.getSelection()[0].data.questionId;											
+											actionSelectedQuestion(componentId, questionId);
 											Ext.getCmp('answer-tools-action').disable();
 										}
 									},
@@ -387,7 +391,7 @@
 								var userType = getUserType(record.data.userTypeCode);
 								var html = value;
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.createUser + " (";
+								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.username + " (";
 								html += userType + ') &middot; ';
 								html += record.data.organization + "";
 								html += "</p>";
@@ -528,7 +532,7 @@
 
 				addComponentToMainViewPort(mainPanel);
 
-				var actionSelectedComponent = function actionSelectedComponent(componentId) {
+				var actionSelectedComponent = function(componentId) {
 					// Set Proxy and Load Questions
 					Ext.getCmp('question-tools-action').disable();
 					Ext.getCmp('answer-tools-action').disable();
@@ -545,10 +549,11 @@
 				};
 
 
-				var actionSelectedQuestion = function actionSelectedQuestion(componentId, questionId) {
+				var actionSelectedQuestion = function(componentId, questionId) {
 					// Set Proxy and Load Answers
-					var apiUrl = 'api/v1/resource/components/';
-					apiUrl += componentId + '/questions/' + questionId + '/responses';
+					var filterSelection = Ext.getCmp('answer-activeStatus').getValue();
+					var apiUrl = 'api/v1/resource/componentquestions/';
+					apiUrl += questionId + '/responses?status=' + filterSelection;
 					answerStore.setProxy({
 						id: 'answerStoreProxy',
 						url: apiUrl,
@@ -558,26 +563,18 @@
 					// we must add it to our emptyText if we want proper styling.
 					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
 					answerStore.load();
-					var filterSelection = Ext.getCmp('answer-activeStatus').getValue();
-
-					if (filterSelection === 'ALL') {
-						answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
-					}
-					else {
-						answerStore.filter('activeStatus', filterSelection);
-					}
 
 					Ext.getCmp('question-tools-action').enable();
 					Ext.getCmp('answer-tools-action').disable();
 				};
 
 				
-				var actionSelectedAnswer = function actionSelectedAnswer(componentId, questionId, answerId)  {
+				var actionSelectedAnswer = function(componentId, questionId, answerId)  {
 					Ext.getCmp('answer-tools-action').enable();
 				};
 
 
-				var actionSetQuestionActivation = function actionSetQuestionActivation(componentId, questionId, newStatus) {
+				var actionSetQuestionActivation = function(componentId, questionId, newStatus) {
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					if(activeStatus === newStatus)
 					{
@@ -627,7 +624,7 @@
 						});
 				};
 
-				var actionSetAnswerActivation = function actionSetAnswerActivation(componentId, questionId, answerId, newStatus) {
+				var actionSetAnswerActivation = function(componentId, questionId, answerId, newStatus) {
 					var activeStatus = Ext.getCmp('answer-activeStatus').getValue();
 					if(activeStatus === newStatus)
 					{
