@@ -697,7 +697,7 @@ Use the following steps to create the agent profile.
 
 Run the following as sudo:
 
-### Optionally install nano. Otherwise use vi.
+### Optionally install nano:
 1)	yum install nano
 
 ### Install Java 1.8:
@@ -728,13 +728,20 @@ apache service command reference (apache should be running at this point):
 
 **Stop:** systemctl stop httpd
 
-**Test:** curl localhost
+**Test:** curl localhost | grep 'Apache HTTP server'
 
-should return a bunch of html to the console
+should give you a response something like this:
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  4897  100  4897    0     0   928k      0 --:--:-- --:--:-- --:--:--  956k
+                <p class="lead">This page is used to test the proper operation of the <a href="http://apache.org">Apache HTTP server</a> after it has been installed. If you can read this page it means that this site is working properly. This server is powered by <a href="http://centos.org">CentOS</a>.</p>
+```
 
-### Install elasticsearch 2.x
+### Install elasticsearch 2.x:
 1)	rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
-2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example ```/etc/yum.repos.d/elasticsearch.repo```
+2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, 
+for example /etc/yum.repos.d/elasticsearch.repo
 
 ```
 [elasticsearch-2.x]
@@ -747,6 +754,7 @@ enabled=1
 3)	yum install elasticsearch
 4)	systemctl daemon-reload
 5)	systemctl enable elasticsearch.service
+6)	systemctl start elasticsearch.service
 
 elasticsearch service command reference (elasticsearch should be running at this point):
 
@@ -773,10 +781,12 @@ should give you a response something like this:
 }
 ```
 
-### Install tomcat 7 
+### Install tomcat 7:
 (https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum)
 1)	yum install tomcat
-2)	systemctl enable tomcat
+2)	yum install tomcat-webapps tomcat-admin-webapps 
+3)	systemctl enable tomcat
+4)	systemctl start tomcat
 
 tomcat service command reference (tomcat should be running at this point):
 
@@ -786,11 +796,17 @@ tomcat service command reference (tomcat should be running at this point):
 
 **Install dir:**  /usr/share/tomcat/
 
-**Test:** curl localhost:8080
+**Test:** curl localhost:8080 | grep 'successfully installed Tomcat'
 
-should return a bunch of html to the console
+should give you a response something like this:
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 11197    0 11197    0     0   850k      0 --:--:-- --:--:-- --:--:--  911k
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulations!</h2>
+```
 
-### Configure Apache proxy 
+### Configure Apache proxy:
 (https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-centos-7)
 1)	Install mod-proxy : already installed	
 2)	Install web socket support: already installed
@@ -800,22 +816,28 @@ should return a bunch of html to the console
 
 ```
 <VirtualHost *:80>
-	   ProxyPreserveHost On	    
-	   RewriteEngine on
+   ProxyPreserveHost On	    
+   RewriteEngine on
 
-	   #Openstorefront
-	    ProxyPass /openstorefront http://localhost:8080/openstorefront
-	    ProxyPassReverse /openstorefront http://localhost:8080/openstorefront
-
-	    ProxyPass /openstorefront ws://localhost:8080/openstorefront
-	    ProxyPassReverse /openstorefront ws://localhost:8080/openstorefront
-
-	    RedirectMatch ^/$ /openstorefront/
+   # Openstorefront reverse proxy
+   ProxyPass "/openstorefront/" "http://localhost:8080/openstorefront/"
+   ProxyPassReverse "/openstorefront/" "http://localhost:8080/openstorefront/"
+   
+   # Openstorefront web socket reverse proxy
+   ProxyPass "/openstorefront/" "ws://localhost:8080/openstorefront/"
+   ProxyPassReverse "/openstorefront/" "ws://localhost:8080/openstorefront/"
+   
+   # changes <hostname>/ to <hostname>/openstorefront/
+   RedirectMatch ^/$ /openstorefront/
 </VirtualHost>
 ```
-4)  systemctl restart httpd
+4)	If you have SELinux running (which is installed by default on CentOS) then we need the instructions from here (http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/)
 
-### Configure Tomcat
+    a)	/usr/sbin/setsebool -P httpd_can_network_connect 1
+    
+5) 	systemctl restart httpd
+
+### Configure Tomcat:
 
 **Set memory**
 
@@ -849,4 +871,5 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
 	
     example: ```curl -LO https://github.com/di2e/openstorefront/releases/download/v2.3/openstorefront.war```
 4)	chown tomcat:tomcat openstorefront.war
-5)	mv -a openstorefront.war /usr/share/tomcat/webapps 
+5)	mv openstorefront.war /usr/share/tomcat/webapps 
+6) 	systemctl restart tomcat
