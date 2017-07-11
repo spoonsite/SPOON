@@ -62,6 +62,10 @@ limitations under the License.
 	text-decoration: underline;
 }
 
+.browser-warning .icon {
+	float: right;
+	cursor: pointer;
+}
 
 .action-icon {
 	font-size: 16px;

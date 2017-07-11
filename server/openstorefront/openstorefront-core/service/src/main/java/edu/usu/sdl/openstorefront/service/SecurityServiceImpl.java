@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
@@ -288,8 +289,8 @@ public class SecurityServiceImpl
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
-
-			SecurityPolicy securityPolicy = getSecurityPolicy();
+			
+			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();
@@ -300,7 +301,8 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			if (securityPolicy.getAutoApproveUsers()) {
+			
+			if (autoApproveUser) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
 			} else {
@@ -310,7 +312,7 @@ public class SecurityServiceImpl
 			persistenceService.persist(userSecurity);
 
 			UserProfile userProfile = new UserProfile();
-			if (securityPolicy.getAutoApproveUsers()) {
+			if (autoApproveUser) {
 				userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 			} else {
 				userProfile.setActiveStatus(UserProfile.INACTIVE_STATUS);
@@ -339,7 +341,7 @@ public class SecurityServiceImpl
 			getAlertService().checkAlert(alertContext);
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was created.", userRegistration.getUsername()));
 
-			if (securityPolicy.getAutoApproveUsers() == false) {
+			if (!autoApproveUser) {
 				alertContext = new AlertContext();
 				alertContext.setAlertType(AlertType.USER_MANAGEMENT);
 				alertContext.setDataTrigger(userSecurity);

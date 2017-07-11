@@ -383,12 +383,12 @@
 														}
 
 														CoreUtil.submitForm({
-															url: 'api/v1/resource/userregistrations',
+															url: 'api/v1/resource/userregistrations/admin',
 															method: 'POST',
 															data: data,
 															form: form,
 															success: function(action, opts) {
-																Ext.toast('Successfully added new user.<br>Remember user may need to be approved.');
+																Ext.toast('Successfully added new user.');
 																actionRefreshRegs();
 																actionRefreshUsers();
 																addUserWin.close();

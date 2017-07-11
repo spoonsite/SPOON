@@ -27,25 +27,6 @@
 	<script src="scripts/component/savedSearchPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
 	
-
-	<div id="browserWarning" class="browser-warning" >
-		 <p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
-		 <a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
-		 <a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
-		 <a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>		
-	</div>
-	
-	<script type="text/javascript">
-		//start fresh on index
-		sessionStorage.clear();
-				
-		if (Ext.isIE10m) {
-			Ext.get('browserWarning').setStyle({
-				display: 'block'
-			});
-		} 
-		
-	</script>	
 	
 	${actionBean.landingTemplate}
 		

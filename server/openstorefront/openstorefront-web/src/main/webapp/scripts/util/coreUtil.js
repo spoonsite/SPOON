@@ -60,7 +60,7 @@ var CoreUtil = {
 					return desc;
 				};
 
-				for (let ii = 0; ii < fullEvaluations.length; ii += 1) {
+				for (var ii = 0; ii < fullEvaluations.length; ii += 1) {
 					//group by section
 					var groupStatus = {};
 					Ext.Array.each(fullEvaluations[ii].checkListAll.responses, function (response) {
