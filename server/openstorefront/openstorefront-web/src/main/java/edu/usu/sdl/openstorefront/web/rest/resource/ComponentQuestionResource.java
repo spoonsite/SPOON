@@ -57,11 +57,7 @@ public class ComponentQuestionResource
 	)
 	{
 		ComponentQuestion componentQuestionExample = new ComponentQuestion();
-		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
-			componentQuestionExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
-		} else {
-			componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-		}
+		componentQuestionExample.setActiveStatus(status);
 		componentQuestionExample.setCreateUser(username);
 
 		List<ComponentQuestion> questions = componentQuestionExample.findByExample();
@@ -83,11 +79,7 @@ public class ComponentQuestionResource
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
-			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
-		} else {
-			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-		}
+		componentQuestionResponseExample.setActiveStatus(status);
 		componentQuestionResponseExample.setCreateUser(username);
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();
 
@@ -108,11 +100,7 @@ public class ComponentQuestionResource
 	)
 	{
 		ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-		if (status.equals(ComponentQuestion.PENDING_STATUS)) {
-			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
-		} else {
-			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-		}
+		componentQuestionResponseExample.setActiveStatus(status);
 		componentQuestionResponseExample.setQuestionId(questionId);
 
 		List<ComponentQuestionResponse> responses = componentQuestionResponseExample.findByExample();

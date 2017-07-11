@@ -145,7 +145,7 @@ public class ComponentDetailReport
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
-		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
 	}
 
 	@Override
@@ -165,16 +165,16 @@ public class ComponentDetailReport
 		//write header
 		cvsGenerator.addLine("Entry Details Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine("");
-		
+
 		List<String> header = new ArrayList<>();
 		header.add("Entry Name");
 		header.add("Entry Organization");
 		header.add("Entry Description");
-		
+
 		if (getBranding().getAllowSecurityMarkingsFlg()) {
 			header.add("Security Marking");
-		}		
-		cvsGenerator.addLine(header.toArray());		
+		}
+		cvsGenerator.addLine(header.toArray());
 
 		for (Component component : components) {
 
@@ -185,8 +185,8 @@ public class ComponentDetailReport
 
 			if (getBranding().getAllowSecurityMarkingsFlg()) {
 				data.add("Security Marking");
-			}		
-			cvsGenerator.addLine(data.toArray());				
+			}
+			cvsGenerator.addLine(data.toArray());
 
 			Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
 
@@ -217,9 +217,8 @@ public class ComponentDetailReport
 							String attributeLabel;
 							if (attributeCode != null) {
 								String securityMarking = "";
-								if (getBranding().getAllowSecurityMarkingsFlg() && 
-									StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
-								{
+								if (getBranding().getAllowSecurityMarkingsFlg()
+										&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
 									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
 								}
 								attributeLabel = securityMarking + attributeCode.getLabel();
@@ -245,9 +244,8 @@ public class ComponentDetailReport
 								String attributeLabel;
 								if (attributeCode != null) {
 									String securityMarking = "";
-									if (getBranding().getAllowSecurityMarkingsFlg() && 
-										StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
-									{
+									if (getBranding().getAllowSecurityMarkingsFlg()
+											&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
 										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
 									}
 									attributeLabel = securityMarking + attributeCode.getLabel();
@@ -267,22 +265,21 @@ public class ComponentDetailReport
 			}
 
 			//meta data
-			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());			
+			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
 				metaData = FilterEngine.filter(metaData);
-				
+
 				cvsGenerator.addLine("MetaData");
 				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
 				for (ComponentMetadata metadataItem : metaData) {
 
 					String securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
-					{
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(metadataItem.getSecurityMarkingType())) {
 						securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
-					}					
-					
+					}
+
 					cvsGenerator.addLine(
 							"",
 							metadataItem.getLabel(),
@@ -295,18 +292,17 @@ public class ComponentDetailReport
 			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
 			if (contacts != null) {
 				contacts = FilterEngine.filter(contacts);
-				
+
 				cvsGenerator.addLine("Contacts");
 				for (ComponentContact contact : contacts) {
-					
+
 					String securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(contact.getSecurityMarkingType()))
-					{
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(contact.getSecurityMarkingType())) {
 						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
-					}					
-					
-					Contact contactFull = contact.fullContact();					
+					}
+
+					Contact contactFull = contact.fullContact();
 					cvsGenerator.addLine(
 							"",
 							TranslateUtil.translate(ContactType.class, contact.getContactType()),
@@ -323,17 +319,16 @@ public class ComponentDetailReport
 			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
 			if (resources != null) {
 				resources = FilterEngine.filter(resources);
-				
+
 				cvsGenerator.addLine("Resources");
 				for (ComponentResource resource : resources) {
 
 					String securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg() && 
-						StringUtils.isNotBlank(resource.getSecurityMarkingType()))
-					{
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(resource.getSecurityMarkingType())) {
 						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
-					}						
-					
+					}
+
 					ComponentResourceView view = ComponentResourceView.toView(resource);
 
 					cvsGenerator.addLine(
@@ -379,8 +374,8 @@ public class ComponentDetailReport
 						dependentHash.put("comment", dependent.getComment());
 						
 						dependenciesList.add(dependentHash);
-					}
-					
+			}
+
 					componentRoot.put("dependencies", dependenciesList);
 				}
 				
@@ -642,9 +637,8 @@ public class ComponentDetailReport
 								String attributeLabel;
 								if (attributeCode != null) {
 									securityMarking = "";
-									if (getBranding().getAllowSecurityMarkingsFlg() && 
-										StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
-									{
+								if (getBranding().getAllowSecurityMarkingsFlg()
+										&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
 										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
 									}
 									attributeLabel = securityMarking + attributeCode.getLabel();
@@ -659,6 +653,7 @@ public class ComponentDetailReport
 								vitalsList.add(vitalsHash);
 							}
 
+
 						}
 					}
 					componentRoot.put("vitals", vitalsList);
@@ -667,17 +662,16 @@ public class ComponentDetailReport
 				// Generate Contancts
 				List<ComponentContactView> contacts = componentDetail.getContacts();
 				if (contacts != null) {
-					
+
 					// make a list of contacts
 					List<Map> contactsList = new ArrayList<>();
 					for (ComponentContactView contact : contacts) {
 
 						securityMarking = "";
-						if (getBranding().getAllowSecurityMarkingsFlg() && 
-							StringUtils.isNotBlank(contact.getSecurityMarkingType()))
-						{
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(contact.getSecurityMarkingType())) {
 							securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
-						}				
+					}
 
 						// Add to the contacts list
 						Map contactsHash = new HashMap();
@@ -703,11 +697,10 @@ public class ComponentDetailReport
 					for (ComponentResource resource : resources) {
 
 						securityMarking = "";
-						if (getBranding().getAllowSecurityMarkingsFlg() && 
-							StringUtils.isNotBlank(resource.getSecurityMarkingType()))
-						{
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(resource.getSecurityMarkingType())) {
 							securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
-						}					
+					}
 
 						ComponentResourceView view = ComponentResourceView.toView(resource);
 						Map resourcesHash = new HashMap();

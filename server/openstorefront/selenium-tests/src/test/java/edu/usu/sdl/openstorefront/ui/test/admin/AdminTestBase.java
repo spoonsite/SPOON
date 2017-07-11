@@ -28,7 +28,7 @@ public class AdminTestBase
 {
 
 	@BeforeClass
-	public static void setupTest()
+	public static void setupBaseTest()
 	{
 		login();
 	}

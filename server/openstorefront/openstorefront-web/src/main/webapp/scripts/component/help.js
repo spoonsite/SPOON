@@ -303,6 +303,7 @@ Ext.define('OSF.component.HelpWindow', {
 	height: 600,
 	maximizable: true,
 	collapsible: true,
+	alwaysOnTop: true,
 	items: [
 		Ext.create('OSF.component.HelpPanel', {	
 			itemId: 'helpPanel'

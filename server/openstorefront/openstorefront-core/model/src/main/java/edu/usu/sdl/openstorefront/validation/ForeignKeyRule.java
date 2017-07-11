@@ -86,7 +86,7 @@ public class ForeignKeyRule
 	@Override
 	protected String getMessage(Field field)
 	{
-		return "Value is not exist foreign relationship";
+		return "Value does not exist in foreign relationship";
 	}
 
 	@Override

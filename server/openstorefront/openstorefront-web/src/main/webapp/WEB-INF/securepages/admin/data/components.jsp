@@ -48,8 +48,7 @@
 			Ext.require('OSF.form.Attributes');
 			Ext.require('OSF.form.Contacts');
 			Ext.require('OSF.form.Dependencies');
-			Ext.require('OSF.form.Media');
-			Ext.require('OSF.form.Metadata');
+			Ext.require('OSF.form.Media');			
 			Ext.require('OSF.form.Relationships');
 			Ext.require('OSF.form.Resources');
 			Ext.require('OSF.form.EntryQuestions');
@@ -1820,7 +1819,7 @@
 											fn: function(field, newValue, oldValue, opts) {
 												actionRefreshComponentGrid();
 											},
-											buffer: 500
+											buffer: 1500
 										}
 									}
 								}
@@ -2248,10 +2247,7 @@
 								}
 								if (type.dataEntryDependencies) {
 									addSubTab('OSF.form.Dependencies', 'Dependencies', 'Manage Dependencies');
-								}
-								if (type.dataEntryMetadata) {
-									addSubTab('OSF.form.Metadata', 'Metadata', 'Used for Varible Values');
-								}
+								}							
 								if (type.dataEntryEvaluationInformation) {
 									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecatied');
 								}

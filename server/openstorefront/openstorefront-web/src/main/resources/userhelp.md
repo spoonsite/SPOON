@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.3
+Version 2.4
                                                      
 
 # 1. Overview
@@ -28,29 +28,28 @@ licensed under GPL V3.**
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
-## 1.1 Release Notes for v2.3
+## 1.1 Release Notes for v2.4
 ------
 
-Version 2.3 incorporates:
+Version 2.4 incorporates:
 
- * Fixes for several small bugs.
- * Password management, new user sign up management.
- * New tools for evaluators.
- * New administrative tools, including the introduction of roles and permissions.
+* New Landing Page Design - Search Tools, Quick Launch, Browse by Category
+* Search tools include tag cloud, organization, relationships, etc.
+* Quick Launch includes dashboard, user submissions, saved searches, etc.
+* Ability to print evaluations
+* Side by side comparison of evaluations
+* Entry detail reports will have evaluation results
 
 
-### 1.1.1 Administrator Release Notes, v2.3 @ADMIN-SYSTEM-MANAGEMENT
+### 1.1.1 Administrator Release Notes, v2.4 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
-*What's new in v2.3*
+*What's new in v2.4*
 
- * Forgot password, password management, and sign up management.
- * Evaluator Tools added
- * Admin- Adding Roles and Permissions to Users
- * Admin- System Export/Import
- * IE9 is now not officially supported.  A warning will come up for IE9 users, advising them to upgrade their browser.
- 
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+* Support for customizing the landing page
+* Support for metadata has been merged with attributes
+
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.4" target="_blank">v2.4</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
 ## 1.2 Known Issues, v2.3 @ADMIN-SYSTEM-MANAGEMENT 
@@ -811,8 +810,8 @@ Functional Areas of Managing Attributes includes:
   4. Managing Codes
   5. Setting Flags, Toggling Status, and Deleting
   6. Importing and Exporting
-    
-    
+
+  
 #### 3.2.1.1 Add New Attribute Type @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
@@ -840,6 +839,7 @@ From the Attribute Tool, click on the **Add New Type** button or the
  4. Associated Entry Types:  Allow this attribute on all types or only certain types (Articles, Entries, etc.)
  5. Flags:  Set the flags shown on the main page for Required, Visible, Important, Architecture, Allow Multiple,
      Allow User-Created Codes, or Hide on Submission.
+ 6. Code value type: set the allowed values for codes and labels
  
 
 #### 3.2.1.2 Entry Assignment @ADMIN-ENTRY-MANAGEMENT
@@ -899,8 +899,8 @@ entry. For example: Entry listing may contain and attribute for
 
 **Field Descriptions:**
 
--  **Label**               - Human readable value of the code
--  **Code**                - System reference key
+-  **Label**               - Human readable value of the code (May only allow numbers if depending on the Attribute type)
+-  **Code**                - System reference key  (May only allow numbers if depending on the Attribute type)
 -  **Description**         - This is a detail description of the meaning of the value. It is used in pop-up to help users interpolate the data.
 -  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
 -  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
@@ -909,7 +909,7 @@ entry. For example: Entry listing may contain and attribute for
 -  **Highlight Class**     - Used to add color emphasis to a code
 
 
-#### 3.2.1.1 Setting Flags, Toggling Status, and Deleting @ADMIN-ATTRIBUTE-MANAGEMENT
+#### 3.2.1.5 Setting Flags, Toggling Status, and Deleting @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 From the attributes page the Action button has three sub-menus:
@@ -1109,7 +1109,9 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the entry or article*
 
 From the **Action** drop-down menu in the toolbar, an administrator can change the ownership or
-type of an entry.  He/she can also view change requests and merge entries together.
+type of an entry.  He/she can also view change requests and merge entries together.  
+
+-----
   
 ### 3.2.4 Entry Types @ADMIN-ENTRY-TYPES
 ------
@@ -1120,7 +1122,7 @@ types can be added, edited, activated, made inactive, and removed here.
 On the Add form, data entry can be selected, such as whether or not to allow on the 
 submission form, and to allow or not allow the following to be displayed:
 
-*Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
+*Attributes, Relationships, Contacts, Resources, Media, Dependencies,
 Evaluation Information, Reviews, and Questions.*
 
 Entry Types can be made active or inactive by using the Toggle Status button.
@@ -1137,37 +1139,22 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
           Removing entry type that has attribute restriction can change the behavior of the require
           attributes. It may only be required for entries of type A but when type A is removed then
           the attribute will be required for all entries. 
-          (It will require an admin to manually update the attributed if that is not the correct behavior).
-  
-		  
+          (It will require an admin to manually update the attributed if that is not the correct behavior).  
+
+-----  
 		  
 ### 3.2.5 Entry Templates @ADMIN-ENTRY-TEMPLATES
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
-To create and implement a template:
 
- 1. How to create an **Entry Template**:
+For a step-by-step guide on how to create an entry template go to **Admin Guides** under the **Guides** section in the Help menu. Look for **How to Create an Entry Template**.
+  
+Note:  
 
-	a.  Click on the **Add** button in the toolbar.
- 
-    b.  Add Template Blocks to see the visual arrangement and order of fields that will be displayed.
-	
-	c.  Select some Sample Data from an existing entry to see how the data will be represented in
-	    the Visual Design tab.
-	
-	d.  The **Code** tab allows for pre and post code to be added.
-	
-	e.  The **Preview** tab shows what an entry using this template will look like.
-	
-	f.  Name the template and click Save/Continue when finished.
-	
-	g.  The name should now appear in the Entry Templates table.  Ensure that the template is Active.
-
-To remove a template click on the template name and click **Delete** on the right-hand side of the toolbar.
-To edit a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and
-click **Save/Continue** at the bottom.
-	
+ - To __remove__ a template click on the template name and click **Delete** on the right-hand side of the toolbar.  
+ - To __edit__ a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and click **Save/Continue** at the bottom. Click **Close**.  
+-----  
   
 ### 3.2.6 Highlights @ADMIN-HIGHLIGHTS
 -------
@@ -1352,12 +1339,6 @@ the form is complete.
 **Viewing Media:** select the media and click **View** in the toolbar.  Some media formats have no preview available.
 
 
-### 3.2.11 Metadata @ADMIN-ENTRY-MANAGEMENT
---------
-
-**See the Glossary for definition of Metadata**
-
-
 ### 3.2.12 Organizations @ADMIN-ORGANIZATION
 --------
 
@@ -1469,13 +1450,38 @@ This section in the Admin Tools -> Data Management allows for the management of 
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
 
-The table displays active questions, but the drop-down at the top of the page allows toggling to inactive questions as well.
+The page has a drop-down at the top to filter or **Show Entries with:**
+ 
+- Active Questions
 
- * Select an entry on the left to see the list of corresponding questions. 
+ - Inactive Questions
+
+ - Pending Questions*
+
+1.  Select a **Component** on the left to see the list of corresponding (Filtered by *Active, Inactive, or Pending*\*) questions. 
+
+2.  Select a(n) Active, Inactive, or Pending) question and then the **Action** menu can be accessed via drop-down 
+	to **move** the question to the status of *Approved, Pending\*, or Inactive.*
+
+3.  In addition, when a question is selected or highlighted, the associated answers appear.  Please be aware that the **Answer** can
+	have it's ***own*** status of *Active, Inactive, or Pending* as indicated in the **Active Status** filter above the answer.
+
+4.  To move the status of the selected answer select it and use the **Action** drop-down menu to move the answer to the status of
+	*Approved, Pending\*, or Inactive.*
  
- * Select a question to see the associated answers.
- 
- * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
+**\*NOTE:** New to v2.4 is the ability to moderate Questions, Answers, and Reviews.  If this feature has been activated, **Pending** 
+	will show as an option on this page.  In additon any user-submitted questions and answers or reviews will **not** be immediately
+	visible on the website, but will need to be moved from *Pending* to *Active* as described above, before it is visible on the 
+	website.  
+	
+**To turn on moderation of Questions, Answers, and Reviews:** 
+
+ - Go to Admin Tools -> Application Management -> System Configuration Properties
+
+ - Add a *new* Key named "userreview.autoapprove" and set the Value to "false"
+
+ - See also this help file under Admin Tools, Application Management, System Configuration Properties.
+
 
 
 #### 3.2.15.2 Reviews @ADMIN-REVIEW
@@ -1483,13 +1489,25 @@ The table displays active questions, but the drop-down at the top of the page al
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
 
-The table displays the list of *active* reviews by default.  
+1.  Select the desired filter at the top of the page to show *Active, Inactive, or Pending*\* reviews.  
+	The table displays the list of *active* reviews by default.  
 
- * Active status can be filtered by Active or Inactive using the drop-down at the top of the table.
- 
- * Selecting an active review allows for the Deactivate button to be pressed, removing the review from view on the website.
- 
- * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
+2.  With a Review selected/ highlighted the **Action** drop-down menu can be accessed to move the review to
+	*Active, Inactive, or Pending*\* status.
+
+**\*NOTE:** New to v2.4 is the ability to moderate Questions, Answers, and Reviews.  If this feature has been activated, **Pending** 
+	will show as an option on this page.  In additon any user-submitted questions and answers or reviews will **not** be immediately
+	visible on the website, but will need to be moved from *Pending* to *Active* as described above, before it is visible on the 
+	website.  
+	
+**To turn on moderation of Questions, Answers, and Reviews:** 
+
+ - Go to Admin Tools -> Application Management -> System Configuration Properties
+
+ - Add a *new* Key named "userreview.autoapprove" and set the Value to "false"
+
+ - See also this help file under Admin Tools, Application Management, System Configuration Properties.
+
 
 
 #### 3.2.15.3 Watches @ADMIN-WATCHES
@@ -1768,22 +1786,122 @@ Make any changes to the form and click **Generate**.
 
 System Tools are provided to aid in troubleshooting.
 
-System Tools and their Purpose:
+System Tools and their Purpose are outlined in the sub-menus.
 
--  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and system properties). Refer to Java platform documentation for the interpretation of the information.
--  **Error Tickets** -            View error tickets generated by the system and view their details.  Delete one or more error tickets by selecting the ticket(s) and clicking on the **Delete** button in the toolbar.
--  **Application Properties** -   Can be used to adjust application run state.  Add a key and value by clicking on **+Add** in the toolbar.  Specify a value and key then click **Save**.  You can also edit or delete a key/value by selecting a key and clicking either **Edit** or **Delete**.
--  **System Configuration** -     Provides a read-only view in the current properties.
--  **Logs and Logging** -         Allows for adjusting log levels at run time to log more/less information from a software entry. **NOTE:** Logs are hierarchically organized so setting a level from a parent will 
-								  affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software entry is loaded.
--  **Plugins** -				  Allows the administrator to manage plugins.  Add a plugin by clicking on the **+Add Plugin** button in the toolbar.  Select a OSGi jar/war file and click **Upload Plugin**.  Other plugin features are starting, stopping, downloading, or uninstalling a plugin. 
--  **Managers** -				  Allows for updating configuration settings at runtime by restarting affected managers.
--  **Cache** -					  Provides cache statistics and allows administrator to flush cache.
--  **Search Control** -           Allows for re-indexing listings.
--  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
+#### 3.3.7.1 Status @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Status** - Shows the run status of the application (i.e. memory, load,
+	thread status and system properties). Refer to Java platform 
+	documentation for the interpretation of the information.
+
+#### 3.3.7.2 Error Tickets @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Error Tickets** - View error tickets generated by the system and view
+	 their details.  Delete one or more error tickets by selecting the
+	 ticket(s) and clicking on the **Delete** button in the toolbar.
+
+#### 3.3.7.3 Application Properties @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Application Properties** - Can be used to adjust application run state.
+	  Add a key and value by clicking on **+Add** in the toolbar.  
+	Specify a value and key then click **Save**.  You can also edit or
+	delete a key/value by selecting a key and clicking either **Edit** 
+	or **Delete**.
+
+#### 3.3.7.4 System Configuration Properties @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**System Configuration Properties** - Lists the Key/ Value pairs for
+	various system configuration items.  These are editable and new ones
+    can be added as well, as long as they are recognized by the system.
+
+Use **caution** when editing the values of the keys.  Some key/ value 
+pairs that could be optionally added are described below:
+ 
+ - **userreview.autoapprove**	*[true \| false]* - If set to false all user reviews and Q&A will have to be approved by an admin
+	 before being added to the site.
 
 
-### 3.3.8 Security @ADMIN-TRACKING
+#### 3.3.7.5 Logs and Logging @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Logs and Logging** - Allows for adjusting log levels at run time to
+	 log more/less information from a software entry. **NOTE:** Logs
+	 are hierarchically organized so setting a level from a parent
+	 will affect all children who are set to delegate to the parent
+	 logger. 
+	Loggers under: edu.usu.sdl.openstorefront are application 
+	specific. A logger will only appear when the software entry is 
+	loaded.
+
+#### 3.3.7.6 Plugins @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Plugins** -				  Allows the administrator to manage plugins.  Add a plugin by clicking on the **+Add Plugin** button in the toolbar.  Select a OSGi jar/war file and click **Upload Plugin**.  Other plugin features are starting, stopping, downloading, or uninstalling a plugin. 
+
+#### 3.3.7.7 Managers @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Managers** -				  Allows for updating configuration settings at runtime by restarting affected managers.
+
+#### 3.3.7.8 Cache @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Cache** -					  Provides cache statistics and allows administrator to flush cache.
+
+#### 3.3.7.9 Search Control  @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Search Control** -           Allows for re-indexing listings.
+
+#### 3.3.7.10 Recent Changes E-mail @ADMIN-SYSTEM-MANAGEMENT
+------
+
+**Recent Changes E-mail** -     Allows for sending/previewing a recent change email.
+
+-----  
+
+### 3.3.8 System Archives @ADMIN-SYSTEM-MANAGEMENT  
+-----  
+
+Allows administrator to generate either an entire database archive (OrientDB) or a general archive that is specified by the administrator.  
+
+To generate a complete archive of the database (OrientDB) do the following:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on the **+ Generate Archive** button.  
+  2. Give the archive a unique name.  
+  3. Under **Archive Type** select **DB Export** from the drop down menu.  
+  4. Click on the **+ Generate** button at the bottom of the form.  
+  5. Optional - Once the archive has a status of *Complete*, you can download the archive and save it to your file system.  This is done by selecting the archive you generated and clicking the **Download** button.    
+
+To generate a more customized archive that is site specific do the following:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on the **+ Generate Archive** button.  
+  2. Give the archive a unique name.  
+  3. Under **Archive Type** select **General** from the drop down menu.  
+  4. To select specific entries with their related data check the **Entries (Related Data)** box and select your entries.  Note: Only active reviews and question/answers are exported.
+  5. Other options include highlights, organizations, attributes, and branding.  If branding is selected you will need to select one or more of the brandings under **Select Branding**.  
+  6. Click the **Generate** button.  
+  7. Optional - Once the archive has a status of *Complete*, you can download the archive and save it to your file system.  This is done by selecting the archive you generated and clicking the **Download** button.    
+
+To import an archive that had previously been generated:  
+
+  1. Go to **Application Management &rarr; System Archives** and click on **Import Archive**.  
+  2. Select **Merge** from the **Import Mode** drop down menu.  
+  3. Click on the **Select Archive** button and select the archive from your file system.  
+  4. Click on the **Import** button.  
+  5. Note: Importing database archives will temporarily interrupt the application and may cause some jobs to fail.  Please wait several minutes for the database to stabilize after import has completed.  
+
+If you experience any errors when generating an archive, you can select the archive and click on the **View Errors** button in the toolbar.  
+
+To delete an archive, select the archive you want to delete and click the **Delete** button on the right side of the toolbar.  
+
+------
+
+### 3.3.9 Security @ADMIN-SECURITY
 
 The Security Management area consists of the Security Policy and the Shiro Config.
 
@@ -1793,7 +1911,7 @@ Some policies only apply to the built-in security realm.
 Shiro Config is used for troubleshoot security realm configuration as well as making it easier to update URL policies.  The application will need to be restarted to apply the changes.  
 Also, note the application will create a backup file of the current policy so an admin can roll it back, if needed.   Only the previous version is backed up.
 
-### 3.3.9 Security Roles @ADMIN-TRACKING
+### 3.3.10 Security Roles @ADMIN-ROLE-MANAGEMENT
 
 This section is used to match up Roles with Users, Permissions, and Data Restrictions.
 
@@ -1808,7 +1926,7 @@ A table is shown of all of the Security Roles which can be edited and managed.
 **NOTE:**  Data Sources and Data Sensitivity values can be managed from the Data Management->Lookups, see section 3.2.9.
 
 
-### 3.3.10 Tracking @ADMIN-TRACKING
+### 3.3.11 Tracking @ADMIN-TRACKING
 
 The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
@@ -1820,15 +1938,88 @@ The primary tracking events can be viewed using the Tracking Admin Tool.
 The events are also aggregated into various system generated reports which
 are accessible via the Reports Admin Tool.
 
+-----  
 
-### 3.3.11 API Documentation @API-DOCS
+### 3.3.12 User Management @ADMIN-USER-MANAGEMENT  
+-----   
+
+Administrator can add users, send messages to individual users, approve new user accounts, lock/unlock user accounts, delete user accounts, and manage the roles of users.  
+
+-----  
+
+#### 3.3.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+When a user registers for a new account, it is the responsibility of the administrator to approve the account.  
+To approve a new account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab. 
+  2. In the **Active Status** drop down menu, select *Locked/Disabled*.
+  3. In the **Approval Status** drop down menu, select *Pending*.  A list will be displayed of accounts awaiting approval.  
+  4. Select a *Pending* account you want to approve and click the **Approve** button.  
+  5. To verify account has been activated, select *Active* from the **Active Status** drop down menu and *Approved* from the **Approval Status** drop down menu.
+
+-----  
+
+#### 3.3.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+Locking a user account only deactivates/disables it.  To lock a user account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the account you want to lock/disable and click on the **Lock Account** button.  
+  3. To verify the account has been disabled, click on *Locked/Disabled* in the **Active Status** drop down menu.  
+
+To unlock/reactivate an account:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. In the **Active Status** drop down menu, select *Locked/Disabled*.  
+  3. Select the account you want to unlock/reactivate and click on the **Unlock Account** button.  
+  4. To verify the account has been reactivated, click on *Active* in the **Active Status** drop down.  
+
+-----  
+
+#### 3.3.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT  
+ 
+Administrator can add users to specific groups/roles that have been created in **Security Role Management**.  Each group in **Security Role Management** has a list of permissions and data restrictions.  
+<br>To add a role to a user:
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the user you would like to add a role to and click on the **Manage Roles** button.  
+  3. Select a role from the **Add Role** drop down menu and click the **Add** button.  
+  4. A list of the user's current roles is shown below.  
+
+To remove a role from a user:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
+  2. Select the user you would like to remove a role from and click on the **Manage Roles** button.  
+  3. Click on the trash can icon to the right of the role you want to remove.  Click **Yes** to confirm deletion of role.
+
+-----  
+
+#### 3.3.12.4 Adding/Deleting User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+
+Administrator can create a user account by doing the following:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Registrations** tab.  
+  2. Click on the **Add** button.  
+  3. Fill in the required information and click on the **Signup** button.  
+  4. The new user account will be listed in the list of active accounts.  
+
+To delete a user account:  
+
+  1. Go to **Application Management &rarr; User Management**.  
+  2. Select the account you want to delete (Note: this will permanently delete the account).  
+  3. Click the **Delete** button in the toolbar and then click **Yes** to confirm deletion.  
+
+-----  
+
+### 3.3.13 API Documentation @API-DOCS
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @ADMIN-SYSTEM-MANAGEMENT 
+# 4.  Evaluator Tools @ADMIN-EVALUATION-MANAGEMENT 
 ------
 
 **NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
@@ -1838,28 +2029,28 @@ This section covers Evaluation Management as it exists in Admin Tools.  For eval
 **Evaluation Management within Admin Tools**
 The Evaluation Management menu consists of Evaluations and Templates.
 
-## 4.1 Evaluations @ADMIN-SYSTEM-MANAGEMENT 
+## 4.1 Evaluations @ADMIN-EVALUATION-MANAGEMENT 
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
 
-## 4.2 Templates @ADMIN-SYSTEM-MANAGEMENT 
+## 4.2 Templates @ADMIN-EVALUATION-TEMPLATE 
 
 The templates section lets you manipulate various templates for evaluation input and display.
 
-### 4.2.1 Evaluation Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.1 Evaluation Templates @ADMIN-EVALUATION-TEMPLATE 
 
 This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
 
-### 4.2.2 Checklist Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.2 Checklist Templates @ADMIN-EVALUATION-TEMPLATE-CHECKLIST 
 
 A checklist template lets you add various questions as a checklist.
 
-### 4.2.3 Checklist Questions @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.3 Checklist Questions @ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION   
 
 Here you formulate the questions to be asked on a template.
 
-### 4.2.4 Section Templates @ADMIN-SYSTEM-MANAGEMENT 
+### 4.2.4 Section Templates @ADMIN-EVALUATION-TEMPLATE-SECTION  
 
 Section templates can be created for further customization.
 
@@ -1885,4 +2076,87 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Attribute Code**   -  A specific value for a type.
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
--  **Entry Metadata**   -  is used to capture non-structure data with variable values.  Metadata consists of a label and Value.  An example is: "Content Collection size:  200".  The label is "Content Collection" and 200 is the value.  Note: Metadata is not indexed or filterable.   
+
+# 6. Guides
+------
+
+##6.1 Admin Guides
+-----------------
+
+### 6.1.1 How to Create an Entry Template @ADMIN-ENTRY-MANAGEMENT
+-----------------  
+
+This is a step-by-step guide on how to create an entry template.  The entry used 
+is *The Hunt for Red October*, and the data is based on the 1990 film.  A movie
+theme layout will be used similar to that of the popular movie site IMDb.com.  
+The guide assumes the user has already created an entry but wants to customize its layout.  
+To create an entry template click on **Data Management &rarr; Entry Template** and follow the steps below.
+
+**Step 1) &nbsp;Template Setup**  
+
+  1. Click on the **+Add** button on the Entry Template.
+  2. Give the template a unique name (see **Figure 1** - Yellow highlight).
+  3. Click on the **Data** tab and select the entry whose layout will be customized (see **Figure 1** - green and blue highlights). &nbsp;Note: The data fields will populate after entry is selected.
+
+![Image](../webapp/images/help/entry-template-title-data-entry.png)  
+
+**(Figure 1 - Template Setup)**  
+<br><br>
+
+**Step 2) &nbsp;Template Block Layout**   
+
+  1. Click on the **Template Blocks** tab (see **Figure 2** - green highlight).   
+  2. Select the main layout for the entry (E.g. fit, scroll, accordion).  In this example a scroll layout will be used.  
+  3. To add a layout click on the __+__ icon on the layout block (see **Figure 2** - blue highlight).  It will appear on the right side under the **Visual Design** tab (see **Figure 2** - red highlight).
+
+![Image](../webapp/images/help/entrytemplate-addLayoutScroll.png)  
+**(Figure 2 - Template Block Layout)**   
+<br><br>
+
+**Step 3) &nbsp;Adding Template Blocks to Layout**   
+
+  1. Click on the template block that should appear first in the entry template.  Drag and drop the block to the layout block on the right side (see **Figure 3**). <br>In this example, **Vitals** will be the first template block.  
+  2. Continue to add template blocks in the order you want them to show up in the entry template.
+  3. Once you have added all the blocks for your template, click **Save/Continue** button at the bottom of the window.
+
+![Image](../webapp/images/help/entrytemplate-dragVitals.png)   
+**(Figure 3 - Add Blocks to Layout)**   
+<br><br>
+
+**Step 4) Change the Title of Template Block - Optional**  
+
+  1. To change the title of the template block click on the **Block Config** tab (see **Figure 4** - green highlight).<br>
+  2. From the drop down menu, select the name of the template block whose title you want to change.
+  3. Click **+ Add Property** (see **Figure 4** - blue highlight).  
+  4. In the property text field, enter "title" (see **Figure 4** - red highlight).   
+  5. In the value text field, enter the new title (see **Figure 4** - purple highlight).  
+  6. Click **Apply** (see **Figure 4** - yellow highlight).  In this example, **Entry Vitals** will be changed to **Details**.
+
+![Image](../webapp/images/help/change-block-title-name.png)  
+**(Figure 4 - Change Template Block Title)**  
+<br><br>  
+
+**Step 5) Preview Entry Template - Optional**  
+
+  1. At any point during the construction of an entry template, you can preview what an entry will look like.
+  2. Click on the **Preview** tab (see **Figure 5** - green highlight).   
+  3. Depending on the layout chosen, you can collapse and expand blocks, scroll, click on tabs, etc.  
+
+![Image](../webapp/images/help/entry-preview-for-template.png)  
+**(Figure 5 - Template Preview)**  
+<br><br>
+
+**Step 6) Add the Entry Template to an Entry Type**   
+
+  1. Before closing the **Add/Edit Template** window, click on the **Save/Continue** button to make sure all changes have been saved.  
+  2. Close the **Add/Edit Template** window.
+  3. Navigate to your list of entry types ( **Data Management &rarr; Entry Types**).  
+  4. Select an entry type.  Note: all entries associated with this entry type will be affected by this change.  
+  5. Click the **Edit** button.  
+  6. At the bottom of the **Add/Edit Entry Type** window, click on the drop down arrow under **Override Template** (see **Figure 6** - red and blue highlights).  Select the entry template you just created.  
+  7. Click the **Save** button.  Now any entry of this type  has the layout of the template you created.
+
+![Image](../webapp/images/help/add-template-to-entry-type.png)  
+**(Figure 6 - Add Entry Template to an Entry Type)**  
+<br><br>
+

@@ -77,7 +77,7 @@ public class ComponentServiceImpl
 		implements ComponentService, ComponentServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentServiceImpl.class.getName());
 
 	private CoreComponentServiceImpl core;
 	private SubComponentServiceImpl sub;
@@ -323,7 +323,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public Boolean checkComponentAttribute(ComponentAttribute attribute)
+	public ValidationResult checkComponentAttribute(ComponentAttribute attribute)
 	{
 		return sub.checkComponentAttribute(attribute);
 	}
@@ -677,6 +677,12 @@ public class ComponentServiceImpl
 	public String resolveComponentTypeIcon(String componentType)
 	{
 		return core.resolveComponentTypeIcon(componentType);
+	}
+
+	@Override
+	public String getComponentType(String componentId)
+	{
+		return core.getComponentType(componentId);
 	}
 
 }

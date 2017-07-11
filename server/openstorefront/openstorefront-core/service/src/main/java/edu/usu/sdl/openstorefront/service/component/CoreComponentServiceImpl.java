@@ -108,7 +108,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
-import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
@@ -230,6 +229,26 @@ public class CoreComponentServiceImpl
 		return componentName;
 	}
 
+	public String getComponentType(String componentId)
+	{
+		String componentType = null;
+		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
+		if (element != null) {
+			componentType = (String) element.getObjectValue();
+		} else {
+			String query = "select componentId, componentType from " + Component.class.getSimpleName();
+			List<ODocument> documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
+				if (document.field("componentId").equals(componentId)) {
+					componentType = (String) document.field("componentType");
+				}
+				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
+			}
+		}
+		return componentType;
+	}
+
 	public List<ComponentSearchView> getComponents()
 	{
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
@@ -237,51 +256,14 @@ public class CoreComponentServiceImpl
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = persistenceService.queryByExample(new QueryByExample(componentExample));
+		List<Component> components = componentExample.findByExampleProxy();
 		components = FilterEngine.filter(components);
 
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(new QueryByExample(componentAttributeExample));
-		Map<String, List<ComponentAttribute>> attributeMaps = new HashMap<>();
-		for (ComponentAttribute attribute : componentAttributes) {
-			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
-				List<ComponentAttribute> attributes = attributeMaps.get(attribute.getComponentAttributePk().getComponentId());
-				attributes.add(attribute);
-			} else {
-				List<ComponentAttribute> attributes = new ArrayList<>();
-				attributes.add(attribute);
-				attributeMaps.put(attribute.getComponentAttributePk().getComponentId(), attributes);
-			}
-		}
-
-		ComponentReview componentReviewExample = new ComponentReview();
-		componentAttributeExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-		List<ComponentReview> reviewsFound = componentReviewExample.findByExample();
-		Map<String, List<ComponentReview>> reviewMap = reviewsFound.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
-
-		ComponentTag componentTagExample = new ComponentTag();
-		componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		List<ComponentTag> componentTagsFound = componentTagExample.findByExample();
-		Map<String, List<ComponentTag>> tagMap = componentTagsFound.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
-
-		for (Component component : components) {
-			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
-			if (attributes == null) {
-				attributes = new ArrayList<>();
-			}
-			List<ComponentReview> reviews = reviewMap.get(component.getComponentId());
-			if (reviews == null) {
-				reviews = new ArrayList<>();
-			}
-			List<ComponentTag> componentTags = tagMap.get(component.getComponentId());
-			if (componentTags == null) {
-				componentTags = new ArrayList<>();
-			}
-			ComponentSearchView componentSearchView = ComponentSearchView.toView(component, attributes, reviews, componentTags);
-
-			componentSearchView.setAttributes(SearchResultAttribute.toViewList(attributes));
-			componentSearchViews.add(componentSearchView);
+		if (!components.isEmpty()) {
+			List<String> componentIds = components.stream()
+					.map(Component::getComponentId)
+					.collect(Collectors.toList());
+			componentSearchViews = getSearchComponentList(componentIds);
 		}
 
 		return componentSearchViews;
@@ -1428,21 +1410,21 @@ public class CoreComponentServiceImpl
 		}
 
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-		
+
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getComponentName())) {
-				Component componentLikeExample = new Component();
-				componentLikeExample.setName("%" + filter.getComponentName().toLowerCase() + "%");
-				
-				// Define A Special Lookup Operation (ILIKE)
-				specialOperatorModel.setExample(componentLikeExample);
-				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
-				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + filter.getComponentName().toLowerCase() + "%");
+
+			// Define A Special Lookup Operation (ILIKE)
+			specialOperatorModel.setExample(componentLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 		}
 
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-		
+
 		//TODO: consider moving the filtering work to the DB
 		List<Component> components = persistenceService.queryByExample(queryByExample);
 
@@ -2408,7 +2390,7 @@ public class CoreComponentServiceImpl
 					for (AttributeType attributeType : allAttributes) {
 
 						boolean addToUpdate = false;
-						if (attributeType.getRequiredRestrictions() != null) {
+						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
@@ -2418,7 +2400,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 
-						if (attributeType.getAssociatedComponentTypes() != null) {
+						if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
 								if (checkType.equals(componentType)) {

@@ -16,6 +16,7 @@
 package edu.usu.sdl.apiclient;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class APIResponse
 	{
 		this.objectMapper = objectMapper;
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	public int getResponseCode()

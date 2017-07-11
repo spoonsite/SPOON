@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.action;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
-import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
@@ -33,8 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -63,7 +60,7 @@ public class LoginAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(LoginAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(LoginAction.class.getName());
 
 	@Validate(required = true, on = "Login")
 	private String username;
@@ -97,7 +94,7 @@ public class LoginAction
 			if (HeaderRealm.handleHeaderLogin(getContext().getRequest())) {
 				resolution = handleLoginRedirect();
 			} else {
-				log.log(Level.SEVERE, "Check configuration; Unable to login user using header realm");
+				LOG.log(Level.SEVERE, "Check configuration; Unable to login user using header realm");
 				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");
 			}
 			if (resolution != null) {
@@ -200,8 +197,8 @@ public class LoginAction
 			return streamResults(jsonResponse);
 		} catch (AuthenticationException uea) {
 			//Keep in mind an attacker can create a DOS hitting accounts...ip logging is here to help trace that scenario.
-			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login. ip: {1}", username, NetworkUtil.getClientIp(getContext().getRequest())));
-			log.log(Level.FINEST, "Failed to login Details: ", uea);
+			LOG.log(Level.WARNING, MessageFormat.format("{0} Failed to login. ip: {1}", username, NetworkUtil.getClientIp(getContext().getRequest())));
+			LOG.log(Level.FINEST, "Failed to login Details: ", uea);
 
 			if (uea instanceof DisabledAccountException) {
 				errors.put("username", uea.getMessage());
@@ -215,39 +212,14 @@ public class LoginAction
 	@HandlesEvent("Logout")
 	public Resolution logout()
 	{
-		Subject currentUser = SecurityUtils.getSubject();
-
 		//If the user is not logged in have them go back to login.
 		//With the idam system it cause them to loop around to re-login
 		//rather than going back to the logout.
 		if (SecurityUtil.isLoggedIn() == false) {
 			return new RedirectResolution(LoginAction.class);
 		}
-
-		String userLoggedIn = SecurityUtil.getCurrentUserName();
-		currentUser.logout();
-		getContext().getRequest().getSession().invalidate();
-		try {
-			getContext().getRequest().logout();
-		} catch (ServletException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
-
-		//For now invalidate all cookies; in the future there may be some that should persist.
-		Cookie[] cookies = getContext().getRequest().getCookies();
-		if (cookies != null && cookies.length > 0) {
-			for (Cookie cookie : cookies) {
-				cookie.setValue("-");
-				cookie.setMaxAge(0);
-				getContext().getResponse().addCookie(cookie);
-			}
-		}
-
-		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
-			log.log(Level.INFO, "User was not logged when the logout was called.");
-		} else {
-			log.log(Level.INFO, MessageFormat.format("Logged off user: {0}", userLoggedIn));
-		}
+		
+		SecurityUtil.logout(getContext().getRequest(), getContext().getResponse());
 
 		String logoutUrl = PropertiesManager.getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");
 		if (StringUtils.isBlank(logoutUrl)) {
@@ -267,7 +239,7 @@ public class LoginAction
 
 	public void setUsername(String username)
 	{
-		this.username = username;
+		this.username = username.toLowerCase();
 	}
 
 	public String getPassword()

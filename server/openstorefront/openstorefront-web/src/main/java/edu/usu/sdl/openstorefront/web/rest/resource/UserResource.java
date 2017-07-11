@@ -260,7 +260,7 @@ public class UserResource
 			@PathParam("username") String username
 	)
 	{
-		service.getSecurityService().deletesUser(username);
+		service.getSecurityService().deleteUser(username);
 		return Response.noContent().build();
 	}
 
