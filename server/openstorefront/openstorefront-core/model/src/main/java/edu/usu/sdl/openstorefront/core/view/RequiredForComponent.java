@@ -68,7 +68,7 @@ public class RequiredForComponent
 		{
 			boolean add = true;
 			if (attributeType.getRequiredRestrictions() != null
-					&& attributeType.getRequiredRestrictions().isEmpty() == false)
+					&& !attributeType.getRequiredRestrictions().isEmpty())
 			{
 				if (component.getComponentType() != null)
 				{
@@ -126,7 +126,6 @@ public class RequiredForComponent
 				matchedAttributes.add(type);
 			}
 		}
-
 		if (matchedAttributes.size() < requiredTypeMap.size())
 		{
 			RuleResult ruleResult = new RuleResult();

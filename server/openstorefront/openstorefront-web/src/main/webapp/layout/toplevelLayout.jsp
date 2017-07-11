@@ -90,6 +90,15 @@
         <stripes:layout-component name="html_head"/>
     </head>
     <body>
+
+	<div id="browserWarning" class="browser-warning" >
+		 <p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
+		 <a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
+		 <a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
+		 <a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
+		 <i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>			
+	</div>
+	
 	<stripes:layout-component name="body_header" />	
 	
 	
@@ -98,7 +107,18 @@
 	
 	<stripes:layout-component name="body_footer" />	
 	
-	<script type="text/javascript">
+	<script type="text/javascript">			
+		if (Ext.isIE10m) {
+			Ext.get('browserWarning').setStyle({
+				display: 'block'
+			});
+
+			Ext.get('browserWarning').on("click", function () {
+				Ext.get('browserWarning').setStyle({
+					display: 'none'
+				});
+			} );
+		} 
 		
 		//Call this only after geting the usercontext
 		//Global (specialcase) beware

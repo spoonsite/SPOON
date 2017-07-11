@@ -23,10 +23,11 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public interface AttributeService
 	 * @param filter
 	 * @return
 	 */
-	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter);
+	public AttributeTypeWrapper getFilteredTypes(AttributeFilterParams filter);
 
 	/**
 	 * This used to page filter results
@@ -66,7 +67,7 @@ public interface AttributeService
 	 * @param type
 	 * @return
 	 */
-	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type);
+	public AttributeCodeWrapper getFilteredCodes(AttributeFilterParams filter, String type);
 
 	/**
 	 * Checks if a code exists for a given type
@@ -75,7 +76,7 @@ public interface AttributeService
 	 * @param code a string representing the attribute code
 	 * @return true if code the code exists for the given type
 	 */
-	public Boolean checkIfCodeExistsForType(String type, String code); 
+	public Boolean checkIfCodeExistsForType(String type, String code);
 
 	/**
 	 * Gets the codes for a type Note active codes are cached.
@@ -139,6 +140,15 @@ public interface AttributeService
 	 * @param updateIndexes (For Searching)
 	 */
 	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
+
+	/**
+	 * Save user generated code which require special handling
+	 *
+	 * @param attributeCodeSave
+	 * @return Attribute Codes changed
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public List<AttributeCode> saveUserCodes(AttributeCodeSave attributeCodeSave);
 
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute

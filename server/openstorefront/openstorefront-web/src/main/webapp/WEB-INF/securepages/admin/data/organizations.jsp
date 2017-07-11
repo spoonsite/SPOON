@@ -127,7 +127,7 @@
 									id: 'logoBtn',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-file-picture-o',
+									iconCls: 'fa fa-2x fa-file-picture-o icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										manageLogoAction();
 									}
@@ -319,7 +319,7 @@
 											{
 												text: 'Upload Logo',
 												formBind: true, 
-												iconCls: 'fa fa-lg fa-upload',
+												iconCls: 'fa fa-lg fa-upload ',
 												handler: function(){
 													var logoForm = addEditLogoWin.queryById('logoForm');
 													

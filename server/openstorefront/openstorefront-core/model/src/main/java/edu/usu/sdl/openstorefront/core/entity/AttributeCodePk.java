@@ -38,15 +38,17 @@ public class AttributeCodePk
 		extends BasePK<AttributeCodePk>
 {
 
+	public static final String FIELD_ATTRIBUTE_CODE = "attributeCode";
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	@FK(AttributeType.class)
 	private String attributeType;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeCode;

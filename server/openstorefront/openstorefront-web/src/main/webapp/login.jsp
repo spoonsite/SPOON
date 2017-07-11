@@ -8,6 +8,7 @@
 <%@page import="edu.usu.sdl.openstorefront.core.entity.SecurityPolicy"%>
 <%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
+<%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
@@ -21,12 +22,25 @@
 	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 	
+	String appVersion = PropertiesManager.getApplicationVersion();		
+	request.setAttribute("appVersion", appVersion);
+	
 %>
 <html>
 	<head>
 		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
+		
+		<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>
+		<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
+		<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
+		<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+		
+		<script src="webjars/extjs/6.2.0/ext-bootstrap.js" type="text/javascript"></script>
+		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
+		<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
+		<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 		<title>${branding.getApplicationName()}</title>
 		
 		<script type="text/javascript">
@@ -217,9 +231,18 @@
 			}
 			
 		</style>
+		<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
+		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	</head>
 	<body>
-
+	<div id="browserWarning" class="browser-warning" >
+		 <p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
+		 <a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
+		 <a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
+		 <a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
+		 <i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
+	</div>
  	<div class="login-header">	
     	<h1>${branding.landingPageTitle}</h1>        
     </div>
@@ -277,6 +300,19 @@
 			
 			sessionStorage.clear();
 			
+			if (Ext.isIE10m) {
+				Ext.get('browserWarning').setStyle({
+					display: 'block'
+				});
+
+				Ext.get('browserWarning').on("click", function () {
+					Ext.get('browserWarning').setStyle({
+						display: 'none'
+					});
+				} );
+			} 
+		
+		
 			$(document).ready(function(){
 				if (${allowRegistration}) {
 					$('#registration').removeClass('hidden');
@@ -385,8 +421,8 @@
 						}
 					 }
 				 });
-			}			
-							
+			}		
+						
 		</script>		
 	</body>
 </html>

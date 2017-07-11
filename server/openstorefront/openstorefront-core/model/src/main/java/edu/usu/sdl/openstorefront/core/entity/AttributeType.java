@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
@@ -39,9 +41,11 @@ public class AttributeType
 		extends StandardEntity<AttributeType>
 {
 
+	public static final String FIELD_ATTRIBUTE_TYPE = "attributeType";
+
 	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeType;
@@ -109,41 +113,40 @@ public class AttributeType
 	@APIDescription("Default attribute code")
 	private String defaultAttributeCode;
 
+	@ConsumeField
+	@APIDescription("Defines the value type of code descriptions")
+	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
+	@FK(AttributeValueType.class)
+	private String attributeValueType;
+
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 
 	public AttributeType()
 	{
 	}
-	
-	public void updateNullFlags() 
+
+	public void updateNullFlags()
 	{
-		if (this.getAllowMultipleFlg() == null) 
-		{
+		if (this.getAllowMultipleFlg() == null) {
 			this.setAllowMultipleFlg(false);
 		}
-		if (this.getArchitectureFlg() == null) 
-		{
+		if (this.getArchitectureFlg() == null) {
 			this.setArchitectureFlg(false);
 		}
-		if (this.getImportantFlg() == null) 
-		{
+		if (this.getImportantFlg() == null) {
 			this.setImportantFlg(false);
 		}
-		if (this.getRequiredFlg() == null) 
-		{
+		if (this.getRequiredFlg() == null) {
 			this.setRequiredFlg(false);
 		}
-		if (this.getVisibleFlg()== null) 
-		{
+		if (this.getVisibleFlg() == null) {
 			this.setVisibleFlg(false);
-		}		
-		if (this.getAllowUserGeneratedCodes()== null) 
-		{
+		}
+		if (this.getAllowUserGeneratedCodes() == null) {
 			this.setAllowUserGeneratedCodes(false);
 		}
-		if (this.getHideOnSubmission()== null) 
-		{
+		if (this.getHideOnSubmission() == null) {
 			this.setHideOnSubmission(false);
 		}
 	}
@@ -154,18 +157,19 @@ public class AttributeType
 		super.updateFields(entity);
 
 		AttributeType attributeTypeUpdate = (AttributeType) entity;
-		this.setAllowMultipleFlg(attributeTypeUpdate.getAllowMultipleFlg());
-		this.setArchitectureFlg(attributeTypeUpdate.getArchitectureFlg());
-		this.setDescription(attributeTypeUpdate.getDescription());
-		this.setImportantFlg(attributeTypeUpdate.getImportantFlg());
-		this.setRequiredFlg(attributeTypeUpdate.getRequiredFlg());
-		this.setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
-		this.setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
-		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
-		this.setAllowUserGeneratedCodes(attributeTypeUpdate.getAllowUserGeneratedCodes());
-		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
-		this.setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
-		this.setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
+		setAllowMultipleFlg(attributeTypeUpdate.getAllowMultipleFlg());
+		setArchitectureFlg(attributeTypeUpdate.getArchitectureFlg());
+		setDescription(attributeTypeUpdate.getDescription());
+		setImportantFlg(attributeTypeUpdate.getImportantFlg());
+		setRequiredFlg(attributeTypeUpdate.getRequiredFlg());
+		setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
+		setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
+		setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
+		setAllowUserGeneratedCodes(attributeTypeUpdate.getAllowUserGeneratedCodes());
+		setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
+		setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
+		setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
+		setAttributeValueType(attributeTypeUpdate.getAttributeValueType());
 
 	}
 
@@ -340,6 +344,16 @@ public class AttributeType
 	public void setAllowUserGeneratedCodes(Boolean allowUserGeneratedCodes)
 	{
 		this.allowUserGeneratedCodes = allowUserGeneratedCodes;
+	}
+
+	public String getAttributeValueType()
+	{
+		return attributeValueType;
+	}
+
+	public void setAttributeValueType(String attributeValueType)
+	{
+		this.attributeValueType = attributeValueType;
 	}
 
 }

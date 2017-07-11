@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import java.io.File;
+import freemarker.template.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
-import freemarker.template.*;
 
 /**
  * Handles Background Reports
@@ -62,7 +61,7 @@ public class ReportManager
 		}
 		catch (Exception e)
 		{
-			System.err.println("While configuring the report template, the follow error was caught: " + e);
+			LOG.log(Level.WARNING,"While configuring the report template, the follow error was caught: " + e);
 		}
 		
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();

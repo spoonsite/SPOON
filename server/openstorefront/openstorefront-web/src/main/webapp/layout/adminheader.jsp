@@ -128,13 +128,6 @@
 				}
 			});
 			dataMenu.push({
-				text: 'Metadata',
-				permission: 'ADMIN-ENTRY-MANAGEMENT',
-				handler: function(){
-					actionLoadContent('Metadata');
-				}
-			});
-			dataMenu.push({
 				text: 'Organizations',
 				permission: 'ADMIN-ORGANIZATION',
 				handler: function(){
@@ -423,6 +416,7 @@
 							items:[
 								{
 									text: 'Dashboard',
+									id: 'dashboardAdminHomeButton',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){

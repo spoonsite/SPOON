@@ -106,7 +106,7 @@ public abstract class BaseComponentParser
 		for (AttributeType attributeType : requiredAttributes) {
 
 			boolean attributeRequiredForType = false;
-			if (attributeType.getRequiredRestrictions() != null) {
+			if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 				Set<String> componentTypesInRestriction = new HashSet<>();
 				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 					componentTypesInRestriction.add(restriction.getComponentType());

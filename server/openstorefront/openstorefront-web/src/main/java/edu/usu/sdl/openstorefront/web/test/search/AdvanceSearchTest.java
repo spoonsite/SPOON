@@ -59,6 +59,8 @@ public class AdvanceSearchTest
 
 		doSearch(searchModel);
 
+		//TODO: Add Attribute and then add number search
+		//Also the search below should use and added attribute
 		results.append("<br>Attribute Search<br>");
 		searchModel = new SearchModel();
 		searchElement = new SearchElement();
@@ -96,17 +98,6 @@ public class AdvanceSearchTest
 		searchElement.setSearchType(SearchOperation.SearchType.CONTACT);
 		searchElement.setField("email");
 		searchElement.setValue("c");
-		searchElement.setCaseInsensitive(true);
-		searchElement.setStringOperation(SearchOperation.StringOperation.STARTS_LIKE);
-		searchModel.getSearchElements().add(searchElement);
-
-		doSearch(searchModel);
-
-		results.append("<br>Metadata Search<br>");
-		searchModel = new SearchModel();
-		searchElement = new SearchElement();
-		searchElement.setSearchType(SearchOperation.SearchType.METADATA);
-		searchElement.setKeyField("Test");
 		searchElement.setCaseInsensitive(true);
 		searchElement.setStringOperation(SearchOperation.StringOperation.STARTS_LIKE);
 		searchModel.getSearchElements().add(searchElement);

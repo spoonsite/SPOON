@@ -21,7 +21,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.SavedSearchLinkInsertWindow',
 	layout: 'fit',
-
+	id: 'linkToSaveSearchWindow',
 	title: 'Insert Link to Saved Search',
 	closeMode: 'destroy',
 	alwaysOnTop: true,
@@ -77,7 +77,8 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						{
 							text: 'Insert Link',
 							itemId: 'insert',
-							iconCls: 'fa fa-link',
+							id: 'insertLinkBtn',
+							iconCls: 'fa fa-lg fa-link icon-button-color-default',
 							disabled: true,
 							handler: function(button) {
 								var window = button.up('window');
@@ -97,6 +98,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						},
 						{
 							text: 'Cancel',
+							iconCls: 'fa fa-lg fa-times icon-button-color-warning',
 							handler: function(button) {
 								var window = button.up('window');
 								window.close();
@@ -814,7 +816,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 				},
 				{
 					text: 'Close',
-					iconCls: 'fa fa-2x fa-close',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 					scale: 'medium',
 					handler: function() {
 						this.up('window').close();
