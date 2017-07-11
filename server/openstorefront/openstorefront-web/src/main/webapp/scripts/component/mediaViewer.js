@@ -41,7 +41,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 					xtype: 'button',
 					text: 'Close',
 					scale: 'large',
-					iconCls: 'fa fa-2x fa-close ',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning',
 					handler: function(){
 						this.up('window').close();
 					}

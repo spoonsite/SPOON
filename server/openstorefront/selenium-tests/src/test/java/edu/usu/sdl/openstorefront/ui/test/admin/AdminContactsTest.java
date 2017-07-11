@@ -46,7 +46,7 @@ public class AdminContactsTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			setupDriver(driver);
-			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", "cameron.cummings-testA@sdl.usu.edu");
+			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", properties.getProperty("test.newuseremail"));
 			createAPIContact();
 			editContact(driver, "AAA-TesterFirst", "000-000-0000");
 			toggleStatusContact(driver, "AAA-TesterFirst", "Active");
@@ -58,7 +58,7 @@ public class AdminContactsTest
 
 	private void createAPIContact()
 	{
-		apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "cameron.cummings-testB@sdl.usu.edu", "MyAmazingTest-Organization");
+		apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", properties.getProperty("test.newuseremail"), "MyAmazingTest-Organization");
 	}
 	
 	public void setupDriver(WebDriver driver)

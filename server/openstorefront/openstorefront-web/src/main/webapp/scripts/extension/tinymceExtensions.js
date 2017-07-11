@@ -816,7 +816,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 				},
 				{
 					text: 'Close',
-					iconCls: 'fa fa-2x fa-close',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 					scale: 'medium',
 					handler: function() {
 						this.up('window').close();

@@ -2408,7 +2408,7 @@ public class CoreComponentServiceImpl
 					for (AttributeType attributeType : allAttributes) {
 
 						boolean addToUpdate = false;
-						if (attributeType.getRequiredRestrictions() != null) {
+						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
@@ -2418,7 +2418,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 
-						if (attributeType.getAssociatedComponentTypes() != null) {
+						if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
