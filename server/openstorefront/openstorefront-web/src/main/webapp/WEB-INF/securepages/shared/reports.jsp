@@ -1191,12 +1191,6 @@
 																inputValue: '1',
 																id: 'showDetailReportQA',
 																name: 'QA'
-															},
-															{
-																boxLabel: 'Meta Data',
-																inputValue: '1',
-																id: 'showDetailReportMetaData',
-																name: 'metaData'
 															}
 														]
 													}

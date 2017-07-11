@@ -177,23 +177,6 @@
 			</table>
 		</#if>
 			
-		<!--Meta Data-->
-		<#if component.metaData?has_content && reportOptions.getDisplayMetaData() == true>
-			<h2>MetaData</h2>
-			<table>
-				<tr>
-					<th>Label</th>
-					<th>Value</th>
-				</tr>
-				<#list component.metaData as metaData>
-					<tr>
-						<td><b>${metaData.label}</b></td>
-						<td>${metaData.value}</td>
-					</tr>
-				</#list>
-			</table>
-		</#if>
-			
 		<!--Contacts-->
 		<#if component.contacts?has_content && reportOptions.getDisplayContacts() == true>
 			<h2>Contacts</h2>
@@ -209,11 +192,11 @@
 				<#list component.contacts as contacts>
 					<tr>
 						<td><b>${contacts.type}</b></td>
-						<td>${contacts.firstName}</td>
-						<td>${contacts.lastName}</td>
-						<td>${contacts.org}</td>
-						<td>${contacts.email}</td>
-						<td>${contacts.phone}</td>
+						<td><#if contacts.firstName?has_content>${contacts.firstName}</#if></td>
+						<td><#if contacts.lastName?has_content>${contacts.lastName}</#if></td>
+						<td><#if contacts.org?has_content>${contacts.org}</#if></td>
+						<td><#if contacts.email?has_content>${contacts.email}</#if></td>
+						<td><#if contacts.phone?has_content>${contacts.phone}</#if></td>
 					</tr>
 				</#list>
 			</table>

@@ -62,9 +62,6 @@ public class ReportOption
 	private boolean displayEvalVersions;
 	
 	@ConsumeField
-	private boolean displayMetaData;
-	
-	@ConsumeField
 	private boolean displayOrgData;
 	
 	@ConsumeField
@@ -252,16 +249,6 @@ public class ReportOption
 	public void setDisplayEvalVersions(boolean displayEvalVersions)
 	{
 		this.displayEvalVersions = displayEvalVersions;
-	}
-
-	public boolean getDisplayMetaData()
-	{
-		return displayMetaData;
-	}
-
-	public void setDisplayMetaData(boolean displayMetaData)
-	{
-		this.displayMetaData = displayMetaData;
 	}
 
 	public boolean getDisplayOrgData()

@@ -44,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
@@ -150,11 +151,11 @@ public class ComponentDetailReport
 	@Override
 	protected void writeReport()
 	{
-		if (ReportFormat.CSV.equals(report.getReportFormat())) {
-			generateCSV();
-		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
+//		if (ReportFormat.CSV.equals(report.getReportFormat())) {
+//			generateCSV();
+//		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
 			generateHtml();
-		}
+//		}
 	}
 
 	private void generateCSV()
@@ -663,41 +664,13 @@ public class ComponentDetailReport
 					componentRoot.put("vitals", vitalsList);
 				}
 				
-				// Generate Meta Data
-				List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
-				if (metaData != null) {
-					metaData = FilterEngine.filter(metaData);
-					metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
-					
-					// Make a list of meta data
-					List<Map> metaDataList = new ArrayList<>();
-					for (ComponentMetadata metadataItem : metaData) {
-
-						securityMarking = "";
-						if (getBranding().getAllowSecurityMarkingsFlg() && 
-							StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
-						{
-							securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
-						}
-						
-						// Add to the meta data list
-						Map metaDataHash = new HashMap();
-						metaDataHash.put("label", metadataItem.getLabel());
-						metaDataHash.put("value", securityMarking + metadataItem.getValue());
-						metaDataList.add(metaDataHash);
-					}
-					
-					componentRoot.put("metaData", metaDataList);
-				}
-				
 				// Generate Contancts
-				List<ComponentContact> contacts = contactMap.get(component.getComponentId());
+				List<ComponentContactView> contacts = componentDetail.getContacts();
 				if (contacts != null) {
-					contacts = FilterEngine.filter(contacts);
 					
 					// make a list of contacts
 					List<Map> contactsList = new ArrayList<>();
-					for (ComponentContact contact : contacts) {
+					for (ComponentContactView contact : contacts) {
 
 						securityMarking = "";
 						if (getBranding().getAllowSecurityMarkingsFlg() && 
@@ -707,14 +680,13 @@ public class ComponentDetailReport
 						}				
 
 						// Add to the contacts list
-						Contact contactFull = contact.fullContact();
 						Map contactsHash = new HashMap();
-						contactsHash.put("type", TranslateUtil.translate(ContactType.class, contact.getContactType()));
-						contactsHash.put("firstName", StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()));
-						contactsHash.put("lastName", StringProcessor.blankIfNull(contactFull.getLastName()));
-						contactsHash.put("org", StringProcessor.blankIfNull(contactFull.getOrganization()));
-						contactsHash.put("email", StringProcessor.blankIfNull(contactFull.getEmail()));
-						contactsHash.put("phone", StringProcessor.blankIfNull(contactFull.getPhone()));
+						contactsHash.put("type", contact.getContactType());
+						contactsHash.put("firstName", securityMarking + contact.getFirstName());
+						contactsHash.put("lastName", contact.getLastName());
+						contactsHash.put("org", contact.getOrganization());
+						contactsHash.put("email", contact.getEmail());
+						contactsHash.put("phone", contact.getPhone());
 						
 						contactsList.add(contactsHash);
 					}
