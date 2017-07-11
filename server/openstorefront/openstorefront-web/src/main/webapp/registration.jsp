@@ -298,8 +298,15 @@
 									]
 								}
 							]
-						}
-					],
+						},
+						{
+							xtype: 'panel',
+							title: '<span style=""></span>',
+							titleAlign: 'center',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							margin: '20 0 0 0',
+							layout: 'center',	
+							items: [],
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -408,6 +415,8 @@
 								}
 							]
 						}
+					]
+					}
 					]
 				});
 				
