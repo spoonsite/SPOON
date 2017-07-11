@@ -688,7 +688,7 @@ Ext.define('OSF.component.template.Reviews', {
 				'			</tpl>',
 				'		</tpl>',
 				'	</div>',
-				'</div>',
+				'</div>'
 			)						
 		},
 		{
