@@ -128,13 +128,6 @@
 				}
 			});
 			dataMenu.push({
-				text: 'Metadata',
-				permission: 'ADMIN-ENTRY-MANAGEMENT',
-				handler: function(){
-					actionLoadContent('Metadata');
-				}
-			});
-			dataMenu.push({
 				text: 'Organizations',
 				permission: 'ADMIN-ORGANIZATION',
 				handler: function(){

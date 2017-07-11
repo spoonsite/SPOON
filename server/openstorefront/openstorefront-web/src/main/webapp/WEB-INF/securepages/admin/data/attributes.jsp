@@ -25,7 +25,8 @@
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 	</stripes:layout-render>
 		
-	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
+	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/attributeAssignment.js?v=${appVersion}" type="text/javascript"></script>	
 
 	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
@@ -130,6 +131,8 @@
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
 				autoLoad: true,
+				pageSize: 100,
+				remoteSort: true,
 				fields: [
 					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
 						if (data.defaultAttributeCode) {
@@ -150,12 +153,20 @@
 						direction: 'ASC'
 					})
 				],	
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/attributes/attributetypes?all=true',
+				proxy:  CoreUtil.pagingProxy({					
+					url: 'api/v1/resource/attributes/attributetypes',
 					reader: {
 						type: 'json',
-						rootProperty: 'data'
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					beforeLoad: function(store, operation, eOpts){
+						store.getProxy().extraParams = {
+							status: Ext.getCmp('attributeTypeGridFilter-activeStatus').getValue(),
+							attributeTypeDescription: Ext.getCmp('attributeTypeGridFilter-description').getValue()
+						};
 					}
 				}
 			});
@@ -311,7 +322,7 @@
 			///////////////////
 
 
-			var gridColorRenderer = function gridColorRenderer(value, metadata, record) {
+			var gridColorRenderer = function(value, metadata, record) {
 				if (value) 
 					metadata.tdCls = 'alert-success';
 				else 
@@ -327,6 +338,12 @@
 				selModel: {
 					selType: 'checkboxmodel'        
 				},
+				bbar: Ext.create('Ext.PagingToolbar', {
+					store: attributeStore,
+					displayInfo: true,
+					displayMsg: 'Displaying Attributes {0} - {1} of {2}',
+					emptyMsg: "No attributes to display"
+				}),				
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						
@@ -439,18 +456,14 @@
 						xtype: 'toolbar',
 						items: [
 							Ext.create('OSF.component.StandardComboBox', {
-								id: 'attributeFilter-activeStatus',
+								id: 'attributeTypeGridFilter-activeStatus',
 								emptyText: 'Show All',
 								fieldLabel: 'Active Status',
 								name: 'activeStatus',
+								value: 'A',
 								listeners: {
 									change: function (filter, newValue, oldValue, opts) {
-										if (newValue === 'A') {
-											attributeStore.filter('activeStatus','A');
-										}
-										else {
-											attributeStore.filter('activeStatus', 'I');
-										}
+										attributeStore.reload();
 									}
 								},
 								storeConfig: {
@@ -471,7 +484,25 @@
 										]
 									}
 								}
-							})
+							}),
+							{
+								xtype: 'textfield',
+								id: 'attributeTypeGridFilter-description',
+								fieldLabel: 'Description',						
+								name: 'description',								
+								emptyText: 'Filter By Description',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: 250,
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											attributeStore.reload();
+										},
+										buffer: 1500
+									}
+								}
+							}
 						]
 					},
 					{
@@ -535,7 +566,9 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
-									actionManageAssignments();
+									var entryWin = Ext.create('OSF.component.AttributeAssignment', {										
+									});
+									entryWin.show();
 								}
 							},
 							{
@@ -633,7 +666,7 @@
 			});			
 			
 
-			var actionAddAttribute = function actionAddAttribute() {
+			var actionAddAttribute = function() {
 				Ext.getCmp('editAttributeForm').reset();
 				editAttributeWin.edit = false;
 				editAttributeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
@@ -1152,7 +1185,7 @@
 				}
 			});
 
-			var actionToggleAttributeStatus = function actionToggleAttributeStatus() {
+			var actionToggleAttributeStatus = function() {
 				
 				// Store Selection
 				var selection = attributeGrid.getSelection();
@@ -1236,7 +1269,7 @@
 				}
 			};
 
-			var actionDeleteAttribute = function actionDeleteAttribute() {
+			var actionDeleteAttribute = function() {
 				
 				// Get Selection
 				var selection = Ext.getCmp('attributeGrid').getSelection();
@@ -1336,11 +1369,11 @@
 				});
 			};
 
-			var actionImportAttribute = function actionImportAttribute() {
+			var actionImportAttribute = function() {
 				importWindow.show();
 			};
 
-			var actionExportAttribute = function actionExportAttribute(records) {
+			var actionExportAttribute = function(records) {
 				
 				// Initialize Export Types
 				var attributeTypes = "";
@@ -1379,21 +1412,15 @@
 				}
 			});
 
-			var actionManageCodes = function actionManageCodes(record) {
+			var actionManageCodes = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes';
-				url += '/' + record.data.attributeType + '/attributecodeviews?all=true';
-				codesStore.setProxy({
-					type: 'ajax',
-					url: url,
-					reader: {
-						type: 'json',
-						rootProperty: 'data'
-					}
+				url += '/' + record.data.attributeType + '/attributecodeviews';
+					
+				codesStore.load({
+					url: url
 				});
-				codesStore.filter('activeStatus', 'A');
-				codesStore.load();
-				manageCodesWin.attributeType = record.data.attributeType;
-				Ext.getCmp('codesFilter-activeStatus').setValue('A');
+				manageCodesWin.attributeType = record.data.attributeType;			
+				manageCodesWin.attributeTypeFull = record.data;
 				
 				manageCodesWin.show();
 			};
@@ -1459,7 +1486,7 @@
 											success: function () {
 												Ext.toast('Successfully uploaded attachment.', '', 'tr');
 												attachmentUploadWindow.hide();
-												codesStore.load();
+												codesStore.reload();
 											},
 											failure: function () {
 												Ext.toast('Failed to upload attachment.');
@@ -1485,7 +1512,32 @@
 			});
 
 			var codesStore = Ext.create('Ext.data.Store', {
-				id: 'codesStore'
+				id: 'codesStore',
+				pageSize: 100,
+				remoteSort: true,
+				autoLoad: false,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'label',
+						direction: 'ASC'
+					})
+				],	
+				proxy:  CoreUtil.pagingProxy({					
+					url: 'api/v1/resource/attributes/attributetypes',
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					beforeLoad: function(store, operation, eOpts){
+						store.getProxy().extraParams = {
+							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
+							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
+						};
+					}
+				}				
 			});
 
 			var codesGrid = Ext.create('Ext.grid.Panel', {
@@ -1529,6 +1581,12 @@
 						}
 					}
 				},
+				bbar: Ext.create('Ext.PagingToolbar', {
+					store: codesStore,
+					displayInfo: true,
+					displayMsg: 'Displaying Codes {0} - {1} of {2}',
+					emptyMsg: "No codes to display"
+				}),					
 				dockedItems: [
 					{
 						dock: 'top',
@@ -1539,17 +1597,10 @@
 								emptyText: 'Active',
 								fieldLabel: 'Active Status',
 								name: 'activeStatus',
+								value: 'A',
 								listeners: {
 									change: function (filter, newValue, oldValue, opts) {
-										if (newValue === 'A') {
-											codesStore.filter('activeStatus','A');
-										}
-										else if (newValue === 'I') {
-											codesStore.filter('activeStatus', 'I');
-										}
-										else {
-											codesStore.clearFilter();
-										}
+										codesStore.reload();
 									}
 								},
 								storeConfig: {
@@ -1570,7 +1621,25 @@
 										]
 									}
 								}
-							})
+							}),
+							{
+								xtype: 'textfield',
+								id: 'codesFilter-label',
+								fieldLabel: 'Label',						
+								name: 'label',								
+								emptyText: 'Filter By Label',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: 250,
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											codesStore.reload();
+										},
+										buffer: 1500
+									}
+								}
+							}							
 						]
 					},
 					{
@@ -1583,7 +1652,7 @@
 								id: 'refreshAttrCodes',
 								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
-									codesStore.load();
+									codesStore.reload();
 								}
 							},
 							{
@@ -1778,14 +1847,24 @@
 								xtype: 'textfield',
 								id: 'editCodeForm-label',
 								fieldLabel: 'Label<span class="field-required" />',
+								allowBlank: false,
 								name: 'label'
 							},
+							{
+								xtype: 'numberfield',
+								id: 'editCodeForm-labelNumber',
+								fieldLabel: 'Label Number<span class="field-required" />',
+								name: 'label',
+								allowBlank: false,
+								allowDecimal: true,
+								hidden: true
+							},								
 							{
 								xtype: 'textfield',
 								id: 'editCodeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
 								name: 'typeCode'
-							},
+							},						
 							{
 								xtype: 'panel',
 								html: '<b>Description</b>'
@@ -1904,7 +1983,7 @@
 													form: Ext.getCmp('editCodeForm'),
 													success: function (response, opts) {
 														Ext.toast('Saved Successfully', '', 'tr');
-														codesStore.load();
+														codesStore.reload();
 														Ext.getCmp('editCodeForm').reset();
 														editCodeWin.hide();
 													},
@@ -1934,26 +2013,52 @@
 						]
 			});
 
-			var actionAddCode = function actionAddCode(parentAttributeRecord) {
+			var actionAddCode = function(parentAttributeRecord) {
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
+				editCodeWin.attributeTypeFull = parentAttributeRecord.data;
 				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
+				
+				
+				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
+					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-label').setDisabled(true);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
+				} else {
+					Ext.getCmp('editCodeForm-label').setHidden(false);
+					Ext.getCmp('editCodeForm-label').setDisabled(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
+				}				
+				
 				editCodeWin.show();
 			};
 
-			var actionEditCode = function actionEditCode(record) {
+			var actionEditCode = function(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
-				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
+				Ext.getCmp('editCodeForm-code').setValue(record.data.code);			
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
+				editCodeWin.attributeTypeFull = manageCodesWin.attributeTypeFull;
 				editCodeWin.setTitle('<i class="fa fa-edit"></i>' + '<span class="shift-window-text-right">Edit Code - </span>' + record.data.code);
 				Ext.getCmp('editCodeForm-code').setEditable(false);
+				Ext.getCmp('editCodeForm-codeNumber').setEditable(false);
+				
+				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
+					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+				} else {
+					Ext.getCmp('editCodeForm-label').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);					
+				}				
+				
 				editCodeWin.show();
 			};
 
-			var actionToggleCode = function acitionToggleCode(record) {
+			var actionToggleCode = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -1970,7 +2075,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully ' + what + 'd attribute code', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to ' + what + ' attribute code', '', 'tr');
@@ -1978,7 +2083,7 @@
 				});
 			};
 
-			var actionDeleteCode = function acitionDeleteCode(record) {
+			var actionDeleteCode = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -1989,7 +2094,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully sent deletion request for attribute code', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to send deletion request for attribute code', '', 'tr');
@@ -1998,7 +2103,7 @@
 
 			};
 
-			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+			var actionDeleteCodeAttachment = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
@@ -2009,7 +2114,7 @@
 					method: method,
 					success: function(response, opt){
 						Ext.toast('Successfully deleted attachment', '', 'tr');
-						codesStore.load();
+						codesStore.reload();
 					},
 					failure: function(response, opt){
 						Ext.toast('Failed to delete attachment', '', 'tr');
@@ -2062,11 +2167,18 @@
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
 				modal: true,
-				width: '60%',
-				height: '80%',
+				width: '75%',
+				height: '90%',
 				maximizable: true,
 				y: '2em',
 				layout: 'fit',
+				listeners: {
+					show: function(win) {
+						Ext.defer(function(){
+							win.down('form').updateLayout(true, true);
+						}, 500);
+					}
+				},
 				items: [
 					{
 						xtype: 'form',
@@ -2118,6 +2230,22 @@
 								maxLength: 255,
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Code Label Value Type',							
+								displayField: 'description',
+								valueField: 'code',
+								typeAhead: false,
+								editable: false,
+								name: 'attributeValueType',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/lookuptypes/AttributeValueType'
+									}
+								}
+							},	
 							{
 								xtype: 'panel',
 								html: '<b>Associated Entry Types:</b>'
@@ -2417,719 +2545,7 @@
 					}
 				]
 			});
-			
-			
-			var refreshEntryGridPanels = function() {
-				
-				// Mask Component Grids (Loading)
-				Ext.getCmp('unassignedComponentGrid').getView().mask("Loading...");
-				Ext.getCmp('assignedComponentGrid').getView().mask("Loading...");
-
-				// Store Attribute Type
-				var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
-
-				// Store Attribute Code
-				var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
-
-				// Get Currently Assigned Components
-				var url = 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code + '/components';
-
-				Ext.Ajax.request({
-					url: url,
-					method: 'GET',
-					success: function(response, opt) {
-
-						// Parse Response JSON
-						var components = JSON.parse(response.responseText);
-
-						// Initialize Component ID Array
-						var componentIds = [];
-
-						// Initialize Component Data Array
-						var componentData = [];
-
-						// Loop Through Components
-						for (i = 0; i < components.length; i++) {
-
-							// Add Component ID To Array
-							componentIds.push(components[i].componentId);
-						}
-						
-						// Load Remote Components Store
-						store_components_remote.load(function(records, operation, success) {
-							
-							// Clear Any Previous Filters
-							store_components_local.clearFilter();
-
-							// Filter Unassigned Components Store
-							store_components_local.filterBy(function(record) {
-
-								return !Ext.Array.contains(componentIds, record.get('id'));
-							});
-							
-							// Loop Through Assigned Component IDs
-							for (i = 0; i < componentIds.length; i++) {
-								
-								// Locate & Store Component With Matching ID
-								var component = store_components_local.getById(componentIds[i]);
-								
-								// Check For Match
-								if (component != null) {
-								
-									// Add Matching Component's Data To Array
-									componentData.push(component.getData());
-								}
-							}
-
-							// Add Assigned Component Data To Assigned Component Store
-							store_assignedComponents_local.setData(componentData);
-
-							// Unmask Component Grids (Loading)
-							Ext.getCmp('unassignedComponentGrid').getView().unmask();
-							Ext.getCmp('assignedComponentGrid').getView().unmask();
-						});
-					},
-					failure: function(response, opt) {
-
-						// Unmask Component Grids (Loading)
-						Ext.getCmp('unassignedComponentGrid').getView().unmask();
-						Ext.getCmp('assignedComponentGrid').getView().unmask();
-
-						// Indicate An Error Occurred
-						Ext.toast('Error Loading Entries', '', 'tr');
-
-						// Log Response
-						console.log('Error Loading Entries. See Response:');
-						console.log(response);
-					}
-				});
-			};
-			
-			
-			var unassignedComponentGrid = Ext.create('Ext.grid.Panel', {
-				id: 'unassignedComponentGrid',
-				store: store_components_local,
-				flex: 1,
-				border: false,
-				autoScroll: true,
-				disabled: true,
-				viewConfig: {
-
-					plugins: {
-
-						ptype: 'gridviewdragdrop',
-						dragGroup: 'componentAssignment-add-drag-drop-group',
-						dropGroup: 'componentAssignment-remove-drag-drop-group',
-						enableDrag: true,
-						enableDrop: true,
-						dragText: 'Add: {0}',
-						dragTextField: 'name'
-					},
-					listeners: {
-
-						drop: function (node, data, overModel, dropPosition, eOpts) {
-
-							// Store Component Data
-							var component = data.records[0];
-							var componentData = component.getData();
-							
-							// Store Attribute Type
-							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
-							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
-
-							// Store Attribute Code
-							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
-							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
-
-							// Make Request
-							Ext.Ajax.request({
-
-								url: 'api/v1/resource/components/' + componentData.id + '/attributes/' + type + '/' + code,
-								method: 'DELETE',
-								success: function (response, opts) {
-									
-									// Loop Through Component Attributes
-									for (i = 0; i < componentData.attributes.length; i++) {
-										
-										// Look For Matching Attribute
-										if (componentData.attributes[i].name === name &&
-												componentData.attributes[i].value === value) {
-											
-											// Delete Attribute
-											componentData.attributes.splice(i, 1);
-											
-											// Stop Looping
-											break;
-										}
-									}
-									
-									// Update Data Display
-									unassignedComponentGrid.getView().refresh();
-									
-									// Clear Filters
-									store_components_local.clearFilter();
-									
-									// Get Assigned Components
-									var assignedComponents = store_assignedComponents_local.getData();
-									
-									// Initialize Assigned Component ID Array
-									var assignedComponentIDs = [];
-									
-									// Loop Through Assigned Components
-									for (i = 0; i < assignedComponents.length; i++) {
-										
-										// Add ID To Array
-										assignedComponentIDs.push(assignedComponents.items[i].id);
-									}
-									
-									// Filter Unassigned Components Store
-									store_components_local.filterBy(function(record) {
-
-										return !Ext.Array.contains(assignedComponentIDs, record.get('id'));
-									});
-									
-									// Indicate Successful Removal
-									Ext.toast("Attribute Deleted From " + componentData.name, '', 'tr');
-								},
-								failure: function (response, opts) {
-
-									// Provide An Error Message
-									Ext.toast("Error Deleting Attribute From " + componentData.name, '', 'tr');
-									
-									// Log Error
-									console.log("Error Removing Attribute. See Response:");
-									console.log(response);
-									
-									// Return Component To Previous Grid
-									store_assignedComponents_local.addSorted(component);
-									
-									// Select Component
-									assignedComponentGrid.getSelectionModel().select(component);
-									
-									// Send Focus Temporarily Elsewhere
-									unassignedComponentGrid.focus();
-									
-									// Focus On Component
-									assignedComponentGrid.getView().focusRow(component);
-									
-									// Remove Component From New Grid
-									store_components_local.remove(component);
-								}
-							});
-						}
-					}
-				},
-				columns: [
-					{ 
-						text: 'Entries',
-						dataIndex: 'name',
-						flex: 1,
-						renderer: function (value, metaData, record) {
-							
-							var html = '<span style="font-weight: bold;">' + value + "</span>";
-							html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-							html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
-							html += '<span style="float: left;">' + record.get('type').name + '</span>';
-							html += "</div>";
-							
-							html += '<div>';
-							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
-							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
-							
-							for (var i = 0; i < record.get('attributes').length; i++) {
-								
-								html += '		<li>';
-								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
-								html += '			' + record.get('attributes')[i].value;
-								html += '		</li>';
-							}
-							
-							html += '	</ul>';
-							html += '</div>';
-							
-							return html;
-						}
-
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'top',
-						items: [
-							{
-								text: 'Refresh',
-								scale: 'medium',
-								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
-								handler: function () {
-
-									// Refresh Entry Grid Panels
-									// (Also Performs A Store Reload)
-									refreshEntryGridPanels();
-								}
-							}
-						]
-					},
-					{
-						xtype: 'toolbar',
-						dock: 'top',
-						items: [
-							{
-								xtype: 'tagfield',
-								fieldLabel: 'Entry Types',
-								labelWidth: new Ext.util.TextMetrics().getWidth("Entry Types:"),
-								flex: 1,
-								store: store_componentTypes_remote,
-								valueField: 'code',
-								displayField: 'description',
-								emptyText: 'All',
-								listeners: {
-									change: function (tagfield, newValue, oldValue, eOpts) {
-
-										// Get Current Filters On Store
-										var filters = store_components_local.getFilters();
-
-										// Loop Through Filters
-										for (i = 0; i < filters.length; i++) {
-
-											// Store Filter Function
-											var filterFunction = filters.items[i].getFilterFn().toString();
-
-											// Check If Current Filter Contains A String Which Itentifies This Filter
-											if (filterFunction.search(/FILTER_BY_TYPE_CODE/) != -1) {
-
-												// Remove Previous Filter
-												store_components_local.removeFilter(filters.items[i]);
-											}
-										}
-
-										// Check If We Should Create A Filter
-										if (newValue.length > 0) {
-
-											// Create A Filter
-											store_components_local.filterBy(filter = function multiFilter(record) {
-
-												// Identify Filter
-												var filterName = "FILTER_BY_TYPE_CODE";
-
-												// Locate Matching Records
-												return Ext.Array.contains(newValue, record.get('type').code);
-											});
-										}
-									}
-								}
-							}
-						]
-					},
-					{
-						xtype: 'toolbar',
-						dock: 'top',
-						items: [
-							{
-								xtype: 'textfield',
-								flex: 1,
-								fieldLabel: 'Filter',
-								labelWidth: new Ext.util.TextMetrics().getWidth("Filter:"),
-								listeners: {
-									change: {
-
-										buffer: 500,
-										fn: function (field, newValue, oldValue, eOpts) {
-
-											// Get Field's Store
-											var store = Ext.getCmp("unassignedComponentGrid").getStore();
-
-											// Get Current Filters On Store
-											var filters = store.getFilters();
-
-											// Loop Through Filters
-											for (i = 0; i < filters.length; i++) {
-
-												// Check If Current Filter Contains A String Which Itentifies This Filter
-												if (filters.items[i].getFilterFn().toString().search(/FILTER_BY_NAME/) != -1) {
-
-													// Remove Previous Filter
-													store.removeFilter(filters.items[i]);
-												}
-											}
-
-											// Set Filter
-											store.filterBy(function(record) {
-
-												// Identify Filter
-												var filterName = "FILTER_BY_NAME";
-
-												// Return Whether Search String Was Found
-												return record.get('name').search(new RegExp(newValue, 'i')) != -1;
-											});
-										}
-									}
-								}
-							}
-						]
-					}
-				]
-			});
-			
-			
-			var assignedComponentGrid = Ext.create('Ext.grid.Panel', {
-				flex: 1,
-				id: 'assignedComponentGrid',
-				store: store_assignedComponents_local,
-				border: false,
-				autoScroll: true,
-				disabled: true,
-				emptyText: 'No Assigned Entries',
-				viewConfig: {
-
-					plugins: {
-
-						ptype: 'gridviewdragdrop',
-						dragGroup: 'componentAssignment-remove-drag-drop-group',
-						dropGroup: 'componentAssignment-add-drag-drop-group',
-						enableDrag: true,
-						enableDrop: true,
-						dragText: 'Delete: {0}',
-						dragTextField: 'name'
-					},
-					listeners: {
-
-						drop: function (node, data, overModel, dropPosition, eOpts) {
-
-							// Store Component Data
-							var component = data.records[0];
-							var componentData = component.getData();
-							
-							// Store Attribute Type
-							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
-							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
-
-							// Store Attribute Code
-							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
-							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
-
-							// Build New Component Attribute Data
-							var attributeData = {
-
-								componentAttributePk: {
-
-									attributeType: type,
-									attributeCode: code
-								}
-							};
-
-							// Make Request
-							Ext.Ajax.request({
-
-								url: 'api/v1/resource/components/' + componentData.id + '/attributes',
-								method: 'POST',
-								jsonData: attributeData,
-								success: function (response, opts) {
-									
-									// Add Attribute & Code To Component
-									componentData.attributes.push({
-										
-										name: name,
-										value: value
-									});
-									
-									// Update Data Display
-									assignedComponentGrid.getView().refresh();
-									
-									// Indicate Successful Removal
-									Ext.toast("Attribute Added To " + componentData.name, '', 'tr');
-								},
-								failure: function (response, opts) {
-
-									// Provide An Error Message
-									Ext.toast("Error Adding Attribute To " + componentData.name, '', 'tr');
-
-									// Log Error
-									console.log("Error Adding Attribute. See Response:");
-									console.log(response);
-
-									// Return Component To Previous Grid
-									store_components_local.addSorted(component);
-									
-									// Select Component
-									unassignedComponentGrid.getSelectionModel().select(component);
-									
-									// Send Focus Temporarily Elsewhere
-									assignedComponentGrid.focus();
-									
-									// Focus On Component
-									unassignedComponentGrid.getView().focusRow(component);
-									
-									// Remove Component From New Grid
-									store_assignedComponents_local.remove(component);
-								}
-							});
-						}
-					}
-				},
-				columns: [
-					{ 
-						text: 'Entries',
-						dataIndex: 'name',
-						flex: 1,
-						renderer: function (value, metaData, record) {
-
-							// Store Record Type
-							var recordType = record.get('type');
-
-							// Check If Record Type Is Empty
-							if (!recordType) {
-
-								// Build Component Without Record Type
-								var html = '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<span style="font-weight: bold;">' + value + "</span>";
-								html += "</div>";
-							}
-							else {
-
-								// Build Component With Record Type
-								var html = '<span style="font-weight: bold;">' + value + "</span>";
-								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book icon-small-vertical-correction-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
-								html += '<span style="float: left;">' + recordType.name + '</span>';
-								html += "</div>";
-							}
-							
-							html += '<div>';
-							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
-							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
-							
-							for (var i = 0; i < record.get('attributes').length; i++) {
-								
-								html += '		<li>';
-								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
-								html += '			' + record.get('attributes')[i].value;
-								html += '		</li>';
-							}
-							
-							html += '	</ul>';
-							html += '</div>';
-							
-							return html;
-						}
-					}
-				]
-			});
-			
-			
-			var manageAssignmentsWin = Ext.create('Ext.window.Window', {
-				id: 'manageAssignmentsWin',
-				title: 'Manage Assignments',
-				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
-				modal: true,
-				width: '60%',
-				height: '80%',
-				maximizable: true,
-				y: '2em',
-				layout: {
-					
-					type: 'vbox',
-					align: 'stretch'
-				},
-				items: [
-					{
-						xtype: 'panel',
-						id: 'manageAssignmentsForm-attribute-container',
-						flex: 1,
-						margin: '10 10 10 10 ',
-						layout: 'hbox',
-						items: [
-							{
-								xtype: 'combobox',
-								id: 'manageAssignmentsForm-attribute',
-								flex: 1,
-								fieldLabel: 'Attribute',
-								emptyText: '-- Select An Attribute --',
-								name: 'attribute',
-								store: attributeStore,
-								displayField: 'description',
-								valueField: 'attributeType',
-								listeners: {
-
-									select: function (field, record, opt) {
-
-										// Build URL For Retrieving Attribute Codes
-										var url = 'api/v1/resource/attributes/attributetypes';
-										url += '/' + record.get('attributeType') + '/attributecodeviews?all=true';
-
-										// Configure Code Store With New URL
-										codesStore.setProxy({
-
-											type: 'ajax',
-											url: url,
-											reader: {
-
-												type: 'json',
-												rootProperty: 'data'
-											}
-										});
-
-										// Filter Code Store Based On Active Status
-										// (Only Show Active Records)
-										codesStore.filter('activeStatus', 'A');
-
-										// Load Data In Store
-										codesStore.load();
-
-										// Enable Code Selection Combo Box
-										Ext.getCmp('manageAssignmentsForm-code').enable();
-									},
-
-									change: function (field, newValue, oldValue, opts) {
-
-										// Get Current Selection
-										var selection = field.getSelection();
-
-										// Check If We Previously Had A Selection
-										if (selection != null && selection.get('attributeType') != newValue) {
-
-											// Reset Field (Remove Selection)
-											field.reset();
-
-											// Put New Value Back Into Field
-											field.setValue(newValue);
-
-											// Reset Attribute Code Selection Field
-											Ext.getCmp('manageAssignmentsForm-code').reset();
-
-											// Disable Attribute Code Selection Field
-											// (Will Re-Enable When Another Selection Is Made)
-											Ext.getCmp('manageAssignmentsForm-code').disable();
-										}
-									}
-								}
-							}
-						]
-					},
-					{
-						xtype: 'panel',
-						id: 'manageAssignmentsForm-code-container',
-						flex: 1,
-						margin: '10 10 10 10',
-						layout: 'hbox',
-						items: [
-							{
-								xtype: 'combobox',
-								id: 'manageAssignmentsForm-code',
-								flex: 1,
-								fieldLabel: 'Attribute Code',
-								emptyText: '-- Select An Attribute Code --',
-								name: 'attributeCode',
-								disabled: true,
-								forceSelection: true,
-								editable: false,
-								store: codesStore,
-								displayField: 'label',
-								valueField: 'code',
-								listeners: {
-
-									select: function (field, newValue, oldValue, opt) {
-
-										// Enable Component Grids
-										Ext.getCmp('unassignedComponentGrid').enable();
-										Ext.getCmp('assignedComponentGrid').enable();
-										
-										// Refresh Entry Grid Panels
-										refreshEntryGridPanels();
-									}
-								}
-							}
-						]
-					},
-					{
-						xtype: 'panel',
-						id: 'manageAssignmentsForm-entries-container',
-						flex: 18,
-						layout: {
-							type: 'hbox',
-							align: 'stretch'
-						},
-						items: [
-							{
-								title: 'Unassigned Entries',
-								xtype: 'panel',
-								margin: '5 5 5 5',
-								flex: 2,
-								id: 'manageAssignmentsForm-entries-unassigned-container',
-								layout: {
-									type: 'hbox',
-									align: 'stretch'
-								},
-								items: [
-
-									unassignedComponentGrid
-								]
-							},
-							{
-								title: 'Assigned Entries',
-								xtype: 'panel',
-								margin: '5 5 5 5',
-								flex: 2,
-								id: 'manageAssignmentsForm-entries-assigned-container',
-								layout: {
-									type: 'hbox',
-									align: 'stretch'
-								},
-								items: [
-
-									assignedComponentGrid
-								]
-							}
-						]
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'bottom',
-						items: [
-							{
-								xtype: 'tbfill',
-							},
-							{
-								text: 'Close',
-								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-								handler: function () {
-									
-									// Hide Attribute Management Window
-									Ext.getCmp('manageAssignmentsWin').hide();
-								}
-							}
-						]
-					}
-				],
-				listeners: {
-					
-					hide: function() {
-						
-						// Reset Attribute Code Selection Field
-						Ext.getCmp('manageAssignmentsForm-code').reset();
-
-						// Disable Attribute Code Selection Field
-						Ext.getCmp('manageAssignmentsForm-code').disable();
-
-						// Disable Assigned Components Grid
-						Ext.getCmp('assignedComponentGrid').disable();
-
-						// Disable Unassigned Components Grid
-						Ext.getCmp('unassignedComponentGrid').disable();
-
-						// Reset Attribute Selection Field
-						Ext.getCmp('manageAssignmentsForm-attribute').reset();
-
-						// Clear Out Component Stores
-						store_components_remote.removeAll();
-						store_components_local.removeAll();
-						store_assignedComponents_local.removeAll();
-					}
-				}
-			});
-			
+		
 			
 			addComponentToMainViewPort(attributeGrid);
 			

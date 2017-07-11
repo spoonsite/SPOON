@@ -25,14 +25,14 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.Contacts',
 		'OSF.form.Resources',
 		'OSF.form.Media',
-		'OSF.form.Dependencies',
-		'OSF.form.Metadata',
+		'OSF.form.Dependencies',		
 		'OSF.form.EntrySummary',
 		'OSF.form.ChecklistSummary',
 		'OSF.form.ChecklistQuestion',
 		'OSF.form.ChecklistAll',
 		'OSF.form.Section',
-		'OSF.form.Review'
+		'OSF.form.Review',
+		'OSF.form.Tags'
 	],
 	
 	layout: 'border',
@@ -704,18 +704,16 @@ Ext.define('OSF.component.EvaluationPanel', {
 							});
 						}
 					});					
-				}				
-				if (entryType.dataEntryMetadata){
-					menuItems.push({						
-						text: 'Metadata',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Metadata',
-								title: 'Entry Metadata'
-							});
-						}
-					});						
-				}		
+				}
+				menuItems.push({						
+					text: 'Tags',							
+					handler: function(){
+						evalPanel.loadContentForm({
+							form: 'Tags',
+							title: 'Tags'
+						});
+					}
+				});					
 				
 				evalPanel.navigation.getComponent('entrymenu').removeAll();
 				evalPanel.navigation.getComponent('entrymenu').add(menuItems);

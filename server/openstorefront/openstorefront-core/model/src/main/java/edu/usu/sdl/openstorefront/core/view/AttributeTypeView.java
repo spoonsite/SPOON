@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -56,6 +58,8 @@ public class AttributeTypeView
 
 	private String defaultAttributeCode;
 	private String detailedDescription;
+	private String attributeValueType;
+	private String attributeValueTypeDescription;
 
 	@NotNull
 	private String activeStatus;
@@ -90,6 +94,9 @@ public class AttributeTypeView
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
 		attributeTypeView.setAssociatedComponentTypes(attributeType.getAssociatedComponentTypes());
+		attributeTypeView.setAttributeValueType(attributeType.getAttributeValueType());
+		attributeTypeView.setAttributeValueTypeDescription(TranslateUtil.translate(AttributeValueType.class, attributeType.getAttributeValueType()));
+
 		attributeTypeView.toStandardView(attributeType);
 
 		return attributeTypeView;
@@ -249,6 +256,26 @@ public class AttributeTypeView
 	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
 	{
 		this.associatedComponentTypes = associatedComponentTypes;
+	}
+
+	public String getAttributeValueType()
+	{
+		return attributeValueType;
+	}
+
+	public void setAttributeValueType(String attributeValueType)
+	{
+		this.attributeValueType = attributeValueType;
+	}
+
+	public String getAttributeValueTypeDescription()
+	{
+		return attributeValueTypeDescription;
+	}
+
+	public void setAttributeValueTypeDescription(String attributeValueTypeDescription)
+	{
+		this.attributeValueTypeDescription = attributeValueTypeDescription;
 	}
 
 }

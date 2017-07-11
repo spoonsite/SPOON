@@ -137,12 +137,6 @@
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Metadata',
-									name: 'dataEntryMetadata',
-									id: 'entryForm-radio-metadata'
-								},
-								{
-									xtype: 'checkbox',
 									boxLabel: 'Evaluation Information',
 									name: 'dataEntryEvaluationInformation',
 									id: 'entryForm-radio-eval-info'
