@@ -810,8 +810,8 @@ Functional Areas of Managing Attributes includes:
   4. Managing Codes
   5. Setting Flags, Toggling Status, and Deleting
   6. Importing and Exporting
-    
-    
+
+  
 #### 3.2.1.1 Add New Attribute Type @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
@@ -839,6 +839,7 @@ From the Attribute Tool, click on the **Add New Type** button or the
  4. Associated Entry Types:  Allow this attribute on all types or only certain types (Articles, Entries, etc.)
  5. Flags:  Set the flags shown on the main page for Required, Visible, Important, Architecture, Allow Multiple,
      Allow User-Created Codes, or Hide on Submission.
+ 6. Code value type: set the allowed values for codes and labels
  
 
 #### 3.2.1.2 Entry Assignment @ADMIN-ENTRY-MANAGEMENT
@@ -898,8 +899,8 @@ entry. For example: Entry listing may contain and attribute for
 
 **Field Descriptions:**
 
--  **Label**               - Human readable value of the code
--  **Code**                - System reference key
+-  **Label**               - Human readable value of the code (May only allow numbers if depending on the Attribute type)
+-  **Code**                - System reference key  (May only allow numbers if depending on the Attribute type)
 -  **Description**         - This is a detail description of the meaning of the value. It is used in pop-up to help users interpolate the data.
 -  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
 -  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
@@ -908,7 +909,7 @@ entry. For example: Entry listing may contain and attribute for
 -  **Highlight Class**     - Used to add color emphasis to a code
 
 
-#### 3.2.1.1 Setting Flags, Toggling Status, and Deleting @ADMIN-ATTRIBUTE-MANAGEMENT
+#### 3.2.1.5 Setting Flags, Toggling Status, and Deleting @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 From the attributes page the Action button has three sub-menus:

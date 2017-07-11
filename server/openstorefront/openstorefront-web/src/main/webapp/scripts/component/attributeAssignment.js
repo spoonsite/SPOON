@@ -296,7 +296,8 @@ Ext.define('OSF.component.AttributeAssignment', {
 						{
 							text: 'Assign Entries',
 							itemId: 'assignEntriesBtn',
-							iconCls: 'fa fa-lg fa-arrow-left',							
+							iconCls: 'fa fa-lg fa-arrow-right',							
+							iconAlign: 'right',
 							disabled: true,
 							handler: function() {
 								var records = assignPanel.unassignedGrid.getSelection();								
@@ -371,8 +372,7 @@ Ext.define('OSF.component.AttributeAssignment', {
 					items: [
 						{
 							text: 'Unassign Entries',		
-							iconCls: 'fa fa-lg fa-arrow-right',
-							iconAlign: 'right',
+							iconCls: 'fa fa-lg fa-arrow-left',							
 							itemId: 'unassignEntriesBtn',
 							disabled: true,
 							handler: function() {

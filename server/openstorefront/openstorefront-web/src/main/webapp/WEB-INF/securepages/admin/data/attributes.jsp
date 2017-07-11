@@ -1864,7 +1864,16 @@
 								id: 'editCodeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
 								name: 'typeCode'
-							},						
+							},
+							{
+								xtype: 'numberfield',
+								id: 'editCodeForm-codeNumber',
+								fieldLabel: 'Type Code Number<span class="field-required" /> (Should match label)',
+								name: 'typeCode',
+								allowBlank: false,
+								allowDecimal: true,
+								hidden: true
+							},							
 							{
 								xtype: 'panel',
 								html: '<b>Description</b>'
@@ -1953,9 +1962,24 @@
 										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
-											var form = Ext.getCmp('editCodeForm');
+											var form = Ext.getCmp('editCodeForm');											
+											var formData = form.getValues();
+											if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
+												if (formData.label !== formData.typeCode) {
+													Ext.Msg.show({
+														title:'Validation',
+														message: 'Type Code must match label for numberic attribute types',
+														buttons: Ext.Msg.OK,
+														icon: Ext.Msg.ERROR,
+														fn: function(btn) {															
+														}
+													});
+													return;
+												}
+											}
+											
 											if (form.isValid()) {
-												var formData = form.getValues();
+												
 												var edit = editCodeWin.edit;
 												var attributeType = editCodeWin.attributeType;
 												var url = 'api/v1/resource/attributes/attributetypes/';
@@ -2020,6 +2044,7 @@
 				editCodeWin.attributeTypeFull = parentAttributeRecord.data;
 				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
+				Ext.getCmp('editCodeForm-codeNumber').setEditable(true);
 				
 				
 				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
@@ -2027,11 +2052,22 @@
 					Ext.getCmp('editCodeForm-label').setDisabled(true);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
+					
+					Ext.getCmp('editCodeForm-code').setHidden(true);
+					Ext.getCmp('editCodeForm-code').setDisabled(true);
+					Ext.getCmp('editCodeForm-codeNumber').setHidden(false);
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(false);
+										
 				} else {
 					Ext.getCmp('editCodeForm-label').setHidden(false);
 					Ext.getCmp('editCodeForm-label').setDisabled(false);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
+					
+					Ext.getCmp('editCodeForm-code').setHidden(false);
+					Ext.getCmp('editCodeForm-code').setDisabled(false);
+					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);					
 				}				
 				
 				editCodeWin.show();
@@ -2232,7 +2268,7 @@
 							},
 							{
 								xtype: 'combobox',
-								fieldLabel: 'Code Label Value Type',							
+								fieldLabel: 'Code Value Type',							
 								displayField: 'description',
 								valueField: 'code',
 								typeAhead: false,
