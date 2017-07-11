@@ -151,11 +151,11 @@ public class ComponentDetailReport
 	@Override
 	protected void writeReport()
 	{
-//		if (ReportFormat.CSV.equals(report.getReportFormat())) {
-//			generateCSV();
-//		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
+		if (ReportFormat.CSV.equals(report.getReportFormat())) {
+			generateCSV();
+		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
 			generateHtml();
-//		}
+		}
 	}
 
 	private void generateCSV()
