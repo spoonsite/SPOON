@@ -849,6 +849,8 @@
 						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
 					} else if (result.componentTypeIconUrl) {
 						result.logo = result.componentTypeIconUrl;
+					} else {
+						result.logo = null;
 					}
 				});
 				

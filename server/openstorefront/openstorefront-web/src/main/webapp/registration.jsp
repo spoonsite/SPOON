@@ -34,7 +34,7 @@
 			SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 			request.setAttribute("autoApprove", securityPolicy.getAutoApproveUsers());
 			request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
-		%>	
+		%>		
 		
 		<style> 
 			

@@ -159,7 +159,18 @@
 														width: '100%',											
 														allowBlank: true,
 														maxLength: 16000
-													},										
+													},
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use image map" ></i>',
+														name: 'loginLogoBlock',
+														resizable: {
+															handles: 's'
+														},
+														width: '100%',											
+														allowBlank: true,
+														maxLength: 16000
+													},														
 													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
