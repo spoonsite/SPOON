@@ -24,7 +24,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	UserProfileTest.class
+	UserProfileIT.class
 })
 public class UserToolTestSuite
 {

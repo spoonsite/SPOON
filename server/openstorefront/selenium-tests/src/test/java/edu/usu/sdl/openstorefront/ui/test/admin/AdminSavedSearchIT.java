@@ -31,11 +31,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminSavedSearchTest
+public class AdminSavedSearchIT
 		extends AdminTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(AdminSavedSearchTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 
 	@Test
 	public void adminSavedSearchTest() throws JsonProcessingException

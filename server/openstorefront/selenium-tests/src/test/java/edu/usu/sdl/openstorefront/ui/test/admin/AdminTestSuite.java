@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	AdminAttributesTest.class
+	AdminAttributesIT.class
 })
 public class AdminTestSuite
 {

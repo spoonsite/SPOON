@@ -31,7 +31,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author dshurtleff
  */
-public class UserProfileTest
+public class UserProfileIT
 		extends UserTestBase
 {
 

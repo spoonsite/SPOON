@@ -58,3 +58,4 @@ nbdist/
 project*.properties
 *.swp
 *~
+*.orig

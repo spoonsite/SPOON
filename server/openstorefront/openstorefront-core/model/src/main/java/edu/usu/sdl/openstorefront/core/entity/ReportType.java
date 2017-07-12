@@ -64,7 +64,6 @@ public class ReportType
 		codeMap.put(COMPONENT_ORGANIZATION, newLookup(ReportType.class, COMPONENT_ORGANIZATION, "Entries by Organization", "Reports on entries that belong to an organization"));
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));
-		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evaluation Status", "Reports on the status of unpublished evaluations."));
 
 		//update metadata
@@ -77,7 +76,6 @@ public class ReportType
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
-		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
 		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT)).setComponentReport(true);
 
@@ -85,7 +83,10 @@ public class ReportType
 		for (LookupEntity lookupEntity : codeMap.values()) {
 			((ReportType) lookupEntity).getSupportedFormats().add(ReportFormat.CSV);
 		}
+		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
+		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
+
 
 		return codeMap;
 	}

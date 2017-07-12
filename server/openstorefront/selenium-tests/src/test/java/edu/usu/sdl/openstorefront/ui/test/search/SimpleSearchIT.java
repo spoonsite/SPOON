@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.evaluator;
+package edu.usu.sdl.openstorefront.ui.test.search;
 
 /**
  *
  * @author dshurtleff
  */
-public class EvaluationToolTest
-		extends EvaluatorTestBase
+public class SimpleSearchIT
+		extends SearchTestBase
 {
 
-	public EvaluationToolTest()
+	public SimpleSearchIT()
 	{
 	}
 

@@ -19,11 +19,11 @@ package edu.usu.sdl.openstorefront.ui.test.search;
  *
  * @author dshurtleff
  */
-public class AdvanceSearchTest
+public class AdvanceSearchIT
 		extends SearchTestBase
 {
 
-	public AdvanceSearchTest()
+	public AdvanceSearchIT()
 	{
 	}
 
