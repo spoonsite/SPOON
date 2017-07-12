@@ -35,16 +35,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author dshurtleff
  */
-public class AccountSignupActivateTest
+public class AccountSignupActivateIT
 		extends SecurityTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(AccountSignupActivateTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(AccountSignupActivateIT.class.getName());
 
 	/**
 	 *
 	 */
-	public AccountSignupActivateTest()
+	public AccountSignupActivateIT()
 	{
 
 	}

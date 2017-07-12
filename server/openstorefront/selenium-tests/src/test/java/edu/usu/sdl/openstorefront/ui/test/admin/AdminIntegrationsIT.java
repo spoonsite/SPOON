@@ -33,7 +33,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminIntegrationsTest
+public class AdminIntegrationsIT
 		extends AdminTestBase
 {
 
