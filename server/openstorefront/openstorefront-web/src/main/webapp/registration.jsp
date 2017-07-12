@@ -35,10 +35,10 @@
 			request.setAttribute("autoApprove", securityPolicy.getAutoApproveUsers());
 		
 			if (!securityPolicy.getAllowRegistration()) {				
-				response.sendRedirect("noregistration.jsp");
+				response.sendRedirect("noregistration.jsp");				
 			}
-
-		%>	
+		
+		%>		
 		
 		<style> 
 			

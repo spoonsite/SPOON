@@ -202,7 +202,7 @@ Ext.define('OSF.widget.EvaluationStats', {
 					},
 					sprites: {
 						type: 'text',
-						text: 'Evaluations per Status',
+						text: 'Unpublished per Status',
 						fontSize: 22,
 						width: 100,
 						height: 30,
