@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class HomePageTest
+public class HomePageIT
 		extends SecurityTestBase
 {
     private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
@@ -30,7 +30,7 @@ public class HomePageTest
     /**
      *
      */
-    public HomePageTest(){
+    public HomePageIT(){
 
     }
 

@@ -36,7 +36,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminEntryTypesTest
+public class AdminEntryTypesIT
 		extends AdminTestBase
 {
 
