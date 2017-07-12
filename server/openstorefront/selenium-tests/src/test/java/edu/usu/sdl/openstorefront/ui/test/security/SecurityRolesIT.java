@@ -25,7 +25,7 @@ import org.openqa.selenium.WebDriver;
  *
  * @author besplin
  */
-public class SecurityRolesTest
+public class SecurityRolesIT
 		extends NewSecurityRole
 {
 
@@ -56,7 +56,7 @@ public class SecurityRolesTest
 
 	public void signupForAccounts() throws InterruptedException
 	{
-		AccountSignupActivateTest newAccountSignup = new AccountSignupActivateTest();
+		AccountSignupActivateIT newAccountSignup = new AccountSignupActivateIT();
 
 		// Create new accounts and activate.  Log on as user then log back on as admin
 		// NOTE-- usernames get converted to lower case

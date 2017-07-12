@@ -19,7 +19,7 @@ import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateTest;
+import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateIT;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -132,7 +132,7 @@ public class BrowserTestBase
 		try {
 			Thread.sleep(mills);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(AccountSignupActivateTest.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AccountSignupActivateIT.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
