@@ -33,11 +33,7 @@
 		
 			SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 			request.setAttribute("autoApprove", securityPolicy.getAutoApproveUsers());
-		
-			if (!securityPolicy.getAllowRegistration()) {				
-				response.sendRedirect("noregistration.jsp");
-			}
-
+			request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 		%>	
 		
 		<style> 
@@ -56,9 +52,12 @@
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-
+			
+			if (!${allowRegistration}) {
+				window.location.replace("noregistration.jsp");
+			}
+			
 			Ext.onReady(function () {
-				
 				var mainForm = Ext.create('Ext.form.Panel', {
 					region: 'center',
 					title: 'Fill out the form to signup for an account',
@@ -440,7 +439,6 @@
 			});
 			
 		</script>
-		
 	</stripes:layout-component>
 </stripes:layout-render>	
 		
