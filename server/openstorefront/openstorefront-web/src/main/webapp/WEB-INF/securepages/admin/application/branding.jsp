@@ -594,11 +594,10 @@
 													{
 														xtype: 'checkbox',
 														width: '100%',
-														boxLabel: 'Use Default Landing Page',
+														boxLabel: 'Use Default Landing Page <i class="fa fa-exclamation-circle" data-qtip="When checked, will override and<br />delete the custom landing page."></i>',
 														name: 'useDefaultLandingPage',
 														listeners: {
 															change: function(field, newValue, oldValue) {							
-																
 																if (record) {
 																	if (newValue) {
 																		addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
@@ -626,7 +625,19 @@
 															var win = this.up('window');
 															var form = this.up('form');
 
-															actionSaveBranding(form, function(response, opt){																
+															actionSaveBranding(form, function(response, opt){	
+																var rootItems = form.items.items;
+
+																// When the form is saved, reset all original values for checkboxes
+																for (var ii = 0; ii < rootItems.length; ii += 1) {
+																	
+																	var subItems = rootItems[ii].items.items;
+																	for (var jj = 0; jj < subItems.length; jj += 1) {
+																		if (form.items.items[ii].items.items[jj].xtype === 'checkbox') {
+																			subItems[jj].originalValue = subItems[jj].getValue();
+																		}
+																	}
+																}
 															});
 														}
 													},
@@ -679,6 +690,7 @@
 											var form = addEditBrandingWin.queryById('brandingForm');
 											var landingTab = addEditBrandingWin.queryById('landingPageTab');
 											actionSaveBranding(form, function(response, opt){
+												landingTab.loadedTemplate = landingTab.code.getFullTemplate();
 											}, landingTemplate);
 										},
 										cancelHandler: function() {
