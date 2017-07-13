@@ -91,6 +91,10 @@ public class AdminAttributesIT
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).sendKeys(attrName);
 
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-code-inputEl"))).sendKeys(attrCode);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#attributeValueType-trigger-picker"))).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(.,'Text')]"))).click();
 
 		// radio buttons
 		boolean bValue = false;

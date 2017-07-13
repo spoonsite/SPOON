@@ -90,8 +90,8 @@ public class AdminEntryTypesIT
 
 		List<String> radioBtns = Arrays.asList("entryForm-radio-allow-on-sub-bodyEl", "entryForm-radio-attributes-bodyEl",
 				"entryForm-radio-relationships-bodyEl", "entryForm-radio-contacts-bodyEl", "entryForm-radio-resources-bodyEl",
-				"entryForm-radio-media-bodyEl", "entryForm-radio-dependencies-bodyEl", "entryForm-radio-metadata-bodyEl",
-				"entryForm-radio-eval-info-bodyEl", "entryForm-radio-reviews-bodyEl", "entryForm-radio-questions-bodyEl");
+				"entryForm-radio-media-bodyEl", "entryForm-radio-dependencies-bodyEl", "entryForm-radio-eval-info-bodyEl", 
+				"entryForm-radio-reviews-bodyEl", "entryForm-radio-questions-bodyEl");
 
 		for (String btn : radioBtns) {
 
@@ -160,7 +160,7 @@ public class AdminEntryTypesIT
 			LOG.log(Level.INFO, e.toString());
 		}
 
-		List<WebElement> allRows = new ArrayList<WebElement>();
+		List<WebElement> allRows = new ArrayList<>();
 		allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(".x-grid-item-container"), By.tagName("tr")));
 
 		int colIndex = getColumnHeaderIndex(driver, "Active Status");
@@ -170,7 +170,7 @@ public class AdminEntryTypesIT
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<WebElement>();
+			List<WebElement> cells = new ArrayList<>();
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);

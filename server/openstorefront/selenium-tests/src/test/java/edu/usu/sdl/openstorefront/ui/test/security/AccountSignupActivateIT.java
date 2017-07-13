@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.selenium.apitestclient.UserRegistrationTestCli
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.eclipse.jetty.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -52,7 +53,11 @@ public class AccountSignupActivateIT
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
-		signupActivate("auto-test-default");
+		String userName = "auto-test-default";
+		signupActivate(userName);
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			deleteUserIfPresent(driver, userName);
+		}
 	}
 
 	// Order of tests when running all of the way through
@@ -61,6 +66,7 @@ public class AccountSignupActivateIT
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			deleteUserIfPresent(driver, userName);
 			signupForm(driver, userName);
+			login();
 			activateAccount(driver, userName);
 		}
 	}
@@ -126,9 +132,35 @@ public class AccountSignupActivateIT
 		driver.findElement(By.cssSelector("input[name='firstName']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("input[name='lastName']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("input[name='organization']")).sendKeys("Air Force");
-		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(properties.getProperty("test.newuseremail"));
+		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(userName + "@test.com");
 		driver.findElement(By.cssSelector("input[name='phone']")).sendKeys("435-555-5555");
+		
+		String registrationId = getRegistrationId(driver);
+		if(StringUtil.isBlank(registrationId))
+		{
+			registrationId = getRegistrationId(driver);
+		}
+		
+		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
+		
+		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
+		UserRegistration registration = client.getUserRegistration(registrationId);
 
+		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
+
+		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
+
+		// SUBMIT the form
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
+
+		// WAIT for signup to complete 
+		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
+
+	}
+	private String getRegistrationId(WebDriver driver)
+	{
+		
+		WebDriverWait wait = new WebDriverWait(driver, 20);
 		// generate the email verification code
 		driver.findElement(By.id("verificationCodeButton")).click();
 		driverWait(() -> wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text"))), 5000);
@@ -152,23 +184,8 @@ public class AccountSignupActivateIT
 		while (registrationId.equals("") && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			registrationId = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
 		}
-
-		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
-		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
-		UserRegistration registration = client.getUserRegistration(registrationId);
-
-		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
-
-		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
-
-		// SUBMIT the form
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
-
-		// WAIT for signup to complete 
-		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
-
+		return registrationId;
 	}
-
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate

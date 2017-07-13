@@ -2294,6 +2294,7 @@
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
 							{
+								id: 'attributeValueType',
 								xtype: 'combobox',
 								fieldLabel: 'Code Value Type',							
 								displayField: 'description',
