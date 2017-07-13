@@ -378,6 +378,7 @@
 													hideSummary: Ext.String.ellipsis(entry.name, 50),
 													labelForDescription: 'Correction: <br>(Please include the section needing the correction. Eg. Contacts)',
 													successHandler: function() {														
+														this.destroy();
 													}
 												});
 												feedbackWin.show();
