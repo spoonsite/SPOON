@@ -325,7 +325,7 @@
 				var highlightAddEditWin = Ext.create('Ext.window.Window', {
 					id: 'highlightAddEditWin',
 					title: 'Add/Edit Highlight',
-					minHeight: 750,
+					height: '70%',
 					minWidth: 700,
 					modal: true,
 					scrollable: true,
