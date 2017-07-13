@@ -433,7 +433,7 @@
 										margin: '0 10 10 0',
 										maxLength: 120,
 										storeConfig: {
-											url: 'api/v1/resource/components/tags'
+											url: 'api/v1/resource/components/' + componentId + '/tagsfree'
 										},
 										listeners:{
 											specialkey: function(field, e) {
@@ -741,6 +741,7 @@
 												},
 												success: function(response, opt){
 													Ext.getCmp('tagPanel').remove(tagButton, true);
+													Ext.getCmp('tagField').store.reload();
 												}
 											});											
 										}

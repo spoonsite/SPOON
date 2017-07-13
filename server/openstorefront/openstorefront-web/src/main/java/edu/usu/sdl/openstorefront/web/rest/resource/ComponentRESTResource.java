@@ -3516,6 +3516,35 @@ public class ComponentRESTResource
 
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TAG section">
 	@GET
+	@APIDescription("Get the entire tag list (Tag Cloud), excluding the tags already used by a some component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tagsfree")
+	public List<ComponentTag> getFreeComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
+		List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+		List<ComponentTag> filteredTags = new ArrayList<>();
+		
+		for (ComponentTag tag : allTags) {
+			boolean pass = true;
+			for (ComponentTag myTag : componentTags) {
+				if (myTag.getTagId().equals(tag.getTagId())) {
+					pass = false;
+					break;
+				}
+			}
+			if (pass) {
+				filteredTags.add(tag);
+			}
+		}
+
+		return filteredTags;
+	}
+	
+	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
