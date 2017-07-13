@@ -59,6 +59,7 @@ public class NewSecurityRole
 			for (WebElement aButton : topButtons) {
 				if (aButton.getText().equals("Delete")) {
 					aButton.click();
+					break;
 				}
 			}
 			// Wait Delete Role confirmation box to come up.
@@ -69,6 +70,7 @@ public class NewSecurityRole
 			for (WebElement theButton : deleteOptions) {
 				if (theButton.getText().equals("Confirm")) {
 					theButton.click();
+					break;
 				}
 			}
 
