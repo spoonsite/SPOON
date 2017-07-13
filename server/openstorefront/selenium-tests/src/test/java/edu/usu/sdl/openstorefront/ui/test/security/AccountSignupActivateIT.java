@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.selenium.apitestclient.UserRegistrationTestCli
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.eclipse.jetty.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -136,11 +135,6 @@ public class AccountSignupActivateIT
 		driver.findElement(By.cssSelector("input[name='phone']")).sendKeys("435-555-5555");
 		
 		String registrationId = getRegistrationId(driver);
-		if(StringUtil.isBlank(registrationId))
-		{
-			registrationId = getRegistrationId(driver);
-		}
-		
 		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
 		
 		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();

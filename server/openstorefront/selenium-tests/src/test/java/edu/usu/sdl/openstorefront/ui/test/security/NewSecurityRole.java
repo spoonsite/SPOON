@@ -168,6 +168,7 @@ public class NewSecurityRole
 
 				// Verify it is in the list of added usernames
 				boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() + "')]")).isDisplayed();
+				driver.findElement(By.cssSelector("[data-qtip='Close dialog']")).click();
 				if (wasAdded) {
 					LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName + " role. ---");
 				} else {
