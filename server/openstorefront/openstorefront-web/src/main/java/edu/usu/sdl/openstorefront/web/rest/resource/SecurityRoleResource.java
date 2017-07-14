@@ -154,7 +154,7 @@ public class SecurityRoleResource
 			SecurityRole savedRole = service.getSecurityService().saveSecurityRole(securityRole);
 
 			if (post) {
-				return Response.created(URI.create("v1/resource/securityroles/" + savedRole.getRoleName())).entity(savedRole).build();
+				return Response.created(URI.create("v1/resource/securityroles")).entity(savedRole).build();
 			} else {
 				return Response.ok(savedRole).build();
 			}

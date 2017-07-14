@@ -289,7 +289,7 @@
 													var urlEnd = '';
 													if (record) {
 														method = 'PUT';
-														urlEnd = '/' + data.roleName;
+														urlEnd = data.roleName;
 														data.permissions = record.data.permissions;
 														data.dataSecurity = record.data.dataSecurity;
 													}	
@@ -301,7 +301,7 @@
 													}													
 													
 													CoreUtil.submitForm({
-														url: 'api/v1/resource/securityroles' + urlEnd,
+														url: 'api/v1/resource/securityroles/' + encodeURIComponent(urlEnd),
 														method: method,
 														data: data,
 														form: form,
