@@ -112,6 +112,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 	initComponent: function () {
 		this.callParent();
+		this.loadRelationships();
 
 		var visPanel = this;
 
