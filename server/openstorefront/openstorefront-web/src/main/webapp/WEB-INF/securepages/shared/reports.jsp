@@ -633,6 +633,7 @@
 						Ext.getCmp('filterForEntries').setHidden(true);
 						Ext.getCmp('scheduleOptionsGrid').setHidden(true);
 						Ext.getCmp('detailReportCategories').setHidden(true);
+						Ext.getCmp('detailReportCol4').setHidden(true);
 						Ext.getCmp('categorySelect').setHidden(true);
 						Ext.getCmp('waitSeconds').setHidden(true);
 						Ext.getCmp('startDate').setHidden(true);
@@ -655,7 +656,10 @@
 
 							Ext.getCmp('filterForEntries').setHidden(false);
 							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
-							Ext.getCmp('detailReportCategories').setHidden(false);
+							if (rType === 'TYPECOMP') {
+								Ext.getCmp('detailReportCategories').setHidden(false);
+								Ext.getCmp('detailReportCol4').setHidden(false);
+							}
 						}
 						else if (rType === 'CATCOMP') {
 							Ext.getCmp('categorySelect').setHidden(false);														
@@ -760,12 +764,12 @@
 													data.reportOption = reportOpt;
 
 													// retrieve each report category flag
-													for (var ii = 1; ii < 4; ii += 1) {
+													for (var ii = 1; ii < 5; ii += 1) {
 														var detailCats = Ext.getCmp('detailReportCol' + ii).items.items;
 														for (var jj = 0; jj < detailCats.length; jj += 1) {
 
 															// mold the name of each value to match that of the API
-															data.reportOption['display' + detailCats[jj].name[0].toUpperCase() + detailCats[jj].name.slice(1)] = detailCats[jj].value;
+															data.reportOption[detailCats[jj].id] = detailCats[jj].value;
 														}
 													}
 
@@ -1073,36 +1077,29 @@
 															{
 																boxLabel: 'Description',
 																inputValue: '1',
-																id: 'showDetailReportDescription',
+																id: 'displayDescription',
 																name: 'description',
 																value: true
 															},
 															{
 																boxLabel: 'Contacts',
 																inputValue: '1',
-																id: 'showDetailReportContacts',
+																id: 'displayContacts',
 																name: 'contacts',
 																value: true
 															},
 															{
 																boxLabel: 'Resources',
 																inputValue: '1',
-																id: 'showDetailReportResources',
+																id: 'displayResources',
 																name: 'resources',
 																value: true
 															},
 															{
 																boxLabel: 'Vitals',
 																inputValue: '1',
-																id: 'showDetailReportVitals',
+																id: 'displayVitals',
 																name: 'vitals',
-																value: true
-															},
-															{
-																boxLabel: 'Dependencies',
-																inputValue: '1',
-																id: 'showDetailReportDependencies',
-																name: 'dependencies',
 																value: true
 															}
 														]
@@ -1115,55 +1112,33 @@
 														baseCls: 'detailReportColumn',
 														items: [
 															{
+																boxLabel: 'Dependencies',
+																inputValue: '1',
+																id: 'displayDependencies',
+																name: 'dependencies',
+																value: true
+															},
+															{
 																boxLabel: 'Relationships',
 																inputValue: '1',
-																id: 'showDetailReportRelationships',
+																id: 'displayRelationships',
 																name: 'relationships',
 																value: true
 															},
 															{
 																boxLabel: 'Tags',
 																inputValue: '1',
-																id: 'showDetailReportTags',
+																id: 'displayTags',
 																name: 'tags',
 																value: true
 															},
 															{
 																boxLabel: 'Organization Data',
 																inputValue: '1',
-																id: 'showDetailReportOrgData',
+																id: 'displayOrgData',
 																name: 'orgData',
 																value: true,
 																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
-															},
-															{
-																boxLabel: 'Evaluation Summary',
-																inputValue: '1',
-																id: 'showDetailReportEvalSummary',
-																name: 'evalSummary',
-																value: true,
-																inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
-																listeners: {
-																	change: function (me, newVal, oldVal) {
-																		if (newVal === true) {
-																			Ext.getCmp('showDetailReportEvalDetails').setValue(false);
-																		}
-																	}
-																}
-															},
-															{
-																boxLabel: 'Evaluation Details',
-																inputValue: '1',
-																id: 'showDetailReportEvalDetails',
-																name: 'evalDetails',
-																inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
-																listeners: {
-																	change: function (me, newVal, oldVal) {
-																		if (newVal === true) {
-																			Ext.getCmp('showDetailReportEvalSummary').setValue(false);
-																		}
-																	}
-																}
 															}
 														]
 													},
@@ -1177,19 +1152,20 @@
 															{
 																boxLabel: 'All Evaluation Versions',
 																inputValue: '1',
-																id: 'showDetailReportEvalVersions',
-																name: 'evalVersions'
+																id: 'displayEvalVersions',
+																name: 'evalVersions',
+																inputAttrTpl: 'data-qtip=An&nbsp;evaluation&nbsp;category&nbsp;type&nbsp;must&nbsp;be&nbsp;specified'
 															},
 															{
 																boxLabel: 'Reviews',
 																inputValue: '1',
-																id: 'showDetailReportReviews',
+																id: 'displayReportReviews',
 																name: 'reportReviews'
 															},
 															{
 																boxLabel: 'Q/A',
 																inputValue: '1',
-																id: 'showDetailReportQA',
+																id: 'displayQA',
 																name: 'QA'
 															}
 														]
@@ -1197,7 +1173,40 @@
 												]
 											}
 										]
-									},					
+									},
+									{
+										xtype: 'fieldcontainer',
+										defaultType: 'radiofield',
+										fieldLabel: 'Included Evaluation Category Type',
+										id: 'detailReportCol4',
+										hidden: true,
+										width: '100%',
+									    defaults: {
+									        columnWidth: 0.32,
+									        inputValue: '1'
+									    },
+									    layout: 'column',
+										items: [
+											{
+												boxLabel: 'Evaluation Summary',
+												name: 'evaluationType',
+												id: 'displayEvalSummary',
+												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
+												value: true
+											},
+											{
+												boxLabel: 'Evaluation Details',
+												name: 'evaluationType',
+												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
+												id: 'displayEvalDetails'
+											},
+											{
+												boxLabel: 'None',
+												inputAttrTpl: 'data-qtip=Exclude&nbsp;evaluations&nbsp;from&nbsp;this&nbsp;report',
+												name: 'evaluationType'
+											}
+										]
+									},
 									{
 										xtype: 'gridpanel',
 										title: 'Restrict By Entry',
