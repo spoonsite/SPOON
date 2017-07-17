@@ -252,17 +252,37 @@ public class ElasticSearchManager
 
 		// Check For Remaining Query Items
 		if (queryString.length() > 0) {
-			// Create custom queries
-			String allUpperQuery = queryString.toString().toUpperCase();
-			String allLowerQuery = queryString.toString().toLowerCase();
-			String properCaseQuery = toProperCase(queryString.toString());
-			String actualQuery = queryString.toString();
+
+			String actualQuery = "";
+			String allUpperQuery = "";
+			String allLowerQuery = "";
+			String properCaseQuery = "";
+
+			if (isHyphenatedWithoutSpaces(queryString.toString())) {
+				// Create custom queries
+				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
+				allLowerQuery = createSubstringOfQuery(queryString.toString().toLowerCase());
+				properCaseQuery = createSubstringOfQuery(toProperCase(queryString.toString()));
+				actualQuery = createSubstringOfQuery(queryString.toString());
+
+			} else {
+				// Create custom queries
+				allUpperQuery = queryString.toString().toUpperCase();
+				allLowerQuery = queryString.toString().toLowerCase();
+				properCaseQuery = toProperCase(queryString.toString());
+				actualQuery = queryString.toString();
+			}
 
 			// Custom query for entry name
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+
+			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 
 			// Custom query for entry organization
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
@@ -271,8 +291,8 @@ public class ElasticSearchManager
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 
 			// Custom query for description
-			esQuery.should(QueryBuilders.matchPhraseQuery("description", queryString.toString()));
-			
+			esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
+
 			// Fuzzy query on all fields using actual input
 			esQuery.should(QueryBuilders.fuzzyQuery(ELASTICSEARCH_ALL_FIELDS, actualQuery));
 		}
@@ -325,17 +345,45 @@ public class ElasticSearchManager
 
 	protected String toProperCase(String query)
 	{
-		final String DELIMITERS = " '-/";
+		final String DELIMITERS = " '-/*";
 
 		StringBuilder searchQuery = new StringBuilder();
 		boolean capNext = true;
 
 		for (char c : query.toCharArray()) {
-			c = (capNext) ? Character.toUpperCase(c) : Character.toLowerCase(c);
-			searchQuery.append(c);
-			capNext = (DELIMITERS.indexOf((int) c) >= 0);
+
+			if (capNext && Character.isLetter(c)) {
+				c = (capNext) ? Character.toUpperCase(c) : Character.toLowerCase(c);
+				searchQuery.append(c);
+				capNext = (DELIMITERS.indexOf((int) c) >= 0);
+			} else {
+				searchQuery.append(c);
+				capNext = (DELIMITERS.indexOf((int) c) >= 0);;
+			}
 		}
 		return searchQuery.toString();
+	}
+
+	protected boolean isHyphenatedWithoutSpaces(String query)
+	{
+		if (query.indexOf('-') >= 0 && query.charAt(0) != '"') {
+
+			for (int i = 1; i < query.length() - 1; i++) {
+				if (query.charAt(i) == '-' && query.charAt(i - 1) != ' ' && query.charAt(i + 1) != ' ') {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+
+	protected String createSubstringOfQuery(String query)
+	{
+		int indexOfHyphen = query.indexOf('-');
+
+		return query.substring(0, indexOfHyphen);
 	}
 
 	@Override
