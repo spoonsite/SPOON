@@ -2296,7 +2296,7 @@
 							{
 								id: 'attributeValueType',
 								xtype: 'combobox',
-								fieldLabel: 'Code Value Type',							
+								fieldLabel: 'Code Value Type<span class="field-required" />',							
 								displayField: 'description',
 								valueField: 'code',
 								typeAhead: false,

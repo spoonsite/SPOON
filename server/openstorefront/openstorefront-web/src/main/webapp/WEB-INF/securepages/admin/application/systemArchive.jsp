@@ -406,6 +406,30 @@
 											},
 											{
 												xtype: 'checkbox',
+												itemId: 'alerts',
+												name: 'alerts',
+												boxLabel: 'Alerts'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'contacts',
+												name: 'contacts',
+												boxLabel: 'Contacts'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'feedback',
+												name: 'feedback',
+												boxLabel: 'Feedback'										
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'userprofile',
+												name: 'userprofile',
+												boxLabel: 'User Profile'										
+											},
+											{
+												xtype: 'checkbox',
 												itemId: 'branding',
 												name: 'branding',
 												boxLabel: 'Branding',
@@ -492,7 +516,27 @@
 														archiveOptions.push({
 															primaryEntity: 'AttributeType'
 														});
-													}	
+													}
+													if (data.alerts) {
+														archiveOptions.push({
+															primaryEntity: 'Alert'
+														});
+													}
+													if (data.contacts) {
+														archiveOptions.push({
+															primaryEntity: 'Contact'
+														});
+													}
+													if (data.feedback) {
+														archiveOptions.push({
+															primaryEntity: 'FeedbackTicket'
+														});
+													}
+													if (data.userprofile) {
+														archiveOptions.push({
+															primaryEntity: 'UserProfile'
+														});
+													}													
 													if (data.branding) {
 														Ext.Array.each(generateWin.queryById('brandingSelectGrid').getSelection(), function(record){
 															archiveOptions.push({

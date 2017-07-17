@@ -931,13 +931,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 												});
 											};
 
-											var type = form.getComponent('attributeTypeCB').getSelection();											
+											var type = form.queryById('attributeTypeCB').getSelection();											
 											
 											// The attribute may allow user generated codes. If so, the code
 											// may not already exist.
 											if (type.get('allowUserGeneratedCodes')) {
-												var label = form.getComponent('attributeCodeCB').getValue();
-												var store = form.getComponent('attributeCodeCB').getStore();
+												var label = form.queryById('attributeCodeCB').getValue();
+												var store = form.queryById('attributeCodeCB').getStore();
 												var found = false;
 												store.each(function(item) {
 													if (item.get('code') === label) {

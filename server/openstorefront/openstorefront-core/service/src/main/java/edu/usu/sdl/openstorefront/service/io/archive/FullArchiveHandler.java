@@ -70,7 +70,32 @@ public class FullArchiveHandler
 			archive.setStatusDetails("Exporting directory: " + dir);
 			archive.save();
 			try {
-				new TFile(dir).cp_r(new TFile(fullArchiveName));
+				TFile originDir = new TFile(dir);
+				boolean copy = true;
+				if (FileSystemManager.DB_DIR.equals(originDir.getPath())) {
+					copy = false;
+				}
+				if (FileSystemManager.MAIN_PERM_DIR.equals(originDir.getPath())) {
+					copy = false;
+
+					//copy all children (expect the archive itself)
+					File permDir = new TFile(FileSystemManager.MAIN_PERM_DIR);
+					File subDirs[] = permDir.listFiles();
+					if (subDirs != null) {
+						for (File subDir : subDirs) {
+							//skip all archives (can not copy itself)
+							//pulling existing archive record is not supported (likely noise anyway)
+							if ("archive".equals(subDir.getName()) == false) {
+								TFile originSubDir = new TFile(subDir);
+								originSubDir.cp_r(new TFile(fullArchiveName + "/" + originDir.getName() + "/" + originSubDir.getName()));
+							}
+						}
+					}
+				}
+
+				if (copy) {
+					originDir.cp_r(new TFile(fullArchiveName + "/" + originDir.getName()));
+				}
 			} catch (IOException ex) {
 				LOG.log(Level.WARNING, "Unable to copy dir: " + dir, ex);
 				addError("Unable to copy dir: " + dir);
@@ -92,13 +117,39 @@ public class FullArchiveHandler
 		archive.setStatusDetails("Importing database...");
 		archive.save();
 
+		//import db
 		File dbImportFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
 		dbArchiveHandler.performImport(dbImportFile);
-
 		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
 		archive.save();
 
+		//import file system
+		TFile archiveDir = new TFile(fullArchiveName);
+
+		File filesInArchive[] = archiveDir.listFiles();
+		if (filesInArchive != null) {
+			for (File dir : filesInArchive) {
+				if (dir.isDirectory()) {
+					archive.setStatusDetails("Exporting directory: " + dir);
+					archive.save();
+					try {
+						File existingDir = FileSystemManager.getDir(FileSystemManager.MAIN_DIR + "/" + dir.getName());
+						new TFile(dir).cp_r(new TFile(existingDir));
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, "Unable to copy dir: " + dir, ex);
+						addError("Unable to copy dir: " + dir);
+					}
+					archive.setStatusDetails("Finished Exporting: " + dir);
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+					archive.save();
+				}
+			}
+
+		}
+		archive.setRecordsProcessed(archive.getTotalRecords());
+		archive.setStatusDetails("Done");
+		archive.save();
 	}
 
 }

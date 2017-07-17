@@ -683,6 +683,9 @@ public class SubComponentServiceImpl
 	public void doSaveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
+		String query = "select from " + ComponentTag.class.getSimpleName() + " where componentId = :componentId and text.toLowerCase() = :text";
+
+		//persistenceService.query(query, parameterMap)
 		if (oldTag != null) {
 			oldTag.updateFields(tag);
 			persistenceService.persist(oldTag);

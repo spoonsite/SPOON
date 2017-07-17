@@ -111,7 +111,7 @@ public class HighlightExporter
 				}
 			}
 		} else {
-			LOG.log(Level.FINE, "No entry types to load.");
+			LOG.log(Level.FINE, "No highlights to load.");
 		}
 	}
 
