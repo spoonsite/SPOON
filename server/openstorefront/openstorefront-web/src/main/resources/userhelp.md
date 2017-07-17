@@ -1750,7 +1750,7 @@ The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
 by clicking on the report and then the **Download** button in the toolbar.
 
-#### 3.3.6.2 Scheduling Reports @REPORTS-SCHEDULE
+#### 3.3.6.2 Scheduling Reports @REPORTS-ALL
 ------
 
 **To create a scheduled report:**
