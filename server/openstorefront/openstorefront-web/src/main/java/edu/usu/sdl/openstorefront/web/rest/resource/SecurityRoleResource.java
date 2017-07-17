@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +155,7 @@ public class SecurityRoleResource
 			SecurityRole savedRole = service.getSecurityService().saveSecurityRole(securityRole);
 
 			if (post) {
-				return Response.created(URI.create("v1/resource/securityroles")).entity(savedRole).build();
+				return Response.created(URI.create("v1/resource/securityroles/" + URLEncoder.encode(savedRole.getRoleName()))).entity(savedRole).build();
 			} else {
 				return Response.ok(savedRole).build();
 			}
