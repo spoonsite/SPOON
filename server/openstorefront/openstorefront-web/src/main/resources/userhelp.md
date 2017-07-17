@@ -2080,7 +2080,7 @@ Contains definitions of terms used in the application and in the help documentat
 # 6. Guides
 ------
 
-##6.1 Admin Guides
+##6.1 Admin Guides @ADMIN-ENTRY-MANAGEMENT
 -----------------
 
 ### 6.1.1 How to Create an Entry Template @ADMIN-ENTRY-MANAGEMENT
