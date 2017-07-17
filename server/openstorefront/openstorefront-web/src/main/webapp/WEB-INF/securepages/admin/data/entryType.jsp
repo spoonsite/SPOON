@@ -445,7 +445,7 @@
 											{
 												text: 'Apply',
 												formBind: true,
-												id 'applyBtnDeleteEntryType',
+												id: 'applyBtnDeleteEntryType',
 												iconCls: 'fa fa-lg fa-check icon-button-color-save',
 												handler: function(){
 													var form = this.up('form');

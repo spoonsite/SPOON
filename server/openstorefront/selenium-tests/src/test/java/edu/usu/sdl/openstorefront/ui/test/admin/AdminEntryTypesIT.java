@@ -71,6 +71,7 @@ public class AdminEntryTypesIT
 			if (titleElements.size() > 0) {
 				return titleElements.get(0).isDisplayed();
 			} else {
+				
 				return false;
 			}
 		});
