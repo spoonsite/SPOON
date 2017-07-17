@@ -432,6 +432,7 @@
 						minHeight: 175,
 						modal: true,
 						layout: 'fit',
+						closeAction: 'destroy',
 						items: [
 							{
 								xtype: 'form',
@@ -444,7 +445,7 @@
 											{
 												text: 'Apply',
 												formBind: true,
-												id: 'applyBtnDeleteEntryType',
+												itemId: 'applyBtnDeleteEntryType',
 												iconCls: 'fa fa-lg fa-check icon-button-color-save',
 												handler: function(){
 													var form = this.up('form');
@@ -484,7 +485,7 @@
 										xtype: 'combobox',
 										anchor: '100% 10%',
 										name: 'componentType',
-										id: 'moveExistingDataComboBox',
+										itemId: 'moveExistingDataComboBox',
 										labelAlign: 'top',
 										fieldLabel: 'Move existing data to<span class="field-required" />',
 										valueField: 'code',
