@@ -38,8 +38,8 @@ Ext.define('OSF.form.ChecklistAll', {
 					{ name: 'questionText', mapping: function(data) {
 						return data.question.question;
 					}},
-					{ name: 'scoringCriteria', mapping: function(data) {
-						return data.question.scoringCriteria;
+					{ name: 'scoreCriteria', mapping: function(data) {
+						return data.question.scoreCriteria;
 					}},
 					{ name: 'objective', mapping: function(data) {
 						return data.question.objective;
@@ -89,7 +89,7 @@ Ext.define('OSF.form.ChecklistAll', {
 				},
 				{ text: 'Section', dataIndex: 'evaluationSectionDescription', align: 'center', width: 175 },
 				{ text: 'Question', dataIndex: 'questionText', flex: 1, minWidth: 250, cellWrap: true },
-				{ text: 'Scoring Criteria', dataIndex: 'scoringCriteria', width: 250, cellWrap: true, hidden: true },
+				{ text: 'Scoring Criteria', dataIndex: 'scoreCriteria', width: 250, cellWrap: true, hidden: true },
 				{ text: 'Objective', dataIndex: 'objective', width: 250, cellWrap: true, hidden: true },
 				{ text: 'Narrative', dataIndex: 'narrative', width: 250, cellWrap: true, hidden: true },
 				{
