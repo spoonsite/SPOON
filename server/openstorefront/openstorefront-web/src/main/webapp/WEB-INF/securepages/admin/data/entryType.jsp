@@ -485,7 +485,7 @@
 										xtype: 'combobox',
 										anchor: '100% 10%',
 										name: 'componentType',
-										itemId: 'moveExistingDataComboBox',
+										id: 'moveExistingDataComboBox',
 										labelAlign: 'top',
 										fieldLabel: 'Move existing data to<span class="field-required" />',
 										valueField: 'code',
