@@ -378,7 +378,7 @@
 													hideSummary: Ext.String.ellipsis(entry.name, 50),
 													labelForDescription: 'Correction: <br>(Please include the section needing the correction. Eg. Contacts)',
 													successHandler: function() {														
-														this.destroy();
+														this.close();
 													}
 												});
 												feedbackWin.show();
@@ -400,7 +400,7 @@
 													hideSummary: Ext.String.ellipsis(entry.name, 50),
 													labelForDescription: 'Request Reason: <br>(Entries you own show in the User Tools->Submissions which provides tools for management.',
 													successHandler: function() {	
-														this.destroy();
+														this.close();
 													}
 												});
 												feedbackWin.show();												
