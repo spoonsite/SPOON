@@ -601,6 +601,7 @@
 																if (record) {
 																	if (newValue) {
 																		addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
+																		addEditBrandingWin.queryById('landingPageTab').loadedTemplate = null;
 																	} else {
 																		addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
 																	}

@@ -70,7 +70,7 @@ Ext.define('OSF.landing.designer.Designer', {
 	],
 	isDirty: function() {
 		var designerPanel = this;
-		if (designerPanel.code.getFullTemplate()) {
+		if (designerPanel.loadedTemplate) {
 			return !(designerPanel.loadedTemplate === designerPanel.code.getFullTemplate());
 		} else {
 			return false;
