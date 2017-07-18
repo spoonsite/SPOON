@@ -1949,8 +1949,15 @@ Administrator can add users, send messages to individual users, approve new user
 
 #### 3.3.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
 
-When a user registers for a new account, it is the responsibility of the administrator to approve the account.  
-To approve a new account:  
+The application offers two ways of approving users: auto approval by system or manual approval by administrator. <br>To have the system automatically approve new user accounts do the following:  
+
+  1. Go to **Application Management &rarr; Security**.  Click on the **Security Policy** tab.  
+  2. Scroll down to the **Storefront Realm** section.  
+  3. Check the box next to **Auto Approve Users**.  
+  4. Click the **Save** button.  Users will now be automatically approved upon completing registration.
+
+If the **Auto Approve Users** box is unchecked under **Security Managment &rarr; Security Policy &rarr; Storefront Realm**, the administrator will have to manually approve new user accounts.  
+To approve a new user account:  
 
   1. Go to **Application Management &rarr; User Management** and click on the **Users** tab. 
   2. In the **Active Status** drop down menu, select *Locked/Disabled*.
@@ -1995,18 +2002,24 @@ To remove a role from a user:
 
 -----  
 
-#### 3.3.12.4 Adding/Deleting User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.3.12.4 Adding/Deleting User Accounts - Registrations @ADMIN-USER-MANAGEMENT  
 
 Administrator can create a user account by doing the following:  
 
   1. Go to **Application Management &rarr; User Management** and click on the **Registrations** tab.  
   2. Click on the **Add** button.  
   3. Fill in the required information and click on the **Signup** button.  
-  4. The new user account will be listed in the list of active accounts.  
+  4. The new user account will be listed in the list of active accounts. 
+
+To delete a user registration:  
+
+  1. Go to **Application Management &rarr; User Management** and click on the **Registrations** tab.
+  2. Select the registration you want to delete (Note: this will **NOT** delete the account).
+  3. Click the **Delete** button in the toolbar and then click **Yes** to confirm deletion.
 
 To delete a user account:  
 
-  1. Go to **Application Management &rarr; User Management**.  
+  1. Go to **Application Management &rarr; User Management** and click on the **Users** tab.  
   2. Select the account you want to delete (Note: this will permanently delete the account).  
   3. Click the **Delete** button in the toolbar and then click **Yes** to confirm deletion.  
 
