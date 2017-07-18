@@ -56,7 +56,9 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '');		
+		// Ext escape dose not properly escape Apostrophes for display on an html page 
+		// so we need to replace \' with the proper html escape of &apos;
+		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '').replace(/\\'/g,'&apos;');		
 				
 		// Perform client-side processing of the description, consisting of two things:
 		// Add the onclick handler for saved search links.
