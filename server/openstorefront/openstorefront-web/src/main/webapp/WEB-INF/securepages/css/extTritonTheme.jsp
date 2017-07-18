@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-<%-- 
+<%--
     Document   : extTritonTheme
     Created on : Dec 2, 2016, 12:19:06 PM
     Author     : dshurtleff
@@ -30,6 +30,14 @@ body > .x-mask {
 }
 
 /* Panels/windows */
+
+div[id*="-east-handle"] {
+	width: 3px;
+}
+
+div[id*="-south-handle"] {
+	height: 3px;
+}
 
 .x-panel-body-default {
     background: transparent;
@@ -245,35 +253,35 @@ x-window-header-default-top {
 }
 
 .x-nbr .x-window-default {
-	background-color: ${actionBean.branding.primaryColor} !important; 	 
+	background-color: ${actionBean.branding.primaryColor} !important;
 }
 
 .x-nbr .x-tab-default-top {
-	background-color: rgba(151,151,151,1) !important; 	 
+	background-color: rgba(151,151,151,1) !important;
 }
 
 .x-nbr .x-btn-default-large {
-	background-color: rgb(85,85,85)  !important; 
+	background-color: rgb(85,85,85)  !important;
 }
 
 .x-nbr .x-btn-default-small {
-	background-color: rgb(85,85,85)  !important; 
+	background-color: rgb(85,85,85)  !important;
 }
 
 .x-nbr .x-btn-default-toolbar-small {
-	background-color: rgb(245,245,245)  !important; 
+	background-color: rgb(245,245,245)  !important;
 }
 
 .x-nbr .x-btn-default-toolbar-medium {
-	background-color: rgb(245,245,245)  !important; 
+	background-color: rgb(245,245,245)  !important;
 }
 
 .x-nbr .x-btn-default-toolbar-large {
-	background-color: rgb(245,245,245)  !important; 
+	background-color: rgb(245,245,245)  !important;
 }
 
 .x-nbr .x-panel-default-framed {
-	background-color: ${actionBean.branding.primaryColor} !important; 
+	background-color: ${actionBean.branding.primaryColor} !important;
 }
 
 .x-btn-default-small-mc {
