@@ -691,7 +691,7 @@
 								{
 									xtype: 'textfield',
 									id: 'appStatePropForm-key',
-									fieldLabel: 'Key',
+									fieldLabel: 'Key <span class="field-required" />',
 									name: 'key',
 									readOnly: true
 								},
@@ -890,7 +890,7 @@
 								{
 									xtype: 'textfield',
 									id: 'configPropForm-key',
-									fieldLabel: 'Key',
+									fieldLabel: 'Key<span class="field-required" />',
 									name: 'code',
 									allowBlank: false
 								},
