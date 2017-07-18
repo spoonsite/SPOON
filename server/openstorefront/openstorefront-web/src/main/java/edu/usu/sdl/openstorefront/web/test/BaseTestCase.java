@@ -9,6 +9,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -31,6 +32,7 @@ public abstract class BaseTestCase
 
 	protected static final String TEST_USER = "TEST-USER";
 	protected static final String TEST_ORGANIZATION = "TEST-ORGANIZATION";
+	private static final String TEST_COMPONENT_NAME = "AUTO-TEST-Component";
 
 	protected boolean success;
 	protected StringBuffer failureReason = new StringBuffer();
@@ -105,32 +107,51 @@ public abstract class BaseTestCase
 
 	protected ComponentAll getTestComponent()
 	{
-		ComponentAll componentAll = new ComponentAll();
-		Component component = new Component();
-		component.setName("c Component");
-		component.setDescription("Test Description");
-		component.setOrganization(TEST_ORGANIZATION);
-		component.setApprovalState(ApprovalStatus.APPROVED);
-		component.setGuid("5555555");
-		component.setLastActivityDts(TimeUtil.currentDate());
-		component.setActiveStatus(Component.ACTIVE_STATUS);
-		componentAll.setComponent(component);
+		Component componentExample = new Component();
+		componentExample.setName(TEST_COMPONENT_NAME);
+		Component found = componentExample.find();
 
-		List<AttributeType> attributeTypes = service.getAttributeService().getRequiredAttributes();
-		for (AttributeType type : attributeTypes) {
-			ComponentAttribute componentAttribute = new ComponentAttribute();
-			componentAttribute.setCreateUser(TEST_USER);
-			componentAttribute.setUpdateUser(TEST_USER);
-			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-			componentAttributePk.setAttributeType(type.getAttributeType());
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(type.getAttributeType());
-			componentAttributePk.setAttributeCode(attributeCodes.get(0).getAttributeCodePk().getAttributeCode());
-			componentAttribute.setComponentAttributePk(componentAttributePk);
-			componentAll.getAttributes().add(componentAttribute);
+		ComponentAll componentAll;
+		if (found != null) {
+			componentAll = service.getComponentService().getFullComponent(found.getComponentId());
+		} else {
+			componentAll = new ComponentAll();
+			Component component = new Component();
+			component.setName(TEST_COMPONENT_NAME);
+			component.setDescription("Test Description");
+			component.setOrganization(TEST_ORGANIZATION);
+			component.setApprovalState(ApprovalStatus.APPROVED);
+			component.setGuid("5555555");
+			component.setLastActivityDts(TimeUtil.currentDate());
+			component.setActiveStatus(Component.ACTIVE_STATUS);
+
+			ComponentType componentTypeExample = new ComponentType();
+			componentTypeExample.setActiveStatus(ComponentType.ACTIVE_STATUS);
+			List<ComponentType> componentTypes = componentTypeExample.findByExample();
+			if (componentTypes.isEmpty()) {
+				//TODO: should create a test one and then remove it.
+				throw new OpenStorefrontRuntimeException("No Component type active");
+			} else {
+				component.setComponentType(componentTypes.get(0).getComponentType());
+			}
+			componentAll.setComponent(component);
+
+			List<AttributeType> attributeTypes = service.getAttributeService().getRequiredAttributes();
+			for (AttributeType type : attributeTypes) {
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				componentAttribute.setCreateUser(TEST_USER);
+				componentAttribute.setUpdateUser(TEST_USER);
+				componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setAttributeType(type.getAttributeType());
+				List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(type.getAttributeType());
+				componentAttributePk.setAttributeCode(attributeCodes.get(0).getAttributeCodePk().getAttributeCode());
+				componentAttribute.setComponentAttributePk(componentAttributePk);
+				componentAll.getAttributes().add(componentAttribute);
+			}
+
+			componentAll = service.getComponentService().saveFullComponent(componentAll);
 		}
-
-		componentAll = service.getComponentService().saveFullComponent(componentAll);
 
 		final String componentIdToDelete = componentAll.getComponent().getComponentId();
 		CleanupTestData cleanupTestData = () -> {
