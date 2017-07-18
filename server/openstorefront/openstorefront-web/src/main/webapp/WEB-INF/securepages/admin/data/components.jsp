@@ -1706,7 +1706,7 @@
 						},
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
-						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175 },
+						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
