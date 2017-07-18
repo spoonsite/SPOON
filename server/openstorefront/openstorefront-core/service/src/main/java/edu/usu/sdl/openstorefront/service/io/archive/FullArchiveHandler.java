@@ -51,7 +51,7 @@ public class FullArchiveHandler
 	protected void generateExport()
 	{
 		Set<String> excludeDir = new HashSet<>();
-		excludeDir.add(FileSystemManager.DB_DIR);
+		excludeDir.add(FileSystemManager.DB_DIR.replace("/", File.separator));
 		List<String> directoriesToPull = FileSystemManager.getTopLevelDirectories(excludeDir);
 
 		long totalRecords = (long) directoriesToPull.size() + 1;
@@ -72,10 +72,10 @@ public class FullArchiveHandler
 			try {
 				TFile originDir = new TFile(dir);
 				boolean copy = true;
-				if (FileSystemManager.DB_DIR.equals(originDir.getPath())) {
+				if (FileSystemManager.DB_DIR.replace("/", File.separator).equals(originDir.getPath())) {
 					copy = false;
 				}
-				if (FileSystemManager.MAIN_PERM_DIR.equals(originDir.getPath())) {
+				if (FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator).equals(originDir.getPath())) {
 					copy = false;
 
 					//copy all children (expect the archive itself)
