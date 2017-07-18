@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -124,29 +126,48 @@ public class FullArchiveHandler
 		archive.setStatusDetails("Done");
 		archive.save();
 
+		//delete any working archives (this would be the carry over from the export process)
+		SystemArchive archiveExample = new SystemArchive();
+		archiveExample.setRunStatus(RunStatus.WORKING);
+		List<SystemArchive> archives = archiveExample.findByExample();
+		for (SystemArchive archiveLocal : archives) {
+			if (archive.getArchiveId().equals(archiveLocal.getArchiveId()) == false) {
+				archiveLocal.setRunStatus(RunStatus.COMPLETE);
+				archiveLocal.save();
+				service.getSystemArchiveService().deleteArchive(archiveLocal.getArchiveId());
+			}
+		}
+
 		//import file system
 		TFile archiveDir = new TFile(fullArchiveName);
 
-		File filesInArchive[] = archiveDir.listFiles();
-		if (filesInArchive != null) {
-			for (File dir : filesInArchive) {
-				if (dir.isDirectory()) {
-					archive.setStatusDetails("Exporting directory: " + dir);
-					archive.save();
-					try {
-						File existingDir = FileSystemManager.getDir(FileSystemManager.MAIN_DIR + "/" + dir.getName());
-						new TFile(dir).cp_r(new TFile(existingDir));
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, "Unable to copy dir: " + dir, ex);
-						addError("Unable to copy dir: " + dir);
+		//pause plugin job
+		JobManager.pauseScheduler();
+		try {
+			File filesInArchive[] = archiveDir.listFiles();
+			if (filesInArchive != null) {
+				for (File dir : filesInArchive) {
+					if (dir.isDirectory()) {
+						archive.setStatusDetails("Importing directory: " + dir);
+						archive.save();
+						try {
+							File existingDir = FileSystemManager.getDir(FileSystemManager.MAIN_DIR + "/" + dir.getName());
+							new TFile(dir).cp_r(new TFile(existingDir));
+						} catch (IOException ex) {
+							LOG.log(Level.WARNING, "Unable to copy dir: " + dir, ex);
+							addError("Unable to copy dir: " + dir);
+						}
+						archive.setStatusDetails("Finished Importing: " + dir);
+						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						archive.save();
 					}
-					archive.setStatusDetails("Finished Exporting: " + dir);
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
-					archive.save();
 				}
 			}
 
+		} finally {
+			JobManager.resumeScheduler();
 		}
+
 		archive.setRecordsProcessed(archive.getTotalRecords());
 		archive.setStatusDetails("Done");
 		archive.save();
