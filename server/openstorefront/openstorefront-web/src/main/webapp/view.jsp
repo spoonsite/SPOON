@@ -435,7 +435,7 @@
 										margin: '0 10 10 0',
 										maxLength: 120,
 										storeConfig: {
-											url: 'api/v1/resource/components/tags'
+											url: 'api/v1/resource/components/' + componentId + '/tagsfree'
 										},
 										listeners:{
 											specialkey: function(field, e) {
@@ -494,11 +494,17 @@
 						},
 						success: function(response, opt){
 							var tag = Ext.decode(response.responseText);
-							processTags(tag);
-
 							var tagField = Ext.getCmp('tagField');
-							tagField.reset();
-							tagField.getStore().load();
+
+							if (typeof tag.errors === 'undefined') {
+								processTags(tag);
+								tagField.reset();
+								tagField.getStore().load();
+							}
+							else {
+								tagField.reset();
+								tagField.markInvalid(tag.errors.entry[0].value);
+							}
 						}
 					});	
 				}
@@ -743,6 +749,7 @@
 												},
 												success: function(response, opt){
 													Ext.getCmp('tagPanel').remove(tagButton, true);
+													Ext.getCmp('tagField').store.reload();
 												}
 											});											
 										}
