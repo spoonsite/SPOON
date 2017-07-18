@@ -139,10 +139,18 @@
 					storeId: 'store_components_remote',
 					autoLoad: true,
 					fields: [
-						'name',
-						'componentId',
-						'componentType',
-						'componentTypeDescription'
+						{name: 'name', mapping: function(data){
+							return data.component.name;	
+						}},
+						{name: 'componentId', mapping: function(data){
+							return data.component.componentId;	
+						}},	
+						{name: 'componentType', mapping: function(data){
+							return data.component.componentType;	
+						}},		
+						{name: 'componentTypeDescription', mapping: function(data){
+							return data.component.componentTypeLabel;	
+						}}
 					],
 					sorters: new Ext.util.Sorter({
 						property: 'name',
@@ -151,7 +159,11 @@
 					proxy: {
 						id: 'store_components_remoteProxy',
 						type: 'ajax',
-						url: 'api/v1/resource/components/'
+						url: 'api/v1/resource/components/filterable',
+						reader: {
+							type: 'json',
+							rootProperty: 'components'
+						}
 					},
 					listeners: {
 						
@@ -167,16 +179,16 @@
 								var currentComponent = {
 									
 									// Store Current Component ID
-									id: store.getAt(i).data.componentId,
+									id: store.getAt(i).get('componentId'),
 
 									// Store Current Component Name
-									name: store.getAt(i).data.name,
+									name: store.getAt(i).get('name'),
 
-									// Store Current Component Security Level
+									// Store Current Component 
 									type: {
 										
-										name: store.getAt(i).data.componentTypeDescription,
-										code: store.getAt(i).data.componentType
+										name: store.getAt(i).get('componentTypeDescription'),
+										code: store.getAt(i).get('componentType')
 									}
 								};
 
