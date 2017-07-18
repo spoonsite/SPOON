@@ -106,7 +106,8 @@
 						},						
 						items: [
 							{
-								xtype: 'tabpanel',							
+								xtype: 'tabpanel',
+								itemId: 'tabpanel',
 								items: [
 									{
 										xtype: 'form',
@@ -740,6 +741,8 @@
 								landingTab.loadData(record.data);
 							}
 						}
+						addEditBrandingWin.queryById('tabpanel').setActiveTab(landingTab);
+						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
 					}
 					
 				};
