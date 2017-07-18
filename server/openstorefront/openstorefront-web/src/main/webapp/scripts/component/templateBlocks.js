@@ -1771,7 +1771,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 		} else {
 			
 			var updateSection = function(evaluation) {
-				if (evaluation.checkListAll.evaluationChecklist.summary) {
+				if (evaluation.checkListAll.responses) {
 					checklistPanel.setHidden(false);
 					checklistPanel.update(evaluation);
 					
