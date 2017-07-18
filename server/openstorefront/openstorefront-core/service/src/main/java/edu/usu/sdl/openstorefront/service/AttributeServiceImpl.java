@@ -331,15 +331,18 @@ public class AttributeServiceImpl
 			}
 		}
 	}
-
+	private String attributeLabelToCode(String code)
+	{
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		return sanitizer.santize(StringUtils.left(code.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+	}
 	@Override
 	public List<AttributeCode> saveUserCodes(AttributeCodeSave attributeCodeSave)
 	{
 		List<AttributeCode> updatedCodes = new ArrayList<>();
 		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
 
-			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+			String key = attributeLabelToCode(saveCode.getAttributeCodeLabel());
 
 			AttributeCode newAttributeCode = new AttributeCode();
 			newAttributeCode.setLabel(saveCode.getAttributeCodeLabel());
@@ -643,8 +646,9 @@ public class AttributeServiceImpl
 	{
 		AttributeCode attributeCode = null;
 		List<AttributeCode> attributeCodes = findCodesForType(pk.getAttributeType());
+		String cleanCode = attributeLabelToCode(pk.getAttributeCode());
 		for (AttributeCode attributeCodeCheck : attributeCodes) {
-			if (attributeCodeCheck.getAttributeCodePk().getAttributeCode().equals(pk.getAttributeCode())) {
+			if (attributeCodeCheck.getAttributeCodePk().getAttributeCode().equals(cleanCode)) {
 				attributeCode = attributeCodeCheck;
 				break;
 			}
