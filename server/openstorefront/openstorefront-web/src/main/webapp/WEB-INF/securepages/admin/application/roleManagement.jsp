@@ -909,12 +909,12 @@
 												valueField: 'username',
 												tpl: Ext.create('Ext.XTemplate',
 													'<ul class="x-list-plain"><tpl for=".">',
-														'<li role="option" class="x-boundlist-item">{firstname} {lastname} - {email}</li>',
+														'<li role="option" class="x-boundlist-item">{username} <span style="color: #a8a8a8;"> - {email}</span></li>',
 													'</tpl></ul>'
 												),											
 												displayTpl: Ext.create('Ext.XTemplate',
 													'<tpl for=".">',
-														'{firstname} {lastname} - {email}',
+														'{username} <span style="color: #a8a8a8;"> - {email}</span>',
 													'</tpl>'
 												),
 												labelAlign: 'top',												
