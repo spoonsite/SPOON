@@ -546,6 +546,11 @@
 					modal: true,
 					maximizable: false,
 					layout: 'vbox',
+					listeners: {
+						show: function() {        
+							this.removeCls('x-unselectable');    
+						}
+					},
 					items: [
 						{
 							xtype: 'panel',
