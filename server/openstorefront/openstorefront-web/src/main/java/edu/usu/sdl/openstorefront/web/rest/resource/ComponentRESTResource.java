@@ -3531,7 +3531,7 @@ public class ComponentRESTResource
 		for (ComponentTag tag : allTags) {
 			boolean pass = true;
 			for (ComponentTag myTag : componentTags) {
-				if (myTag.getTagId().equals(tag.getTagId())) {
+				if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
 					pass = false;
 					break;
 				}

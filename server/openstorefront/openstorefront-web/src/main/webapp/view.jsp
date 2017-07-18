@@ -492,11 +492,17 @@
 						},
 						success: function(response, opt){
 							var tag = Ext.decode(response.responseText);
-							processTags(tag);
-
 							var tagField = Ext.getCmp('tagField');
-							tagField.reset();
-							tagField.getStore().load();
+
+							if (typeof tag.errors === 'undefined') {
+								processTags(tag);
+								tagField.reset();
+								tagField.getStore().load();
+							}
+							else {
+								tagField.reset();
+								tagField.markInvalid(tag.errors.entry[0].value);
+							}
 						}
 					});	
 				}
