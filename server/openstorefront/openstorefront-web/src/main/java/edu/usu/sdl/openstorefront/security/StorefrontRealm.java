@@ -81,7 +81,7 @@ public class StorefrontRealm
 		if (userSecurity.getFailedLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
 			Date now = TimeUtil.currentDate();
 			Instant instantLastAttempt = Instant.ofEpochMilli(userSecurity.getLastLoginAttempt().getTime());
-			instantLastAttempt.plus(securityPolicy.getResetLockoutTimeMinutes(), ChronoUnit.MINUTES);
+			instantLastAttempt = instantLastAttempt.plus(securityPolicy.getResetLockoutTimeMinutes(), ChronoUnit.MINUTES);
 			if (now.toInstant().isAfter(instantLastAttempt)) {
 				if (securityPolicy.getRequireAdminUnlock() == false) {
 					userSecurity.setFailedLoginAttempts(0);
