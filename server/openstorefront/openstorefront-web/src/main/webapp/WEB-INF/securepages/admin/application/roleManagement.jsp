@@ -914,7 +914,7 @@
 												),											
 												displayTpl: Ext.create('Ext.XTemplate',
 													'<tpl for=".">',
-														'{username} <span style="color: #a8a8a8;"> - {email}</span>',
+														'{username}',
 													'</tpl>'
 												),
 												labelAlign: 'top',												
