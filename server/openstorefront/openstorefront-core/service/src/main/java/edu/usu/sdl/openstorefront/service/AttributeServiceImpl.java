@@ -115,6 +115,11 @@ public class AttributeServiceImpl
 			attributeCodes = persistenceService.queryByExample(new AttributeCode());
 			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
 			OSFCacheManager.getAttributeCodeAllCache().put(element);
+
+			List<AttributeCode> activeCodesOnly = attributeCodes.stream()
+					.filter(code -> code.getActiveStatus().equals(AttributeCode.ACTIVE_STATUS))
+					.collect(Collectors.toList());
+			warmAttributeCaches(activeCodesOnly);
 		}
 		if (StringUtils.isNotBlank(activeStatus)) {
 			attributeCodes = attributeCodes.stream().filter(code -> code.getActiveStatus().equals(activeStatus)).collect(Collectors.toList());
@@ -331,11 +336,13 @@ public class AttributeServiceImpl
 			}
 		}
 	}
+
 	private String attributeLabelToCode(String code)
 	{
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 		return sanitizer.santize(StringUtils.left(code.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
 	}
+
 	@Override
 	public List<AttributeCode> saveUserCodes(AttributeCodeSave attributeCodeSave)
 	{
@@ -919,13 +926,12 @@ public class AttributeServiceImpl
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
-		
-		
+
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getAttributeTypeDescription())) {
 			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 			AttributeType attributeTypeLikeExample = new AttributeType();
-			attributeTypeLikeExample.setDescription("%" + filter.getAttributeTypeDescription().toLowerCase() + "%");				
+			attributeTypeLikeExample.setDescription("%" + filter.getAttributeTypeDescription().toLowerCase() + "%");
 
 			specialOperatorModel.setExample(attributeTypeLikeExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
@@ -969,7 +975,7 @@ public class AttributeServiceImpl
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
-				
+
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getAttributeCodeLabel())) {
 			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -980,8 +986,8 @@ public class AttributeServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
 			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-		}			
-		
+		}
+
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());
 		queryByExample.setSortDirection(filter.getSortOrder());
@@ -1051,6 +1057,46 @@ public class AttributeServiceImpl
 			}
 		}
 		syncAttribute(attributeMap);
+	}
+
+	@Override
+	public void warmAttributeCaches()
+	{
+		warmAttributeCaches(null);
+	}
+
+	private void warmAttributeCaches(List<AttributeCode> attributeCodes)
+	{
+		boolean warmCaches = true;
+		if (attributeCodes == null) {
+			Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+			if (element == null) {
+				//warm caches (ignore return)
+				getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
+			}
+			warmCaches = false;
+		}
+
+		if (warmCaches) {
+			//populate type->code cache
+			Map<String, List<AttributeCode>> codeMap = attributeCodes.stream()
+					.collect(Collectors.groupingBy(AttributeCode::typeField));
+
+			for (String type : codeMap.keySet()) {
+				Element element = new Element(type, codeMap.get(type));
+				OSFCacheManager.getAttributeCache().put(element);
+			}
+
+			//populate the type cache
+			AttributeType attributeTypeExample = new AttributeType();
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+			List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
+			for (AttributeType attributeTypeCheck : attributeTypes) {
+				Element element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
+				OSFCacheManager.getAttributeTypeCache().put(element);
+			}
+		}
+
 	}
 
 }

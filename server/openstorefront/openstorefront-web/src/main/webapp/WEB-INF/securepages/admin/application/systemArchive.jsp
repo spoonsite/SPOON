@@ -302,14 +302,18 @@
 										listeners: {
 											change: function(field, newValue, oldValue, opts) {
 												var form = field.up('form');
-												if (newValue === 'DBEXPORT') {
-													form.queryById('options').setDisabled(true);																									
-												} else if (newValue === 'GENERAL') {													
-													form.queryById('options').setDisabled(false);													
+												if (newValue === 'GENERAL') {
+													form.queryById('options').setDisabled(false);																									
+												} else {													
+													form.queryById('options').setDisabled(true);													
 												}
 												if (!form.queryById('component').getValue()) {
 													form.queryById('entrySelectGrid').setDisabled(false);
 													form.queryById('entrySelectGrid').setDisabled(true);
+												}
+												if (!form.queryById('branding').getValue()) {
+													form.queryById('brandingSelectGrid').setDisabled(false);
+													form.queryById('brandingSelectGrid').setDisabled(true);
 												}
  											}
 										}

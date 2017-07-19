@@ -70,11 +70,11 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
 
-			memoryOnlyCache = new Cache("attributeCache", 30000, false, false, 900, 900);
+			memoryOnlyCache = new Cache("attributeCache", 30000, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCache = singletonManager.getCache("attributeCache");
 
-			memoryOnlyCache = new Cache("attributeTypeCache", 5000, false, false, 900, 900);
+			memoryOnlyCache = new Cache("attributeTypeCache", 5000, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
@@ -98,11 +98,11 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
 
-			memoryOnlyCache = new Cache("componentIconCache", 50000, false, false, 900, 900);
+			memoryOnlyCache = new Cache("componentIconCache", 50000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			componentIconCache = singletonManager.getCache("componentIconCache");
 
-			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 600, 600);
+			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			componentDataRestrictionCache = singletonManager.getCache("componentDataRestrictionCache");
 

@@ -1210,6 +1210,8 @@ public class CoreComponentServiceImpl
 				}
 			}
 
+			componentService.getAttributeServicePrivate().warmAttributeCaches();
+
 			//group by component
 			for (Component component : components) {
 				List<ComponentAttribute> attributes = attributeMap.get(component.getComponentId());
@@ -1764,6 +1766,18 @@ public class CoreComponentServiceImpl
 				}
 				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
 			}
+
+			//add the missed cases
+			query = "select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL";
+			documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				String foundId = document.field("componentId");
+				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+				cacheSensitivityModel.setComponentId(foundId);
+				Element newElement = new Element(foundId, cacheSensitivityModel);
+				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+			}
+
 		}
 
 		return componentSensitivityModel;

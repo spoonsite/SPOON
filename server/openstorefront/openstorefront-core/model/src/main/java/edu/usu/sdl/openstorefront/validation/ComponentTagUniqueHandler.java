@@ -15,10 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
-import edu.usu.sdl.openstorefront.core.api.Service;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
-import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -28,20 +25,21 @@ import java.util.List;
  */
 public class ComponentTagUniqueHandler implements UniqueHandler<ComponentTag>
 {
+
 	@Override
 	public boolean isUnique(Field field, Object value, ComponentTag fullDataObject)
 	{
 		boolean unique = true;
-		Service serviceProxy = ServiceProxyFactory.getServiceProxy();
-		ComponentDetailView component = serviceProxy.getComponentService().getComponentDetails(fullDataObject.getComponentId());
-		List<ComponentTag> componentTags = component.getTags();
-		
+		ComponentTag componentTagExample = new ComponentTag();
+		componentTagExample.setComponentId(fullDataObject.getComponentId());
+		List<ComponentTag> componentTags = componentTagExample.findByExample();
+
 		for (ComponentTag tag : componentTags) {
 			if (tag.getText().toLowerCase().equals(fullDataObject.getText().toLowerCase())) {
 				unique = false;
 			}
 		}
-		
+
 		return unique;
 	}
 

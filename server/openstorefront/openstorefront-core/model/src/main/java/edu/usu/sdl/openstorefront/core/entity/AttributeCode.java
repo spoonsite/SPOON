@@ -50,7 +50,7 @@ public class AttributeCode
 		extends StandardEntity<AttributeCode>
 {
 
-	public static final String FIELD_LABEL = "label";	
+	public static final String FIELD_LABEL = "label";
 
 	@PK
 	@NotNull
@@ -170,6 +170,15 @@ public class AttributeCode
 			}
 		}
 		return validationResult;
+	}
+
+	public String typeField()
+	{
+		if (getAttributeCodePk() != null) {
+			return this.getAttributeCodePk().getAttributeType();
+		} else {
+			return null;
+		}
 	}
 
 	/**
