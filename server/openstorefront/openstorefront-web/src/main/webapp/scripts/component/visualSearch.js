@@ -24,6 +24,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	//height: 5000,
 	//border: true,
 	plugins: ['spriteevents'],
+	showOnLoad: false,
 	//style: 'cursor: pointer',
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
@@ -709,6 +710,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				height: 200,
 				bodyStyle: 'padding: 10px;',
 				layout: 'anchor',
+				listeners: {
+
+				},
 				items: [
 					{
 						xtype: 'combo',
@@ -776,7 +780,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				]
 			});
-			prompt.show();
+
+			Ext.onReady(function () {
+				if (this.showOnLoad && this.viewType == null) {
+					prompt.show();
+				}
+			}.bind(this));
 		}
 	},
 

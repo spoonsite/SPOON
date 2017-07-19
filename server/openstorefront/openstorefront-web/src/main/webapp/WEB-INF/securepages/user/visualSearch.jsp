@@ -41,7 +41,8 @@
 				var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
 					title: 'View Relationships <i class="fa fa-lg fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>',					
 					visualPanelConfig: {
-						viewType: initViewOptions ? null : 'RELATION'
+						viewType: initViewOptions ? null : 'RELATION',
+						showOnLoad: true
 					}
 				});
 				
