@@ -404,6 +404,7 @@
 					id: 'errorTicketsGrid',
 					store: errorTicketsStore,
 					plugins: 'gridfilters',
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',

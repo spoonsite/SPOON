@@ -304,14 +304,14 @@
 											},											
 											{
 												xtype: 'textfield',
-												fieldLabel: 'Email <span class="field-required" />',
+												fieldLabel: 'Business Email <span class="field-required" />',
 												name: 'email',
 												allowBlank: false,
 												maxLength: 1024
 											},	
 											{
 												xtype: 'textfield',
-												fieldLabel: 'Phone <span class="field-required" />',
+												fieldLabel: 'Business Phone <span class="field-required" />',
 												name: 'phone',
 												allowBlank: false,
 												maxLength: 80
@@ -319,8 +319,7 @@
 											{
 												xtype: 'textfield',
 												fieldLabel: 'Position Title',
-												name: 'positionTitle',
-												allowBlank: false,
+												name: 'positionTitle',												
 												maxLength: 255
 											},											
 											{
