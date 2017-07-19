@@ -710,9 +710,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				height: 200,
 				bodyStyle: 'padding: 10px;',
 				layout: 'anchor',
-				listeners: {
-
-				},
 				items: [
 					{
 						xtype: 'combo',
