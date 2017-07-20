@@ -80,6 +80,11 @@
 								return display;
 							}
 						},						
+						{ text: 'Status', dataIndex: 'activeStatus', width: 200,
+							renderer: function(values, meta, record) {
+								return (record.get('activeStatus') === 'A') ? 'Active' : 'Pending';
+							}
+						},
 						{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200 },
 						{ text: 'Update Date', dataIndex: 'updateDate', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],

@@ -404,6 +404,7 @@
 					id: 'errorTicketsGrid',
 					store: errorTicketsStore,
 					plugins: 'gridfilters',
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -546,6 +547,11 @@
 					modal: true,
 					maximizable: false,
 					layout: 'vbox',
+					listeners: {
+						show: function() {        
+							this.removeCls('x-unselectable');    
+						}
+					},
 					items: [
 						{
 							xtype: 'panel',
@@ -691,7 +697,7 @@
 								{
 									xtype: 'textfield',
 									id: 'appStatePropForm-key',
-									fieldLabel: 'Key',
+									fieldLabel: 'Key <span class="field-required" />',
 									name: 'key',
 									readOnly: true
 								},
@@ -890,7 +896,7 @@
 								{
 									xtype: 'textfield',
 									id: 'configPropForm-key',
-									fieldLabel: 'Key',
+									fieldLabel: 'Key<span class="field-required" />',
 									name: 'code',
 									allowBlank: false
 								},
@@ -2134,9 +2140,7 @@
 				actionLoadRecentChangesInfo();
 
 				var systemMainPanel = Ext.create('Ext.tab.Panel', {
-					title: 'System Management &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
-					width: 400,
-					height: 400,
+					title: 'System Management &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',					
 					items: [
 						statusPanel,
 						errorTicketsGrid,

@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -81,6 +82,7 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -107,7 +109,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
-import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
@@ -229,59 +230,41 @@ public class CoreComponentServiceImpl
 		return componentName;
 	}
 
+	public String getComponentType(String componentId)
+	{
+		String componentType = null;
+		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
+		if (element != null) {
+			componentType = (String) element.getObjectValue();
+		} else {
+			String query = "select componentId, componentType from " + Component.class.getSimpleName();
+			List<ODocument> documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
+				if (document.field("componentId").equals(componentId)) {
+					componentType = (String) document.field("componentType");
+				}
+				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
+			}
+		}
+		return componentType;
+	}
+
 	public List<ComponentSearchView> getComponents()
 	{
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = persistenceService.queryByExample(new QueryByExample(componentExample));
-		components = FilterEngine.filter(components);
+		String query = "select componentId from " + Component.class.getSimpleName()
+				+ " where activeStatus='" + Component.ACTIVE_STATUS
+				+ "' and approvalState='" + ApprovalStatus.APPROVED + "'";
 
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(new QueryByExample(componentAttributeExample));
-		Map<String, List<ComponentAttribute>> attributeMaps = new HashMap<>();
-		for (ComponentAttribute attribute : componentAttributes) {
-			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
-				List<ComponentAttribute> attributes = attributeMaps.get(attribute.getComponentAttributePk().getComponentId());
-				attributes.add(attribute);
-			} else {
-				List<ComponentAttribute> attributes = new ArrayList<>();
-				attributes.add(attribute);
-				attributeMaps.put(attribute.getComponentAttributePk().getComponentId(), attributes);
-			}
+		List<ODocument> documents = persistenceService.query(query, null);
+
+		List<String> componentIds = new ArrayList<>();
+		for (ODocument document : documents) {
+			componentIds.add(document.field("componentId"));
 		}
-
-		ComponentReview componentReviewExample = new ComponentReview();
-		componentAttributeExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-		List<ComponentReview> reviewsFound = componentReviewExample.findByExample();
-		Map<String, List<ComponentReview>> reviewMap = reviewsFound.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
-
-		ComponentTag componentTagExample = new ComponentTag();
-		componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		List<ComponentTag> componentTagsFound = componentTagExample.findByExample();
-		Map<String, List<ComponentTag>> tagMap = componentTagsFound.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
-
-		for (Component component : components) {
-			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
-			if (attributes == null) {
-				attributes = new ArrayList<>();
-			}
-			List<ComponentReview> reviews = reviewMap.get(component.getComponentId());
-			if (reviews == null) {
-				reviews = new ArrayList<>();
-			}
-			List<ComponentTag> componentTags = tagMap.get(component.getComponentId());
-			if (componentTags == null) {
-				componentTags = new ArrayList<>();
-			}
-			ComponentSearchView componentSearchView = ComponentSearchView.toView(component, attributes, reviews, componentTags);
-
-			componentSearchView.setAttributes(SearchResultAttribute.toViewList(attributes));
-			componentSearchViews.add(componentSearchView);
-		}
+		componentSearchViews = getSearchComponentList(componentIds);
 
 		return componentSearchViews;
 	}
@@ -373,7 +356,17 @@ public class CoreComponentServiceImpl
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
-		List<ComponentReview> tempReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempReviews = new ArrayList();
+		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
+		String currentUser = SecurityUtil.getCurrentUserName();
+		tempPendingReviews.forEach(review
+				-> {
+			if (review.getCreateUser().equals(currentUser)) {
+				tempReviews.add(review);
+			}
+		});
+		tempReviews.addAll(tempApprovedReviews);
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review
 				-> {
@@ -395,19 +388,35 @@ public class CoreComponentServiceImpl
 
 			reviews.add(tempView);
 		});
+		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
 		result.setReviews(reviews);
 
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
+		List<ComponentQuestion> pendingQuestions = componentService.getBaseComponent(ComponentQuestion.class, componentId, ComponentQuestion.PENDING_STATUS);
+		pendingQuestions.forEach(question
+				-> {
+			if (question.getCreateUser().equals(currentUser)) {
+				questions.add(question);
+			}
+		});
 		questions.stream().forEach((question)
 				-> {
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
 			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-			List<ComponentQuestionResponse> responses = tempResponse.findByExample();
-			responses = FilterEngine.filter(responses);
+			List<ComponentQuestionResponse> activeResponses = tempResponse.findByExample();
+			activeResponses = FilterEngine.filter(activeResponses);
+
+			ComponentQuestionResponse tempPendingResponse = new ComponentQuestionResponse();
+			tempPendingResponse.setQuestionId(question.getQuestionId());
+			tempPendingResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			tempPendingResponse.setCreateUser(currentUser);
+
+			List<ComponentQuestionResponse> responses = FilterEngine.filter(tempPendingResponse.findByExample());
+			responses.addAll(activeResponses);
 
 			responseViews = ComponentQuestionResponseView.toViewList(responses);
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
@@ -1145,8 +1154,23 @@ public class CoreComponentServiceImpl
 			List<Component> components = persistenceService.query(componentQuery.toString(), paramMap, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();
-			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), paramMap, true);
+			componentAttributeQuery.append("select componentAttributePk.attributeType as attributeType, componentAttributePk.attributeCode as attributeCode, componentId from ComponentAttribute where activeStatus='")
+					.append(Component.ACTIVE_STATUS)
+					.append("' and componentId IN :componentIdsParams");
+
+			List<ODocument> documents = persistenceService.query(componentAttributeQuery.toString(), paramMap, false);
+			List<ComponentAttribute> componentAttributes = new ArrayList<>();
+			for (ODocument document : documents) {
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setComponentId(document.field("componentId"));
+				componentAttributePk.setAttributeCode(document.field("attributeCode"));
+				componentAttributePk.setAttributeType(document.field("attributeType"));
+				componentAttribute.setComponentAttributePk(componentAttributePk);
+				componentAttribute.setComponentId(componentAttributePk.getComponentId());
+				componentAttributes.add(componentAttribute);
+			}
 			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeMap.containsKey(componentAttribute.getComponentId())) {
@@ -1185,6 +1209,8 @@ public class CoreComponentServiceImpl
 					tagMap.put(componentTag.getComponentId(), tags);
 				}
 			}
+
+			componentService.getAttributeServicePrivate().warmAttributeCaches();
 
 			//group by component
 			for (Component component : components) {
@@ -1400,7 +1426,21 @@ public class CoreComponentServiceImpl
 			}
 		}
 
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+
+		// If given, filter the search by name
+		if (StringUtils.isNotBlank(filter.getComponentName())) {
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + filter.getComponentName().toLowerCase() + "%");
+
+			// Define A Special Lookup Operation (ILIKE)
+			specialOperatorModel.setExample(componentLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+		}
+
 		QueryByExample queryByExample = new QueryByExample(componentExample);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		//TODO: consider moving the filtering work to the DB
 		List<Component> components = persistenceService.queryByExample(queryByExample);
@@ -1433,7 +1473,7 @@ public class CoreComponentServiceImpl
 
 		QueryByExample queryPendingChanges = new QueryByExample(new Component());
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(pendingChangeExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
@@ -1726,6 +1766,18 @@ public class CoreComponentServiceImpl
 				}
 				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
 			}
+
+			//add the missed cases
+			query = "select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL";
+			documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				String foundId = document.field("componentId");
+				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+				cacheSensitivityModel.setComponentId(foundId);
+				Element newElement = new Element(foundId, cacheSensitivityModel);
+				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+			}
+
 		}
 
 		return componentSensitivityModel;
@@ -2367,7 +2419,7 @@ public class CoreComponentServiceImpl
 					for (AttributeType attributeType : allAttributes) {
 
 						boolean addToUpdate = false;
-						if (attributeType.getRequiredRestrictions() != null) {
+						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
@@ -2377,7 +2429,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 
-						if (attributeType.getAssociatedComponentTypes() != null) {
+						if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
@@ -2561,6 +2613,62 @@ public class CoreComponentServiceImpl
 		if (existing != null) {
 			persistenceService.delete(existing);
 		}
+	}
+
+	public String resolveComponentIcon(String componentId)
+	{
+		String iconMediaId = null;
+		Element element = OSFCacheManager.getComponentIconCache().get(componentId);
+		if (element != null) {
+			String componentMediaId = (String) element.getObjectValue();
+			if (StringUtils.isNotBlank(componentMediaId)) {
+				iconMediaId = componentMediaId;
+			}
+		} else {
+			ComponentMedia componentMediaExample = new ComponentMedia();
+			componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+			componentMediaExample.setIconFlag(Boolean.TRUE);
+
+			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
+			Set<String> mediaWithIcons = new HashSet<>();
+			for (ComponentMedia componentMedia : allIconMedia) {
+				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
+				OSFCacheManager.getComponentIconCache().put(newElement);
+				if (componentMedia.getComponentId().equals(componentId)) {
+					iconMediaId = componentMedia.getComponentMediaId();
+				}
+				mediaWithIcons.add(componentMedia.getComponentId());
+			}
+			if (iconMediaId == null) {
+				//set all missing icon to blank to warm cache
+				Element newElement = new Element(componentId, "");
+				OSFCacheManager.getComponentIconCache().put(newElement);
+			}
+			String query = "select componentId from " + Component.class.getSimpleName();
+			List<ODocument> documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				String id = document.field("componentId");
+				if (!mediaWithIcons.contains(id)) {
+					Element newElement = new Element(id, "");
+					OSFCacheManager.getComponentIconCache().put(newElement);
+				}
+			}
+
+		}
+		return iconMediaId;
+	}
+
+	public String resolveComponentTypeIcon(String componentType)
+	{
+		String typeIcon = null;
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		for (ComponentType componentTypeLocal : componentTypes) {
+			if (componentTypeLocal.getComponentType().equals(componentType)) {
+				typeIcon = componentTypeLocal.getIconUrl();
+			}
+		}
+
+		return typeIcon;
 	}
 
 }

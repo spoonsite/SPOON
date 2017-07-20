@@ -30,7 +30,6 @@
 
 			Ext.onReady(function () {
 				
-			
 				var roleGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Security Role Management <i class="fa fa-question-circle"  data-qtip="Manage security roles that allow access to features in the application."></i>',
 					columnLines: true,
@@ -53,6 +52,7 @@
 							url: 'api/v1/resource/securityroles'
 						}
 					},
+					
 					columns: [
 						{ text: 'Name', dataIndex: 'roleName', width: 200 },
 						{ text: 'Description', dataIndex: 'description',flex: 1, minWidth: 200 },
@@ -71,7 +71,12 @@
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true  }
 					],
-					listeners: {
+			
+					autoEl: {
+						'data-test' : 'securityRolesTable'
+					},
+					
+			listeners: {
 						selectionchange: function(selModel, records, opts) {
 							var tools = roleGrid.getComponent('tools');
 							if (records.length > 0) {					
@@ -284,7 +289,7 @@
 													var urlEnd = '';
 													if (record) {
 														method = 'PUT';
-														urlEnd = '/' + data.roleName;
+														urlEnd = data.roleName;
 														data.permissions = record.data.permissions;
 														data.dataSecurity = record.data.dataSecurity;
 													}	
@@ -296,7 +301,7 @@
 													}													
 													
 													CoreUtil.submitForm({
-														url: 'api/v1/resource/securityroles' + urlEnd,
+														url: 'api/v1/resource/securityroles/' + encodeURIComponent(urlEnd),
 														method: method,
 														data: data,
 														form: form,
@@ -446,7 +451,11 @@
 							{
 								xtype: 'grid',
 								itemId: 'availableGrid',
-								title: 'Permissions Available',
+								title: 'Permissions Available', 
+								autoEl: {
+									'data-test' : 'permissionsAvailableTable'
+								},
+
 								width: '50%',
 								margin: '0 5 0 0',
 								columnLines: true,
@@ -496,6 +505,9 @@
 								xtype: 'grid',
 								itemId: 'rolePermissionsGrid',
 								title: 'Current Role Permissions',
+								autoEl: {
+									'data-test' : 'currentRolePermissionsTable'
+								},
 								width: '50%',
 								columnLines: true,
 								store: {									
@@ -729,7 +741,7 @@
 													{ text: 'Code', dataIndex: 'code', width: 200},
 													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
 												]
-											},
+											},	
 											{
 												xtype: 'grid',
 												id: 'dataSensitivitiesInRoleGrid',
@@ -897,12 +909,12 @@
 												valueField: 'username',
 												tpl: Ext.create('Ext.XTemplate',
 													'<ul class="x-list-plain"><tpl for=".">',
-														'<li role="option" class="x-boundlist-item">{firstname} {lastname} - {email}</li>',
+														'<li role="option" class="x-boundlist-item">{username} <span style="color: #a8a8a8;"> - {email}</span></li>',
 													'</tpl></ul>'
 												),											
 												displayTpl: Ext.create('Ext.XTemplate',
 													'<tpl for=".">',
-														'{firstname} {lastname} - {email}',
+														'{username}',
 													'</tpl>'
 												),
 												labelAlign: 'top',												

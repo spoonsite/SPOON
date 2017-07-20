@@ -23,9 +23,12 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.exception.DefaultExceptionHandler;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Translate Errors into something the front-end can handle
@@ -40,23 +43,30 @@ public class OpenStorefrontExceptionHandler
 	{
 		//ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
 
-		ErrorInfo errorInfo = new ErrorInfo(error, request);
+		if (error != null
+				&& StringUtils.isNotBlank(error.getMessage())
+				&& error.getMessage().startsWith("Could not locate an ActionBean that is bound to the URL")) {
+			return new ErrorResolution(Response.Status.NOT_FOUND.getStatusCode());
+		} else {
 
-		//Strip and senstive info (See Checklist Q: 410)
-		ServiceProxy serviceProxy = new ServiceProxy();
-		SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
+			ErrorInfo errorInfo = new ErrorInfo(error, request);
 
-		final ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		return new StreamingResolution(MediaType.APPLICATION_JSON)
-		{
+			//Strip and senstive info (See Checklist Q: 410)
+			ServiceProxy serviceProxy = new ServiceProxy();
+			SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
 
-			@Override
-			protected void stream(HttpServletResponse response) throws Exception
+			final ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+			return new StreamingResolution(MediaType.APPLICATION_JSON)
 			{
-				objectMapper.writeValue(response.getOutputStream(), systemErrorModel);
-			}
 
-		};
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					objectMapper.writeValue(response.getOutputStream(), systemErrorModel);
+				}
+
+			};
+		}
 	}
 
 }

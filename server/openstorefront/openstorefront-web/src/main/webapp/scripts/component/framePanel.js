@@ -24,7 +24,7 @@
 Ext.define('OSF.ux.IFrame', {
     extend: 'Ext.Component',
 
-    alias: 'OSF.widget.uxiframe',
+    alias: 'widget.osf-uxiframe',
 
     loadMask: 'Loading...',
 
@@ -94,7 +94,7 @@ Ext.define('OSF.ux.IFrame', {
             try {
                 doc = this.getDoc();
                 if (doc) {
-                    Ext.get(doc).un(this._docListeners);
+                    doc.un(this._docListeners);
                     if (destroying) {
                         for (prop in doc) {
                             if (doc.hasOwnProperty && doc.hasOwnProperty(prop)) {

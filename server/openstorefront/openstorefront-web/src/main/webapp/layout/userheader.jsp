@@ -124,7 +124,7 @@
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('index.jsp');
+												window.location.replace('Landing.action');
 											}
 										}
 									}
@@ -177,6 +177,7 @@
 								{
 									text: 'Dashboard',
 									scale   : 'large',
+									id: 'dashboardUserHomeButton',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Dashboard');
@@ -187,6 +188,7 @@
 								},										
 								{
 									text: 'Profile',
+									id: 'userHeaderProfileBtn',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									handler: function(){

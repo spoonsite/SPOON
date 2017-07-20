@@ -106,12 +106,12 @@ public class HighlightExporter
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load searches", ex);
-					addError("Unable to load searches: " + dataFile.getName());
+					LOG.log(Level.WARNING, "Failed to Load highlights", ex);
+					addError("Unable to load highlights: " + dataFile.getName());
 				}
 			}
 		} else {
-			LOG.log(Level.FINE, "No entry types to load.");
+			LOG.log(Level.FINE, "No highlights to load.");
 		}
 	}
 

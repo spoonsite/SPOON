@@ -44,6 +44,7 @@ public class ComponentMediaView
 	private String originalLink;
 	private Boolean hideInDisplay;
 	private Boolean usedInline;
+	private Boolean iconFlag;
 
 	public ComponentMediaView()
 	{
@@ -70,6 +71,7 @@ public class ComponentMediaView
 		mediaView.setUpdateDts(media.getUpdateDts());
 		mediaView.setHideInDisplay(media.getHideInDisplay());
 		mediaView.setUsedInline(media.getUsedInline());
+		mediaView.setIconFlag(media.getIconFlag());
 		mediaView.toStandardView(media);
 
 		return mediaView;
@@ -212,6 +214,16 @@ public class ComponentMediaView
 	public void setUsedInline(Boolean usedInline)
 	{
 		this.usedInline = usedInline;
+	}
+
+	public Boolean getIconFlag()
+	{
+		return iconFlag;
+	}
+
+	public void setIconFlag(Boolean iconFlag)
+	{
+		this.iconFlag = iconFlag;
 	}
 
 }

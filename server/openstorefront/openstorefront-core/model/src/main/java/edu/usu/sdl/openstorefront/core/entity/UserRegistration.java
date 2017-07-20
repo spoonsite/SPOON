@@ -35,6 +35,8 @@ public class UserRegistration
 		extends StandardEntity<UserRegistration>
 {
 
+	public static final String VERIFICATION_CODE_FIELD = "verificationCode";
+	
 	@PK(generated = true)
 	@NotNull
 	private String registrationId;
@@ -73,6 +75,11 @@ public class UserRegistration
 	@ConsumeField
 	private String phone;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String positionTitle;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
@@ -88,6 +95,12 @@ public class UserRegistration
 	@APIDescription("This is used to flag the built in admin account; on first creation")
 	private Boolean usingDefaultPassword;
 
+	@ConsumeField
+	private String verificationCode;
+
+	@ConsumeField
+	private String userProfileId;
+	
 	public UserRegistration()
 	{
 	}
@@ -192,4 +205,52 @@ public class UserRegistration
 		this.usingDefaultPassword = usingDefaultPassword;
 	}
 
+	public String getPositionTitle()
+	{
+		return positionTitle;
+	}
+
+	public void setPositionTitle(String positionTitle)
+	{
+		this.positionTitle = positionTitle;
+	}
+
+	public void setVerificationCode(String verificationCode)
+	{
+		this.verificationCode = verificationCode;
+	}
+
+	public String getVerificationCode()
+	{
+		return verificationCode;
+	}
+
+	public String getUserProfileId()
+	{
+		return userProfileId;
+	}
+
+	public void setUserProfileId(String userProfileId)
+	{
+		this.userProfileId = userProfileId;
+	}
+	
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		UserRegistration userRegistrationUpdate = (UserRegistration) entity;
+		this.setPassword(userRegistrationUpdate.getPassword());
+		this.setUsername(userRegistrationUpdate.getUsername());
+		this.setFirstName(userRegistrationUpdate.getFirstName());
+		this.setLastName(userRegistrationUpdate.getLastName());
+		this.setOrganization(userRegistrationUpdate.getOrganization());
+		this.setPositionTitle(userRegistrationUpdate.getPositionTitle());
+		this.setEmail(userRegistrationUpdate.getEmail());
+		this.setPhone(userRegistrationUpdate.getPhone());
+		this.setUserTypeCode(userRegistrationUpdate.getUserTypeCode());
+		this.setVerificationCode(userRegistrationUpdate.getVerificationCode());
+		this.setUserProfileId(userRegistrationUpdate.getUserProfileId());
+	}
 }

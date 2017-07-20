@@ -106,7 +106,7 @@ public class SolrManager
 	}
 
 	//Should reuse server to avoid leaks according to docs.
-	private static SolrClient  solrServer;
+	private static SolrClient solrServer;
 
 	public static void init()
 	{
@@ -114,20 +114,17 @@ public class SolrManager
 		if (StringUtils.isNotBlank(url)) {
 			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
 
-			
 			//use the xml instead of binary
 			String xml = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_USE_XML);
 			if (StringUtils.isNotBlank(xml)) {
-				solrServer =  new HttpSolrClient.					
-						Builder(url)
-						.allowCompression(true)					
+				solrServer = new HttpSolrClient.Builder(url)
+						.allowCompression(true)
 						.withResponseParser(new XMLResponseParser())
-						.build();				
+						.build();
 			} else {
-				solrServer =  new HttpSolrClient.					
-						Builder(url)
-						.allowCompression(true)					
-						.build();				
+				solrServer = new HttpSolrClient.Builder(url)
+						.allowCompression(true)
+						.build();
 			}
 
 		} else {
@@ -168,28 +165,28 @@ public class SolrManager
 	{
 		return solrServer;
 	}
-	
+
 	private ServiceProxy service = ServiceProxy.getProxy();
 
 	@Override
 	public void initialize()
 	{
 		SolrManager.init();
-		started.set(true);		
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		SolrManager.cleanup();
-		started.set(false);		
+		started.set(false);
 	}
-	
+
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
+	}
 
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)
@@ -225,9 +222,9 @@ public class SolrManager
 			}
 		}
 		SearchServerManager.updateSearchScore(searchQuery.getQuery(), componentSearchViews);
-		
+
 		views.addAll(componentSearchViews);
-		
+
 		componentSearchWrapper.setData(views);
 		componentSearchWrapper.setResults(views.size());
 
@@ -236,7 +233,7 @@ public class SolrManager
 			totalFound = 0;
 		}
 		componentSearchWrapper.setTotalNumber(totalFound);
-		return componentSearchWrapper;		
+		return componentSearchWrapper;
 	}
 
 	@Override
@@ -253,12 +250,12 @@ public class SolrManager
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 			List<ComponentAttribute> allAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			attributeMap = allAttributes.stream().collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
-			
+
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			List<ComponentTag> allTags = service.getPersistenceService().queryByExample(componentTagExample);
 			tagMap = allTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
-			
+
 		}
 
 		List<SolrComponentModel> solrDocs = new ArrayList<>();
@@ -270,15 +267,15 @@ public class SolrManager
 			solrDocModel.setIsComponent(Boolean.TRUE);
 			solrDocModel.setId(component.getComponentId());
 			solrDocModel.setNameString(component.getName());
+			solrDocModel.setComponentType(component.getComponentType());
 			solrDocModel.setDataSource(component.getDataSource());
-			solrDocModel.setDataSensitivity(component.getDataSensitivity());			
+			solrDocModel.setDataSensitivity(component.getDataSensitivity());
 			solrDocModel.setName(component.getName());
 			String description = StringProcessor.stripHtml(component.getDescription());
 			solrDocModel.setDescription(description.replace("<>", "").replace("\n", ""));
 			solrDocModel.setUpdateDts(component.getUpdateDts());
 			solrDocModel.setOrganization(component.getOrganization());
 
-			
 			List<ComponentTag> tags;
 			List<ComponentAttribute> attributes;
 			if (components.size() > 1) {
@@ -320,9 +317,9 @@ public class SolrManager
 			} catch (IOException | SolrServerException ex) {
 				throw new OpenStorefrontRuntimeException("Failed Adding Component", ex);
 			}
-		}		
+		}
 	}
-	
+
 	private String attributesToString(String typeKey, String codeKey)
 	{
 		StringBuilder attributeList = new StringBuilder();
@@ -344,7 +341,7 @@ public class SolrManager
 			}
 		}
 		return attributeList.toString();
-	}	
+	}
 
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
@@ -401,14 +398,14 @@ public class SolrManager
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(myQueryString);
 
-			// fields to be returned back from solr			
+			// fields to be returned back from solr
 			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
 			if (addtionalFieldsToReturn != null) {
 				for (String field : addtionalFieldsToReturn) {
 					solrQuery.addField(field);
 				}
 			}
-			
+
 			solrQuery.setStart(filter.getOffset());
 			solrQuery.setRows(filter.getMax());
 
@@ -424,36 +421,36 @@ public class SolrManager
 					order = SolrQuery.ORDER.asc;
 				}
 				solrQuery.addSort(sortFieldText, order);
-			} 
+			}
 
 			solrQuery.setIncludeScore(true);
 
 			QueryResponse response = SolrManager.getServer().query(solrQuery);
 			SolrDocumentList results = response.getResults();
-			totalFound = results.getNumFound();				
-						
-//			DocumentObjectBinder binder = new DocumentObjectBinder();
-//			resultsList = binder.getBeans(SolrComponentModel.class, results);		
+			totalFound = results.getNumFound();
 
+//			DocumentObjectBinder binder = new DocumentObjectBinder();
+//			resultsList = binder.getBeans(SolrComponentModel.class, results);
 			for (SolrDocument document : results) {
 				SolrComponentModel solrComponentModel = new SolrComponentModel();
 				solrComponentModel.setComponentId((String) document.get(SolrComponentModel.ID_FIELD));
 				solrComponentModel.setId((String) document.get(SolrComponentModel.ID_FIELD));
 				solrComponentModel.setIsComponent(Convert.toBoolean(document.get(SolrComponentModel.ISCOMPONENT_FIELD)));
-				
+
 				if (document.get(SolrComponentModel.FIELD_NAME) instanceof ArrayList) {
-					List<String> names = (ArrayList<String>) document.get(SolrComponentModel.FIELD_NAME);		
-					solrComponentModel.setName((names!=null ? names.get(0) : null ));
+					List<String> names = (ArrayList<String>) document.get(SolrComponentModel.FIELD_NAME);
+					solrComponentModel.setName((names != null ? names.get(0) : null));
 				} else if (document.get(SolrComponentModel.FIELD_NAME) instanceof String) {
 					solrComponentModel.setName((String) document.get(SolrComponentModel.FIELD_NAME));
 				}
-				
+
+				solrComponentModel.setComponentType((String) document.get(SolrComponentModel.FIELD_COMPONENTTYPE));
 				solrComponentModel.setOrganization((String) document.get(SolrComponentModel.FIELD_ORGANIZATION));
 				solrComponentModel.setDescription((String) document.get(SolrComponentModel.FIELD_DESCRIPTION));
 				solrComponentModel.setQueryScore((float) document.get("score"));
 				resultsList.add(solrComponentModel);
 			}
-			
+
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
 		} catch (Exception ex) {
@@ -462,73 +459,87 @@ public class SolrManager
 		indexSearchResult.getResultsList().addAll(resultsList);
 		indexSearchResult.setTotalResults(totalFound);
 		indexSearchResult.applyDataFilter();
-		
-		return indexSearchResult;		
+
+		return indexSearchResult;
 	}
 
 	@Override
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
 		List<SearchSuggestion> suggestions = new ArrayList<>();
-		
+
 		FilterQueryParams filter = FilterQueryParams.defaultFilter();
-		
+
 		//query everything we can
 		String extraFields[] = {
-			SolrComponentModel.FIELD_NAME, 
-			SolrComponentModel.FIELD_ORGANIZATION, 
-			SolrComponentModel.FIELD_DESCRIPTION, 
-		};
-		query = "*" + query + "*";		
+			SolrComponentModel.FIELD_NAME,
+			SolrComponentModel.FIELD_ORGANIZATION,
+			SolrComponentModel.FIELD_DESCRIPTION,};
+		query = "*" + query + "*";
 		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
-		
+
+		if (org.apache.commons.lang.StringUtils.isNotBlank(componentType)) {
+			indexSearchResult.setResultsList(
+					indexSearchResult.getResultsList()
+							.stream()
+							.filter((result) -> componentType.equals(result.getComponentType()))
+							.collect(Collectors.toList())
+			);
+			indexSearchResult.setSearchViews(
+					indexSearchResult.getSearchViews()
+							.stream()
+							.filter((result) -> componentType.equals(result.getComponentType()))
+							.collect(Collectors.toList())
+			);
+		}
+
 		//apply weight to items
 		if (StringUtils.isBlank(query)) {
 			query = "";
 		}
-		
+
 		String queryNoWild = query.replace("*", "").toLowerCase();
 		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
 			int score = 0;
-						
-			if (StringUtils.isNotBlank(model.getName()) &&
-					model.getName().toLowerCase().contains(queryNoWild)) {
+
+			if (StringUtils.isNotBlank(model.getName())
+					&& model.getName().toLowerCase().contains(queryNoWild)) {
 				score += 100;
 			}
-			
-			if (StringUtils.isNotBlank(model.getOrganization()) &&
-					model.getOrganization().toLowerCase().contains(queryNoWild)) {
+
+			if (StringUtils.isNotBlank(model.getOrganization())
+					&& model.getOrganization().toLowerCase().contains(queryNoWild)) {
 				score += 50;
 			}
-			
+
 			int count = StringUtils.countMatches(model.getDescription().toLowerCase(), queryNoWild);
-			score += count * 5;	
-			
-			model.setSearchWeight(score);			
+			score += count * 5;
+
+			model.setSearchWeight(score);
 		}
-		
+
 		//sort
 		indexSearchResult.getResultsList().sort((SolrComponentModel o1, SolrComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
-		
+
 		//window
 		List<SolrComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
-		
+
 		for (SolrComponentModel model : topItems) {
-			
+
 			SearchSuggestion suggestion = new SearchSuggestion();
 			suggestion.setName(model.getName());
 			suggestion.setComponentId(model.getId());
 			suggestion.setQuery("\"" + model.getName() + "\"");
-			
+
 			// Only include approved components.
 			if (service.getComponentService().checkComponentApproval(suggestion.getComponentId())) {
 				suggestions.add(suggestion);
 			}
 		}
-				
-		return suggestions;		
-	}	
-	
+
+		return suggestions;
+	}
+
 	@Override
 	public void deleteById(String id)
 	{
@@ -552,18 +563,17 @@ public class SolrManager
 		} catch (SolrServerException | IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search server is active and can be reached", ex);
 		}
-	}	
-	
-	
+	}
+
 	@Override
 	public void saveAll()
 	{
 		Component component = new Component();
 		component.setActiveStatus(Component.ACTIVE_STATUS);
-		component.setApprovalState(ApprovalStatus.APPROVED);		
+		component.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = component.findByExample();
 
-		index(components);		
+		index(components);
 	}
 
 	@Override
@@ -572,5 +582,5 @@ public class SolrManager
 		deleteAll();
 		saveAll();
 	}
-	
+
 }

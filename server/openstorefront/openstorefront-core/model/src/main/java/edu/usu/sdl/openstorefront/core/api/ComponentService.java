@@ -110,6 +110,30 @@ public interface ComponentService
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentReviewId
+	 * @return
+	 */
+	public ComponentReview setReviewPending(String ComponentReviewId);
+
+	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentQuestionId
+	 * @return
+	 */
+	public ComponentQuestion setQuestionPending(String ComponentQuestionId);
+
+	/**
+	 * Set Review to pending
+	 *
+	 * @param ComponentQuestionResponseId
+	 * @return
+	 */
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId);
+
+	/**
 	 * Deletes a base component
 	 *
 	 * @param <T>
@@ -149,6 +173,14 @@ public interface ComponentService
 	 * @return Name or null if not found
 	 */
 	public String getComponentName(String componentId);
+
+	/**
+	 * High-speed component type lookup
+	 *
+	 * @param componentId
+	 * @return ComponentType Code or null if not found
+	 */
+	public String getComponentType(String componentId);
 
 	/**
 	 * High-speed check for approval
@@ -239,6 +271,14 @@ public interface ComponentService
 	public void saveComponentAttribute(ComponentAttribute attribute);
 
 	/**
+	 * Saves a component Attribute
+	 *
+	 * @param attribute
+	 * @param updateLastActivity
+	 */
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);
+
+	/**
 	 *
 	 * @param filter
 	 * @param componentId
@@ -247,12 +287,14 @@ public interface ComponentService
 	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId);
 
 	/**
+	 * Validate Component Attribute and handling adding user code if it doesn't
+	 * exist
 	 *
 	 * @param attribute
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Boolean checkComponentAttribute(ComponentAttribute attribute);
+	public ValidationResult checkComponentAttribute(ComponentAttribute attribute);
 
 	/**
 	 *
@@ -765,5 +807,21 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component mergePendingChange(String componentIdOfPendingChange);
+
+	/**
+	 * Quick look up the entry icon
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public String resolveComponentIcon(String componentId);
+
+	/**
+	 * Quick look up the entry type icon
+	 *
+	 * @param componentType
+	 * @return
+	 */
+	public String resolveComponentTypeIcon(String componentType);
 
 }

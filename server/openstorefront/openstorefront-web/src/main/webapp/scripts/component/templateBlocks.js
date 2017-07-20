@@ -56,7 +56,9 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '');		
+		// Ext escape dose not properly escape Apostrophes for display on an html page 
+		// so we need to replace \' with the proper html escape of &apos;
+		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '').replace(/\\'/g,'&apos;');		
 				
 		// Perform client-side processing of the description, consisting of two things:
 		// Add the onclick handler for saved search links.
@@ -530,8 +532,11 @@ Ext.define('OSF.component.template.Media', {
 			var mediaToShow = [];
 			Ext.Array.each(entry.componentMedia, function(media) {
 				if (!media.hideInDisplay) mediaToShow.push(media);
-			});
+			});			
 			MediaViewer.mediaList = mediaToShow;
+			if (mediaToShow.length === 0) {
+				this.setHidden(true);
+			}
 			
 			var updated = false;
 			Ext.Array.each(entry.componentMedia, function(item){
@@ -662,30 +667,30 @@ Ext.define('OSF.component.template.Reviews', {
 			margin: '0 0 1 0',
 			bodyStyle: 'padding: 10px;',
 			tpl: new Ext.XTemplate(
-				'<table style="width:100%"><tr>',
-				'	<td valign="top">',
+				'<div class="review-summary">',
+				'	<div class="details">',
 				'		<tpl if="totalReviews && totalReviews &gt; 0">',
 				'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',							
-				'			<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
+				'			<div><span class="label">{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</span> reviewers recommended</div>',
 				'		</tpl>',
-				'   <td>',
-				'	<td valign="top" width="20%">',
+				'	</div>',
+				'	<div class="pros">',
 				'		<tpl if="pros.length &gt; 0">',
 				'			<div class="review-pro-con-header">Pros</div>',
 				'			<tpl for="pros">',
 				'				- {text} <span class="review-summary-count">({count})</span><br>',	
 				'			</tpl>',
 				'		</tpl>',
-				'   <td>',
-				'	<td valign="top" width="20%">',
+				'	</div>',
+				'	<div class="cons">',
 				'		<tpl if="cons.length &gt; 0">',
 				'			<div class="review-pro-con-header">Cons</div>',							
 				'			<tpl for="cons">',
 				'				- {text} <span class="review-summary-count">({count})</span><br>',	
 				'			</tpl>',
 				'		</tpl>',
-				'   <td>',
-				'</tr></table>'
+				'	</div>',
+				'</div>'
 			)						
 		},
 		{
@@ -698,33 +703,38 @@ Ext.define('OSF.component.template.Reviews', {
 			bodyStyle: 'padding: 10px;',
 			tpl: new Ext.XTemplate(
 				'<tpl for=".">',	
-				'<table style="width:100%"><tr>',
-				'	<td valign="top">',
-				'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br><br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
-				'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
-				'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
-				'		</div><br>',
-				'		<b>Organization:</b> {organization}<br>',
-				'		<b>Experience:</b> {userTimeDescription}<br>',							
-				'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
-				'   <td>',
-				'	<td valign="top" width="20%">',
+				'<div class="review-section">',
+				'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</div></tpl>',
+				'	<div class="details">',
+				'		<div class="title"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title}</div>',
+				'		<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
+				'		<div class="review-who-section">',
+				'			{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <strong>Recommend</strong></tpl>',
+				'			<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
+				'		</div>',
+				'		<div><span class="label">Organization:</span> {organization}</div>',
+				'		<div><span class="label">Experience:</span> {userTimeDescription}</div>',							
+				'		<div><span class="label">Last Used:</span> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}</div>',
+				'	</div>',			
+				'	<div class="pros">',
 				'		<tpl if="pros.length &gt; 0">',									
 				'		<div class="review-pro-con-header">Pros</div>',
 				'		<tpl for="pros">',
 				'			- {text}<br>',	
 				'		</tpl></tpl>',
-				'   <td>',
-				'	<td valign="top" width="20%">',
+				'	</div>',			
+				'	<div class="cons">',
 				'		<tpl if="cons.length &gt; 0">',
 				'		<div class="review-pro-con-header">Cons</div>',
 				'		<tpl for="cons">',
 				'			- {text}<br>',	
 				'		</tpl></tpl>',
-				'   <td>',
-				'</tr></table>',
-				'<br><b>Comments:</b><br>{comment}',
-				' <br><br><hr>',
+				'	</div>',				
+				'	<div class="comments">',
+				'		<span class="label">Comments:</span>',				
+				'		<div>{comment}</div>',							
+				'	</div>',				
+				'</div>',
 				'</tpl>'
 			)						
 		}
@@ -1054,8 +1064,12 @@ Ext.define('OSF.component.template.Questions', {
 				if (question.securityMarkingType) {
 					questionSecurity = '(' + question.securityMarkingType + ') '; 
 				}
-
-				var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
+				var pendingNotice = "";
+				if(question.activeStatus === "P")
+				{
+					pendingNotice = '<div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div>';
+				}
+				var text = '<div class="question-question">' + pendingNotice + '<span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
 				text += '<div class="question-info">' +
 						question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
 						'</div>';
@@ -1063,7 +1077,7 @@ Ext.define('OSF.component.template.Questions', {
 				Ext.Array.each(question.responses, function(response){
 					response.questionId = question.questionId;
 					response.componentId = question.componentId;
-					response.owner = (question.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
+					response.owner = (response.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));					
 				});
 
 
@@ -1075,7 +1089,8 @@ Ext.define('OSF.component.template.Questions', {
 					data: question.responses,
 					tpl: new Ext.XTemplate(							
 						'<tpl for=".">',
-						'	<tpl if="activeStatus === \'A\'">',
+						'	<tpl if="activeStatus === \'A\' || (activeStatus === \'P\' &amp;&amp; owner === true)">',
+						'		<tpl if="activeStatus === \'P\'"><div class="alert-warning" style="text-align: center;font-size:1.25em"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>',
 						'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
 						'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
 						'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
@@ -1756,7 +1771,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 		} else {
 			
 			var updateSection = function(evaluation) {
-				if (evaluation.checkListAll.evaluationChecklist.summary) {
+				if (evaluation.checkListAll.responses) {
 					checklistPanel.setHidden(false);
 					checklistPanel.update(evaluation);
 					

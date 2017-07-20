@@ -161,9 +161,10 @@ public interface SystemService
 	 *
 	 * @param generalMedia
 	 * @param fileInput (optional on update)
+	 * @return the general media
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput);
+	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput);
 
 	/**
 	 * Delete the general media

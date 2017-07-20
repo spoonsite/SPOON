@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -652,6 +653,7 @@ public class ComponentRESTResource
 	@POST
 	@APIDescription("Creates a component")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(RequiredForComponent.class)
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
@@ -1325,16 +1327,14 @@ public class ComponentRESTResource
 			return response;
 		}
 
-		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
 
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid() && service.getComponentService().checkComponentAttribute(attribute)) {
-			attribute.setCreateUser(SecurityUtil.getCurrentUserName());
-			attribute.setUpdateUser(SecurityUtil.getCurrentUserName());
+		validationResult.merge(service.getComponentService().checkComponentAttribute(attribute));
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentAttribute(attribute);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -2521,7 +2521,16 @@ public class ComponentRESTResource
 		questionExample.setComponentId(componentId);
 
 		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(questionExample);
+		String user = SecurityUtil.getCurrentUserName();
+		if (filterQueryParams.getStatus().equals(ComponentQuestion.ACTIVE_STATUS)) {
+			ComponentQuestion pendingQuestionExample = new ComponentQuestion();
+			pendingQuestionExample.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+			pendingQuestionExample.setComponentId(componentId);
+			pendingQuestionExample.setCreateUser(user);
+			componentQuestions.addAll(service.getPersistenceService().queryByExample(pendingQuestionExample));
+		}
 		componentQuestions = filterQueryParams.filter(componentQuestions);
+		componentQuestions.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentQuestion.FIELD_CREATE_DTS));
 
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
@@ -2644,6 +2653,32 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(componentQuestion);
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@APIDescription("Set a question to pending for the specified entity")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/pending")
+	public Response pendingComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
+	{
+		ComponentQuestion componentQuestionExample = new ComponentQuestion();
+		componentQuestionExample.setComponentId(componentId);
+		componentQuestionExample.setQuestionId(questionId);
+
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(componentQuestionExample);
+		if (componentQuestion != null) {
+			service.getComponentService().setQuestionPending(questionId);
+			componentQuestion.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(componentQuestion);
+	}
+
 	@POST
 	@APIDescription("Add a new question to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -2689,7 +2724,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+				question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			} else {
+				question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
+			}
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -2809,6 +2848,34 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(questionResponse);
 	}
 
+	@PUT
+	@RequireSecurity
+	@APIDescription("Sets a response from the given question on the specified component to Pending")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/questions/{questionId}/responses/{responseId}/pending")
+	public Response pendingComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId,
+			@PathParam("responseId")
+			@RequiredParam String responseId)
+	{
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		responseExample.setComponentId(componentId);
+		responseExample.setQuestionId(questionId);
+		responseExample.setResponseId(responseId);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
+		if (questionResponse != null) {
+			service.getComponentService().setQuestionResponsePending(responseId);
+			questionResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(questionResponse);
+	}
+
 	@POST
 	@APIDescription("Add a response to the given question on the specified component")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -2864,7 +2931,11 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+				response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+			} else {
+				response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
+			}
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
@@ -2919,8 +2990,19 @@ public class ComponentRESTResource
 		reviewExample.setComponentId(componentId);
 
 		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(reviewExample);
+
+		if (filterQueryParams.getStatus().equals(ComponentReview.ACTIVE_STATUS)) {
+			ComponentReview pendingReviewExample = new ComponentReview();
+			pendingReviewExample.setActiveStatus(ComponentReview.PENDING_STATUS);
+			pendingReviewExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			pendingReviewExample.setComponentId(componentId);
+
+			List<ComponentReview> pendingComponentReviews = service.getPersistenceService().queryByExample(pendingReviewExample);
+			componentReviews.addAll(pendingComponentReviews);
+		}
 		componentReviews = filterQueryParams.filter(componentReviews);
 		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
+		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
 
 		GenericEntity<List<ComponentReviewView>> entity = new GenericEntity<List<ComponentReviewView>>(views)
 		{
@@ -2969,7 +3051,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
-	@APIDescription("Activate a review on  the specified component")
+	@APIDescription("Activate a review on the specified component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -2990,7 +3072,33 @@ public class ComponentRESTResource
 			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
 			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(componentReviewExample);
+		return sendSingleEntityResponse(componentReview);
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@APIDescription("Sets a review on the specified component to pending")
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@Path("/{id}/reviews/{reviewId}/pending")
+	public Response pendingComponentReview(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("reviewId")
+			@RequiredParam String reviewId)
+	{
+		ComponentReview componentReviewExample = new ComponentReview();
+		componentReviewExample.setComponentId(componentId);
+		componentReviewExample.setComponentReviewId(reviewId);
+
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(componentReviewExample);
+		if (componentReview != null) {
+			service.getComponentService().setReviewPending(reviewId);
+			componentReview.setActiveStatus(ComponentReview.PENDING_STATUS);
+		}
+		return sendSingleEntityResponse(componentReview);
 	}
 
 	@POST
@@ -3407,6 +3515,35 @@ public class ComponentRESTResource
 	// </editor-fold>
 
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TAG section">
+	@GET
+	@APIDescription("Get the entire tag list (Tag Cloud), excluding the tags already used by a some component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tagsfree")
+	public List<ComponentTag> getFreeComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
+		List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+		List<ComponentTag> filteredTags = new ArrayList<>();
+		
+		for (ComponentTag tag : allTags) {
+			boolean pass = true;
+			for (ComponentTag myTag : componentTags) {
+				if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+					pass = false;
+					break;
+				}
+			}
+			if (pass) {
+				filteredTags.add(tag);
+			}
+		}
+
+		return filteredTags;
+	}
+	
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})

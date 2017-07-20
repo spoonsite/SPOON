@@ -32,6 +32,7 @@ public class SystemArchiveType
 {
 
 	public static final String DBEXPORT = "DBEXPORT";
+	public static final String FULL = "FULLEXPORT";
 	public static final String GENERAL = "GENERAL";
 
 	public SystemArchiveType()
@@ -43,6 +44,7 @@ public class SystemArchiveType
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(DBEXPORT, newLookup(SystemArchiveType.class, DBEXPORT, "DB Export"));
+		codeMap.put(FULL, newLookup(SystemArchiveType.class, FULL, "Full Export"));
 		codeMap.put(GENERAL, newLookup(SystemArchiveType.class, GENERAL, "General"));
 		return codeMap;
 	}

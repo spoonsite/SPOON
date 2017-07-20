@@ -16,17 +16,22 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -144,6 +149,36 @@ public class AttributeCode
 		this.setGroupCode(attributeCode.getGroupCode());
 		this.setSortOrder(attributeCode.getSortOrder());
 		this.setHighlightStyle(attributeCode.getHighlightStyle());
+	}
+
+	public ValidationResult customValidation(Service service)
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		//Enforce Value type on the type code
+		AttributeType attributeType = service.getAttributeService().findType(getAttributeCodePk().getAttributeType());
+		if (attributeType.getAttributeValueType() != null
+				&& AttributeValueType.NUMBER.equals(attributeType.getAttributeValueType())) {
+			BigDecimal value = Convert.toBigDecimal(getLabel());
+			if (value == null) {
+				RuleResult result = new RuleResult();
+				result.setFieldName(FIELD_LABEL);
+				result.setEntityClassName(getClass().getSimpleName());
+				result.setValidationRule("Attribute Type requires label to number");
+				result.setMessage("Default Code is requried when hide on submission and the attribute is required.");
+				validationResult.getRuleResults().add(result);
+			}
+		}
+		return validationResult;
+	}
+
+	public String typeField()
+	{
+		if (getAttributeCodePk() != null) {
+			return this.getAttributeCodePk().getAttributeType();
+		} else {
+			return null;
+		}
 	}
 
 	/**

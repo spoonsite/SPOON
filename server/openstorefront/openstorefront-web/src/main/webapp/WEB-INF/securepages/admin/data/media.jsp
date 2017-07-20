@@ -197,6 +197,8 @@
 				};
 				
 				var addRecord = function() {
+					
+					Ext.getCmp('addMediaForm').setLoading(false);
 					addMediaWin.show();
 					
 					//reset form
@@ -465,20 +467,29 @@
 											Ext.getCmp('addMediaForm').submit({
 												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
-												success: function(response, opts) {
-													Ext.toast('Uploaded Successfully', '', 'tr');
+												callback: function() {
 													Ext.getCmp('addMediaForm').setLoading(false);
-													Ext.getCmp('addMediaWin').hide();													
+												},
+												success: function(response, opts) {
+													Ext.toast('Uploaded Successfully', '', 'tr');													
+													Ext.getCmp('addMediaWin').close();													
 													refreshGrid();												
 												},
-												failure: function(response,opts){
-													Ext.Msg.show({
-														title: 'Upload Failed',
-														msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
-														buttons: Ext.Msg.OK
-													});
-													Ext.getCmp('addMediaForm').setLoading(false);									
-													refreshGrid();	
+												failure: function(action, opts){
+													var data = Ext.decode(opts.response.responseText);
+													if (data.success && data.success === false){
+														Ext.Msg.show({
+															title: 'Upload Failed',
+															msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+															buttons: Ext.Msg.OK
+														});													
+														refreshGrid();	
+													} else {
+														//false positive the return object doesn't have success
+														Ext.toast('Uploaded Successfully', '', 'tr');													
+														Ext.getCmp('addMediaWin').close();													
+														refreshGrid();
+													}
 												}
 											});												
 										}

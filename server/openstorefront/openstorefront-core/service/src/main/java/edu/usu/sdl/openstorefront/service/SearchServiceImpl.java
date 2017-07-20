@@ -71,6 +71,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -213,11 +214,13 @@ public class SearchServiceImpl
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
 		//each user may get different results depending on security roles
-		//Take out caching for now
-//		Element element = OSFCacheManager.getSearchCache().get(searchModel.searchKey());
-//		if (element != null) {
-//			searchResult = (AdvanceSearchResult) element.getObjectValue();
-//		} else {
+		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
+			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
+			if (element != null) {
+				return searchResult = (AdvanceSearchResult) element.getObjectValue();
+			}
+		}
+
 		//group
 		Map<SearchType, List<SearchElement>> searchGroup = new HashMap<>();
 		for (SearchElement searchElement : searchModel.getSearchElements()) {
@@ -405,9 +408,10 @@ public class SearchServiceImpl
 		}
 		searchResult.setValidationResult(validationResultMain);
 
-//			element = new Element(searchModel.searchKey(), searchResult);
-//			OSFCacheManager.getSearchCache().put(element);
-//		}
+		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
+			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
+			OSFCacheManager.getSearchCache().put(element);
+		}
 		return searchResult;
 	}
 
@@ -423,9 +427,9 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
-		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult);
+		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult, componentType);
 	}
 
 	@Override

@@ -70,7 +70,7 @@
 							}, 
 							{
 								text: 'Close',
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function() {
 									addEditAttributeCodeWin.close();
 								}
@@ -889,10 +889,10 @@
 														dock: 'top',														
 														items: [
 															{
-																text: 'Manages Codes',
+																text: 'Manage Codes',
 																itemId: 'addCodes',
 																disabled: true,
-																iconCls: 'fa fa-plus',
+																iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 																handler: function() {
 																	var grid = this.up('grid');	
 																	var record = grid.getSelectionModel().getSelection()[0];
@@ -920,7 +920,7 @@
 																text: 'Edit',
 																itemId: 'edit',
 																disabled: true,
-																iconCls: 'fa fa-edit',
+																iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 																handler: function() {
 																	var grid = this.up('grid');																	
 																	var form = Ext.getCmp('attributeTypeForm');
@@ -938,7 +938,7 @@
 																text: 'Delete',
 																itemId: 'remove',
 																disabled: true,
-																iconCls: 'fa fa-trash',
+																iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 																handler: function() {
 																	var grid = this.up('grid');	
 																	var record = grid.getSelectionModel().getSelection()[0];

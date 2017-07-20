@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -24,10 +25,13 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -98,6 +102,16 @@ public class Organization
 	@Sanitize(TextSanitizer.class)
 	private String contactEmail;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String logoMimeType;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String logoFileName;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String logoOriginalFileName;
+
 	public Organization()
 	{
 	}
@@ -114,6 +128,22 @@ public class Organization
 			key = Base64.getUrlEncoder().encodeToString(name.toUpperCase().getBytes());
 		}
 		return key;
+	}
+
+	/**
+	 * Get the path to the media on disk. Note: this may be ran from a proxy so
+	 * don't use fields directly
+	 *
+	 * @return Path or null if this doesn't represent a disk resource
+	 */
+	public Path pathToLogo()
+	{
+		Path path = null;
+		if (StringUtils.isNotBlank(getLogoFileName())) {
+			File mediaDir = FileSystemManager.getDir(FileSystemManager.ORGANIZATION_DIR);
+			path = Paths.get(mediaDir.getPath() + "/" + getLogoFileName());
+		}
+		return path;
 	}
 
 	@Override
@@ -134,6 +164,9 @@ public class Organization
 		this.setDescription(updated.getDescription());
 		this.setHomeUrl(updated.getHomeUrl());
 		this.setOrganizationType(updated.getOrganizationType());
+		this.setLogoFileName(updated.getLogoFileName());
+		this.setLogoMimeType(updated.getLogoMimeType());
+		this.setLogoOriginalFileName(updated.getLogoOriginalFileName());			
 	}
 
 	public String getOrganizationId()
@@ -244,6 +277,36 @@ public class Organization
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public String getLogoMimeType()
+	{
+		return logoMimeType;
+	}
+
+	public void setLogoMimeType(String logoMimeType)
+	{
+		this.logoMimeType = logoMimeType;
+	}
+
+	public String getLogoFileName()
+	{
+		return logoFileName;
+	}
+
+	public void setLogoFileName(String logoFileName)
+	{
+		this.logoFileName = logoFileName;
+	}
+
+	public String getLogoOriginalFileName()
+	{
+		return logoOriginalFileName;
+	}
+
+	public void setLogoOriginalFileName(String logoOriginalFileName)
+	{
+		this.logoOriginalFileName = logoOriginalFileName;
 	}
 
 }

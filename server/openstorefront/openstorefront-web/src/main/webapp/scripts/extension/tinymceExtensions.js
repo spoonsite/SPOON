@@ -21,7 +21,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.SavedSearchLinkInsertWindow',
 	layout: 'fit',
-
+	id: 'linkToSaveSearchWindow',
 	title: 'Insert Link to Saved Search',
 	closeMode: 'destroy',
 	alwaysOnTop: true,
@@ -77,7 +77,8 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						{
 							text: 'Insert Link',
 							itemId: 'insert',
-							iconCls: 'fa fa-link',
+							id: 'insertLinkBtn',
+							iconCls: 'fa fa-lg fa-link icon-button-color-default',
 							disabled: true,
 							handler: function(button) {
 								var window = button.up('window');
@@ -97,6 +98,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						},
 						{
 							text: 'Cancel',
+							iconCls: 'fa fa-lg fa-times icon-button-color-warning',
 							handler: function(button) {
 								var window = button.up('window');
 								window.close();
@@ -503,11 +505,36 @@ Ext.define('OSF.component.MediaInsertWindow', {
 	mediaToShow: 'IMG',
 	mediaName: 'Image',
 	
+	isEditor: true,
+	
+	mediaHandler: function(link, alt, mediaType, mimeType) {
+
+		this.insertInlineMedia(link, alt, mediaType, mimeType);
+	},
+	
 	initComponent: function () {
 		this.callParent();
 
 		var mediaInsertWindow = this;
-
+		
+		if (!mediaInsertWindow.isEditor) {
+			
+			if (!mediaInsertWindow.mediaSelectionUrl) {
+					
+				mediaInsertWindow.mediaSelectionUrl = '';
+			}
+			
+			var apiMediaType = 'GeneralMedia';
+			var requestFieldName = 'generalMedia';
+		}
+		else {
+			
+			mediaInsertWindow.mediaSelectionUrl = mediaInsertWindow.editor.settings.mediaSelectionUrl();
+			
+			var apiMediaType = 'TemporaryMedia';
+			var requestFieldName = 'temporaryMedia';
+		}
+		
 		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {			
 		});
 
@@ -515,7 +542,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			autoLoad: true,
 			proxy: {
 				type: 'ajax',
-				url: mediaInsertWindow.editor.settings.mediaSelectionUrl()
+				url: mediaInsertWindow.mediaSelectionUrl
 			},
 			listeners: {
 				load: function(store, records, success, eOpts) {
@@ -586,7 +613,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					if (!record) {
 						record = offRecord;
 					}
-					mediaInsertWindow.insertInlineMedia(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'), record.get('mediaTypeCode'), record.get('mimeType'));
+					mediaInsertWindow.mediaHandler(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'), record.get('mediaTypeCode'), record.get('mimeType'));
 					Ext.defer(function(){
 						mediaInsertWindow.close();
 					}, 250);					
@@ -625,7 +652,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 							items: [
 								{
 									xtype: 'textfield',									
-									name: 'temporaryMedia.name',
+									name: requestFieldName + '.name',
 									allowBlank: false,
 									flex: 9,
 									labelWidth: 175,
@@ -636,30 +663,30 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									xtype: 'button',
 									title: 'Upload',
 									flex: 1,
-									iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+									iconCls: 'fa fa-lg fa-upload',
 									formBind: true,
 									text: 'Upload',
 									handler: function() {
 										var uploadForm = this.up('form');
 																				
-										if (mediaInsertWindow.editor.settings.mediaUploadHandler) {
+										if (mediaInsertWindow.isEditor && mediaInsertWindow.editor.settings.mediaUploadHandler) {
 											mediaInsertWindow.editor.settings.mediaUploadHandler(uploadForm, mediaInsertWindow);
 										} else {
 											uploadForm.setLoading("Uploading...");
 										
 											uploadForm.submit({
-												url: 'Media.action?UploadTemporaryMedia',
+												url: 'Media.action?Upload' + apiMediaType,
 												method: 'POST',
-												success: function(form, action) {
-												},
-												failure: function(form, action){
+												success: function(form, action) { },
+												failure: function(form, action) {
+													
 													// In this case, to not up-end the
 													// server side things, technically a 
 													// failure is a potentially a sucess
 													if (action.result && action.result.fileName) {
 														// True success
 														uploadForm.setLoading(false);
-														var link = "Media.action?TemporaryMedia&name=";
+														var link = 'Media.action?' + apiMediaType + '&name=';
 														link += encodeURIComponent(action.result.name);
 														
 														var mediaTypeCode = mediaInsertWindow.mediaToShow;
@@ -673,7 +700,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 															} 
 														}
 														
-														mediaInsertWindow.insertInlineMedia(link, action.result.name, mediaTypeCode, action.result.mimeType);
+														mediaInsertWindow.mediaHandler(link, action.result.name, mediaTypeCode, action.result.mimeType);
 														uploadForm.up('window').close();
 													} else {
 														// True failure
@@ -789,7 +816,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 				},
 				{
 					text: 'Close',
-					iconCls: 'fa fa-2x fa-close',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 					scale: 'medium',
 					handler: function() {
 						this.up('window').close();

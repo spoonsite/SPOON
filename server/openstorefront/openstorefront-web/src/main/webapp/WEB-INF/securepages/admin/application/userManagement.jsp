@@ -67,21 +67,30 @@
 					store: registrationGridStore,
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
 					columns: [
 						{ text: 'Username', dataIndex: 'username', width: 200 },
 						{ text: 'First name', dataIndex: 'firstName', width: 200 },
 						{ text: 'Last name', dataIndex: 'lastName', width: 200 },
 						{ text: 'Organization', dataIndex: 'organization', width: 200 },
+						{ text: 'Position Title', dataIndex: 'positionTitle', width: 200 },						
 						{ text: 'Email', dataIndex: 'email', flex: 1, minWidth: 200 },
-						{ text: 'Phone', dataIndex: 'phone', width: 200 },
+						{ text: 'Phone', dataIndex: 'phone', width: 150 },
 						{ text: 'User Type', dataIndex: 'userTypeCode', align: 'center', width: 200, 
 							renderer: function(value, meta, record) {
-								meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
+								if (record.get('userTypeDescription')) {
+									meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
+								}
 								return value;
 							}
 						},
-						{ text: 'Registration Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Registration Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Status', dataIndex: 'userProfileId', align: 'center', width: 150, 
+							renderer: function(value, meta, record) {
+								return (record.get('userProfileId')) ? "Complete" : "Pending";
+							}
+						}
 					],
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {
@@ -94,7 +103,8 @@
 								tools.getComponent('message').setDisabled(true);
 							}
 						}
-					},					
+					},	
+					
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -148,7 +158,7 @@
 										Ext.Msg.show({
 											title:'Delete Registration?',
 											iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-											message: 'Are you sure you want to remove this registration? <br/><br/><b>Warning:</b> This will delete the user as well.',
+											message: 'Are you sure you want to remove this registration?',
 											buttons: Ext.Msg.YESNO,
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
@@ -294,18 +304,24 @@
 											},											
 											{
 												xtype: 'textfield',
-												fieldLabel: 'Email <span class="field-required" />',
+												fieldLabel: 'Business Email <span class="field-required" />',
 												name: 'email',
 												allowBlank: false,
 												maxLength: 1024
 											},	
 											{
 												xtype: 'textfield',
-												fieldLabel: 'Phone <span class="field-required" />',
+												fieldLabel: 'Business Phone <span class="field-required" />',
 												name: 'phone',
 												allowBlank: false,
 												maxLength: 80
 											},
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Position Title',
+												name: 'positionTitle',												
+												maxLength: 255
+											},											
 											{
 												xtype: 'combobox',
 												fieldLabel: 'User Type',
@@ -320,6 +336,7 @@
 														type: 'ajax',
 														url: 'api/v1/resource/lookuptypes/UserTypeCode'
 													},
+													
 													listeners: {
 														load: function(store, records, opts) {
 															store.add({
@@ -365,12 +382,12 @@
 														}
 
 														CoreUtil.submitForm({
-															url: 'api/v1/resource/userregistrations',
+															url: 'api/v1/resource/userregistrations/admin',
 															method: 'POST',
 															data: data,
 															form: form,
 															success: function(action, opts) {
-																Ext.toast('Successfully added new user.<br>Remember user may need to be approved.');
+																Ext.toast('Successfully added new user.');
 																actionRefreshRegs();
 																actionRefreshUsers();
 																addUserWin.close();
@@ -480,7 +497,12 @@
 					],
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},	
+					
+					autoEl: {
+						'data-test' : 'xPanelTable'
+					},
+					
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {
 							var tools = userGrid.getComponent('tools');
@@ -532,7 +554,10 @@
 									name: 'activeStatus',									
 									typeAhead: false,
 									editable: false,
-									width: 200,							
+									width: 200,	
+									autoEl: {
+										'data-test' : 'userActiveStatus'
+									},
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshUsers();
@@ -733,7 +758,7 @@
 									}									
 								}
 							]
-						},						
+						},
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',

@@ -95,6 +95,10 @@ public abstract class AbstractArchiveHandler
 				handler = new GeneralArchiveHandler(archive);
 				break;
 
+			case SystemArchiveType.FULL:
+				handler = new FullArchiveHandler(archive);
+				break;
+
 			default:
 				throw new OpenStorefrontRuntimeException("Archive type not supported.", "Archive Type: " + archive.getSystemArchiveType());
 		}

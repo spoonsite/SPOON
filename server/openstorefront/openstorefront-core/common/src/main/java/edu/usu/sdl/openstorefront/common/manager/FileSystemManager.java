@@ -25,6 +25,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,6 +62,7 @@ public class FileSystemManager
 	public static final String TEMPORARY_MEDIA_DIR = MAIN_PERM_DIR + "/temporarymedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
+	public static final String ORGANIZATION_DIR = MAIN_PERM_DIR + "/organization";
 	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
 	public static final String PLUGIN_DIR = MAIN_PERM_DIR + "/plugins";
 	public static final String COMPONENT_VERSION_DIR = MAIN_PERM_DIR + "/componentversion";
@@ -69,6 +73,25 @@ public class FileSystemManager
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	private static final int BUFFER_SIZE = 8192;
+
+	public static List<String> getTopLevelDirectories(Set<String> exclude)
+	{
+		List<String> directories = new ArrayList<>();
+
+		File mainDir = new File(MAIN_DIR);
+		File files[] = mainDir.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.isDirectory()) {
+					String path = file.getPath();
+					if (!exclude.contains(path)) {
+						directories.add(file.getPath());
+					}
+				}
+			}
+		}
+		return directories;
+	}
 
 	public static File getDir(String directory)
 	{

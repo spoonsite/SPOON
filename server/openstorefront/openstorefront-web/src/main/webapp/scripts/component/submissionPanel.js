@@ -232,11 +232,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 		});
 		
 		var allAttributes = [];
-		var loadAllAttributes = function(){
+		var loadAllAttributes = function(callback){
 			Ext.Ajax.request({
 				url: 'api/v1/resource/attributes',
 				success: function(response, opts){
 					allAttributes = Ext.decode(response.responseText);
+					if (callback) {
+						callback();
+					}
 				}
 			});
 		};
@@ -287,6 +290,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 		};
 
 		var handleAttributes = function(componentType) {
+			if (!componentType) {
+				componentType = submissionPanel.componentTypeSelected;
+			}
 
 			var requiredAttributes = [];
 			var optionalAttributes = [];
@@ -449,8 +455,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 					},
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
-							if (newValue) {
+							if (newValue) {								
 								handleAttributes(newValue);
+								submissionPanel.componentTypeSelected = newValue;
 
 								var sectionPanel = submissionPanel.detailsPanel.getComponent('detailSections');
 
@@ -458,8 +465,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								sectionPanel.getComponent('contactGrid').setHidden(true);
 								sectionPanel.getComponent('resourceGrid').setHidden(true);							
 								sectionPanel.getComponent('mediaGrid').setHidden(true);							
-								sectionPanel.getComponent('dependenciesGrid').setHidden(true);
-								sectionPanel.getComponent('metadataGrid').setHidden(true);
+								sectionPanel.getComponent('dependenciesGrid').setHidden(true);								
 								sectionPanel.getComponent('relationshipsGrid').setHidden(true);
 								sectionPanel.getComponent('tagGrid').setHidden(true);							
 								
@@ -467,8 +473,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								sectionPanel.getComponent('contactGrid-help').setHidden(true);
 								sectionPanel.getComponent('resourceGrid-help').setHidden(true);							
 								sectionPanel.getComponent('mediaGrid-help').setHidden(true);							
-								sectionPanel.getComponent('dependenciesGrid-help').setHidden(true);
-								sectionPanel.getComponent('metadataGrid-help').setHidden(true);
+								sectionPanel.getComponent('dependenciesGrid-help').setHidden(true);								
 								sectionPanel.getComponent('relationshipsGrid-help').setHidden(true);
 								sectionPanel.getComponent('tagGrid-help').setHidden(true);							
 								
@@ -493,10 +498,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 								if (record.get('dataEntryDependancies')){							
 									sectionPanel.getComponent('dependenciesGrid').setHidden(false);
 									sectionPanel.getComponent('dependenciesGrid-help').setHidden(false);
-								} 
-								if (record.get('dataEntryMetadata')){
-									sectionPanel.getComponent('metadataGrid').setHidden(false);
-									sectionPanel.getComponent('metadataGrid-help').setHidden(false);
 								} 
 								if (record.get('dataEntryRelationships')){
 									sectionPanel.getComponent('relationshipsGrid').setHidden(false);
@@ -630,95 +631,220 @@ Ext.define('OSF.component.SubmissionPanel', {
 						},
 						items: [
 							{
-								xtype: 'combobox',
-								itemId: 'attributeTypeCB',
-								fieldLabel: 'Attribute Type <span class="field-required" />',
-								name: 'type',
-								labelWidth: 150,
-								forceSelection: true,
-								queryMode: 'local',
-								editable: false,
-								typeAhead: false,
-								allowBlank: false,
-								valueField: 'attributeType',
-								displayField: 'description',
-								store: Ext.create('Ext.data.Store', {
-									sorters: [
-										{
-											property: 'description',
-											direction: 'ASC',
-											transform: function(item) {
-												if (item) {
-													item = item.toLowerCase();
+								xtype: 'panel',
+								layout: 'hbox',
+								margin: '0 0 10 0',
+								items: [
+									{
+										xtype: 'combobox',
+										itemId: 'attributeTypeCB',
+										fieldLabel: 'Attribute Type <span class="field-required" />',
+										name: 'type',
+										flex: 1,
+										labelWidth: 150,
+										labelAlign: 'right',
+										labelSeparator: '',
+										forceSelection: true,
+										queryMode: 'local',
+										editable: true,
+										typeAhead: true,
+										allowBlank: false,
+										valueField: 'attributeType',
+										displayField: 'description',
+										store: Ext.create('Ext.data.Store', {
+											sorters: [
+												{
+													property: 'description',
+													direction: 'ASC',
+													transform: function(item) {
+														if (item) {
+															item = item.toLowerCase();
+														}
+														return item;
+													}
 												}
-												return item;
-											}
-										}
-									],
-									fields: [
-										"attributeType",
-										"description"
-									],
-									data: submissionPanel.optionalAttributes
-								}),
-								listeners: {
-									
-									change: function (field, newValue, oldValue, opts) {
-										
-										// Clear Previously Selected Code
-										var codeField = field.up('form').getComponent('attributeCodeCB');
-										codeField.clearValue();
-														
-										codeField.setLoading(true);
-										Ext.Ajax.request({
-											url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes',
-											callback: function(){
-												codeField.setLoading(false);
-											},
-											success: function(response, opts) {
-												var attributeCodes = Ext.decode(response.responseText);
-												
-												var lookUpCodes = [];
-												Ext.Array.each(attributeCodes, function(attributeCode) {
-													lookUpCodes.push({
-														code: attributeCode.attributeCodePk.attributeCode,
-														label: attributeCode.label
-													});
+											],
+											fields: [
+												"attributeType",
+												"description"
+											],
+											data: submissionPanel.optionalAttributes
+										}),
+										listeners: {
+
+											change: function (field, newValue, oldValue, opts) {
+
+												// Clear Previously Selected Code
+												var codeField = field.up('form').getComponent('attributeCodeCB');
+												codeField.clearValue();
+
+												codeField.setLoading(true);
+												Ext.Ajax.request({
+													url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes',
+													callback: function(){
+														codeField.setLoading(false);
+													},
+													success: function(response, opts) {
+														var attributeCodes = Ext.decode(response.responseText);
+
+														var lookUpCodes = [];
+														Ext.Array.each(attributeCodes, function(attributeCode) {
+															lookUpCodes.push({
+																code: attributeCode.attributeCodePk.attributeCode,
+																label: attributeCode.label
+															});
+														});
+														codeField.getStore().loadData(lookUpCodes);
+													}
 												});
-												codeField.getStore().loadData(lookUpCodes);
-											}
-										});
-										
-										var record = field.getSelection();
-										
-										// Check For Selected Type
-										if (record) {
-											
-											// Check For User-Generated Codes Being Enabled
-											if (record.get("allowUserGeneratedCodes")) {												
-												// Allow Editing Of ComboBox
-												codeField.setEditable(true);
-											}
-											else {
-												// Disallow Editing Of ComboBox
-												codeField.setEditable(false);
+
+												var record = field.getSelection();
+
+												// Check For Selected Type
+												if (record) {
+
+													// Check For User-Generated Codes Being Enabled
+													if (record.get("allowUserGeneratedCodes")) {												
+														// Allow Editing Of ComboBox
+														codeField.setEditable(true);
+													}
+													else {
+														// Disallow Editing Of ComboBox
+														codeField.setEditable(false);
+													}
+												}
+												else {
+
+													// Nothing Selcted, Remove All Codes
+													codeField.getStore().removeAll();
+												}
 											}
 										}
-										else {
+									},
+									{
+										xtype: 'button',
+										itemId: 'addAttributeType',
+										text: 'Add',
+										iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+										minWidth: 100,
+										hidden: true,
+										handler: function() {
+											var attributeTypeCb = addWindow.queryById('attributeTypeCB');
 											
-											// Nothing Selcted, Remove All Codes
-											codeField.getStore().removeAll();
+											
+											var addTypeWin = Ext.create('Ext.window.Window', {
+												title: 'Add Type',
+												iconCls: 'fa fa-plus',
+												closeAction: 'destroy',
+												alwaysOnTop: true,
+												modal: true,
+												width: 400,
+												height: 380,
+												layout: 'fit',
+												items: [
+													{
+														xtype: 'form',
+														scrollable: true,
+														layout: 'anchor',
+														bodyStyle: 'padding: 10px',
+														defaults: {
+															labelAlign: 'top',
+															labelSeparator: '',
+															width: '100%'															
+														},
+														items: [
+															{
+																xtype: 'textfield',
+																name: 'label',
+																fieldLabel: 'Label <span class="field-required" />',
+																allowBlank: false,
+																maxLength: 255
+															},
+															{
+																xtype: 'textarea',
+																name: 'detailedDescription',
+																fieldLabel: 'Description',
+																maxLength: 255																
+															},
+															{
+																xtype: 'combobox',
+																fieldLabel: 'Code Label Value Type <span class="field-required" />',							
+																displayField: 'description',
+																valueField: 'code',
+																typeAhead: false,
+																editable: false,
+																allowBlank: false,
+																name: 'attributeValueType',
+																store: {
+																	autoLoad: true,
+																	proxy: {
+																		type: 'ajax',
+																		url: 'api/v1/resource/lookuptypes/AttributeValueType'
+																	}
+																}
+															}
+														],
+														dockedItems: [
+															{
+																xtype: 'toolbar',
+																dock: 'bottom',
+																items: [
+																	{
+																		text: 'Save',
+																		formBind: true,
+																		iconCls: 'fa fa-lg fa-save icon-button-color-save',
+																		handler: function () {
+																			var form = this.up('form');
+																			var data = form.getValues();
+																			var addTypeWin = this.up('window');
+																			
+																			CoreUtil.submitForm({
+																				url: 'api/v1/resource/attributes/attributetypes/metadata',
+																				method: 'POST',
+																				data: data,
+																				form: form,
+																				success: function (response, opts) {
+																					loadAllAttributes(function(){
+																						handleAttributes();
+																					});						
+																					
+																					var newAttribute = Ext.decode(response.responseText);
+																					attributeTypeCb.getStore().add(newAttribute);	
+																					addTypeWin.close();
+																				}
+																			});
+																			
+																		}
+																	},
+																	{
+																		xtype: 'tbfill'
+																	},																	
+																	{
+																		text: 'Cancel',
+																		iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																		handler: function () {
+																			this.up('window').close();
+																		}																		
+																	}
+																]
+															}
+														]
+													}
+												]
+											});
+											addTypeWin.show();
+											
 										}
 									}
-								}
-							},
+								]
+							},							
 							{
 								xtype: 'combobox',
 								itemId: 'attributeCodeCB',
 								fieldLabel: 'Attribute Code <span class="field-required" />',
 								name: 'code',
 								queryMode: 'local',
-								labelWidth: 150,
+								labelWidth: 150,								
 								editable: false,
 								typeAhead: false,
 								allowBlank: false,
@@ -805,13 +931,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 												});
 											};
 
-											var type = form.getComponent('attributeTypeCB').getSelection();
+											var type = form.queryById('attributeTypeCB').getSelection();											
 											
 											// The attribute may allow user generated codes. If so, the code
 											// may not already exist.
 											if (type.get('allowUserGeneratedCodes')) {
-												var label = form.getComponent('attributeCodeCB').getValue();
-												var store = form.getComponent('attributeCodeCB').getStore();
+												var label = form.queryById('attributeCodeCB').getValue();
+												var store = form.queryById('attributeCodeCB').getStore();
 												var found = false;
 												store.each(function(item) {
 													if (item.get('code') === label) {
@@ -821,40 +947,64 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 												if (!found) {
 													
-													// Build Request Data
-													var newAttributeData = {														
-														userAttributes: [
-															{
-																attributeCodeLabel: label,
-																attributeType: data.type
-															}
-														]
-													};
-													
-													form.setLoading("Add new attribute...");
-													Ext.Ajax.request({
-														url: 'api/v1/resource/attributes/attributetypes/usercodes',
-														method: 'POST',
-														jsonData: newAttributeData,
-														callback: function() {
-															form.setLoading(false);
-														},
-														success: function(response, opts) {
-															Ext.toast('Successfully added user attribute code.', '', 'tr');																														
-															CoreService.attributeservice.labelToCode(label).then(function(response, opts) {
-																handleSaveAttribute(response.responseText); 
-																loadAllAttributes();
-															});						
-														},
-														failure: function(response, opts) {
-															Ext.MessageBox.show({
-																title:'Failed to Save',
-																message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
-																buttons: Ext.Msg.OK,
-																icon: Ext.Msg.ERROR										
-															});
+													//check
+													var valid = true;
+													if (type.get('attributeValueType') === 'NUMBER') {
+														if (!Ext.isNumeric(label)) {
+															valid = false;
 														}
-													});													
+													}
+													
+													if (!valid) {
+														Ext.Msg.show({
+															title:'Validation Error',
+															message: 'Attribute Code must be numberic for this attribute type',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {
+																if (btn === 'OK') {
+																	form.getForm().markInvalid({
+																		attributeCode: 'Must be a number for this attribute Type'
+																	});
+																} 
+															}
+														});															
+													} else {													
+														// Build Request Data
+														var newAttributeData = {														
+															userAttributes: [
+																{
+																	attributeCodeLabel: label,
+																	attributeType: data.type
+																}
+															]
+														};
+
+														form.setLoading("Add new attribute...");
+														Ext.Ajax.request({
+															url: 'api/v1/resource/attributes/attributetypes/usercodes',
+															method: 'POST',
+															jsonData: newAttributeData,
+															callback: function() {
+																form.setLoading(false);
+															},
+															success: function(response, opts) {
+																Ext.toast('Successfully added user attribute code.', '', 'tr');																														
+																CoreService.attributeservice.labelToCode(label).then(function(response, opts) {
+																	handleSaveAttribute(response.responseText); 
+																	loadAllAttributes();
+																});						
+															},
+															failure: function(response, opts) {
+																Ext.MessageBox.show({
+																	title:'Failed to Save',
+																	message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
+																	buttons: Ext.Msg.OK,
+																	icon: Ext.Msg.ERROR										
+																});
+															}
+														});	
+													}	
 												} else {
 													handleSaveAttribute();
 												}
@@ -883,7 +1033,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 			
 			if (record) {
 				addWindow.getComponent('attributeForm').loadRecord(record);
-			}			
+			}	
+						
+			CoreService.userservice.getCurrentUser().then(function(user){
+
+				if (CoreService.userservice.userHasPermisson(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
+					addWindow.queryById('addAttributeType').setHidden(false);
+				}
+
+			});			
+			
 		};		
 		
 		var addEditContact = function(record, grid) {
@@ -1396,6 +1555,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'usedInline'
 							},
 							{
+								xtype: 'checkbox',
+								fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
+								name: 'iconFlag'
+							},								
+							{
 								xtype: 'filefield',
 								itemId: 'upload',
 								fieldLabel: 'Upload Media (Limit of 1GB)',
@@ -1526,8 +1690,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('mediaForm').loadRecord(record);
 			}			
 		};
-
-		
 		
 		var addEditDependency = function(record, grid){
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -1646,145 +1808,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('depForm').loadRecord(record);
 			}			
 		};
-		
-		var addEditMetadata = function(record, grid){		
-			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destroy',
-				modal: true,
-				alwaysOnTop: true,
-				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Metadata</span>',
-				width: '50%',
-				height: 350,
-				layout: 'fit',
-				items: [
-					{
-						xtype: 'form',
-						scrollable: true,
-						itemId: 'metaForm',
-						bodyStyle: 'padding: 10px;',
-						defaults: {
-							labelAlign: 'top',
-							labelSeparator: '',
-							width: '100%'
-						},
-						items: [
-							{
-								xtype: 'hidden',
-								name: 'metadataId'
-							},
-							{
-								xtype: 'combobox',
-								itemId: 'metadataLabelComboBox',
-								fieldLabel: 'Label <span class="field-required" />',
-								allowBlank: false,									
-								maxLength: '255',									
-								name: 'label',
-								valueField: 'code',
-								displayField: 'description',
-								typeAhead: 'true',
-								store: Ext.create('Ext.data.Store', {
-									storeId: 'metadataLabelStore',
-									proxy: {
-										type: 'ajax',
-										url: 'api/v1/resource/componentmetadata/lookup'
-									},
-									autoLoad: true
-								}),
-								listeners: {
-									change: {																			
-										fn: function (combo, newValue, oldValue, eOpts) {
-											var valueStore = this.up('form').getComponent('metadataValueComboBox').getStore();
-											valueStore.getProxy().setUrl('api/v1/resource/componentmetadata/lookup/values');
-											valueStore.getProxy().setExtraParams({label: newValue});
-											valueStore.load();
-										},
-										buffer: 500
-									}
-								}
-							},
-							{
-								xtype: 'combobox',
-								itemId: 'metadataValueComboBox',
-								fieldLabel: 'Value <span class="field-required" />',
-								allowBlank: false,									
-								maxLength: '255',									
-								name: 'value',
-								valueField: 'code',
-								displayField: 'description',
-								typeAhead: 'true',
-								store: Ext.create('Ext.data.Store', {									
-									proxy: {
-										type: 'ajax'
-									}
-								})
-							},
-							Ext.create('OSF.component.SecurityComboBox', {	
-								itemId: 'securityMarkings',
-								hidden: submissionPanel.hideSecurityMarkings
-							}),
-							Ext.create('OSF.component.DataSensitivityComboBox', {			
-								width: '100%'
-							})							
-						],
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Save',
-										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-save',
-										handler: function(){
-											var metaWindow = this.up('window');
-											var form = this.up('form');
-											var data = form.getValues();
-											var componentId = submissionPanel.componentId;
-
-											var method = 'POST';
-											var update = '';
-											if (data.metadataId) {
-												update = '/' + data.metadataId;
-												method = 'PUT';
-											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/components/' + componentId + '/metadata' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function(){
-													grid.getStore().load({
-														url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
-													});
-													Ext.getStore('metadataLabelStore').load();
-													metaWindow.close();
-												}
-											});
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Cancel',										
-										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-										handler: function(){
-											this.up('window').close();
-										}
-									}
-								]
-							}																
-						]															
-					}
-				]
-			}).show();			
-		
-			if (record) {
-				addWindow.getComponent('metaForm').loadRecord(record);
-			}			
-		};
-		
+	
 		var addEditRelationship = function(record, grid) {
 
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -2124,7 +2148,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							itemId: 'resourceGrid-help',
-							html: '<h3>Add direct links external to Documentation, Binaries, Source Code, etc... where appropriate.</h3>'
+							html: '<h3>Add direct links to external Documentation, Binaries, Source Code, etc... where appropriate.</h3>'
 						},						
 						{
 							xtype: 'grid',
@@ -2239,6 +2263,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 								{ text: 'Link',  dataIndex: 'originalLink', width: 200 },
+								{ text: 'Icon Flag',  dataIndex: 'iconFlag', width: 150, hidden: true },
 								{ text: 'Security Marking', itemId: 'securityMarking', dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
@@ -2399,92 +2424,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 													grid: this.up('grid'),
 													idField: 'dependencyId',
 													entity: 'dependencies'
-												});
-											}
-										}								
-									]
-								}
-							]
-						},
-						{
-							xtype: 'panel',
-							itemId: 'metadataGrid-help',
-							html: '<h3>Add relavant feature support or other metadata to describe the entry. Eg. Label: DIB Compatible  Value: 4.1+</h3>'
-						},						
-						{
-							xtype: 'grid',
-							itemId: 'metadataGrid',
-							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAPI Compatible   Value: 1.3+)"></i>',
-							collapsible: true,
-							titleCollapse: true,
-							margin: '0 0 20 0',
-							frame: true,	
-							border: true,
-							columnLines: true,
-							store: Ext.create('Ext.data.Store', {
-								autoLoad: false,
-								proxy: {
-									type: 'ajax'							
-								}
-							}),
-							forceFit: true,
-							columns: [
-								{ text: 'Label', dataIndex: 'label',  width: 200 },
-								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
-								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
-							],
-							listeners: {						
-								afterrender: function(grid, opts){
-									grid.getSelectionModel().grid = grid;
-								},
-								selectionchange:  function(selectionModel, selection, opts){
-									var tools = selectionModel.grid.getComponent('tools');
-									if (selectionModel.getCount() > 0) {
-										tools.getComponent('removeBtn').setDisabled(false);
-										tools.getComponent('editBtn').setDisabled(false);
-									} else {
-										tools.getComponent('removeBtn').setDisabled(true);
-										tools.getComponent('editBtn').setDisabled(true);
-									}
-								}
-							},
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									itemId: 'tools',
-									items: [
-										{
-											text: 'Add',
-											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-											handler: function(){
-												var grid = this.up('grid');
-												addEditMetadata(null, grid);
-											}
-										},
-										{
-											text: 'Edit',
-											itemId: 'editBtn',
-											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
-											disabled: true,
-											handler: function(){
-												var grid = this.up('grid');
-												var record = this.up('grid').getSelectionModel().getSelection()[0];
-												addEditMetadata(record, grid);
-											}
-										},										
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Delete',	
-											itemId: 'removeBtn',
-											disabled: true,
-											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
-											handler: function(){
-												actionSubComponentRemove({
-													grid: this.up('grid'),
-													idField: 'metadataId',
-													entity: 'metadata'
 												});
 											}
 										}								
@@ -2755,6 +2694,25 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		submissionPanel.reviewPanel = Ext.create('Ext.panel.Panel', {
 			layout: 'vbox',
+			listeners: {
+				activate: function () {
+					var initialToggleElement = document.querySelectorAll('.toggle-collapse')[0];
+
+					// Wait until the the template has been rendered
+					var templateStateCheckInterval = setInterval(function () {
+
+						// the template has refreshed
+						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
+							clearInterval(templateStateCheckInterval);
+							var toggleElements = document.querySelectorAll('.toggle-collapse');
+							for (ii = 0; ii < toggleElements.length; ii += 1) {
+								toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+								toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+							}
+						}
+					}, 100);
+				}
+			},
 			items: [
 				{
 					xtype: 'panel',
@@ -2785,7 +2743,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					border: true,
 					autoScroll: true,
 					bodyStyle: 'padding: 10px;',
-					tpl: reviewViewTemplate					
+					tpl: reviewViewTemplate
 				}
 			]			
 		});		
@@ -2930,13 +2888,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 					sections.getComponent('contactGrid').down('#securityMarking').setHidden(false);
 					sections.getComponent('resourceGrid').down('#securityMarking').setHidden(false);
 					sections.getComponent('mediaGrid').down('#securityMarking').setHidden(false);
-					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);
-					sections.getComponent('metadataGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);					
 					sections.getComponent('tagGrid').down('#securityMarking').setHidden(false);						
 				});
 			}
 		});
-		
+	
 		
 		submissionPanel.currentStep = 1;
 		submissionPanel.changeSteps = function(forceProceed) {	
@@ -3086,7 +3043,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 										reviewEntryPanel.setLoading(false);
 									},
 									success: function(response, opts){
-
 										// Get Response Data
 										var data = Ext.decode(response.responseText);
 
@@ -3110,8 +3066,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 										// Process Complete Record Data
 										data = CoreUtil.processEntry(data);
 
-										// Display Complete Record Data
-										reviewEntryPanel.update(data);
+										CoreUtil.calculateEvalutationScore({
+											fullEvaluations: data.fullEvaluations,
+											evaluation: data.fullEvaluations,
+											success: function (newData) {
+												data.fullEvaluations = newData.fullEvaluations;
+												// Display Complete Record Data
+												reviewEntryPanel.update(data);
+											}
+										});
 								
 									}
 								});
@@ -3234,7 +3197,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.detailsPanel);
 					
 					// Update Panel
-					submissionPanel.detailsPanel.updateLayout(true, true);
+					Ext.defer(function(){
+						submissionPanel.detailsPanel.updateLayout(true, true);
+					}, 250);					
 				}
 				else if (submissionPanel.currentStep === 4) {
 					
@@ -3545,9 +3510,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('relationshipsGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/relationships'
 		});
-		detailSection.getComponent('metadataGrid').getStore().load({
-			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
-		});
 		detailSection.getComponent('dependenciesGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/dependencies/view'
 		});		
@@ -3608,8 +3570,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		//clear details
 		var detailSection = submissionPanel.detailsPanel.getComponent('detailSections');
 		detailSection.getComponent('tagGrid').getStore().removeAll();
-		detailSection.getComponent('relationshipsGrid').getStore().removeAll();
-		detailSection.getComponent('metadataGrid').getStore().removeAll();
+		detailSection.getComponent('relationshipsGrid').getStore().removeAll();		
 		detailSection.getComponent('dependenciesGrid').getStore().removeAll();
 		detailSection.getComponent('mediaGrid').getStore().removeAll();
 		detailSection.getComponent('resourceGrid').getStore().removeAll();

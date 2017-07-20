@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -28,20 +27,15 @@ import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
@@ -53,14 +47,14 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
+import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeMetadata;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
-import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -72,14 +66,12 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -123,7 +115,8 @@ public class AttributeResource
 	public List<AttributeTypeView> getAttributeView(
 			@QueryParam("all")
 			@APIDescription("Setting all to true will pull both active and inactive records")
-			@DefaultValue("false") boolean all)
+			@DefaultValue("false") boolean all,
+			@QueryParam("important") Boolean important)
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 
@@ -131,6 +124,8 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
+		attributeTypeExample.setImportantFlg(important);
+
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 
 		String codeStatus = null;
@@ -300,7 +295,7 @@ public class AttributeResource
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
 	public Response getAttributeTypes(
-			@BeanParam FilterQueryParams filterQueryParams
+			@BeanParam AttributeFilterParams filterQueryParams
 	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -332,7 +327,7 @@ public class AttributeResource
 
 			boolean keep = true;
 
-			if (attributeType.getAssociatedComponentTypes() != null) {
+			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 				keep = false;
 				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
 					if (restriction.getComponentType().equals(componentType)) {
@@ -343,7 +338,7 @@ public class AttributeResource
 
 			//check required
 			if (keep) {
-				if (attributeType.getRequiredRestrictions() != null) {
+				if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 						if (restriction.getComponentType().equals(componentType)) {
 							requiredAttributes.add(attributeType);
@@ -481,7 +476,7 @@ public class AttributeResource
 	public Response getAttributeCodeViews(
 			@PathParam("type")
 			@RequiredParam String type,
-			@BeanParam FilterQueryParams filterQueryParams)
+			@BeanParam AttributeFilterParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -541,44 +536,11 @@ public class AttributeResource
 		return sendSingleEntityResponse(attributeCode);
 	}
 
-	@GET
-	@APIDescription("Get the components which contain a specified attribute type and code")
-	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(AttributeCode.class)
-	@Path("/attributetypes/{type}/attributecodes/{code}/components")
-	public List<ComponentView> getComponentsWithAttributeCode(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code)
-	{
-		List<ComponentView> components = new ArrayList<>();
-
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType(type);
-		componentAttributePk.setAttributeCode(code);
-		componentAttributeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
-		for (ComponentAttribute attributeComponent : attributeComponents) {
-
-			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
-
-			ComponentView view = ComponentView.toView(component);
-
-			if (view != null) {
-
-				components.add(view);
-			}
-		}
-		return components;
-	}
-
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
+
 	@Path("/attributetypes")
 	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
@@ -591,13 +553,52 @@ public class AttributeResource
 		}
 
 		if (attributeTypeSave.getAssociatedComponentTypes() != null
-				&& attributeTypeSave.getAssociatedComponentTypes().isEmpty() == false) {
+				&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-		} else if (attributeTypeSave.getAssociatedComponentTypes() == null) {
+		} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
 		}
 
 		return handleAttributePostPutType(attributeType, true);
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.ALLOW_USER_ATTRIBUTE_TYPE_CREATION)
+	@APIDescription("Adds a new metadata attribute type with user-code")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/metadata")
+	public Response createMetaDataAttributeType(AttributeTypeMetadata attributeTypeMetadata)
+	{
+		ValidationModel validationModel = new ValidationModel(attributeTypeMetadata);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			String attributeTypeCode = sanitizer.santize(StringUtils.left(attributeTypeMetadata.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+
+			AttributeType attributeType = new AttributeType();
+			attributeType.setAttributeType(attributeTypeCode);
+			attributeType.setAttributeValueType(attributeTypeMetadata.getAttributeValueType());
+			attributeType.setDescription(attributeTypeMetadata.getLabel());
+			attributeType.setDetailedDescription(attributeTypeMetadata.getDetailedDescription());
+			attributeType.setAllowUserGeneratedCodes(Boolean.TRUE);
+			attributeType.setAllowMultipleFlg(Boolean.TRUE);
+			attributeType.setArchitectureFlg(Boolean.FALSE);
+			attributeType.setHideOnSubmission(Boolean.FALSE);
+			attributeType.setImportantFlg(Boolean.FALSE);
+			attributeType.setRequiredFlg(Boolean.FALSE);
+			attributeType.setVisibleFlg(Boolean.FALSE);
+
+			service.getAttributeService().saveAttributeType(attributeType);
+
+			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
+			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
+					+ StringProcessor.urlEncode(attributeType.getAttributeType()))).entity(attributeTypeCreated).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@PUT
@@ -620,9 +621,9 @@ public class AttributeResource
 				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
 			}
 			if (attributeTypeSave.getAssociatedComponentTypes() != null
-					&& attributeTypeSave.getAssociatedComponentTypes().isEmpty() == false) {
+					&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-			} else if (attributeTypeSave.getAssociatedComponentTypes() == null) {
+			} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
 				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
 			}
 			attributeType.setAttributeType(type);
@@ -821,49 +822,7 @@ public class AttributeResource
 	public Response postUserAttributeCode(
 			AttributeCodeSave attributeCodeSave)
 	{
-		List<AttributeCode> updatedCodes = new ArrayList<>();
-		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
-
-			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
-
-			AttributeCode newAttributeCode = new AttributeCode();
-			newAttributeCode.setLabel(saveCode.getAttributeCodeLabel());
-			AttributeCodePk newAttributeCodePk = new AttributeCodePk();
-			newAttributeCodePk.setAttributeType(saveCode.getAttributeType());
-			newAttributeCodePk.setAttributeCode(key);
-			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
-			updatedCodes.add(newAttributeCode);
-
-			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
-			if (attributeType != null) {
-				// The attribute type must allow user-generated codes to continue
-				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
-
-					//see if it already exist...if so do nothing. So we don't alert.
-					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);
-					if (existing == null) {
-						ValidationModel validationModel = new ValidationModel(newAttributeCode);
-						validationModel.setConsumeFieldsOnly(true);
-						ValidationResult validationResult = ValidationUtil.validate(validationModel);
-						if (validationResult.valid()) {
-							service.getAttributeService().saveAttributeCode(newAttributeCode, false);
-
-							AlertContext alertContext = new AlertContext();
-							alertContext.setAlertType(AlertType.USER_DATA);
-							alertContext.setDataTrigger(newAttributeCode);
-							service.getAlertService().checkAlert(alertContext);
-						} else {
-							LOG.log(Level.WARNING, validationResult.toString());
-						}
-					}
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Attribute type doesn''t support user codes Type: {0}", saveCode.getAttributeType()));
-				}
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
-			}
-		}
+		List<AttributeCode> updatedCodes = service.getAttributeService().saveUserCodes(attributeCodeSave);
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
 		{
 		};

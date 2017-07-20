@@ -49,15 +49,11 @@ public class DBArchiveHandler
 	{
 		File exportFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
 		archive.setTotalRecords(1L);
-		archive.setStatusDetails("Exporting...");
+		archive.setStatusDetails("Exporting database...");
 		archive.save();
 
-		try {
-			DBManager.exportDB(new TFileOutputStream(exportFile));
-		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, "DB Export failed", ex);
-			addError("Fail to create export. See log for more details.");
-		}
+		performExport(exportFile);
+
 		archive.setRecordsProcessed(1L);
 		archive.setStatusDetails("Done");
 		archive.save();
@@ -67,13 +63,32 @@ public class DBArchiveHandler
 		createManifest(manifest);
 	}
 
+	public void performExport(File exportFile)
+	{
+		try {
+			DBManager.exportDB(new TFileOutputStream(exportFile));
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, "DB Export failed", ex);
+			addError("Fail to create export. See log for more details.");
+		}
+	}
+
 	@Override
 	protected void processImport(ArchiveManifest manifest)
 	{
 		File importFile = new TFile(fullArchiveName + DBEXPORT_FILENAME);
-		archive.setStatusDetails("Importing...");
+		archive.setStatusDetails("Importing database...");
 		archive.save();
 
+		performImport(importFile);
+
+		archive.setRecordsProcessed(1L);
+		archive.setStatusDetails("Done");
+		archive.save();
+	}
+
+	public void performImport(File importFile)
+	{
 		try {
 			CoreSystem.standby("Importing Database...(This may take several minutes)");
 			JobManager.pauseScheduler();
@@ -94,9 +109,6 @@ public class DBArchiveHandler
 			JobManager.resumeScheduler();
 			CoreSystem.resume("Completed Import Database");
 		}
-		archive.setRecordsProcessed(1L);
-		archive.setStatusDetails("Done");
-		archive.save();
 	}
 
 }

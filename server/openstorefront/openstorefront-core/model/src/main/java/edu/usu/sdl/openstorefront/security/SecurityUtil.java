@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
@@ -25,7 +26,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
@@ -198,4 +202,33 @@ public class SecurityUtil
 		return message.toString();
 	}
 
+	public static void logout(HttpServletRequest request, HttpServletResponse response)
+	{
+		Subject currentUser = SecurityUtils.getSubject();
+		String userLoggedIn = SecurityUtil.getCurrentUserName();
+		
+		currentUser.logout();
+		request.getSession().invalidate();
+		try {
+			request.logout();
+		} catch (ServletException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+
+		//For now invalidate all cookies; in the future there may be some that should persist.
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null && cookies.length > 0) {
+			for (Cookie cookie : cookies) {
+				cookie.setValue("-");
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);
+			}
+		}
+		
+		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
+			LOG.log(Level.INFO, "User was not logged when the logout was called.");
+		} else {
+			LOG.log(Level.INFO, MessageFormat.format("Logged off user: {0}", userLoggedIn));
+		}
+	}
 }

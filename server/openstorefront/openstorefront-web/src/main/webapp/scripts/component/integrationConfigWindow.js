@@ -118,6 +118,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 									width: 100,
 									minWidth: 100,
 									text: 'Check',
+									id: 'checkJiraNumberButton',
 									margin: '30 0 0 0',
 									iconCls: 'fa fa-lg fa-check',
 									handler: function() {
@@ -142,6 +143,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								{
 									text: 'Save',
 									formBind: true,
+									id: 'theSaveBtnConfig',
 									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function() {
 										
@@ -306,6 +308,9 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Refresh',							
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
+							autoEl: {
+								'data-test': 'refreshBtnIntegrationWindow'
+							},
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}							
@@ -316,6 +321,9 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Add',							
 							iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+							autoEl: {
+								'data-test': 'addBtnIntegrationWindow'
+							},
 							handler: function(){
 								addEditWindow.show();
 								addEditWindow.getComponent('configForm').reset();
@@ -387,6 +395,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Delete',
 							itemId: 'tbDelete',
+							id: 'integrationDeleteBtn',
 							disabled: true,							
 							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 							handler: function(){

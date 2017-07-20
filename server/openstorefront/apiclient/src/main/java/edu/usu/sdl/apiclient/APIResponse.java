@@ -15,6 +15,12 @@
  */
 package edu.usu.sdl.apiclient;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.IOException;
+
 /**
  *
  * @author dshurtleff
@@ -24,15 +30,20 @@ public class APIResponse
 
 	private int responseCode;
 	private String responseBody;
+	private ObjectMapper objectMapper;
 
-	public APIResponse(int responseCode, String responseBody)
+	public APIResponse(int responseCode, String responseBody, ObjectMapper objectMapper)
 	{
+		this(objectMapper);
 		this.responseCode = responseCode;
 		this.responseBody = responseBody;
 	}
 
-	public APIResponse()
+	public APIResponse(ObjectMapper objectMapper)
 	{
+		this.objectMapper = objectMapper;
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	public int getResponseCode()
@@ -55,4 +66,23 @@ public class APIResponse
 		this.responseBody = responseBody;
 	}
 
+	public <T extends Object> T getResponse(Class<T> valueType)
+	{
+		try {
+			T dataModel = objectMapper.readValue(this.getResponseBody(), valueType);
+			return dataModel;
+		} catch (IOException ex) {
+			throw new HandlingException(ex);
+		}
+	}
+
+	public <T extends Object> T getList(TypeReference valueTypeRef)
+	{
+		try {
+			T dataModel = objectMapper.readValue(this.getResponseBody(), valueTypeRef);
+			return dataModel;
+		} catch (IOException ex) {
+			throw new HandlingException(ex);
+		}
+	}
 }

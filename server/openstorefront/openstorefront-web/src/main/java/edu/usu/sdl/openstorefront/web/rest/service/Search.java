@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.service;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -48,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -59,6 +61,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -73,6 +76,11 @@ import javax.ws.rs.core.Response;
 public class Search
 		extends BaseResource
 {
+
+	private static final String USER_SEARCH_KEY = "UserSearchKey";
+
+	@Context
+	private HttpServletRequest request;
 
 	@GET
 	@APIDescription("Searches for listing based on given parameters.  (Components, Articles)")
@@ -125,6 +133,13 @@ public class Search
 		searchModel.setMax(filterQueryParams.getMax());
 		searchModel.setSortField(filterQueryParams.getSortField());
 		searchModel.setSortDirection(filterQueryParams.getSortOrder());
+
+		String userSearchKey = (String) request.getSession().getAttribute(USER_SEARCH_KEY);
+		if (userSearchKey == null) {
+			userSearchKey = StringProcessor.uniqueId();
+			request.getSession().setAttribute(USER_SEARCH_KEY, userSearchKey);
+		}
+		searchModel.setUserSessionKey(userSearchKey);
 
 		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
 		if (result.getValidationResult().valid()) {
@@ -252,7 +267,7 @@ public class Search
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
-		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());		
+		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
@@ -308,10 +323,11 @@ public class Search
 			@QueryParam("query")
 			@DefaultValue("*") String query,
 			@QueryParam("max")
-			@DefaultValue("6") int maxResults
+			@DefaultValue("6") int maxResults,
+			@QueryParam("componentType") String componentType
 	)
 	{
-		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults, componentType);
 		return suggestions;
 	}
 

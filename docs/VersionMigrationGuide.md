@@ -1,5 +1,27 @@
 # Version Migration Guide
 
+In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
+
+
+## Upgrading from 2.3 to 2.4
+-------------
+
+**Note:** As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won't be avaliable until the migration is complete.  
+
+Pre- Deployment 
+------------------------------------------------------------------------------------------------------------------------------- 
+1. Edit /var/openstorefront/config/shiro.ini 
+under [url] section: 
+
+Confirm line "/images" is 
+
+/images/* = anon 
+
+If not then update it. 
+
+Then restart server if it's running to apply changes.
+
+
 
 ## Upgrading from 2.2 to 2.3
 ---------

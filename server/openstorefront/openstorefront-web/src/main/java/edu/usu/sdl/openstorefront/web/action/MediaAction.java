@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -93,7 +94,7 @@ public class MediaAction
 	@Validate(required = true, on = "DataImage")
 	private String imageType;
 
-	@Validate(required = true, on = "UploadMedia")
+	@Validate(required = true, on = {"UploadMedia", "UploadOrganizationLogo"})
 	private FileBean file;
 
 	@Validate(required = true, on = "GeneralMedia")
@@ -115,6 +116,9 @@ public class MediaAction
 		@Validate(required = true, field = "contentSectionId", on = "UploadSectionMedia")
 	})
 	private ContentSectionMedia contentSectionMedia;
+
+	@Validate(required = true, on = {"OrganizationLogo", "UploadOrganizationLogo"})
+	private String organizationId;
 
 	@DefaultHandler
 	public Resolution audioTestPage()
@@ -286,7 +290,8 @@ public class MediaAction
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				try {
-					service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					return streamResults(generalMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
@@ -374,7 +379,7 @@ public class MediaAction
 			if (validationResult.valid()) {
 				try {
 					temporaryMedia = service.getSystemService().saveTemporaryMedia(temporaryMedia, file.getInputStream());
-					return streamResults(temporaryMedia);
+					return streamResults(temporaryMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
@@ -488,6 +493,81 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@HandlesEvent("UploadOrganizationLogo")
+	public Resolution uploadOrganizationLogo()
+	{
+		Map<String, String> errors = new HashMap<>();
+
+		Organization organizationExample = new Organization();
+		organizationExample.setOrganizationId(organizationId);
+		Organization organization = organizationExample.find();
+		if (organization != null) {
+
+			organization.setLogoOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
+			organization.setLogoMimeType(file.getContentType());
+
+			ValidationResult validationResult = organization.validate();
+			if (validationResult.valid()) {
+				try {
+					service.getOrganizationService().saveOrganizationLogo(organization, file.getInputStream());
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteUploadFile(file);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		} else {
+			errors.put("organization.name", "Unable to find organization. Check name and try again.");
+		}
+		return streamUploadResponse(errors);
+	}
+
+	@HandlesEvent("OrganizationLogo")
+	public Resolution organizationLogo() throws FileNotFoundException
+	{
+		Organization organizationExample = new Organization();
+		organizationExample.setOrganizationId(organizationId);
+		Organization organization = organizationExample.find();
+
+		if (organization != null) {
+			InputStream in;
+			long length;
+			Path path = organization.pathToLogo();
+			if (path != null && path.toFile().exists()) {
+				in = new FileInputStream(path.toFile());
+				length = path.toFile().length();
+			} else {
+				log.log(Level.WARNING, MessageFormat.format("Organization logo not on disk: {0} Check organization media record: {1} ", new Object[]{organization.pathToLogo(), organization.getOrganizationId()}));
+				in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+				length = MISSING_MEDIA_IMAGE_SIZE;
+			}
+
+			return new RangeResolutionBuilder()
+					.setContentType(organization.getLogoMimeType())
+					.setInputStream(in)
+					.setTotalLength(length)
+					.setRequest(getContext().getRequest())
+					.setFilename(organization.getLogoOriginalFileName())
+					.createRangeResolution();
+		} else {
+			log.log(Level.FINE, MessageFormat.format("Organization with id: {0} is not found.", organizationId));
+			return new StreamingResolution("image/png")
+			{
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+			}.setFilename("MediaNotFound.png");
+		}
+
+	}
+
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()
 	{
@@ -589,6 +669,16 @@ public class MediaAction
 	public void setContentSectionMedia(ContentSectionMedia contentSectionMedia)
 	{
 		this.contentSectionMedia = contentSectionMedia;
+	}
+
+	public String getOrganizationId()
+	{
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId)
+	{
+		this.organizationId = organizationId;
 	}
 
 }

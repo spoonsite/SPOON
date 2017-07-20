@@ -82,12 +82,15 @@ Ext.define('OSF.component.UserProfilePanel', {
 					},
 					{
 						xtype: 'button',
-						itemId: 'emailSendBtn',
+						itemId: 'emailSendBtn',				
 						width: '175',
 						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
 						iconCls: 'fa fa-lg fa-envelope-o',
 						maxWidth: 175,
+						autoEl: {
+							'data-test' : 'emailSendTestBtn'
+						},
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
 							var email = this.up('form').getForm().findField('email');
@@ -119,6 +122,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				itemId: 'phone',
 				name: 'phone',
 				fieldLabel: 'Phone',
+				labelSeparator: '',
 				width: '100%',
 				maxLength: 80
 			},
@@ -136,6 +140,15 @@ Ext.define('OSF.component.UserProfilePanel', {
 					url: 'api/v1/resource/organizations/lookup'
 				}
 			}),
+			{
+				xtype: 'textfield',
+				itemId: 'positionTitle',
+				name: 'positionTitle',
+				fieldLabel: 'Position Title',
+				labelSeparator: '',
+				width: '100%',
+				maxLength: 255
+			},			
 			Ext.create('OSF.component.StandardComboBox', {
 				itemId: 'userTypeCodeCB',
 				name: 'userTypeCode',
@@ -167,8 +180,11 @@ Ext.define('OSF.component.UserProfilePanel', {
 		var toolbarItems = [			
 			{
 				text: 'Save',
-				formBind: true,
+				formBind: true,		
 				iconCls: 'fa fa-lg fa-save icon-button-color-save',
+				autoEl: {
+					'data-test' : 'saveProfileFormBtn'
+				},
 				handler: function () {
 					var data = profileForm.getValues();
 					data.externalGuid = data.guid;
@@ -237,6 +253,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 						profileForm.queryById('emailSendBtn').setDisabled(true);
 						profileForm.queryById('phone').setDisabled(true);
 						profileForm.queryById('organization').setDisabled(true);
+						profileForm.queryById('positionTitle').setDisabled(true);
 						
 						if (policy.externalUserManagementText) {
 							profileForm.queryById('externalManagementMessage').update('<br><br><i class="fa fa-2x fa-warning text-warning"></i> ' + policy.externalUserManagementText);

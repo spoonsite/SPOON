@@ -42,6 +42,45 @@ public class ReportOption
 
 	@ConsumeField
 	private Date endDts;
+	
+	@ConsumeField
+	private boolean displayContacts;
+	
+	@ConsumeField
+	private boolean displayDependencies;
+	
+	@ConsumeField
+	private boolean displayDescription;
+	
+	@ConsumeField
+	private boolean displayEvalDetails;
+	
+	@ConsumeField
+	private boolean displayEvalSummary;
+	
+	@ConsumeField
+	private boolean displayEvalVersions;
+	
+	@ConsumeField
+	private boolean displayOrgData;
+	
+	@ConsumeField
+	private boolean displayQA;
+	
+	@ConsumeField
+	private boolean displayRelationships;
+	
+	@ConsumeField
+	private boolean displayReportReviews;
+	
+	@ConsumeField
+	private boolean displayResources;
+	
+	@ConsumeField
+	private boolean displayTags;
+	
+	@ConsumeField
+	private boolean displayVitals;
 
 	@Min(1)
 	@Max(30)
@@ -151,5 +190,134 @@ public class ReportOption
 	{
 		this.assignedGroup = assignedGroup;
 	}
+	
+	public boolean getDisplayContacts()
+	{
+		return displayContacts;
+	}
 
+	public void setDisplayContacts(boolean displayContacts)
+	{
+		this.displayContacts = displayContacts;
+	}
+
+	public boolean getDisplayDependencies()
+	{
+		return displayDependencies;
+	}
+
+	public void setDisplayDependencies(boolean displayDependencies)
+	{
+		this.displayDependencies = displayDependencies;
+	}
+
+	public boolean getDisplayDescription()
+	{
+		return displayDescription;
+	}
+
+	public void setDisplayDescription(boolean displayDescription)
+	{
+		this.displayDescription = displayDescription;
+	}
+
+	public boolean getDisplayEvalDetails()
+	{
+		return displayEvalDetails;
+	}
+
+	public void setDisplayEvalDetails(boolean displayEvalDetails)
+	{
+		this.displayEvalDetails = displayEvalDetails;
+	}
+
+	public boolean getDisplayEvalSummary()
+	{
+		return displayEvalSummary;
+	}
+
+	public void setDisplayEvalSummary(boolean displayEvalSummary)
+	{
+		this.displayEvalSummary = displayEvalSummary;
+	}
+
+	public boolean getDisplayEvalVersions()
+	{
+		return displayEvalVersions;
+	}
+
+	public void setDisplayEvalVersions(boolean displayEvalVersions)
+	{
+		this.displayEvalVersions = displayEvalVersions;
+	}
+
+	public boolean getDisplayOrgData()
+	{
+		return displayOrgData;
+	}
+
+	public void setDisplayOrgData(boolean displayOrgData)
+	{
+		this.displayOrgData = displayOrgData;
+	}
+
+	public boolean getDisplayQA()
+	{
+		return displayQA;
+	}
+
+	public void setDisplayQA(boolean displayQA)
+	{
+		this.displayQA = displayQA;
+	}
+
+	public boolean getDisplayRelationships()
+	{
+		return displayRelationships;
+	}
+
+	public void setDisplayRelationships(boolean displayRelationships)
+	{
+		this.displayRelationships = displayRelationships;
+	}
+
+	public boolean getDisplayReportReviews()
+	{
+		return displayReportReviews;
+	}
+
+	public void setDisplayReportReviews(boolean displayReportReviews)
+	{
+		this.displayReportReviews = displayReportReviews;
+	}
+
+	public boolean getDisplayResources()
+	{
+		return displayResources;
+	}
+
+	public void setDisplayResources(boolean displayResources)
+	{
+		this.displayResources = displayResources;
+	}
+
+	public boolean getDisplayTags()
+	{
+		return displayTags;
+	}
+
+	public void setDisplayTags(boolean displayTags)
+	{
+		this.displayTags = displayTags;
+	}
+
+	public boolean getDisplayVitals()
+	{
+		return displayVitals;
+	}
+
+	public void setDisplayVitals(boolean displayVitals)
+	{
+		this.displayVitals = displayVitals;
+	}
 }

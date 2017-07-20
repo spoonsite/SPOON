@@ -46,6 +46,8 @@ public class OSFCacheManager
 	private static Cache componentApprovalCache;
 	private static Cache componentDataRestrictionCache;
 	private static Cache componentTypeCache;
+	private static Cache componentTypeComponentCache;
+	private static Cache componentIconCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
 	private static Cache searchCache;
@@ -68,11 +70,11 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
 
-			memoryOnlyCache = new Cache("attributeCache", 500, false, false, 300, 300);
+			memoryOnlyCache = new Cache("attributeCache", 30000, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCache = singletonManager.getCache("attributeCache");
 
-			memoryOnlyCache = new Cache("attributeTypeCache", 500, false, false, 300, 300);
+			memoryOnlyCache = new Cache("attributeTypeCache", 5000, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
@@ -96,13 +98,21 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
 
-			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 600, 600);
+			memoryOnlyCache = new Cache("componentIconCache", 50000, false, false, 1800, 1800);
+			singletonManager.addCache(memoryOnlyCache);
+			componentIconCache = singletonManager.getCache("componentIconCache");
+
+			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			componentDataRestrictionCache = singletonManager.getCache("componentDataRestrictionCache");
 
 			memoryOnlyCache = new Cache("componentTypeCache", 1, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentTypeCache = singletonManager.getCache("componentTypeCache");
+
+			memoryOnlyCache = new Cache("componentTypeComponentCache", 50000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentTypeComponentCache = singletonManager.getCache("componentTypeComponentCache");
 
 			memoryOnlyCache = new Cache("applicationCache", 100, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
@@ -112,7 +122,7 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
 
-			memoryOnlyCache = new Cache("searchCache", 50, false, false, 1800, 1800);
+			memoryOnlyCache = new Cache("searchCache", 250, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			searchCache = singletonManager.getCache("searchCache");
 
@@ -209,6 +219,16 @@ public class OSFCacheManager
 	public static Cache getChecklistQuestionCache()
 	{
 		return checklistQuestionCache;
+	}
+
+	public static Cache getComponentIconCache()
+	{
+		return componentIconCache;
+	}
+
+	public static Cache getComponentTypeComponentCache()
+	{
+		return componentTypeComponentCache;
 	}
 
 	@Override

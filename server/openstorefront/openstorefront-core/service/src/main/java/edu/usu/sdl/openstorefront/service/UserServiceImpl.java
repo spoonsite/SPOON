@@ -115,8 +115,6 @@ public class UserServiceImpl
 
 	private static final Logger LOG = Logger.getLogger(UserServiceImpl.class.getName());
 
-	private static final int MAX_NAME_CHECK = 100;
-
 	@Override
 	public List<UserWatch> getWatches(String userId)
 	{
@@ -200,6 +198,7 @@ public class UserServiceImpl
 			}
 			userProfile.setEmail(user.getEmail());
 			userProfile.setPhone(user.getPhone());
+			userProfile.setPositionTitle(user.getPositionTitle());
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
 			userProfile.setNotifyOfNew(user.getNotifyOfNew());
@@ -367,7 +366,7 @@ public class UserServiceImpl
 				//new user
 				profile = userprofile;
 				saveUserProfile(profile, false);
-			} 
+			}
 
 			//Activative profile on login
 			if (UserProfile.INACTIVE_STATUS.equals(profile.getActiveStatus())) {
@@ -392,15 +391,15 @@ public class UserServiceImpl
 					//Daily sync can pull it so we don't want to wipe that out
 					if (StringUtils.isNotBlank(userprofile.getOrganization())) {
 						profile.setOrganization(userprofile.getOrganization());
-					}				
+					}
 					profile.setEmail(userprofile.getEmail());
 					profile.setPhone(userprofile.getPhone());
 
 					//In the same situation as Organization
 					if (StringUtils.isNotBlank(userprofile.getExternalGuid())) {
 						profile.setExternalGuid(userprofile.getExternalGuid());
-					}				
-					saveUserProfile(profile, false);				
+					}
+					saveUserProfile(profile, false);
 				}
 			}
 
@@ -493,7 +492,7 @@ public class UserServiceImpl
 		List<UserWatch> userWatches = persistenceService.queryByExample(userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
-				
+
 				//make sure the user can still access the component
 				Component accessComponent = FilterEngine.filter(component);
 				if (accessComponent != null) {
@@ -760,7 +759,7 @@ public class UserServiceImpl
 					case UserMessageType.CHANGE_REQUEST_ALERT:
 						generator = new ChangeRequestMessageGenerator(messageContext);
 						break;
-						
+
 				}
 			}
 
@@ -997,10 +996,10 @@ public class UserServiceImpl
 					SecurityPolicy securityPolicy = getSecurityService().getSecurityPolicy();
 					if (Convert.toBoolean(securityPolicy.getDisableUserInfoEdit())) {
 						UserRecord userRecord = activeUserMap.get(userProfile.getUsername());
-						
+
 						//check to see if needs syncing
 						boolean sync = false;
-						
+
 						UserRecord currentRecord = new UserRecord();
 						currentRecord.setFirstName(userProfile.getFirstName());
 						currentRecord.setLastName(userProfile.getLastName());
@@ -1011,7 +1010,7 @@ public class UserServiceImpl
 						if (EntityUtil.isObjectsDifferent(userRecord, currentRecord, false)) {
 							sync = true;
 						}
-						
+
 						if (sync) {
 							userProfile.setFirstName(userRecord.getFirstName());
 							userProfile.setLastName(userRecord.getLastName());
@@ -1020,8 +1019,8 @@ public class UserServiceImpl
 							userProfile.setPhone(userRecord.getPhone());
 							userProfile.setExternalGuid(userRecord.getGuid());
 							saveUserProfile(userProfile, false);
-							
-							LOG.log(Level.FINEST, MessageFormat.format("Sync user profile for user: {0}", userProfile.getUsername()));							
+
+							LOG.log(Level.FINEST, MessageFormat.format("Sync user profile for user: {0}", userProfile.getUsername()));
 						}
 					}
 				}

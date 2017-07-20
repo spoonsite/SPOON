@@ -33,12 +33,8 @@
 		
 			SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 			request.setAttribute("autoApprove", securityPolicy.getAutoApproveUsers());
-		
-			if (!securityPolicy.getAllowRegistration()) {				
-				response.sendRedirect("noregistration.jsp");
-			}
-
-		%>	
+			request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
+		%>		
 		
 		<style> 
 			
@@ -56,9 +52,12 @@
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-
+			
+			if (!${allowRegistration}) {
+				window.location.replace("noregistration.jsp");
+			}
+			
 			Ext.onReady(function () {
-				
 				var mainForm = Ext.create('Ext.form.Panel', {
 					region: 'center',
 					title: 'Fill out the form to signup for an account',
@@ -104,7 +103,7 @@
 											xtype: 'panel',
 											html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
 												  '<li>At least 1 Number</li>' +
-												  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
+												  '<li>At least 1 Special Character (i.e. ?!@#$%*)</li></ul>'
 										},
 										{
 											xtype: 'textfield',
@@ -167,10 +166,16 @@
 													url: 'api/v1/resource/organizations/lookup'
 												}
 											}
-										},							
+										},	
 										{
 											xtype: 'textfield',
-											fieldLabel: 'Email <span class="field-required" />',
+											fieldLabel: 'Position Title',
+											name: 'positionTitle',																					
+											maxLength: 255
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Business Email <span class="field-required" />',
 											name: 'email',
 											vtype: 'email',
 											allowBlank: false,
@@ -178,7 +183,7 @@
 										},	
 										{
 											xtype: 'textfield',
-											fieldLabel: 'Phone <span class="field-required" />',
+											fieldLabel: 'Business Phone <span class="field-required" />',
 											name: 'phone',
 											allowBlank: false,
 											maxLength: 80
@@ -210,8 +215,97 @@
 									]
 								}
 							]
-						}
-					],
+						},
+						{
+							xtype: 'panel',
+							title: '<span style="">Verification Code</span>',
+							titleAlign: 'center',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							margin: '20 0 0 0',
+							layout: 'center',	
+							height: 200,
+							items: [
+								{
+									xtype: 'panel',
+									layout: 'anchor',
+									defaults: {
+										width: 600,
+										labelSeparator: '',
+										labelAlign: 'top',
+										msgTarget: 'under'
+									},	
+									items: [ {
+											xtype: 'hiddenfield',
+											id: 'registrationId',
+											name: 'registrationId'
+										},
+										{
+											xtype: 'label',
+											cls: 'x-form-item-label x-form-item-label-default field-label-basic x-form-item-label-top x-unselectable',
+											text:  'Click on the "Get Verification Code" button and a verification code will be sent to your email address'
+										},
+										{
+											xtype: 'button',
+											text: "Get Verification Code",
+											name: 'verificationCodeButton',
+											id: 'verificationCodeButton',
+											iconCls: 'fa fa-2x fa-lock icon-button-color-default icon-vertical-correction-check',
+											allowBlank: false,
+											width: 200,
+											handler: function(){										
+												var form = this.up('form');
+												var data = form.getValues();
+
+												if (data.password !== data.confirmPassword) {
+													Ext.Msg.show({
+														title:'Validation',
+														message: 'Password and the Confirm Password must match',
+														buttons: Ext.Msg.OK,
+														icon: Ext.Msg.Error,
+														fn: function(btn) {
+														}
+													});
+													form.getForm().markInvalid({
+														confirmPassword: 'Must match password'
+													});											
+												} else {
+
+													if (data.userTypeCode === '') {
+														delete data.userTypeCode;
+													}
+
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/userregistrations',
+														method: 'POST',
+														data: data,
+														form: form,
+														success: function(action, opts) {
+															var registration = Ext.decode(action.responseText);
+															Ext.getCmp('registrationId').setValue(registration.registrationId);
+														}
+													});
+												}
+											}
+										},
+										{
+											xtype: 'textfield',
+											fieldLabel: 'Enter the verification code from your your email here <span class="field-required" />',
+											name: 'verificationCode',
+											allowBlank: false,
+											maxLength: 80
+										}										
+									]
+								}
+							]
+						},
+						{
+							xtype: 'panel',
+							title: '<span style=""></span>',
+							titleAlign: 'center',
+							style: 'background-image: url(images/grid.png); box-shadow: 5px 10px 15px;',
+							margin: '20 0 0 0',
+							layout: 'center',	
+							items: [],
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -223,6 +317,7 @@
 								},
 								{
 									text: 'Signup',
+									id: 'Signup',
 									iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 									scale: 'medium',
 									formBind: true,
@@ -250,7 +345,7 @@
 											
 											CoreUtil.submitForm({
 												url: 'api/v1/resource/userregistrations',
-												method: 'POST',
+												method: 'PUT',
 												data: data,
 												form: form,
 												success: function(action, opts) {
@@ -297,14 +392,9 @@
 														]
 													});
 													accountRegWin.show();
-													
 												}
 											});
-											
 										}
-										
-										
-										
 									}
 								},
 								{
@@ -324,6 +414,8 @@
 								}
 							]
 						}
+					]
+					}
 					]
 				});
 				
@@ -347,7 +439,6 @@
 			});
 			
 		</script>
-		
 	</stripes:layout-component>
 </stripes:layout-render>	
 		

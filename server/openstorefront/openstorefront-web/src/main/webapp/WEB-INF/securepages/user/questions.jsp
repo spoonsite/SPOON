@@ -66,7 +66,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/responses/' + '${user}'
+							url: 'api/v1/resource/componentquestions/responses/${user}'
 						}		
 					},
 					columns: [
@@ -80,7 +80,39 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							itemId: 'tools',
-							items: [
+							items: [{
+									xtype: 'combobox',
+									id: 'answer-activeStatus',									
+									value: 'A',
+									editable: false,
+									fieldLabel: 'Active Status',
+									name: 'answer-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											responseGrid.getStore().load({
+												url: 'api/v1/resource/componentquestions/responses/${user}?status=' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
+											});
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'P',
+												description: 'Pending'
+											}
+										]
+									})
+								},
 								{
 									text: 'Refresh',
 									scale: 'medium',
@@ -152,7 +184,9 @@
 				});
 				
 				var actionRefreshResponses = function() {
-					Ext.getCmp('responseGrid').getStore().load();
+					Ext.getCmp('responseGrid').getStore().load({
+						url: 'api/v1/resource/componentquestions/responses/${user}?status=' + Ext.getCmp('answer-activeStatus').getSelection().getData().code 
+					});
 				};
 						
 				var responseWindow = Ext.create('OSF.component.ResponseWindow', {
@@ -217,7 +251,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componentquestions/' + '${user}'
+							url: 'api/v1/resource/componentquestions/${user}' 
 						}		
 					},
 					columns: [
@@ -233,6 +267,39 @@
 							xtype: 'toolbar',
 							itemId: 'tools',
 							items: [
+								{
+									xtype: 'combobox',
+									id: 'question-activeStatus',									
+									value: 'A',
+									editable: false,
+									fieldLabel: 'Active Status',
+									name: 'question-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											questionGrid.getStore().load({
+													url: 'api/v1/resource/componentquestions/${user}?status=' + Ext.getCmp('question-activeStatus').getSelection().getData().code
+												});
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'P',
+												description: 'Pending'
+											}
+										]
+									})
+								},
 								{
 									text: 'Refresh',
 									scale: 'medium',
@@ -326,7 +393,9 @@
 				};
 				
 				var actionRefreshQuestions = function() {
-					Ext.getCmp('questionGrid').getStore().load();
+					Ext.getCmp('questionGrid').getStore().load({
+						url: 'api/v1/resource/componentquestions/${user}?status=' + Ext.getCmp('question-activeStatus').getSelection().getData().code
+					});
 				};
 						
 				var questionWindow = Ext.create('OSF.component.QuestionWindow', {

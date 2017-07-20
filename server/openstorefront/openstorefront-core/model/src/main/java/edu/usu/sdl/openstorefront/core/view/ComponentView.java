@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -42,26 +43,28 @@ public class ComponentView
 	private String statusOfPendingChange;
 	private String pendingChangeComponentId;
 	private Date pendingChangeSubmitDts;
-	private String pendingChangeSubmitUser;	
+	private String pendingChangeSubmitUser;
 	private String ownerEmail;
 	private String securityMarkingDescription;
+	private String componentIconId;
+	private String componentTypeIconUrl;
 
 	public ComponentView()
 	{
 	}
-	
+
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
 		ComponentView componentView = toView(component);
 		if (populateOwnerInfo) {
 			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.getCreateUser());
 			if (userProfile != null) {
-				componentView.setOwnerEmail(userProfile.getEmail());				
-			}			
+				componentView.setOwnerEmail(userProfile.getEmail());
+			}
 		}
 		return componentView;
 	}
-	
+
 	public static ComponentView toView(Component component)
 	{
 		ComponentView componentView = new ComponentView();
@@ -75,6 +78,10 @@ public class ComponentView
 		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));
 		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
 
+		Service service = ServiceProxyFactory.getServiceProxy();
+		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
+		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+
 		return componentView;
 	}
 
@@ -86,7 +93,7 @@ public class ComponentView
 		});
 		return views;
 	}
-	
+
 	public static List<ComponentView> toViewList(List<Component> components)
 	{
 		List<ComponentView> views = new ArrayList<>();
@@ -184,6 +191,26 @@ public class ComponentView
 	public void setSecurityMarkingDescription(String securityMarkingDescription)
 	{
 		this.securityMarkingDescription = securityMarkingDescription;
+	}
+
+	public String getComponentIconId()
+	{
+		return componentIconId;
+	}
+
+	public void setComponentIconId(String componentIconId)
+	{
+		this.componentIconId = componentIconId;
+	}
+
+	public String getComponentTypeIconUrl()
+	{
+		return componentTypeIconUrl;
+	}
+
+	public void setComponentTypeIconUrl(String componentTypeIconUrl)
+	{
+		this.componentTypeIconUrl = componentTypeIconUrl;
 	}
 
 }

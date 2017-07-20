@@ -15,8 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.web.action.BaseAction;
+import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import static edu.usu.sdl.openstorefront.web.action.MediaAction.MISSING_IMAGE;
+import static edu.usu.sdl.openstorefront.web.action.MediaAction.MISSING_MEDIA_IMAGE_SIZE;
+import edu.usu.sdl.openstorefront.web.action.resolution.RangeResolutionBuilder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -27,60 +39,108 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Branding (dynamic pages)
+ *
  * @author dshurtleff
  */
 public class BrandingAction
-	extends BaseAction
+		extends BaseAction
 {
-	@Validate(required = true, on="CSS")
+
+	private static final Logger log = Logger.getLogger(BrandingAction.class.getName());
+
+	@Validate(required = true, on = "CSS")
 	private String template;
-	
-	private String brandingId;
-	
+
 	private Branding branding;
-	
+
+	@Validate(required = true, on = "GeneralMedia")
+	private String name;
+
 	@HandlesEvent("CSS")
-	public Resolution cssPage() 
-	{		
-		loadBranding();
+	public Resolution cssPage()
+	{
+		branding = loadBranding();
 		if (branding != null) {
 			return new ForwardResolution("/WEB-INF/securepages/css/" + template);
 		} else {
-			return new ErrorResolution(404);			
+			return new ErrorResolution(404);
 		}
 	}
-	
-	private void loadBranding() 
+
+	@HandlesEvent("Override")
+	public Resolution brandingCssOverride()
 	{
-		if (StringUtils.isNotBlank(brandingId)) {
-			branding = new Branding();
-			branding.setBrandingId(brandingId);
-			branding = branding.find();
-		} else  {
-			branding = service.getBrandingService().getCurrentBrandingView();
-		}
-	}
-	
-	@HandlesEvent("Override") 
-	public Resolution brandingCssOverride() 
-	{
-		loadBranding();
+		branding = loadBranding();
 		if (branding != null) {
 			String overrideCss = "";
 			if (StringUtils.isNotBlank(branding.getOverrideCSS())) {
 				overrideCss = branding.getOverrideCSS();
-			}			
+			}
 			return new StreamingResolution("text/css", overrideCss);
 		} else {
-			return new ErrorResolution(404);			
-		}	
+			return new ErrorResolution(404);
+		}
 	}
-		
-	@HandlesEvent("Preview") 
-	public Resolution previewBranding() 
+
+	@HandlesEvent("Preview")
+	public Resolution previewBranding()
 	{
 		return new ForwardResolution("/WEB-INF/securepages/admin/application/brandingPreview.jsp");
-	}	
+	}
+
+	@HandlesEvent("GeneralMedia")
+	public Resolution generalMedia() throws FileNotFoundException
+	{
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setName(name);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
+
+		branding = loadBranding();
+		//restrict to media part of the branding
+		if (!branding.getPrimaryLogoUrl().contains("name=" + name)
+				&& !branding.getSecondaryLogoUrl().contains("name=" + name)
+				&& !branding.getHomebackSplashUrl().contains("name=" + name)) {
+			generalMedia = null;
+			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is restricted.", name));
+		}
+
+		if (generalMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found or was restricted.", name));
+			return new StreamingResolution("image/png")
+			{
+
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = generalMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(generalMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(generalMedia.getOriginalFileName())
+				.createRangeResolution();
+
+	}
 
 	public String getTemplate()
 	{
@@ -92,16 +152,6 @@ public class BrandingAction
 		this.template = template;
 	}
 
-	public String getBrandingId()
-	{
-		return brandingId;
-	}
-
-	public void setBrandingId(String brandingId)
-	{
-		this.brandingId = brandingId;
-	}
-
 	public Branding getBranding()
 	{
 		return branding;
@@ -111,5 +161,15 @@ public class BrandingAction
 	{
 		this.branding = branding;
 	}
-	
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
 }

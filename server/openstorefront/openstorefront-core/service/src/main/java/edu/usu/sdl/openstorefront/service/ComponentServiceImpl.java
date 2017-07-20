@@ -77,7 +77,7 @@ public class ComponentServiceImpl
 		implements ComponentService, ComponentServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentServiceImpl.class.getName());
 
 	private CoreComponentServiceImpl core;
 	private SubComponentServiceImpl sub;
@@ -127,6 +127,25 @@ public class ComponentServiceImpl
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
 		return sub.activateBaseComponent(subComponentClass, pk);
+	}
+
+	@Override
+	public ComponentReview setReviewPending(String ComponentReviewId)
+	{
+		return sub.setReviewPending(ComponentReviewId);
+	}
+
+	@Override
+	public ComponentQuestion setQuestionPending(String ComponentQuestionResponseId)
+	{
+		return sub.setQuestionPending(ComponentQuestionResponseId);
+
+	}
+
+	@Override
+	public ComponentQuestionResponse setQuestionResponsePending(String ComponentQuestionResponseId)
+	{
+		return sub.setQuestionResponsePending(ComponentQuestionResponseId);
 	}
 
 	@Override
@@ -304,7 +323,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public Boolean checkComponentAttribute(ComponentAttribute attribute)
+	public ValidationResult checkComponentAttribute(ComponentAttribute attribute)
 	{
 		return sub.checkComponentAttribute(attribute);
 	}
@@ -646,6 +665,24 @@ public class ComponentServiceImpl
 	public ComponentSensitivityModel getComponentSensitivity(String componentId)
 	{
 		return core.getComponentSensitivity(componentId);
+	}
+
+	@Override
+	public String resolveComponentIcon(String componentId)
+	{
+		return core.resolveComponentIcon(componentId);
+	}
+
+	@Override
+	public String resolveComponentTypeIcon(String componentType)
+	{
+		return core.resolveComponentTypeIcon(componentType);
+	}
+
+	@Override
+	public String getComponentType(String componentId)
+	{
+		return core.getComponentType(componentId);
 	}
 
 }

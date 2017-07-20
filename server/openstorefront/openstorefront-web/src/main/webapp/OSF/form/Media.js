@@ -197,6 +197,11 @@ Ext.define('OSF.form.Media', {
 					fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline reference in the description." ></i>',
 					name: 'usedInline'
 				},
+				{
+					xtype: 'checkbox',
+					fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
+					name: 'iconFlag'
+				},				
 				Ext.create('OSF.component.SecurityComboBox', {					
 				}),
 				Ext.create('OSF.component.DataSensitivityComboBox', {												
@@ -225,7 +230,8 @@ Ext.define('OSF.form.Media', {
 					},							
 					"activeStatus",
 					"usedInline",
-					"hideInDisplay"
+					"hideInDisplay",
+					"iconFlag"
 				],
 				autoLoad: false,
 				proxy: {
@@ -241,6 +247,7 @@ Ext.define('OSF.form.Media', {
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Hide In Carousel', dataIndex: 'hideInDisplay', width: 150},
 				{ text: 'Used Inline', dataIndex: 'usedInline', width: 150 },
+				{ text: 'Icon Flag',  dataIndex: 'iconFlag', width: 150},
 				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: mediaPanel.hideSecurityMarking }
 			],

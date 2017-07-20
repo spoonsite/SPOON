@@ -34,4 +34,9 @@ public interface AttributeServicePrivate
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void performSaveAttributeCode(AttributeCode attributeCode);
 
+	/**
+	 * This will pre-populate caches in a efficient matter if not already warm
+	 */
+	public void warmAttributeCaches();
+
 }

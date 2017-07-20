@@ -16,18 +16,23 @@
 package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -49,8 +54,9 @@ public class AttributeSearchHandler
 		ValidationResult validationResult = new ValidationResult();
 
 		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
+			if (StringUtils.isBlank(searchElement.getKeyField())
+					&& StringUtils.isBlank(searchElement.getField())) {
+				validationResult.getRuleResults().add(getRuleResult("keyField or field", "Required"));
 			}
 		}
 
@@ -69,70 +75,124 @@ public class AttributeSearchHandler
 			componentAttributePk.setAttributeType(searchElement.getKeyField());
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			
-			QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
 
-			if (StringUtils.isNotBlank(searchElement.getField())) {
-				Field field = ReflectionUtil.getField(new ComponentAttribute(), searchElement.getField());
-				field.setAccessible(true);
+			List<ComponentAttribute> attributes = new ArrayList<>();
+			boolean doRegularSearch = true;
+			if (StringUtils.isNotBlank(searchElement.getKeyField())) {
 
-				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
-					String likeValue = null;
-					try {
-						switch (searchElement.getStringOperation()) {
-							case EQUALS:
-								String value = searchElement.getValue();
-								if (searchElement.getCaseInsensitive()) {									
-									queryByExample.getFieldOptions().put(field.getName(), 
-											new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());									
-									value = value.toLowerCase();
-								}
-								field.set(componentAttribute, value);
-								break;
-							default:
-								likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-								break;
-						}
+				AttributeType attributeType = serviceProxy.getAttributeService().findType(searchElement.getKeyField());
+				if (attributeType != null) {
+					if (AttributeValueType.NUMBER.equals(attributeType.getAttributeValueType())) {
+						doRegularSearch = false;
+						List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
+						attributes = componentAttributes.stream()
+								.filter((attribute) -> {
+									boolean keep = false;
+									BigDecimal value = Convert.toBigDecimal(attribute.getComponentAttributePk().getAttributeCode());
+									BigDecimal checkValue = Convert.toBigDecimal(searchElement.getKeyValue());
+									if (value != null && checkValue != null) {
 
-						if (likeValue != null) {
-							ComponentAttribute componentAttributeLike = new ComponentAttribute();
-							if (searchElement.getCaseInsensitive()) {
-								likeValue = likeValue.toLowerCase();
-								queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
-							}
-							field.set(componentAttributeLike, likeValue);
-							queryByExample.setLikeExample(componentAttributeLike);
-						}
-					} catch (SecurityException | IllegalArgumentException | IllegalAccessException | OpenStorefrontRuntimeException e) {
-						throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
+										switch (searchElement.getNumberOperation()) {
+											case EQUALS:
+												if (value.compareTo(checkValue) == 0) {
+													keep = true;
+												}
+												break;
+											case GREATERTHAN:
+												if (value.compareTo(checkValue) > 0) {
+													keep = true;
+												}
+												break;
+											case GREATERTHANEQUALS:
+												if (value.compareTo(checkValue) >= 0) {
+													keep = true;
+												}
+												break;
+											case LESSTHAN:
+												if (value.compareTo(checkValue) < 0) {
+													keep = true;
+												}
+												break;
+											case LESSTHANEQUALS:
+												if (value.compareTo(checkValue) <= 0) {
+													keep = true;
+												}
+												break;
+										}
+									}
+									return keep;
+								})
+								.collect(Collectors.toList());
 					}
-				} else {
-					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
 				}
 			}
 
-			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
-				String likeValue = null;
-				switch (searchElement.getStringOperation()) {
-					case EQUALS:
-						componentAttributePk.setAttributeCode(searchElement.getKeyValue());
-						break;
-					default:
-						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
-						break;
+			if (doRegularSearch) {
+				QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
+
+				if (StringUtils.isNotBlank(searchElement.getField())) {
+					Field field = ReflectionUtil.getField(new ComponentAttribute(), searchElement.getField());
+					field.setAccessible(true);
+
+					Class type = field.getType();
+					if (type.getSimpleName().equals(String.class.getSimpleName())) {
+						String likeValue = null;
+						try {
+							switch (searchElement.getStringOperation()) {
+								case EQUALS:
+									String value = searchElement.getValue();
+									if (searchElement.getCaseInsensitive()) {
+										queryByExample.getFieldOptions().put(field.getName(),
+												new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+										value = value.toLowerCase();
+									}
+									field.set(componentAttribute, value);
+									break;
+								default:
+									likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+									break;
+							}
+
+							if (likeValue != null) {
+								ComponentAttribute componentAttributeLike = new ComponentAttribute();
+								if (searchElement.getCaseInsensitive()) {
+									likeValue = likeValue.toLowerCase();
+									queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+								}
+								field.set(componentAttributeLike, likeValue);
+								queryByExample.setLikeExample(componentAttributeLike);
+							}
+						} catch (SecurityException | IllegalArgumentException | IllegalAccessException | OpenStorefrontRuntimeException e) {
+							throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
+					}
 				}
 
-				if (likeValue != null) {
-					ComponentAttribute componentAttributeLike = new ComponentAttribute();
-					ComponentAttributePk componentAttributePkLike = new ComponentAttributePk();
-					componentAttributePkLike.setAttributeCode(likeValue);
-					componentAttributeLike.setComponentAttributePk(componentAttributePkLike);
-					queryByExample.setLikeExample(componentAttributeLike);
+				if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
+					String likeValue = null;
+					switch (searchElement.getStringOperation()) {
+						case EQUALS:
+							componentAttributePk.setAttributeCode(searchElement.getKeyValue());
+							break;
+						default:
+							likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
+							break;
+					}
+
+					if (likeValue != null) {
+						ComponentAttribute componentAttributeLike = new ComponentAttribute();
+						ComponentAttributePk componentAttributePkLike = new ComponentAttributePk();
+						componentAttributePkLike.setAttributeCode(likeValue);
+						componentAttributeLike.setComponentAttributePk(componentAttributePkLike);
+						queryByExample.setLikeExample(componentAttributeLike);
+					}
 				}
+
+				attributes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			}
 
-			List<ComponentAttribute> attributes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
 			List<String> results = new ArrayList<>();
 			for (ComponentAttribute attribute : attributes) {
 				results.add(attribute.getComponentId());
