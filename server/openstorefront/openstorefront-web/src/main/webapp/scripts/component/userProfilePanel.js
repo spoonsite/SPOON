@@ -88,6 +88,9 @@ Ext.define('OSF.component.UserProfilePanel', {
 						text: 'Send Test Message',
 						iconCls: 'fa fa-lg fa-envelope-o',
 						maxWidth: 175,
+						autoEl: {
+							'data-test' : 'emailSendTestBtn'
+						},
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
 							var email = this.up('form').getForm().findField('email');
@@ -179,6 +182,9 @@ Ext.define('OSF.component.UserProfilePanel', {
 				text: 'Save',
 				formBind: true,		
 				iconCls: 'fa fa-lg fa-save icon-button-color-save',
+				autoEl: {
+					'data-test' : 'saveProfileFormBtn'
+				},
 				handler: function () {
 					var data = profileForm.getValues();
 					data.externalGuid = data.guid;

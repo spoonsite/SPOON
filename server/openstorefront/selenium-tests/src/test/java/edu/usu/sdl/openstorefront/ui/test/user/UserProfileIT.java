@@ -77,7 +77,7 @@ public class UserProfileIT
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name*='email']"))).sendKeys(email);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#saveProfileFormBtn"))).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='saveProfileFormBtn']"))).click();
 
 		try {
 			wait.until(ExpectedConditions.textToBePresentInElementValue(By.cssSelector(".x-autocontainer-innerCt"), "Updated User Profile"));
@@ -96,7 +96,7 @@ public class UserProfileIT
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#emailSendTestBtn"))).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='emailSendTestBtn']"))).click();
 
 		try {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-window.x-toast")));
