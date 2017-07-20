@@ -42,14 +42,14 @@
 					title: 'View Relationships <i class="fa fa-lg fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>',					
 					visualPanelConfig: {
 						viewType: initViewOptions ? null : 'RELATION',
-						showOnLoad: true
+						promptForType: false
 					}
 				});
 				
 				addComponentToMainViewPort(visualPanel);
 				
 				//init view if requested	
-				if (initViewOptions) {
+				if (initViewOptions && initViewOptions.viewType) {
 					visualPanel.setViewType(initViewOptions.viewType, false);
 					
 					if (initViewOptions.viewType === 'RELATION') {
@@ -61,6 +61,9 @@
 					} else if (initViewOptions.viewType === 'TAGS') {
 						visualPanel.visualPanel.loadTags(initViewOptions.entityId);
 					}
+				} else {
+					visualPanel.visualPanel.promptForType = true;
+					visualPanel.visualPanel.loadRelationships();
 				}
 
 			});
