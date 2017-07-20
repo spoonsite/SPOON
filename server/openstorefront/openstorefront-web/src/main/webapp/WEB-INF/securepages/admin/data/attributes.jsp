@@ -2080,7 +2080,10 @@
 
 			var actionEditCode = function(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
-				Ext.getCmp('editCodeForm-code').setValue(record.data.code);			
+				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
+				Ext.getCmp('editCodeForm-codeNumber').setValue(record.data.code);	
+				Ext.getCmp('editCodeForm-label').setValue(record.data.label);
+				Ext.getCmp('editCodeForm-labelNumber').setValue(record.data.label);	
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
 				editCodeWin.attributeTypeFull = manageCodesWin.attributeTypeFull;
@@ -2090,10 +2093,29 @@
 				
 				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
 					Ext.getCmp('editCodeForm-label').setHidden(true);
+					Ext.getCmp('editCodeForm-label').setDisabled(true);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
+					
+					Ext.getCmp('editCodeForm-code').setHidden(false);
+					Ext.getCmp('editCodeForm-code').setDisabled(false);
+					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);
+					
+					Ext.getCmp('editCodeForm-code').setHidden(true);
+					Ext.getCmp('editCodeForm-code').setDisabled(true);
+					Ext.getCmp('editCodeForm-codeNumber').setHidden(false);
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(false);					
 				} else {
 					Ext.getCmp('editCodeForm-label').setHidden(false);
-					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);					
+					Ext.getCmp('editCodeForm-label').setDisabled(false);
+					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
+					
+					Ext.getCmp('editCodeForm-code').setHidden(false);
+					Ext.getCmp('editCodeForm-code').setDisabled(false);
+					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);					
 				}				
 				
 				editCodeWin.show();
@@ -2272,8 +2294,9 @@
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
 							{
+								id: 'attributeValueType',
 								xtype: 'combobox',
-								fieldLabel: 'Code Value Type',							
+								fieldLabel: 'Code Value Type<span class="field-required" />',							
 								displayField: 'description',
 								valueField: 'code',
 								typeAhead: false,

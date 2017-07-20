@@ -289,7 +289,7 @@
 													var urlEnd = '';
 													if (record) {
 														method = 'PUT';
-														urlEnd = '/' + data.roleName;
+														urlEnd = data.roleName;
 														data.permissions = record.data.permissions;
 														data.dataSecurity = record.data.dataSecurity;
 													}	
@@ -301,7 +301,7 @@
 													}													
 													
 													CoreUtil.submitForm({
-														url: 'api/v1/resource/securityroles' + urlEnd,
+														url: 'api/v1/resource/securityroles/' + encodeURIComponent(urlEnd),
 														method: method,
 														data: data,
 														form: form,
@@ -909,12 +909,12 @@
 												valueField: 'username',
 												tpl: Ext.create('Ext.XTemplate',
 													'<ul class="x-list-plain"><tpl for=".">',
-														'<li role="option" class="x-boundlist-item">{firstname} {lastname} - {email}</li>',
+														'<li role="option" class="x-boundlist-item">{username} <span style="color: #a8a8a8;"> - {email}</span></li>',
 													'</tpl></ul>'
 												),											
 												displayTpl: Ext.create('Ext.XTemplate',
 													'<tpl for=".">',
-														'{firstname} {lastname} - {email}',
+														'{username}',
 													'</tpl>'
 												),
 												labelAlign: 'top',												

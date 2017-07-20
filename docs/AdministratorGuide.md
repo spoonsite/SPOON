@@ -1,7 +1,7 @@
 
 # Clearinghouse Administrator Guide
 
-Version 2.3
+Version 2.4
 
 
 Space Dynamics Laboratory
@@ -46,11 +46,11 @@ licensed under Apache V2.**
 This guide has been organized into separate documents to make it easier to navigate.
 The focus of this document is for configuration.  See other guides for other topics.
 
-[Architecture] (Architecture.md)
+[Architecture](Architecture.md)
 
-[Setup] (Setup.md)
+[Setup](Setup.md)
 
-[Developer Guide] (DevelopersGuide.md)
+[Developer Guide](DevelopersGuide.md)
 
 # 2.  Configuration
 ------
@@ -227,7 +227,17 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **jira.connection.wait.seconds** -   Wait time if the pool is empty                                 ( **60** )
 -  **jira.server.url** -                Jira server to connect to                                      ( **https://jira.di2e.net** )
 
-## 2.4 Mail Server
+## 2.4 Confluence Integration
+----------------
+
+Configure in: /var/openstorefront/config/openstorefront.properties
+
+( **Property** -description ( **Default** ))
+
+-  **confluence.server.url** -URL to confluence
+
+
+## 2.5 Mail Server
 -----------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
@@ -246,7 +256,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
 -  **test.email** -           Set for automated testing only; the email to use for testing
 
-## 2.5 Other Application Properties
+## 2.6 Other Application Properties
 ----------------------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
@@ -281,6 +291,9 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **system.archive.maxprocessminutes** -Max time for system archive process without making progress (**60**)
 -  **websockets.enabled** - Enables the use of websockets for server notifications ( **False** )
 -  **userreview.autoapprove** - Allows user reviews, Questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update ( **True** )
+-  **role.admin** -Set this before strarting the application the first time to set the name of the Admin Role
+-  **test.email** -Set to run container tests that require email
+-  **system.archive.maxprocessminutes** -Set the max time for running archive process; this used to clean up stuck working archives ( **60** )
 
 # 3. Database Management
 -----

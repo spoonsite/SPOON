@@ -255,13 +255,7 @@
 		<div class="row" style="padding-left: 20px;padding-right: 20px;">
 		  <h2>Log In</h2>
 		  <div class="logos">
-			  <map name="pagemap">
-					<area shape="rect" coords="0,0,150,200" href="https://www.nasa.gov" target="_blank" alt="Nasa">
-					<area shape="rect" coords="150,0,560,200" href="https://www.nasa.gov/smallsat-institute" target="_blank" alt="Nasa S3VI">
-					<area shape="rect" coords="560,0,710,200" href="http://www.wpafb.af.mil/afrl/" target="_blank" alt="AFRL">
-			  </map>	  
-			  			  
-			  <img src="${loginLogo}" usemap="pagemap" />
+			  ${branding.loginLogoBlock}
 		  </div>		  
 		  <form id="loginForm" action="Login.action?Login" method="POST">
 			 <%=branding.getLoginWarning() %>				 

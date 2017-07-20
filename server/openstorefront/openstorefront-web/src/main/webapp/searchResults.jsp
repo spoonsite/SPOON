@@ -27,7 +27,7 @@
 	<script src="scripts/component/savedSearchPanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
 		
-	<form id="exportForm" action="api/v1/service/search/export" method="POST">		
+	<form id="exportForm" action="api/v1/service/search/export" method="POST">
 		<p style="display: none;" id="exportFormIds">
 		</p> 
 	</form>
@@ -849,6 +849,8 @@
 						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
 					} else if (result.componentTypeIconUrl) {
 						result.logo = result.componentTypeIconUrl;
+					} else {
+						result.logo = null;
 					}
 				});
 				
@@ -1466,6 +1468,13 @@
 											searchResultsStore.each(function(record){
 												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />';
 											});
+											// Get CSRF Token From Cookie
+											var token = Ext.util.Cookies.get('X-Csrf-Token');
+											// Ensure CSRF Token Is Available
+											if (token) {
+												// Add CSRF Token To Form
+												ids  += '<input type="hidden" name="X-Csrf-Token" value="' + token + '" />';
+											}
 											exportFormIds.innerHTML = ids;
 											exportForm.submit();
 										}

@@ -197,6 +197,8 @@
 				};
 				
 				var addRecord = function() {
+					
+					Ext.getCmp('addMediaForm').setLoading(false);
 					addMediaWin.show();
 					
 					//reset form

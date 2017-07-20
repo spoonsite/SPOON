@@ -432,6 +432,7 @@
 						minHeight: 175,
 						modal: true,
 						layout: 'fit',
+						closeAction: 'destroy',
 						items: [
 							{
 								xtype: 'form',

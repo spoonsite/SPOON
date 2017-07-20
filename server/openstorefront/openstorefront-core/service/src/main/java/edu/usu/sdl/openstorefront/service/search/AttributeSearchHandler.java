@@ -77,11 +77,13 @@ public class AttributeSearchHandler
 			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 
 			List<ComponentAttribute> attributes = new ArrayList<>();
+			boolean doRegularSearch = true;
 			if (StringUtils.isNotBlank(searchElement.getKeyField())) {
 
 				AttributeType attributeType = serviceProxy.getAttributeService().findType(searchElement.getKeyField());
 				if (attributeType != null) {
 					if (AttributeValueType.NUMBER.equals(attributeType.getAttributeValueType())) {
+						doRegularSearch = false;
 						List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
 						attributes = componentAttributes.stream()
 								.filter((attribute) -> {
@@ -123,7 +125,9 @@ public class AttributeSearchHandler
 								.collect(Collectors.toList());
 					}
 				}
-			} else {
+			}
+
+			if (doRegularSearch) {
 				QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
 
 				if (StringUtils.isNotBlank(searchElement.getField())) {

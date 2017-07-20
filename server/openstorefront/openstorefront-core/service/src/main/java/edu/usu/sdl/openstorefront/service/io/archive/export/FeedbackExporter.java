@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
 import java.io.IOException;
@@ -36,53 +36,59 @@ import net.java.truevfs.access.TFileOutputStream;
  *
  * @author dshurtleff
  */
-public class HighlightExporter
+public class FeedbackExporter
 		extends BaseExporter
 {
 
-	private static final Logger LOG = Logger.getLogger(HighlightExporter.class.getName());
-	private static final String DATA_DIR = "/highlights/";
+	private static final Logger LOG = Logger.getLogger(FeedbackExporter.class.getName());
+	private static final String DATA_DIR = "/feedback/";
 
 	@Override
 	public int getPriority()
 	{
-		return 13;
+		return 17;
 	}
 
 	@Override
 	public String getExporterSupportEntity()
 	{
-		return Highlight.class.getSimpleName();
+		return FeedbackTicket.class.getSimpleName();
 	}
 
 	@Override
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		exporters.add(new GeneralMediaExporter());
-		exporters.add(new SavedSearchExporter());
 		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
+	public long getTotalRecords()
+	{
+		FeedbackTicket feedbackExample = new FeedbackTicket();
+		feedbackExample.setActiveStatus(FeedbackTicket.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(feedbackExample);
+	}
+
+	@Override
 	public void exportRecords()
 	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		List<Highlight> highlights = highlightExample.findByExample();
+		FeedbackTicket feedbackExample = new FeedbackTicket();
+		feedbackExample.setActiveStatus(FeedbackTicket.ACTIVE_STATUS);
+		List<FeedbackTicket> feedbackTickets = feedbackExample.findByExample();
 
-		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "highlights.json");
+		File feedbackFile = new TFile(archiveBasePath + DATA_DIR + "feedbacktickets.json");
 
-		try (OutputStream out = new TFileOutputStream(highlightFile)) {
-			StringProcessor.defaultObjectMapper().writeValue(out, highlights);
+		try (OutputStream out = new TFileOutputStream(feedbackFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, feedbackTickets);
 		} catch (IOException ex) {
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to export highlights.{0}", ex));
-			addError("Unable to export highlights");
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export feedback tickets.{0}", ex));
+			addError("Unable to export feedback tickets");
 		}
 
-		archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
-		archive.setStatusDetails("Exported " + highlights.size() + " highlights");
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + feedbackTickets.size());
+		archive.setStatusDetails("Exported " + feedbackTickets.size() + " feedbacktickets");
 		archive.save();
 	}
 
@@ -97,30 +103,25 @@ public class HighlightExporter
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
-					List<Highlight> highlights = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<Highlight>>()
+					List<FeedbackTicket> tickets = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<FeedbackTicket>>()
 					{
 					});
-					service.getSystemService().saveHighlight(highlights);
+					//We don't want to re-sent these; just store locally
+					for (FeedbackTicket ticket : tickets) {
+						ticket.save();
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + tickets.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load highlights", ex);
-					addError("Unable to load highlights: " + dataFile.getName());
+					LOG.log(Level.WARNING, "Failed to Load feedback tickets", ex);
+					addError("Unable to load feedback tickets: " + dataFile.getName());
 				}
 			}
 		} else {
-			LOG.log(Level.FINE, "No highlights to load.");
+			LOG.log(Level.FINE, "No feedback tickets to load.");
 		}
-	}
-
-	@Override
-	public long getTotalRecords()
-	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		return service.getPersistenceService().countByExample(highlightExample);
 	}
 
 }

@@ -35,16 +35,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author dshurtleff
  */
-public class AccountSignupActivateTest
+public class AccountSignupActivateIT
 		extends SecurityTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(AccountSignupActivateTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(AccountSignupActivateIT.class.getName());
 
 	/**
 	 *
 	 */
-	public AccountSignupActivateTest()
+	public AccountSignupActivateIT()
 	{
 
 	}
@@ -52,7 +52,11 @@ public class AccountSignupActivateTest
 	@Test
 	public void signupActivate() throws InterruptedException
 	{
-		signupActivate("auto-test-default");
+		String userName = "auto-test-default";
+		signupActivate(userName);
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			deleteUserIfPresent(driver, userName);
+		}
 	}
 
 	// Order of tests when running all of the way through
@@ -61,6 +65,7 @@ public class AccountSignupActivateTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			deleteUserIfPresent(driver, userName);
 			signupForm(driver, userName);
+			login();
 			activateAccount(driver, userName);
 		}
 	}
@@ -126,9 +131,30 @@ public class AccountSignupActivateTest
 		driver.findElement(By.cssSelector("input[name='firstName']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("input[name='lastName']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("input[name='organization']")).sendKeys("Air Force");
-		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(properties.getProperty("test.newuseremail"));
+		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(userName + "@test.com");
 		driver.findElement(By.cssSelector("input[name='phone']")).sendKeys("435-555-5555");
+		
+		String registrationId = getRegistrationId(driver);
+		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
+		
+		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
+		UserRegistration registration = client.getUserRegistration(registrationId);
 
+		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
+
+		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
+
+		// SUBMIT the form
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
+
+		// WAIT for signup to complete 
+		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
+
+	}
+	private String getRegistrationId(WebDriver driver)
+	{
+		
+		WebDriverWait wait = new WebDriverWait(driver, 20);
 		// generate the email verification code
 		driver.findElement(By.id("verificationCodeButton")).click();
 		driverWait(() -> wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text"))), 5000);
@@ -152,23 +178,8 @@ public class AccountSignupActivateTest
 		while (registrationId.equals("") && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			registrationId = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].value;", element);
 		}
-
-		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
-		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
-		UserRegistration registration = client.getUserRegistration(registrationId);
-
-		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
-
-		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
-
-		// SUBMIT the form
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Signup"))).click();
-
-		// WAIT for signup to complete 
-		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
-
+		return registrationId;
 	}
-
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate

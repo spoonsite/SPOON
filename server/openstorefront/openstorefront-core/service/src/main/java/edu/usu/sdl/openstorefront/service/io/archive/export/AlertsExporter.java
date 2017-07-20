@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
 import java.io.File;
@@ -36,53 +37,59 @@ import net.java.truevfs.access.TFileOutputStream;
  *
  * @author dshurtleff
  */
-public class HighlightExporter
+public class AlertsExporter
 		extends BaseExporter
 {
 
-	private static final Logger LOG = Logger.getLogger(HighlightExporter.class.getName());
-	private static final String DATA_DIR = "/highlights/";
+	private static final Logger LOG = Logger.getLogger(AlertsExporter.class.getName());
+	private static final String DATA_DIR = "/alerts/";
 
 	@Override
 	public int getPriority()
 	{
-		return 13;
+		return 15;
 	}
 
 	@Override
 	public String getExporterSupportEntity()
 	{
-		return Highlight.class.getSimpleName();
+		return Alert.class.getSimpleName();
 	}
 
 	@Override
 	public List<BaseExporter> getAllRequiredExports()
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
-		exporters.add(new GeneralMediaExporter());
-		exporters.add(new SavedSearchExporter());
 		exporters.add(this);
 		return exporters;
 	}
 
 	@Override
+	public long getTotalRecords()
+	{
+		Alert alertExample = new Alert();
+		alertExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		return service.getPersistenceService().countByExample(alertExample);
+	}
+
+	@Override
 	public void exportRecords()
 	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		List<Highlight> highlights = highlightExample.findByExample();
+		Alert alertExample = new Alert();
+		alertExample.setActiveStatus(Alert.ACTIVE_STATUS);
+		List<Alert> alerts = alertExample.findByExample();
 
-		File highlightFile = new TFile(archiveBasePath + DATA_DIR + "highlights.json");
+		File alertsFile = new TFile(archiveBasePath + DATA_DIR + "alerts.json");
 
-		try (OutputStream out = new TFileOutputStream(highlightFile)) {
-			StringProcessor.defaultObjectMapper().writeValue(out, highlights);
+		try (OutputStream out = new TFileOutputStream(alertsFile)) {
+			StringProcessor.defaultObjectMapper().writeValue(out, alerts);
 		} catch (IOException ex) {
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to export highlights.{0}", ex));
-			addError("Unable to export highlights");
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to export alerts.{0}", ex));
+			addError("Unable to export alerts");
 		}
 
-		archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
-		archive.setStatusDetails("Exported " + highlights.size() + " highlights");
+		archive.setRecordsProcessed(archive.getRecordsProcessed() + alerts.size());
+		archive.setStatusDetails("Exported " + alerts.size() + " alerts");
 		archive.save();
 	}
 
@@ -97,30 +104,24 @@ public class HighlightExporter
 					archive.setStatusDetails("Importing: " + dataFile.getName());
 					archive.save();
 
-					List<Highlight> highlights = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<Highlight>>()
+					List<Alert> alerts = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<Alert>>()
 					{
 					});
-					service.getSystemService().saveHighlight(highlights);
+					for (Alert alert : alerts) {
+						service.getAlertService().saveAlert(alert);
+					}
 
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + highlights.size());
+					archive.setRecordsProcessed(archive.getRecordsProcessed() + alerts.size());
 					archive.save();
 
 				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load highlights", ex);
-					addError("Unable to load highlights: " + dataFile.getName());
+					LOG.log(Level.WARNING, "Failed to Load alerts", ex);
+					addError("Unable to load alerts: " + dataFile.getName());
 				}
 			}
 		} else {
-			LOG.log(Level.FINE, "No highlights to load.");
+			LOG.log(Level.FINE, "No alerts to load.");
 		}
-	}
-
-	@Override
-	public long getTotalRecords()
-	{
-		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
-		return service.getPersistenceService().countByExample(highlightExample);
 	}
 
 }

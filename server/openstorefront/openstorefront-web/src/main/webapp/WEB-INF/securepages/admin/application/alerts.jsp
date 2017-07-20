@@ -170,14 +170,14 @@
 														type: 'ajax',
 														url: 'api/v1/resource/alerts?status=A'
 													});
-													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Deactivate");
+													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Toggle Status");
 												} else {
 													store.setProxy({
 														id: 'alertStoreProxy',
 														type: 'ajax',
 														url: 'api/v1/resource/alerts?status=I'
 													});
-													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Activate");
+													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Toggle Status");
 												}
 												store.load();
 												Ext.getCmp('alertGrid').getSelectionModel().deselectAll();

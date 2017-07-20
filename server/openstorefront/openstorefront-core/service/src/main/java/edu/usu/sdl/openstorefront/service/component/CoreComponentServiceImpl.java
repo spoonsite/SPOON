@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -253,18 +254,17 @@ public class CoreComponentServiceImpl
 	{
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		List<Component> components = componentExample.findByExampleProxy();
-		components = FilterEngine.filter(components);
+		String query = "select componentId from " + Component.class.getSimpleName()
+				+ " where activeStatus='" + Component.ACTIVE_STATUS
+				+ "' and approvalState='" + ApprovalStatus.APPROVED + "'";
 
-		if (!components.isEmpty()) {
-			List<String> componentIds = components.stream()
-					.map(Component::getComponentId)
-					.collect(Collectors.toList());
-			componentSearchViews = getSearchComponentList(componentIds);
+		List<ODocument> documents = persistenceService.query(query, null);
+
+		List<String> componentIds = new ArrayList<>();
+		for (ODocument document : documents) {
+			componentIds.add(document.field("componentId"));
 		}
+		componentSearchViews = getSearchComponentList(componentIds);
 
 		return componentSearchViews;
 	}
@@ -1154,8 +1154,23 @@ public class CoreComponentServiceImpl
 			List<Component> components = persistenceService.query(componentQuery.toString(), paramMap, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();
-			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), paramMap, true);
+			componentAttributeQuery.append("select componentAttributePk.attributeType as attributeType, componentAttributePk.attributeCode as attributeCode, componentId from ComponentAttribute where activeStatus='")
+					.append(Component.ACTIVE_STATUS)
+					.append("' and componentId IN :componentIdsParams");
+
+			List<ODocument> documents = persistenceService.query(componentAttributeQuery.toString(), paramMap, false);
+			List<ComponentAttribute> componentAttributes = new ArrayList<>();
+			for (ODocument document : documents) {
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setComponentId(document.field("componentId"));
+				componentAttributePk.setAttributeCode(document.field("attributeCode"));
+				componentAttributePk.setAttributeType(document.field("attributeType"));
+				componentAttribute.setComponentAttributePk(componentAttributePk);
+				componentAttribute.setComponentId(componentAttributePk.getComponentId());
+				componentAttributes.add(componentAttribute);
+			}
 			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeMap.containsKey(componentAttribute.getComponentId())) {
@@ -1194,6 +1209,8 @@ public class CoreComponentServiceImpl
 					tagMap.put(componentTag.getComponentId(), tags);
 				}
 			}
+
+			componentService.getAttributeServicePrivate().warmAttributeCaches();
 
 			//group by component
 			for (Component component : components) {
@@ -1749,6 +1766,18 @@ public class CoreComponentServiceImpl
 				}
 				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
 			}
+
+			//add the missed cases
+			query = "select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL";
+			documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				String foundId = document.field("componentId");
+				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+				cacheSensitivityModel.setComponentId(foundId);
+				Element newElement = new Element(foundId, cacheSensitivityModel);
+				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+			}
+
 		}
 
 		return componentSensitivityModel;
@@ -2601,13 +2630,30 @@ public class CoreComponentServiceImpl
 			componentMediaExample.setIconFlag(Boolean.TRUE);
 
 			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
+			Set<String> mediaWithIcons = new HashSet<>();
 			for (ComponentMedia componentMedia : allIconMedia) {
 				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
 				OSFCacheManager.getComponentIconCache().put(newElement);
 				if (componentMedia.getComponentId().equals(componentId)) {
 					iconMediaId = componentMedia.getComponentMediaId();
 				}
+				mediaWithIcons.add(componentMedia.getComponentId());
 			}
+			if (iconMediaId == null) {
+				//set all missing icon to blank to warm cache
+				Element newElement = new Element(componentId, "");
+				OSFCacheManager.getComponentIconCache().put(newElement);
+			}
+			String query = "select componentId from " + Component.class.getSimpleName();
+			List<ODocument> documents = persistenceService.query(query, null);
+			for (ODocument document : documents) {
+				String id = document.field("componentId");
+				if (!mediaWithIcons.contains(id)) {
+					Element newElement = new Element(id, "");
+					OSFCacheManager.getComponentIconCache().put(newElement);
+				}
+			}
+
 		}
 		return iconMediaId;
 	}

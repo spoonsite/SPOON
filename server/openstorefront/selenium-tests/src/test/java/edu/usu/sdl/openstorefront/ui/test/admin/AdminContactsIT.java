@@ -34,7 +34,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminContactsTest
+public class AdminContactsIT
 		extends AdminTestBase
 {
 
@@ -46,19 +46,14 @@ public class AdminContactsTest
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			setupDriver(driver);
-			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", properties.getProperty("test.newuseremail"));
-			createAPIContact();
+			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", "testContact@test.com");
+			apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "testAPIContact@test.com", "MyAmazingTest-Organization");
 			editContact(driver, "AAA-TesterFirst", "000-000-0000");
 			toggleStatusContact(driver, "AAA-TesterFirst", "Active");
 			Assert.assertTrue(verifyStatus(driver, "AAA-TesterFirst", "Inactive"));
 			deleteContact(driver, "AAA-TesterFirst", "Inactive");
 			sleep(1000);
 		}
-	}
-
-	private void createAPIContact()
-	{
-		apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", properties.getProperty("test.newuseremail"), "MyAmazingTest-Organization");
 	}
 	
 	public void setupDriver(WebDriver driver)
@@ -141,14 +136,14 @@ public class AdminContactsTest
 
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#addEditWindow_header-title-textEl")));
 
-		List<WebElement> allRows = new ArrayList<WebElement>();
+		List<WebElement> allRows = new ArrayList<>();
 		allRows = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
 
 		int colIndex = getColumnHeaderIndex(driver, "Phone", ".x-grid-header-ct");
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<WebElement>();
+			List<WebElement> cells = new ArrayList<>();
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);
@@ -255,7 +250,7 @@ public class AdminContactsTest
 			}
 		}
 
-		List<WebElement> allRows = new ArrayList<WebElement>();
+		List<WebElement> allRows = new ArrayList<>();
 		allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-grid-header-ct")));
@@ -267,7 +262,7 @@ public class AdminContactsTest
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<WebElement>();
+			List<WebElement> cells = new ArrayList<>();
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);

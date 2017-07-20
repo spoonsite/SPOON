@@ -24,6 +24,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	//height: 5000,
 	//border: true,
 	plugins: ['spriteevents'],
+	promptForType: false,
 	//style: 'cursor: pointer',
 	bodyStyle: 'background: #2d2c2c;',
 	viewData: [],
@@ -112,6 +113,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 	initComponent: function () {
 		this.callParent();
+		this.loadRelationships();
 
 		var visPanel = this;
 
@@ -775,7 +777,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				]
 			});
-			prompt.show();
+
+		
+			if (visPanel.promptForType && 
+				!visPanel.viewType) {
+				prompt.show();
+			}
 		}
 	},
 

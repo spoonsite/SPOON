@@ -1706,7 +1706,7 @@
 						},
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
-						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175 },
+						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -1728,7 +1728,7 @@
 									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
-											actionRefreshComponentGrid();
+											actionRefreshComponentGrid(true);
 										}
 									},
 									storeConfig: {
@@ -1763,7 +1763,7 @@
 									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
-											actionRefreshComponentGrid();
+											actionRefreshComponentGrid(true);
 										}
 									},
 									storeConfig: {
@@ -1788,7 +1788,7 @@
 									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
-											actionRefreshComponentGrid();
+											actionRefreshComponentGrid(true);
 										}
 									},
 									storeConfig: {
@@ -1817,7 +1817,7 @@
 									listeners: {
 										change: {
 											fn: function(field, newValue, oldValue, opts) {
-												actionRefreshComponentGrid();
+												actionRefreshComponentGrid(true);
 											},
 											buffer: 1500
 										}
@@ -2142,15 +2142,26 @@
 					Ext.getCmp('changeTypeWin').show();
 				};
 
-				var actionRefreshComponentGrid = function() {
-					Ext.getCmp('componentGrid').getStore().load({
-						params: {
+				var actionRefreshComponentGrid = function(resetPage) {
+					var searchPram = {
 							status: Ext.getCmp('componentGridFilter-ActiveStatus').getValue() ? Ext.getCmp('componentGridFilter-ActiveStatus').getValue() : 'ALL',
 							approvalState: Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() ? Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() : 'ALL',
 							componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL',
 							componentName: Ext.getCmp('componentGridFilter-Name').getValue() ? Ext.getCmp('componentGridFilter-Name').getValue() : ''
-						}
-					});
+						};
+					if(resetPage)
+					{
+						Ext.getCmp('componentGrid').getStore().loadPage(1,{
+							params: searchPram
+						});
+					}
+					else
+					{
+						Ext.getCmp('componentGrid').getStore().load({
+							params: searchPram
+						});
+
+					}
 				};
 
 

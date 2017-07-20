@@ -68,6 +68,10 @@ public class Branding
 	@ConsumeField
 	private String loginWarning;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@ConsumeField
+	private String loginLogoBlock;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -220,6 +224,7 @@ public class Branding
 		setLandingPageTitle(branding.getLandingPageTitle());
 		setLandingStatsText(branding.getLandingStatsText());
 		setLoginWarning(branding.getLoginWarning());
+		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
@@ -608,6 +613,16 @@ public class Branding
 	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
 	{
 		this.useDefaultLandingPage = useDefaultLandingPage;
+	}
+
+	public String getLoginLogoBlock()
+	{
+		return loginLogoBlock;
+	}
+
+	public void setLoginLogoBlock(String loginLogoBlock)
+	{
+		this.loginLogoBlock = loginLogoBlock;
 	}
 
 }

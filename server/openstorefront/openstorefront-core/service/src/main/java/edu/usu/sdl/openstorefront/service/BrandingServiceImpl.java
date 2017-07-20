@@ -128,6 +128,13 @@ public class BrandingServiceImpl
 					);
 				}
 
+				if (branding.getLoginLogoBlock() == null) {
+					String loginLogo = branding.getPrimaryLogoUrl().replace("Media.action", "Branding.action");
+					branding.setLoginLogoBlock(
+							"<img src='" + loginLogo + "' />"
+					);
+				}
+
 				if (branding.getUserInputWarning() == null) {
 					branding.setUserInputWarning("Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.");
 				}

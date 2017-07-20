@@ -59,6 +59,7 @@ public class NewSecurityRole
 			for (WebElement aButton : topButtons) {
 				if (aButton.getText().equals("Delete")) {
 					aButton.click();
+					break;
 				}
 			}
 			// Wait Delete Role confirmation box to come up.
@@ -69,6 +70,7 @@ public class NewSecurityRole
 			for (WebElement theButton : deleteOptions) {
 				if (theButton.getText().equals("Confirm")) {
 					theButton.click();
+					break;
 				}
 			}
 
@@ -168,6 +170,7 @@ public class NewSecurityRole
 
 				// Verify it is in the list of added usernames
 				boolean wasAdded = driver.findElement(By.xpath("//div[contains(.,'" + userName.toLowerCase() + "')]")).isDisplayed();
+				driver.findElement(By.cssSelector("[data-qtip='Close dialog']")).click();
 				if (wasAdded) {
 					LOG.log(Level.INFO, "--- Successfully added " + userName.toLowerCase() + " to " + roleName + " role. ---");
 				} else {
