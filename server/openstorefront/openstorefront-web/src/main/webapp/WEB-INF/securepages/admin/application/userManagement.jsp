@@ -158,7 +158,7 @@
 										Ext.Msg.show({
 											title:'Delete Registration?',
 											iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-											message: 'Are you sure you want to remove this registration? <br/><br/><b>Warning:</b> This will delete the user as well.',
+											message: 'Are you sure you want to remove this registration?',
 											buttons: Ext.Msg.YESNO,
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
