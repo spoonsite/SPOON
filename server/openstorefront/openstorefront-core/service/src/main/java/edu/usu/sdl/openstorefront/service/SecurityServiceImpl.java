@@ -43,6 +43,7 @@ import edu.usu.sdl.openstorefront.core.view.UserSecurityView;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
@@ -86,7 +87,7 @@ import org.passay.WhitespaceRule;
  */
 public class SecurityServiceImpl
 		extends ServiceProxy
-		implements SecurityService
+		implements SecurityService, SecurityServicePrivate
 {
 
 	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
@@ -278,6 +279,12 @@ public class SecurityServiceImpl
 	@Override
 	public ValidationResult processNewUser(UserRegistration userRegistration)
 	{
+		return processNewUser(userRegistration, false);
+	}
+
+	@Override
+	public ValidationResult processNewUser(UserRegistration userRegistration, boolean forceApprove)
+	{
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
@@ -289,8 +296,11 @@ public class SecurityServiceImpl
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
-			
-			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+
+			boolean autoApproveUser = forceApprove;
+			if (!forceApprove) {
+				autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+			}
 
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();
@@ -301,7 +311,7 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			
+
 			if (autoApproveUser) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);

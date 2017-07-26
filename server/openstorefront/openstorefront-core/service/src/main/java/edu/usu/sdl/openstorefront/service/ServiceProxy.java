@@ -47,6 +47,7 @@ import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
@@ -89,6 +90,7 @@ public class ServiceProxy
 	private ChecklistService checklistService;
 	private ContentSectionService contentSectionService;
 	private SecurityService securityService;
+	private SecurityServicePrivate securityServicePrivate;
 	private ChangeLogService changeLogService;
 	private ChangeLogServicePrivate changeLogServicePrivate;
 	private SystemArchiveService systemArchiveService;
@@ -374,6 +376,14 @@ public class ServiceProxy
 			securityService = DynamicProxy.newInstance(new SecurityServiceImpl());
 		}
 		return securityService;
+	}
+
+	public SecurityServicePrivate getSecurityServicePrivate()
+	{
+		if (securityServicePrivate == null) {
+			securityServicePrivate = DynamicProxy.newInstance(new SecurityServiceImpl());
+		}
+		return securityServicePrivate;
 	}
 
 	@Override
