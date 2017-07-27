@@ -2088,14 +2088,24 @@ Ext.define('OSF.component.template.LayoutTab', {
 		layout: {
 			pack: 'left'
 		}
-	},	
+	},
+	listeners: {
+		afterrender: function(tabPanel) {
+			//force all tabs to render at the first
+			for(i=0; i<20; i++){
+				 tabPanel.setActiveTab(i);
+			}
+			tabPanel.setActiveTab(0);
+		}
+	},
 	
 	initComponent: function () {
 		this.callParent();
 	},
 	
-	updateTemplate: function (entry) {
+	updateTemplate: function (entry, container) {
 		var layoutPanel = this;
+		layoutPanel.holderContainer = container;
 		
 		var itemsToClose = [];
 		Ext.Array.each(layoutPanel.items.items, function(item){

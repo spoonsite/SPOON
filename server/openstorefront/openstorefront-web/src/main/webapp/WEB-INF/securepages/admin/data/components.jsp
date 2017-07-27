@@ -670,7 +670,9 @@
 										width: '100%',
 										listeners: {
 											ready: function(combo) {
-												combo.setValue(generalForm.componentRecord.get('dataSensitivity'));
+												if (generalForm.componentRecord) {
+													combo.setValue(generalForm.componentRecord.get('dataSensitivity'));
+												}
 											}
 										}
 									}),
@@ -680,7 +682,9 @@
 										width: '100%',
 										listeners: {
 											ready: function(combo) {
-												combo.setValue(generalForm.componentRecord.get('dataSource'));
+												if (generalForm.componentRecord) {
+													combo.setValue(generalForm.componentRecord.get('dataSource'));
+												}
 											}
 										}
 									}),
