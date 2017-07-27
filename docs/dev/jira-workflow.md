@@ -11,31 +11,47 @@
 
 ## New Features, Improvements, Bugs Stages
 
-1. Pending Review - Ticket in product backlog.
+* Pending Review - Holding state for new tickets awaiting developers initial triage.
 
-2. Review - Ticket reviewed by developer. Developer adds details such as
-implementation plan, time estimate, sub-tasks, and other relevant changes.
+* Waiting for information - Back to requestor for more details on requirements and/or screenshots.
 
-3. Approval - Business owner or Project Manager approves/rejects an issue.
- (Typically during sprint planning or sprint review)
+* Getting PMO approval - Business owner or Project Manager approves/rejects an issue.
 
-4. Schedule - Waiting to be scheduled for a release version.
+* Awaiting Design Review - Holding state awaiting developer resources.
 
-5. Working - Currently in development. Refer to the Git Workflow guide for more information on branching style.
+* Design Review - Ticket reviewed by developer. Developer adds details such as implementation plan, time estimate, sub-tasks, and other relevant changes.
 
-6. Ready for Development Move - Development is complete but ticket not moved to the Integration environment.
+* Design Complete - Waiting for Peer approval.
 
-7. Integration - In Integration environment, subjected to automated testing.
+* Ready to Work - Product Backlog
+ * An ordered list of everything that might be needed in the product and is the single source of requirements
+ * Items scheduled for the next release
+ * Set of items selected for the Sprint
 
-8. Ready for Acceptance Move - Passed integration testing and waiting to be moved to the acceptance state.
 
-9. Acceptance Test - Ticket ready for QA to test.
+* Pending Verification - Item has aged in the backlog and needs to be revaluated
 
-10. Ready for Staging - Ticket has passed QA and is now ready to move to staging.
+* Being Verified - Checking if the issue still needs addressed.
 
-11. In Staging - Ticket subject to final review and testing in staging environment before being moved to production.
+* Working - Currently in development. Refer to the Git Workflow guide for more information on branching style.
 
-12. Close - Ticket moved to production. Any new changes require creation of a new ticket.
+* Development Complete
+ * Development work complete
+ * Unit and Integration tests passing
+ * Pull request submitted
+
+
+* Awaiting build - Pull request reviewed and merged, but not moved to the Integration environment.
+
+* Awaiting Testing - Code pushed to testing server ready for QA to test. (testing queue)
+
+* Testing - Tester is currently testing the ticket.
+
+* Ready for Staging - Ticket has passed QA and is now ready to move to staging.  Any new changes require creation of a new ticket.
+
+* In Staging - Ticket subject to final review and testing in staging environment before being moved to production.
+
+* Close - Ticket moved to production.
 
 
 ## Task
