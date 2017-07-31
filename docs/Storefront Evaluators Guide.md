@@ -45,7 +45,9 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
 **Evaluation**
   1. Info
-      This is high level status about the evaluation itself. Here you can change the version of the evaluation which can be useful to signal that there are major changes to the evaluation. How to best use the Version of an evaluation will be dependent on your particular implementation. 
+      ![Evaluation Info](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Evaluations%20Info%20Page%202.png)
+      
+      This sections gives you a high level status about the evaluation itself. Here you can change the version of the evaluation which can be useful to signal that there are major changes to the evaluation. How to best use the Version of an evaluation will be dependent on your particular implementation. 
       
       ![Evaluation Status](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Evaluation%20Status.png)
       
@@ -72,7 +74,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
   
       ![Entry Attributes](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Attributes.png)
       
-      Attributes are used categorize the data, build category relationships, and improve searching. Available attribute types and codes are setup by an administrator and are controlled, in part, by the template used to create the evaluation and the entry type. Each entry should have as many attributes added to it as make sense for that entry. It is important that attributes are carefully curated for each entry. Some attribute types can be added only once, while others can be added multiple times. 
+      Attributes are used to categorize the data, build category relationships, and improve searching. Available attribute types and codes are setup by an administrator and are controlled, in part, by the template used to create the evaluation and the entry type. Each entry should have as many attributes added to it as make sense for that entry. It is important that attributes are carefully curated for each entry. Some attribute types can be added only once, while others can be added multiple times. 
       
       The best practice is to use elements from the drop downs on the attribue code or stick to a pre-determined list of entries for free-form fields. Other information is better placed into the Contacts, Resources, Media, or Tags sections. In other words, semantics for the attribute codes must be determined ahead of time and you need to refer to those external semantics when determining which attribute to add. 
       
@@ -122,7 +124,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
       Youtube or external videos should be added in the "Resource" section and not here. This sections is for direct links to the media.
 
-      Note: Media embedded (inline) in entry description will also show up in this list. Typically, inline media should hid from the carousel.
+      Note: Media added to the Entry Summary section will also show up in this list. Typically, such media should hid from the carousel.
 
       
   7. Tags
@@ -155,11 +157,11 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       ![Checklist Summary](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Checklist%20Summary.png)
       
-      The checklist is supposed to be a guided examination of an entry in such a way as to allow results to be compared across entries. After having investigated the entry the summary should be filled out to summarize that investigation and the results thereof. It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tell you what an entry was *actually* about. 
+      The checklist is supposed to be a guided examination of an entry in such a way as to allow results to be compared across entries. After having investigated the entry the summary should be filled out to summarize that investigation and the results thereof. It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tells you what an entry was *actually* about. 
       
       Another way to say it is that this should be the summary of the evaluation. The evaluator should put in their own words their experience of the evaluation. This would be the narration of part of a consumer report. It should summarize what was found in the checklist questions. (E.g. The asset was easily discoverable however, we found the documentation was lacking. See recommendations)
       
-      The Recommendations section is where you can list your recommendations for improvements about the entry. The intention is to communicate back to the source of the entry what you think should be done to make what they are doing better. These recommendations must be categorized into one of a selections of options: 
+      The Recommendations section is where you can list your recommendations for improvements about the entry. The intention is to communicate back to the source of the entry what you think should be done to make what they are doing better. These recommendations must be categorized into one of a set of options: 
       
       ![Recommendation Options](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Recommendation%20Categories.png)
       
