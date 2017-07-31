@@ -106,7 +106,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
      
      ![Entry Resources](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Resources.png)
      
-      The best place to manage links, documentation, etc. pertaining to the entry is the Resources section. Various specific resource types will be available, depending on the configuration of your system. At a minimum, you should have links to the homepage of what it is that you are evaluating. Relevant documentation not otherwise available on the web but still marked for distribution can be uploaded to the storefront here as well. 
+      The resources section is for managing links, documentation, etc. pertaining to the entry. Various specific resource types will be available, depending on the configuration of your system. At a minimum, you should ensure that there is a link to the homepage of what it is that you are evaluating. Relevant documentation not otherwise available on the web, but still marked for distribution, can be uploaded here as well. 
      
       Generally, when you have the option of having an item added as an attribute or as a resource, it is better to add it as a resource. 
       
@@ -124,7 +124,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
       Youtube or external videos should be added in the "Resource" section and not here. This sections is for direct links to the media.
 
-      Note: Media added to the Entry Summary section will also show up in this list. Typically, such media should hid from the carousel.
+      Note: Media added to the Entry Summary section will also show up in this list. Typically, such media should be hid from the carousel by checking the appropriate box for that media.
 
       
   7. Tags
