@@ -8,7 +8,7 @@
 ## Overview
 In this guide we will go over how to correctly add information to an evaluation inside of the Storefront. All of the information in this guide has been developed for version 2.5 (2017-07-26 15:03:18 MDT). The general process of doing evaluations will be the same for previous versions but some of the specific menu items and verbiage will be different. 
 
-Entries that have been added to storefront, and been approved, can be evaluated. Entries can be added via user submission from the User Tools area and then approved by an administrator, or directly added by an administrator. Go [here](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/Quick%20Overview%20of%20Submitting%20a%20New%20Component.md) for a quick overview of how to submit a new entry.
+Entries that have been added to storefront can be evaluated. Entries can be added via user submission from the User Tools area and then approved by an administrator, or directly added by an administrator. Go [here](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/Quick%20Overview%20of%20Submitting%20a%20New%20Component.md) for a quick overview of how to submit a new entry.
 
 Any entry can have multiple evaluations and each evaluation will be tracked separately. This allows for multiple versions of a software package or service to be evaluated based on the same entry. Each evaluation is based on a template defined in advance by the administrator and the template determines everything from the look and feel of the evaluation to the questions that will be asked. 
 
@@ -72,15 +72,15 @@ The difference between an entry and an evaluation needs to be emphasized. While 
   
       ![Entry Attributes](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Attributes.png)
       
-      Each entry should have as many attributes added to it as make sense for that entry. Storefront allows you to search and sort on these attributes so it is important that attributes are carefully curated for each entry. The available attributes will depend on how the templates were set up for your evaluation and entry type. Some attribute types can be added only once, while others can be added multiple times. 
+      Attributes are used categorize the data, build category relationships, and improve searching. Available attribute types and codes are setup by an administrator and are controlled, in part, by the template used to create the evaluation and the entry type. Each entry should have as many attributes added to it as make sense for that entry. It is important that attributes are carefully curated for each entry. Some attribute types can be added only once, while others can be added multiple times. 
       
-      Care should be taken to only add properly sortable information to the attribute. The best practice is to use elements from the drop downs on the attribue code or stick to a pre-determined list of entries for free-form fields. Other information is better placed into the Contacts, Resources, Media, or Tags sections. In other words, semantics for the attributes must be determined ahead of time and are dependent on your implementation and you need to refer to those external semantics when determining which attribute to add. 
+      The best practice is to use elements from the drop downs on the attribue code or stick to a pre-determined list of entries for free-form fields. Other information is better placed into the Contacts, Resources, Media, or Tags sections. In other words, semantics for the attribute codes must be determined ahead of time and you need to refer to those external semantics when determining which attribute to add. 
       
       To add a new attribute, select the appropriate attribute type from the list and then select or fill out the attribute code and click save. 
       
       Ultimately, attributes become Entry Vitals on the Details tab for an entry. Here is an example: 
       
-      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details.png)
+      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details%20-%20Attributes%20to%20Vitals.png)
       
   3. Relationships
   
@@ -98,7 +98,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       Ultimately, contacts become Points of Contact on the Details tab for an entry. Here is an example: 
       
-      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details.png)
+      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details%20-%20Contacts%20to%20POC.png)
       
   5. Resources
      
@@ -110,13 +110,20 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       Ultimately, resources become Location of Entry Artifacts on the Details tab for an entry. Here is an example: 
       
-      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details.png)
+      ![Entry Details](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Details%20-%20Resources%20to%20Artifacts.png)
       
   6. Media
       
       ![Entry Media](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Media.png)
       
       The Media tab is for adding media specific to the entry in general. The media for an evaluation is different from the media for an entry. Media added from other sections in the Entry set of sections will show up to be managed here. 
+      
+      This is where you should add screenshots and videos related to the entry. Videos should be in mp4 format as they can be shown directly in the site. Other video formats will need to be download by the users.  
+
+      Youtube or external videos should be added in the "Resource" section and not here. This sections is for direct links to the media.
+
+      Note: Media embedded (inline) in entry description will also show up in this list. Typically, inline media should hid from the carousel.
+
       
   7. Tags
       
@@ -131,13 +138,17 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       This is an example of a very basic custom section. Some templates will include a variety of sub-sections or other custom formatting. Generally, the sections allow you to focus on different aspects of the evaluation as determined by your implementation. 
       
-      The text box is a rich text box which means it supports formatting, images, tables, equations, code snippets, etc. The top of the text box has tools that you can use but it also supports the normal keyboard shortcuts (`Ctrl + B` for bold, etc.). Note that there is no auto save in place. If you make a change and click off to a different section your changes will be lost! If you want to save your changes you can either click the save button at the bottom of the text box or change the status at the bottom of the window.  
+      The text box is a rich text box which means it supports formatting, images, tables, equations, code snippets, etc. The top of the text box has tools that you can use but it also supports the normal keyboard shortcuts (`Ctrl + B` for bold, etc.). If you make a change and click off to a different section your changes will be lost! If you want to save your changes you can either click the save button at the bottom of the text box or change the status at the bottom of the window. However, your changes should auto-save after a timeout which is set to take a minute or so after there is no changes.
+
+      Media (pictures, videos, etc.) that have been embedded in a section  can be managed from the "Manage Media" button in that section. This is for diagrams or screenshots that are part of the section and are discussed in that section.
       
   2. Private Notes (A more complex example section)
       
       ![Private Notes](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Private%20Notes.png)
       
       Here is an example of a more complex section template where the base section contains sub-sections. Again, changes made to any of the sub-sections will NOT be automatically saved. You must click the Save button at the bottom of the window to save your changes. 
+      
+      It is usually safe to assume that anything added to a section labeled Private Notes will not be published with the final, user facing, evaluation. 
         
 **Checklist**
   1. Summary
@@ -145,6 +156,8 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       ![Checklist Summary](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Checklist%20Summary.png)
       
       The checklist is supposed to be a guided examination of an entry in such a way as to allow results to be compared across entries. After having investigated the entry the summary should be filled out to summarize that investigation and the results thereof. It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tell you what an entry was *actually* about. 
+      
+      Another way to say it is that this should be the summary of the evaluation. The evaluator should put in their own words their experience of the evaluation. This would be the narration of part of a consumer report. It should summarize what was found in the checklist questions. (E.g. The asset was easily discoverable however, we found the documentation was lacking. See recommendations)
       
       The Recommendations section is where you can list your recommendations for improvements about the entry. The intention is to communicate back to the source of the entry what you think should be done to make what they are doing better. These recommendations must be categorized into one of a selections of options: 
       
