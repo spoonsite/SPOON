@@ -44,7 +44,7 @@ public class Organization
 
 	@PK
 	@NotNull
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1K)
 	@Sanitize(TextSanitizer.class)
 	@APIDescription("The id is based on the name")
 	private String organizationId;
@@ -166,7 +166,7 @@ public class Organization
 		this.setOrganizationType(updated.getOrganizationType());
 		this.setLogoFileName(updated.getLogoFileName());
 		this.setLogoMimeType(updated.getLogoMimeType());
-		this.setLogoOriginalFileName(updated.getLogoOriginalFileName());			
+		this.setLogoOriginalFileName(updated.getLogoOriginalFileName());
 	}
 
 	public String getOrganizationId()
