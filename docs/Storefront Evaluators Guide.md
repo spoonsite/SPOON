@@ -1,6 +1,9 @@
 # Storefront Guide for Evaluators
 
------
+## TL;DR
+* Administrators create and publish evaluations. Evaluators fill out evaluations. 
+* While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab.
+* Storefront assumes you know what all of the various questions mean, what the asset types available to you mean, and how your implementation of Storefront works. If you don't, ask your administrator. 
 
 ## Overview
 In this guide we will go over how to correctly add information to an evaluation inside of the Storefront. All of the information in this guide has been developed for version 2.5 (2017-07-26 15:03:18 MDT). The general process of doing evaluations will be the same for previous versions but some of the specific menu items and verbiage will be different. 
