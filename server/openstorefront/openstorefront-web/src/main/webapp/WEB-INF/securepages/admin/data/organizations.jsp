@@ -838,7 +838,7 @@
 											style: 'padding-top: 5px;',
 											width: '100%',
 											allowBlank: false,
-											maxLength: 30		
+											maxLength: 255		
 										},
 										{
 											xtype: 'textarea',
@@ -856,7 +856,7 @@
 											name: 'homeUrl',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 150		
+											maxLength: 255		
 										},
 										{
 											xtype: 'combobox',
@@ -889,7 +889,7 @@
 											name: 'contactName',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 30	
+											maxLength: 255	
 										},
 										{
 											xtype: 'textfield',
@@ -898,7 +898,7 @@
 											name: 'contactPhone',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 20	
+											maxLength: 255	
 										},
 										{
 											xtype: 'textfield',
@@ -909,7 +909,7 @@
 											vtype: 'email',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 120	
+											maxLength: 255	
 										},
 										{
 											xtype: 'textfield',
@@ -918,7 +918,7 @@
 											name: 'agency',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 30	
+											maxLength: 255	
 										},
 										{
 											xtype: 'textfield',
@@ -927,7 +927,7 @@
 											name: 'department',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 30	
+											maxLength: 255	
 										},
 										{
 											xtype: 'textfield',
@@ -936,7 +936,7 @@
 											name: 'address',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 50	
+											maxLength: 255	
 										}
 									]
 								}

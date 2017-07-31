@@ -30,12 +30,21 @@
 					container.removeAll();
 					
 					Ext.Array.each(template.blocks, function(block){						
-						block.updateTemplate(entry);	
+						block.updateTemplate(entry, container);	
 					});
 					
 					container.add(template.blocks);	
 					Ext.defer(function(){
 						container.updateLayout(true, true);
+						Ext.defer(function(){
+							container.updateLayout(true, true);
+							Ext.defer(function(){
+								container.updateLayout(true, true);								
+								Ext.defer(function(){
+									container.updateLayout(true, true);
+								}, 7000);
+							}, 2000);
+						}, 1000);
 					}, 500);					
 				}
 			};
