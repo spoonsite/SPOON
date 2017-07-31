@@ -12,7 +12,7 @@ Any entry can have multiple evaluations and each evaluation will be tracked sepa
 ## Who is this for?
 This guide is for anyone who will be performing an evaluation on the Storefront application. We will cover a general work flow and use that to discuss intent and best practices. Please note that the exact work flow for any given evaluation will depend on the template used to create that evaluation. Thus you will need to contact your administrator for any questions related to your particular work flow.
 
-Storefront assumes that people doing the evaluations have familiarity with the system and, more importantly, with how your organizes uses your data. 
+Storefront assumes that people doing the evaluations have familiarity with the system and, more importantly, with how your organization uses your data. 
 
 ## Before you begin
 Make sure your administrator has created an evaluation for you to use and that you are part of the STOREFRONT-Evaluators group (or equivalent). 
@@ -38,7 +38,7 @@ On the left hand side of the window you will see blue boxes which will take you 
 
 The exact set of sections for any particular evaluation is dependent on how your system has been configured and how the templates were set up. That said, all evaluations will, generally, have at least the sections shown above. We will now talk about each of these sections although the order presented does not imply that an evaluation must be done in any particular order. It is expected that an evaluation is going to be an iterative and non-linear process.
 
-The difference between an entry and an evaluation needs to be emphasized. While performing an evaluation you will have the opportunity to correct and update information about the entry as well as the evaluation. The easiest way of thinking about the difference is to look at what happens once an evaluation is published. All information related to an entry will show up in the Details tab. All information relating to a particular evaluation will be under the Evaluations tab. When looking at editing an evaluation, *everything under the Entry section applies to that Details tab. Everything under the Sections and Checklist sections apply to that Evaluations tab.* 
+The difference between an entry and an evaluation needs to be emphasized. While performing an evaluation you will have the opportunity to correct and update information about the entry as well as the evaluation. The easiest way of thinking about the difference is to look at what happens once an evaluation is published. All information related to an entry will show up in the Details tab. All information relating to a particular evaluation will be under the Evaluations tab. When looking at editing an evaluation, *everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab.* 
 
 **Evaluation**
   1. Info
@@ -46,9 +46,9 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       ![Evaluation Status](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Evaluation%20Status.png)
       
-      The Status of an evaluation can be Open, In-Progress, Waiting for more information, Hold or Complete. It is best practice to update the status of an evaluation here whenever it changes. However, the status on this page, or any other page of the evaluation, is for the benifit of the evaluator and does not impact if or how an evaluation can be published by an administrator. Also note that even if an evaluation is marked as Complete that it will NOT be published into the Storefront search results. An evaluation will only be so published if an administrator publishes an evaluation. 
+      The Status of an evaluation can be Open, In-Progress, Waiting for more information, Hold or Complete. It is best practice to update the status of an evaluation here whenever it changes. However, the status on this page, or any other page of the evaluation, is for the benefit of the evaluator and does not impact if or how an evaluation can be published by an administrator. Also note that even if an evaluation is marked as Complete that it will NOT be published into the Storefront search results. An evaluation will only be so published if an administrator publishes an evaluation. 
       
-      Changes to the elements on this page are automatically saved when the changed field looses focus. 
+      Changes to the elements on this page are automatically saved when the changed field loses focus. 
       
   2. Review
   
@@ -71,9 +71,9 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       Each entry should have as many attributes added to it as make sense for that entry. Storefront allows you to search and sort on these attributes so it is important that attributes are carefully curated for each entry. The available attributes will depend on how the templates were set up for your evaluation and entry type. Some attribute types can be added only once, while others can be added multiple times. 
       
-      Care should be taken to only add properly sortable information to the attributes. The best practice is to use elements from the drop downs on the attribue code or stick to a pre-determined list of entries for free-form fields. Other information is better placed into the Contacts, Resources, Media, or Tags sections. In other words, semantics for the attributes must be determined ahead of time and are depenant on your implementation and you need to refer to those external semantics when determining which attribute to add. 
+      Care should be taken to only add properly sortable information to the attribute. The best practice is to use elements from the drop downs on the attribue code or stick to a pre-determined list of entries for free-form fields. Other information is better placed into the Contacts, Resources, Media, or Tags sections. In other words, semantics for the attributes must be determined ahead of time and are dependent on your implementation and you need to refer to those external semantics when determining which attribute to add. 
       
-      To add a new attribuite, select the appripriate attribute type from the list and then select or fill out the attribute code and click save. 
+      To add a new attribute, select the appropriate attribute type from the list and then select or fill out the attribute code and click save. 
       
       Ultimately, attributes become Entry Vitals on the Details tab for an entry. Here is an example: 
       
@@ -83,7 +83,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
   
       ![Entry Relationships](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Entry%20Relationships.png)
       
-      Relationships show how various entries are related to one another. This helps with discovery of entries while searching. A through knowledge of existing entries is usually needed to add good entries here, but can be very useful if done correctly. 
+      Relationships show how various entries are related to one another. This helps with discovery of entries while searching. A thorough knowledge of existing entries is usually needed to add good entries here, but can be very useful if done correctly. 
       
   4. Contacts
   
@@ -126,9 +126,9 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       ![Repo Overview](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Repo%20Overview.png)
       
-      This is an example of a very basic custom section. Some templates will include a variety of sub-sections or other custom formatting. Generally, the sections allow you to focus on different aspects of the evaluation as determied by your implementation. 
+      This is an example of a very basic custom section. Some templates will include a variety of sub-sections or other custom formatting. Generally, the sections allow you to focus on different aspects of the evaluation as determined by your implementation. 
       
-      The text box is a rich text box which means it supports formatting, images, tables, equations, code snippets, etc. The top of the text box has tools that you can use but it also supports the normal keyboard shortcuts (`Ctrl + B` for bold, etc.). Note that there is no autosave in place. If you make a change and click off to a different section your changes will be lost! If you want to save your changes you can either click the save button at the bottom of the text box or change the status at the bottom of the window.  
+      The text box is a rich text box which means it supports formatting, images, tables, equations, code snippets, etc. The top of the text box has tools that you can use but it also supports the normal keyboard shortcuts (`Ctrl + B` for bold, etc.). Note that there is no auto save in place. If you make a change and click off to a different section your changes will be lost! If you want to save your changes you can either click the save button at the bottom of the text box or change the status at the bottom of the window.  
       
   2. Private Notes (A more complex example section)
       
@@ -141,7 +141,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       ![Checklist Summary](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Checklist%20Summary.png)
       
-      The checklist is supposed to be a guided examination of an entry in such a way as to allow results to be compared across entries. After having investigated the entry the summary should be filled out to summarize that investigation and the results thereof. It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tell your what an entry was *actually* about. 
+      The checklist is supposed to be a guided examination of an entry in such a way as to allow results to be compared across entries. After having investigated the entry the summary should be filled out to summarize that investigation and the results thereof. It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tell you what an entry was *actually* about. 
       
       The Recommendations section is where you can list your recommendations for improvements about the entry. The intention is to communicate back to the source of the entry what you think should be done to make what they are doing better. These recommendations must be categorized into one of a selections of options: 
       
@@ -151,17 +151,17 @@ The difference between an entry and an evaluation needs to be emphasized. While 
       
       ![All Questions](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/All%20Questions.png)
       
-      This section gives a sortable and modifyable listing of all of the questions associated with your evaluation. As every question can have a status assigned to it you can use this overview to quickly find those questions that haven't yet been answered or are on hold if you are coming back to continue working on an evaluation. 
+      This section gives a sortable and modifiable listing of all of the questions associated with your evaluation. As every question can have a status assigned to it you can use this overview to quickly find those questions that haven't yet been answered or are on hold if you are coming back to continue working on an evaluation. 
       
-      To edit a question either click on it once to select it and then click Edit or double click on the question. The window that comes up to answer that question will be similar to, but different from, the window that is available if you click on the question in the left hand sidebar. The biggest gap is that there is no way to display the scoring criteria from the pop up window. To get the scoring criteria you have to turn the column on in the table or click on the question in the sidebar. 
+      To edit a question either click on it once to select it, then click Edit, or double click on the question. The window that comes up to answer that question will be similar to, but different from, the window that is available if you click on the question in the left hand sidebar. The biggest gap is that there is no way to display the scoring criteria from the pop up window. To get the scoring criteria you have to turn the column on in the table or click on the question in the sidebar. 
       
   3. Discoverable (An example question)
       
       ![Checklist Question](https://github.com/Aaron-Fine/openstorefront/blob/Storefront-Guide/docs/images/Screenshots/Checklist%20Question.png)
       
-      Here is an example of a typical question. All questions are rated on a 1 to 5 rating scale with 5 being the best possible, 3 being normal and acceptable, and 1 being completly non-conforming. A typical question will have scoring criteria to help an evaluation be objective and consistent, an objective to help evaluators consider the same intent when looking at a question, the questio itself, a free form response area, and private notes. 
+      Here is an example of a typical question. All questions are rated on a 1 to 5 rating scale with 5 being the best possible, 3 being normal and acceptable, and 1 being completely non-conforming. A typical question will have scoring criteria to help an evaluation be objective and consistent, an objective to help evaluators consider the same intent when looking at a question, the question itself, a free form response area, and private notes. 
       
-      It is best practice for every question to have an associated response explaining why a question was scored as it was. Even if the scoring criteria seem clear and unambigous, there is always more to the story than what can be said with only one number. The response area is where you should tell that story. In terms of value, the response is generally more useful than the number assigned. 
+      It is best practice for every question to have an associated response explaining why a question was scored as it was. Even if the scoring criteria seem clear and unambiguous, there is always more to the story than what can be said with only one number. The response area is where you should tell that story. In terms of value, the response is generally more useful than the number assigned. 
       
       Private notes are for use by the evaluator. Nothing in the private notes section will be visible on the final published evaluation. That said, the notes will be preserved for later reference.  
       
