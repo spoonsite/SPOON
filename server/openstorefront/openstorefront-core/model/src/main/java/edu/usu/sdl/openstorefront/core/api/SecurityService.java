@@ -70,7 +70,7 @@ public interface SecurityService
 	 * @return validation results
 	 */
 	ValidationResult validateRegistration(UserRegistration userRegistration);
-	
+
 	/**
 	 * Handle processing the application and generating a verification email
 	 *
@@ -80,7 +80,7 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail);
-	
+
 	/**
 	 * Handle processing the application into user and user profile
 	 *
@@ -89,7 +89,7 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewUser(UserRegistration userRegistration);
-	
+
 	/**
 	 * Approve Registration
 	 *
@@ -136,6 +136,13 @@ public interface SecurityService
 	void unlockUser(String username);
 
 	/**
+	 * Resets failed login attempt (effectively manual unlocks an auto failed
+	 * locked account)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void resetFailedAttempts(String username);
+
+	/**
 	 * This will disable an account; prevent login (Only using the appropriate
 	 * security realm); Remove user profile based user profile rules Which
 	 * should disable watches.
@@ -152,7 +159,6 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void deleteUser(String username);
-
 
 	/**
 	 * Delete User Registration
