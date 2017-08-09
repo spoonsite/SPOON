@@ -289,7 +289,7 @@ public class SecurityServiceImpl
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
-			
+
 			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 
 			UserSecurity userSecurity = new UserSecurity();
@@ -301,7 +301,7 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			
+
 			if (autoApproveUser) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
@@ -481,6 +481,7 @@ public class SecurityServiceImpl
 	public void unlockUser(String username)
 	{
 		Objects.requireNonNull(username);
+		username = username.toLowerCase();
 
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
@@ -498,9 +499,30 @@ public class SecurityServiceImpl
 	}
 
 	@Override
+	public void resetFailedAttempts(String username)
+	{
+		Objects.requireNonNull(username);
+		username = username.toLowerCase();
+
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.findProxy();
+
+		if (userSecurity != null) {
+			userSecurity.setFailedLoginAttempts(0);
+			userSecurity.populateBaseUpdateFields();
+			persistenceService.persist(userSecurity);
+			LOG.log(Level.INFO, MessageFormat.format("user {0} failed attempts was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find user to reset failed attempts.", "Check input: " + username);
+		}
+	}
+
+	@Override
 	public void disableUser(String username)
 	{
 		Objects.requireNonNull(username);
+		username = username.toLowerCase();
 
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
