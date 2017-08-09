@@ -130,22 +130,29 @@ public class EvaluationResource
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
-
-		queryByExample.setMaxResults(evaluationFilterParams.getMax());
-		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
-		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
-
+		
 		Evaluation evaluationSortExample = new Evaluation();
 		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
+
+
 		if (sortField != null) {
+			
+			queryByExample.setMaxResults(evaluationFilterParams.getMax());
+			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
+			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
-
+		List<EvaluationView> views = EvaluationView.toView(evaluations);
+		
+		if (sortField == null) {
+			views = evaluationFilterParams.filter(views);
+		}
+		
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
-		evaluationViewWrapper.getData().addAll(EvaluationView.toView(evaluations));
+		evaluationViewWrapper.getData().addAll(views);
 		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(evaluationViewWrapper);
