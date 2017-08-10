@@ -119,7 +119,7 @@ Ext.define('OSF.landing.TagCloudView', {
 				});
 
 				var maxFontSize = 5;
-				var minFontSize = .9;
+				var minFontSize = .625;
 				var maxCount = 0;
 				var minCount = 0;
 				Ext.Array.each(groupedTags, function(tag) {
