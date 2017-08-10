@@ -128,7 +128,8 @@
 					dockedItems: [
 						{
 							dock: 'top',
-							xtype: 'toolbar',														
+							xtype: 'toolbar',
+							overflowHandler: 'scroller',
 							items:[
 								{
 									text: 'Dashboard',
