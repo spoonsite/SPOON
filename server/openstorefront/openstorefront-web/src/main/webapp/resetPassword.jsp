@@ -79,7 +79,7 @@
 								},
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Password <span class="field-required" />',
+									fieldLabel: 'New Password <span class="field-required" />',
 									inputType: 'password',
 									name: 'password',
 									allowBlank: false,

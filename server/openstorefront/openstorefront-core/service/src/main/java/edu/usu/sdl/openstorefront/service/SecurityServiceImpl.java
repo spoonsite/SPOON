@@ -289,7 +289,7 @@ public class SecurityServiceImpl
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
-			
+
 			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 
 			UserSecurity userSecurity = new UserSecurity();
@@ -301,7 +301,7 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			
+
 			if (autoApproveUser) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
@@ -455,7 +455,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {

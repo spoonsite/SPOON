@@ -60,20 +60,20 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 @Path("v1/service/security")
 @APIDescription("Provides distinct end-point that can be open for user-control security operations")
 public class SecurityService
-	extends BaseResource
+		extends BaseResource
 {
+
 	private static final Logger LOG = Logger.getLogger(SecurityService.class.getName());
-	
-	
+
 	@GET
 	@APIDescription("Gets the shiro config.")
 	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
 	@Produces({MediaType.TEXT_PLAIN})
 	@Path("/shiroconfig")
-	public Response getShiroConfig() 
+	public Response getShiroConfig()
 	{
 		File shiroConfig = FileSystemManager.getConfig("shiro.ini");
-		
+
 		String config = "";
 		try {
 			byte data[] = Files.readAllBytes(shiroConfig.toPath());
@@ -86,22 +86,22 @@ public class SecurityService
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)	
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
 	@APIDescription("Saves shiro config")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/shiroconfig")
 	public Response saveShiroConfig(
-			GenericDataView dataView	
-	) 
+			GenericDataView dataView
+	)
 	{
 		File shiroConfig = FileSystemManager.getConfig("shiro.ini");
-		
+
 		try {
-			Files.copy(shiroConfig.toPath(), 
-					Paths.get(FileSystemManager.CONFIG_DIR + "/shiro.ini.back"), 
-					StandardCopyOption.REPLACE_EXISTING, 					
+			Files.copy(shiroConfig.toPath(),
+					Paths.get(FileSystemManager.CONFIG_DIR + "/shiro.ini.back"),
+					StandardCopyOption.REPLACE_EXISTING,
 					StandardCopyOption.COPY_ATTRIBUTES);
-			
+
 			try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(shiroConfig)))) {
 				out.write(dataView.getData());
 				out.flush();
@@ -109,20 +109,20 @@ public class SecurityService
 				throw exInternal;
 			}
 		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to save shiro.ini file.",  "Check system permission and disk space.", ex);
+			throw new OpenStorefrontRuntimeException("Unable to save shiro.ini file.", "Check system permission and disk space.", ex);
 		}
 		return Response.ok().build();
 	}
-	
+
 	@GET
-	@APIDescription("Gets the security realm(s) in use")	
+	@APIDescription("Gets the security realm(s) in use")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("/realmname")	
-	public List<LookupModel> getSecurityRealm() 
+	@Path("/realmname")
+	public List<LookupModel> getSecurityRealm()
 	{
 		List<LookupModel> realms = new ArrayList<>();
-		
+
 		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
 		if (securityManager instanceof DefaultWebSecurityManager) {
 			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
@@ -132,58 +132,58 @@ public class SecurityService
 				lookupModel.setDescription(realm.getName());
 				realms.add(lookupModel);
 			}
-		}				
+		}
 		return realms;
-	}	
-	
-	@PUT	
-	@APIDescription("Allows a user to reset their password.")	
+	}
+
+	@PUT
+	@APIDescription("Allows a user to reset their password.")
 	@Produces({MediaType.TEXT_PLAIN})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{username}/resetpassword")
 	public Response resetUserPassword(
-		@PathParam("username") String username,
-		UserCredential userCredential
+			@PathParam("username") String username,
+			UserCredential userCredential
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().resetPasswordUser(username, userCredential.getPassword().toCharArray());
+			service.getSecurityService().resetPasswordUser(username.toLowerCase(), userCredential.getPassword().toCharArray());
 			//Approve code will be sent via email. Don't send back to requester.
 			return Response.ok().build();
-		}	
-		
+		}
+
 		//Don't indicted if they that they haven't hit a user
-		return Response.ok().build();		
-	}	
-	
-	@PUT	
-	@APIDescription("Allows a user to approve their new password.")	
+		return Response.ok().build();
+	}
+
+	@PUT
+	@APIDescription("Allows a user to approve their new password.")
 	@Produces({MediaType.TEXT_PLAIN})
 	@Path("/approveResetPassword/{approvalcode}")
-	public Response approvePasswordReset(		
-		@PathParam("approvalcode") String approvalcode	
+	public Response approvePasswordReset(
+			@PathParam("approvalcode") String approvalcode
 	)
-	{	
-		boolean successful =  service.getSecurityService().approveUserPasswordReset(approvalcode);
-		return Response.ok(Boolean.toString(successful)).build();		
-	}	
+	{
+		boolean successful = service.getSecurityService().approveUserPasswordReset(approvalcode);
+		return Response.ok(Boolean.toString(successful)).build();
+	}
 
 	@POST
-	@APIDescription("Allows a user to approve their new password.")	
+	@APIDescription("Allows a user to approve their new password.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(RestErrorModel.class)
 	@Path("/checkPassword")
 	public Response checkPassword(
-		UserCredential userCredential	
+			UserCredential userCredential
 	)
 	{
 		ValidationResult result = service.getSecurityService().validatePassword(userCredential.getPassword().toCharArray());
 		RestErrorModel restErrorModel = result.toRestError();
 		return sendSingleEntityResponse(restErrorModel);
 	}
-	
+
 }
