@@ -54,19 +54,25 @@ import org.hazlewood.connor.bottema.emailaddress.EmailAddressValidator;
 public class MailManager
 		implements Initializable
 {
-    public enum Templates { 
-        EMAIL_VERIFICATION("emailVerification.ftl");
-		
-        private String filename; 
-        private Templates(String filename) { 
-            this.filename = filename; 
-        } 
-        
-        @Override 
-        public String toString(){ 
-            return filename; 
-        } 
-    } 
+
+	public enum Templates
+	{
+		EMAIL_VERIFICATION("emailVerification.ftl"),
+		FORGOT_USERNAME("forgotUsername.ftl");
+
+		private String filename;
+
+		private Templates(String filename)
+		{
+			this.filename = filename;
+		}
+
+		@Override
+		public String toString()
+		{
+			return filename;
+		}
+	}
 
 	private static final Logger log = Logger.getLogger(MailManager.class.getName());
 
@@ -129,28 +135,31 @@ public class MailManager
 		}
 		return email;
 	}
-	
+
 	/**
 	 * Creates a new email with the body of the email set to the email template
+	 *
 	 * @param templateName template to use in setting the contents of the email
 	 * @param data data values to use for populating the template variables
 	 * @return new Email with populated text field
 	 */
-	public static Email newTemplateEmail(String templateName, Map data)
+	public static Email newTemplateEmail(String templateName, Map<String, Object> data)
 	{
 		return newTemplateEmail(templateName, data, false);
 	}
-	
+
 	/**
 	 * Creates a new email with the body of the email set to the email template
+	 *
 	 * @param templateName template to use in setting the contents of the email
 	 * @param data data values to use for populating the template variables
-	 * @param throwException When true, throws an exception when loading the 
-	 * template or processing data map fails. When false, will still log, 
-	 * but will not throw an exception
+	 * (either Map<String, Object> or Javabean see template.process docs)
+	 * @param throwException When true, throws an exception when loading the
+	 * template or processing data map fails. When false, will still log, but
+	 * will not throw an exception
 	 * @return new Email with populated text field
 	 */
-	public static Email newTemplateEmail(String templateName, Map data, boolean throwException)
+	public static Email newTemplateEmail(String templateName, Object data, boolean throwException)
 	{
 		Email email = newEmail();
 		try {
@@ -159,7 +168,7 @@ public class MailManager
 			template.process(data, writer);
 			email.setTextHTML(writer.toString());
 		} catch (TemplateNotFoundException ex) {
-			log.log(Level.SEVERE, MessageFormat.format("Unable to load template {0}, error: {1}",templateName, ex.getMessage()), ex);
+			log.log(Level.SEVERE, MessageFormat.format("Unable to load template {0}, error: {1}", templateName, ex.getMessage()), ex);
 			// Check If Exception Should Be Thrown
 			if (throwException) {
 
@@ -167,7 +176,7 @@ public class MailManager
 				throw new OpenStorefrontRuntimeException("Unable to create email", ex);
 			}
 		} catch (MalformedTemplateNameException | ParseException | TemplateException ex) {
-			log.log(Level.SEVERE, MessageFormat.format("Unable to process template {0}, error: {1}",templateName, ex.getMessage()), ex);
+			log.log(Level.SEVERE, MessageFormat.format("Unable to process template {0}, error: {1}", templateName, ex.getMessage()), ex);
 			// Check If Exception Should Be Thrown
 			if (throwException) {
 
@@ -175,7 +184,7 @@ public class MailManager
 				throw new OpenStorefrontRuntimeException("Unable to create email", ex);
 			}
 		} catch (IOException ex) {
-			log.log(Level.SEVERE, MessageFormat.format("error reading template {0}, error: {1}",templateName, ex.getMessage()), ex);
+			log.log(Level.SEVERE, MessageFormat.format("error reading template {0}, error: {1}", templateName, ex.getMessage()), ex);
 			// Check If Exception Should Be Thrown
 			if (throwException) {
 
@@ -185,7 +194,7 @@ public class MailManager
 		}
 		return email;
 	}
-	
+
 	/**
 	 * Sends an email
 	 * <p>

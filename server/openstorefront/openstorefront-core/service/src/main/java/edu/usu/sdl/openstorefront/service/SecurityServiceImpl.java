@@ -242,7 +242,7 @@ public class SecurityServiceImpl
 				userRegistration.setVerificationCode(generateRandomString(8));
 
 				if (StringUtils.isNotBlank(userRegistration.getEmail())) {
-					Map data = new HashMap();
+					Map<String, Object> data = new HashMap<>();
 					String subject = "Email Verification Code";
 					data.put("verificationCode", userRegistration.getVerificationCode());
 					data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
@@ -289,7 +289,7 @@ public class SecurityServiceImpl
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
-			
+
 			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 
 			UserSecurity userSecurity = new UserSecurity();
@@ -301,7 +301,7 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());
 			userSecurity.populateBaseCreateFields();
-			
+
 			if (autoApproveUser) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
@@ -455,7 +455,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
@@ -832,6 +832,38 @@ public class SecurityServiceImpl
 				LOG.log(Level.FINER, MessageFormat.format("No Matching Role for group: {0}", group));
 			}
 		}
+
+	}
+
+	@Override
+	public void forgotUser(String emailAddress)
+	{
+		String username = null;
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setEmail(emailAddress);
+
+		List<UserProfile> userProfiles = userProfileExample.findByExample();
+		for (UserProfile userProfile : userProfiles) {
+			if (username == null) {
+				username = "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+			} else {
+				username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+			}
+		}
+
+		Map<String, Object> data = new HashMap<>();
+		String subject = "Forgot Username";
+		data.put("username", username);
+		data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+		data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+		data.put("title", subject);
+		Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
+		email.setSubject(subject);
+		email.addRecipient("", emailAddress, Message.RecipientType.TO);
+		MailManager.send(email, true);
 
 	}
 
