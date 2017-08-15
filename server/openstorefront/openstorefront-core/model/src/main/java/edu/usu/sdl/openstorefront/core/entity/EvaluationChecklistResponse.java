@@ -75,6 +75,10 @@ public class EvaluationChecklistResponse
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;
 
+	@ConsumeField
+	@APIDescription("Private information is not published; response and question will not show.")
+	private Boolean privateFlg;
+
 	public EvaluationChecklistResponse()
 	{
 	}
@@ -91,6 +95,7 @@ public class EvaluationChecklistResponse
 		setScore(checklistResponse.getScore());
 		setNotApplicable(checklistResponse.getNotApplicable());
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
+		setPrivateFlg(checklistResponse.getPrivateFlg());
 
 	}
 
@@ -204,6 +209,16 @@ public class EvaluationChecklistResponse
 	public void setNotApplicable(Boolean notApplicable)
 	{
 		this.notApplicable = notApplicable;
+	}
+
+	public Boolean getPrivateFlg()
+	{
+		return privateFlg;
+	}
+
+	public void setPrivateFlg(Boolean privateFlg)
+	{
+		this.privateFlg = privateFlg;
 	}
 
 }
