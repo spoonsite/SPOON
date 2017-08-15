@@ -10,7 +10,7 @@
 		</head>
 	<body>
 		<#if username??>
-			Your username is: <br><br> <b>${username}</b> <br><br>
+			Your username is: <br><br> ${username} <br><br>
 						
 			If you have forgotten your password. Click on "Forgot Password" on the login page.<br><br>
 			

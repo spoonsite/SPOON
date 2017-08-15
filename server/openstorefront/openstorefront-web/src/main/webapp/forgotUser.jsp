@@ -72,7 +72,7 @@
 							items: [
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Enter email address associated with account <span class="field-required" />',
+									fieldLabel: 'Enter your email address associated with your account <span class="field-required" />',
 									name: 'emailAddress',
 									allowBlank: false,
 									maxLength: 255

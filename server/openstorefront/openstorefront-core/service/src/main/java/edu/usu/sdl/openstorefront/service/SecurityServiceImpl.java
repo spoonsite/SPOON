@@ -846,11 +846,11 @@ public class SecurityServiceImpl
 		List<UserProfile> userProfiles = userProfileExample.findByExample();
 		for (UserProfile userProfile : userProfiles) {
 			if (username == null) {
-				username = userProfile.getUsername()
-						+ " (" + userProfile.getFirstName() + ", " + userProfile.getLastName() + ")";
+				username = "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
 			} else {
-				username += "<br> " + userProfile.getUsername()
-						+ " (" + userProfile.getFirstName() + ", " + userProfile.getLastName() + ")";
+				username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
 			}
 		}
 
