@@ -283,7 +283,7 @@
 				<br>
 				<br>
 				<br>
-				<span id="registration" class="hidden"><a href="registration.jsp">Sign up</a> |</span> <a href="resetPassword.jsp">Forgot Password</a> 
+				<span id="registration" class="hidden"><a href="registration.jsp">Sign up</a> |</span> <a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a> 
 				
 			</div>
 		  </form>

@@ -19,7 +19,7 @@
  */
 
     Document   : resetPassword
-    Created on : Feb 17, 2017, 12:09:24 PM
+    Created on : Aug 15, 2017, 12:09:24 PM
     Author     : dshurtleff
 --%>
 
@@ -49,7 +49,7 @@
 				
 				
 				var resetWindow = Ext.create('Ext.window.Window', {
-					title: 'Reset Password',
+					title: 'Forgot Username',
 					iconCls: 'fa fa-key icon-correction-key icon-small-vertical-correction',
 					y: 200,
 					width: 500,
@@ -72,34 +72,10 @@
 							items: [
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Username <span class="field-required" />',
-									name: 'username',
+									fieldLabel: 'Enter email address associated with account <span class="field-required" />',
+									name: 'emailAddress',
 									allowBlank: false,
-									maxLength: 80
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'New Password <span class="field-required" />',
-									inputType: 'password',
-									name: 'password',
-									allowBlank: false,
-									maxLength: 80,
-									minLength: 8
-								},
-								{
-									xtype: 'panel',
-									html: 'Password Requires: <ul><li>At least 1 Capital Letter</li>'+
-										  '<li>At least 1 Number</li>' +
-										  '<li>At least 1 Special Character (Ie. ?!@#$%*)</li></ul>'
-								},								
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Confirm Password <span class="field-required" />',
-									inputType: 'password',
-									name: 'confirmPassword',
-									allowBlank: false,
-									maxLength: 80,
-									minLength: 8
+									maxLength: 255
 								}
 							],
 							dockedItems: [
@@ -108,90 +84,62 @@
 									dock: 'bottom',
 									items: [
 										{											
-											text: 'Send Approval',
+											text: 'Send Username',
 											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction-send icon-button-color-default',
 											scale: 'medium',
 											width: '160px',
 											formBind: true,
 											handler: function() {
-												
-												//verify password
+							
 												var form = this.up('form');
 												var data = form.getValues();
-
-												if (data.password !== data.confirmPassword) {
-													Ext.Msg.show({
-														title:'Validation',
-														message: 'Password and the Confirm Password must match',
-														buttons: Ext.Msg.OK,
-														icon: Ext.Msg.Error,
-														fn: function(btn) {
-														}
-													});
-													form.getForm().markInvalid({
-														confirmPassword: 'Must match password'
-													});											
-												} else {
-													
-													
-													CoreUtil.submitForm({
-														url: 'api/v1/service/security/checkPassword',
-														method: 'POST',														
-														data: data,
-														form: form,
-														loadingText: 'Validating...',
-														success: function(response, opts) {
-															
-															CoreUtil.submitForm({
-																url: 'api/v1/service/security/' + data.username + '/resetpassword',
-																method: 'PUT',
-																data: data,
-																form: form,
-																loadingText: 'Sending Approval...',
-																success: function(response, opts) {
-																	var successWin = Ext.create('Ext.window.Window', {
-																		title: 'Sent Approval',																		
-																		bodyStyle: 'padding: 20px;',
-																		closeAction: 'destroy',
-																		width: 400,
-																		height: 300,
-																		scrollable: true,
-																		closable: false,
-																		onEsc: Ext.emptyFn,
-																		modal: true,
-																		html: '<i class="fa fa-2x fa-check text-success"></i>Check your email associated with your user. Follow the instructions in the email to complete the reset.',
-																		dockedItems: [
+												
+												form.setLoading("Sending Email...");
+												Ext.Ajax.request({
+													url: 'api/v1/service/security/forgotusername?emailAddress=' + data.emailAddress,
+													callback: function(){
+														form.setLoading(false);
+													},
+													success: function(response, opts) {
+														
+														var successWin = Ext.create('Ext.window.Window', {
+																title: 'Sent Email',																		
+																bodyStyle: 'padding: 20px;',
+																closeAction: 'destroy',
+																width: 400,
+																height: 300,
+																scrollable: true,
+																closable: false,
+																onEsc: Ext.emptyFn,
+																modal: true,
+																html: '<i class="fa fa-2x fa-check text-success"></i>Check your email for your username or username(s).',
+																dockedItems: [
+																	{
+																		xtype: 'toolbar',
+																		dock: 'bottom',
+																		items: [
 																			{
-																				xtype: 'toolbar',
-																				dock: 'bottom',
-																				items: [
-																					{
-																						xtype: 'tbfill'
-																					},
-																					{ 
-																						text: 'Return to Login',
-																						width: '170px',
-																						iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction-view',
-																						scale: 'medium',
-																						handler: function() {
-																							window.location.href = 'login.jsp';
-																						}
-																					},
-																					{
-																						xtype: 'tbfill'
-																					}
-																				]
+																				xtype: 'tbfill'
+																			},
+																			{ 
+																				text: 'Return to Login',
+																				width: '170px',
+																				iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction-view',
+																				scale: 'medium',
+																				handler: function() {
+																					window.location.href = 'login.jsp';
+																				}
+																			},
+																			{
+																				xtype: 'tbfill'
 																			}
 																		]
-																	});
-																	successWin.show();
-																}
+																	}
+																]
 															});
-														}
-													});
-													
-													
-												}
+															successWin.show()
+													}
+												});
 											}
 										}, 
 										{

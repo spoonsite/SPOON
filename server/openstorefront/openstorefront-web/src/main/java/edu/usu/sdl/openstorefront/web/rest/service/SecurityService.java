@@ -47,6 +47,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
@@ -156,6 +157,19 @@ public class SecurityService
 		}
 
 		//Don't indicted if they that they haven't hit a user
+		return Response.ok().build();
+	}
+
+	@GET
+	@APIDescription("Allows a user to find there username.")
+	@Produces({MediaType.TEXT_PLAIN})
+	@Path("/forgotusername")
+	public Response forgotUsername(
+			@QueryParam("emailAddress") String emailAddress
+	)
+	{
+		service.getSecurityService().forgotUser(emailAddress);
+		//Username(s) will be emailed
 		return Response.ok().build();
 	}
 

@@ -70,7 +70,7 @@ public interface SecurityService
 	 * @return validation results
 	 */
 	ValidationResult validateRegistration(UserRegistration userRegistration);
-	
+
 	/**
 	 * Handle processing the application and generating a verification email
 	 *
@@ -80,7 +80,7 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewRegistration(UserRegistration userRegistration, Boolean sendEmail);
-	
+
 	/**
 	 * Handle processing the application into user and user profile
 	 *
@@ -89,7 +89,7 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewUser(UserRegistration userRegistration);
-	
+
 	/**
 	 * Approve Registration
 	 *
@@ -107,6 +107,14 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	String resetPasswordUser(String username, char[] password);
+
+	/**
+	 * This will send an email to the emailAddress provided The email will
+	 * indicate the user associated with the email
+	 *
+	 * @param emailAddress
+	 */
+	void forgotUser(String emailAddress);
 
 	/**
 	 * Approves user password reset
@@ -152,7 +160,6 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void deleteUser(String username);
-
 
 	/**
 	 * Delete User Registration
