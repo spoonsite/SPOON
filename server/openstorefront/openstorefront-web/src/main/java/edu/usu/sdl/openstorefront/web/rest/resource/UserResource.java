@@ -98,12 +98,12 @@ public class UserResource
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
 			UserRole userRole = new UserRole();
 			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
-			userRole.setUsername(username);
+			userRole.setUsername(username.toLowerCase());
 
 			List<UserRole> userRoles = userRole.findByExample();
 
@@ -134,10 +134,10 @@ public class UserResource
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().disableUser(username);
+			service.getSecurityService().disableUser(username.toLowerCase());
 			return Response.ok().build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
@@ -152,11 +152,11 @@ public class UserResource
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 
 		if (userSecurity != null) {
-			service.getSecurityService().approveRegistration(username);
+			service.getSecurityService().approveRegistration(username.toLowerCase());
 			return Response.ok().build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
@@ -174,7 +174,7 @@ public class UserResource
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().unlockUser(username);
+			service.getSecurityService().unlockUser(username.toLowerCase());
 			return Response.ok().build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
@@ -209,18 +209,14 @@ public class UserResource
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
 
-			if (SecurityUtil.getCurrentUserName().equals(username)
+			if (SecurityUtil.getCurrentUserName().equals(username.toLowerCase())
 					|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT)) {
 
-				if (SecurityUtil.getCurrentUserName().equals(username)) {
-					//
-				}
-
-				service.getSecurityService().adminResetPassword(username, userCredential.getPassword().toCharArray());
+				service.getSecurityService().adminResetPassword(username.toLowerCase(), userCredential.getPassword().toCharArray());
 				return Response.ok().build();
 			} else {
 				return Response.status(Response.Status.FORBIDDEN).build();
@@ -278,7 +274,7 @@ public class UserResource
 			@PathParam("username") String username
 	)
 	{
-		service.getSecurityService().deleteUser(username);
+		service.getSecurityService().deleteUser(username.toLowerCase());
 		return Response.noContent().build();
 	}
 

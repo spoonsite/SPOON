@@ -109,6 +109,14 @@ public interface SecurityService
 	String resetPasswordUser(String username, char[] password);
 
 	/**
+	 * This will send an email to the emailAddress provided The email will
+	 * indicate the user associated with the email
+	 *
+	 * @param emailAddress
+	 */
+	void forgotUser(String emailAddress);
+
+	/**
 	 * Approves user password reset
 	 *
 	 * @param approvalCode (Assumes it Base64 encoded for web)
