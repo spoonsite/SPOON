@@ -46,6 +46,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -545,6 +546,13 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
+		List<T> results = query(query.getKey(), query.getValue(), queryByExample.isReturnNonProxied());
+		return results;
+	}
+
+	public SimpleEntry<String, Map<String, Object>> generateQuery(QueryByExample queryByExample)
+	{
 		StringBuilder queryString = new StringBuilder();
 
 		switch (queryByExample.getQueryType()) {
@@ -567,6 +575,13 @@ public class OrientPersistenceService
 			if (StringUtils.isNotBlank(likeClause)) {
 				appendToWhere(queryString, likeClause);
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions()));
+			}
+		}
+		if (queryByExample.getInExample() != null) {
+			String inClause = generateWhereClause(queryByExample.getInExample(), new ComplexFieldStack(), queryByExample.getInExampleOption(), queryByExample.getFieldOptions());
+			if (StringUtils.isNotBlank(inClause)) {
+				appendToWhere(queryString, inClause);
+				mappedParams.putAll(mapParameters(queryByExample.getInExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getInExampleOption(), queryByExample.getFieldOptions()));
 			}
 		}
 		queryByExample.getExtraWhereCauses().forEach(item -> {
@@ -606,9 +621,7 @@ public class OrientPersistenceService
 		if (queryByExample.isParallelQuery()) {
 			queryString.append(" PARALLEL ");
 		}
-
-		List<T> results = query(queryString.toString(), mappedParams, queryByExample.isReturnNonProxied());
-		return results;
+		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
 	private void appendToWhere(StringBuilder queryString, String conditionClause)
@@ -674,6 +687,20 @@ public class OrientPersistenceService
 							if (GenerateStatementOption.OPERATION_NULL.equals(fieldOperation.getOperation())
 									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(fieldOperation.getOperation())) {
 								addParameter = false;
+							}
+							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())) {
+								addParameter = false;
+								where.append(" ( :")
+										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+										.append(fieldOperation.getParameterSuffix())
+										.append(0);
+								for (int i = 1; i < generateStatementOption.getParameterValues().size(); i++) {
+									where.append(", :")
+											.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+											.append(fieldOperation.getParameterSuffix())
+											.append(i);
+								}
+								where.append(" )");
 							}
 
 							if (addParameter) {
@@ -768,6 +795,12 @@ public class OrientPersistenceService
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
+						} else if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+								&& !generateStatementOption.getParameterValues().isEmpty()) {
+							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
+							for (Integer i = 0; i < generateStatementOption.getParameterValues().size(); i++) {
+								parameterMap.put(fieldName + fieldOperation.getParameterSuffix() + i.toString(), generateStatementOption.getParameterValues().get(i));
+							}
 						} else {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							parameterMap.put(fieldName + fieldOperation.getParameterSuffix(), value);
