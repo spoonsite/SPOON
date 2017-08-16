@@ -546,7 +546,7 @@
 
 					var evalComponentUrl = 'api/v1/resource/components/' + componentId + '/detail';
 					if (evaluationId !== '') {
-						evalComponentUrl = 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/' + componentId;
+						evalComponentUrl = 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/';
 					}
 
 					Ext.Ajax.request({
@@ -646,17 +646,6 @@
 					});
 				}
 			};
-
-			var loadComponentId = function () {
-				Ext.Ajax.request({
-					url: 'api/v1/resource/evaluations/' + evaluationId + '/componentId',
-					success: function(response, opts) {
-						var component = Ext.decode(response.responseText);
-						componentId = component.componentId;
-						loadDetails();
-					}
-				});
-			};
 			
 			var currentWatch;			
 			var loadWatches = function(){
@@ -673,13 +662,8 @@
 							Ext.getCmp('watchBtn').setHidden(true);
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
 						}
-						
-						if (evaluationId !== '') {
-							loadComponentId();
-						}
-						else {
-							loadDetails();
-						}
+
+						loadDetails();
 					}
 				});
 			};

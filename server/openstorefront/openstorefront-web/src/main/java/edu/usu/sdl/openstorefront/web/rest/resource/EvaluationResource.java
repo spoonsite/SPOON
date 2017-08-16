@@ -178,9 +178,9 @@ public class EvaluationResource
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationView.class)
-	@APIDescription("Get a valid component relative to the given evaluation")
-	@Path("/{evaluationId}/componentId")
-	public Response getEvaluationComponentId(
+	@APIDescription("Get component view (including evals) for published and current evaluation (whether published or not)")
+	@Path("/{evaluationId}/componentdetails")
+	public Response getEvaluationComponentDetails(
 			@PathParam("evaluationId") String evaluationId
 	)
 	{
@@ -193,23 +193,6 @@ public class EvaluationResource
 			componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
 		}
 		
-		componentExample = new Component();
-		componentExample.setComponentId(componentId);
-		
-		return sendSingleEntityResponse(componentExample);
-	}
-	
-	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(EvaluationView.class)
-	@APIDescription("Get component view (including evals) for published and current evaluation (whether publish or not)")
-	@Path("/{evaluationId}/componentdetails/{componentId}")
-	public Response getEvaluationComponentDetails(
-			@PathParam("evaluationId") String evaluationId,
-			@PathParam("componentId") String componentId
-	)
-	{
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId, evaluationId);
 		
 		if (componentDetail != null) {
