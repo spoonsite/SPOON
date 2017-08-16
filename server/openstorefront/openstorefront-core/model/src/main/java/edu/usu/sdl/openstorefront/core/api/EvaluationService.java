@@ -57,12 +57,21 @@ public interface EvaluationService
 	public String saveEvaluationAll(EvaluationAll evaluationAll);
 
 	/**
-	 * Get a complete evaluation model
+	 * Get a complete evaluation model This get published and unpublished data
 	 *
 	 * @param evaluationId
 	 * @return null if not found
 	 */
 	public EvaluationAll getEvaluation(String evaluationId);
+
+	/**
+	 * Get a complete evaluation model
+	 *
+	 * @param evaluationId
+	 * @param publicInformationOnly
+	 * @return
+	 */
+	public EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly);
 
 	/**
 	 * Gets published evaluations (only public information)

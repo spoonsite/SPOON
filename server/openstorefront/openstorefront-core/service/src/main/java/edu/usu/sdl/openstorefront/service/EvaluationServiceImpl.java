@@ -271,7 +271,8 @@ public class EvaluationServiceImpl
 		return getEvaluation(evaluationId, false);
 	}
 
-	private EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
+	@Override
+	public EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
 	{
 		Objects.requireNonNull(evaluationId);
 
