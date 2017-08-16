@@ -3524,24 +3524,33 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
-		List<ComponentTag> allTags = service.getComponentService().getTagCloud();
-		List<ComponentTag> filteredTags = new ArrayList<>();
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		List<Component> components = componentExample.findByExample();
 		
-		for (ComponentTag tag : allTags) {
-			boolean pass = true;
-			for (ComponentTag myTag : componentTags) {
-				if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
-					pass = false;
-					break;
+		if (!components.isEmpty()) {
+			List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
+			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+			List<ComponentTag> filteredTags = new ArrayList<>();
+
+			for (ComponentTag tag : allTags) {
+				boolean pass = true;
+				for (ComponentTag myTag : componentTags) {
+					if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+						pass = false;
+						break;
+					}
+				}
+				if (pass) {
+					filteredTags.add(tag);
 				}
 			}
-			if (pass) {
-				filteredTags.add(tag);
-			}
-		}
 
-		return filteredTags;
+			return filteredTags;
+		}
+		else {
+			return service.getComponentService().getTagCloud();
+		}
 	}
 	
 	@GET
