@@ -118,6 +118,7 @@
 		Ext.onReady(function(){		
 			
 			var componentId = '${param.id}';
+			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
 			var hideSecurityBanner =  '${param.hideSecurityBanner}' !==  '' ? true : false;
 			
@@ -542,14 +543,20 @@
 				if (componentId) {
 					headerPanel.setLoading(true);
 					contentPanel.setLoading(true);
+
+					var evalComponentUrl = 'api/v1/resource/components/' + componentId + '/detail';
+					if (evaluationId !== '') {
+						evalComponentUrl = 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/' + componentId;
+					}
+
 					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + componentId + '/detail',
+						url: evalComponentUrl,
 						callback: function(){
 							headerPanel.setLoading(false);							
 						},
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
-							
+
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
@@ -639,6 +646,17 @@
 					});
 				}
 			};
+
+			var loadComponentId = function () {
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evaluationId + '/componentId',
+					success: function(response, opts) {
+						var component = Ext.decode(response.responseText);
+						componentId = component.componentId;
+						loadDetails();
+					}
+				});
+			};
 			
 			var currentWatch;			
 			var loadWatches = function(){
@@ -656,7 +674,12 @@
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
 						}
 						
-						loadDetails();
+						if (evaluationId !== '') {
+							loadComponentId();
+						}
+						else {
+							loadDetails();
+						}
 					}
 				});
 			};

@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
@@ -40,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
@@ -169,6 +171,51 @@ public class EvaluationResource
 			return sendSingleEntityResponse(EvaluationView.toView(evaluation));
 		} else {
 			return sendSingleEntityResponse(evaluation);
+		}
+	}
+	
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationView.class)
+	@APIDescription("Get a valid component relative to the given evaluation")
+	@Path("/{evaluationId}/componentId")
+	public Response getEvaluationComponentId(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		String componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getComponentId();
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		List<Component> components = componentExample.findByExample();
+		
+		if (components.isEmpty()) {
+			componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+		}
+		
+		componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		
+		return sendSingleEntityResponse(componentExample);
+	}
+	
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationView.class)
+	@APIDescription("Get component view (including evals) for published and current evaluation (whether publish or not)")
+	@Path("/{evaluationId}/componentdetails/{componentId}")
+	public Response getEvaluationComponentDetails(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("componentId") String componentId
+	)
+	{
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId, evaluationId);
+		
+		if (componentDetail != null) {
+			return sendSingleEntityResponse(componentDetail);
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
 
