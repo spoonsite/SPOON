@@ -254,7 +254,8 @@
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
 								'status': Ext.getCmp('filterActiveStatus').getValue(),
-								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
+								'componentName': Ext.getCmp('filterName').getValue()
 							};
 						}
 					}
@@ -379,25 +380,24 @@
 										actionRefresh();
 									}
 								}			
-							})
-//							,
-//							{
-//								xtype: 'textfield',
-//								id: 'filterName',
-//								fieldLabel: 'Name',
-//								name: 'name',
-//								emptyText: 'Filter By Name',
-//								labelAlign: 'top',
-//								labelSeparator: '',
-//								listeners: {
-//									change: {
-//										fn: function(field, newValue, oldValue, opts) {
-//											actionRefresh();
-//										},
-//										buffer: 1500
-//									}
-//								}
-//							}
+							}),
+							{
+								xtype: 'textfield',
+								id: 'filterName',
+								fieldLabel: 'Name',
+								name: 'name',
+								emptyText: 'Filter By Name',
+								labelAlign: 'top',
+								labelSeparator: '',
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											actionRefresh();
+										},
+										buffer: 1500
+									}
+								}
+							}
 						]
 					},					
 					{

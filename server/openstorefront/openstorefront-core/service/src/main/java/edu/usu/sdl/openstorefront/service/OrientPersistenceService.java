@@ -553,6 +553,7 @@ public class OrientPersistenceService
 
 	public SimpleEntry<String, Map<String, Object>> generateQuery(QueryByExample queryByExample)
 	{
+
 		StringBuilder queryString = new StringBuilder();
 
 		switch (queryByExample.getQueryType()) {
@@ -690,7 +691,7 @@ public class OrientPersistenceService
 							}
 							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())) {
 								addParameter = false;
-								where.append(" ( :")
+								where.append(" [ :")
 										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
 										.append(fieldOperation.getParameterSuffix())
 										.append(0);
@@ -700,7 +701,7 @@ public class OrientPersistenceService
 											.append(fieldOperation.getParameterSuffix())
 											.append(i);
 								}
-								where.append(" )");
+								where.append(" ]");
 							}
 
 							if (addParameter) {

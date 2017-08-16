@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
@@ -54,6 +55,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -115,6 +117,7 @@ public class EvaluationResource
 
 		Evaluation endExample = new Evaluation();
 		endExample.setUpdateDts(evaluationFilterParams.getEnd());
+		
 
 		QueryByExample queryByExample = new QueryByExample(evaluationExample);
 
@@ -130,13 +133,35 @@ public class EvaluationResource
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
-		
+
+		//get component ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
+			// If given, filter the search by name
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + evaluationFilterParams.getComponentName().toLowerCase() + "%");
+
+			QueryByExample componentQueryByExample = new QueryByExample(new Component());
+			componentQueryByExample.setLikeExample(componentLikeExample);
+			// Define Lookup Operation (ILIKE)
+			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			
+			List<Component> components = service.getPersistenceService().queryByExample(componentQueryByExample);
+			// get list of ids
+			List<String> ids = components.stream().map(x -> x.getComponentId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+				Evaluation idInExample = new Evaluation();
+				idInExample.setComponentId(QueryByExample.STRING_FLAG);
+				queryByExample.setInExample(idInExample);
+				queryByExample.getInExampleOption().setParameterValues(ids);
+			}
+		}
+
 		Evaluation evaluationSortExample = new Evaluation();
 		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
 
-
 		if (sortField != null) {
-			
+
 			queryByExample.setMaxResults(evaluationFilterParams.getMax());
 			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
 			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
@@ -146,11 +171,11 @@ public class EvaluationResource
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
 		List<EvaluationView> views = EvaluationView.toView(evaluations);
-		
+
 		if (sortField == null) {
 			views = evaluationFilterParams.filter(views);
 		}
-		
+
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
 		evaluationViewWrapper.getData().addAll(views);
 		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));

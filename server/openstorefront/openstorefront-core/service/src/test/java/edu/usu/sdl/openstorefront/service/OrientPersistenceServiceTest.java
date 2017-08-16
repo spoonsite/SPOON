@@ -186,7 +186,7 @@ public class OrientPersistenceServiceTest
 		values.add("CODE3");
 		queryByExample.setInExample(componentInExample);
 		queryByExample.getInExampleOption().setParameterValues(values);
-		String expQuery = "select   from TestEntity where  code  IN ( :codeParam0, :codeParam1, :codeParam2 )";
+		String expQuery = "select   from TestEntity where  code  IN [ :codeParam0, :codeParam1, :codeParam2 ]";
 		Map<String, Object> expPrams = new HashMap<>();
 		expPrams.put("codeParam0", "CODE1");
 		expPrams.put("codeParam1", "CODE2");
@@ -221,7 +221,7 @@ public class OrientPersistenceServiceTest
 
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		String expQuery = "select   from TestEntity where  code  IN ( :codeParam0, :codeParam1, :codeParam2 )";
+		String expQuery = "select   from TestEntity where  code  IN [ :codeParam0, :codeParam1, :codeParam2 ]";
 		Map<String, Object> expPrams = new HashMap<>();
 		expPrams.put("codeParam0", "CODE1");
 		expPrams.put("codeParam1", "CODE2");
