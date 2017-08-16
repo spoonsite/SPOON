@@ -201,6 +201,12 @@ public class ComponentServiceImpl
 	{
 		return core.getComponentDetails(componentId);
 	}
+	
+	@Override
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
+	{
+		return core.getComponentDetails(componentId, evaluationId);
+	}
 
 	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)

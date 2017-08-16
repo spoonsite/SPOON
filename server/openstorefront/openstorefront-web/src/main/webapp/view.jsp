@@ -118,6 +118,7 @@
 		Ext.onReady(function(){		
 			
 			var componentId = '${param.id}';
+			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
 			var hideSecurityBanner =  '${param.hideSecurityBanner}' !==  '' ? true : false;
 			
@@ -542,14 +543,21 @@
 				if (componentId) {
 					headerPanel.setLoading(true);
 					contentPanel.setLoading(true);
+
+					var evalComponentUrl = 'api/v1/resource/components/' + componentId + '/detail';
+					if (evaluationId) {
+						evalComponentUrl = 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/';
+					}
+
 					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + componentId + '/detail',
+						url: evalComponentUrl,
 						callback: function(){
 							headerPanel.setLoading(false);							
 						},
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
-							
+							componentId = entry.componentId;
+
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
@@ -655,7 +663,7 @@
 							Ext.getCmp('watchBtn').setHidden(true);
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
 						}
-						
+
 						loadDetails();
 					}
 				});
