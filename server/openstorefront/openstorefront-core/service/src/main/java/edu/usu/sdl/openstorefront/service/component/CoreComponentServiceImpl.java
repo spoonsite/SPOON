@@ -268,6 +268,29 @@ public class CoreComponentServiceImpl
 
 		return componentSearchViews;
 	}
+	
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
+	{
+		EvaluationAll currentEvaluation = componentService.getEvaluationService().getEvaluation(evaluationId);
+		ComponentDetailView componentDetailView = getComponentDetails(componentId);
+		List<EvaluationAll> existingEvaluations;
+		
+		// If the evaluation is not published, use the origin component Id
+		if (!currentEvaluation.getEvaluation().getPublished()) {
+			componentId = componentService.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+			existingEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		}
+		else {
+			existingEvaluations = componentDetailView.getFullEvaluations();
+		}
+		
+		// set current evaluation as the first in the list
+		existingEvaluations.removeIf(obj -> obj.getEvaluation().getEvaluationId().equals(evaluationId));
+		existingEvaluations.add(0, currentEvaluation);
+		componentDetailView.setFullEvaluations(existingEvaluations);
+		
+		return componentDetailView;
+	}
 
 	public ComponentDetailView getComponentDetails(String componentId)
 	{

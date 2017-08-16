@@ -295,6 +295,13 @@
 					},						
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('evaluationGrid').getComponent('tools');
+						var evalGrid = Ext.getCmp('evaluationGrid');
+
+						if (evalGrid.getSelectionModel().getCount() === 1) {
+							Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+						} else {
+							Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+						}
 
 						if (selected.length > 0) {	
 							tools.getComponent('action').setDisabled(false);
@@ -417,6 +424,18 @@
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 									addEditEvaluation(record);
+								}
+							},
+							{
+								text: 'View',
+								id: 'lookupGrid-tools-preview',
+								scale: 'medium',
+								width: '100px',
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+								disabled: true,
+								handler: function () {
+									var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
+									actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
 								}
 							},
 							{
@@ -874,8 +893,86 @@
 						} 
 					}
 				});					
-			};			
-		
+			};	
+
+			var previewContents = Ext.create('OSF.ux.IFrame', {
+				src: ''
+			});
+
+			var previewComponentWin = Ext.create('Ext.window.Window', {
+				width: '70%',
+				height: '80%',
+				maximizable: true,
+				title: 'Preview',
+				iconCls: 'fa fa-lg fa-eye',
+				modal: true,
+				layout: 'fit',
+				items: [
+					previewContents
+				],
+				tools: [
+					{
+						type: 'up',
+						tooltip: 'popout preview',
+						handler: function(){
+							window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('evaluationGrid').getSelection()[0].get('componentId'), "Preview");
+						}
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								text: 'Previous',
+								id: 'previewWinTools-previousBtn',
+								iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
+								handler: function() {
+									actionPreviewNextRecord(false);
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function() {
+									this.up('window').hide();
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Next',
+								id: 'previewWinTools-nextBtn',
+								iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+								iconAlign: 'right',
+								handler: function() {
+									actionPreviewNextRecord(true);
+								}
+							}
+						]
+					}
+				]
+			});
+
+			var actionPreviewNextRecord = function(next) {
+				if (next) {
+					Ext.getCmp('evaluationGrid').getSelectionModel().selectNext();
+				} else {
+					Ext.getCmp('evaluationGrid').getSelectionModel().selectPrevious();
+				}
+				var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
+				actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
+			};
+
+			var actionPreviewComponent = function(componentId, evalId){
+				previewComponentWin.show();
+				previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
+			};
 		});
 		
 	</script>
