@@ -609,6 +609,9 @@ public class EvaluationResource
 			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
 			contentSectionMedia = contentSectionMedia.find();
 			if (contentSectionMedia != null) {
+				if (StringUtils.isNotBlank(sectionMedia.getMediaTypeCode())) {
+					contentSectionMedia.setMediaTypeCode(sectionMedia.getMediaTypeCode());
+				}
 				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
 				contentSectionMedia.setCaption(sectionMedia.getCaption());
 				contentSectionMedia.save();
