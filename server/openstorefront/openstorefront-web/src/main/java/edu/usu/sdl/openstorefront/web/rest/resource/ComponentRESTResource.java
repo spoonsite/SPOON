@@ -3526,10 +3526,13 @@ public class ComponentRESTResource
 	{
 		Component componentExample = new Component();
 		componentExample.setComponentId(componentId);
-		List<Component> components = componentExample.findByExample();
+		Component component = componentExample.find();
 		
-		if (!components.isEmpty()) {
-			List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
+		if (component != null) {
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(componentId);
+			List<ComponentTag> componentTags = componentTagExample.findByExample();
+			
 			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
 			List<ComponentTag> filteredTags = new ArrayList<>();
 

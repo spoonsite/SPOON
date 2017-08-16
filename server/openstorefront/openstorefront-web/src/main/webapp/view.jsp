@@ -545,7 +545,7 @@
 					contentPanel.setLoading(true);
 
 					var evalComponentUrl = 'api/v1/resource/components/' + componentId + '/detail';
-					if (evaluationId !== '') {
+					if (evaluationId) {
 						evalComponentUrl = 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/';
 					}
 
@@ -556,6 +556,7 @@
 						},
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
+							componentId = entry.componentId;
 
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){
