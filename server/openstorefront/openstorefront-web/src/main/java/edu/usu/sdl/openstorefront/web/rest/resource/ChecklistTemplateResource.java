@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ChecklistTemplateDetailView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -136,6 +137,11 @@ public class ChecklistTemplateResource
 	{
 		ValidationResult validationResult = checklistTemplate.validate();
 		if (validationResult.valid()) {
+			//mark the order
+			int order = 1;
+			for (ChecklistTemplateQuestion templateQuestion : checklistTemplate.getQuestions()) {
+				templateQuestion.setSortOrder(order++);
+			}
 			checklistTemplate = checklistTemplate.save();
 
 			if (create) {

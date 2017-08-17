@@ -245,8 +245,18 @@
 							return Ext.util.Format.stripTags(value);
 						}
 					},	
-					{ text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
-					{ text: 'Create User', dataIndex: 'createUser', width: 175 },
+					{ text: 'Tags', dataIndex: 'tags', width: 250, sortable: false, 
+						renderer: function(value, meta, record) {
+							var viewHtml = '';							
+							var tags = record.get('tags');
+							Ext.Array.each(tags, function(tag){
+								viewHtml += '<span class="alerts-option-items">' + tag.tag + '</span>';
+							});							
+							return viewHtml;
+						}
+					},
+					{ text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175, hidden: true },
+					{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
 					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
 					{ text: 'Update User', dataIndex: 'updateUser', width: 175 }
 				],
@@ -262,11 +272,13 @@
 							tools.getComponent('edit').setDisabled(false);							
 							tools.getComponent('togglestatus').setDisabled(false);
 							tools.getComponent('delete').setDisabled(false);
+							tools.getComponent('copy').setDisabled(false);							
 						} else {
 							tools.getComponent('view').setDisabled(true);
 							tools.getComponent('edit').setDisabled(true);							
 							tools.getComponent('togglestatus').setDisabled(true);
 							tools.getComponent('delete').setDisabled(true);
+							tools.getComponent('copy').setDisabled(true);
 						}
 					}
 				},				
@@ -373,7 +385,18 @@
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
 								}
-							},								
+							},
+							{
+								text: 'Copy',
+								iconCls: 'fa fa-2x fa-copy icon-button-color-default',
+								itemId: 'copy',
+								disabled: true,								
+								scale: 'medium',
+								handler: function(){
+									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
+									actionCopyRecord(record);
+								}								
+							},
 							{
 								xtype: 'tbfill'
 							},
@@ -553,8 +576,53 @@
 						actionRefreshQuestion();
 					}
 				});				
-			};			
+			};
 			
+			var actionCopyRecord = function(record) {
+				
+				var data = Ext.clone(record.data);
+				delete data.questionId;
+				
+						
+				var maxRetries = 5;						
+				var performCopy = function(copyNumber) {
+					data.qid = 'copy-' + data.qid;
+					data.qid = Ext.String.ellipsis(data.qid, 58);
+					data.qid += '-' + copyNumber;
+										
+					questionGrid.setLoading('Copying...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/checklistquestions',
+						method: 'POST',
+						jsonData: data,
+						callback: function() {
+							questionGrid.setLoading(false);
+						},
+						success: function() {
+							actionRefreshQuestion();
+						},
+						failure: function() {
+							copyNumber++;
+							if (copyNumber <= maxRetries) {
+								performCopy(copyNumber);
+							} else {
+								Ext.Msg.show({
+									title:'Too Many Copies',
+									message: 'Too many copies of the same question.<br> Edit the QID of the copies.',
+									buttons: Ext.Msg.OK,
+									icon: Ext.Msg.ERROR,
+									fn: function(btn) {
+									}
+								});
+							}
+						}
+					});					
+					
+				};
+				performCopy(1);
+			
+			};
+					
 			var actionDelete = function(record) {
 				
 				questionGrid.setLoading('Checking for references...');

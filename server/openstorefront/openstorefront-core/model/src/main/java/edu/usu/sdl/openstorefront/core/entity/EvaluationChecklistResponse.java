@@ -79,6 +79,8 @@ public class EvaluationChecklistResponse
 	@APIDescription("Private information is not published; response and question will not show.")
 	private Boolean privateFlg;
 
+	private Integer sortOrder;
+
 	public EvaluationChecklistResponse()
 	{
 	}
@@ -219,6 +221,16 @@ public class EvaluationChecklistResponse
 	public void setPrivateFlg(Boolean privateFlg)
 	{
 		this.privateFlg = privateFlg;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
 	}
 
 }

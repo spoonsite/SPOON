@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
-import edu.usu.sdl.openstorefront.core.sort.ChecklistQuestionComparator;
+import edu.usu.sdl.openstorefront.core.sort.ChecklistTemplateQuestionComparator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,11 +48,11 @@ public class ChecklistTemplateDetailView
 		view.setDescription(template.getDescription());
 		view.setInstructions(template.getInstructions());
 
+		template.getQuestions().sort(new ChecklistTemplateQuestionComparator<>());
 		for (ChecklistTemplateQuestion questionTemplate : template.getQuestions()) {
 			ChecklistQuestion checklistQuestion = service.getChecklistService().findQuestion(questionTemplate.getQuestionId());
 			view.getQuestions().add(ChecklistQuestionView.toView(checklistQuestion));
 		}
-		view.getQuestions().sort(new ChecklistQuestionComparator<>());
 
 		return view;
 	}

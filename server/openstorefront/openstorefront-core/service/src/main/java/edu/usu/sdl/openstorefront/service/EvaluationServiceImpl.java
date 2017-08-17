@@ -251,6 +251,7 @@ public class EvaluationServiceImpl
 				response.setResponseId(persistenceService.generateId());
 				response.setQuestionId(question.getQuestionId());
 				response.setWorkflowStatus(initialStatus.getCode());
+				response.setSortOrder(question.getSortOrder());
 				response.populateBaseCreateFields();
 				persistenceService.persist(response);
 			}

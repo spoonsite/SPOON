@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.core.sort;
 
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import java.util.Comparator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
- * order by QID (numbers first)
  *
  * @author dshurtleff
- * @param <T>
  */
-public class ChecklistQuestionComparator<T extends ChecklistQuestion>
+public class ChecklistTemplateQuestionComparator<T extends ChecklistTemplateQuestion>
 		implements Comparator<T>
 {
 
-	public ChecklistQuestionComparator()
+	public ChecklistTemplateQuestionComparator()
 	{
 	}
 
@@ -44,14 +40,19 @@ public class ChecklistQuestionComparator<T extends ChecklistQuestion>
 		} else if (o1 == null && o2 != null) {
 			return -1;
 		} else {
-			String quid1 = o1.getQid();
-			String quid2 = o2.getQid();
-
-			if (StringUtils.isNumeric(quid1)
-					&& StringUtils.isNumeric(quid2)) {
-				return Convert.toInteger(quid1).compareTo(Convert.toInteger(quid2));
+			Integer sort1 = o1.getSortOrder();
+			Integer sort2 = o2.getSortOrder();
+			if (sort1 == null
+					&& sort2 == null) {
+				return 0;
+			} else if (sort1 != null
+					&& sort2 == null) {
+				return 1;
+			} else if (sort1 == null
+					&& sort2 != null) {
+				return -1;
 			} else {
-				return o1.getQid().compareTo(o2.getQid());
+				return sort1.compareTo(sort2);
 			}
 		}
 	}
