@@ -173,7 +173,7 @@ public class EvaluationResource
 			return sendSingleEntityResponse(evaluation);
 		}
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -188,13 +188,13 @@ public class EvaluationResource
 		Component componentExample = new Component();
 		componentExample.setComponentId(componentId);
 		List<Component> components = componentExample.findByExample();
-		
+
 		if (components.isEmpty()) {
 			componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
 		}
-		
+
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId, evaluationId);
-		
+
 		if (componentDetail != null) {
 			return sendSingleEntityResponse(componentDetail);
 		} else {
@@ -339,6 +339,7 @@ public class EvaluationResource
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
+				evaluationExisting.populateBaseUpdateFields();
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
