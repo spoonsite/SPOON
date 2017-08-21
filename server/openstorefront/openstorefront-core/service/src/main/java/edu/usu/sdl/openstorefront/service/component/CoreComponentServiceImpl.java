@@ -1015,7 +1015,11 @@ public class CoreComponentServiceImpl
 					Field pkField = EntityUtil.getPKField(oldEnity);
 					if (pkField != null) {
 						pkField.setAccessible(true);
-						sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						if (oldEnity instanceof ComponentTag) {
+							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+						} else {
+							sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						}
 					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
 					}

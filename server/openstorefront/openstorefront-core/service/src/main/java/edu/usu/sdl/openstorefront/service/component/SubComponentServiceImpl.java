@@ -682,7 +682,24 @@ public class SubComponentServiceImpl
 
 	public void doSaveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
+		Objects.requireNonNull(tag);
+		Objects.requireNonNull(tag.getComponentId(), "Must set the component Id");
+		Objects.requireNonNull(tag.getText());
+
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
+		if (oldTag == null) {
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(tag.getComponentId());
+			List<ComponentTag> componentTags = componentTagExample.findByExampleProxy();
+
+			for (ComponentTag tagExisting : componentTags) {
+
+				if (tagExisting.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+					oldTag = tagExisting;
+				}
+			}
+		}
+
 		if (oldTag != null) {
 			oldTag.updateFields(tag);
 			persistenceService.persist(oldTag);
