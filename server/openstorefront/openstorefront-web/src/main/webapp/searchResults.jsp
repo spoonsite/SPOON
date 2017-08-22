@@ -1612,7 +1612,8 @@
 											queryMode: 'remote',
 											hideTrigger: true,
 											valueField: 'query',
-											displayField: 'name',											
+											displayField: 'name',
+											id: 'searchTextFieldResults',
 											autoSelect: false,
 											store: {
 												autoLoad: false,
