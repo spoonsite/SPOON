@@ -63,6 +63,7 @@
 							{
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-print icon-top-padding',
+								id: 'printCustomizedEntryBtn',
 								text: 'Print',								
 								scale: 'large',
 								margin: '0 10 0 0',

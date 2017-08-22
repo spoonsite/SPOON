@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test.search;
 
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import org.junit.BeforeClass;
 
 /**
  * Extend this for Search Tests
@@ -25,5 +26,9 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 public class SearchTestBase
 		extends BrowserTestBase
 {
-
+	@BeforeClass
+	public static void setupBaseTest()
+	{
+		login();
+	}
 }

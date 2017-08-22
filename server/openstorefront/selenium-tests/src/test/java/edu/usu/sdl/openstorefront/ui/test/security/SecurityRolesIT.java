@@ -25,7 +25,7 @@ import org.openqa.selenium.WebDriver;
  *
  * @author besplin
  */
-public class SecurityRolesTest
+public class SecurityRolesIT
 		extends NewSecurityRole
 {
 

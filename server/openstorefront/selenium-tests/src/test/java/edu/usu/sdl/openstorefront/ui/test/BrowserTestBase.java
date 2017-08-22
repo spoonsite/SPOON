@@ -127,7 +127,7 @@ public class BrowserTestBase
 	}
 
 	// Making Tread.sleep "universal"
-	protected void sleep(int mills)
+	protected static void sleep(int mills)
 	{
 		try {
 			Thread.sleep(mills);
