@@ -1728,37 +1728,71 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Checklist Details',
-	tpl: new Ext.XTemplate(
-		' <table class="details-table" width="100%">',	
-		'	<th class="details-table" style="text-align: center; width: 75px;">QID</th><th class="details-table" style="text-align: center; width: 125px;">Section</th><th class="details-table">Question</th><th class="details-table" style="text-align: center; width: 75px;">Score</th><th class="details-table">Response</th>',
-		'	<tpl for="checkListAll.responses">',	
-		'		<tr class="details-table">',
-		'			<td class="details-table" style="text-align: center; width: 75px;">',
-		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'{questionId}\')">',
-		'					<b>{question.qid}</b>',
-		'				</a>',
-		'			</td>',
-		'			<td class="details-table" style="text-align: center; width: 125px;">',
-		'				{question.evaluationSectionDescription}',
-		'			</td>',		
-		'			<td class="details-table">',
-		'				{question.question}',				
-		'			</td>',	
-		'			<td class="details-table" style="text-align: center; width: 75px;" >',
-		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'{questionId}\')">',		
-		'					<tpl if="notApplicable"><span style="font-weight: bold;">N/A</span></tpl>',	
-		'					<tpl if="score"><span style="font-weight: bold;">{score}</span></tpl>',	
-		'				</a>',
-		'			</td>',		
-		'			<td class="details-table">',
-		'				{response}',						
-		'			</td>',
-		'		</tr>',
-		'	</tpl>',
-		'</table>'		
-	),	
-		
+	title: 'Evaluation Checklist Details',	
+	layout: 'anchor',
+	tools: [
+		{
+			type: 'unpin',			
+			tooltip: 'Toggle Restrict Height',
+			callback:  function(panel, tool) {
+				var grid = panel.queryById('grid');
+				if (grid.fixedHeight) {
+					grid.fixedHeight = false;	
+					tool.setType('unpin');
+					grid.setMaxHeight(500000);
+				} else {
+					grid.fixedHeight = true;			
+					tool.setType('pin');
+					var showHeight = panel.up('panel').getHeight() - 60;
+					grid.setMaxHeight(showHeight);
+				}
+			}
+		}
+	],
+	items: [
+		{
+			xtype: 'grid',
+			itemId: 'grid',			
+			columnLines: true,
+			width: '100%',			
+			store: {				
+			},
+			plugins: 'gridfilters',
+			columns: [
+				{ text: 'QID', dataIndex: 'qid', width: 75, align: 'center',
+					renderer: function(value, meta, record) {
+						var link = '<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';						
+						link += '<b>' + record.get('qid') + '</b>';
+						link += '</a>';
+						return link;
+					}
+				},
+				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 125, align: 'center',
+					filter: {
+					  type: 'list'            
+					}
+				},
+				{ text: 'Question', dataIndex: 'question', flex: 2, cellWrap: true },
+				{ text: 'Score', dataIndex: 'score', width: 75, align: 'center',
+					filter: {
+					  type: 'list'            
+					},
+					renderer: function(value, meta, record) {
+						var link = '<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'' + record.get('questionId') + '\')">';						
+						if (record.get('notApplicable')) {
+							link += '<b>N/A</b>';
+						} else if (record.get('score')) {
+							link += '<b>' + record.get('score') + '</b>';
+						}												
+						link += '</a>';
+						return link;
+					}
+				},
+				{ text: 'Response', dataIndex: 'response', flex: 1,  cellWrap: true }
+			]
+		}
+	],
+	
 	initComponent: function () {
 		this.callParent();
 	},
@@ -1773,7 +1807,23 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 			var updateSection = function(evaluation) {
 				if (evaluation.checkListAll.responses) {
 					checklistPanel.setHidden(false);
-					checklistPanel.update(evaluation);
+					
+					var detailGrid = checklistPanel.queryById('grid');								
+					
+					var responseData = [];
+					Ext.Array.each(evaluation.checkListAll.responses, function(response){
+						responseData.push({
+							qid: response.question.qid,
+							questionId: response.question.questionId,
+							question: response.question.question,
+							evaluationSectionDescription: response.question.evaluationSectionDescription,
+							score: response.score,
+							notApplicable: response.notApplicable,
+							response: response.response
+						});
+					});
+					
+					detailGrid.getStore().loadRawData(responseData);
 					
 					var findQuestion = function(questionId) {
 						var question;

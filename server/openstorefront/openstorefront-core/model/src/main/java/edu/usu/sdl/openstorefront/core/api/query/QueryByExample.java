@@ -58,7 +58,8 @@ public class QueryByExample<T extends BaseEntity>
 	private T likeExample;
 	private GenerateStatementOption likeExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_LIKE).build();
 	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
-	private String additionalWhere; 
+	private String additionalWhere;
+	private Map<String, Object> extraParamMapping = new HashMap<>();
 
 	public QueryByExample()
 	{
@@ -273,6 +274,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setAdditionalWhere(String additionalWhere)
 	{
 		this.additionalWhere = additionalWhere;
+	}
+
+	public Map<String, Object> getExtraParamMapping()
+	{
+		return extraParamMapping;
+	}
+
+	public void setExtraParamMapping(Map<String, Object> extraParamMapping)
+	{
+		this.extraParamMapping = extraParamMapping;
 	}
 
 }

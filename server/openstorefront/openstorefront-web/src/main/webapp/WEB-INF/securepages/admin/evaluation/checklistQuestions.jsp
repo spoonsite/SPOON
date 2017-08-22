@@ -73,24 +73,64 @@
 												});
 											} else {
 												
+												if (data.tags) {
+													var processedTags = [];
+													Ext.Array.each(data.tags, function(tag){
+														processedTags.push({
+															tag: tag
+														});
+													});
+													data.tags = processedTags;
+												}
+												
 												var method = 'POST';
 												var update = '';
 												if (data.questionId) {
 													update = '/' + data.questionId;
 													method = 'PUT';
 												}
+												
+												
+												var performSave = function() {										
+												
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/checklistquestions' + update,
+														method: method,
+														data: data,
+														form: form,
+														success: function(){
+															actionRefreshQuestion();
+															form.reset();
+															win.close();
+														}
+													});												
+												};
+												
+												if (data.questionId) {
+													addEditWindow.setLoading('Checking for references...');
+													Ext.Ajax.request({
+														url: 'api/v1/resource/checklistquestions/' + data.questionId + '/inuse',
+														callback: function(){
+															addEditWindow.setLoading(false);
+														},
+														success: function(response, opts){
 
-												CoreUtil.submitForm({
-													url: 'api/v1/resource/checklistquestions' + update,
-													method: method,
-													data: data,
-													form: form,
-													success: function(){
-														actionRefreshQuestion();
-														form.reset();
-														win.close();
-													}
-												});												
+															Ext.Msg.show({
+																title:'Save Changes?',
+																message: 'This question is being used in evaluations.<br> Updating the question will update existing evaluations<br>(both Published and Unpublished)<br><br>Save Changes?',
+																buttons: Ext.Msg.YESNO,
+																icon: Ext.Msg.QUESTION,
+																fn: function(btn) {
+																	if (btn === 'yes') {
+																		performSave();
+																	} 
+																}
+															});	
+														}
+													});
+												} else {
+													performSave();
+												}
 												
 											}
 										}
@@ -120,6 +160,32 @@
 								name: 'qid',
 								maxLength: 60,
 								allowBlank: false								
+							},
+							{
+								xtype: 'tagfield',
+								fieldLabel: 'Add Tag',						
+								name: 'tags',
+								emptyText: 'Select Tags',
+								grow: true,
+								forceSelection: false,
+								valueField: 'tag',
+								displayField: 'tag',
+								createNewOnEnter: true,
+								createNewOnBlur: true,
+								filterPickList: true,
+								queryMode: 'local',
+								publishes: 'tag',								
+								store: Ext.create('Ext.data.Store', {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/checklistquestions/tags'
+									},
+									sorters: [{
+										property: 'text',
+										direction: 'ASC'
+									}]
+								})							
 							},
 							Ext.create('OSF.component.StandardComboBox', {
 								name: 'evaluationSection',									
@@ -228,7 +294,8 @@
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
-								status: Ext.getCmp('filterActiveStatus').getValue()									
+								status: Ext.getCmp('filterActiveStatus').getValue(),
+								tags: Ext.getCmp('filterTags').getValue()
 							};
 						}
 					}
@@ -319,7 +386,42 @@
 										]
 									}
 								}
-							}) 															
+							}),
+							{
+								xtype: 'tagfield',
+								id: 'filterTags',
+								fieldLabel: 'Filter By Tags',	
+								labelAlign: 'top',
+								labelSeparator: '',
+								name: 'tags',
+								emptyText: 'Select Tags',
+								grow: true,
+								width: 300,	
+								forceSelection: false,
+								valueField: 'tag',
+								displayField: 'tag',
+								createNewOnEnter: true,
+								createNewOnBlur: true,
+								filterPickList: true,
+								queryMode: 'local',
+								publishes: 'tag',								
+								store: Ext.create('Ext.data.Store', {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/checklistquestions/tags'
+									},
+									sorters: [{
+										property: 'text',
+										direction: 'ASC'
+									}]
+								}),
+								listeners: {
+									change: function(filter, newValue, oldValue, opts){
+										actionRefreshQuestion();
+									}
+								}								
+							}
 						]
 					},
 					{

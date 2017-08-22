@@ -28,9 +28,9 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.Tag;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -71,7 +71,7 @@ public class ChecklistQuestionResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionWrapper.class)
 	@APIDescription("Gets Checklist questions")
-	public Response getQuestions(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getQuestions(@BeanParam CheckQuestionFilterParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -99,6 +99,11 @@ public class ChecklistQuestionResource
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		if (!filterQueryParams.getTags().isEmpty()) {
+			queryByExample.setAdditionalWhere(" tags in :tagsParams ");
+			queryByExample.getExtraParamMapping().put("tagsParams", filterQueryParams.getTags());
+		}
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
@@ -302,9 +307,11 @@ public class ChecklistQuestionResource
 		List<ChecklistQuestion> questions = checklistQuestionExample.findByExample();
 		Map<String, Tag> distinctTags = new HashMap<>();
 		for (ChecklistQuestion checklistQuestion : questions) {
-			for (Tag tag : checklistQuestion.getTags()) {
-				if (distinctTags.containsKey(tag.getTag())) {
-					distinctTags.put(tag.getTag(), tag);
+			if (checklistQuestion.getTags() != null) {
+				for (Tag tag : checklistQuestion.getTags()) {
+					if (distinctTags.containsKey(tag.getTag()) == false) {
+						distinctTags.put(tag.getTag(), tag);
+					}
 				}
 			}
 		}

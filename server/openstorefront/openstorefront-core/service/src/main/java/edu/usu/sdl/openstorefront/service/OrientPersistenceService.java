@@ -377,6 +377,7 @@ public class OrientPersistenceService
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -503,6 +504,7 @@ public class OrientPersistenceService
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -607,6 +609,7 @@ public class OrientPersistenceService
 			queryString.append(" PARALLEL ");
 		}
 
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
 		List<T> results = query(queryString.toString(), mappedParams, queryByExample.isReturnNonProxied());
 		return results;
 	}
