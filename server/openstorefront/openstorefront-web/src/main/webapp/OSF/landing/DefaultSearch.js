@@ -153,8 +153,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					hideTrigger: true,
 					valueField: 'query',
 					displayField: 'name',
-					autoSelect: false,
-					id: 'searchFieldLandingPage',
+					autoSelect: false,					
 					store: {
 						autoLoad: false,
 						proxy: {
