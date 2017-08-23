@@ -3527,12 +3527,12 @@ public class ComponentRESTResource
 		Component componentExample = new Component();
 		componentExample.setComponentId(componentId);
 		Component component = componentExample.find();
-		
+
 		if (component != null) {
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setComponentId(componentId);
 			List<ComponentTag> componentTags = componentTagExample.findByExample();
-			
+
 			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
 			List<ComponentTag> filteredTags = new ArrayList<>();
 
@@ -3550,12 +3550,11 @@ public class ComponentRESTResource
 			}
 
 			return filteredTags;
-		}
-		else {
+		} else {
 			return service.getComponentService().getTagCloud();
 		}
 	}
-	
+
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})

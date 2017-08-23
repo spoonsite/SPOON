@@ -56,6 +56,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -274,6 +275,11 @@ public class SubComponentServiceImpl
 		Objects.requireNonNull(attribute.getComponentAttributePk().getComponentId(), "Requires Component Attrubute PK Component Id");
 
 		ValidationResult validationResult = checkComponentAttribute(attribute);
+
+		//Need to Santize the user code to match the attribute code after the code has been converted.
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		String sanitizedCode = (String) sanitizer.santize(attribute.getComponentAttributePk().getAttributeCode());
+		attribute.getComponentAttributePk().setAttributeCode(sanitizedCode);
 
 		if (validationResult.valid()) {
 			AttributeType type = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());

@@ -48,10 +48,10 @@ public class ComponentAttributePk
 	@FK(AttributeType.class)
 	private String attributeType;
 
+	//Delay sanitizing user created codes until before saving
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@Sanitize(CleanKeySanitizer.class)
 	@FK(AttributeCode.class)
 	private String attributeCode;
 
