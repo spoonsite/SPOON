@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,28 +39,30 @@ public class AdminPrintEntryIT
 	// custom template drop-down menu class = x-box-inner x-box-scroller-body-vertical
 	// custom template btn id = customTemplateBtn
 	// print button id = printCustomizedEntryBtn
-	
+	// search field class = home-search-field-new
+
 	private static String entryName = "A Selenium Test Entry";
-	
+
 	@BeforeClass
-	protected void createEntryToPrint()
+	public static void createEntryToPrint()
 	{
 		createBasicSearchComponent(entryName);
 	}
-	
+
 	@Test
 	public void printEntryFromSearchResults()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchAndClickEntry(driver, "Test");
+			searchAndClickEntry(driver, entryName);
+			selectCustomTemplate(driver);
 		}
 	}
-	
-	public static void createBasicSearchComponent(String componentName)
+
+	protected static void createBasicSearchComponent(String componentName)
 	{
 		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("My name is " + myEntry.getName());
+		System.out.println("Entry name: " + myEntry.getName());
 		ComponentAdminView entry = null;
 
 		int timer = 0;
@@ -71,17 +75,22 @@ public class AdminPrintEntryIT
 
 		}
 	}
-	
+
 	public void searchAndClickEntry(WebDriver driver, String entryName)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("Test");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
+
 		List<WebElement> entryResults = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#resultsDisplayPanel-innerCt h2")));
 
 		boolean isResult = false;
 
 		for (WebElement entry : entryResults) {
 
-			System.out.println("Entry Name: " + entry.getText());
+			System.out.println("Entry Results Name: " + entry.getText());
+
 			if (entry.getText().equals(entryName)) {
 				isResult = true;
 				entry.click();
@@ -90,6 +99,70 @@ public class AdminPrintEntryIT
 		}
 
 		Assert.assertTrue(isResult);
+	}
+
+	protected void selectCustomTemplate(WebDriver driver)
+	{
+		//[data-qtip = 'Print']
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+
+		String winHandleBefore = driver.getWindowHandle();
+
+		WebElement frame = driver.findElement(By.cssSelector("iframe"));
+
+		driver.switchTo().frame(frame);
+
+		sleep(500);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-qtip = 'Print']"))).click();
+
+		Set<String> handles = driver.getWindowHandles();
+		List windows = new ArrayList(handles);
+		String printWindow = (String) windows.get(windows.size() - 1);
+		driver.switchTo().window(printWindow);
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#customTemplateBtn"))).click();
+
+		List<WebElement> templateItems = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-menu-body.x-menu-body.x-unselectable .x-menu-item-text.x-menu-item-text-default.x-menu-item-indent-no-separator")));
+
+		for (WebElement item : templateItems) {
+
+			if (item.getText().equals("Description")) {
+				item.click();
+			}
+		}
+
+		driver.findElement(By.cssSelector("#customTemplateBtn")).click();
+
+		driver.findElement(By.cssSelector(".x-body")).click();
+
+		List<WebElement> templateSections = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#contentInfo-innerCt div h3")));
+
+		boolean isSection = false;
+		
+		for (WebElement section : templateSections) {
+
+			if (section.getText().equals("Description:")) {
+				isSection = true;
+			}
+		}
+
+		Assert.assertFalse(isSection);
+		
+		WebElement printBtn = driver.findElement(By.cssSelector("#printCustomizedEntryBtn"));
+		
+		boolean canPrint = false;
+		
+		if(printBtn.isDisplayed() && printBtn.isEnabled()) {
+			canPrint = true;
+		}
+		
+		Assert.assertTrue(canPrint);
+
+		driver.close();
+
+		driver.switchTo().window(winHandleBefore);
+
 	}
 
 }
