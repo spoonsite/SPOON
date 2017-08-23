@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.util.Objects;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
@@ -42,12 +44,14 @@ public class ComponentAttributePk
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
 	@FK(AttributeType.class)
 	private String attributeType;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
 	@FK(AttributeCode.class)
 	private String attributeCode;
 
