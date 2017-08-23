@@ -556,7 +556,18 @@
 				addEditWindow.getComponent('form').reset();
 				
 				if (record) {
-					addEditWindow.getComponent('form').loadRecord(record);
+					var correctedRecord = Ext.create('Ext.data.Model', {						
+					});
+					var data = Ext.clone(record.data);
+					var tags = [];
+					if (data.tags) {
+						Ext.Array.each(data.tags, function(tag){
+							tags.push(tag.tag);
+						});
+					}
+					data.tags = tags;
+					correctedRecord.set(data);
+					addEditWindow.getComponent('form').loadRecord(correctedRecord);
 				}
 			};
 			
