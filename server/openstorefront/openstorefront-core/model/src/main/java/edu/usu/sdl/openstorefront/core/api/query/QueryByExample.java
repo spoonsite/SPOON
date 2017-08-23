@@ -59,7 +59,7 @@ public class QueryByExample<T extends BaseEntity>
 	private GenerateStatementOption likeExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_LIKE).build();
 	private T inExample;
 	private GenerateStatementOption inExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_IN).build();
-	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
+	private List<WhereClause> extraWhereCauses = new ArrayList<>();
 	private String additionalWhere;
 
 	public QueryByExample()
@@ -247,12 +247,12 @@ public class QueryByExample<T extends BaseEntity>
 		this.inExampleOption = inExampleOption;
 	}
 
-	public List<SpecialOperatorModel<T>> getExtraWhereCauses()
+	public List<WhereClause> getExtraWhereCauses()
 	{
 		return extraWhereCauses;
 	}
 
-	public void setExtraWhereCauses(List<SpecialOperatorModel<T>> extraWhereCauses)
+	public void setExtraWhereCauses(List<WhereClause> extraWhereCauses)
 	{
 		this.extraWhereCauses = extraWhereCauses;
 	}
