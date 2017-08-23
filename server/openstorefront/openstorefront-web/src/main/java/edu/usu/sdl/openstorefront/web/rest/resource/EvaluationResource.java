@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
@@ -152,8 +153,22 @@ public class EvaluationResource
 			if (!ids.isEmpty()) {
 				Evaluation idInExample = new Evaluation();
 				idInExample.setComponentId(QueryByExample.STRING_FLAG);
-				queryByExample.setInExample(idInExample);
-				queryByExample.getInExampleOption().setParameterValues(ids);
+				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
+				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				
+				Evaluation originIdInExample = new Evaluation();
+				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
+				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				WhereClauseGroup group = new WhereClauseGroup();
+				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
+				group.getExtraWhereClause().add(componentIdGroup);
+				group.getExtraWhereClause().add(originIdGroup);
+				queryByExample.getExtraWhereCauses().add(group);
 			}
 		}
 
