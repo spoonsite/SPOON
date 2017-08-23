@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,54 +15,46 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Linking table to the question pool")
+@APIDescription("This is general tag; embedded in other entities")
 @Embeddable
-public class ChecklistTemplateQuestion
+public class Tag
 		implements Serializable
 {
 
-	@FK(ChecklistQuestion.class)
-	private String questionId;
-
 	@ConsumeField
-	private Integer sortOrder;
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String tag;
 
 	@Version
 	private String storageVersion;
 
-	public ChecklistTemplateQuestion()
+	public Tag()
 	{
 	}
 
-	public String getQuestionId()
+	public String getTag()
 	{
-		return questionId;
+		return tag;
 	}
 
-	public void setQuestionId(String questionId)
+	public void setTag(String tag)
 	{
-		this.questionId = questionId;
-	}
-
-	public Integer getSortOrder()
-	{
-		return sortOrder;
-	}
-
-	public void setSortOrder(Integer sortOrder)
-	{
-		this.sortOrder = sortOrder;
+		this.tag = tag;
 	}
 
 	public String getStorageVersion()

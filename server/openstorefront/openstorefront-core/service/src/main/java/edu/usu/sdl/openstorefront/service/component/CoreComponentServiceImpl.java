@@ -269,6 +269,28 @@ public class CoreComponentServiceImpl
 		return componentSearchViews;
 	}
 
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
+	{
+		EvaluationAll currentEvaluation = componentService.getEvaluationService().getEvaluation(evaluationId, true);
+		ComponentDetailView componentDetailView = getComponentDetails(componentId);
+		List<EvaluationAll> existingEvaluations;
+
+		// If the evaluation is not published, use the origin component Id
+		if (!currentEvaluation.getEvaluation().getPublished()) {
+			componentId = componentService.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+			existingEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		} else {
+			existingEvaluations = componentDetailView.getFullEvaluations();
+		}
+
+		// set current evaluation as the first in the list
+		existingEvaluations.removeIf(obj -> obj.getEvaluation().getEvaluationId().equals(evaluationId));
+		existingEvaluations.add(0, currentEvaluation);
+		componentDetailView.setFullEvaluations(existingEvaluations);
+
+		return componentDetailView;
+	}
+
 	public ComponentDetailView getComponentDetails(String componentId)
 	{
 
@@ -993,7 +1015,11 @@ public class CoreComponentServiceImpl
 					Field pkField = EntityUtil.getPKField(oldEnity);
 					if (pkField != null) {
 						pkField.setAccessible(true);
-						sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						if (oldEnity instanceof ComponentTag) {
+							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+						} else {
+							sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						}
 					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
 					}

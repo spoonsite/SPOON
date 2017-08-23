@@ -7,23 +7,23 @@ Version 2.4
 # 1. Overview
 ------
 
-The Open Storefront application is a software cataloging system that
-is used to catalog entries of interest to the DI2E community. 
-Entries include Government off the shelf (GOTS), commercial off the
-shelf (COTS), and Open Source software (OSS). The evaluations
-done by DI2E's Centers of Excellence are displayed in the Clearinghouse 
-and give details on the following:
+This site is based on the Open Storefront application.  Open Storefront is a software cataloging system that
+is used to catalog and organize any item from software to parts. 
+The software provides details on the following:
 
 -   Ownership
--   Where/How to access the software
--   Software vitals
+-   Where/How to access the entry
+-   Contact information
+-   Media and rich resources
+-   Metadata/Attributes
 -   Conformance
 -   Links to documentation, source code, and other artifacts
--   Evaluation information
-The application can also be used as a general cataloging system.
+-   Details Evaluation information
 
-**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
+**Open Storefront is developed by Space Dynamics Laboratory is
 licensed under GPL V3.**
+
+Originally developed for DI2E (Defense Intelligence Information Enterprise)
 
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)

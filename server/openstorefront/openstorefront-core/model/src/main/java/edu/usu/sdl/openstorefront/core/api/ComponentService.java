@@ -222,6 +222,16 @@ public interface ComponentService
 	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+	
+	/**
+	 * Return the details object of the component attached to the given componentId and evaluationId. (the
+	 * full view)
+	 *
+	 * @param componentId
+	 * @param evaluationId
+	 * @return details or null if not found
+	 */
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId);
 
 	/**
 	 * Set the last view date for the component associated with the supplied id.

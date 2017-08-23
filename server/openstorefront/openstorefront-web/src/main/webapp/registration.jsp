@@ -282,6 +282,16 @@
 														success: function(action, opts) {
 															var registration = Ext.decode(action.responseText);
 															Ext.getCmp('registrationId').setValue(registration.registrationId);
+															
+															Ext.Msg.show({
+																title:'Emailed Code',
+																message: 'Validation code was sent to your email.',
+																buttons: Ext.Msg.OK,
+																icon: Ext.Msg.Info,
+																fn: function(btn) {
+																}
+															});
+															
 														}
 													});
 												}

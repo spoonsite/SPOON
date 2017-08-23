@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
@@ -222,6 +223,34 @@ public class EvaluationResource
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationView.class)
+	@APIDescription("Get component view (including evals) for published and current evaluation (whether published or not)")
+	@Path("/{evaluationId}/componentdetails")
+	public Response getEvaluationComponentDetails(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		String componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getComponentId();
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		List<Component> components = componentExample.findByExample();
+
+		if (components.isEmpty()) {
+			componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+		}
+
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId, evaluationId);
+
+		if (componentDetail != null) {
+			return sendSingleEntityResponse(componentDetail);
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationStatistic.class)
 	@APIDescription("Get Evaluation statistics")
 	@Path("/statistics")
@@ -356,6 +385,7 @@ public class EvaluationResource
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
+				evaluationExisting.populateBaseUpdateFields();
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
@@ -656,6 +686,9 @@ public class EvaluationResource
 			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
 			contentSectionMedia = contentSectionMedia.find();
 			if (contentSectionMedia != null) {
+				if (StringUtils.isNotBlank(sectionMedia.getMediaTypeCode())) {
+					contentSectionMedia.setMediaTypeCode(sectionMedia.getMediaTypeCode());
+				}
 				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
 				contentSectionMedia.setCaption(sectionMedia.getCaption());
 				contentSectionMedia.save();

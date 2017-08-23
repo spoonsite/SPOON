@@ -422,8 +422,8 @@
 				
 				
 				var userGridStore = Ext.create('Ext.data.Store',{
-					pageSize: 500,
-					autoLoad: true,
+					pageSize: 100,
+					autoLoad: false,
 					fields: [
 						{
 							name: 'lastLoginAttempt',
@@ -457,6 +457,19 @@
 					}						
 				});
 				
+				var securityPolicy;
+				var initalUserLoad = function() {
+				
+					Ext.Ajax.request({
+						url: 'api/v1/resource/securitypolicy',
+						success: function(response, opts) {
+							securityPolicy = Ext.decode(response.responseText);
+							userGridStore.load();
+						}
+					});		
+				};
+				initalUserLoad();
+				
 				var userGrid = Ext.create('Ext.grid.Panel',{
 					iconCls: 'fa fa-lg fa-users',
 					title: 'Users',
@@ -473,7 +486,14 @@
 							}
 						},
 						{ text: 'Last Login', dataIndex: 'lastLoginAttempt', align: 'center', width: 175, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Failed Login Attempts', align: 'center', dataIndex: 'failedLoginAttempts', width: 200 },
+						{ text: 'Failed Login Attempts', align: 'center', dataIndex: 'failedLoginAttempts', width: 200,
+							renderer: function(value, meta, record) {
+								if (value > securityPolicy.loginLockoutMaxAttempts) {
+									meta.tdCls = 'alert-danger';
+								} 
+								return value;
+							}
+						},
 						{ text: 'Pending Password Reset', dataIndex: 'pendingUserPasswordReset', width: 175, align: 'center',
 							renderer: function(value, meta, record){
 								if (value) {
@@ -530,11 +550,12 @@
 								} else {
 									tools.getComponent('approve').setDisabled(true);
 								}
-								
+								tools.getComponent('resetLogin').setDisabled(false);
 							} else {
 								tools.getComponent('unlock').setDisabled(true);
 								tools.getComponent('reset').setDisabled(true);								
 								tools.getComponent('disable').setDisabled(true);
+								tools.getComponent('resetLogin').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);	
 								tools.getComponent('approve').setDisabled(true);
 								tools.getComponent('role').setDisabled(true);
@@ -657,6 +678,7 @@
 						{
 							xtype: 'toolbar',
 							itemId: 'tools',
+							overflowHandler: 'menu',
 							dock: 'top',
 							items: [
 								{
@@ -743,6 +765,18 @@
 									}
 								},
 								{
+									text: 'Reset Failed Logins',
+									itemId: 'resetLogin',
+									iconCls: 'fa fa-2x fa-rotate-right icon-button-color-default icon-vertical-correction',
+									scale: 'medium',
+									tooltip: 'Resets Login Attempts',
+									disabled: true,
+									handler: function(){
+										var record = userGrid.getSelectionModel().getSelection()[0];
+										actionResetLoginAttempts(record);
+									}									
+								},
+								{
 									xtype: 'tbfill'
 								},
 								{
@@ -790,6 +824,20 @@
 					userGrid.setLoading('Unlocking user...');								
 					Ext.Ajax.request({
 						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/unlock',
+						method: 'PUT',
+						callback: function(){
+							userGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							actionRefreshUsers();
+						}
+					});						
+				};
+				
+				var actionResetLoginAttempts = function(record) {
+					userGrid.setLoading('Resetting login attempts...');								
+					Ext.Ajax.request({
+						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/resetfailedlogins',
 						method: 'PUT',
 						callback: function(){
 							userGrid.setLoading(false);

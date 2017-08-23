@@ -167,7 +167,17 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					name: 'privateNote',			
 					maxLength: 32000,
 					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")					
-				}				
+				},
+				{
+					xtype: 'checkbox',
+					name: 'privateFlg',
+					boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides when published"></i>',
+					listeners: {
+						change: function(field, newValue, oldValue, opts) {
+							questionForm.markUnsaved();	
+						}
+					}					
+				}
 			]
 		});
 	

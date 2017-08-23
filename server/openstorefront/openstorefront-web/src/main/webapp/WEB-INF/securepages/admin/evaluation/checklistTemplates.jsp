@@ -93,9 +93,11 @@
 								name: 'checklistTemplateId'
 							},
 							{
-								xtype: 'panel',
+								xtype: 'fieldset',
+								collapsible: true,
+								title: 'Details',
 								region: 'north',
-								layout: 'anchor',
+								layout: 'anchor',								
 								bodyStyle: 'padding: 10px;',
 								defaults: {
 									labelAlign: 'top',
@@ -147,6 +149,10 @@
 										width: '50%',
 										margin: '0 5 0 0',
 										columnLines: true,
+										selModel: {
+										   selType: 'rowmodel',
+										   mode: 'MULTI'
+										},
 										store: {
 											autoLoad: false,
 											sorters: [
@@ -177,11 +183,71 @@
 												renderer: function(value, metadata, record) {
 													return record.get('evaluationSectionDescription');
 												}
-											},												
+											},
+											{ text: 'Tags', dataIndex: 'tags', width: 175, sortable: false, 
+												renderer: function(value, meta, record) {
+													var viewHtml = '';							
+													var tags = record.get('tags');
+													Ext.Array.each(tags, function(tag){
+														viewHtml += '<span class="alerts-option-items">' + tag.tag + '</span>';
+													});							
+													return viewHtml;
+												}
+											},
 											{ text: 'Question', dataIndex: 'question',  flex: 1,
 												renderer: function(value, metadata, record) {
 													return Ext.util.Format.stripTags(value);
 												}												
+											}
+										],
+										dockedItems: [
+											{
+												xtype: 'tagfield',												
+												fieldLabel: 'Filter By Tags',												
+												name: 'tags',
+												emptyText: 'Select Tags',
+												grow: true,
+												width: 300,	
+												forceSelection: true,
+												valueField: 'tag',
+												displayField: 'tag',
+												createNewOnEnter: true,
+												createNewOnBlur: false,
+												filterPickList: true,
+												queryMode: 'local',
+												publishes: 'tag',								
+												store: Ext.create('Ext.data.Store', {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/checklistquestions/tags'
+													},
+													sorters: [{
+														property: 'text',
+														direction: 'ASC'
+													}]
+												}),
+												listeners: {
+													change: function(filter, newValue, oldValue, opts){
+														var grid = filter.up('grid');
+														grid.getStore().clearFilter();
+														if (newValue && newValue.length > 0) {
+															grid.getStore().filterBy(function(record){
+																var containsAny = false;
+																Ext.Array.each(newValue, function(value){
+																	if (record.get('tags')) {
+																		Ext.Array.each(record.get('tags'), function(tag) {
+																			if (tag.tag === value) {
+																				containsAny = true;
+																			}	
+																		});
+																	}
+																});
+																return containsAny;
+															});
+														}
+													}
+												}
 											}
 										]
 									},
@@ -191,6 +257,10 @@
 										title: 'Questions In Template - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
 										width: '50%',
 										columnLines: true,
+										selModel: {
+										   selType: 'rowmodel',
+										   mode: 'MULTI'
+										},										
 										store: {											
 										},
 										viewConfig: {
@@ -204,18 +274,78 @@
 											}
 										},										
 										columns: [
-											{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125 },
-											{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200,
+											{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125, sortable: false },
+											{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200, sortable: false,
 												renderer: function(value, metadata, record) {
 													return record.get('evaluationSectionDescription');
 												}
-											},												
-											{ text: 'Question', dataIndex: 'question',  flex: 1,
+											},
+											{ text: 'Tags', dataIndex: 'tags', width: 175, sortable: false, 
+												renderer: function(value, meta, record) {
+													var viewHtml = '';							
+													var tags = record.get('tags');
+													Ext.Array.each(tags, function(tag){
+														viewHtml += '<span class="alerts-option-items">' + tag.tag + '</span>';
+													});							
+													return viewHtml;
+												}
+											},											
+											{ text: 'Question', dataIndex: 'question',  flex: 1, sortable: false,
 												renderer: function(value, metadata, record) {
 													return Ext.util.Format.stripTags(value);
 												}												
 											}
-										]
+										],
+										dockedItems: [
+											{
+												xtype: 'tagfield',												
+												fieldLabel: 'Filter By Tags',												
+												name: 'tags',
+												emptyText: 'Select Tags',
+												grow: true,
+												width: 300,	
+												forceSelection: true,
+												valueField: 'tag',
+												displayField: 'tag',
+												createNewOnEnter: true,
+												createNewOnBlur: false,
+												filterPickList: true,
+												queryMode: 'local',
+												publishes: 'tag',								
+												store: Ext.create('Ext.data.Store', {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/checklistquestions/tags'
+													},
+													sorters: [{
+														property: 'text',
+														direction: 'ASC'
+													}]
+												}),
+												listeners: {
+													change: function(filter, newValue, oldValue, opts){
+														var grid = filter.up('grid');
+														grid.getStore().clearFilter();
+														if (newValue && newValue.length > 0) {
+															grid.getStore().filterBy(function(record){
+																var containsAny = false;
+																Ext.Array.each(newValue, function(value){
+																	if (record.get('tags')) {
+																		Ext.Array.each(record.get('tags'), function(tag) {
+																			if (tag.tag === value) {
+																				containsAny = true;
+																			}	
+																		});
+																	}
+																});
+																return containsAny;
+															});
+														}
+													}
+												}
+											}
+										]										
 									}
 								]
 							}
@@ -440,17 +570,36 @@
 							if (record.get('questions')) {
 								Ext.Array.each(record.get('questions'), function(templateQuestion) {
 									if (templateQuestion.questionId === question.get('questionId')) {
+										question.sortOrder = templateQuestion.sortOrder;
 										questionInTemplate = true;
 									}
 								});
 							}
 							
-							if (questionInTemplate) {
+							if (questionInTemplate) {								
 								recordsInTemplate.push(question);
 							} else {
 								recordsAvaliable.push(question);
 							}
 						});
+						recordsInTemplate = recordsInTemplate.sort(function(o1, o2){							
+							if (!o1.sortOrder && !o2.sortOrder) {
+								return 0;
+							} else if (o1.sortOrder && !o2.sortOrder) {
+								return 1;
+							} else if (!o1.sortOrder && o2.sortOrder) {
+								return -1;
+							} else {
+								if (o1.sortOrder < o2.sortOrder) {
+									return -1;
+								} else if (o1.sortOrder > o2.sortOrder) {
+									return 1;
+								} else {
+									return 0;
+								}
+							}
+						});
+						
 						Ext.getCmp('questionPool').getStore().loadData(recordsAvaliable);
 						Ext.getCmp('questionsInTemplate').getStore().loadData(recordsInTemplate);
 					});					
@@ -527,8 +676,7 @@
 						var data = Ext.decode(response.responseText);
 						viewWin.update(data);
 					}
-				});
-				previewCheckButtons();				
+				});			
 			};
 		
 			var actionToggleStatus = function(record) {

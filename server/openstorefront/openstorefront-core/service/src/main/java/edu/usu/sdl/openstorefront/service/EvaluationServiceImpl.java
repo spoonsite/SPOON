@@ -129,34 +129,59 @@ public class EvaluationServiceImpl
 		EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
 		evaluationChecklist.setChecklistId(checklistId);
 		evaluationChecklist = evaluationChecklist.find();
+		if (publicInformationOnly) {
+			if (evaluationChecklist != null && Convert.toBoolean(evaluationChecklist.getPrivateChecklistFlg())) {
+				evaluationChecklist = null;
+			}
+		}
+
 		if (evaluationChecklist != null) {
 			checklistAll = new ChecklistAll();
 			checklistAll.setEvaluationChecklist(evaluationChecklist);
 
-			EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
-			recommendation.setChecklistId(checklistId);
-			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
-			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendation.findByExample()));
-
-			EvaluationChecklistResponse responses = new EvaluationChecklistResponse();
-			responses.setChecklistId(checklistId);
-			responses.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
-			checklistAll.getResponses().addAll(ChecklistResponseView.toView(responses.findByExample()));
-
-			//clear private notes
 			if (publicInformationOnly) {
-				for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
-					response.setPrivateNote(null);
+				if (Convert.toBoolean(evaluationChecklist.getPrivateSummaryFlg())) {
+					evaluationChecklist.setSummary(null);
 				}
 			}
 
-		}
+			EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
+			recommendation.setChecklistId(checklistId);
+			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
+			List<EvaluationChecklistRecommendation> recommendations = recommendation.findByExample();
+			if (publicInformationOnly) {
+				recommendations = recommendations
+						.stream()
+						.filter(r -> Convert.toBoolean(r.getPrivateFlg()) == false)
+						.collect(Collectors.toList());
+			}
+			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendations));
 
+			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+			response.setChecklistId(checklistId);
+			response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+			List<EvaluationChecklistResponse> responses = response.findByExample();
+			if (publicInformationOnly) {
+				responses = responses
+						.stream()
+						.filter(r -> Convert.toBoolean(r.getPrivateFlg()) == false)
+						.collect(Collectors.toList());
+			}
+			checklistAll.getResponses().addAll(ChecklistResponseView.toView(responses));
+
+			//clear private notes
+			if (publicInformationOnly) {
+				for (EvaluationChecklistResponse evaluationChecklistResponse : checklistAll.getResponses()) {
+					evaluationChecklistResponse.setPrivateNote(null);
+				}
+			}
+		}
 		return checklistAll;
 	}
 
 	@Override
-	public String saveEvaluationAll(EvaluationAll evaluationAll)
+	public String saveEvaluationAll(EvaluationAll evaluationAll
+	)
 	{
 		Objects.requireNonNull(evaluationAll);
 		Objects.requireNonNull(evaluationAll.getEvaluation());
@@ -175,7 +200,8 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public Evaluation createEvaluationFromTemplate(Evaluation evaluation)
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation
+	)
 	{
 		Objects.requireNonNull(evaluation);
 		Objects.requireNonNull(evaluation.getTemplateId());
@@ -225,6 +251,7 @@ public class EvaluationServiceImpl
 				response.setResponseId(persistenceService.generateId());
 				response.setQuestionId(question.getQuestionId());
 				response.setWorkflowStatus(initialStatus.getCode());
+				response.setSortOrder(question.getSortOrder());
 				response.populateBaseCreateFields();
 				persistenceService.persist(response);
 			}
@@ -239,12 +266,14 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public EvaluationAll getEvaluation(String evaluationId)
+	public EvaluationAll getEvaluation(String evaluationId
+	)
 	{
 		return getEvaluation(evaluationId, false);
 	}
 
-	private EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
+	@Override
+	public EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
 	{
 		Objects.requireNonNull(evaluationId);
 
