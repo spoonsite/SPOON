@@ -57,7 +57,9 @@ public class QueryByExample<T extends BaseEntity>
 	private T groupBy;
 	private T likeExample;
 	private GenerateStatementOption likeExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_LIKE).build();
-	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
+	private T inExample;
+	private GenerateStatementOption inExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_IN).build();
+	private List<WhereClause> extraWhereCauses = new ArrayList<>();
 	private String additionalWhere;
 	private Map<String, Object> extraParamMapping = new HashMap<>();
 
@@ -226,12 +228,32 @@ public class QueryByExample<T extends BaseEntity>
 		this.likeExample = likeExample;
 	}
 
-	public List<SpecialOperatorModel<T>> getExtraWhereCauses()
+	public T getInExample()
+	{
+		return inExample;
+	}
+
+	public void setInExample(T inExample)
+	{
+		this.inExample = inExample;
+	}
+
+	public GenerateStatementOption getInExampleOption()
+	{
+		return inExampleOption;
+	}
+
+	public void setInExampleOption(GenerateStatementOption inExampleOption)
+	{
+		this.inExampleOption = inExampleOption;
+	}
+
+	public List<WhereClause> getExtraWhereCauses()
 	{
 		return extraWhereCauses;
 	}
 
-	public void setExtraWhereCauses(List<SpecialOperatorModel<T>> extraWhereCauses)
+	public void setExtraWhereCauses(List<WhereClause> extraWhereCauses)
 	{
 		this.extraWhereCauses = extraWhereCauses;
 	}

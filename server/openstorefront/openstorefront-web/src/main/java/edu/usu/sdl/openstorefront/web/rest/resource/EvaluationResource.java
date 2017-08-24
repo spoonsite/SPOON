@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
@@ -56,6 +57,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -117,6 +119,7 @@ public class EvaluationResource
 
 		Evaluation endExample = new Evaluation();
 		endExample.setUpdateDts(evaluationFilterParams.getEnd());
+		
 
 		QueryByExample queryByExample = new QueryByExample(evaluationExample);
 
@@ -133,21 +136,64 @@ public class EvaluationResource
 
 		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
 
-		queryByExample.setMaxResults(evaluationFilterParams.getMax());
-		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
-		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
+		//get component ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
+			// If given, filter the search by name
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + evaluationFilterParams.getComponentName().toLowerCase() + "%");
+
+			QueryByExample componentQueryByExample = new QueryByExample(new Component());
+			componentQueryByExample.setLikeExample(componentLikeExample);
+			// Define Lookup Operation (ILIKE)
+			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			
+			List<Component> components = service.getPersistenceService().queryByExample(componentQueryByExample);
+			// get list of ids
+			List<String> ids = components.stream().map(x -> x.getComponentId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+				Evaluation idInExample = new Evaluation();
+				idInExample.setComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
+				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				
+				Evaluation originIdInExample = new Evaluation();
+				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
+				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				WhereClauseGroup group = new WhereClauseGroup();
+				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
+				group.getExtraWhereClause().add(componentIdGroup);
+				group.getExtraWhereClause().add(originIdGroup);
+				queryByExample.getExtraWhereCauses().add(group);
+			}
+		}
 
 		Evaluation evaluationSortExample = new Evaluation();
 		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
+
 		if (sortField != null) {
+
+			queryByExample.setMaxResults(evaluationFilterParams.getMax());
+			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
+			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		List<EvaluationView> views = EvaluationView.toView(evaluations);
+
+		if (sortField == null) {
+			views = evaluationFilterParams.filter(views);
+		}
 
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
-		evaluationViewWrapper.getData().addAll(EvaluationView.toView(evaluations));
+		evaluationViewWrapper.getData().addAll(views);
 		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(evaluationViewWrapper);
