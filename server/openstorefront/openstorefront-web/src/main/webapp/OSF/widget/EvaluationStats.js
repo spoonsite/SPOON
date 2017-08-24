@@ -43,7 +43,8 @@ Ext.define('OSF.widget.EvaluationStats', {
 						valueField: 'code',								
 						emptyText: 'All',						
 						width: 350,
-						editable: false,
+						typeAhead: true,
+						editable: true,
 						forceSelection: true,
 						store: {									
 							autoLoad: true,

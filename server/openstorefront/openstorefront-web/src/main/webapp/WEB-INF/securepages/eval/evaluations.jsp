@@ -137,8 +137,9 @@
 									valueField: 'code',								
 									emptyText: 'All',
 									labelAlign: 'top',
+									typeAhead: true,
 									width: 250,
-									editable: false,
+									editable: true,
 									forceSelection: true,
 									store: {									
 										autoLoad: true,
@@ -336,7 +337,8 @@
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
 										width: '100%',
-										editable: false,
+										typeAhead: true,
+										editable: true,
 										forceSelection: true,
 										store: {									
 											autoLoad: true,
