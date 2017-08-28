@@ -74,6 +74,17 @@ public class ChecklistResponseView
 		return views;
 	}
 
+	public EvaluationChecklistResponse toResponse()
+	{
+		EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+		try {
+			BeanUtils.copyProperties(response, this);
+		} catch (IllegalAccessException | InvocationTargetException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return response;
+	}
+
 	public ChecklistQuestionView getQuestion()
 	{
 		return question;

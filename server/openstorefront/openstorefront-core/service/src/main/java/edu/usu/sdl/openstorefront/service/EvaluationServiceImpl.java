@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -74,6 +75,10 @@ public class EvaluationServiceImpl
 
 		for (EvaluationChecklistRecommendation recommendation : checklistAll.getRecommendations()) {
 
+			if (recommendation instanceof EvaluationChecklistRecommendationView) {
+				recommendation = ((EvaluationChecklistRecommendationView) recommendation).toRecommendation();
+			}
+
 			if (recommendation.getRecommendationId() != null && existingRecs.containsKey(recommendation.getRecommendationId())) {
 				EvaluationChecklistRecommendation existing = existingRecs.get(recommendation.getRecommendationId()).get(0);
 				existing.updateFields(recommendation);
@@ -97,6 +102,20 @@ public class EvaluationServiceImpl
 				.collect(Collectors.groupingBy(EvaluationChecklistResponse::getResponseId));
 
 		for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
+
+			if (response instanceof ChecklistResponseView) {
+				ChecklistResponseView view = ((ChecklistResponseView) response);
+				//find corrected question id base on the imported qid
+				ChecklistQuestion question = new ChecklistQuestion();
+				question.setQid(view.getQuestion().getQid());
+				question = question.findProxy();
+
+				response = view.toResponse();
+				if (question != null) {
+					response.setQuestionId(question.getQuestionId());
+				}
+			}
+
 			if (response.getResponseId() != null && existingResponses.containsKey(response.getResponseId())) {
 				EvaluationChecklistResponse existing = existingResponses.get(response.getResponseId()).get(0);
 				existing.updateFields(response);

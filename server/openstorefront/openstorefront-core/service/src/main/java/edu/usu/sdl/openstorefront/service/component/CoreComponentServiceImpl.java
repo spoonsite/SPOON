@@ -527,6 +527,9 @@ public class CoreComponentServiceImpl
 
 	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
 	{
+		Objects.requireNonNull(component);
+		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
+
 		Component oldComponent = null;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
@@ -771,6 +774,9 @@ public class CoreComponentServiceImpl
 
 	private ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options, boolean updateIndex)
 	{
+		Objects.requireNonNull(componentAll);
+		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
+
 		LockSwitch lockSwitch = new LockSwitch();
 
 		//check component
@@ -794,6 +800,13 @@ public class CoreComponentServiceImpl
 		}
 
 		//Check Attributes
+		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
+			Component oldComponent = findExistingComponent(component);
+			if (oldComponent != null) {
+				component.setComponentId(oldComponent.getComponentId());
+			}
+		}
+
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);

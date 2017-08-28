@@ -92,6 +92,7 @@ public class EvaluationChecklistResponse
 		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, checklistResponse);
 		super.updateFields(entity);
 
+		setQuestionId(checklistResponse.getQuestionId());
 		setPrivateNote(checklistResponse.getPrivateNote());
 		setResponse(checklistResponse.getResponse());
 		setScore(checklistResponse.getScore());

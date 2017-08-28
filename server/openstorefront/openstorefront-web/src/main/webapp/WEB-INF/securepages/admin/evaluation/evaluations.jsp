@@ -395,7 +395,9 @@
 								name: 'name',
 								emptyText: 'Filter By Name',
 								labelAlign: 'top',
-								labelSeparator: '',
+								labelSeparator: '',	
+								margin: '20 0 0 20',
+								minWidth: 200,	
 								listeners: {
 									change: {
 										fn: function(field, newValue, oldValue, opts) {
