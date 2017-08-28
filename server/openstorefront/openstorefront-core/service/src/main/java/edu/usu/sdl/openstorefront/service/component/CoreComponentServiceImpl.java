@@ -509,11 +509,20 @@ public class CoreComponentServiceImpl
 	{
 		Component oldComponent = persistenceService.findById(Component.class, componentToLookFor.getComponentId());
 
+		if (StringUtils.isNotBlank(componentToLookFor.getPendingChangeId())) {
+			//Change request; only check for id
+			return oldComponent;
+		}
+
 		//Duplicate protection; check External id
 		if (oldComponent == null && StringUtils.isNotBlank(componentToLookFor.getExternalId())) {
 			Component componentCheck = new Component();
 			componentCheck.setExternalId(componentToLookFor.getExternalId());
 			oldComponent = componentCheck.findProxy();
+			if (StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+				//ignore change request
+				oldComponent = null;
+			}
 		}
 
 		//check name
@@ -521,6 +530,10 @@ public class CoreComponentServiceImpl
 			Component componentCheck = new Component();
 			componentCheck.setName(componentToLookFor.getName());
 			oldComponent = componentCheck.findProxy();
+			if (StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+				//ignore change request
+				oldComponent = null;
+			}
 		}
 		return oldComponent;
 	}
