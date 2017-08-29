@@ -235,7 +235,7 @@
 								},
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Email <span class="field-required" />',																																	
+									fieldLabel: 'Email <i class="fa fa-question-circle" data-qtip="This needs to be unique.<br>Entering a existing email will update existing contact with that email."></i> <span class="field-required" />',																																	
 									maxLength: '255',
 									allowBlank: false,
 									vtype: 'email',
