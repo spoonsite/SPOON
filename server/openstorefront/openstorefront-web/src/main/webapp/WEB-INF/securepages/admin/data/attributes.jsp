@@ -1862,7 +1862,7 @@
 								name: 'label',
 								allowBlank: false,
 								allowDecimal: true,
-								decimalPrecision: 30,
+								decimalPrecision: 20,
 								hidden: true
 							},								
 							{
@@ -1878,7 +1878,7 @@
 								name: 'typeCode',
 								allowBlank: false,
 								allowDecimal: true,
-								decimalPrecision: 30,
+								decimalPrecision: 20,
 								hidden: true
 							},							
 							{
