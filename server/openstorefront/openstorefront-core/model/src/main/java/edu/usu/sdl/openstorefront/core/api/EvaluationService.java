@@ -90,12 +90,21 @@ public interface EvaluationService
 	public EvaluationAll getLatestEvaluation(String componentId);
 
 	/**
-	 * Create an evaluation base on the template
+	 * Create an evaluation based on the template
 	 *
 	 * @param evaluation
 	 * @return
 	 */
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
+
+	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 * @return
+	 */
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation);
 
 	/**
 	 * Make sure the evaluation component change request existing if it doesn't

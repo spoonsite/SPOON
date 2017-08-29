@@ -265,6 +265,29 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 * @return
+	 */
+	@Override
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation)
+	{
+		Objects.requireNonNull(evaluation);
+		Objects.requireNonNull(evaluation.getTemplateId());
+		
+		EvaluationTemplate exampleTemplate = new EvaluationTemplate();
+		exampleTemplate.setTemplateId(evaluation.getTemplateId());
+		EvaluationTemplate template = exampleTemplate.find();
+		if(template != null)
+		{
+			int x =1;
+			// Do Stuff
+		}
+	}
+
 	@Override
 	public EvaluationAll getEvaluation(String evaluationId
 	)

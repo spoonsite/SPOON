@@ -14,71 +14,116 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
-			var selectEvaluationWin = Ext.create('Ext.window.Window', {
-				title: 'Select Evaluations',
-				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
-				modal: true,
-				width: 1050,
-				maxHeight: '80%',
-				layout: 'fit',
-				items: [
-				Ext.create('Ext.grid.Panel', {
-					id: 'evaluationGrid',
-					title: 'Update Evaluation <i class="fa fa-question-circle"  data-qtip="Updating evaluations may result in a loss of work."></i>',
-					columnLines: true,
-					store: {
-						id: 'evaluationGridStore',
-						autoLoad: false,
-						pageSize: 250,
-						remoteSort: true,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'componentName',
-								direction: 'ASC'
-							})
-						],				
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/evaluations?published=false',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}
-						})
-					},				
-					columns: [
-						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
-						{ text: 'Version', dataIndex: 'version', align: 'center', width: 175 },
-						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
-						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
-						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
-							renderer: function(value, meta, record) {
-								if (value === 'INPROGRESS') {
-									meta.tdCls = 'alert-warning';
-								} else if (value === 'WAIT') {
-									meta.tdCls = 'alert-info';
-								} else if (value === 'COMPLETE') {
-									meta.tdCls = 'alert-success';
-								} else if (value === 'HOLD') {
-									meta.tdCls = 'alert-danager';
+			var getEvaluations = function(parentWindow, form, saveCallback)
+			{
+				var selectEvaluationWin = Ext.create('Ext.window.Window', {
+					title: 'Select Evaluations',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+					modal: true,
+					width: 1050,
+					maxHeight: '80%',
+					layout: 'fit',
+					closeAction: 'destroy',
+					items: [
+					Ext.create('Ext.grid.Panel', {
+						id: 'evaluationGrid',
+						title: 'Update Evaluation <i class="fa fa-question-circle"  data-qtip="Updating evaluations may result in a loss of work."></i>',
+						columnLines: true,
+						selModel: {
+							selType: 'checkboxmodel'
+						},
+						store: {
+							id: 'evaluationGridStore',
+							autoLoad: false,
+							remoteSort: true,
+							sorters: [
+								new Ext.util.Sorter({
+									property: 'componentName',
+									direction: 'ASC'
+								})
+							],				
+							proxy: {
+								// paging will not work as you won't be able to select items on different pages
+								type: 'ajax',
+								url: 'api/v1/resource/evaluations?published=false',
+								reader: {
+									type: 'json',
+									rootProperty: 'data',
+									totalProperty: 'totalNumber'
 								}
-								return record.get('workflowStatusDescription');
 							}
-						}
-					],			
+						},				
+						columns: [
+							{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
+							{ text: 'Version', dataIndex: 'version', align: 'center', width: 175 },
+							{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
+							{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
+							{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+								renderer: function(value, meta, record) {
+									if (value === 'INPROGRESS') {
+										meta.tdCls = 'alert-warning';
+									} else if (value === 'WAIT') {
+										meta.tdCls = 'alert-info';
+									} else if (value === 'COMPLETE') {
+										meta.tdCls = 'alert-success';
+									} else if (value === 'HOLD') {
+										meta.tdCls = 'alert-danager';
+									}
+									return record.get('workflowStatusDescription');
+								}
+							}
+						]			
+					})
+					],
 					dockedItems: [
 						{
-							xtype: 'pagingtoolbar',
+							xtype: 'toolbar',
 							dock: 'bottom',
-							store: 'evaluationGridStore',
-							displayInfo: true
+							items: [
+							{
+								text: 'Update',
+								iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-edit',
+								width: '110px',
+								scale: 'medium',
+								handler: function() {
+									var evaluationIdsToUpdate = [];
+									var rows = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection();
+									Ext.Array.each(rows, function (item) {
+										evaluationIdsToUpdate.push(item.data.evaluationId);
+									});
+									
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form, evaluationIdsToUpdate);
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Skip',									
+								iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+								scale: 'medium',
+								handler: function() {
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form);
+									}
+								}										
+							}]
 						}
-					]				
-				})
-				]
-			});
-			
+					]
+				});
+				var data = form.getValues();
+				Ext.getCmp('evaluationGrid').getStore().load({
+					url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
+				 });
+				selectEvaluationWin.show();	
+			}
+		
 			var addEditWindow = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Evaluation Template',
 				iconCls: 'fa fa-edit',
@@ -104,9 +149,7 @@
 										width: '110px',
 										scale: 'medium',
 										handler: function() {
-											var saveTemplate = function() {
-												var form = this.up('form');
-												var win = this.up('window');
+											var saveTemplate = function(win, form, evaluationIdsToUpdate) {
 												var data = form.getValues();
 
 												data.sectionTemplates = [];											
@@ -115,14 +158,17 @@
 														sectionTemplateId: item.get('templateId')
 													});
 												});
-												
+
 												var method = 'POST';
 												var update = '';
 												if (data.templateId) {
 													update = '/' + data.templateId;
 													method = 'PUT';
 												}
-
+												if(evaluationIdsToUpdate !== undefined) {
+													data.evaluationIdsToUpdate = evaluationIdsToUpdate;
+												}
+												
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/evaluationtemplates' + update,
 													method: method,
@@ -136,18 +182,15 @@
 												});	
 											}
 											
+											var form = this.up('form');
+											var win = this.up('window');
 											if(Ext.getCmp('updatePending').getRawValue())
 											{
-												var evaluationIdsToUpdate = [];
-												var data = this.up('form').getValues();
-												Ext.getCmp('evaluationGrid').getStore().load({
-													url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
-												 });
-												selectEvaluationWin.show();												
+												getEvaluations(win, form, saveTemplate);
 											}
 											else
 											{
-												saveTemplate();
+												saveTemplate(win, form);
 											}
 										}
 									},

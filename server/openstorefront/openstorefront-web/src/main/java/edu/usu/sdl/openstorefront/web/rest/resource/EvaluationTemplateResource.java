@@ -18,8 +18,10 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -97,7 +99,13 @@ public class EvaluationTemplateResource
 	@DataType(EvaluationTemplate.class)
 	public Response createEvaluationTemplate(EvaluationTemplate evaluationTemplate)
 	{
-		return saveEvaluationTemplate(evaluationTemplate, true);
+		ValidationResult validationResult = evaluationTemplate.validate();
+		if (validationResult.valid()) {
+			evaluationTemplate = evaluationTemplate.save();
+			return Response.created(URI.create("v1/resource/evaluationtemplates/" + evaluationTemplate.getTemplateId())).entity(evaluationTemplate).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@PUT
@@ -109,29 +117,30 @@ public class EvaluationTemplateResource
 	@Path("/{templateId}")
 	public Response updateChecklistTemplate(
 			@PathParam("templateId") String templateId,
-			EvaluationTemplate evaluationTemplate)
+			UpdateEvaluationTemplateModel model)
 	{
-		EvaluationTemplate existing = new EvaluationTemplate();
-		existing.setTemplateId(templateId);
-		existing = existing.find();
-		if (existing == null) {
+		EvaluationTemplate evaluationTemplate = model.getEvaluationTemplate();
+		EvaluationTemplate existingTemplate = new EvaluationTemplate();
+		existingTemplate.setTemplateId(templateId);
+		existingTemplate = existingTemplate.find();
+		if (existingTemplate == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		evaluationTemplate.setTemplateId(templateId);
-		return saveEvaluationTemplate(evaluationTemplate, false);
-	}
 
-	private Response saveEvaluationTemplate(EvaluationTemplate evaluationTemplate, boolean create)
-	{
+		evaluationTemplate.setTemplateId(templateId);
 		ValidationResult validationResult = evaluationTemplate.validate();
 		if (validationResult.valid()) {
 			evaluationTemplate = evaluationTemplate.save();
+			model.getEvaluationIdsToUpdate().forEach(id -> {
+				Evaluation idExample = new Evaluation();
+				idExample.setEvaluationId(id);
+				Evaluation existingEvaluation = idExample.find();
 
-			if (create) {
-				return Response.created(URI.create("v1/resource/evaluationtemplates/" + evaluationTemplate.getTemplateId())).entity(evaluationTemplate).build();
-			} else {
-				return Response.ok(evaluationTemplate).build();
-			}
+				if (existingEvaluation != null) {
+					service.getEvaluationService().updateEvaluationToLatestTemplateVersion(existingEvaluation);
+				}
+			});
+			return Response.ok(evaluationTemplate).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

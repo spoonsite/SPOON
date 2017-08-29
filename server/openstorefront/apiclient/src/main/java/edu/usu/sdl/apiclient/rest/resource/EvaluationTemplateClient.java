@@ -16,6 +16,7 @@
 package edu.usu.sdl.apiclient.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import javax.ws.rs.core.Response;
 
@@ -51,7 +52,7 @@ public class EvaluationTemplateClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response updateChecklistTemplate(String templateId, EvaluationTemplate evaluationTemplate)
+	public Response updateChecklistTemplate(String templateId, UpdateEvaluationTemplateModel updateModel)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
