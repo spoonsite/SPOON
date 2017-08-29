@@ -587,7 +587,7 @@ public class OrientPersistenceService
 			appendToWhere(queryString, extraWhere.getKey());
 			mappedParams.putAll(extraWhere.getValue());
 		}
-		
+
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
 		}
@@ -628,12 +628,18 @@ public class OrientPersistenceService
 			if (item.getClass() == SpecialOperatorModel.class) {
 				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
 					queryString.append(extraWhere.getKey());
 					mappedParams.putAll(extraWhere.getValue());
 				}
 			} else if (item.getClass() == WhereClauseGroup.class) {
 				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
 					queryString.append(extraWhere.getKey());
 					mappedParams.putAll(extraWhere.getValue());
 				}
@@ -641,7 +647,7 @@ public class OrientPersistenceService
 				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
 			}
 		});
-		return new SimpleEntry(queryString.toString(), mappedParams);		
+		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
 	private SimpleEntry<String, Map<String, Object>> ProcessSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
@@ -662,8 +668,7 @@ public class OrientPersistenceService
 			if (item.getClass() == SpecialOperatorModel.class) {
 				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
-					if(queryString.length() > 0)
-					{
+					if (queryString.length() > 0) {
 						queryString.append(group.getStatementOption().getCondition());
 					}
 					queryString.append(extraWhere.getKey());
@@ -672,9 +677,8 @@ public class OrientPersistenceService
 			} else if (item.getClass() == WhereClauseGroup.class) {
 				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
-					if(queryString.length() > 0)
-					{
-						queryString.append(group.getStatementOption().getCondition());		
+					if (queryString.length() > 0) {
+						queryString.append(group.getStatementOption().getCondition());
 					}
 					queryString.append(extraWhere.getKey());
 					mappedParams.putAll(extraWhere.getValue());
@@ -683,8 +687,7 @@ public class OrientPersistenceService
 				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
 			}
 		});
-		if(queryString.length() > 0)
-		{
+		if (queryString.length() > 0) {
 			// wrap the group in ()
 			queryString.insert(0, "(");
 			queryString.append(" )");

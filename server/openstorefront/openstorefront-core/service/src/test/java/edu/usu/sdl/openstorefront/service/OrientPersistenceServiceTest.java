@@ -416,6 +416,101 @@ public class OrientPersistenceServiceTest
 		assertMapEquals(expPrams, result.getValue());
 	}
 
+	/**
+	 * Test of generateQuery method, of class OrientPersistenceService.
+	 */
+	@Test
+	public void testGenerateQueryMultipleWhereClauseGroups()
+	{
+		System.out.println("generateQuery");
+		String expQuery = "select   from TestEntity where  activeStatus = :activeStatusParam AND ( code = :codeParam OR code = :codeParam2 ) AND ( sortOrder  >= :sortOrderParam AND  sortOrder <= :sortOrderParam2 )";
+		Map<String, String> expPrams = new HashMap<>();
+		expPrams.put("activeStatusParam", "A");
+		expPrams.put("codeParam", "TestCode");
+		expPrams.put("codeParam2", "TestCode2");
+		expPrams.put("sortOrderParam", "1");
+		expPrams.put("sortOrderParam2", "10");
+
+		TestEntity example = new TestEntity();
+		example.setActiveStatus(TestEntity.ACTIVE_STATUS);
+
+		SpecialOperatorModel group1Item1 = new SpecialOperatorModel();
+		TestEntity codeExample1 = new TestEntity();
+		codeExample1.setCode("TestCode");
+		group1Item1.setExample(codeExample1);
+
+		SpecialOperatorModel group1Item2 = new SpecialOperatorModel();
+		TestEntity codeExample2 = new TestEntity();
+		codeExample2.setCode("TestCode2");
+		group1Item2.setExample(codeExample2);
+		group1Item2.getGenerateStatementOption().setParameterSuffix("Param2");
+
+		WhereClauseGroup group1 = new WhereClauseGroup();
+		group1.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
+		group1.getExtraWhereClause().add(group1Item1);
+		group1.getExtraWhereClause().add(group1Item2);
+
+		SpecialOperatorModel group2Item1 = new SpecialOperatorModel();
+		TestEntity example1 = new TestEntity();
+		example1.setSortOrder(1);
+		group2Item1.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
+		group2Item1.setExample(example1);
+
+		SpecialOperatorModel group2Item2 = new SpecialOperatorModel();
+		TestEntity example2 = new TestEntity();
+		example2.setSortOrder(10);
+		group2Item2.setExample(example2);
+		group2Item2.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		group2Item2.getGenerateStatementOption().setParameterSuffix("Param2");
+
+		WhereClauseGroup group2 = new WhereClauseGroup();
+		group2.getExtraWhereClause().add(group2Item1);
+		group2.getExtraWhereClause().add(group2Item2);
+
+		QueryByExample queryByExample = new QueryByExample(example);
+		queryByExample.getExtraWhereCauses().add(group1);
+		queryByExample.getExtraWhereCauses().add(group2);
+
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService().generateQuery(queryByExample);
+		Assert.assertEquals(expQuery, result.getKey());
+		assertMapEquals(expPrams, result.getValue());
+	}
+
+	/**
+	 * Test of generateQuery method, of class OrientPersistenceService.
+	 */
+	@Test
+	public void testGenerateQueryMultipleWhereClauses()
+	{
+		System.out.println("generateQuery");
+		String expQuery = "select   from TestEntity where  activeStatus = :activeStatusParam AND  code = :codeParam AND  createUser = :createUserParam";
+		Map<String, String> expPrams = new HashMap<>();
+		expPrams.put("activeStatusParam", "A");
+		expPrams.put("codeParam", "TestCode");
+		expPrams.put("createUserParam", "admin");
+
+		TestEntity example = new TestEntity();
+		example.setActiveStatus(TestEntity.ACTIVE_STATUS);
+
+		SpecialOperatorModel extraItem1 = new SpecialOperatorModel();
+		TestEntity codeExample = new TestEntity();
+		codeExample.setCode("TestCode");
+		extraItem1.setExample(codeExample);
+
+		SpecialOperatorModel extraItem2 = new SpecialOperatorModel();
+		TestEntity userExample = new TestEntity();
+		userExample.setCreateUser("admin");
+		extraItem2.setExample(userExample);
+
+		QueryByExample queryByExample = new QueryByExample(example);
+		queryByExample.getExtraWhereCauses().add(extraItem1);
+		queryByExample.getExtraWhereCauses().add(extraItem2);
+
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService().generateQuery(queryByExample);
+		Assert.assertEquals(expQuery, result.getKey());
+		assertMapEquals(expPrams, result.getValue());
+	}
+
 	private void assertMapEquals(Map<String, String> expPrams, Map<String, Object> result)
 	{
 		//assertEquals does not force the same order on a Map.
