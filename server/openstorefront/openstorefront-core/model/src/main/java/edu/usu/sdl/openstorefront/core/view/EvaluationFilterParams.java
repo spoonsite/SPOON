@@ -44,6 +44,11 @@ public class EvaluationFilterParams
 	@QueryParam("published")
 	private Boolean published;
 	
+			
+	@QueryParam("templateId")
+	@Size(min = 0, max = 255)	
+	private String templateId;
+	
 	public EvaluationFilterParams()
 	{
 	}
@@ -88,4 +93,13 @@ public class EvaluationFilterParams
 		this.published = published;
 	}
 
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
+	}
 }

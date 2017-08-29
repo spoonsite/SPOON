@@ -112,6 +112,10 @@ public class EvaluationResource
 			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));
 		}
 
+		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
+			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
+		}
+		
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 

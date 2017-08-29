@@ -14,7 +14,70 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
-			
+			var selectEvaluationWin = Ext.create('Ext.window.Window', {
+				title: 'Select Evaluations',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
+				modal: true,
+				width: 1050,
+				maxHeight: '80%',
+				layout: 'fit',
+				items: [
+				Ext.create('Ext.grid.Panel', {
+					id: 'evaluationGrid',
+					title: 'Update Evaluation <i class="fa fa-question-circle"  data-qtip="Updating evaluations may result in a loss of work."></i>',
+					columnLines: true,
+					store: {
+						id: 'evaluationGridStore',
+						autoLoad: false,
+						pageSize: 250,
+						remoteSort: true,
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'componentName',
+								direction: 'ASC'
+							})
+						],				
+						proxy: CoreUtil.pagingProxy({
+							type: 'ajax',
+							url: 'api/v1/resource/evaluations?published=false',
+							reader: {
+								type: 'json',
+								rootProperty: 'data',
+								totalProperty: 'totalNumber'
+							}
+						})
+					},				
+					columns: [
+						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
+						{ text: 'Version', dataIndex: 'version', align: 'center', width: 175 },
+						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
+						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
+						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+							renderer: function(value, meta, record) {
+								if (value === 'INPROGRESS') {
+									meta.tdCls = 'alert-warning';
+								} else if (value === 'WAIT') {
+									meta.tdCls = 'alert-info';
+								} else if (value === 'COMPLETE') {
+									meta.tdCls = 'alert-success';
+								} else if (value === 'HOLD') {
+									meta.tdCls = 'alert-danager';
+								}
+								return record.get('workflowStatusDescription');
+							}
+						}
+					],			
+					dockedItems: [
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'evaluationGridStore',
+							displayInfo: true
+						}
+					]				
+				})
+				]
+			});
 			
 			var addEditWindow = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Evaluation Template',
@@ -41,36 +104,51 @@
 										width: '110px',
 										scale: 'medium',
 										handler: function() {
-											var form = this.up('form');
-											var win = this.up('window');
-											var data = form.getValues();
+											var saveTemplate = function() {
+												var form = this.up('form');
+												var win = this.up('window');
+												var data = form.getValues();
 
-											data.sectionTemplates = [];											
-											Ext.getCmp('sectionsInTemplate').getStore().each(function(item){
-												data.sectionTemplates.push({
-													sectionTemplateId: item.get('templateId')
+												data.sectionTemplates = [];											
+												Ext.getCmp('sectionsInTemplate').getStore().each(function(item){
+													data.sectionTemplates.push({
+														sectionTemplateId: item.get('templateId')
+													});
 												});
-											});
-
-											var method = 'POST';
-											var update = '';
-											if (data.templateId) {
-												update = '/' + data.templateId;
-												method = 'PUT';
-											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/evaluationtemplates' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function(){
-													actionRefresh();
-													form.reset();
-													win.close();
+												
+												var method = 'POST';
+												var update = '';
+												if (data.templateId) {
+													update = '/' + data.templateId;
+													method = 'PUT';
 												}
-											});	
+
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/evaluationtemplates' + update,
+													method: method,
+													data: data,
+													form: form,
+													success: function(){
+														actionRefresh();
+														form.reset();
+														win.close();
+													}
+												});	
+											}
 											
+											if(Ext.getCmp('updatePending').getRawValue())
+											{
+												var evaluationIdsToUpdate = [];
+												var data = this.up('form').getValues();
+												Ext.getCmp('evaluationGrid').getStore().load({
+													url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
+												 });
+												selectEvaluationWin.show();												
+											}
+											else
+											{
+												saveTemplate();
+											}
 										}
 									},
 									{
@@ -131,7 +209,12 @@
 										storeConfig: {
 											url: 'api/v1/resource/checklisttemplates'
 										}
-									})									
+									}),
+									{
+										xtype: 'checkboxfield',
+										id: 'updatePending',
+										fieldLabel: 'Update unpublished Evaluations'		
+									}									
 								]
 							},
 							{
@@ -215,8 +298,6 @@
 					}
 				]
 			});
-			
-			
 			
 			var templateGrid = Ext.create('Ext.grid.Panel', {
 				id: 'templateGrid',
