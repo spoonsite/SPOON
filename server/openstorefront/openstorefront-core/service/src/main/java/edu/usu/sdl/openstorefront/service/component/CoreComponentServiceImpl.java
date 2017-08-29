@@ -519,7 +519,7 @@ public class CoreComponentServiceImpl
 			Component componentCheck = new Component();
 			componentCheck.setExternalId(componentToLookFor.getExternalId());
 			oldComponent = componentCheck.findProxy();
-			if (StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+			if (oldComponent != null && StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
 				//ignore change request
 				oldComponent = null;
 			}
@@ -530,7 +530,7 @@ public class CoreComponentServiceImpl
 			Component componentCheck = new Component();
 			componentCheck.setName(componentToLookFor.getName());
 			oldComponent = componentCheck.findProxy();
-			if (StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+			if (oldComponent != null && StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
 				//ignore change request
 				oldComponent = null;
 			}
@@ -812,7 +812,6 @@ public class CoreComponentServiceImpl
 			component.setLastActivityDts(TimeUtil.currentDate());
 		}
 
-		//Check Attributes
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			Component oldComponent = findExistingComponent(component);
 			if (oldComponent != null) {
@@ -820,6 +819,7 @@ public class CoreComponentServiceImpl
 			}
 		}
 
+		//Check Attributes
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
