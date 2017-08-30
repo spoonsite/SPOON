@@ -130,6 +130,16 @@ public class EvaluationTemplateResource
 		ValidationResult validationResult = evaluationTemplate.validate();
 		if (validationResult.valid()) {
 			evaluationTemplate = service.getEvaluationService().updateEvaluationTemplate(model);
+			if (model.getEvaluationIdsToUpdate() != null) {
+				model.getEvaluationIdsToUpdate().forEach(id -> {
+					Evaluation idExample = new Evaluation();
+					idExample.setEvaluationId(id);
+					Evaluation existingEvaluation = idExample.find();
+					if (existingEvaluation != null) {
+						service.getEvaluationService().updateEvaluationToLatestTemplateVersion(existingEvaluation);
+					}
+				});
+			}
 			return Response.ok(evaluationTemplate).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

@@ -122,7 +122,7 @@
 					url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
 				 });
 				selectEvaluationWin.show();	
-			}
+			};
 		
 			var addEditWindow = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Evaluation Template',
@@ -150,24 +150,25 @@
 										scale: 'medium',
 										handler: function() {
 											var saveTemplate = function(win, form, evaluationIdsToUpdate) {
-												var data = form.getValues();
+												var evaluationData = form.getValues();
 
-												data.sectionTemplates = [];											
+												evaluationData.sectionTemplates = [];											
 												Ext.getCmp('sectionsInTemplate').getStore().each(function(item){
-													data.sectionTemplates.push({
+													evaluationData.sectionTemplates.push({
 														sectionTemplateId: item.get('templateId')
 													});
 												});
 
 												var method = 'POST';
 												var update = '';
-												if (data.templateId) {
-													update = '/' + data.templateId;
+												if (evaluationData.templateId) {
+													update = '/' + evaluationData.templateId;
 													method = 'PUT';
 												}
-												if(evaluationIdsToUpdate !== undefined) {
-													data.evaluationIdsToUpdate = evaluationIdsToUpdate;
-												}
+												var data = {
+													evaluationTemplate: evaluationData,
+													evaluationIdsToUpdate: evaluationIdsToUpdate
+												};
 												
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/evaluationtemplates' + update,
@@ -180,7 +181,7 @@
 														win.close();
 													}
 												});	
-											}
+											};
 											
 											var form = this.up('form');
 											var win = this.up('window');

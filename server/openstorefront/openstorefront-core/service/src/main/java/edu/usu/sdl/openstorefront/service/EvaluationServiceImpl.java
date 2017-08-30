@@ -289,9 +289,45 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+
+		if (template != null) {
+			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
+		}
+	}
+
+	private void updateContentSections(String evaluationId, List<EvaluationSectionTemplate> sectionTemplates)
+	{
+		ContentSection contentSectionExample = new ContentSection();
+		contentSectionExample.setEntity(Evaluation.class.getSimpleName());
+		contentSectionExample.setEntityId(evaluationId);
+		List<ContentSection> contentSections = persistenceService.queryByExample(contentSectionExample);
+		// add new sections
+		sectionTemplates.forEach((sectionTemplate) -> {
+			boolean foundSection = false;
+			for (ContentSection section : contentSections) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluationId, sectionTemplate.getSectionTemplateId());
+			}
+		});
+		// remove sections
+		contentSections.forEach((section) -> {
+			boolean foundSection = false;
+			for (EvaluationSectionTemplate sectionTemplate : sectionTemplates) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().deleteContentSection(section.getContentSectionId());
+			}
+		});
+	}
 	@Override
-	public EvaluationAll getEvaluation(String evaluationId
-	)
+	public EvaluationAll getEvaluation(String evaluationId)
 	{
 		return getEvaluation(evaluationId, false);
 	}
