@@ -208,7 +208,12 @@
 								xtype: 'checkbox',
 								name: 'allowNewSections',
 								boxLabel: 'Allow Adding Sections'
-							}						
+							},
+							{
+								xtype: 'checkbox',
+								name: 'allowQuestionManagement',
+								boxLabel: 'Allow Question Management'
+							}							
 						]
 					}
 				]
@@ -269,6 +274,9 @@
 					{ text: 'Allow New Sections', dataIndex: 'allowNewSections', align: 'center', width: 175, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
+					{ text: 'Allow Question Management', dataIndex: 'allowQuestionManagement', align: 'center', width: 175, hidden: true,
+						renderer: CoreUtil.renderer.booleanRenderer
+					},					
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
 					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
@@ -532,6 +540,14 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowNewSections(record);
+										}										
+									},	
+									{
+										text: 'Toggle Allow Question Management',
+										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionAllowQuestionManagement(record);
 										}										
 									},									
 									{
@@ -811,6 +827,20 @@
 					}
 				});
 			};
+			
+			var actionAllowQuestionManagement = function(record) {
+				evaluationGrid.setLoading('Updating evaluation...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/allowquestionmanagement',
+					method: 'PUT',
+					callback: function(){
+						evaluationGrid.setLoading(false);
+					},
+					success: function(response, opts){
+						actionRefresh();
+					}
+				});
+			};			
 
 			var copy = function(record) {
 				evaluationGrid.setLoading('Copying...');

@@ -90,6 +90,8 @@ public class Evaluation
 	@NotNull
 	private Boolean allowNewSubSections;
 
+	private Boolean allowQuestionManagement;
+
 	public Evaluation()
 	{
 	}
@@ -110,6 +112,7 @@ public class Evaluation
 		setWorkflowStatus(evaluation.getWorkflowStatus());
 		setAllowNewSections(evaluation.getAllowNewSections());
 		setAllowNewSubSections(evaluation.getAllowNewSubSections());
+		setAllowQuestionManagement(evaluation.getAllowQuestionManagement());
 	}
 
 	@Override
@@ -244,6 +247,16 @@ public class Evaluation
 	public void setAllowNewSubSections(Boolean allowNewSubSections)
 	{
 		this.allowNewSubSections = allowNewSubSections;
+	}
+
+	public Boolean getAllowQuestionManagement()
+	{
+		return allowQuestionManagement;
+	}
+
+	public void setAllowQuestionManagement(Boolean allowQuestionManagement)
+	{
+		this.allowQuestionManagement = allowQuestionManagement;
 	}
 
 }

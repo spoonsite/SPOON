@@ -119,7 +119,6 @@ public class EvaluationResource
 
 		Evaluation endExample = new Evaluation();
 		endExample.setUpdateDts(evaluationFilterParams.getEnd());
-		
 
 		QueryByExample queryByExample = new QueryByExample(evaluationExample);
 
@@ -146,7 +145,7 @@ public class EvaluationResource
 			componentQueryByExample.setLikeExample(componentLikeExample);
 			// Define Lookup Operation (ILIKE)
 			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
-			
+
 			List<Component> components = service.getPersistenceService().queryByExample(componentQueryByExample);
 			// get list of ids
 			List<String> ids = components.stream().map(x -> x.getComponentId()).collect(Collectors.toList());
@@ -157,14 +156,13 @@ public class EvaluationResource
 				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
 				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
-				
-				
+
 				Evaluation originIdInExample = new Evaluation();
 				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
 				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
 				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
-				
+
 				WhereClauseGroup group = new WhereClauseGroup();
 				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
 				group.getExtraWhereClause().add(componentIdGroup);
@@ -426,7 +424,7 @@ public class EvaluationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Toggles the allow new section flag")
 	@Path("/{evaluationId}/allownewsections")
-	public Response toggleAllowNewSecionEvaluation(
+	public Response toggleAllowNewSectionEvaluation(
 			@PathParam("evaluationId") String evaluationId
 	)
 	{
@@ -442,7 +440,34 @@ public class EvaluationResource
 			}
 			evaluation.save();
 
-			return Response.ok().build();
+			return Response.ok(evaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Toggles the question management flag")
+	@Path("/{evaluationId}/allowquestionmanagement")
+	public Response toggleAllowQuestionManagement(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+
+			if (Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				evaluation.setAllowQuestionManagement(Boolean.FALSE);
+			} else {
+				evaluation.setAllowQuestionManagement(Boolean.TRUE);
+			}
+			evaluation.save();
+
+			return Response.ok(evaluation).build();
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
@@ -999,6 +1024,37 @@ public class EvaluationResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Add/Remove (inactivate) questions from evaluation checklist. Evaluation must be marked to allow changing questions.")
+	@Path("/{evaluationId}/checklist/{checklistId}/syncquestions")
+	public Response syncChecklistQuestions(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@DataType(String.class) List<String> questionIdsToKeep
+	)
+	{
+		EvaluationChecklist existing = new EvaluationChecklist();
+		existing.setEvaluationId(evaluationId);
+		existing.setChecklistId(checklistId);
+		existing = existing.find();
+		if (existing != null) {
+
+			Evaluation evaluation = new Evaluation();
+			evaluation.setEvaluationId(evaluationId);
+			evaluation = evaluation.find();
+			if (evaluation != null && Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				service.getChecklistService().syncChecklistQuestions(checklistId, questionIdsToKeep);
+				return Response.ok().build();
+			} else {
+				Response.status(Response.Status.FORBIDDEN).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1068,6 +1124,7 @@ public class EvaluationResource
 				if (result.valid()) {
 					checklistResponse.setChecklistId(checklistId);
 					checklistResponse.setResponseId(responseId);
+					checklistResponse.setQuestionId(existing.getQuestionId());
 					checklistResponse = checklistResponse.save();
 					return Response.ok(ChecklistResponseView.toView(checklistResponse)).build();
 				} else {

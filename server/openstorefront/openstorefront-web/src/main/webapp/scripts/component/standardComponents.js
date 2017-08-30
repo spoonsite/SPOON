@@ -521,7 +521,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				'<tpl for=".">',
 				'	<tpl if="changeTypeDescription">',
 				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
-				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment">{comment}</tpl><br>',									
+				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment"><br>{comment}</tpl><br>',									
 				'	<tpl if="newValue"><br><b>New Value: </b><br>',
 				'	<b>{newValue}</b><br><br></tpl>',
 				'	<tpl if="oldValue"><b>Old Value:</b> <br>',

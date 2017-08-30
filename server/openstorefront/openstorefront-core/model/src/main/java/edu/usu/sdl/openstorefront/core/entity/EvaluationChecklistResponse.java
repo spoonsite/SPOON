@@ -81,6 +81,9 @@ public class EvaluationChecklistResponse
 
 	private Integer sortOrder;
 
+	@APIDescription("Indicates that an evaluator manually added or removed; This used for auto syncing.")
+	private Boolean userAddRemoveFlg;
+
 	public EvaluationChecklistResponse()
 	{
 	}
@@ -99,6 +102,7 @@ public class EvaluationChecklistResponse
 		setNotApplicable(checklistResponse.getNotApplicable());
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
 		setPrivateFlg(checklistResponse.getPrivateFlg());
+		setUserAddRemoveFlg(checklistResponse.getUserAddRemoveFlg());
 
 	}
 
@@ -232,6 +236,16 @@ public class EvaluationChecklistResponse
 	public void setSortOrder(Integer sortOrder)
 	{
 		this.sortOrder = sortOrder;
+	}
+
+	public Boolean getUserAddRemoveFlg()
+	{
+		return userAddRemoveFlg;
+	}
+
+	public void setUserAddRemoveFlg(Boolean userAddRemoveFlg)
+	{
+		this.userAddRemoveFlg = userAddRemoveFlg;
 	}
 
 }
