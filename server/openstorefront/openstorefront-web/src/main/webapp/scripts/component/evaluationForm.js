@@ -32,7 +32,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.ChecklistAll',
 		'OSF.form.Section',
 		'OSF.form.Review',
-		'OSF.form.Tags'
+		'OSF.form.Tags',
+		'OSF.form.ManageEvalQuestions'
 	],
 	
 	layout: 'border',
@@ -79,7 +80,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EvaluationInfo',
-									title: 'Evaluation Info'
+									title: 'Evaluation Info',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});
 							}
 						},
@@ -117,7 +119,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EntrySummary',
-									title: 'Entry Summary'
+									title: 'Entry Summary',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});								
 							}							
 						}
@@ -608,7 +611,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 			
 			evalPanel.loadContentForm({
 				form: 'EvaluationInfo',
-				title: 'Evaluation Info'
+				title: 'Evaluation Info',
+				refreshCallback: evalPanel.externalRefreshCallback
 			});			
 		});
 		
@@ -634,7 +638,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 						handler: function(){
 							evalPanel.loadContentForm({
 								form: 'EntrySummary',
-								title: 'Entry Summary'
+								title: 'Entry Summary',
+								refreshCallback: evalPanel.externalRefreshCallback
 							});								
 						}							
 					}					
@@ -739,26 +744,62 @@ Ext.define('OSF.component.EvaluationPanel', {
 							}							
 						});
 						
-						questions.push({														
-							text: 'All Questions',							
+						var allQuestionButtonType = 'button';
+						var allQuestionMenu = null;
+						if (evaluationAll.evaluation.allowQuestionManagement) {
+							allQuestionButtonType = 'splitbutton';
+							allQuestionMenu = {
+								items: [
+									{
+										text: 'Manage Questions',
+										iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+										handler: function() {
+											
+											var manageWin = Ext.create('OSF.form.ManageEvalQuestions', {
+												evaluationAll: evaluationAll,
+												successCallback: function() {
+													evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
+													allQuestionLoadAction();
+												}
+											});											
+											manageWin.show();
+										}
+									}
+								],
+								listeners: {
+									beforerender: function () {
+									 this.setWidth(this.up('button').getWidth());
+									}					
+								}								
+							};
+						}
+						
+						var allQuestionLoadAction = function() {
+							evalPanel.loadContentForm({
+								form: 'ChecklistAll',
+								title: 'Checklist Questions',
+								data: evaluationAll.checkListAll,
+								refreshCallback: function(updatedResponse) {
+									var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+
+									var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+									Ext.Array.each(checklistMenu.items.items, function(item){
+										if (item.questionId && updatedResponse.questionId === item.questionId) {
+											var itemStatus = item.getComponent('status');
+											itemStatus.setText(newStatusIcon);	
+											itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
+										}
+									});
+								}									
+							});
+						};
+						
+						questions.push({		
+							xtype: allQuestionButtonType,
+							text: 'All Questions',
+							menu: allQuestionMenu,
 							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'ChecklistAll',
-									title: 'Checklist Questions',
-									data: evaluationAll.checkListAll,
-									refreshCallback: function(updatedResponse) {
-										var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
-																				
-										var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
-										Ext.Array.each(checklistMenu.items.items, function(item){
-											if (item.questionId && updatedResponse.questionId === item.questionId) {
-												var itemStatus = item.getComponent('status');
-												itemStatus.setText(newStatusIcon);	
-												itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
-											}
-										});
-									}									
-								});
+								allQuestionLoadAction();
 							}							
 						});
 						
@@ -1091,7 +1132,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
 		if (refreshCallback) {
-			evalWin.evalPanel.refreshCallback = refreshCallback;
+			evalWin.evalPanel.externalRefreshCallback = refreshCallback;
 		}		
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;

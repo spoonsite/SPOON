@@ -44,7 +44,8 @@ Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: ['widget.templatedescription'],	
 	
-	showDescriptionHeader: true,
+	showDescriptionHeader: false,
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',	
 		'	{description}',
@@ -1574,6 +1575,7 @@ Ext.define('OSF.component.template.EvaluationSections', {
 						collapsible: true,
 						sectionData: section,
 						margin: '0 0 20 0',
+						bodyCls: 'text-readable',
 						tpl: new Ext.XTemplate(
 							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
 							'	<tpl if="section.content">{section.content}</tpl>',
@@ -1624,6 +1626,7 @@ Ext.define('OSF.component.template.EvaluationSectionByTitle', {
 	collapsible: true,
 	title: '',
 	sectionTitle: '',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
 		'	<tpl if="section.content">{section.content}</tpl>',
@@ -1684,6 +1687,7 @@ Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Evaluation Checklist Summary',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
 		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
@@ -1755,30 +1759,44 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 			itemId: 'grid',			
 			columnLines: true,
 			width: '100%',			
+			viewConfig: {
+				enableTextSelection: true				
+			},			
 			store: {				
 			},
 			plugins: 'gridfilters',
 			columns: [
 				{ text: 'QID', dataIndex: 'qid', width: 75, align: 'center',
 					renderer: function(value, meta, record) {
-						var link = '<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';						
+						meta.tdCls = 'text-readable';
+						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';						
 						link += '<b>' + record.get('qid') + '</b>';
 						link += '</a>';
 						return link;
 					}
 				},
-				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 125, align: 'center',
+				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true,
 					filter: {
 					  type: 'list'            
+					},
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
 					}
 				},
-				{ text: 'Question', dataIndex: 'question', flex: 2, cellWrap: true },
+				{ text: 'Question', dataIndex: 'question', flex: 2, cellWrap: true,
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
+					}
+				},
 				{ text: 'Score', dataIndex: 'score', width: 75, align: 'center',
 					filter: {
 					  type: 'list'            
 					},
 					renderer: function(value, meta, record) {
-						var link = '<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'' + record.get('questionId') + '\')">';						
+						meta.tdCls = 'text-readable';
+						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'' + record.get('questionId') + '\')">';						
 						if (record.get('notApplicable')) {
 							link += '<b>N/A</b>';
 						} else if (record.get('score')) {
@@ -1788,7 +1806,12 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return link;
 					}
 				},
-				{ text: 'Response', dataIndex: 'response', flex: 1,  cellWrap: true }
+				{ text: 'Response', dataIndex: 'response', flex: 1,  cellWrap: true,
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
+					}					
+				}
 			]
 		}
 	],
@@ -1848,6 +1871,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								draggable: false,
 								maximizable: true,
 								scrollable: true,
+								bodyCls: 'text-readable',
 								bodyStyle: 'padding: 10px;',
 								listeners: {
 									show: function() {        
@@ -1898,6 +1922,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								draggable: false,
 								maximizable: true,
 								scrollable: true,
+								bodyCls: 'text-readable',
 								bodyStyle: 'padding: 10px;',
 								listeners: {
 									show: function() {        
@@ -1961,6 +1986,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Evaluation Recommendations',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		' <table class="details-table" width="100%">',			
 		'	<tpl for="checkListAll.recommendations">',	

@@ -323,6 +323,7 @@ public class ComponentSubmissionResource
 		FileHistoryOption fileHistoryOption = new FileHistoryOption();
 		fileHistoryOption.setUploadQuestions(true);
 		fileHistoryOption.setUploadTags(true);
+		fileHistoryOption.setSkipDuplicationCheck(Boolean.TRUE);
 
 		//validate all pieces
 		if (componentAll.getComponent() != null) {

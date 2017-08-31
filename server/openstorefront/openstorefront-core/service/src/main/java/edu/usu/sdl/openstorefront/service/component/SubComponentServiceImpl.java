@@ -418,13 +418,15 @@ public class SubComponentServiceImpl
 			oldMedia.updateFields(media);
 			newMedia = persistenceService.persist(oldMedia);
 		} else {
-			media.setComponentMediaId(persistenceService.generateId());
+			if (StringUtils.isBlank(media.getComponentMediaId())) {
+				media.setComponentMediaId(persistenceService.generateId());
+			}
 
 			//On a merge there may be a pre-existing file that needs to be rename
 			if (StringUtils.isNotBlank(media.getFileName())) {
 				if (media.getFileName().equals(media.getComponentMediaId()) == false) {
 					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
+					if (oldPath != null && oldPath.toFile().exists()) {
 						try {
 							Files.move(oldPath, oldPath.resolveSibling(media.getComponentMediaId()));
 						} catch (IOException ioe) {
@@ -581,13 +583,15 @@ public class SubComponentServiceImpl
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
-			resource.setResourceId(persistenceService.generateId());
+			if (StringUtils.isBlank(resource.getResourceId())) {
+				resource.setResourceId(persistenceService.generateId());
+			}
 
 			//On a merge there may be a pre-existing file that needs to be rename
 			if (StringUtils.isNotBlank(resource.getFileName())) {
 				if (resource.getFileName().equals(resource.getResourceId()) == false) {
 					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
+					if (oldPath != null && oldPath.toFile().exists()) {
 						try {
 							Files.move(oldPath, oldPath.resolveSibling(resource.getResourceId()));
 						} catch (IOException ioe) {

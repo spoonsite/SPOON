@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
@@ -56,6 +57,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -137,21 +139,63 @@ public class EvaluationResource
 
 		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
 
-		queryByExample.setMaxResults(evaluationFilterParams.getMax());
-		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
-		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
+		//get component ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
+			// If given, filter the search by name
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + evaluationFilterParams.getComponentName().toLowerCase() + "%");
+
+			QueryByExample componentQueryByExample = new QueryByExample(new Component());
+			componentQueryByExample.setLikeExample(componentLikeExample);
+			// Define Lookup Operation (ILIKE)
+			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+
+			List<Component> components = service.getPersistenceService().queryByExample(componentQueryByExample);
+			// get list of ids
+			List<String> ids = components.stream().map(x -> x.getComponentId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+				Evaluation idInExample = new Evaluation();
+				idInExample.setComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
+				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+
+				Evaluation originIdInExample = new Evaluation();
+				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
+				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+
+				WhereClauseGroup group = new WhereClauseGroup();
+				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
+				group.getExtraWhereClause().add(componentIdGroup);
+				group.getExtraWhereClause().add(originIdGroup);
+				queryByExample.getExtraWhereCauses().add(group);
+			}
+		}
 
 		Evaluation evaluationSortExample = new Evaluation();
 		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
+
 		if (sortField != null) {
+
+			queryByExample.setMaxResults(evaluationFilterParams.getMax());
+			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
+			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		List<EvaluationView> views = EvaluationView.toView(evaluations);
+
+		if (sortField == null) {
+			views = evaluationFilterParams.filter(views);
+		}
 
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
-		evaluationViewWrapper.getData().addAll(EvaluationView.toView(evaluations));
+		evaluationViewWrapper.getData().addAll(views);
 		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(evaluationViewWrapper);
@@ -384,7 +428,7 @@ public class EvaluationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Toggles the allow new section flag")
 	@Path("/{evaluationId}/allownewsections")
-	public Response toggleAllowNewSecionEvaluation(
+	public Response toggleAllowNewSectionEvaluation(
 			@PathParam("evaluationId") String evaluationId
 	)
 	{
@@ -400,7 +444,34 @@ public class EvaluationResource
 			}
 			evaluation.save();
 
-			return Response.ok().build();
+			return Response.ok(evaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Toggles the question management flag")
+	@Path("/{evaluationId}/allowquestionmanagement")
+	public Response toggleAllowQuestionManagement(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+
+			if (Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				evaluation.setAllowQuestionManagement(Boolean.FALSE);
+			} else {
+				evaluation.setAllowQuestionManagement(Boolean.TRUE);
+			}
+			evaluation.save();
+
+			return Response.ok(evaluation).build();
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
@@ -957,6 +1028,37 @@ public class EvaluationResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Add/Remove (inactivate) questions from evaluation checklist. Evaluation must be marked to allow changing questions.")
+	@Path("/{evaluationId}/checklist/{checklistId}/syncquestions")
+	public Response syncChecklistQuestions(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@DataType(String.class) List<String> questionIdsToKeep
+	)
+	{
+		EvaluationChecklist existing = new EvaluationChecklist();
+		existing.setEvaluationId(evaluationId);
+		existing.setChecklistId(checklistId);
+		existing = existing.find();
+		if (existing != null) {
+
+			Evaluation evaluation = new Evaluation();
+			evaluation.setEvaluationId(evaluationId);
+			evaluation = evaluation.find();
+			if (evaluation != null && Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				service.getChecklistService().syncChecklistQuestions(checklistId, questionIdsToKeep);
+				return Response.ok().build();
+			} else {
+				Response.status(Response.Status.FORBIDDEN).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1026,6 +1128,7 @@ public class EvaluationResource
 				if (result.valid()) {
 					checklistResponse.setChecklistId(checklistId);
 					checklistResponse.setResponseId(responseId);
+					checklistResponse.setQuestionId(existing.getQuestionId());
 					checklistResponse = checklistResponse.save();
 					return Response.ok(ChecklistResponseView.toView(checklistResponse)).build();
 				} else {

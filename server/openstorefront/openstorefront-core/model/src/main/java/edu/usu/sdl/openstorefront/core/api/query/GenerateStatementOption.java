@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.core.api.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Used for query generation
  *
@@ -49,6 +52,7 @@ public class GenerateStatementOption
 	private String condition = CONDITION_AND;
 	private String parameterSuffix = PARAMETER_SUFFIX_DEFAULT;
 	private String method = "";
+	private List<String> values = new ArrayList<>();
 
 	public GenerateStatementOption()
 	{
@@ -100,6 +104,16 @@ public class GenerateStatementOption
 	public void setMethod(String method)
 	{
 		this.method = method;
+	}
+
+	public void setParameterValues(List<String> values)
+	{
+		this.values = values;
+	}
+
+	public List<String> getParameterValues()
+	{
+		return values;
 	}
 
 }

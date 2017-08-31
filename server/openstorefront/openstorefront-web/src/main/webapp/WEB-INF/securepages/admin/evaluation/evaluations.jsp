@@ -179,14 +179,21 @@
 								displayField: 'description',
 								valueField: 'code',								
 								emptyText: 'Unassigned',
+								typeAhead: true,
 								forceSelection: true,
-								editable: false,
+								editable: true,
 								store: {									
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/userprofiles/lookup'
 									},
+									sorters: [
+										new Ext.util.Sorter({
+											property: 'description',
+											direction: 'ASC'
+										})
+									],
 									listeners: {
 										load: function(store, records, opts) {
 											store.add({
@@ -201,14 +208,12 @@
 								xtype: 'checkbox',
 								name: 'allowNewSections',
 								boxLabel: 'Allow Adding Sections'
-							}
-/*							
+							},
 							{
 								xtype: 'checkbox',
-								name: 'allowNewSubSections',
-								boxLabel: 'Allow Adding Sub-Sections'
-							}
-*/							
+								name: 'allowQuestionManagement',
+								boxLabel: 'Allow Question Management'
+							}							
 						]
 					}
 				]
@@ -254,11 +259,12 @@
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
 								'status': Ext.getCmp('filterActiveStatus').getValue(),
-								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
+								'componentName': Ext.getCmp('filterName').getValue()
 							};
 						}
 					}
-				},				
+				},
 				columns: [
 					{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
 					{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },
@@ -268,6 +274,9 @@
 					{ text: 'Allow New Sections', dataIndex: 'allowNewSections', align: 'center', width: 175, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
+					{ text: 'Allow Question Management', dataIndex: 'allowQuestionManagement', align: 'center', width: 175, hidden: true,
+						renderer: CoreUtil.renderer.booleanRenderer
+					},					
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
 					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
@@ -386,7 +395,26 @@
 										actionRefresh();
 									}
 								}			
-							})
+							}),
+							{
+								xtype: 'textfield',
+								id: 'filterName',
+								fieldLabel: 'Name',
+								name: 'name',
+								emptyText: 'Filter By Name',
+								labelAlign: 'top',
+								labelSeparator: '',	
+								margin: '20 0 0 20',
+								minWidth: 200,	
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											actionRefresh();
+										},
+										buffer: 1500
+									}
+								}
+							}
 						]
 					},					
 					{
@@ -512,6 +540,14 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowNewSections(record);
+										}										
+									},	
+									{
+										text: 'Toggle Allow Question Management',
+										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionAllowQuestionManagement(record);
 										}										
 									},									
 									{
@@ -678,7 +714,7 @@
 			var actionAssignUser = function(record) {
 
 				var assignWin = Ext.create('Ext.window.Window', {
-					title: 'Assign Group',
+					title: 'Assign User',
 					iconCls: 'fa fa-user',
 					closeAction: 'destroy',
 					modal: true,
@@ -701,7 +737,8 @@
 									emptyText: 'Unassigned',
 									labelAlign: 'top',
 									width: '100%',
-									editable: false,
+									typeAhead: true,
+									editable: true,
 									forceSelection: true,
 									store: {									
 										autoLoad: true,
@@ -709,6 +746,12 @@
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
 										},
+										sorters: [
+											new Ext.util.Sorter({
+												property: 'description',
+												direction: 'ASC'
+											})
+										],
 										listeners: {
 											load: function(store, records, opts) {
 												store.add({
@@ -784,6 +827,20 @@
 					}
 				});
 			};
+			
+			var actionAllowQuestionManagement = function(record) {
+				evaluationGrid.setLoading('Updating evaluation...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/allowquestionmanagement',
+					method: 'PUT',
+					callback: function(){
+						evaluationGrid.setLoading(false);
+					},
+					success: function(response, opts){
+						actionRefresh();
+					}
+				});
+			};			
 
 			var copy = function(record) {
 				evaluationGrid.setLoading('Copying...');

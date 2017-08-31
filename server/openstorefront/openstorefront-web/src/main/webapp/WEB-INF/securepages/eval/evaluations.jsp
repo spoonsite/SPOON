@@ -39,7 +39,7 @@
 				
 				var evaluationGrid = Ext.create('Ext.grid.Panel', {					
 					id: 'evaluationGrid',
-					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allow editing evaluations for entries" ></i>',										
+					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allows editing evaluations for entries" ></i>',										
 					columnLines: true,
 					store: {
 						autoLoad: false,
@@ -137,8 +137,9 @@
 									valueField: 'code',								
 									emptyText: 'All',
 									labelAlign: 'top',
+									typeAhead: true,
 									width: 250,
-									editable: false,
+									editable: true,
 									forceSelection: true,
 									store: {									
 										autoLoad: true,
@@ -336,7 +337,8 @@
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
 										width: '100%',
-										editable: false,
+										typeAhead: true,
+										editable: true,
 										forceSelection: true,
 										store: {									
 											autoLoad: true,
