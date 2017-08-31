@@ -99,11 +99,11 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					tpl: new Ext.XTemplate(						
 						'<div class="checklist-question">{question}</div>',
 						'({evaluationSectionDescription})<br>',
-						'<tpl if="scoreCriteria"><h3>Scoring criteria:</h3>',
+						'<tpl if="scoreCriteria"><h3 class="checklist-question-sectionheader">Scoring criteria:</h3>',
 						'{scoreCriteria}</tpl>',
-						'<tpl if="objective"><h3>Objective:</h3>',
+						'<tpl if="objective"><h3 class="checklist-question-sectionheader">Objective:</h3>',
 						'{objective}</tpl>',
-						'<tpl if="narrative"><h3>Narrative:</h3>',
+						'<tpl if="narrative"><h3 class="checklist-question-sectionheader">Narrative:</h3>',
 						'{narrative}</tpl>'
 					)
 				}

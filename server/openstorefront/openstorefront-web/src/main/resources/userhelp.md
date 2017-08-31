@@ -747,6 +747,7 @@ Selecting an evaluation allows you to Assign it to another user or to Edit the e
 
 When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
 
+The preview button will show what the evaluation will look like when published.  Private information will not be shown.
 
 
 # 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
@@ -2046,6 +2047,7 @@ The Evaluation Management menu consists of Evaluations and Templates.
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
+When an evaluation has been flagged with allow question management then this will allow an admin or evaluator to add/remove to the evaluation's checklist from the question pool. 
 
 ## 4.2 Templates @ADMIN-EVALUATION-TEMPLATE 
 

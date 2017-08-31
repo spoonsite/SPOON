@@ -80,7 +80,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EvaluationInfo',
-									title: 'Evaluation Info'
+									title: 'Evaluation Info',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});
 							}
 						},
@@ -118,7 +119,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EntrySummary',
-									title: 'Entry Summary'
+									title: 'Entry Summary',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});								
 							}							
 						}
@@ -609,7 +611,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 			
 			evalPanel.loadContentForm({
 				form: 'EvaluationInfo',
-				title: 'Evaluation Info'
+				title: 'Evaluation Info',
+				refreshCallback: evalPanel.externalRefreshCallback
 			});			
 		});
 		
@@ -635,7 +638,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 						handler: function(){
 							evalPanel.loadContentForm({
 								form: 'EntrySummary',
-								title: 'Entry Summary'
+								title: 'Entry Summary',
+								refreshCallback: evalPanel.externalRefreshCallback
 							});								
 						}							
 					}					
@@ -1128,7 +1132,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
 		if (refreshCallback) {
-			evalWin.evalPanel.refreshCallback = refreshCallback;
+			evalWin.evalPanel.externalRefreshCallback = refreshCallback;
 		}		
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;
