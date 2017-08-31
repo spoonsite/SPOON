@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
-import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
@@ -130,16 +129,7 @@ public class EvaluationTemplateResource
 		evaluationTemplate.setTemplateId(templateId);
 		ValidationResult validationResult = evaluationTemplate.validate();
 		if (validationResult.valid()) {
-			evaluationTemplate = evaluationTemplate.save();
-			model.getEvaluationIdsToUpdate().forEach(id -> {
-				Evaluation idExample = new Evaluation();
-				idExample.setEvaluationId(id);
-				Evaluation existingEvaluation = idExample.find();
-
-				if (existingEvaluation != null) {
-					service.getEvaluationService().updateEvaluationToLatestTemplateVersion(existingEvaluation);
-				}
-			});
+			evaluationTemplate = service.getEvaluationService().updateEvaluationTemplate(model);
 			return Response.ok(evaluationTemplate).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

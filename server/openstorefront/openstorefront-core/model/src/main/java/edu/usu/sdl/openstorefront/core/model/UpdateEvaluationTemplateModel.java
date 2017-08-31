@@ -18,6 +18,7 @@
 package edu.usu.sdl.openstorefront.core.model;
 
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,8 +27,9 @@ import java.util.List;
  */
 public class UpdateEvaluationTemplateModel
 {
+
 	private EvaluationTemplate evaluationTemplate;
-	private List<String> evaluationIdsToUpdate;
+	private List<String> evaluationIdsToUpdate = new ArrayList<>();
 
 	/**
 	 * @return the evaluationTemplate
