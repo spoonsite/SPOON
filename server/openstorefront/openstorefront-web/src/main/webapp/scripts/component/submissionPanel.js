@@ -953,6 +953,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 														if (!Ext.isNumeric(label)) {
 															valid = false;
 														}
+														if (valid) {														
+															try {
+																var valueNumber = new Number(label);
+																label = valueNumber.toString();																
+															} catch(e) {
+																valid = false;
+															}
+														}														
 													}
 													
 													if (!valid) {
