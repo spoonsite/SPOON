@@ -21,13 +21,38 @@ Ext.define('OSF.form.EvaluationInfo', {
 	alias: 'osf.form.EvaluationInfo',
 
 	layout: 'anchor',
-	bodyStyle: 'padding: 20px',
+	bodyStyle: 'padding: 10px;margin: 10px',
 	initComponent: function () {		
 		this.callParent();
 		
 		var evalForm = this;
 		
 		var formItems = [];
+		formItems.push({	
+			xtype: 'toolbar',
+			itemId: 'updateNotice',					
+			cls: 'alert-warning',					
+			items: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					xtype: 'panel',
+					html: '<h1>There has been an update to the template this review is based on.</h1>'					
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Update',
+					itemId: 'updateTemplateBtn',
+					iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
+					scale: 'medium',
+					handler: function() {	}
+				}
+			]
+		});
+		
 		formItems.push({	
 			xtype: 'textfield',
 			fieldCls: 'eval-form-field',

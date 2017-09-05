@@ -16,10 +16,8 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
-import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import java.util.List;
 
 /**
@@ -100,14 +98,20 @@ public interface EvaluationService
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
 	/**
-	 * Update an evaluation template and then updates any request evaluations If
-	 * evaluations requested don't exist or are publish this will warn and
-	 * continue.
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
 	 *
-	 * @param updateModel
-	 * @return updated evaluation
+	 * @param evaluation
 	 */
-	public EvaluationTemplate updateEvaluationTemplate(UpdateEvaluationTemplateModel updateModel);
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation);
+
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
+	public void updateEvaluationsToLatestTemplateVersion(List<String> evaluationIds);
 
 	/**
 	 * Make sure the evaluation component change request existing if it doesn't

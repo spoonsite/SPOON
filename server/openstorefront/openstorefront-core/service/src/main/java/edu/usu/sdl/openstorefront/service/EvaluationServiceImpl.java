@@ -37,17 +37,14 @@ import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
-import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -204,8 +201,7 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public String saveEvaluationAll(EvaluationAll evaluationAll
-	)
+	public String saveEvaluationAll(EvaluationAll evaluationAll)
 	{
 		Objects.requireNonNull(evaluationAll);
 		Objects.requireNonNull(evaluationAll.getEvaluation());
@@ -224,8 +220,7 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public Evaluation createEvaluationFromTemplate(Evaluation evaluation
-	)
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation)
 	{
 		Objects.requireNonNull(evaluation);
 		Objects.requireNonNull(evaluation.getTemplateId());
@@ -289,15 +284,60 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
+	@Override
+	public void updateEvaluationsToLatestTemplateVersion(List<String> evaluationIds)
+	{
+		if (evaluationIds != null) {
+			evaluationIds.forEach(evaluationId -> {
+				Evaluation idExample = new Evaluation();
+				idExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+				idExample.setPublished(Boolean.FALSE);
+				idExample.setEvaluationId(evaluationId);
+				Evaluation existingEvaluation = idExample.find();
+				if (existingEvaluation != null) {
+					updateEvaluationToLatestTemplateVersion(existingEvaluation);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("(Skipping) Unable to find unpublished active evaluation for id: {0}", evaluationId));
+				}
+			});
+		}
+	}
+
+	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 * @return
+	 */
+	@Override
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation)
+	{
+		Objects.requireNonNull(evaluation);
+		Objects.requireNonNull(evaluation.getTemplateId());
+
+		EvaluationTemplate exampleTemplate = new EvaluationTemplate();
+		exampleTemplate.setTemplateId(evaluation.getTemplateId());
+		EvaluationTemplate template = exampleTemplate.find();
 
 		if (template != null) {
 			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
+			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
 		}
 	}
 
 	private void updateContentSections(String evaluationId, List<EvaluationSectionTemplate> sectionTemplates)
 	{
+		Objects.requireNonNull(sectionTemplates);
+
 		ContentSection contentSectionExample = new ContentSection();
+		contentSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
 		contentSectionExample.setEntity(Evaluation.class.getSimpleName());
 		contentSectionExample.setEntityId(evaluationId);
 		List<ContentSection> contentSections = persistenceService.queryByExample(contentSectionExample);
@@ -325,7 +365,10 @@ public class EvaluationServiceImpl
 				getContentSectionService().deleteContentSection(section.getContentSectionId());
 			}
 		});
+		// update sections
+		//TODO: update section
 	}
+
 	@Override
 	public EvaluationAll getEvaluation(String evaluationId)
 	{
@@ -613,73 +656,4 @@ public class EvaluationServiceImpl
 			getChangeLogService().resumeSaving();
 		}
 	}
-
-	@Override
-	public EvaluationTemplate updateEvaluationTemplate(UpdateEvaluationTemplateModel updateModel)
-	{
-		Objects.requireNonNull(updateModel);
-		Objects.requireNonNull(updateModel.getEvaluationTemplate());
-
-		EvaluationTemplate evaluationTemplate = updateModel.getEvaluationTemplate().save();
-
-		//Sync request evaluations
-		for (String evaluationId : updateModel.getEvaluationIdsToUpdate()) {
-
-			Evaluation evaluation = new Evaluation();
-			evaluation.setActiveStatus(Evaluation.ACTIVE_STATUS);
-			evaluation.setPublished(Boolean.FALSE);
-			evaluation.setEvaluationId(evaluationId);
-			evaluation.setTemplateId(evaluationTemplate.getTemplateId());
-			evaluation = evaluation.find();
-
-			if (evaluation != null) {
-				//sync sections	(Add or Update titles and sub-sections; keep contents
-
-				if (evaluationTemplate.getSectionTemplates() != null) {
-
-					ContentSection contentSectionExample = new ContentSection();
-					contentSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
-					contentSectionExample.setEntity(Evaluation.class.getSimpleName());
-					contentSectionExample.setEntityId(evaluation.getEvaluationId());
-
-					List<ContentSection> evaluationSections = contentSectionExample.findByExampleProxy();
-					Map<String, List<ContentSection>> evalSectionExisting = evaluationSections
-							.stream()
-							.collect(Collectors.groupingBy(ContentSection::getTemplateId));
-
-					Set<String> templateSectionIds = new HashSet<>();
-					for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates()) {
-						templateSectionIds.add(sectionTemplate.getSectionTemplateId());
-
-						//try find existing to update
-						if (evalSectionExisting.containsKey(sectionTemplate.getSectionTemplateId())) {
-							//TODO: update section
-
-						} else {
-							//add
-							getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluation.getEvaluationId(), sectionTemplate.getSectionTemplateId());
-						}
-					}
-
-					for (String evalSectionTemplateId : evalSectionExisting.keySet()) {
-						if (templateSectionIds.contains(evalSectionTemplateId) == false) {
-							//remove
-							List<ContentSection> sections = evalSectionExisting.get(evalSectionTemplateId);
-							for (ContentSection section : sections) {
-								getContentSectionService().deleteContentSection(section.getContentSectionId());
-							}
-						}
-					}
-
-				}
-
-				//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("(Skipping) Unable to find unpublished active evaluation for id: {0}", evaluationId));
-			}
-		}
-
-		return evaluationTemplate;
-	}
-
 }
