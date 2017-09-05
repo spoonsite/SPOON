@@ -257,7 +257,7 @@
 									{
 										xtype: 'checkboxfield',
 										id: 'updatePending',
-										fieldLabel: 'Update unpublished Evaluations'		
+										boxLabel: 'Update unpublished Evaluations'		
 									}									
 								]
 							},

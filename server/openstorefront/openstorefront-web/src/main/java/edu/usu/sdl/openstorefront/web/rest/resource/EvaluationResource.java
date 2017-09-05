@@ -117,7 +117,7 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
 			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
 		}
-		
+
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
@@ -394,6 +394,30 @@ public class EvaluationResource
 			} else {
 				return sendSingleEntityResponse(validationResult.toRestError());
 			}
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Updates an evaluation; to reflect changes in the template.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/updateTemplate")
+	public Response updateEvaluationTemplate(
+			@PathParam("evaluationId") String evaluationId)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().updateEvaluationToLatestTemplateVersion(evaluation);
+			evaluation = new Evaluation();
+			evaluation.setEvaluationId(evaluationId);
+			evaluation = evaluation.find();
+			return Response.ok(evaluation).build();
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
