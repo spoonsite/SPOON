@@ -88,31 +88,45 @@ Ext.define('OSF.form.Tags', {
 					},
 					items: [
 						{
-							xtype: 'textfield',
-							fieldLabel: 'Tag<span class="field-required" />',
-							allowBlank: false,
-							margin: '0 20 0 0',
-							width: '100%',
-							maxLength: 120,
-							name: 'text',
-							listeners: {
-								specialkey: function(field, e){
-									if (e.getKey() === e.ENTER) {
-									   actionAddTag(this.up('form'));
+							xtype: 'panel',
+							layout: 'hbox',
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'text',	
+									id: 'tagField',																				
+									flex: 1,
+									fieldLabel: 'Add Tag',
+									forceSelection: false,
+									valueField: 'text',
+									displayField: 'text',										
+									margin: '0 10 10 0',
+									maxLength: 120,
+									storeConfig: {
+										url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
+									},
+									listeners:{
+										specialkey: function(field, e) {
+											var value = this.getValue();
+											if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
+												actionAddTag(this.up('form'));
+											}	
+										}
+									}
+								}),
+								{
+									xtype: 'button',
+									text: 'Add',
+									iconCls: 'fa fa-plus',
+									margin: '30 0 0 0',
+									minWidth: 75,
+									handler: function(){
+										var tagField = Ext.getCmp('tagField');
+										if (tagField.isValid()) {
+											actionAddTag(this.up('form'));
+										}
 									}
 								}
-							}
-						},
-						Ext.create('OSF.component.SecurityComboBox', {							
-						}),								
-						{
-							xtype: 'button',
-							text: 'Add',
-							formBind: true,
-							iconCls: 'fa fa-lg fa-plus',
-							handler: function(){
-								actionAddTag(this.up('form'));
-							}
+							]
 						}
 					]
 				},						
