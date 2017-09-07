@@ -75,7 +75,7 @@ limitations under the License.
 	font-weight: normal;
     font-size: 19px;
     line-height: 1.45;
-    font-family: "Georgia", Serif
+    /* font-family: "Georgia", Serif; */
 }
 
 .link {
