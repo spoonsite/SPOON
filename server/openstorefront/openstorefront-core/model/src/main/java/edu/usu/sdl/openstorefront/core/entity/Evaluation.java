@@ -115,7 +115,7 @@ public class Evaluation
 		setAllowNewSections(evaluation.getAllowNewSections());
 		setAllowNewSubSections(evaluation.getAllowNewSubSections());
 		setAllowQuestionManagement(evaluation.getAllowQuestionManagement());
-//		setTemplateUpdatePending(evaluation.getTemplateUpdatePending());
+		setTemplateUpdatePending(evaluation.getTemplateUpdatePending());
 	}
 
 	@Override
@@ -268,7 +268,6 @@ public class Evaluation
 	 */
 	public Boolean getTemplateUpdatePending()
 	{
-//		return (templateUpdatePending != null) ? templateUpdatePending : false;
 		return templateUpdatePending;
 	}
 

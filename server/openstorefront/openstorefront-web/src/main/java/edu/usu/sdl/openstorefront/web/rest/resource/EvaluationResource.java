@@ -268,7 +268,7 @@ public class EvaluationResource
 		Evaluation evaluation = new Evaluation();
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
-		return Response.ok(true).build();
+		return Response.ok(evaluation.getTemplateUpdatePending()).build();
 		//return Response.ok(evaluation != null && evaluation.getTemplateUpdatePending())).build();
 	}
 

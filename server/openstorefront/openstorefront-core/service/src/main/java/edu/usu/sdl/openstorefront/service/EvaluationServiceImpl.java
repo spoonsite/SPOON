@@ -331,6 +331,13 @@ public class EvaluationServiceImpl
 			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
 			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
 		}
+		// set template update flag to false
+		Evaluation proxyExample = new Evaluation();
+		proxyExample.setEvaluationId(evaluation.getEvaluationId());
+
+		Evaluation proxy = proxyExample.findProxy();
+		proxy.setTemplateUpdatePending(Boolean.FALSE);
+		proxy.save();
 	}
 
 	private void updateContentSections(String evaluationId, List<EvaluationSectionTemplate> sectionTemplates)

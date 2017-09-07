@@ -163,8 +163,12 @@ public class EvaluationTemplateResource
 		
 		List<Evaluation> evaluationsToFlag = service.getPersistenceService().queryByExample(queryByExample);
 		evaluationsToFlag.forEach(eval -> {
-			if (!eval.getTemplateUpdatePending()) {
-				Evaluation proxy = eval.findProxy();
+			if (eval.getTemplateUpdatePending() == null || !eval.getTemplateUpdatePending()) {
+				
+				Evaluation proxyExample = new Evaluation();
+				proxyExample.setEvaluationId(eval.getEvaluationId());
+				
+				Evaluation proxy = proxyExample.findProxy();
 				proxy.setTemplateUpdatePending(Boolean.TRUE);
 				proxy.save();
 			}
