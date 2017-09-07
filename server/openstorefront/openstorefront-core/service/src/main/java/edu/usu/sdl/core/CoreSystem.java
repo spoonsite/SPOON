@@ -63,6 +63,7 @@ public class CoreSystem
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static String systemStatus = "Starting application...";
+	private static String detailedStatus;
 
 	public CoreSystem()
 	{
@@ -211,7 +212,7 @@ public class CoreSystem
 		}
 		started.set(true);
 	}
-	
+
 	@PreDestroy
 	@SuppressWarnings("UseSpecificCatch")
 	public void shutdown()
@@ -269,7 +270,13 @@ public class CoreSystem
 		SystemStatusView view = new SystemStatusView();
 		view.setStarted(started.get());
 		view.setSystemStatus(systemStatus);
+		view.setDetailedStatus(detailedStatus);
 		return view;
+	}
+
+	public static void setDetailedStatus(String aDetailedStatus)
+	{
+		detailedStatus = aDetailedStatus;
 	}
 
 }

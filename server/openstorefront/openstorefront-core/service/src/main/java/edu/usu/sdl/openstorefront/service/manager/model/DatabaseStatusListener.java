@@ -13,52 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.view;
+package edu.usu.sdl.openstorefront.service.manager.model;
 
 /**
- * Used to display status
+ * Use as a callback for status
  *
  * @author dshurtleff
  */
-public class SystemStatusView
+@FunctionalInterface
+public interface DatabaseStatusListener
 {
 
-	private boolean started;
-	private String systemStatus;
-	private String detailedStatus;
-
-	public SystemStatusView()
-	{
-	}
-
-	public boolean getStarted()
-	{
-		return started;
-	}
-
-	public void setStarted(boolean started)
-	{
-		this.started = started;
-	}
-
-	public String getSystemStatus()
-	{
-		return systemStatus;
-	}
-
-	public void setSystemStatus(String systemStatus)
-	{
-		this.systemStatus = systemStatus;
-	}
-
-	public String getDetailedStatus()
-	{
-		return detailedStatus;
-	}
-
-	public void setDetailedStatus(String detailedStatus)
-	{
-		this.detailedStatus = detailedStatus;
-	}
+	public void statusUpdate(String status);
 
 }
