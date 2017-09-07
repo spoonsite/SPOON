@@ -261,15 +261,15 @@ public class EvaluationResource
 	@DataType(Boolean.class)
 	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
 	@Path("/{evaluationId}/checkTemplateUpdate")
-	public Response checkTemplateUpdate(
+	public String checkTemplateUpdate(
 			@PathParam("evaluationId") String evaluationId
 	)
 	{
 		Evaluation evaluation = new Evaluation();
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
-		return Response.ok(evaluation.getTemplateUpdatePending()).build();
-		//return Response.ok(evaluation != null && evaluation.getTemplateUpdatePending())).build();
+		Boolean result = evaluation != null && evaluation.getTemplateUpdatePending() != null && evaluation.getTemplateUpdatePending();
+		return "{ \"result\": " + result.toString() + " }";
 	}
 
 	@GET

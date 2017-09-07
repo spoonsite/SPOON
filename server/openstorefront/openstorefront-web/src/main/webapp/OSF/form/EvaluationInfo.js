@@ -29,43 +29,6 @@ Ext.define('OSF.form.EvaluationInfo', {
 
 		var formItems = [];
 
-		Ext.Ajax.request({
-			url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId + '/checkTemplateUpdate',
-			success: function () {
-				formItems.push({
-					xtype: 'toolbar',
-					itemId: 'updateNotice',
-					cls: 'alert-warning',
-					items: [
-						{
-							xtype: 'tbfill'
-						},
-						{
-							xtype: 'panel',
-							html: '<h1>There has been an update to the template this review is based on.</h1>'
-						},
-						{
-							xtype: 'tbfill'
-						},
-						{
-							text: 'Update',
-							itemId: 'updateTemplateBtn',
-							iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
-							scale: 'medium',
-							handler: function () {
-								Ext.Ajax.request({
-									url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId + '/updateTemplate',
-									method: 'PUT',
-									success: function () {
-										evalForm.reloadEval();
-									}
-								});
-							}
-						}
-					]
-				});
-			}
-		});
 		formItems.push({
 			xtype: 'textfield',
 			fieldCls: 'eval-form-field',
@@ -157,6 +120,47 @@ Ext.define('OSF.form.EvaluationInfo', {
 				evalForm.setLoading(false);
 			},
 			success: function (response, opt) {
+
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evaluationId + '/checkTemplateUpdate',
+					success: function (response, opt) {
+						if (Ext.decode(response.responseText).result === true) {
+							evalForm.insert(0, {
+								xtype: 'toolbar',
+								itemId: 'updateNotice',
+								cls: 'alert-warning',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										xtype: 'panel',
+										html: '<h1>There has been an update to the template this review is based on.</h1>'
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Update',
+										itemId: 'updateTemplateBtn',
+										iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
+										scale: 'medium',
+										handler: function () {
+											Ext.Ajax.request({
+												url: 'api/v1/resource/evaluations/' + evaluationId + '/updateTemplate',
+												method: 'PUT',
+												success: function () {
+													evalForm.reloadEval();
+													evalForm.remove(evalForm.getComponent("updateNotice"));
+												}
+											});
+										}
+									}
+								]
+							});
+						}
+					}
+				});
 				var evaluation = Ext.decode(response.responseText);
 				var record = Ext.create('Ext.data.Model', {
 				});
