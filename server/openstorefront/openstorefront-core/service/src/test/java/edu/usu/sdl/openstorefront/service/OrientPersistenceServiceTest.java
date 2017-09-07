@@ -235,6 +235,41 @@ public class OrientPersistenceServiceTest
 	 * Test of generateQuery method, of class OrientPersistenceService.
 	 */
 	@Test
+	public void testGenerateQueryNotIn()
+	{
+		System.out.println("generateQuery");
+		List<String> values = new ArrayList<>();
+		values.add("CODE1");
+		values.add("CODE2");
+		values.add("CODE3");
+
+		QueryByExample queryByExample = new QueryByExample(new TestEntity());
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		// Define A Special Lookup Operation (IN)
+		TestEntity componentInExample = new TestEntity();
+		componentInExample.setCode(QueryByExample.STRING_FLAG);
+		specialOperatorModel.setExample(componentInExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_IN);
+		specialOperatorModel.getGenerateStatementOption().setParameterValues(values);
+
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		String expQuery = "select   from TestEntity where  code  NOT IN [ :codeParam0, :codeParam1, :codeParam2 ]";
+		Map<String, Object> expPrams = new HashMap<>();
+		expPrams.put("codeParam0", "CODE1");
+		expPrams.put("codeParam1", "CODE2");
+		expPrams.put("codeParam2", "CODE3");
+
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService().generateQuery(queryByExample);
+		Assert.assertEquals(expQuery, result.getKey());
+		Assert.assertEquals(expPrams, result.getValue());
+	}
+
+	/**
+	 * Test of generateQuery method, of class OrientPersistenceService.
+	 */
+	@Test
 	public void testGenerateQueryGroupBy()
 	{
 		System.out.println("generateQuery");
