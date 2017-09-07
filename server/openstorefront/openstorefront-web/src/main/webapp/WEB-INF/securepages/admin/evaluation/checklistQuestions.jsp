@@ -73,6 +73,10 @@
 												});
 											} else {
 												
+												if (data.tags === "") {
+													delete data.tags;
+												}
+												
 												if (data.tags) {
 													var processedTags = [];
 													Ext.Array.each(data.tags, function(tag){
@@ -80,8 +84,13 @@
 															tag: tag
 														});
 													});
-													data.tags = processedTags;
-												}
+													if (processedTags.length > 0) {
+														data.tags = processedTags;
+													} else {
+														delete data.tags;
+													}													
+												}												
+												
 												
 												var method = 'POST';
 												var update = '';
