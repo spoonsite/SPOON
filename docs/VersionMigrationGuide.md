@@ -12,7 +12,7 @@ Includes a database export and import in preparation for 2.5 upgrade of DB.  If 
 3. install/deploy 2.4.2
 4. Start app server
 
-You need to wait for 20 minutes+ (Depending on size of DB) for the update to occur. At this time the application will be unavailable. 
+You need to wait for 5-20 minutes (Depending on size of DB) for the update to occur. At this time the application will be unavailable. 
 
 To manually export/import:
 
