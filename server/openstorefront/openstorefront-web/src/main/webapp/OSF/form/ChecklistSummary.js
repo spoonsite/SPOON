@@ -92,7 +92,9 @@ Ext.define('OSF.form.ChecklistSummary', {
 					boxLabel: 'Private Summary <i class="fa fa-question-circle" data-qtip="Hides when published"></i>',
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
-							summaryForm.markUnsaved();	
+							if (!summaryForm.initialSet) {
+								summaryForm.markUnsaved();	
+							}
 						}
 					}
 				},
@@ -102,7 +104,9 @@ Ext.define('OSF.form.ChecklistSummary', {
 					boxLabel: 'Private Checklist <i class="fa fa-question-circle" data-qtip="Hides the whole checklist when published"></i>',
 					listeners: {
 						change: function(field, newValue, oldValue, opts) {
-							summaryForm.markUnsaved();	
+							if (!summaryForm.initialSet) {
+								summaryForm.markUnsaved();	
+							}
 						}
 					}
 				},				
@@ -421,11 +425,13 @@ Ext.define('OSF.form.ChecklistSummary', {
 				});
 				record.set(recordData);
 				
+				summaryForm.initialSet = true;
 				summaryForm.loadRecord(record);		
+				summaryForm.initialSet = false;
 				summaryForm.fullEvalData = recordData;
 				summaryForm.evaluationId = evaluationId; 
 				summaryForm.checklistId = data.evaluationChecklist.checklistId; 
-
+				
 				summaryForm.loadRecommendations();
 
 				summaryForm.getComponent('tools').getComponent('workflowStatus').on('change', function(){

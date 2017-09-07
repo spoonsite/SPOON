@@ -36,9 +36,9 @@ Ext.define('OSF.form.Section', {
 			boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides whole section when published"></i>',
 			listeners: {
 				change: function(field, newValue, oldValue, opts) {	
-					var sectionForm = field.up('form');
-					if (sectionForm.initialSet === false) {
-						field.up('form').markUnsaved();	
+					var sectionForm = field.up('panel');
+					if (!sectionForm.initialSet) {
+						sectionForm.markUnsaved();	
 					}
 				}
 			}												
@@ -491,7 +491,9 @@ Ext.define('OSF.form.Section', {
 				var record = Ext.create('Ext.data.Model', {			
 				});
 				record.set(originalData.section);
+				sectionForm.initialSet = true;
 				sectionForm.loadRecord(record);
+				sectionForm.initialSet = false;
 				sectionForm.evaluationId = evaluationId;
 				sectionForm.sectionId = data.section.contentSectionId;
 				
