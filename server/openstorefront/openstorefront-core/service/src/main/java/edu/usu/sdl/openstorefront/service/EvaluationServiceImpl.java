@@ -326,6 +326,7 @@ public class EvaluationServiceImpl
 		exampleTemplate.setTemplateId(evaluation.getTemplateId());
 		EvaluationTemplate template = exampleTemplate.find();
 
+		//FIXME: Add check for Evaluation; should not be published; perhap only active
 		if (template != null) {
 			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
 			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)

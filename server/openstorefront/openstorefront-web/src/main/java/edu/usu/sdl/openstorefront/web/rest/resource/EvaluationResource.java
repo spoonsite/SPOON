@@ -54,9 +54,12 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -83,6 +86,8 @@ import org.apache.commons.lang.StringUtils;
 public class EvaluationResource
 		extends BaseResource
 {
+
+	private static final Logger LOG = Logger.getLogger(EvaluationResource.class.getSimpleName());
 
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
@@ -403,7 +408,7 @@ public class EvaluationResource
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@APIDescription("Updates an evaluation; to reflect changes in the template.")
+	@APIDescription("Updates an evaluation; to reflect changes in the template. Unpublished only.")
 	@DataType(Evaluation.class)
 	@Path("/{evaluationId}/updateTemplate")
 	public Response updateEvaluationTemplate(
@@ -413,11 +418,13 @@ public class EvaluationResource
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
 		if (evaluation != null) {
-			service.getEvaluationService().updateEvaluationToLatestTemplateVersion(evaluation);
-			evaluation = new Evaluation();
-			evaluation.setEvaluationId(evaluationId);
-			evaluation = evaluation.find();
-			return Response.ok(evaluation).build();
+			if (evaluation.getPublished()) {
+				LOG.log(Level.WARNING, MessageFormat.format("Cannot update published evaluation: {0}", evaluation.getEvaluationId()));
+				return Response.status(Response.Status.FORBIDDEN).build();
+			} else {
+				service.getEvaluationService().updateEvaluationToLatestTemplateVersion(evaluation);
+				return Response.ok(evaluation).build();
+			}
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
