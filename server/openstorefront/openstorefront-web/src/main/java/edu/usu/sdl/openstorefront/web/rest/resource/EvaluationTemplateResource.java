@@ -17,7 +17,11 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
@@ -128,9 +132,10 @@ public class EvaluationTemplateResource
 
 		evaluationTemplate.setTemplateId(templateId);
 		ValidationResult validationResult = evaluationTemplate.validate();
-		
+
 		if (validationResult.valid()) {
-			evaluationTemplate = evaluationTemplate.save();		
+			evaluationTemplate = evaluationTemplate.save();
+			setEvaluationUpdatePending(templateId, model.getEvaluationIdsToUpdate());
 			service.getEvaluationService().updateEvaluationsToLatestTemplateVersion(model.getEvaluationIdsToUpdate());
 			return Response.ok(evaluationTemplate).build();
 		} else {
@@ -138,7 +143,33 @@ public class EvaluationTemplateResource
 		}
 	}
 
+	private void setEvaluationUpdatePending(String templateId, List<String> evaluationIdsToUpdate)
+	{
+		Evaluation evaluationExample = new Evaluation();
+		evaluationExample.setTemplateId(templateId);
+		QueryByExample queryByExample = new QueryByExample(evaluationExample);
 
+		if (evaluationIdsToUpdate.size() > 0) {
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			// Define A Special Lookup Operation (IN)
+			Evaluation exampleEvaluation = new Evaluation();
+			exampleEvaluation.setEvaluationId(QueryByExample.STRING_FLAG);
+			specialOperatorModel.setExample(exampleEvaluation);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_IN);
+			specialOperatorModel.getGenerateStatementOption().setParameterValues(evaluationIdsToUpdate);
+
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
+		
+		List<Evaluation> evaluationsToFlag = service.getPersistenceService().queryByExample(queryByExample);
+		evaluationsToFlag.forEach(eval -> {
+			if (!eval.getTemplateUpdatePending()) {
+				Evaluation proxy = eval.findProxy();
+				proxy.setTemplateUpdatePending(Boolean.TRUE);
+				proxy.save();
+			}
+		});
+	}
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)

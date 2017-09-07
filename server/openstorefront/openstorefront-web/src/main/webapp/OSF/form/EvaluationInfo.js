@@ -28,39 +28,44 @@ Ext.define('OSF.form.EvaluationInfo', {
 		var evalForm = this;
 
 		var formItems = [];
-		formItems.push({
-			xtype: 'toolbar',
-			itemId: 'updateNotice',
-			cls: 'alert-warning',
-			items: [
-				{
-					xtype: 'tbfill'
-				},
-				{
-					xtype: 'panel',
-					html: '<h1>There has been an update to the template this review is based on.</h1>'
-				},
-				{
-					xtype: 'tbfill'
-				},
-				{
-					text: 'Update',
-					itemId: 'updateTemplateBtn',
-					iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
-					scale: 'medium',
-					handler: function () {
-						Ext.Ajax.request({
-							url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId + '/updateTemplate',
-							method: 'PUT',
-							success: function () {
-								evalForm.reloadEval();
-							}
-						});
-					}
-				}
-			]
-		});
 
+		Ext.Ajax.request({
+			url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId + '/checkTemplateUpdate',
+			success: function () {
+				formItems.push({
+					xtype: 'toolbar',
+					itemId: 'updateNotice',
+					cls: 'alert-warning',
+					items: [
+						{
+							xtype: 'tbfill'
+						},
+						{
+							xtype: 'panel',
+							html: '<h1>There has been an update to the template this review is based on.</h1>'
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Update',
+							itemId: 'updateTemplateBtn',
+							iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
+							scale: 'medium',
+							handler: function () {
+								Ext.Ajax.request({
+									url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId + '/updateTemplate',
+									method: 'PUT',
+									success: function () {
+										evalForm.reloadEval();
+									}
+								});
+							}
+						}
+					]
+				});
+			}
+		});
 		formItems.push({
 			xtype: 'textfield',
 			fieldCls: 'eval-form-field',

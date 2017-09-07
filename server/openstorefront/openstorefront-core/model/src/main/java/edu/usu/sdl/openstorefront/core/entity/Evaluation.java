@@ -92,6 +92,8 @@ public class Evaluation
 
 	private Boolean allowQuestionManagement;
 
+	private Boolean templateUpdatePending;
+
 	public Evaluation()
 	{
 	}
@@ -113,6 +115,7 @@ public class Evaluation
 		setAllowNewSections(evaluation.getAllowNewSections());
 		setAllowNewSubSections(evaluation.getAllowNewSubSections());
 		setAllowQuestionManagement(evaluation.getAllowQuestionManagement());
+//		setTemplateUpdatePending(evaluation.getTemplateUpdatePending());
 	}
 
 	@Override
@@ -257,6 +260,25 @@ public class Evaluation
 	public void setAllowQuestionManagement(Boolean allowQuestionManagement)
 	{
 		this.allowQuestionManagement = allowQuestionManagement;
+	}
+
+	/**
+	 * @return True if there has been a change to the template, that was not
+	 * updated in the evaluation; otherwise False
+	 */
+	public Boolean getTemplateUpdatePending()
+	{
+//		return (templateUpdatePending != null) ? templateUpdatePending : false;
+		return templateUpdatePending;
+	}
+
+	/**
+	 * @param templateUpdatePending True if there has been a change to the
+	 * template, that was not updated in the evaluation; otherwise False
+	 */
+	public void setTemplateUpdatePending(Boolean templateUpdatePending)
+	{
+		this.templateUpdatePending = templateUpdatePending;
 	}
 
 }
