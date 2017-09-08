@@ -204,9 +204,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response addComponentTag(String componentId, ComponentTag tag)
+	public ComponentTag addComponentTag(String componentId, ComponentTag tag)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/tags", tag, null);
+		return response.getResponse(ComponentTag.class);
 	}
 
 	public Response addComponentTags(String componentId, List<ComponentTag> tags)
