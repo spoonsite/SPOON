@@ -191,6 +191,8 @@ Ext.define('OSF.form.Contacts', {
 							typeAhead: false,
 							autoSelect: false,
 							selectOnTab: false,
+							assertValue: function(){
+							},
 							listConfig: {
 								itemTpl: [
 									 '{firstName} <span style="color: grey">({email})</span>'
@@ -220,6 +222,8 @@ Ext.define('OSF.form.Contacts', {
 							valueField: 'lastName',
 							displayField: 'lastName',
 							maxLength: '80',
+							assertValue: function(){
+							},							
 							typeAhead: false,
 							autoSelect: false,
 							selectOnTab: false,

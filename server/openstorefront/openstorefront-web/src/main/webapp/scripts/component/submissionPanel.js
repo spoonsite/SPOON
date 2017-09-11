@@ -1125,7 +1125,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 								maxLength: '80',
 								typeAhead: false,
 								autoSelect: false,
-								selectOnTab: false,								
+								selectOnTab: false,
+								assertValue: function(){
+								},								
 								listConfig: {
 									itemTpl: [
 										 '{firstName} <span style="color: grey">({email})</span>'
@@ -1157,7 +1159,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 								maxLength: '80',
 								typeAhead: false,
 								autoSelect: false,
-								selectOnTab: false,																
+								selectOnTab: false,
+								assertValue: function(){
+								},								
 								listConfig: {
 									itemTpl: [
 										 '{lastName} <span style="color: grey">({email})</span>'
