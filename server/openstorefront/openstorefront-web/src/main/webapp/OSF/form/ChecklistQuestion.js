@@ -250,9 +250,9 @@ Ext.define('OSF.form.ChecklistQuestion', {
 								scoreField.setValue(null);
 								scoreField.setDisabled(true);
 							} else {
-								scoreField.setDisabled(false);
-								questionForm.markUnsaved();	
+								scoreField.setDisabled(false);								
 							}
+							questionForm.markUnsaved();	
 						}, undefined, {
 							buffer: 1000
 						});					
@@ -291,6 +291,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		var data = questionForm.getValues();
 		
 		questionForm.saveTask.cancel();
+		
 		questionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 		CoreUtil.submitForm({
 			url: 'api/v1/resource/evaluations/' + 

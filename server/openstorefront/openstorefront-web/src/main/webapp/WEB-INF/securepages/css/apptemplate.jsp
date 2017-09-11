@@ -1423,8 +1423,7 @@ table.confluenceTable td.numberingColumn {
 .checklist-question{
 	font-weight: normal;
     font-size: 19px;
-    line-height: 1.45;
-    font-family: "Georgia", Serif
+    line-height: 1.45;   
 }
 
 .checklist-question-table{
