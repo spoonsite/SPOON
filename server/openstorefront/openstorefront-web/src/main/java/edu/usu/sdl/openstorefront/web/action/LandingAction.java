@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
@@ -58,7 +59,8 @@ public class LandingAction
 			String fullTemplate = landingTemplateFull.fullTemplate();
 			setLandingTemplate(fullTemplate);
 		} else {
-			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/defaultLanding.jsp"));
+			String defaultLanding = PropertiesManager.getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
+			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/" + defaultLanding));
 		}
 
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");

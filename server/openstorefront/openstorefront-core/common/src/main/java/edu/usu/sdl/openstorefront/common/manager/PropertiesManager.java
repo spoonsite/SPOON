@@ -50,7 +50,7 @@ public class PropertiesManager
 	public static final String PW_PROPERTY = ".pw";
 
 	public static final String KEY_ENABLE_WEBSOCKETS = "websockets.enabled";
-	
+
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";
@@ -78,6 +78,7 @@ public class PropertiesManager
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
+	public static final String KEY_UI_DEFAULTLANDING_TEMPLATE = "ui.default.landing";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -169,7 +170,7 @@ public class PropertiesManager
 	public static String getModuleVersion()
 	{
 		loadVersionProperties();
-		
+
 		String key = "app.module.version";
 		String moduleVersion = properties.getProperty(key);
 
@@ -266,7 +267,7 @@ public class PropertiesManager
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
-			
+
 			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
 				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
 			}
@@ -285,8 +286,8 @@ public class PropertiesManager
 			LOCK.unlock();
 		}
 	}
-	
-	private static void loadVersionProperties() 
+
+	private static void loadVersionProperties()
 	{
 		try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
 			Properties versionProperties = new Properties();
@@ -297,13 +298,13 @@ public class PropertiesManager
 			properties.putAll(versionProperties);
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
-		}		
+		}
 	}
 
 	private static void saveProperties()
 	{
 		LOCK.lock();
-		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();		
+		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
 			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
