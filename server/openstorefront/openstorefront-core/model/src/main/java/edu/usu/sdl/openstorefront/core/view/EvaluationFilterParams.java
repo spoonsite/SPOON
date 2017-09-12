@@ -49,6 +49,11 @@ public class EvaluationFilterParams
 	@Size(min = 0, max = 255)	
 	private String templateId;
 	
+	@QueryParam("checklistTemplateId")
+	@Size(min = 0, max = 255)	
+	private String checklistTemplateId;
+	
+	
 	public EvaluationFilterParams()
 	{
 	}
@@ -101,5 +106,15 @@ public class EvaluationFilterParams
 	public void setTemplateId(String templateId)
 	{
 		this.templateId = templateId;
+	}
+
+	public String getChecklistTemplateId()
+	{
+		return checklistTemplateId;
+	}
+
+	public void setChecklistTemplateId(String checklistTemplateId)
+	{
+		this.checklistTemplateId = checklistTemplateId;
 	}
 }

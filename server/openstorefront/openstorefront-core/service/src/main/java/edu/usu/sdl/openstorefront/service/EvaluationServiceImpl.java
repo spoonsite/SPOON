@@ -329,6 +329,7 @@ public class EvaluationServiceImpl
 		//FIXME: Add check for Evaluation; should not be published; perhap only active
 		if (template != null) {
 			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
+			updateChecklist(evaluation.getEvaluationId(), template.getChecklistTemplateId());
 			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
 		}
 		// set template update flag to false
@@ -375,6 +376,66 @@ public class EvaluationServiceImpl
 		});
 		// update sections
 		//TODO: update section
+	}
+
+	private void updateChecklist(String evaluationId, String checklistTemplateId)
+	{
+		ChecklistTemplate templateExample = new ChecklistTemplate();
+		templateExample.setChecklistTemplateId(checklistTemplateId);
+		ChecklistTemplate template = templateExample.find();
+
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setChecklistTemplateId(checklistTemplateId);
+		checklist.setEvaluationId(evaluationId);
+
+		checklist = checklist.findProxy();
+		String checklistId = checklist.getChecklistId();
+
+		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
+		responseExample.setChecklistId(checklist.getChecklistId());
+		List<EvaluationChecklistResponse> responseList = responseExample.findByExampleProxy();
+
+		//add questions
+		template.getQuestions().forEach(question -> {
+			boolean foundQuestion = false;
+			for (EvaluationChecklistResponse response : responseList) {
+				if (response.getQuestionId().equals(question.getQuestionId())) {
+					foundQuestion = true;
+					response.setSortOrder(question.getSortOrder());
+					response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+					response.save();
+				}
+			}
+			if (!foundQuestion) {
+				EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
+				newResponse.setChecklistId(checklistId);
+				newResponse.setResponseId(persistenceService.generateId());
+				newResponse.setQuestionId(question.getQuestionId());
+				newResponse.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());
+				newResponse.setSortOrder(question.getSortOrder());
+				newResponse.populateBaseCreateFields();
+				persistenceService.persist(newResponse);
+			}
+		});
+
+		//remove questions
+		responseList.forEach(response -> {
+			boolean foundQuestion = false;
+			if (response.getActiveStatus().equals(EvaluationChecklistResponse.ACTIVE_STATUS) && 
+					(response.getUserAddRemoveFlg() == null || !response.getUserAddRemoveFlg())) {
+				for (ChecklistTemplateQuestion question : template.getQuestions()) {
+					if (response.getQuestionId().equals(question.getQuestionId())) {
+						foundQuestion = true;
+					}
+				}
+				if(!foundQuestion)
+				{
+					//inactivate
+					response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
+					response.save();
+				}
+			}
+		});
 	}
 
 	@Override

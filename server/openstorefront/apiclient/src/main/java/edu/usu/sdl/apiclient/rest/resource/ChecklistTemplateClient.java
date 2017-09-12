@@ -18,6 +18,7 @@ package edu.usu.sdl.apiclient.rest.resource;
 import edu.usu.sdl.apiclient.AbstractService;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationChecklistModel;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.List;
 import javax.ws.rs.core.Response;
@@ -44,7 +45,7 @@ public class ChecklistTemplateClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response createChecklistTemplate(ChecklistTemplate checklistTemplate)
+	public Response createChecklistTemplate(UpdateEvaluationChecklistModel model)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
@@ -69,7 +70,7 @@ public class ChecklistTemplateClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response updateChecklistTemplate(String templateId, ChecklistTemplate checklistTemplate)
+	public Response updateChecklistTemplate(String templateId, UpdateEvaluationChecklistModel model)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

@@ -122,7 +122,7 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
 			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
 		}
-
+		
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
@@ -177,6 +177,28 @@ public class EvaluationResource
 				group.getExtraWhereClause().add(componentIdGroup);
 				group.getExtraWhereClause().add(originIdGroup);
 				queryByExample.getExtraWhereCauses().add(group);
+			}
+		}
+		
+		//get Evaluation Template ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getChecklistTemplateId())) {
+			// If given, filter the search by name
+			EvaluationTemplate templateExample = new EvaluationTemplate();
+			templateExample.setChecklistTemplateId(evaluationFilterParams.getChecklistTemplateId());
+			
+			List<EvaluationTemplate> templates = templateExample.findByExample();
+			// get list of ids
+			List<String> ids = templates.stream().map(x -> x.getTemplateId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+
+				Evaluation idInExample = new Evaluation();
+				idInExample.setTemplateId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel templateIdGroup = new SpecialOperatorModel(idInExample);
+				templateIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				templateIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				queryByExample.getExtraWhereCauses().add(templateIdGroup);
 			}
 		}
 

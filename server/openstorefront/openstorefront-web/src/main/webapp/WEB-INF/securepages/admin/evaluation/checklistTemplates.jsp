@@ -14,6 +14,115 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
+			var getEvaluations = function(parentWindow, form, saveCallback)
+			{
+				var selectEvaluationWin = Ext.create('Ext.window.Window', {
+					title: 'Select Evaluations',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+					modal: true,
+					width: 1050,
+					maxHeight: '80%',
+					layout: 'fit',
+					closeAction: 'destroy',
+					items: [
+					Ext.create('Ext.grid.Panel', {
+						id: 'evaluationGrid',
+						title: 'Update Evaluation <i class="fa fa-question-circle"  data-qtip="Updating evaluations may result in a loss of work."></i>',
+						columnLines: true,
+						selModel: {
+							selType: 'checkboxmodel'
+						},
+						store: {
+							id: 'evaluationGridStore',
+							autoLoad: false,
+							remoteSort: true,
+							sorters: [
+								new Ext.util.Sorter({
+									property: 'componentName',
+									direction: 'ASC'
+								})
+							],				
+							proxy: {
+								// paging will not work as you won't be able to select items on different pages
+								type: 'ajax',
+								url: 'api/v1/resource/evaluations?published=false',
+								reader: {
+									type: 'json',
+									rootProperty: 'data',
+									totalProperty: 'totalNumber'
+								}
+							}
+						},				
+						columns: [
+							{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
+							{ text: 'Version', dataIndex: 'version', align: 'center', width: 175 },
+							{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
+							{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
+							{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+								renderer: function(value, meta, record) {
+									if (value === 'INPROGRESS') {
+										meta.tdCls = 'alert-warning';
+									} else if (value === 'WAIT') {
+										meta.tdCls = 'alert-info';
+									} else if (value === 'COMPLETE') {
+										meta.tdCls = 'alert-success';
+									} else if (value === 'HOLD') {
+										meta.tdCls = 'alert-danager';
+									}
+									return record.get('workflowStatusDescription');
+								}
+							}
+						]			
+					})
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+							{
+								text: 'Update',
+								iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-edit',
+								width: '110px',
+								scale: 'medium',
+								handler: function() {
+									var evaluationIdsToUpdate = [];
+									var rows = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection();
+									Ext.Array.each(rows, function (item) {
+										evaluationIdsToUpdate.push(item.data.evaluationId);
+									});
+									
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form, evaluationIdsToUpdate);
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Skip',									
+								iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+								scale: 'medium',
+								handler: function() {
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form);
+									}
+								}										
+							}]
+						}
+					]
+				});
+				var data = form.getValues();
+				Ext.getCmp('evaluationGrid').getStore().load({
+					url: 'api/v1/resource/evaluations?published=false&checklistTemplateId=' + data.checklistTemplateId
+				 });
+				selectEvaluationWin.show();	
+			};
 			
 			var addEditWindow = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Checklist Template',
@@ -41,36 +150,50 @@
 										width: '100px',
 										scale: 'medium',
 										handler: function() {
+											var saveCheckList = function(win,form, evaluationIdsToUpdate)
+											{
+												var data = {
+													checklistTemplate: form.getValues(),
+													evaluationIdsToUpdate: evaluationIdsToUpdate
+												};
+
+												data.checklistTemplate.questions = [];											
+												Ext.getCmp('questionsInTemplate').getStore().each(function(item){
+													data.checklistTemplate.questions.push({
+														questionId: item.get('questionId')
+													});
+												});
+
+												var method = 'POST';
+												var update = '';
+												if (data.checklistTemplate.checklistTemplateId) {
+													update = '/' + data.checklistTemplate.checklistTemplateId;
+													method = 'PUT';
+												}
+
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/checklisttemplates' + update,
+													method: method,
+													data: data,
+													form: form,
+													success: function(){
+														actionRefresh();
+														form.reset();
+														win.close();
+													}
+												});	
+											}
+											
 											var form = this.up('form');
 											var win = this.up('window');
-											var data = form.getValues();
-
-											data.questions = [];											
-											Ext.getCmp('questionsInTemplate').getStore().each(function(item){
-												data.questions.push({
-													questionId: item.get('questionId')
-												});
-											});
-
-											var method = 'POST';
-											var update = '';
-											if (data.checklistTemplateId) {
-												update = '/' + data.checklistTemplateId;
-												method = 'PUT';
+											if(Ext.getCmp('updatePending').getRawValue())
+											{
+												getEvaluations(win, form, saveCheckList);
 											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/checklisttemplates' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function(){
-													actionRefresh();
-													form.reset();
-													win.close();
-												}
-											});	
-											
+											else
+											{
+												saveCheckList(win, form);
+											}
 										}
 									},
 									{
@@ -131,6 +254,11 @@
 										height: 300,
 										maxLength: 16384,
 										tinyMCEConfig: CoreUtil.tinymceConfig()
+									},
+									{
+										xtype: 'checkboxfield',
+										id: 'updatePending',
+										boxLabel: 'Update unpublished Evaluations'		
 									}									
 								]
 							},
