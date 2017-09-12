@@ -54,9 +54,12 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -83,6 +86,8 @@ import org.apache.commons.lang.StringUtils;
 public class EvaluationResource
 		extends BaseResource
 {
+
+	private static final Logger LOG = Logger.getLogger(EvaluationResource.class.getSimpleName());
 
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
@@ -114,6 +119,10 @@ public class EvaluationResource
 			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));
 		}
 
+		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
+			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
+		}
+		
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
@@ -168,6 +177,28 @@ public class EvaluationResource
 				group.getExtraWhereClause().add(componentIdGroup);
 				group.getExtraWhereClause().add(originIdGroup);
 				queryByExample.getExtraWhereCauses().add(group);
+			}
+		}
+		
+		//get Evaluation Template ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getChecklistTemplateId())) {
+			// If given, filter the search by name
+			EvaluationTemplate templateExample = new EvaluationTemplate();
+			templateExample.setChecklistTemplateId(evaluationFilterParams.getChecklistTemplateId());
+			
+			List<EvaluationTemplate> templates = templateExample.findByExample();
+			// get list of ids
+			List<String> ids = templates.stream().map(x -> x.getTemplateId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+
+				Evaluation idInExample = new Evaluation();
+				idInExample.setTemplateId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel templateIdGroup = new SpecialOperatorModel(idInExample);
+				templateIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				templateIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+				
+				queryByExample.getExtraWhereCauses().add(templateIdGroup);
 			}
 		}
 
@@ -244,6 +275,23 @@ public class EvaluationResource
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Boolean.class)
+	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
+	@Path("/{evaluationId}/checkTemplateUpdate")
+	public String checkTemplateUpdate(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		Boolean result = evaluation != null && evaluation.getTemplateUpdatePending() != null && evaluation.getTemplateUpdatePending();
+		return "{ \"result\": " + result.toString() + " }";
 	}
 
 	@GET
@@ -389,6 +437,32 @@ public class EvaluationResource
 				return Response.ok(evaluationExisting).build();
 			} else {
 				return sendSingleEntityResponse(validationResult.toRestError());
+			}
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Updates an evaluation; to reflect changes in the template. Unpublished only.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/updateTemplate")
+	public Response updateEvaluationTemplate(
+			@PathParam("evaluationId") String evaluationId)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			if (evaluation.getPublished()) {
+				LOG.log(Level.WARNING, MessageFormat.format("Cannot update published evaluation: {0}", evaluation.getEvaluationId()));
+				return Response.status(Response.Status.FORBIDDEN).build();
+			} else {
+				service.getEvaluationService().updateEvaluationToLatestTemplateVersion(evaluation);
+				return Response.ok(evaluation).build();
 			}
 		} else {
 			return sendSingleEntityResponse(evaluation);

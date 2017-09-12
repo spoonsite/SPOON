@@ -759,7 +759,8 @@ public class OrientPersistenceService
 									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(fieldOperation.getOperation())) {
 								addParameter = false;
 							}
-							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())) {
+							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation())) {
 								addParameter = false;
 								where.append(" [ :")
 										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
@@ -866,7 +867,8 @@ public class OrientPersistenceService
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
-						} else if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+						} else if ((GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation()))
 								&& !generateStatementOption.getParameterValues().isEmpty()) {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							for (Integer i = 0; i < generateStatementOption.getParameterValues().size(); i++) {

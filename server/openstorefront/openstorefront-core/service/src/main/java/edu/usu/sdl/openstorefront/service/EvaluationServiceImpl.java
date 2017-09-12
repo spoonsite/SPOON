@@ -40,10 +40,12 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
@@ -199,8 +201,7 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public String saveEvaluationAll(EvaluationAll evaluationAll
-	)
+	public String saveEvaluationAll(EvaluationAll evaluationAll)
 	{
 		Objects.requireNonNull(evaluationAll);
 		Objects.requireNonNull(evaluationAll.getEvaluation());
@@ -219,8 +220,7 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public Evaluation createEvaluationFromTemplate(Evaluation evaluation
-	)
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation)
 	{
 		Objects.requireNonNull(evaluation);
 		Objects.requireNonNull(evaluation.getTemplateId());
@@ -284,9 +284,163 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
 	@Override
-	public EvaluationAll getEvaluation(String evaluationId
-	)
+	public void updateEvaluationsToLatestTemplateVersion(List<String> evaluationIds)
+	{
+		if (evaluationIds != null) {
+			evaluationIds.forEach(evaluationId -> {
+				Evaluation idExample = new Evaluation();
+				idExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+				idExample.setPublished(Boolean.FALSE);
+				idExample.setEvaluationId(evaluationId);
+				Evaluation existingEvaluation = idExample.find();
+				if (existingEvaluation != null) {
+					updateEvaluationToLatestTemplateVersion(existingEvaluation);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("(Skipping) Unable to find unpublished active evaluation for id: {0}", evaluationId));
+				}
+			});
+		}
+	}
+
+	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 * @return
+	 */
+	@Override
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation)
+	{
+		Objects.requireNonNull(evaluation);
+		Objects.requireNonNull(evaluation.getTemplateId());
+
+		EvaluationTemplate exampleTemplate = new EvaluationTemplate();
+		exampleTemplate.setTemplateId(evaluation.getTemplateId());
+		EvaluationTemplate template = exampleTemplate.find();
+
+		//FIXME: Add check for Evaluation; should not be published; perhap only active
+		if (template != null) {
+			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
+			updateChecklist(evaluation.getEvaluationId(), template.getChecklistTemplateId());
+			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
+		}
+		// set template update flag to false
+		Evaluation proxyExample = new Evaluation();
+		proxyExample.setEvaluationId(evaluation.getEvaluationId());
+
+		Evaluation proxy = proxyExample.findProxy();
+		proxy.setTemplateUpdatePending(Boolean.FALSE);
+		proxy.save();
+	}
+
+	private void updateContentSections(String evaluationId, List<EvaluationSectionTemplate> sectionTemplates)
+	{
+		Objects.requireNonNull(sectionTemplates);
+
+		ContentSection contentSectionExample = new ContentSection();
+		contentSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
+		contentSectionExample.setEntity(Evaluation.class.getSimpleName());
+		contentSectionExample.setEntityId(evaluationId);
+		List<ContentSection> contentSections = persistenceService.queryByExample(contentSectionExample);
+		// add new sections
+		sectionTemplates.forEach((sectionTemplate) -> {
+			boolean foundSection = false;
+			for (ContentSection section : contentSections) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluationId, sectionTemplate.getSectionTemplateId());
+			}
+		});
+		// remove sections
+		contentSections.forEach((section) -> {
+			boolean foundSection = false;
+			for (EvaluationSectionTemplate sectionTemplate : sectionTemplates) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().deleteContentSection(section.getContentSectionId());
+			}
+		});
+		// update sections
+		//TODO: update section
+	}
+
+	private void updateChecklist(String evaluationId, String newChecklistTemplateId)
+	{
+		ChecklistTemplate templateExample = new ChecklistTemplate();
+		templateExample.setChecklistTemplateId(newChecklistTemplateId);
+		ChecklistTemplate template = templateExample.find();
+
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist = checklist.findProxy();
+		checklist.setChecklistTemplateId(newChecklistTemplateId);
+		checklist.save();
+		
+		String checklistId = checklist.getChecklistId();
+
+		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
+		responseExample.setChecklistId(checklistId);
+		List<EvaluationChecklistResponse> responseList = responseExample.findByExampleProxy();
+
+		//add questions
+		template.getQuestions().forEach(question -> {
+			boolean foundQuestion = false;
+			for (EvaluationChecklistResponse response : responseList) {
+				if (response.getQuestionId().equals(question.getQuestionId())) {
+					foundQuestion = true;
+					response.setSortOrder(question.getSortOrder());
+					response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+					response.save();
+				}
+			}
+			if (!foundQuestion) {
+				EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
+				newResponse.setChecklistId(checklistId);
+				newResponse.setResponseId(persistenceService.generateId());
+				newResponse.setQuestionId(question.getQuestionId());
+				newResponse.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());
+				newResponse.setSortOrder(question.getSortOrder());
+				newResponse.populateBaseCreateFields();
+				persistenceService.persist(newResponse);
+			}
+		});
+
+		//remove questions
+		responseList.forEach(response -> {
+			boolean foundQuestion = false;
+			if (response.getActiveStatus().equals(EvaluationChecklistResponse.ACTIVE_STATUS) && 
+					(response.getUserAddRemoveFlg() == null || !response.getUserAddRemoveFlg())) {
+				for (ChecklistTemplateQuestion question : template.getQuestions()) {
+					if (response.getQuestionId().equals(question.getQuestionId())) {
+						foundQuestion = true;
+					}
+				}
+				if(!foundQuestion)
+				{
+					//inactivate
+					response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
+					response.save();
+				}
+			}
+		});
+	}
+
+	@Override
+	public EvaluationAll getEvaluation(String evaluationId)
 	{
 		return getEvaluation(evaluationId, false);
 	}
@@ -572,5 +726,4 @@ public class EvaluationServiceImpl
 			getChangeLogService().resumeSaving();
 		}
 	}
-
 }

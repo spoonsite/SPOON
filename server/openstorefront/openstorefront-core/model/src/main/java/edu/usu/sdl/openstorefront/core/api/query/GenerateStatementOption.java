@@ -40,6 +40,7 @@ public class GenerateStatementOption
 	public static final String OPERATION_GREATER_THAN_EQUAL = " >=";
 	public static final String OPERATION_GREATER_THAN = ">";
 	public static final String OPERATION_IN = " IN";
+	public static final String OPERATION_NOT_IN = " NOT IN";
 
 	public static final String PARAMETER_SUFFIX_DEFAULT = "Param";
 	public static final String PARAMETER_SUFFIX_SET = "SetParam";
