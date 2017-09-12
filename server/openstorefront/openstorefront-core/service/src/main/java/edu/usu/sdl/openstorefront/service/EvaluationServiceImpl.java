@@ -378,21 +378,22 @@ public class EvaluationServiceImpl
 		//TODO: update section
 	}
 
-	private void updateChecklist(String evaluationId, String checklistTemplateId)
+	private void updateChecklist(String evaluationId, String newChecklistTemplateId)
 	{
 		ChecklistTemplate templateExample = new ChecklistTemplate();
-		templateExample.setChecklistTemplateId(checklistTemplateId);
+		templateExample.setChecklistTemplateId(newChecklistTemplateId);
 		ChecklistTemplate template = templateExample.find();
 
 		EvaluationChecklist checklist = new EvaluationChecklist();
-		checklist.setChecklistTemplateId(checklistTemplateId);
 		checklist.setEvaluationId(evaluationId);
-
 		checklist = checklist.findProxy();
+		checklist.setChecklistTemplateId(newChecklistTemplateId);
+		checklist.save();
+		
 		String checklistId = checklist.getChecklistId();
 
 		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
-		responseExample.setChecklistId(checklist.getChecklistId());
+		responseExample.setChecklistId(checklistId);
 		List<EvaluationChecklistResponse> responseList = responseExample.findByExampleProxy();
 
 		//add questions
