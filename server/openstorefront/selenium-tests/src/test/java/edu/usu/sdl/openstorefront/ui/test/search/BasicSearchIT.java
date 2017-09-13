@@ -95,7 +95,7 @@ public class BasicSearchIT
 		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchFieldLandingPage-inputEl"))).sendKeys(search);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
@@ -137,7 +137,7 @@ public class BasicSearchIT
 	public static void createBasicSearchComponent(String componentName)
 	{
 		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("My name is " + myEntry.getName());
+		System.out.println("Entry Name: " + myEntry.getName());
 		ComponentAdminView entry = null;
 
 		int timer = 0;
