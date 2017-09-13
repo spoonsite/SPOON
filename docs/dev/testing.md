@@ -22,3 +22,34 @@ Regression tests are captured in a separate document. [Regression Docs](https://
    * Walk through all Regression and Acceptance tests and verify they pass
    * If a failure is found verify if it is a code bug or test issue if possible.
    * Return to developers providing steps to reproduce failure.
+
+## Selenium Tests
+How to run Selenium tests:
+1. These steps assume you have the latest code for your branch.
+2. Go to your testconfig.properties file found in your var file (var &rarr; config &rarr; testconfig).  Update the email field in the following section:
+test.server=http://localhost:8080/openstorefront/
+#EDGE, CHROME, IE, FIREFOX, ALL
+test.drivers=CHROME
+test.username=admin
+test.password=Secret1@
+test.newuseremail= *_your email_*
+report.dir=/var/openstorefront/testreports
+3. Right click on *selenium-tests* found in the Projects tab of NetBeans.
+4. Select *Run Selenium Tests*.
+5. To run an individual Selenium test: locate the test file, right click on it, and select *Test File*.
+6. Note: Selenium tests end with _IT.java_.
+
+## Unit Tests
+How to run Unit Tests:
+1. Note: Unit test filenames end with _Test.java_.
+2. To run an individual unit test: locate the file, right click and select *Test File*.
+3. To run a suite of unit tests: locate the project, right click and select *Test*.
+4. All unit tests will be run during a project build.
+
+## Integration Tests/Container Page
+How to run integration tests:
+1. Storefront and ElasticSearch must be running in order to run this suite of tests.
+2. Go to http://localhost:8080/openstorefront/test/ServiceTest.action
+3. Login as admin if you haven't already.
+4. Container page allows you to *Run All Tests*, a section of tests (e.g. Alert Tests), or individual tests (e.g. Find Lookup Test).
+
