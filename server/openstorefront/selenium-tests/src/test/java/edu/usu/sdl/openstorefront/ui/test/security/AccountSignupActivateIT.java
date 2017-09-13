@@ -133,10 +133,10 @@ public class AccountSignupActivateIT
 		driver.findElement(By.cssSelector("input[name='organization']")).sendKeys("Air Force");
 		driver.findElement(By.cssSelector("input[name='email']")).sendKeys(userName + "@test.com");
 		driver.findElement(By.cssSelector("input[name='phone']")).sendKeys("435-555-5555");
-		
+
 		String registrationId = getRegistrationId(driver);
 		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
-		
+
 		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
 		UserRegistration registration = client.getUserRegistration(registrationId);
 
@@ -151,14 +151,16 @@ public class AccountSignupActivateIT
 		LOG.log(Level.INFO, "--- User '" + userName + "' CREATED ---");
 
 	}
+
 	private String getRegistrationId(WebDriver driver)
 	{
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		// generate the email verification code
 		driver.findElement(By.id("verificationCodeButton")).click();
 		driverWait(() -> wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("x-component.x-border-box.x-mask.x-component-default .x-mask-msg-text"))), 5000);
-
+		driverWait(() -> wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[id*=\"messagebox-\"].x-window.x-message-box a"))), 5000);
+		driver.findElement(By.cssSelector("[id*=\"messagebox-\"].x-window.x-message-box a")).click();
 		// Get the code from the API because we can't automate reading emails
 		/**
 		 * https://github.com/SeleniumHQ/selenium/wiki/Frequently-Asked-Questions
@@ -180,6 +182,7 @@ public class AccountSignupActivateIT
 		}
 		return registrationId;
 	}
+
 	private void activateAccount(WebDriver driver, String userName) throws InterruptedException
 	{
 		// Navigate to Admin Tools -> Application Management -> User Tools to activate
