@@ -180,7 +180,7 @@ public class ChangeLogServiceImpl
 	@Override
 	public <T extends StandardEntity> ChangeLog logStatusChange(T statusEntity, String newStatus)
 	{
-		return logOtherChange(statusEntity, newStatus, null);
+		return logStatusChange(statusEntity, newStatus, null);
 	}
 
 	@Override
