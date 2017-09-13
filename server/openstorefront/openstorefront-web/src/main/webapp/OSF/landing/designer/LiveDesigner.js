@@ -29,7 +29,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 		'OSF.landing.DefaultSearchTools',
 		'OSF.landing.DefaultActions',
 		'OSF.landing.DefaultCategory',
-		'OSF.landing.DefaultInfo'
+		'OSF.landing.DefaultInfo',
+		'OSF.landing.StaticInfo'
 	],
 	
 	layout: 'border',

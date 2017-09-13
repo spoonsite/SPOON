@@ -82,12 +82,12 @@ Ext.define('OSF.landing.DefaultInfo', {
 			data: [],
 			indicators: []
 		};	
-		carousel.currentHighlighIndex = 0;
+		carousel.currentHighlightIndex = 0;
 		
 		var handleHightlightChange = function(index) {
-			carousel.currentHighlighIndex = index;
+			carousel.currentHighlightIndex = index;
 			updateHighlight();
-			carousel.currentHighlighIndex++;
+			carousel.currentHighlightIndex++;
 		};
 		CoreUtil.pageActions.handleHightlightChange = handleHightlightChange;
 		
@@ -164,18 +164,18 @@ Ext.define('OSF.landing.DefaultInfo', {
 		CoreUtil.pageActions.readMoreView = readMoreView;
 		
 		var updateHighlight = function() {			
-			if (carousel.currentHighlighIndex >= infoPanel.infoItems.data.length) {
-				carousel.currentHighlighIndex = 0;
+			if (carousel.currentHighlightIndex >= infoPanel.infoItems.data.length) {
+				carousel.currentHighlightIndex = 0;
 			} 
 
-			if (carousel.currentHighlighIndex < 0) {
-				carousel.currentHighlighIndex = infoPanel.infoItems.data.length-1;
+			if (carousel.currentHighlightIndex < 0) {
+				carousel.currentHighlightIndex = infoPanel.infoItems.data.length-1;
 			}
 			
 			infoPanel.infoItems.indicators = [];
 			Ext.Array.each(infoPanel.infoItems.data, function(item, index){
 				item.index = index;
-				if (carousel.currentHighlighIndex === index) {
+				if (carousel.currentHighlightIndex === index) {
 					infoPanel.infoItems.indicators.push({
 						indicator: '<i class="fa fa-circle"></i>',
 						index: index
@@ -188,7 +188,7 @@ Ext.define('OSF.landing.DefaultInfo', {
 				}
 			});						
 
-			carousel.update(infoPanel.infoItems.data[carousel.currentHighlighIndex]);
+			carousel.update(infoPanel.infoItems.data[carousel.currentHighlightIndex]);
 			carouselIndicator.update(infoPanel.infoItems.indicators);
 			var textel = Ext.query('.new-home-highlight-item-desc');
 			var el = Ext.get(textel[0]);
@@ -234,13 +234,13 @@ Ext.define('OSF.landing.DefaultInfo', {
 						infoPanel.highlightTask = Ext.TaskManager.newTask({
 							run: function() {								
 								updateHighlight();								
-								carousel.currentHighlighIndex++;
+								carousel.currentHighlightIndex++;
 							},
 							interval: 10000
 						});
 						Ext.TaskManager.start(infoPanel.highlightTask);						
 						updateHighlight();
-						carousel.currentHighlighIndex++;
+						carousel.currentHighlightIndex++;
 					}
 				});
 			}
