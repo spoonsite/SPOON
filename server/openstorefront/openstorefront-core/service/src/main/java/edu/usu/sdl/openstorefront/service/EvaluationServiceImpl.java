@@ -588,13 +588,24 @@ public class EvaluationServiceImpl
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
 		if (evaluation != null) {
 
-			//merge change request
-			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
-			if (changeRequest != null) {
-				getComponentService().mergePendingChange(changeRequest.getComponentId());
-			}
+			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getOriginComponentId());
+			if (originalComponent != null) {
 
-			getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.TRUE.toString());
+				//merge change request
+				Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
+				if (changeRequest != null) {
+					getComponentService().mergePendingChange(changeRequest.getComponentId());
+				}
+
+				getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.TRUE.toString());
+
+				if (!ApprovalStatus.APPROVED.equals(originalComponent.getApprovalState())) {
+					getComponentService().approveComponent(originalComponent.getComponentId());
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable find original entry.", "Check input");
+			}
 
 			evaluation.setPublished(Boolean.TRUE);
 			evaluation.populateBaseUpdateFields();
@@ -736,7 +747,7 @@ public class EvaluationServiceImpl
 		Evaluation evaluation = getPersistenceService().findById(Evaluation.class, evaluationId);
 		if (evaluation != null) {
 
-			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getComponentId());
+			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getOriginComponentId());
 			if (originalComponent != null) {
 
 				Component component = getPersistenceService().findById(Component.class, evaluation.getComponentId());

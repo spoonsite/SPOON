@@ -860,7 +860,7 @@
 			var publish = function(record, successAction){
 				Ext.Msg.show({
 					title:'Publish Evaluation?',
-					message: 'Are you sure you want to PUBLISH this evaluation?',
+					message: 'Are you sure you want to PUBLISH this evaluation?<br><br>This will approve the entry if not approved.',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
