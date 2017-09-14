@@ -260,6 +260,14 @@ limitations under the License.
 	height: 100%;
 }
 
+.home-highlight-update {
+	font-size: 10px;
+    float: left;
+    padding-top: 10px;
+    padding-left: 45px;
+    color: BLACK;
+}
+
 .new-home-highlight-item-back {	
 	/* background: rgba(0, 0, 0, 0.5); */
 	/* height: 100%; */
@@ -276,10 +284,10 @@ limitations under the License.
 
 .home-highlight-header {
     text-align: center;
-    //font-size: 24px;
-    height: 50px;
-    padding-top: 15px;
-    //background: ${actionBean.branding.quoteColor};
+    /* font-size: 24px; */
+    /* height: 50px; */
+    padding-top: 50px;
+    /* background: ${actionBean.branding.quoteColor}; */
     letter-spacing: 5px;
     text-transform: uppercase;
     font: 20px "Lato", sans-serif;

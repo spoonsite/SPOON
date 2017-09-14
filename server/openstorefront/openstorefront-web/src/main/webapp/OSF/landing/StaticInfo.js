@@ -27,7 +27,7 @@ Ext.define('OSF.landing.StaticInfo', {
 
 			infoPanel.suspendEvent('resize');
 			infoPanel.removeAll();
-			infoPanel.resumeEvent('resize');
+			
 
 			var containerLayout = {
 				type: 'hbox',
@@ -44,7 +44,7 @@ Ext.define('OSF.landing.StaticInfo', {
 			} 			
 			var container = Ext.create('Ext.panel.Panel', {	
 				itemId: 'container',
-				layout: containerLayout
+				layout: containerLayout				
 			});
 
 			//add display
@@ -55,7 +55,7 @@ Ext.define('OSF.landing.StaticInfo', {
 					'	<div class="new-home-highlight-item-back">',
 							'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl></div>',
 							'<div class="new-home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}</div>',					
-							'<div class="home-highlight-footer"><span style="font-size: 10px; float: left;padding-top:10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
+							'<div class=""><span class="home-highlight-update" style="font-size: 10px; float: left;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
 					'	</div>',										
 					'</div>',
 				'</tpl>'	
@@ -70,11 +70,6 @@ Ext.define('OSF.landing.StaticInfo', {
 				items: [
 					{
 						html: '<h1 class="home-info-section-title">Highlights</h1><hr class="home-info-section-title-rule">'
-					},
-					{
-						itemId: 'highlightTemplate',
-						xtype: 'panel',							
-						tpl: template					
 					}
 				]											
 			});
@@ -84,19 +79,81 @@ Ext.define('OSF.landing.StaticInfo', {
 				xtype: 'panel',
 				width: infoPanelsWidth,						
 				bodyCls: 'home-info-carousel',
-				bodyStyle: 'padding-right: 10px; padding-left: 10px;',			
+				bodyStyle: 'padding-right: 10px; padding-left: 10px; padding-bottom: 20px;',			
 				items: [										
-					
+					{
+						html: '<h1 class="home-info-section-title">Recently Added</h1><hr class="home-info-section-title-rule">'
+					}
 				]							
 			});				
 			container.add(highlightPanel);
 			container.add(recentlyAddedPanel);
 
-			infoPanel.suspendEvent('resize');
-			infoPanel.add(container);
-			infoPanel.updateLayout(true, true);
-			infoPanel.resumeEvent('resize');
+			infoPanel.infoItems = [];
+			infoPanel.infoItems.data = [];
+			var dataIndex = 0;
+			Ext.Ajax.request({
+				url: 'api/v1/resource/highlights',
+				success: function(response, opts) {
+					var highlights = Ext.decode(response.responseText);
+
+					Ext.Array.each(highlights, function(highlight){
+						if (!highlight.link) {
+							highlight.link = false;
+						} 					
+						highlight.index = dataIndex++;
+						highlight.titleDesc = highlight.title; //Ext.util.Format.ellipsis(highlight.title, 50);
+						highlight.moreText = 'Read More >>';
+						highlight.displayDesc = Ext.util.Format.ellipsis(Ext.util.Format.stripTags(highlight.description), 700);
+
+					});				
+					var highlightItems = [];
+					Ext.Array.each(highlights, function(item){
+						highlightItems.push(item);
+					});							
+					
+					
+					highlightPanel.add({								
+						xtype: 'panel',
+						data: highlightItems,
+						tpl: template
+					});
+
+					Ext.Ajax.request({
+						url: 'api/v1/service/search/recent?max=3',
+						success: function(response, opts) {
+							var recent = Ext.decode(response.responseText);
+
+							var recentItems = [];
+							Ext.Array.each(recent, function(item){
+								recentItems.push({
+									titleDesc: Ext.util.Format.ellipsis(item.name),
+									link: '',
+									index: dataIndex++,
+									moreText: 'View >>',
+									updateDts: item.addedDts,
+									componentId: item.componentId,
+									displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
+								});
+							});			
+							
+							recentlyAddedPanel.add({								
+								xtype: 'panel',
+								data: recentItems,
+								tpl: template
+							});
+							infoPanel.infoItems.data = highlightItems.concat(recentItems);
+							
+							infoPanel.add(container);
+							infoPanel.updateLayout(true, true);
+							infoPanel.resumeEvent('resize');
 			
+						}
+					});
+
+				}
+			});	
+
 			
 		}
 	},	
@@ -181,80 +238,13 @@ Ext.define('OSF.landing.StaticInfo', {
 	afterRender: function() {
 		this.callParent();			
 		var infoPanel = this;
-		Ext.defer(function(){
-			infoPanel.loadData();
-		}, 100);
-		
 	},
 	loadData: function(){
 		var infoPanel = this;
 		
 		if (!infoPanel.dataloaded) {
 		
-			var template = new Ext.XTemplate(
-				'<tpl for=".">',
-					'<div class="new-home-highlight-item">',
-					'	<div class="new-home-highlight-item-back">',
-							'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl></div>',
-							'<div class="new-home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}</div>',					
-							'<div class="home-highlight-footer"><span style="font-size: 10px; float: left;padding-top:10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
-					'	</div>',										
-					'</div>',
-				'</tpl>'	
-			);
-		
-			Ext.Ajax.request({
-				url: 'api/v1/resource/highlights',
-				success: function(response, opts) {
-					var highlights = Ext.decode(response.responseText);
 
-					Ext.Array.each(highlights, function(highlight){
-						if (!highlight.link) {
-							highlight.link = false;
-						} 					
-
-						highlight.titleDesc = highlight.title; //Ext.util.Format.ellipsis(highlight.title, 50);
-						highlight.moreText = 'Read More >>';
-						highlight.displayDesc = Ext.util.Format.ellipsis(Ext.util.Format.stripTags(highlight.description), 700);
-
-					});				
-					var highlightItems = [];
-					Ext.Array.each(highlights, function(item){
-						highlightItems.push(item);
-					});							
-					infoPanel.queryById('highlightTemplate').update(highlightItems);
-
-					Ext.Ajax.request({
-						url: 'api/v1/service/search/recent?max=5',
-						success: function(response, opts) {
-							var recent = Ext.decode(response.responseText);
-
-							var recentItems = [];
-							Ext.Array.each(recent, function(item){
-								recentItems.push({
-									titleDesc: Ext.util.Format.ellipsis(item.name),
-									link: '',
-									moreText: 'View >>',
-									updateDts: item.addedDts,
-									componentId: item.componentId,
-									displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
-								});
-							});			
-							
-							infoPanel.getComponent('container').getComponent('recentlyAddedPanel').add({								
-								xtype: 'panel',
-								data: recentItems,
-								tpl: template
-							});							
-							console.log(template.apply(recentItems));
-														
-							infoPanel.getComponent('container').getComponent('recentlyAddedPanel').updateLayout(true, true);
-							infoPanel.updateLayout(true, true);
-						}
-					});
-
-				}
-			});	
 			
 			infoPanel.dataloaded = true;
 		}
