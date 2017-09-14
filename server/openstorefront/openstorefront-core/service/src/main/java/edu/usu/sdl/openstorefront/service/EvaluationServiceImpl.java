@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
@@ -389,7 +391,7 @@ public class EvaluationServiceImpl
 		checklist = checklist.findProxy();
 		checklist.setChecklistTemplateId(newChecklistTemplateId);
 		checklist.save();
-		
+
 		String checklistId = checklist.getChecklistId();
 
 		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
@@ -422,15 +424,14 @@ public class EvaluationServiceImpl
 		//remove questions
 		responseList.forEach(response -> {
 			boolean foundQuestion = false;
-			if (response.getActiveStatus().equals(EvaluationChecklistResponse.ACTIVE_STATUS) && 
-					(response.getUserAddRemoveFlg() == null || !response.getUserAddRemoveFlg())) {
+			if (response.getActiveStatus().equals(EvaluationChecklistResponse.ACTIVE_STATUS)
+					&& (response.getUserAddRemoveFlg() == null || !response.getUserAddRemoveFlg())) {
 				for (ChecklistTemplateQuestion question : template.getQuestions()) {
 					if (response.getQuestionId().equals(question.getQuestionId())) {
 						foundQuestion = true;
 					}
 				}
-				if(!foundQuestion)
-				{
+				if (!foundQuestion) {
 					//inactivate
 					response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
 					response.save();
@@ -726,4 +727,39 @@ public class EvaluationServiceImpl
 			getChangeLogService().resumeSaving();
 		}
 	}
+
+	@Override
+	public void approveEvaluationSummary(String evaluationId)
+	{
+		Objects.requireNonNull(evaluationId);
+
+		Evaluation evaluation = getPersistenceService().findById(Evaluation.class, evaluationId);
+		if (evaluation != null) {
+
+			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getComponentId());
+			if (originalComponent != null) {
+
+				Component component = getPersistenceService().findById(Component.class, evaluation.getComponentId());
+				if (component != null) {
+					LOG.log(Level.FINE, MessageFormat.format("Approving Change Request. Change Request Id: {0}", component.getComponentId()));
+					getComponentService().mergePendingChange(component.getComponentId());
+				} else {
+					LOG.log(Level.FINE, MessageFormat.format("There is no outstanding change request to the evaluation. Id: {0}", evaluationId));
+				}
+
+				if (!ApprovalStatus.APPROVED.equals(originalComponent.getApprovalState())) {
+					getComponentService().approveComponent(originalComponent.getComponentId());
+				}
+
+				evaluation.setLastSummaryApprovedDts(TimeUtil.currentDate());
+				getPersistenceService().persist(evaluation);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable find original entry.", "Check input");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable find evaluation to approve summary on.", "Check input");
+		}
+
+	}
+
 }

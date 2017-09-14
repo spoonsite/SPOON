@@ -46,6 +46,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
+import edu.usu.sdl.openstorefront.core.view.EvaluationInfoView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.statistic.EvaluationStatistic;
@@ -122,7 +123,7 @@ public class EvaluationResource
 		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
 			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
 		}
-		
+
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
@@ -179,13 +180,13 @@ public class EvaluationResource
 				queryByExample.getExtraWhereCauses().add(group);
 			}
 		}
-		
+
 		//get Evaluation Template ids
 		if (StringUtils.isNotBlank(evaluationFilterParams.getChecklistTemplateId())) {
 			// If given, filter the search by name
 			EvaluationTemplate templateExample = new EvaluationTemplate();
 			templateExample.setChecklistTemplateId(evaluationFilterParams.getChecklistTemplateId());
-			
+
 			List<EvaluationTemplate> templates = templateExample.findByExample();
 			// get list of ids
 			List<String> ids = templates.stream().map(x -> x.getTemplateId()).collect(Collectors.toList());
@@ -197,7 +198,7 @@ public class EvaluationResource
 				SpecialOperatorModel templateIdGroup = new SpecialOperatorModel(idInExample);
 				templateIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				templateIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
-				
+
 				queryByExample.getExtraWhereCauses().add(templateIdGroup);
 			}
 		}
@@ -361,6 +362,28 @@ public class EvaluationResource
 		return sendSingleEntityResponse(evaluationAll);
 	}
 
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationInfoView.class)
+	@APIDescription("Gets an evaluation information status")
+	@Path("/{evaluationId}/info")
+	public Response getEvaluationInfo(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		EvaluationInfoView evaluationInfoView = null;
+		EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluationId);
+		if (evaluationAll != null) {
+			evaluationInfoView = new EvaluationInfoView();
+			evaluationInfoView.setEvaluationId(evaluationId);
+			evaluationInfoView.setLastChangeDate(evaluationAll.calcLastChangeDate());
+			evaluationInfoView.setProgessPercent(evaluationAll.calcProgress());
+		}
+
+		return sendSingleEntityResponse(evaluationInfoView);
+	}
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
 	@APIDescription("Creates an evaluation from template ")
@@ -402,6 +425,25 @@ public class EvaluationResource
 		} else {
 			return sendSingleEntityResponse(evaluationExisting);
 		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@APIDescription("Approves the entry summary change request and approves the entry if not, approved")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/publishsummary")
+	public Response approveEvaluationSummary(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().approveEvaluationSummary(evaluationId);
+		}
+		return sendSingleEntityResponse(evaluation);
 	}
 
 	@PUT

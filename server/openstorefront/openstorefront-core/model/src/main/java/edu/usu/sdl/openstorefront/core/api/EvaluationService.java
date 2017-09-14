@@ -155,4 +155,11 @@ public interface EvaluationService
 	 */
 	public String copyEvaluation(String evaluationId);
 
+	/**
+	 * This will approve the change request and approve entry if needed
+	 *
+	 * @param evaluationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void approveEvaluationSummary(String evaluationId);
 }

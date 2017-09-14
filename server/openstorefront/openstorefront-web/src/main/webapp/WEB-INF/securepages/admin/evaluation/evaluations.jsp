@@ -295,8 +295,9 @@
 						}
 					},					
 					{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true  },
-					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
-					{ text: 'Update User', dataIndex: 'updateUser', width: 175 }
+					{ text: 'Last Summary Published Date', dataIndex: 'lastSummaryApprovedDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 250, align: 'center' },
+					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175, hidden: true },
+					{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true  }
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
@@ -463,7 +464,7 @@
 								disabled: true,
 								handler: function () {
 									var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
-									actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
+									actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId, selection);
 								}
 							},
 							{
@@ -856,7 +857,7 @@
 				});	
 			};
 
-			var publish = function(record){
+			var publish = function(record, successAction){
 				Ext.Msg.show({
 					title:'Publish Evaluation?',
 					message: 'Are you sure you want to PUBLISH this evaluation?',
@@ -873,11 +874,41 @@
 								},
 								success: function(response, opts){
 									actionRefresh();
+									if (successAction) {
+										successAction(record);
+									}
 								}
 							});	
 						} 
 					}
 				});				
+			};
+			
+			var publishSummary = function(record, successAction) {
+				Ext.Msg.show({
+					title:'Publish Summary only?',
+					message: 'Are you sure you want to PUBLISH the Summary?<br><br><ul><li>This will merge the entry information only.</li><li>This will approve the entry if not approved</li></ul>',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							evaluationGrid.setLoading('Publishing...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/publishsummary',
+								method: 'PUT',
+								callback: function(){
+									evaluationGrid.setLoading(false);
+								},
+								success: function(response, opts){
+									actionRefresh();
+									if (successAction) {
+										successAction(record);
+									}
+								}
+							});	
+						} 
+					}
+				});		
 			};
 
 			var unpublish = function(record){
@@ -979,6 +1010,48 @@
 				dockedItems: [
 					{
 						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Publish Full Evaluation',
+								iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
+								handler: function() {
+									var record = Ext.getCmp('evaluationGrid').getSelection()[0];									
+									publish(record, function(){
+										Ext.toast('Sucessfully published evalaution'); 
+										record.set({
+											published: true
+										});
+										actionPreviewComponent(record.get('componentId'), record.get('evaluationId'), record);
+									});
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Publish Summary Only',
+								iconCls: 'fa fa-lg fa-book icon-button-color-default icon-small-vertical-correction',
+								handler: function() {
+									var record = Ext.getCmp('evaluationGrid').getSelection()[0];
+									publishSummary(record, function(){
+										Ext.toast('Sucessfully published summary'); 
+										actionPreviewComponent(record.get('componentId'), record.get('evaluationId'), record);
+									});
+								}									
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								xtype: 'panel',
+								itemId: 'evalInfoStatus',
+								tpl: '<tpl if="published"><span class="alert-success">&nbsp;Published&nbsp;</span> </tpl>Last change: <b>{[Ext.util.Format.date(values.lastChangeDate)]}</b> Percent Complete: <b>{[Ext.util.Format.percent(values.progessPercent/100)]}</b>'
+							}
+						]
+					},					
+					{
+						xtype: 'toolbar',
 						dock: 'bottom',
 						items: [
 							{
@@ -1023,12 +1096,32 @@
 					Ext.getCmp('evaluationGrid').getSelectionModel().selectPrevious();
 				}
 				var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
-				actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
+				actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId, selection);
 			};
 
-			var actionPreviewComponent = function(componentId, evalId){
+			var actionPreviewComponent = function(componentId, evalId, record){
 				previewComponentWin.show();
 				previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
+				
+				if (record.get('published')) {
+					previewComponentWin.setTitle('Preview - Published');
+				} else {
+					previewComponentWin.setTitle('Preview');
+				}
+				
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evalId + '/info',
+					success: function(response, opts) {
+						var data = Ext.decode(response.responseText);
+						
+						if (record.get('published')) {
+							data.published = true;
+						}
+						
+						previewComponentWin.queryById('evalInfoStatus').update(data);
+					}
+				});
+				
 			};
 		});
 		

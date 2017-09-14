@@ -420,6 +420,7 @@
 									id: 'dashboardAdminHomeButton',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -433,6 +434,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-database icon-button-color-default',
+									margin: '0 13 0 0',
 									menu: {																				
 										listeners: {
 											beforerender: function () {
@@ -447,6 +449,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
+									margin: '0 15 0 0',
 									menu: {																				
 										listeners: {
 											beforerender: function () {

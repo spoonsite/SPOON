@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -85,14 +86,22 @@ public class Evaluation
 	private Boolean published;
 
 	@NotNull
+	@ConsumeField
 	private Boolean allowNewSections;
 
 	@NotNull
+	@ConsumeField
 	private Boolean allowNewSubSections;
 
+	@ConsumeField
 	private Boolean allowQuestionManagement;
 
+	@ConsumeField
+	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
 	private Boolean templateUpdatePending;
+
+	@ConsumeField
+	private Date lastSummaryApprovedDts;
 
 	public Evaluation()
 	{
@@ -116,6 +125,7 @@ public class Evaluation
 		setAllowNewSubSections(evaluation.getAllowNewSubSections());
 		setAllowQuestionManagement(evaluation.getAllowQuestionManagement());
 		setTemplateUpdatePending(evaluation.getTemplateUpdatePending());
+		setLastSummaryApprovedDts(evaluation.getLastSummaryApprovedDts());
 	}
 
 	@Override
@@ -278,6 +288,16 @@ public class Evaluation
 	public void setTemplateUpdatePending(Boolean templateUpdatePending)
 	{
 		this.templateUpdatePending = templateUpdatePending;
+	}
+
+	public Date getLastSummaryApprovedDts()
+	{
+		return lastSummaryApprovedDts;
+	}
+
+	public void setLastSummaryApprovedDts(Date lastSummaryApprovedDts)
+	{
+		this.lastSummaryApprovedDts = lastSummaryApprovedDts;
 	}
 
 }
