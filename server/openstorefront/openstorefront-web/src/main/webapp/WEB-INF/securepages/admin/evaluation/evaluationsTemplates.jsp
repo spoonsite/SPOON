@@ -118,9 +118,12 @@
 					]
 				});
 				var data = form.getValues();
-				Ext.getCmp('evaluationGrid').getStore().load({
-					url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
-				 });
+				if(data.templateId)
+				{
+					Ext.getCmp('evaluationGrid').getStore().load({
+						url: 'api/v1/resource/evaluations?published=false&templateId=' + data.templateId
+					 });
+				 }
 				selectEvaluationWin.show();	
 			};
 		

@@ -100,8 +100,9 @@ public class EvaluationTemplateResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationTemplate.class)
-	public Response createEvaluationTemplate(EvaluationTemplate evaluationTemplate)
+	public Response createEvaluationTemplate(UpdateEvaluationTemplateModel model)
 	{
+		EvaluationTemplate evaluationTemplate = model.getEvaluationTemplate();
 		ValidationResult validationResult = evaluationTemplate.validate();
 		if (validationResult.valid()) {
 			evaluationTemplate = evaluationTemplate.save();
