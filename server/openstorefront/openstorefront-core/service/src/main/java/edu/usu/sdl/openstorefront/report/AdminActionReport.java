@@ -36,6 +36,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,6 +50,7 @@ public class AdminActionReport
 		extends BaseReport
 {
 	private static final Logger LOG = Logger.getLogger(ExternalLinkValidationReport.class.getName());
+	private static final int MAX_CHAR_COUNT = 800;
 	private HashMap root = new HashMap();
 	private String renderedTemplate;
 	
@@ -81,6 +83,7 @@ public class AdminActionReport
 		List<Component> pendingAdminEntries = componentExample.findByExample();
 		List<Component> pendingUserEntries = new ArrayList<>();
 		pendingAdminEntries.removeIf((Component item) -> {
+			item.setDescription(truncateHTML(item.getDescription()));
 			if (item.getSubmittedDts() != null) {
 				pendingUserEntries.add(item);
 				return true;
@@ -237,5 +240,48 @@ public class AdminActionReport
 	{
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
 		htmlGenerator.addLine(renderedTemplate);
+	}
+	
+	//	Truncates a string of HTML relative to MAX_CHAR_COUNT
+	//		This roughly respects HTML, as it tries not to remove HTML tags.
+	private String truncateHTML(String html) {
+		List<String> htmlList = new ArrayList<>(Arrays.asList(html.split("")));
+		boolean canDelete = true;
+		boolean hasRemoved = false;
+		for (int ii = htmlList.size() - 1; ii > -1; ii--) {
+			
+			//	Detect if the cursor is within an HTML tag
+			if(htmlList.get(ii).equals(">")) {
+				canDelete = false;
+				continue;
+			}
+			else if (htmlList.get(ii).equals("<")) {
+				canDelete = true;
+				continue;
+			}
+			
+			//	Bail if the cursor is inside the accepted char count
+			if (ii < MAX_CHAR_COUNT) {
+				if (hasRemoved && canDelete) {
+					if (!"<".equals(htmlList.get(ii+1))) {
+						htmlList.set(ii+1, " ... ");
+					}
+					else {
+						htmlList.set(ii, " ... ");
+					}
+				}
+				break;
+			}
+			
+			//	"remove" the current item given that canDelete == true
+			if (canDelete && ii > MAX_CHAR_COUNT) {
+				htmlList.set(ii, "");
+				hasRemoved = true;
+			}
+		}
+		
+		//	Return the truncated result
+		html = String.join("", htmlList);
+		return html;
 	}
 }
