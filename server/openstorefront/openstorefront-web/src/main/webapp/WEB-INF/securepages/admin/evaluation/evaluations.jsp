@@ -1019,6 +1019,7 @@
 						items: [
 							{
 								text: 'Publish Full Evaluation',
+								id: 'publishFullEvalBtn',
 								iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
 								handler: function() {
 									var record = Ext.getCmp('evaluationGrid').getSelection()[0];									
@@ -1030,12 +1031,10 @@
 										actionPreviewComponent(record.get('componentId'), record.get('evaluationId'), record);
 									});
 								}
-							},
-							{
-								xtype: 'tbseparator'
-							},
+							},							
 							{
 								text: 'Publish Summary Only',
+								id: 'publishSummaryBtn',
 								iconCls: 'fa fa-lg fa-book icon-button-color-default icon-small-vertical-correction',
 								handler: function() {
 									var record = Ext.getCmp('evaluationGrid').getSelection()[0];
@@ -1109,9 +1108,13 @@
 				previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
 				
 				if (record.get('published')) {
-					previewComponentWin.setTitle('Preview - Published');
+					previewComponentWin.setTitle('Preview - Published');					
+					Ext.getCmp('publishFullEvalBtn').hide();
+					Ext.getCmp('publishSummaryBtn').hide();					
 				} else {
 					previewComponentWin.setTitle('Preview');
+					Ext.getCmp('publishFullEvalBtn').show();
+					Ext.getCmp('publishSummaryBtn').show();
 				}
 				
 				Ext.Ajax.request({
@@ -1121,7 +1124,7 @@
 						
 						if (record.get('published')) {
 							data.published = true;
-						}
+						} 
 						
 						previewComponentWin.queryById('evalInfoStatus').update(data);
 					}
