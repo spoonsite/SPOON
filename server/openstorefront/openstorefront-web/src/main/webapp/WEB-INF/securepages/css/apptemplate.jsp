@@ -286,7 +286,7 @@ limitations under the License.
     text-align: center;
     /* font-size: 24px; */
     /* height: 50px; */
-    padding-top: 50px;
+    margin-top: 50px;
     /* background: ${actionBean.branding.quoteColor}; */
     letter-spacing: 5px;
     text-transform: uppercase;

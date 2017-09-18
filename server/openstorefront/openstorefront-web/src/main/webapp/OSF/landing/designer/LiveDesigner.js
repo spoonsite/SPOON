@@ -795,9 +795,32 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 			},			
 			{
 				name: 'Info',
-				description: 'Displays highlight and new approved items',
+				description: 'Displays highlight and new approved items (Carousel)',
 				className: 'OSF.landing.DefaultInfo',
 				designerClassName: 'OSF.landing.DefaultInfo',
+				config: {},
+				items: [],
+				designerRender: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});
+					return commonDesignerRender(this, config);					
+				},
+				acceptCheck: function(info) {
+					return false;
+				},
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});					
+					return commonCodeRender(this, config);					
+				}				
+			},
+			{
+				name: 'Static Info',
+				description: 'Displays highlight and new approved items (Static view)',
+				className: 'OSF.landing.StaticInfo',
+				designerClassName: 'OSF.landing.StaticInfo',
 				config: {},
 				items: [],
 				designerRender: function(config){
