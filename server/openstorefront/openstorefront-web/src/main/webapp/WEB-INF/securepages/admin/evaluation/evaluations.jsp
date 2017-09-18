@@ -209,11 +209,13 @@
 								name: 'allowNewSections',
 								boxLabel: 'Allow Adding Sections'
 							},
+/*							
 							{
 								xtype: 'checkbox',
 								name: 'allowNewSubSections',
 								boxLabel: 'Allow Adding Sub Sections'
 							},
+*/							
 							{
 								xtype: 'checkbox',
 								name: 'allowQuestionManagement',

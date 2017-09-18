@@ -392,6 +392,12 @@ public class EvaluationResource
 	@DataType(Evaluation.class)
 	public Response createEvaluation(Evaluation evaluation)
 	{
+		//optional
+		evaluation.setAllowNewSections(Convert.toBoolean(evaluation.getAllowNewSections()));
+
+		//Not currently used
+		evaluation.setAllowNewSubSections(Boolean.FALSE);
+
 		ValidationResult validationResult = evaluation.validate();
 		if (validationResult.valid()) {
 			evaluation = service.getEvaluationService().createEvaluationFromTemplate(evaluation);
