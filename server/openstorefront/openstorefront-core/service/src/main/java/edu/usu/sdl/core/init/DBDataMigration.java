@@ -62,13 +62,13 @@ public class DBDataMigration
 
 			service.getSystemService().toggleDBlogger(false);
 			DBManager.cleanup();
-			LOG.log(Level.INFO, "Clearing orient directory");			
+			LOG.log(Level.INFO, "Clearing orient directory");
 			String dataDir = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath() + "/databases/openstorefront";
 			FileUtils.deleteDirectory(FileSystemManager.getDir(dataDir));
-			
+
 			LOG.log(Level.INFO, "restarting orient");
 			DBManager.init();
-			
+
 			LOG.log(Level.INFO, MessageFormat.format("Importing Database to {0}/2-1dbexport.gz ...standy by", exportDir.getPath()));
 			DBManager.importDB(new FileInputStream(exportDir.getPath() + "/2-1dbexport.gz"), (String status) -> {
 				CoreSystem.setDetailedStatus(status);
@@ -83,9 +83,6 @@ public class DBDataMigration
 			}
 			LOG.log(Level.INFO, "Finishing data migration");
 			results.append("Export/Imported DB successfully");
-			
-			//restart?
-			
 
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "Unable to migrate data.  See log.", ex);
