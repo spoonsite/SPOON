@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,10 @@ import java.util.List;
  */
 public class UpdateEvaluationChecklistModel
 {
+	@ConsumeField
 	private ChecklistTemplate checklistTemplate;
+	
+	@ConsumeField
 	private List<String> evaluationIdsToUpdate = new ArrayList<>();
 	
 	/**
