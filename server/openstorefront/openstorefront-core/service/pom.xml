@@ -54,7 +54,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<orientdb.version>2.1.25</orientdb.version>
+		<orientdb.version>2.2.27</orientdb.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
@@ -192,11 +192,12 @@
 			<artifactId>orientdb-client</artifactId>
 			<version>${orientdb.version}</version>
 		</dependency>  
-		<dependency>
+<!--		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-enterprise</artifactId>
 			<version>${orientdb.version}</version>
 		</dependency>			  	
+		-->
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
