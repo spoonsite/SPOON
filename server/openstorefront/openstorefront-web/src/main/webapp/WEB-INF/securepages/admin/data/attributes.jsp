@@ -2225,7 +2225,11 @@
 				]
 			});
 
-
+			var formChange = {
+				change: function () {
+					Ext.getCmp('editAttributeForm').getForm().checkValidity();
+				}
+			};
 			var editAttributeWin = Ext.create('Ext.window.Window', {
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
@@ -2248,6 +2252,7 @@
 						id: 'editAttributeForm',
 						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
+						trackResetOnLoad: true,
 						defaults: {
 							labelAlign: 'top',
 							width: '100%'
@@ -2411,20 +2416,25 @@
 														select.allowBlank = true;
 														select.clearInvalid();
 													}
+												formChange.change();
 											}
 										}
 									},
 									{
 										name: 'visibleFlg',
-										boxLabel: 'Visible'
+										boxLabel: 'Visible',
+										listeners: formChange
 									},
 									{
 										name: 'importantFlg',
-										boxLabel: 'Important'
+										boxLabel: 'Important',
+										allowBlank: true,
+										listeners: formChange
 									},
 									{
 										name: 'architectureFlg',
-										boxLabel: 'Architecture'
+										boxLabel: 'Architecture',
+										listeners: formChange
 									},
 									{
 										name: 'allowMultipleFlg',
@@ -2451,12 +2461,14 @@
 														});	
 													}
 												}
+												formChange.change();
 											}
 										}
 									},
 									{
 										name: 'allowUserGeneratedCodes',
-										boxLabel: 'Allow User-Created Codes'
+										boxLabel: 'Allow User-Created Codes',
+										listeners: formChange
 									},
 									{
 										name: 'hideOnSubmission',
@@ -2475,8 +2487,7 @@
 													select.allowBlank = true;
 													select.clearInvalid();
 												}
-												var form = Ext.getCmp('editAttributeForm');
-												form.getForm().checkValidity();
+												formChange.change();
 											}
 										}
 									}
@@ -2508,7 +2519,8 @@
 										},
 										autoLoad: true
 									})
-								}
+								},
+								listeners: formChange
 							},
 						],
 						dockedItems: [
