@@ -111,6 +111,9 @@
 															actionRefreshQuestion();
 															form.reset();
 															win.close();
+														},
+														failure: function(actionForm, opts) {
+															form.setScrollY(0);
 														}
 													});												
 												};
