@@ -39,8 +39,7 @@ public class UseCase
 		List<String> lines = Files.readLines(new File("c:/temp/store.tab"), Charset.defaultCharset());
 		Map<String, List<DataModel>> modelList = new HashMap<>();
 		lines.remove(0);
-		for (String line : lines)
-		{
+		for (String line : lines) {
 
 			String data[] = line.split("\t");
 
@@ -49,20 +48,16 @@ public class UseCase
 			dataModel.setWsi2Gov(Convert.toInteger(data[1]));
 			dataModel.setWso2Ent(Convert.toInteger(data[2]));
 
-			if (modelList.containsKey(data[0]))
-			{
+			if (modelList.containsKey(data[0])) {
 				modelList.get(data[0]).add(dataModel);
-			}
-			else
-			{
+			} else {
 				List<DataModel> dataModels = new ArrayList<>();
 				dataModels.add(dataModel);
 				modelList.put(data[0], dataModels);
 			}
 		}
 
-		for (String key : modelList.keySet())
-		{
+		for (String key : modelList.keySet()) {
 			List<DataModel> dataModels = modelList.get(key);
 			System.out.println(key + "\t"
 					+ dataModels.stream().mapToInt(DataModel::getWsi2Gov).average().getAsDouble()

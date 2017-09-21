@@ -128,12 +128,14 @@
 					dockedItems: [
 						{
 							dock: 'top',
-							xtype: 'toolbar',														
+							xtype: 'toolbar',
+							overflowHandler: 'scroller',
 							items:[
 								{
 									text: 'Dashboard',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -145,6 +147,7 @@
 									text: 'Evaluations',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Evaluations');
 									}									

@@ -21,14 +21,15 @@ Ext.define('OSF.form.EvaluationInfo', {
 	alias: 'osf.form.EvaluationInfo',
 
 	layout: 'anchor',
-	bodyStyle: 'padding: 20px',
-	initComponent: function () {		
+	bodyStyle: 'padding: 10px;margin: 10px',
+	initComponent: function () {
 		this.callParent();
-		
+
 		var evalForm = this;
-		
+
 		var formItems = [];
-		formItems.push({	
+
+		formItems.push({
 			xtype: 'textfield',
 			fieldCls: 'eval-form-field',
 			labelClsExtra: 'eval-form-field-label',
@@ -41,9 +42,9 @@ Ext.define('OSF.form.EvaluationInfo', {
 			labelWidth: 200,
 			width: '100%',
 			listeners: {
-				change: {	
+				change: {
 					buffer: 2000,
-					fn: function(field, newValue, oldValue) {
+					fn: function (field, newValue, oldValue) {
 						evalForm.saveData();
 					}
 				}
@@ -54,7 +55,7 @@ Ext.define('OSF.form.EvaluationInfo', {
 			labelClsExtra: 'eval-form-field-label',
 			fieldCls: 'eval-form-field',
 			labelAlign: 'right',
-			allowBlank: false,								
+			allowBlank: false,
 			margin: '0 0 5 0',
 			editable: false,
 			typeAhead: false,
@@ -67,13 +68,13 @@ Ext.define('OSF.form.EvaluationInfo', {
 			listeners: {
 				change: {
 					buffer: 1000,
-					fn: function(field, newValue, oldValue) {
+					fn: function (field, newValue, oldValue) {
 						evalForm.saveData();
 					}
 				}
-			}			
+			}
 		}));
-		formItems.push(Ext.create('OSF.component.SecurityComboBox', {						
+		formItems.push(Ext.create('OSF.component.SecurityComboBox', {
 			width: '100%',
 			itemId: 'securityMarking',
 			labelClsExtra: 'eval-form-field-label',
@@ -83,13 +84,13 @@ Ext.define('OSF.form.EvaluationInfo', {
 			listeners: {
 				change: {
 					buffer: 1000,
-					fn: function(field, newValue, oldValue) {
+					fn: function (field, newValue, oldValue) {
 						evalForm.saveData();
 					}
 				}
-			}			
-		}));		
-		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {												
+			}
+		}));
+		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {
 			width: '100%',
 			itemId: 'dataSensitivity',
 			labelClsExtra: 'eval-form-field-label',
@@ -99,81 +100,125 @@ Ext.define('OSF.form.EvaluationInfo', {
 			listeners: {
 				change: {
 					buffer: 1000,
-					fn: function(field, newValue, oldValue) {
+					fn: function (field, newValue, oldValue) {
 						evalForm.saveData();
 					}
 				}
-			}	
+			}
 		}));
-		
+
 		evalForm.add(formItems);
 	},
-	
-	loadData: function(evaluationId, componentId, data, opts) {
+
+	loadData: function (evaluationId, componentId, data, opts) {
 		var evalForm = this;
-		
+
 		evalForm.setLoading(true);
 		Ext.Ajax.request({
 			url: 'api/v1/resource/evaluations/' + evaluationId,
-			callback: function() {
+			callback: function () {
 				evalForm.setLoading(false);
 			},
-			success: function(response, opt) {
+			success: function (response, opt) {
+
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evaluationId + '/checkTemplateUpdate',
+					success: function (response, opt) {
+						if (Ext.decode(response.responseText).result === true) {
+							evalForm.insert(0, {
+								xtype: 'toolbar',
+								itemId: 'updateNotice',
+								cls: 'alert-warning',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										xtype: 'panel',
+										html: '<h1>There has been an update to the template this review is based on.</h1>'
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Update',
+										itemId: 'updateTemplateBtn',
+										iconCls: 'fa fa-2x fa-refresh icon-button-color-default icon-vertical-correction',
+										scale: 'medium',
+										handler: function () {
+											Ext.Ajax.request({
+												url: 'api/v1/resource/evaluations/' + evaluationId + '/updateTemplate',
+												method: 'PUT',
+												success: function () {
+													evalForm.reloadEval();
+													evalForm.remove(evalForm.getComponent("updateNotice"));
+												}
+											});
+										}
+									}
+								]
+							});
+						}
+					}
+				});
 				var evaluation = Ext.decode(response.responseText);
-				var record = Ext.create('Ext.data.Model',{					
+				var record = Ext.create('Ext.data.Model', {
 				});
-				record.set(evaluation);				
-			
+				record.set(evaluation);
+
 				evalForm.loadRecord(record);
-				
-				evalForm.queryById('dataSensitivity').on('ready', function() {
+
+				evalForm.queryById('dataSensitivity').on('ready', function () {
 					evalForm.loadRecord(record);
-					
-					Ext.defer(function(){
+
+					Ext.defer(function () {
 						evalForm.doneInitialLoad = true;
 					}, 2000);
 				});
-				
-				evalForm.queryById('securityMarking').on('ready', function() {
+
+				evalForm.queryById('securityMarking').on('ready', function () {
 					evalForm.loadRecord(record);
-					
-					Ext.defer(function(){
+
+					Ext.defer(function () {
 						evalForm.doneInitialLoad = true;
 					}, 2000);
-				});				
-				
+				});
+
 				evalForm.evaluation = evaluation;
 				if (opts && opts.mainForm) {
 					evalForm.refreshCallback = opts.mainForm.refreshCallback;
+					evalForm.reloadEval = function () {
+						opts.mainForm.loadEval(evaluationId, componentId);
+					};
 				}
 			}
 		});
 		opts.commentPanel.loadComments(evaluationId, null, null);
 	},
-	
-	saveData: function() {
+
+	saveData: function () {
 		var evalForm = this;
-		
+
 		var data = evalForm.getValues();
-		
+
 		if (evalForm.doneInitialLoad) {
 			if (evalForm.isValid() &&
-					data.version && 
-					data.version !== '' &&				
+					data.version &&
+					data.version !== '' &&
 					data.workflowStatus &&
 					data.workflowStatus !== ''
-				) {
+					) {
 
 				if (evalForm.evaluation.version !== data.version ||
-					evalForm.evaluation.workflowStatus !== data.workflowStatus ||
-					evalForm.evaluation.dataSensitivity !== data.dataSensitivity ||
-					evalForm.evaluation.securityMarkingType !== data.securityMarkingType
-					)
-				{			
+						evalForm.evaluation.workflowStatus !== data.workflowStatus ||
+						evalForm.evaluation.dataSensitivity !== data.dataSensitivity ||
+						evalForm.evaluation.securityMarkingType !== data.securityMarkingType
+						)
+				{
 					evalForm.evaluation.version = data.version;
 					evalForm.evaluation.workflowStatus = data.workflowStatus;
 					evalForm.evaluation.dataSensitivity = data.dataSensitivity;
-					evalForm.evaluation.securityMarkingType = data.securityMarkingType; 
+					evalForm.evaluation.securityMarkingType = data.securityMarkingType;
 					delete evalForm.evaluation.type;
 
 					CoreUtil.submitForm({
@@ -181,16 +226,16 @@ Ext.define('OSF.form.EvaluationInfo', {
 						method: 'PUT',
 						data: evalForm.evaluation,
 						form: evalForm,
-						success: function(action, opts) {
+						success: function (action, opts) {
 							Ext.toast('Updated evaluation');
 							if (evalForm.refreshCallback) {
 								evalForm.refreshCallback();
 							}
-						}	
+						}
 					});
 				}
 			}
 		}
 	}
-	
+
 });

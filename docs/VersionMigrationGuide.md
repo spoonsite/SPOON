@@ -3,6 +3,34 @@
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
 
 
+## Note: 2.4.2
+
+Includes a database export and import in preparation for 2.5 upgrade of DB.  If you have an existing database install 2.4.2 before 2.5.
+
+1. Shutdown app server
+2. Backup /var/openstorefront/db directory
+3. install/deploy 2.4.2
+4. Start app server
+
+You need to wait for 5-20 minutes (Depending on size of DB) for the update to occur. At this time the application will be unavailable. 
+
+To manually export/import:
+
+1. install orient 2.1.25 to system to use console tool
+a.) Shutdown app server
+
+From Orient
+
+> cd bin
+> ./console.sh (or bin/console.bat under Windows)
+orientdb> CONNECT plocal:/var/openstorefront/db/openstorefront <DBuser> <db password
+orientdb> EXPORT DATABASE /temp/mydb.json.gz
+orientdb> DISCONNECT
+  (orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
+orientdb> IMPORT DATABASE /temp/mydb.json.gz
+
+
+
 ## Upgrading from 2.3 to 2.4
 -------------
 

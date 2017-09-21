@@ -87,6 +87,30 @@ Ext.define('OSF.form.ChecklistSummary', {
 					html: '<b>Summary</b>'
 				},
 				{
+					xtype: 'checkbox',
+					name: 'privateSummaryFlg',
+					boxLabel: 'Private Summary <i class="fa fa-question-circle" data-qtip="Hides when published"></i>',
+					listeners: {
+						change: function(field, newValue, oldValue, opts) {
+							if (!summaryForm.initialSet) {
+								summaryForm.markUnsaved();	
+							}
+						}
+					}
+				},
+				{
+					xtype: 'checkbox',
+					name: 'privateChecklistFlg',
+					boxLabel: 'Private Checklist <i class="fa fa-question-circle" data-qtip="Hides the whole checklist when published"></i>',
+					listeners: {
+						change: function(field, newValue, oldValue, opts) {
+							if (!summaryForm.initialSet) {
+								summaryForm.markUnsaved();	
+							}
+						}
+					}
+				},				
+				{
 					xtype: 'tinymce_textarea',		
 					itemId: 'summary',
 					dock: 'top',
@@ -115,7 +139,15 @@ Ext.define('OSF.form.ChecklistSummary', {
 			columns: [
 				{ text: 'Type', dataIndex: 'recommendationTypeDescription', width: 200 },
 				{ text: 'Recommendation', dataIndex: 'recommendation', flex: 1, minWidth: 200, cellWrap: true },
-				{ text: 'Reason', dataIndex: 'reason', width: 250, cellWrap: true }
+				{ text: 'Reason', dataIndex: 'reason', width: 250, cellWrap: true },
+				{ text: 'Private', dataIndex: 'privateFlg', width: 170, align: 'center',
+					renderer: function(value, meta) {
+						if (value) {
+							meta.tdCls = 'alert-danger';
+							return '<i class="fa fa-lg fa-eye-slash"></i>';
+						}
+					}
+				}
 			],
 			listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
@@ -265,7 +297,12 @@ Ext.define('OSF.form.ChecklistSummary', {
 								name: 'reason',			
 								maxLength: 32000,
 								tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()		
-							}							
+							},
+							{
+								xtype: 'checkbox',
+								name: 'privateFlg',
+								boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides the recommendation when published"></i>'								
+							}
 						],
 						dockedItems: [
 							{
@@ -388,11 +425,13 @@ Ext.define('OSF.form.ChecklistSummary', {
 				});
 				record.set(recordData);
 				
+				summaryForm.initialSet = true;
 				summaryForm.loadRecord(record);		
+				summaryForm.initialSet = false;
 				summaryForm.fullEvalData = recordData;
 				summaryForm.evaluationId = evaluationId; 
 				summaryForm.checklistId = data.evaluationChecklist.checklistId; 
-
+				
 				summaryForm.loadRecommendations();
 
 				summaryForm.getComponent('tools').getComponent('workflowStatus').on('change', function(){
@@ -422,6 +461,8 @@ Ext.define('OSF.form.ChecklistSummary', {
 		var data = summaryForm.getValues();
 		
 		if (data.summary !== summaryForm.fullEvalData.summary ||
+			data.privateSummaryFlg !== summaryForm.fullEvalData.privateSummaryFlg ||
+			data.privateChecklistFlg !== summaryForm.fullEvalData.privateChecklistFlg ||
 			data.workflowStatus !== summaryForm.fullEvalData.workflowStatus) {
 				
 				summaryForm.saveTask.cancel();

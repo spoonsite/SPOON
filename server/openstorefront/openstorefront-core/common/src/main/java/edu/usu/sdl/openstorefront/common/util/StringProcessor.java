@@ -442,7 +442,7 @@ public class StringProcessor
 	public static String cleanEntityKey(String key)
 	{
 		if (StringUtils.isNotBlank(key)) {
-			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~");
+			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~", "#");
 			for (String badChar : badChars) {
 				key = key.replace(badChar, "");
 			}

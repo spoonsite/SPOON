@@ -30,6 +30,20 @@ Ext.define('OSF.form.Section', {
 	},
 	dockedItems: [
 		{
+			xtype: 'checkbox',
+			name: 'privateSection',
+			dock: 'top',
+			boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides whole section when published"></i>',
+			listeners: {
+				change: function(field, newValue, oldValue, opts) {	
+					var sectionForm = field.up('panel');
+					if (!sectionForm.initialSet) {
+						sectionForm.markUnsaved();	
+					}
+				}
+			}												
+		},
+		{
 			xtype: 'toolbar',
 			itemId: 'tools',
 			dock: 'bottom',
@@ -113,10 +127,12 @@ Ext.define('OSF.form.Section', {
 										{ text: 'Caption', dataIndex: 'caption', flex: 2, minWidth: 200 },		
 										{ text: 'Preview', dataIndex: 'caption', width: 200, 
 											renderer: function(value, meta, record) {
-												if (record.get('mediaType') === 'VID') {
+												if (record.get('mediaTypeCode') === 'VID') {
 													return '<video width="170" height="120" controls><source src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '#t=10" onloadedmetadata="this.currentTime=10;" type="' + (record.get('mimeType') ? record.get('mimeType') : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
-												} else {
+												} else if (record.get('mediaTypeCode') === 'IMG') {
 													return '<img src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '" alt="' + value + '" width="100%" />';													
+												} else {
+													return '<a href="' + record.get('link') + '">Download</a>';
 												}
 											}
 										},		
@@ -156,7 +172,7 @@ Ext.define('OSF.form.Section', {
 															title: 'Edit Media',
 															iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 															width: 400,
-															height: 250,
+															height: 300,
 															modal: true,
 															closeAction: 'destroy',
 															layout: 'fit',
@@ -167,9 +183,22 @@ Ext.define('OSF.form.Section', {
 																	layout: 'anchor',																	
 																	bodyStyle: 'padding: 10px;',
 																	items: [
+																		Ext.create('OSF.component.StandardComboBox', {
+																			name: 'mediaTypeCode',									
+																			allowBlank: false,								
+																			margin: '0 0 5 0',
+																			editable: false,
+																			typeAhead: false,
+																			width: '100%',
+																			fieldLabel: 'Media Type <span class="field-required" />',
+																			storeConfig: {
+																				url: 'api/v1/resource/lookuptypes/MediaType'
+																			}
+																		}),
 																		{
 																			xtype: 'textfield',
 																			fieldLabel: 'Caption',
+																			labelAlign: 'top',
 																			name: 'caption',
 																			width: '100%',
 																			maxLength: 255,
@@ -195,6 +224,7 @@ Ext.define('OSF.form.Section', {
 																						
 																						record.set('caption', formData.caption);
 																						record.set('privateMedia', formData.privateMedia);
+																						record.set('mediaTypeCode', formData.mediaTypeCode);
 																						
 																						var recordData = record.data;
 																						delete recordData.type;
@@ -234,6 +264,127 @@ Ext.define('OSF.form.Section', {
 														});
 														editWindow.show();
 														editWindow.down('form').loadRecord(record);
+													}
+												},
+												{
+													xtype: 'tbseparator'
+												},
+												{
+													text: 'Upload',
+													iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+													handler: function() {
+														var grid = this.up('grid');
+														
+														var uploadWin = Ext.create('Ext.window.Window', {
+															title: 'Upload Media',
+															iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+															width: 400,
+															height: 375,
+															modal: true,
+															closeAction: 'destroy',
+															layout: 'fit',
+															items: [
+																{
+																	xtype: 'form',
+																	scrollable: 'true',
+																	layout: 'anchor',																	
+																	bodyStyle: 'padding: 10px;',
+																	items: [
+																		Ext.create('OSF.component.StandardComboBox', {
+																			name: 'mediaTypeCode',									
+																			allowBlank: false,								
+																			margin: '0 0 5 0',
+																			editable: false,
+																			typeAhead: false,
+																			width: '100%',
+																			fieldLabel: 'Media Type <span class="field-required" />',
+																			storeConfig: {
+																				url: 'api/v1/resource/lookuptypes/MediaType'
+																			}
+																		}),
+																		{
+																			xtype: 'textfield',
+																			fieldLabel: 'Caption',
+																			labelAlign: 'top',
+																			name: 'caption',
+																			width: '100%',
+																			maxLength: 255,
+																			labelSeparator: ''
+																		}, 
+																		{
+																			xtype: 'checkbox',
+																			boxLabel: 'Private',
+																			name: 'privateMedia'
+																		},
+																		{
+																			xtype: 'filefield',
+																			name: 'file',
+																			fieldLabel: 'Upload file',
+																			labelAlign: 'top',
+																			labelSeparator: '',
+																			width: '100%'
+																		}
+																	],
+																	dockedItems: [
+																		{
+																			xtype: 'toolbar',
+																			dock: 'bottom',
+																			items: [
+																				{
+																					text: 'Save',
+																					iconCls: 'fa fa-lg fa-save icon-button-color-save',
+																					handler: function() {
+																						var uploadForm = this.up('form');
+																						var formData = uploadForm.getValues();
+																						
+																						uploadForm.setLoading("Uploading Media...");																							
+																						uploadForm.submit({
+																							url: 'Media.action?UploadSectionMedia',
+																							method: 'POST',
+																							params: {
+																								'contentSectionMedia.mediaTypeCode': formData.mediaTypeCode,
+																								'contentSectionMedia.contentSectionId': sectionForm.sectionId,
+																								'contentSectionMedia.caption': formData.caption,
+																								'contentSectionMedia.privateMedia': formData.privateMedia ? formData.privateMedia : false
+																							},
+																							callback: function() {
+																								uploadForm.setLoading(false);
+																							},
+																							success: function(form, action) {	
+																								uploadForm.setLoading(false);
+																								grid.getStore().load();
+																								uploadWin.close();
+																							},
+																							failure: function(form, action){																								
+																								uploadForm.setLoading(false);
+																								Ext.Msg.show({
+																									title: 'Upload Failed',
+																									msg: 'The file upload was not successful.',
+																									icon: Ext.Msg.ERROR,
+																									buttons: Ext.Msg.OK
+																								});	
+																							}
+																						});
+																					}
+																				},
+																				{
+																					xtype: 'tbfill'
+																				}, 
+																				{
+																					text: 'Cancel',
+																					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																					handler: function() {
+																						uploadWin.close();
+																					}																					
+																				}
+																			]																			
+																		}
+																	]
+																}
+															]
+														});
+														uploadWin.show();
+														
 													}
 												},
 												{
@@ -340,7 +491,9 @@ Ext.define('OSF.form.Section', {
 				var record = Ext.create('Ext.data.Model', {			
 				});
 				record.set(originalData.section);
+				sectionForm.initialSet = true;
 				sectionForm.loadRecord(record);
+				sectionForm.initialSet = false;
 				sectionForm.evaluationId = evaluationId;
 				sectionForm.sectionId = data.section.contentSectionId;
 				
@@ -429,8 +582,7 @@ Ext.define('OSF.form.Section', {
 						if (subsection.hideTitle) {
 							extraTitleInfo = " (Hidden on View)";
 						}
-						if (subsection.privateSection) {
-							extraTitleInfo += " (Private)";
+						if (subsection.privateSection) {							
 							border = '1px dash steelblue';
 						}
 
@@ -578,6 +730,21 @@ Ext.define('OSF.form.Section', {
 								labelAlign: 'right',
 								width: '100%'
 							},
+							dockedItems: [
+								{
+									xtype: 'checkbox',
+									name: 'subPrivateSection',
+									dock: 'top',
+									value: subsection.privateSection,
+									boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides this section when published"></i>',
+									listeners: {
+										change: function(field, newValue, oldValue, opts) {	
+											subsection.privateSection = newValue;
+											sectionForm.markUnsaved();
+										}
+									}												
+								}								
+							],
 							items: subItems
 						});
 						items.push(subSectionPanel);
@@ -611,8 +778,12 @@ Ext.define('OSF.form.Section', {
 					}
 				}
 
-				if (originalData.section.privateSection) {
-					sectionForm.setTitle("PRIVATE");
+				if (originalData.section.privateSection) {		
+					sectionForm.initialSet = true;
+					sectionForm.getForm().setValues({
+						privateSection: originalData.section.privateSection
+					});
+					sectionForm.initialSet = false;
 				}
 
 				sectionForm.getComponent('tools').getComponent('workflowStatus').on('change', function(field, newValue, oldValue){
@@ -642,6 +813,7 @@ Ext.define('OSF.form.Section', {
 		
 			var data = sectionForm.getValues();
 			
+			sectionForm.originalData.section.privateSection = data.privateSection ? data.privateSection : false;
 			sectionForm.originalData.section.content = data.content;
 			sectionForm.originalData.section.workflowStatus = data.workflowStatus;
 
@@ -668,7 +840,10 @@ Ext.define('OSF.form.Section', {
 
 							Ext.Array.each(subsectionPanel.items.items, function(formItem){
 								if (formItem.name === 'subcontent') {
-									originalSubSection.content = formItem.getValue();
+									originalSubSection.content = formItem.getValue();									
+								}
+								if (formItem.name === 'subPrivateSection') {
+									originalSubSection.privateSection = formItem.getValue();
 								}
 							});	
 

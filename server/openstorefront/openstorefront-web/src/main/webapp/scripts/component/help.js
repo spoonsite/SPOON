@@ -257,6 +257,7 @@ Ext.define('OSF.component.HelpPanel', {
 		helpPanel.contentPanel = Ext.create('Ext.panel.Panel', {
 			region: 'center',
 			scrollable: true,
+			bodyCls: 'text-readable',
 			bodyStyle: 'background: white; padding: 10px;',
 			tpl: new Ext.XTemplate(
 				'<h2 style="text-align: center">{title}</h2>',
@@ -329,7 +330,11 @@ Ext.define('OSF.component.HelpWindow', {
 				helpWin.getComponent('helpPanel').loadSections();
 				helpWin.loaded = true;
 			}
-		}
+		},
+		show: function()   
+		{        
+			this.removeCls("x-unselectable");    
+		}		
 	},
 	
 	initComponent: function () {

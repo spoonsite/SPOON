@@ -44,7 +44,8 @@ Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: ['widget.templatedescription'],	
 	
-	showDescriptionHeader: true,
+	showDescriptionHeader: false,
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',	
 		'	{description}',
@@ -1574,6 +1575,7 @@ Ext.define('OSF.component.template.EvaluationSections', {
 						collapsible: true,
 						sectionData: section,
 						margin: '0 0 20 0',
+						bodyCls: 'text-readable',
 						tpl: new Ext.XTemplate(
 							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
 							'	<tpl if="section.content">{section.content}</tpl>',
@@ -1624,6 +1626,7 @@ Ext.define('OSF.component.template.EvaluationSectionByTitle', {
 	collapsible: true,
 	title: '',
 	sectionTitle: '',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',	
 		'	<tpl if="section.content">{section.content}</tpl>',
@@ -1684,6 +1687,7 @@ Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Evaluation Checklist Summary',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',	
 		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
@@ -1702,7 +1706,10 @@ Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 		} else {
 			
 			var updateSection = function(evaluation) {
-				if (evaluation.checkListAll.evaluationChecklist.summary) {
+				if (evaluation.checkListAll &&
+					evaluation.checkListAll.evaluationChecklist &&
+					evaluation.checkListAll.evaluationChecklist.summary) {
+				
 					checklistPanel.setHidden(false);
 					checklistPanel.update(evaluation);
 				} else {
@@ -1728,37 +1735,90 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 	
 	titleCollapse: true,
 	collapsible: true,
-	title: 'Evaluation Checklist Details',
-	tpl: new Ext.XTemplate(
-		' <table class="details-table" width="100%">',	
-		'	<th class="details-table" style="text-align: center; width: 75px;">QID</th><th class="details-table" style="text-align: center; width: 125px;">Section</th><th class="details-table">Question</th><th class="details-table" style="text-align: center; width: 75px;">Score</th><th class="details-table">Response</th>',
-		'	<tpl for="checkListAll.responses">',	
-		'		<tr class="details-table">',
-		'			<td class="details-table" style="text-align: center; width: 75px;">',
-		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'{questionId}\')">',
-		'					<b>{question.qid}</b>',
-		'				</a>',
-		'			</td>',
-		'			<td class="details-table" style="text-align: center; width: 125px;">',
-		'				{question.evaluationSectionDescription}',
-		'			</td>',		
-		'			<td class="details-table">',
-		'				{question.question}',				
-		'			</td>',	
-		'			<td class="details-table" style="text-align: center; width: 75px;" >',
-		'				<a href="#" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'{questionId}\')">',		
-		'					<tpl if="notApplicable"><span style="font-weight: bold;">N/A</span></tpl>',	
-		'					<tpl if="score"><span style="font-weight: bold;">{score}</span></tpl>',	
-		'				</a>',
-		'			</td>',		
-		'			<td class="details-table">',
-		'				{response}',						
-		'			</td>',
-		'		</tr>',
-		'	</tpl>',
-		'</table>'		
-	),	
-		
+	title: 'Evaluation Checklist Details',	
+	layout: 'anchor',
+	tools: [
+		{
+			type: 'unpin',			
+			tooltip: 'Toggle Restrict Height',
+			callback:  function(panel, tool) {
+				var grid = panel.queryById('grid');
+				if (grid.fixedHeight) {
+					grid.fixedHeight = false;	
+					tool.setType('unpin');
+					grid.setMaxHeight(500000);
+				} else {
+					grid.fixedHeight = true;			
+					tool.setType('pin');
+					var showHeight = panel.up('panel').getHeight() - 60;
+					grid.setMaxHeight(showHeight);
+				}
+			}
+		}
+	],
+	items: [
+		{
+			xtype: 'grid',
+			itemId: 'grid',			
+			columnLines: true,
+			width: '100%',			
+			viewConfig: {
+				enableTextSelection: true				
+			},			
+			store: {				
+			},
+			plugins: 'gridfilters',
+			columns: [
+				{ text: 'QID', dataIndex: 'qid', width: 75, align: 'center',
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';						
+						link += '<b>' + record.get('qid') + '</b>';
+						link += '</a>';
+						return link;
+					}
+				},
+				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true,
+					filter: {
+					  type: 'list'            
+					},
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
+					}
+				},
+				{ text: 'Question', dataIndex: 'question', flex: 2, cellWrap: true,
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
+					}
+				},
+				{ text: 'Score', dataIndex: 'score', width: 75, align: 'center',
+					filter: {
+					  type: 'list'            
+					},
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showScoreDetails(\'' + record.get('questionId') + '\')">';						
+						if (record.get('notApplicable')) {
+							link += '<b>N/A</b>';
+						} else if (record.get('score')) {
+							link += '<b>' + record.get('score') + '</b>';
+						}												
+						link += '</a>';
+						return link;
+					}
+				},
+				{ text: 'Response', dataIndex: 'response', flex: 1,  cellWrap: true,
+					renderer: function(value, meta, record) {
+						meta.tdCls = 'text-readable';
+						return value;
+					}					
+				}
+			]
+		}
+	],
+	
 	initComponent: function () {
 		this.callParent();
 	},
@@ -1771,9 +1831,26 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 		} else {
 			
 			var updateSection = function(evaluation) {
-				if (evaluation.checkListAll.responses) {
+
+				if (evaluation.checkListAll && evaluation.checkListAll.responses) {
 					checklistPanel.setHidden(false);
-					checklistPanel.update(evaluation);
+					
+					var detailGrid = checklistPanel.queryById('grid');								
+					
+					var responseData = [];
+					Ext.Array.each(evaluation.checkListAll.responses, function(response){
+						responseData.push({
+							qid: response.question.qid,
+							questionId: response.question.questionId,
+							question: response.question.question,
+							evaluationSectionDescription: response.question.evaluationSectionDescription,
+							score: response.score,
+							notApplicable: response.notApplicable,
+							response: response.response
+						});
+					});
+					
+					detailGrid.getStore().loadRawData(responseData);
 					
 					var findQuestion = function(questionId) {
 						var question;
@@ -1798,6 +1875,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								draggable: false,
 								maximizable: true,
 								scrollable: true,
+								bodyCls: 'text-readable',
 								bodyStyle: 'padding: 10px;',
 								listeners: {
 									show: function() {        
@@ -1848,6 +1926,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								draggable: false,
 								maximizable: true,
 								scrollable: true,
+								bodyCls: 'text-readable',
 								bodyStyle: 'padding: 10px;',
 								listeners: {
 									show: function() {        
@@ -1911,6 +1990,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 	titleCollapse: true,
 	collapsible: true,
 	title: 'Evaluation Recommendations',
+	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 		' <table class="details-table" width="100%">',			
 		'	<tpl for="checkListAll.recommendations">',	
@@ -1939,10 +2019,15 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 		} else {
 			
 			var updateSection = function(evaluation) {
-				if (!evaluation.checkListAll.recommendations || evaluation.checkListAll.recommendations.length === 0) {
+				if (!evaluation.checkListAll ||
+					!evaluation.checkListAll.recommendations) {
 					recomendationPanel.setHidden(true);
-				} else {
-					recomendationPanel.update(evaluation);
+				} else {				
+					if (!evaluation.checkListAll.recommendations || evaluation.checkListAll.recommendations.length === 0) {
+						recomendationPanel.setHidden(true);
+					} else {
+						recomendationPanel.update(evaluation);
+					}
 				}
 			};
 			updateSection(entry.fullEvaluations[0]);
@@ -1994,75 +2079,80 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 			
 			var updateSection = function(evaluation) {			
 				
-				Ext.Ajax.request({
-					url: 'api/v1/resource/lookuptypes/EvaluationSection',
-					success: function(response, opts){
-						var sectionLookup = Ext.decode(response.responseText);
-						
-						var findSectionDesc = function(sectionKey) {
-							var desc = null;
-							Ext.Array.each(sectionLookup, function(lookup) {
-								if (lookup.code === sectionKey) {
-									desc = lookup.detailedDescription;
+				if (evaluation.checkListAll &&
+					evaluation.checkListAll.responses) {
+				
+						Ext.Ajax.request({
+						url: 'api/v1/resource/lookuptypes/EvaluationSection',
+						success: function(response, opts){
+							var sectionLookup = Ext.decode(response.responseText);
+
+							var findSectionDesc = function(sectionKey) {
+								var desc = null;
+								Ext.Array.each(sectionLookup, function(lookup) {
+									if (lookup.code === sectionKey) {
+										desc = lookup.detailedDescription;
+									}
+								});
+								return desc;
+							};
+
+							//group by section
+							var groupStatus = {};				
+							Ext.Array.each(evaluation.checkListAll.responses, function(response){
+								if (groupStatus[response.question.evaluationSection]) {
+									var stat = groupStatus[response.question.evaluationSection];						
+									if (!response.notApplicable) {
+										stat.count++;
+										stat.totalScore += response.score;
+									}
+								} else {
+									groupStatus[response.question.evaluationSection] = {
+										title: response.question.evaluationSectionDescription,
+										sectionDescription: findSectionDesc(response.question.evaluationSection),
+										count: 1,									
+										totalScore: response.score ? response.score : 0
+									};
 								}
+							});		
+
+							//average and add dots
+							var sections = [];
+							Ext.Object.eachValue(groupStatus, function(section) {
+								if (isNaN(section.count)) {
+									section.count = 0;
+								}
+								if (section.count > 0) {
+									section.average = Math.round((section.totalScore/section.count)*10) / 10;
+
+									var score = Math.round(section.average);
+									section.display = "";
+									for (var i= 0; i<score; i++){
+										section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+									}								
+								} else {
+									section.average = 0;								
+								}
+								if (isNaN(section.average) || section.average < 1) {
+									section.average = 0;
+									section.display = 'N/A';
+								}
+
+								sections.push(section);
 							});
-							return desc;
-						};
-						
-						//group by section
-						var groupStatus = {};				
-						Ext.Array.each(evaluation.checkListAll.responses, function(response){
-							if (groupStatus[response.question.evaluationSection]) {
-								var stat = groupStatus[response.question.evaluationSection];						
-								if (!response.notApplicable) {
-									stat.count++;
-									stat.totalScore += response.score;
-								}
-							} else {
-								groupStatus[response.question.evaluationSection] = {
-									title: response.question.evaluationSectionDescription,
-									sectionDescription: findSectionDesc(response.question.evaluationSection),
-									count: 1,									
-									totalScore: response.score ? response.score : 0
-								};
-							}
-						});		
+							Ext.Array.sort(sections, function(a, b){
+								return a.title.localeCompare(b.title);
+							});
 
-						//average and add dots
-						var sections = [];
-						Ext.Object.eachValue(groupStatus, function(section) {
-							if (isNaN(section.count)) {
-								section.count = 0;
-							}
-							if (section.count > 0) {
-								section.average = Math.round((section.totalScore/section.count)*10) / 10;
-								
-								var score = Math.round(section.average);
-								section.display = "";
-								for (var i= 0; i<score; i++){
-									section.display += '<i class="fa fa-circle detail-evalscore"></i>';
-								}								
-							} else {
-								section.average = 0;								
-							}
-							if (isNaN(section.average) || section.average < 1) {
-								section.average = 0;
-								section.display = 'N/A';
-							}
-							
-							sections.push(section);
-						});
-						Ext.Array.sort(sections, function(a, b){
-							return a.title.localeCompare(b.title);
-						});
-
-						scorePanel.update(sections);
-					}
-				});
-				
-
-				
+							scorePanel.update(sections);
+						}
+					});
+					scorePanel.setHidden(false);					
+				} else {
+					scorePanel.setHidden(true);
+				}
 			};
+			
 			updateSection(entry.fullEvaluations[0]);
 			if (!entry.evalListeners) {
 				entry.evalListeners = [];

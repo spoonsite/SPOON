@@ -1677,6 +1677,9 @@
 					store: maingridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
+					viewConfig: {
+						enableTextSelection: true
+					},					
 					selModel: {
 						   selType: 'checkboxmodel'
 					},

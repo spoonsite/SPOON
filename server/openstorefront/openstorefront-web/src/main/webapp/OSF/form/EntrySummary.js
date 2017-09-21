@@ -74,14 +74,16 @@ Ext.define('OSF.form.EntrySummary', {
 				{
 					xtype: 'datefield',
 					itemId: 'releaseDate',
-					fieldLabel: 'Release Date',
+					fieldLabel: 'Release Date <i class="fa fa-question-circle" data-qtip="This is the last release date of the entry not the evaluation. Typically leave as is."></i>',
 					name: 'releaseDate',
+					labelSeparator: '',
 					submitFormat: 'Y-m-d\\TH:i:s.u'
 				},
 				{
 					xtype: 'textfield',
 					itemId: 'version',
-					fieldLabel: 'Version',
+					fieldLabel: 'Version <i class="fa fa-question-circle" data-qtip="This is the version of the entry and not of the evaluation. Typically leave blank."></i>',
+					labelSeparator: '',
 					name: 'version'																		
 				},										
 				{

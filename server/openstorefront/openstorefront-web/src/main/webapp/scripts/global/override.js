@@ -171,6 +171,13 @@ Ext.define('OSF.defaults.checkbox', {
 
 });
 
+Ext.define('OSF.defaults.toolbar', {
+    override: 'Ext.toolbar.Toolbar',
+
+	overflowHandler: 'menu'
+
+});
+
 Ext.define('OSF.defaults.Window', {
     override: 'Ext.window.Window',
 	

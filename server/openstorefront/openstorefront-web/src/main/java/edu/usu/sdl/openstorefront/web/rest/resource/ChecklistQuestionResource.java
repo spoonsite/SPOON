@@ -27,15 +27,19 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.Tag;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -46,6 +50,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -66,7 +71,7 @@ public class ChecklistQuestionResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionWrapper.class)
 	@APIDescription("Gets Checklist questions")
-	public Response getQuestions(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getQuestions(@BeanParam CheckQuestionFilterParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -94,6 +99,11 @@ public class ChecklistQuestionResource
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		if (!filterQueryParams.getTags().isEmpty()) {
+			queryByExample.setAdditionalWhere(" tags in :tagsParams ");
+			queryByExample.getExtraParamMapping().put("tagsParams", filterQueryParams.getTags());
+		}
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
@@ -283,6 +293,33 @@ public class ChecklistQuestionResource
 		} else {
 			return sendSingleEntityResponse(null);
 		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Tag.class)
+	@APIDescription("Gets all distinct tags across questions")
+	@Path("/tags")
+	public Response getQuestionTags()
+	{
+		ChecklistQuestion checklistQuestionExample = new ChecklistQuestion();
+		List<ChecklistQuestion> questions = checklistQuestionExample.findByExample();
+		Map<String, Tag> distinctTags = new HashMap<>();
+		for (ChecklistQuestion checklistQuestion : questions) {
+			if (checklistQuestion.getTags() != null) {
+				for (Tag tag : checklistQuestion.getTags()) {
+					if (distinctTags.containsKey(tag.getTag()) == false) {
+						distinctTags.put(tag.getTag(), tag);
+					}
+				}
+			}
+		}
+
+		GenericEntity<List<Tag>> entity = new GenericEntity<List<Tag>>(new ArrayList<>(distinctTags.values()))
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@DELETE

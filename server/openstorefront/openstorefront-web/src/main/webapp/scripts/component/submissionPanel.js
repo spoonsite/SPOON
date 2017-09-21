@@ -953,6 +953,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 														if (!Ext.isNumeric(label)) {
 															valid = false;
 														}
+														if (valid) {														
+															try {
+																var valueNumber = new Number(label);
+																label = valueNumber.toString();																
+															} catch(e) {
+																valid = false;
+															}
+														}														
 													}
 													
 													if (!valid) {
@@ -1114,7 +1122,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								forceSelection: false,
 								valueField: 'firstName',
 								displayField: 'firstName',
-								maxLength: '80',							
+								maxLength: '80',
+								typeAhead: false,
+								autoSelect: false,
+								selectOnTab: false,
+								assertValue: function(){
+								},								
 								listConfig: {
 									itemTpl: [
 										 '{firstName} <span style="color: grey">({email})</span>'
@@ -1143,7 +1156,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								forceSelection: false,
 								valueField: 'lastName',
 								displayField: 'lastName',
-								maxLength: '80',							
+								maxLength: '80',
+								typeAhead: false,
+								autoSelect: false,
+								selectOnTab: false,
+								assertValue: function(){
+								},								
 								listConfig: {
 									itemTpl: [
 										 '{lastName} <span style="color: grey">({email})</span>'
