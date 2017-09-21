@@ -111,6 +111,9 @@
 															actionRefreshQuestion();
 															form.reset();
 															win.close();
+														},
+														failure: function(actionForm, opts) {
+															form.setScrollY(0);
 														}
 													});												
 												};
@@ -123,18 +126,23 @@
 															addEditWindow.setLoading(false);
 														},
 														success: function(response, opts){
-
-															Ext.Msg.show({
-																title:'Save Changes?',
-																message: 'This question is being used in evaluations.<br> Updating the question will update existing evaluations<br>(both Published and Unpublished)<br><br>Save Changes?',
-																buttons: Ext.Msg.YESNO,
-																icon: Ext.Msg.QUESTION,
-																fn: function(btn) {
-																	if (btn === 'yes') {
-																		performSave();
-																	} 
-																}
-															});	
+															var inUse = response.responseText;
+														
+															if (inUse && inUse === 'true') { 
+																Ext.Msg.show({
+																	title:'Save Changes?',
+																	message: 'This question is being used in evaluations.<br> Updating the question will update existing evaluations<br>(both Published and Unpublished)<br><br>Save Changes?',
+																	buttons: Ext.Msg.YESNO,
+																	icon: Ext.Msg.QUESTION,
+																	fn: function(btn) {
+																		if (btn === 'yes') {
+																			performSave();
+																		} 
+																	}
+																});	
+															} else {
+																performSave();
+															}
 														}
 													});
 												} else {
