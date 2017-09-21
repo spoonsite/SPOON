@@ -147,7 +147,6 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-// </editor-fold>
 
 /**
  * ComponentRESTResource Resource
@@ -181,7 +180,12 @@ public class ComponentRESTResource
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/lookup")
-	public Response getComponentLookupList(@BeanParam ComponentFilterParams filterQueryParams)
+	public Response getComponentLookupList(
+			@BeanParam ComponentFilterParams filterQueryParams,
+			@QueryParam("includePending")
+			@APIDescription("Include Pending change request")
+			@DefaultValue("false") boolean includePending
+	)
 	{
 		if (filterQueryParams != null) {
 
@@ -212,6 +216,13 @@ public class ComponentRESTResource
 				componentExample.setComponentType(null);
 			}
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+
+			if (!includePending) {
+				components.removeIf(c -> {
+					return Component.PENDING_STATUS.equals(c.getActiveStatus());
+				});
+			}
+
 			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
@@ -231,6 +242,13 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+
+			if (!includePending) {
+				components.removeIf(c -> {
+					return Component.PENDING_STATUS.equals(c.getActiveStatus());
+				});
+			}
+
 			components = FilterEngine.filter(components);
 			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
