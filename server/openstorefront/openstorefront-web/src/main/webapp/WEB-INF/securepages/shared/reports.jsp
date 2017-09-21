@@ -773,29 +773,27 @@
 														}
 													}
 
-													if (data.scheduleIntervalDays === null)
-													{
-														var theData = {};
-														if (Ext.getCmp('scheduleOptionsGrid').isVisible()) {
-															var gridSelections = Ext.getCmp('scheduleOptionsGrid').getSelection();
-
-
-															theData.report = data;
-															theData.reportDataId = [];
-															for (ctr = 0; ctr < gridSelections.length; ctr++)
-															{
-																theData.reportDataId.push({id: gridSelections[ctr].data.code});
-															}
-															generateReport(theData);
-														}
-														else
-														{
-															theData.report = data;
-															theData.reportDataId = [];
-															generateReport(theData);
+													// make a list of the selected entries to run a report on
+													var ids = [];
+													var reportGrid = Ext.getCmp('scheduleOptionsGrid');
+													if (reportGrid.isVisible()) {
+														var gridSelections = reportGrid.getSelection();
+														for (var ii = 0; ii < gridSelections.length; ii++) {
+															ids.push({id: gridSelections[ii].data.code});
 														}
 													}
+
+													// if the report is NOT scheduled
+													if (data.scheduleIntervalDays === null)
+													{
+														generateReport({
+															reportDataId: ids,
+															report: data
+														});
+													}
+													// if the report IS scheduled
 													else {
+														data.componentIds = ids;
 														scheduleReport(data);
 													}
 												}
