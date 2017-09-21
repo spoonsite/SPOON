@@ -22,9 +22,16 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +43,8 @@ public class ChecklistServiceImpl
 		extends ServiceProxy
 		implements ChecklistService
 {
+
+	private static final Logger LOG = Logger.getLogger(ChecklistServiceImpl.class.getName());
 
 	@Override
 	public ChecklistQuestion findQuestion(String questionId)
@@ -181,6 +190,80 @@ public class ChecklistServiceImpl
 				persistenceService.delete(existing);
 			}
 		}
+	}
+
+	@Override
+	public void syncChecklistQuestions(String checklistId, List<String> questionIdsToKeep)
+	{
+		Objects.requireNonNull(checklistId);
+		Objects.requireNonNull(questionIdsToKeep);
+
+		WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
+		if (initialStatus == null) {
+			throw new OpenStorefrontRuntimeException("Unable to get initial workflow status", "Add at least one workflow status.");
+		}
+
+		Set<String> questionKeepSet = questionIdsToKeep.stream()
+				.collect(Collectors.toSet());
+
+		EvaluationChecklistResponse checklistResponseExample = new EvaluationChecklistResponse();
+		checklistResponseExample.setChecklistId(checklistId);
+
+		List<EvaluationChecklistResponse> responsesInChecklist = checklistResponseExample.findByExampleProxy();
+
+		Set<String> questionAlreadyThere = new HashSet<>();
+		for (EvaluationChecklistResponse response : responsesInChecklist) {
+			ChecklistQuestion question = findQuestion(response.getQuestionId());
+			if (question == null) {
+				question = new ChecklistQuestion();
+				question.setQid("N/A Missing question");
+			}
+
+			if (questionKeepSet.contains(response.getQuestionId())) {
+				if (EvaluationChecklistResponse.INACTIVE_STATUS.equals(response.getActiveStatus())) {
+					getChangeLogService().logStatusChange(response, EvaluationChecklistResponse.ACTIVE_STATUS, "Question: " + question.getQid());
+
+					response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+					response.populateBaseUpdateFields();
+					response.setUserAddRemoveFlg(Boolean.TRUE);
+					persistenceService.persist(response);
+				}
+				questionAlreadyThere.add(response.getQuestionId());
+			} else {
+				//remove question
+				getChangeLogService().logStatusChange(response, EvaluationChecklistResponse.INACTIVE_STATUS, "Question: " + question.getQid());
+
+				response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
+				response.populateBaseUpdateFields();
+				response.setUserAddRemoveFlg(Boolean.TRUE);
+				persistenceService.persist(response);
+
+			}
+		}
+
+		//look for questions to add
+		for (String questionIdKeep : questionKeepSet) {
+			if (questionAlreadyThere.contains(questionIdKeep) == false) {
+
+				//make sure questions exist
+				ChecklistQuestion question = findQuestion(questionIdKeep);
+				if (question != null) {
+
+					EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+					response.setChecklistId(checklistId);
+					response.setResponseId(persistenceService.generateId());
+					response.setQuestionId(questionIdKeep);
+					response.setWorkflowStatus(initialStatus.getCode());
+					response.populateBaseCreateFields();
+					response.setUserAddRemoveFlg(Boolean.TRUE);
+					persistenceService.persist(response);
+					getChangeLogService().addEntityChange(response);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find existing question to add new response. (skipping) QuestionId: {0}", questionIdKeep));
+				}
+			}
+		}
+
 	}
 
 }

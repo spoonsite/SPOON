@@ -71,6 +71,13 @@ limitations under the License.
 	font-size: 16px;
 }
 
+.text-readable {
+	font-weight: normal;
+    font-size: 19px;
+    line-height: 1.45;
+    /* font-family: "Georgia", Serif; */
+}
+
 .link {
     color: ${actionBean.branding.linkColor};
     text-decoration: none;	
@@ -1407,9 +1414,16 @@ table.confluenceTable td.numberingColumn {
 	padding-top: 10px;
 }
 
+.checklist-question-sectionheader {
+	padding: 5px;
+    background-color: lightgray;
+    border: 1px solid darkgrey;
+}
+
 .checklist-question{
-	line-height: 100%;
-	font-size: 24px;
+	font-weight: normal;
+    font-size: 19px;
+    line-height: 1.45;   
 }
 
 .checklist-question-table{

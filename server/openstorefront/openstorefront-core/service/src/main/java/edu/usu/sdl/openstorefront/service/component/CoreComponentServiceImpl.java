@@ -269,6 +269,28 @@ public class CoreComponentServiceImpl
 		return componentSearchViews;
 	}
 
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
+	{
+		EvaluationAll currentEvaluation = componentService.getEvaluationService().getEvaluation(evaluationId, true);
+		ComponentDetailView componentDetailView = getComponentDetails(componentId);
+		List<EvaluationAll> existingEvaluations;
+
+		// If the evaluation is not published, use the origin component Id
+		if (!currentEvaluation.getEvaluation().getPublished()) {
+			componentId = componentService.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+			existingEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		} else {
+			existingEvaluations = componentDetailView.getFullEvaluations();
+		}
+
+		// set current evaluation as the first in the list
+		existingEvaluations.removeIf(obj -> obj.getEvaluation().getEvaluationId().equals(evaluationId));
+		existingEvaluations.add(0, currentEvaluation);
+		componentDetailView.setFullEvaluations(existingEvaluations);
+
+		return componentDetailView;
+	}
+
 	public ComponentDetailView getComponentDetails(String componentId)
 	{
 
@@ -487,11 +509,20 @@ public class CoreComponentServiceImpl
 	{
 		Component oldComponent = persistenceService.findById(Component.class, componentToLookFor.getComponentId());
 
+		if (StringUtils.isNotBlank(componentToLookFor.getPendingChangeId())) {
+			//Change request; only check for id
+			return oldComponent;
+		}
+
 		//Duplicate protection; check External id
 		if (oldComponent == null && StringUtils.isNotBlank(componentToLookFor.getExternalId())) {
 			Component componentCheck = new Component();
 			componentCheck.setExternalId(componentToLookFor.getExternalId());
 			oldComponent = componentCheck.findProxy();
+			if (oldComponent != null && StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+				//ignore change request
+				oldComponent = null;
+			}
 		}
 
 		//check name
@@ -499,12 +530,19 @@ public class CoreComponentServiceImpl
 			Component componentCheck = new Component();
 			componentCheck.setName(componentToLookFor.getName());
 			oldComponent = componentCheck.findProxy();
+			if (oldComponent != null && StringUtils.isNotBlank(oldComponent.getPendingChangeId())) {
+				//ignore change request
+				oldComponent = null;
+			}
 		}
 		return oldComponent;
 	}
 
 	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
 	{
+		Objects.requireNonNull(component);
+		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
+
 		Component oldComponent = null;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
@@ -749,6 +787,9 @@ public class CoreComponentServiceImpl
 
 	private ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options, boolean updateIndex)
 	{
+		Objects.requireNonNull(componentAll);
+		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
+
 		LockSwitch lockSwitch = new LockSwitch();
 
 		//check component
@@ -769,6 +810,13 @@ public class CoreComponentServiceImpl
 
 		if (component.getLastActivityDts() != null) {
 			component.setLastActivityDts(TimeUtil.currentDate());
+		}
+
+		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
+			Component oldComponent = findExistingComponent(component);
+			if (oldComponent != null) {
+				component.setComponentId(oldComponent.getComponentId());
+			}
 		}
 
 		//Check Attributes
@@ -993,7 +1041,11 @@ public class CoreComponentServiceImpl
 					Field pkField = EntityUtil.getPKField(oldEnity);
 					if (pkField != null) {
 						pkField.setAccessible(true);
-						sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						if (oldEnity instanceof ComponentTag) {
+							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+						} else {
+							sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
+						}
 					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
 					}

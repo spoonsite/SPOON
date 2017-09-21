@@ -7,23 +7,23 @@ Version 2.4
 # 1. Overview
 ------
 
-The Open Storefront application is a software cataloging system that
-is used to catalog entries of interest to the DI2E community. 
-Entries include Government off the shelf (GOTS), commercial off the
-shelf (COTS), and Open Source software (OSS). The evaluations
-done by DI2E's Centers of Excellence are displayed in the Clearinghouse 
-and give details on the following:
+This site is based on the Open Storefront application.  Open Storefront is a software cataloging system that
+is used to catalog and organize any item from software to parts. 
+The software provides details on the following:
 
 -   Ownership
--   Where/How to access the software
--   Software vitals
+-   Where/How to access the entry
+-   Contact information
+-   Media and rich resources
+-   Metadata/Attributes
 -   Conformance
 -   Links to documentation, source code, and other artifacts
--   Evaluation information
-The application can also be used as a general cataloging system.
+-   Details Evaluation information
 
-**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
+**Open Storefront is developed by Space Dynamics Laboratory is
 licensed under GPL V3.**
+
+Originally developed for DI2E (Defense Intelligence Information Enterprise)
 
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
@@ -747,6 +747,7 @@ Selecting an evaluation allows you to Assign it to another user or to Edit the e
 
 When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
 
+The preview button will show what the evaluation will look like when published.  Private information will not be shown.
 
 
 # 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
@@ -2046,6 +2047,7 @@ The Evaluation Management menu consists of Evaluations and Templates.
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
 
+When an evaluation has been flagged with allow question management then this will allow an admin or evaluator to add/remove to the evaluation's checklist from the question pool. 
 
 ## 4.2 Templates @ADMIN-EVALUATION-TEMPLATE 
 

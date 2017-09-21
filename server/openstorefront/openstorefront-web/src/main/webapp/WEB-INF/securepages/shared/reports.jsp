@@ -1009,7 +1009,8 @@
 										emptyText: 'All',
 										labelAlign: 'top',
 										width: '100%',
-										editable: false,
+										typeAhead: true,
+										editable: true,
 										hidden: true,
 										forceSelection: true,
 										store: {									

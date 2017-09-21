@@ -99,11 +99,11 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					tpl: new Ext.XTemplate(						
 						'<div class="checklist-question">{question}</div>',
 						'({evaluationSectionDescription})<br>',
-						'<tpl if="scoreCriteria"><h3>Scoring criteria:</h3>',
+						'<tpl if="scoreCriteria"><h3 class="checklist-question-sectionheader">Scoring criteria:</h3>',
 						'{scoreCriteria}</tpl>',
-						'<tpl if="objective"><h3>Objective:</h3>',
+						'<tpl if="objective"><h3 class="checklist-question-sectionheader">Objective:</h3>',
 						'{objective}</tpl>',
-						'<tpl if="narrative"><h3>Narrative:</h3>',
+						'<tpl if="narrative"><h3 class="checklist-question-sectionheader">Narrative:</h3>',
 						'{narrative}</tpl>'
 					)
 				}
@@ -167,7 +167,17 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					name: 'privateNote',			
 					maxLength: 32000,
 					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")					
-				}				
+				},
+				{
+					xtype: 'checkbox',
+					name: 'privateFlg',
+					boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides when published"></i>',
+					listeners: {
+						change: function(field, newValue, oldValue, opts) {
+							questionForm.markUnsaved();	
+						}
+					}					
+				}
 			]
 		});
 	
@@ -190,61 +200,76 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				questionForm.setLoading(false);
 			}, 
 			success: function(response, localOpts) {
-				var responseData = Ext.decode(response.responseText);
-				
-				questionForm.response.getComponent('question').update(responseData.question);
-
-				var record = Ext.create('Ext.data.Model', {			
-				});
-				record.set(responseData);	
-
-				questionForm.loadRecord(record);
-				questionForm.evaluationId = evaluationId;
-				questionForm.checklistResponse = responseData;
-
-				if (opts && opts.mainForm) {
-					questionForm.refreshCallback = opts.mainForm.refreshCallback;
-				}		
-
-				//Add change detection
 				Ext.defer(function(){
-					questionForm.getComponent('tools').getComponent('workflowStatus').on('change', function(field, newValue, oldValue){
-						questionForm.saveData();
-					}, undefined, {
-						buffer: 1000
-					});
+					var responseData = Ext.decode(response.responseText);
+					var questionFormComponentExists = true;
 
-					questionForm.response.getComponent('score').on('change', function(field, newValue, oldValue){
-						questionForm.markUnsaved();
-					}, undefined, {
-						buffer: 1000
-					});
+					// Check and see if the form component exists.
+					try {
+						questionForm.response.getComponent('question');
+						questionForm.getComponent('tools').getComponent('workflowStatus');
+						questionForm.response.getComponent('notApplicable');
+						questionForm.response.getComponent('score');
+						questionForm.response.getComponent('response');
+						questionForm.response.getComponent('privateNote');
+					} catch (e) {
+						questionFormComponentExists = false;
+					}
 					
-					questionForm.response.getComponent('notApplicable').on('change', function(field, newValue, oldValue){
-						var scoreField = questionForm.response.getComponent('score');
-						if (newValue) {
-							scoreField.setValue(null);
-							scoreField.setDisabled(true);
-						} else {
-							scoreField.setDisabled(false);
+					if (questionFormComponentExists) {
+						questionForm.response.getComponent('question').update(responseData.question);
+
+						var record = Ext.create('Ext.data.Model', {			
+						});
+						record.set(responseData);	
+
+						questionForm.loadRecord(record);
+						questionForm.evaluationId = evaluationId;
+						questionForm.checklistResponse = responseData;
+
+						if (opts && opts.mainForm) {
+							questionForm.refreshCallback = opts.mainForm.refreshCallback;
+						}		
+
+					//Add change detection
+						questionForm.getComponent('tools').getComponent('workflowStatus').on('change', function(field, newValue, oldValue){
+							questionForm.saveData();
+						}, undefined, {
+							buffer: 1000
+						});
+
+						questionForm.response.getComponent('score').on('change', function(field, newValue, oldValue){
+							questionForm.markUnsaved();
+						}, undefined, {
+							buffer: 1000
+						});
+						
+						questionForm.response.getComponent('notApplicable').on('change', function(field, newValue, oldValue){
+							var scoreField = questionForm.response.getComponent('score');
+							if (newValue) {
+								scoreField.setValue(null);
+								scoreField.setDisabled(true);
+							} else {
+								scoreField.setDisabled(false);								
+							}
 							questionForm.markUnsaved();	
-						}
-					}, undefined, {
-						buffer: 1000
-					});					
+						}, undefined, {
+							buffer: 1000
+						});					
 
-					questionForm.response.getComponent('response').on('change', function(field, newValue, oldValue){
-						questionForm.markUnsaved();
-					}, undefined, {
-						buffer: 2000
-					});
+						questionForm.response.getComponent('response').on('change', function(field, newValue, oldValue){
+							questionForm.markUnsaved();
+						}, undefined, {
+							buffer: 2000
+						});
 
-					questionForm.response.getComponent('privateNote').on('change', function(field, newValue, oldValue){
-						questionForm.markUnsaved();
-					}, undefined, {
-						buffer: 2000
-					});					
-				}, 1000);
+						questionForm.response.getComponent('privateNote').on('change', function(field, newValue, oldValue){
+							questionForm.markUnsaved();
+						}, undefined, {
+							buffer: 2000
+						});					
+					}
+				}, 100);
 			}
 		});
 				
@@ -266,6 +291,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		var data = questionForm.getValues();
 		
 		questionForm.saveTask.cancel();
+		
 		questionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 		CoreUtil.submitForm({
 			url: 'api/v1/resource/evaluations/' + 

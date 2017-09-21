@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -35,8 +36,14 @@ public class ComponentTagUniqueHandler implements UniqueHandler<ComponentTag>
 		List<ComponentTag> componentTags = componentTagExample.findByExample();
 
 		for (ComponentTag tag : componentTags) {
-			if (tag.getText().toLowerCase().equals(fullDataObject.getText().toLowerCase())) {
-				unique = false;
+			if (ComponentTag.INACTIVE_STATUS.equals(tag.getActiveStatus())) {
+				tag.delete();
+			}
+			else if (!((fullDataObject.getTagId() != null && tag.getTagId() != null) && fullDataObject.getTagId().equals(tag.getTagId()))) {
+				if (tag.getText().toLowerCase().equals(fullDataObject.getText().toLowerCase())) {
+					unique = false;
+					break;
+				}
 			}
 		}
 

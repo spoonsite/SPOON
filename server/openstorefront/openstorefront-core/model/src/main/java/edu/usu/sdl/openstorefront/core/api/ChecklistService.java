@@ -95,4 +95,14 @@ public interface ChecklistService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteChecklistTemplate(String checklistTemplateId);
 
+	/**
+	 * This will sync (Add/Remove questions to match input) Removed question
+	 * will be in-activated to make it a safe delete
+	 *
+	 * @param checklistId
+	 * @param questionIdsToKeep
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void syncChecklistQuestions(String checklistId, List<String> questionIdsToKeep);
+
 }

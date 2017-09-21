@@ -62,6 +62,10 @@ public class EvaluationChecklistRecommendation
 	@FK(RecommendationType.class)
 	private String recommendationType;
 
+	@ConsumeField
+	@APIDescription("Private information is not published; recommendation will not show.")
+	private Boolean privateFlg;
+
 	public EvaluationChecklistRecommendation()
 	{
 	}
@@ -76,6 +80,7 @@ public class EvaluationChecklistRecommendation
 		setReason(evaluationChecklistRecommendation.getReason());
 		setRecommendation(evaluationChecklistRecommendation.getRecommendation());
 		setRecommendationType(evaluationChecklistRecommendation.getRecommendationType());
+		setPrivateFlg(evaluationChecklistRecommendation.getPrivateFlg());
 
 	}
 
@@ -156,6 +161,16 @@ public class EvaluationChecklistRecommendation
 	public void setRecommendationType(String recommendationType)
 	{
 		this.recommendationType = recommendationType;
+	}
+
+	public Boolean getPrivateFlg()
+	{
+		return privateFlg;
+	}
+
+	public void setPrivateFlg(Boolean privateFlg)
+	{
+		this.privateFlg = privateFlg;
 	}
 
 }
