@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 
 /**
  * remove in 2.5
@@ -40,7 +41,7 @@ public class DBDataMigration
 
 	public DBDataMigration()
 	{
-		super("DB-MIGRATION2-1");
+		super("DB-MIGRATION-2.1");
 	}
 
 	@Override
@@ -59,6 +60,15 @@ public class DBDataMigration
 				CoreSystem.setDetailedStatus(status);
 			});
 
+			service.getSystemService().toggleDBlogger(false);
+			DBManager.cleanup();
+			LOG.log(Level.INFO, "Clearing orient directory");
+			String dataDir = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath() + "/databases/openstorefront";
+			FileUtils.deleteDirectory(FileSystemManager.getDir(dataDir));
+
+			LOG.log(Level.INFO, "restarting orient");
+			DBManager.init();
+
 			LOG.log(Level.INFO, MessageFormat.format("Importing Database to {0}/2-1dbexport.gz ...standy by", exportDir.getPath()));
 			DBManager.importDB(new FileInputStream(exportDir.getPath() + "/2-1dbexport.gz"), (String status) -> {
 				CoreSystem.setDetailedStatus(status);
@@ -71,7 +81,6 @@ public class DBDataMigration
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to remove temp db export file: {0}", tempFile.getPath()));
 				}
 			}
-
 			LOG.log(Level.INFO, "Finishing data migration");
 			results.append("Export/Imported DB successfully");
 

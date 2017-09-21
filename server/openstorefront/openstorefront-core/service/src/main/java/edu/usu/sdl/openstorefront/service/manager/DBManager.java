@@ -89,7 +89,7 @@ public class DBManager
 			String dbFileDir = home + "/databases/openstorefront";
 			File dbFile = new File(dbFileDir);
 			if (dbFile.exists() == false) {
-				LOG.log(Level.INFO, "Creating DB at {0}", dbFileDir);
+				LOG.log(Level.INFO, "Creating DB at %s", dbFileDir);
 				OObjectDatabaseTx db = new OObjectDatabaseTx("plocal:" + dbFileDir).create();
 				db.close();
 				LOG.log(Level.INFO, "Done");

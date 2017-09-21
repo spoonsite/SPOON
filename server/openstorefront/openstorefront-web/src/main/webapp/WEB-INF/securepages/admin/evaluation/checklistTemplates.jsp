@@ -855,7 +855,7 @@
 				Ext.Ajax.request({
 					url: 'api/v1/resource/checklisttemplates',
 					method: 'POST',
-					jsonData: data,												
+					jsonData: {checklistTemplate: data, evaluationIdsToUpdate: null},	
 					success: function(){
 						actionRefresh();													
 					}
