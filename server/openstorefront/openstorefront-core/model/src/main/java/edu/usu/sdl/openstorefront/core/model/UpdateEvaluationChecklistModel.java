@@ -30,6 +30,7 @@ public class UpdateEvaluationChecklistModel
 	private ChecklistTemplate checklistTemplate;
 	
 	@ConsumeField
+	@DataType(String.class)
 	private List<String> evaluationIdsToUpdate = new ArrayList<>();
 	
 	/**
