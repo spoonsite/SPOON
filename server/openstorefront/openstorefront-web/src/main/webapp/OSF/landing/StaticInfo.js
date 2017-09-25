@@ -34,7 +34,7 @@ Ext.define('OSF.landing.StaticInfo', {
 				align: 'stretch'
 			};
 			var infoPanelsWidth = '50%';
-			var borderSeparator = 'border-right: 1px solid lightgrey !important; padding-right: 10px; padding-left: 10px;';
+			var borderSeparator = 'border-right: 1px solid lightgrey !important; padding-right: 10px; padding-left: 10px; padding-bottom: 20px;';
 			if (width < 1024) {
 				infoPanelsWidth = '100%';
 				containerLayout = {

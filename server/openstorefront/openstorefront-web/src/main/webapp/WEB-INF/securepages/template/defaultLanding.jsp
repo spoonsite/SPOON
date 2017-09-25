@@ -57,20 +57,95 @@
 							items: [
 								{
 									xtype: 'osf-defaultsearch',
-									bodyStyle: 'padding-top: 80px; padding-bottom: 40px;'
+									bodyStyle: 'padding-top: 80px; padding-bottom: 80px;'
 								},
 								{
-									xtype: 'osf-defaultsearchtools',
-									bodyStyle: 'padding-bottom: 40px;'
-								}								
+									layout: {
+										type: 'hbox',
+										align: 'stretch'
+									},
+									items: [
+										{
+											xtype: 'osf-defaultsearchtools',
+											bodyStyle: 'padding-bottom: 40px;',
+											toolSize: 'small',
+											width: '50%',
+											//cls: 'search-tool-background',
+											searchTools: [
+												{
+													text: 'Tags',
+													tip: 'Search Tag Cloud',
+													icon: 'fa-cloud',
+													toolType: 'OSF.landing.TagCloud'
+												},
+												{
+													text: '<span style="font-size: 12px;">Organizations</span>',
+													tip: 'Search by Entry Organization',
+													icon: 'fa-sitemap',
+													toolType: 'OSF.landing.OrganizationSearch'
+												},
+												{
+													text: '<span style="font-size: 12px;">Relationships</span>',
+													tip: 'View relationships between entries',
+													icon: 'fa-share-alt',
+													toolType: 'OSF.landing.RelationshipSearch'
+												},				
+												{
+													text: 'Advanced',
+													tip: 'Create Advanced Searches',
+													icon: 'fa-search-plus',
+													toolType: 'OSF.landing.AdvancedSearch'
+												}			
+											]									
+										},
+										{
+											xtype: 'osf-defaultactions',
+											width: '50%',
+											toolSize: 'small',
+											//cls: 'action-tool-background',
+											textCSSOverride: 'search-tool-button-inner-small',
+											actionTools: [
+												{
+													text: 'Dashboard',
+													icon: 'fa-dashboard',
+													tip: 'Access your dashboard',
+													//imageSrc: 'images/dash.png',
+													toolBackground: 'action-tool-button-background',													
+													link: 'UserTool.action?load=Dashboard'
+												},
+												{
+													text: '<span style="font-size: 12px;">Submissions</span>',
+													icon: 'fa-edit',
+													//imageSrc: 'images/submission.png',
+													tip: 'Add or update entries to the registry',
+													permission: 'USER-SUBMISSIONS',
+													toolBackground: 'action-tool-button-background',
+													link: 'UserTool.action?load=Submissions'
+												},
+												{
+													text: '<span style="font-size: 12px;">My Searches</span>',
+													icon: 'fa-floppy-o',
+													tip: 'View and manage your saved searches',
+													//imageSrc: 'images/savedsearch.png',
+													toolBackground: 'action-tool-button-background',
+													link: 'UserTool.action?load=Searches'
+												},		
+												{
+													text: 'Feedback',
+													icon: 'fa-comments',
+													tip: 'Provide feedback about the site',
+													//imageSrc: 'images/feedback.png',
+													toolBackground: 'action-tool-button-background',
+													link: 'feedback.jsp'
+												}		
+											]
+										}								
+									]
+								}									
 							]
-						},		
-						{
-							xtype: 'osf-defaultactions'
-						},
+						},																
 						{
 							xtype: 'osf-staticinfo'
-							//margin: '0 0 40 0'
 						},						
 						{
 							xtype: 'osf-defaultcategory'
