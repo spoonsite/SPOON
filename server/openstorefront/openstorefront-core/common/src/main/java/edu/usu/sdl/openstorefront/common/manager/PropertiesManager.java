@@ -73,6 +73,7 @@ public class PropertiesManager
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
+        public static final String KEY_REPORT_LIFETIME = "report.lifetime";
 	public static final String KEY_TEST_EMAIL = "test.email";
 	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
 
@@ -264,6 +265,7 @@ public class PropertiesManager
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
+                        defaults.put(KEY_REPORT_LIFETIME, "180");
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 			

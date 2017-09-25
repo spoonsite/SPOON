@@ -1324,6 +1324,26 @@
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
+						{
+							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>', 
+							dataIndex: 'remainingReportLifetime', 
+							width: 150,
+							sortable: false, renderer: function (value, meta, record) {
+
+								// Defined status color, info, and sybmol
+								var maxHue = 85;
+								var statusColor = (record.data.remainingReportLifetime/record.data.reportLifetimeMax)*maxHue;
+								var statusInfo = ['This report will be removed soon', 'This report still has time before cleanup', 'This report was recently created'];
+								var statusSymbol = ['fa fa-exclamation-circle', 'fa fa-exclamation-triangle', 'fa fa-check-circle'];
+								var statusIndex = Math.floor(record.data.remainingReportLifetime/record.data.reportLifetimeMax*(statusInfo.length-0.1));
+								statusInfo = record.data.remainingReportLifetime == 0 ? 'This report will be removed' : statusInfo[statusIndex];
+								statusSymbol = statusSymbol[statusIndex];
+
+								// Set the value of the cell
+								record.data.remainingReportLifetime = '<span data-qtip="' + statusInfo + '"> <i style="color: hsla(' + statusColor + ', 70%, 50%, 1.0);" class="' + statusSymbol + '" aria-hidden="true"></i> ' + record.data.remainingReportLifetime + '</span>';
+								return record.data.remainingReportLifetime;
+							} 
+						},
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
 						},

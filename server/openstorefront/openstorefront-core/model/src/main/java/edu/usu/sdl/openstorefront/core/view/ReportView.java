@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
@@ -37,9 +38,18 @@ public class ReportView
 	private String reportTypeDescription;
 	private String reportFormatDescription;
 	private String runStatusDescription;
+	private long remainingReportLifetime;
+	private int reportLifetimeMax;
 
 	public ReportView()
 	{
+		try {
+			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_REPORT_LIFETIME));
+		}
+		catch (NumberFormatException e) {
+			//	If the configured report lifetime is invalid, fallback to the default value for the max report lifetime
+			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME));
+		}
 	}
 
 	public static ReportView toReportView(Report report)
@@ -93,6 +103,26 @@ public class ReportView
 	public void setReportFormatDescription(String reportFormatDescription)
 	{
 		this.reportFormatDescription = reportFormatDescription;
+	}
+	
+	public long getRemainingReportLifetime()
+	{
+		return remainingReportLifetime;
+	}
+
+	public void setRemainingReportLifetime(long remainingReportLifetime)
+	{
+		this.remainingReportLifetime = remainingReportLifetime;
+	}
+	
+	public int getReportLifetimeMax()
+	{
+		return reportLifetimeMax;
+	}
+
+	public void setReportLifetimeMax(int reportLifetimeMax)
+	{
+		this.reportLifetimeMax = reportLifetimeMax;
 	}
 
 }
