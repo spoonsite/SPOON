@@ -244,6 +244,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 
 ( **Property** -description ( **Default** ))
 
+-  **mail.attach.file** -     Set to true or false indicating if emails should contain attached files
 -  **mail.smtp.url** -        Login Credentials for Integrations (currently just for jira)   ( **localhost** )
 -  **mail.server.user** -     Login Credentials for mail server                              
 -  **mail.server.pw** -       Login Credentials for mail server                              
