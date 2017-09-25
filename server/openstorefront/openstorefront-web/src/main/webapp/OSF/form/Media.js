@@ -56,6 +56,7 @@ Ext.define('OSF.form.Media', {
 						var data = mainForm.getValues();
 						var componentId = mediaPanel.mediaGrid.componentId;
 
+						data.caption = data.caption.replace(/\"|\'/g, '');
 						data.fileSelected = mainForm.getComponent('upload').getValue();
 						data.link = data.originalLink;
 						data.originalName = data.originalFileName;
