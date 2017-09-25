@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationChecklistModel;
 import edu.usu.sdl.openstorefront.core.view.ChecklistTemplateDetailView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -106,9 +108,9 @@ public class ChecklistTemplateResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
-	public Response createChecklistTemplate(ChecklistTemplate checklistTemplate)
+	public Response createChecklistTemplate(UpdateEvaluationChecklistModel model)
 	{
-		return saveChecklistTemplate(checklistTemplate, true);
+		return saveChecklistTemplate(model.getChecklistTemplate(), true, null);
 	}
 
 	@PUT
@@ -120,7 +122,7 @@ public class ChecklistTemplateResource
 	@Path("/{templateId}")
 	public Response updateChecklistTemplate(
 			@PathParam("templateId") String templateId,
-			ChecklistTemplate checklistTemplate)
+			UpdateEvaluationChecklistModel model)
 	{
 		ChecklistTemplate existing = new ChecklistTemplate();
 		existing.setChecklistTemplateId(templateId);
@@ -128,19 +130,25 @@ public class ChecklistTemplateResource
 		if (existing == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		checklistTemplate.setChecklistTemplateId(templateId);
-		return saveChecklistTemplate(checklistTemplate, false);
+		model.getChecklistTemplate().setChecklistTemplateId(templateId);
+		return saveChecklistTemplate(model.getChecklistTemplate(), false, model.getEvaluationIdsToUpdate());
 	}
 
-	private Response saveChecklistTemplate(ChecklistTemplate checklistTemplate, boolean create)
+	private Response saveChecklistTemplate(ChecklistTemplate checklistTemplate, boolean create, List<String> evaluationIdsToUpdate)
 	{
 		ValidationResult validationResult = checklistTemplate.validate();
 		if (validationResult.valid()) {
+			//mark the order
+			int order = 1;
+			for (ChecklistTemplateQuestion templateQuestion : checklistTemplate.getQuestions()) {
+				templateQuestion.setSortOrder(order++);
+			}
 			checklistTemplate = checklistTemplate.save();
 
 			if (create) {
 				return Response.created(URI.create("v1/resource/checklisttemplates/" + checklistTemplate.getChecklistTemplateId())).entity(checklistTemplate).build();
 			} else {
+				service.getEvaluationService().updateEvaluationsToLatestTemplateVersion(evaluationIdsToUpdate);
 				return Response.ok(checklistTemplate).build();
 			}
 		} else {

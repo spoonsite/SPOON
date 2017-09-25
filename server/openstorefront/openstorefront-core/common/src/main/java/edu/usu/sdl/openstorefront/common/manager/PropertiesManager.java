@@ -73,6 +73,7 @@ public class PropertiesManager
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
+        public static final String KEY_REPORT_LIFETIME = "report.lifetime";
 	public static final String KEY_TEST_EMAIL = "test.email";
 	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
 
@@ -115,6 +116,7 @@ public class PropertiesManager
 	public static final String KEY_MAIL_FROM_ADDRESS = "mail.from.address";
 	public static final String KEY_MAIL_REPLY_NAME = "mail.reply.name";
 	public static final String KEY_MAIL_REPLY_ADDRESS = "mail.reply.address";
+        public static final String KEY_MAIL_ATTACH_FILE = "mail.attach.file";
 	public static final String KEY_MESSAGE_KEEP_DAYS = "message.archive.days";
 	public static final String KEY_MESSAGE_MIN_QUEUE_MINUTES = "message.queue.minmintues";
 	public static final String KEY_MESSAGE_MAX_RETRIES = "message.maxretires";
@@ -264,6 +266,8 @@ public class PropertiesManager
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
+      defaults.put(KEY_REPORT_LIFETIME, "180");
+      defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 			

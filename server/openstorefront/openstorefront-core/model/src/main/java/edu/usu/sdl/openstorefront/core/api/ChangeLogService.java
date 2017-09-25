@@ -119,6 +119,19 @@ public interface ChangeLogService
 	public <T extends StandardEntity> ChangeLog logStatusChange(final T statusEntity, String newStatus);
 
 	/**
+	 * Logs and active status change in cases where that not handle in an
+	 * update.
+	 *
+	 * @param <T>
+	 * @param statusEntity
+	 * @param newStatus
+	 * @param comment
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends StandardEntity> ChangeLog logStatusChange(final T statusEntity, String newStatus, String comment);
+
+	/**
 	 * Logs a generic change type (Example: use is for snapshots and restores)
 	 *
 	 * @param <T>

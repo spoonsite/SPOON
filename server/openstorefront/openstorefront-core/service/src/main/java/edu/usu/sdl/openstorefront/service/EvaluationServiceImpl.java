@@ -18,7 +18,10 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -39,10 +42,12 @@ import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
@@ -74,6 +79,10 @@ public class EvaluationServiceImpl
 
 		for (EvaluationChecklistRecommendation recommendation : checklistAll.getRecommendations()) {
 
+			if (recommendation instanceof EvaluationChecklistRecommendationView) {
+				recommendation = ((EvaluationChecklistRecommendationView) recommendation).toRecommendation();
+			}
+
 			if (recommendation.getRecommendationId() != null && existingRecs.containsKey(recommendation.getRecommendationId())) {
 				EvaluationChecklistRecommendation existing = existingRecs.get(recommendation.getRecommendationId()).get(0);
 				existing.updateFields(recommendation);
@@ -97,6 +106,20 @@ public class EvaluationServiceImpl
 				.collect(Collectors.groupingBy(EvaluationChecklistResponse::getResponseId));
 
 		for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
+
+			if (response instanceof ChecklistResponseView) {
+				ChecklistResponseView view = ((ChecklistResponseView) response);
+				//find corrected question id base on the imported qid
+				ChecklistQuestion question = new ChecklistQuestion();
+				question.setQid(view.getQuestion().getQid());
+				question = question.findProxy();
+
+				response = view.toResponse();
+				if (question != null) {
+					response.setQuestionId(question.getQuestionId());
+				}
+			}
+
 			if (response.getResponseId() != null && existingResponses.containsKey(response.getResponseId())) {
 				EvaluationChecklistResponse existing = existingResponses.get(response.getResponseId()).get(0);
 				existing.updateFields(response);
@@ -129,29 +152,53 @@ public class EvaluationServiceImpl
 		EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
 		evaluationChecklist.setChecklistId(checklistId);
 		evaluationChecklist = evaluationChecklist.find();
+		if (publicInformationOnly) {
+			if (evaluationChecklist != null && Convert.toBoolean(evaluationChecklist.getPrivateChecklistFlg())) {
+				evaluationChecklist = null;
+			}
+		}
+
 		if (evaluationChecklist != null) {
 			checklistAll = new ChecklistAll();
 			checklistAll.setEvaluationChecklist(evaluationChecklist);
 
-			EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
-			recommendation.setChecklistId(checklistId);
-			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
-			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendation.findByExample()));
-
-			EvaluationChecklistResponse responses = new EvaluationChecklistResponse();
-			responses.setChecklistId(checklistId);
-			responses.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
-			checklistAll.getResponses().addAll(ChecklistResponseView.toView(responses.findByExample()));
-
-			//clear private notes
 			if (publicInformationOnly) {
-				for (EvaluationChecklistResponse response : checklistAll.getResponses()) {
-					response.setPrivateNote(null);
+				if (Convert.toBoolean(evaluationChecklist.getPrivateSummaryFlg())) {
+					evaluationChecklist.setSummary(null);
 				}
 			}
 
-		}
+			EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
+			recommendation.setChecklistId(checklistId);
+			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
+			List<EvaluationChecklistRecommendation> recommendations = recommendation.findByExample();
+			if (publicInformationOnly) {
+				recommendations = recommendations
+						.stream()
+						.filter(r -> Convert.toBoolean(r.getPrivateFlg()) == false)
+						.collect(Collectors.toList());
+			}
+			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendations));
 
+			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+			response.setChecklistId(checklistId);
+			response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+			List<EvaluationChecklistResponse> responses = response.findByExample();
+			if (publicInformationOnly) {
+				responses = responses
+						.stream()
+						.filter(r -> Convert.toBoolean(r.getPrivateFlg()) == false)
+						.collect(Collectors.toList());
+			}
+			checklistAll.getResponses().addAll(ChecklistResponseView.toView(responses));
+
+			//clear private notes
+			if (publicInformationOnly) {
+				for (EvaluationChecklistResponse evaluationChecklistResponse : checklistAll.getResponses()) {
+					evaluationChecklistResponse.setPrivateNote(null);
+				}
+			}
+		}
 		return checklistAll;
 	}
 
@@ -225,6 +272,7 @@ public class EvaluationServiceImpl
 				response.setResponseId(persistenceService.generateId());
 				response.setQuestionId(question.getQuestionId());
 				response.setWorkflowStatus(initialStatus.getCode());
+				response.setSortOrder(question.getSortOrder());
 				response.populateBaseCreateFields();
 				persistenceService.persist(response);
 			}
@@ -238,13 +286,168 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
+	@Override
+	public void updateEvaluationsToLatestTemplateVersion(List<String> evaluationIds)
+	{
+		if (evaluationIds != null) {
+			evaluationIds.forEach(evaluationId -> {
+				Evaluation idExample = new Evaluation();
+				idExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+				idExample.setPublished(Boolean.FALSE);
+				idExample.setEvaluationId(evaluationId);
+				Evaluation existingEvaluation = idExample.find();
+				if (existingEvaluation != null) {
+					updateEvaluationToLatestTemplateVersion(existingEvaluation);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("(Skipping) Unable to find unpublished active evaluation for id: {0}", evaluationId));
+				}
+			});
+		}
+	}
+
+	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 * @return
+	 */
+	@Override
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation)
+	{
+		Objects.requireNonNull(evaluation);
+		Objects.requireNonNull(evaluation.getTemplateId());
+
+		EvaluationTemplate exampleTemplate = new EvaluationTemplate();
+		exampleTemplate.setTemplateId(evaluation.getTemplateId());
+		EvaluationTemplate template = exampleTemplate.find();
+
+		//FIXME: Add check for Evaluation; should not be published; perhap only active
+		if (template != null) {
+			updateContentSections(evaluation.getEvaluationId(), template.getSectionTemplates());
+			updateChecklist(evaluation.getEvaluationId(), template.getChecklistTemplateId());
+			//TODO: sync checklist (Add/Remove) Questions (Skip userAdded/Removed Questions)
+		}
+		// set template update flag to false
+		Evaluation proxyExample = new Evaluation();
+		proxyExample.setEvaluationId(evaluation.getEvaluationId());
+
+		Evaluation proxy = proxyExample.findProxy();
+		proxy.setTemplateUpdatePending(Boolean.FALSE);
+		proxy.save();
+	}
+
+	private void updateContentSections(String evaluationId, List<EvaluationSectionTemplate> sectionTemplates)
+	{
+		Objects.requireNonNull(sectionTemplates);
+
+		ContentSection contentSectionExample = new ContentSection();
+		contentSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
+		contentSectionExample.setEntity(Evaluation.class.getSimpleName());
+		contentSectionExample.setEntityId(evaluationId);
+		List<ContentSection> contentSections = persistenceService.queryByExample(contentSectionExample);
+		// add new sections
+		sectionTemplates.forEach((sectionTemplate) -> {
+			boolean foundSection = false;
+			for (ContentSection section : contentSections) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().createSectionFromTemplate(Evaluation.class.getSimpleName(), evaluationId, sectionTemplate.getSectionTemplateId());
+			}
+		});
+		// remove sections
+		contentSections.forEach((section) -> {
+			boolean foundSection = false;
+			for (EvaluationSectionTemplate sectionTemplate : sectionTemplates) {
+				if (sectionTemplate.getSectionTemplateId().equals(section.getTemplateId())) {
+					foundSection = true;
+				}
+			}
+			if (!foundSection) {
+				getContentSectionService().deleteContentSection(section.getContentSectionId());
+			}
+		});
+		// update sections
+		//TODO: update section
+	}
+
+	private void updateChecklist(String evaluationId, String newChecklistTemplateId)
+	{
+		ChecklistTemplate templateExample = new ChecklistTemplate();
+		templateExample.setChecklistTemplateId(newChecklistTemplateId);
+		ChecklistTemplate template = templateExample.find();
+
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist = checklist.findProxy();
+		checklist.setChecklistTemplateId(newChecklistTemplateId);
+		checklist.save();
+
+		String checklistId = checklist.getChecklistId();
+
+		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
+		responseExample.setChecklistId(checklistId);
+		List<EvaluationChecklistResponse> responseList = responseExample.findByExampleProxy();
+
+		//add questions
+		template.getQuestions().forEach(question -> {
+			boolean foundQuestion = false;
+			for (EvaluationChecklistResponse response : responseList) {
+				if (response.getQuestionId().equals(question.getQuestionId())) {
+					foundQuestion = true;
+					response.setSortOrder(question.getSortOrder());
+					response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+					response.save();
+				}
+			}
+			if (!foundQuestion) {
+				EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
+				newResponse.setChecklistId(checklistId);
+				newResponse.setResponseId(persistenceService.generateId());
+				newResponse.setQuestionId(question.getQuestionId());
+				newResponse.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());
+				newResponse.setSortOrder(question.getSortOrder());
+				newResponse.populateBaseCreateFields();
+				persistenceService.persist(newResponse);
+			}
+		});
+
+		//remove questions
+		responseList.forEach(response -> {
+			boolean foundQuestion = false;
+			if (response.getActiveStatus().equals(EvaluationChecklistResponse.ACTIVE_STATUS)
+					&& (response.getUserAddRemoveFlg() == null || !response.getUserAddRemoveFlg())) {
+				for (ChecklistTemplateQuestion question : template.getQuestions()) {
+					if (response.getQuestionId().equals(question.getQuestionId())) {
+						foundQuestion = true;
+					}
+				}
+				if (!foundQuestion) {
+					//inactivate
+					response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
+					response.save();
+				}
+			}
+		});
+	}
+
 	@Override
 	public EvaluationAll getEvaluation(String evaluationId)
 	{
 		return getEvaluation(evaluationId, false);
 	}
 
-	private EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
+	@Override
+	public EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly)
 	{
 		Objects.requireNonNull(evaluationId);
 
@@ -385,13 +588,24 @@ public class EvaluationServiceImpl
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
 		if (evaluation != null) {
 
-			//merge change request
-			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
-			if (changeRequest != null) {
-				getComponentService().mergePendingChange(changeRequest.getComponentId());
-			}
+			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getOriginComponentId());
+			if (originalComponent != null) {
 
-			getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.TRUE.toString());
+				//merge change request
+				Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
+				if (changeRequest != null) {
+					getComponentService().mergePendingChange(changeRequest.getComponentId());
+				}
+
+				getChangeLogService().logFieldChange(evaluation, Evaluation.FIELD_PUBLISHED, evaluation.getPublished().toString(), Boolean.TRUE.toString());
+
+				if (!ApprovalStatus.APPROVED.equals(originalComponent.getApprovalState())) {
+					getComponentService().approveComponent(originalComponent.getComponentId());
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable find original entry.", "Check input");
+			}
 
 			evaluation.setPublished(Boolean.TRUE);
 			evaluation.populateBaseUpdateFields();
@@ -523,6 +737,40 @@ public class EvaluationServiceImpl
 		} finally {
 			getChangeLogService().resumeSaving();
 		}
+	}
+
+	@Override
+	public void approveEvaluationSummary(String evaluationId)
+	{
+		Objects.requireNonNull(evaluationId);
+
+		Evaluation evaluation = getPersistenceService().findById(Evaluation.class, evaluationId);
+		if (evaluation != null) {
+
+			Component originalComponent = getPersistenceService().findById(Component.class, evaluation.getOriginComponentId());
+			if (originalComponent != null) {
+
+				Component component = getPersistenceService().findById(Component.class, evaluation.getComponentId());
+				if (component != null) {
+					LOG.log(Level.FINE, MessageFormat.format("Approving Change Request. Change Request Id: {0}", component.getComponentId()));
+					getComponentService().mergePendingChange(component.getComponentId());
+				} else {
+					LOG.log(Level.FINE, MessageFormat.format("There is no outstanding change request to the evaluation. Id: {0}", evaluationId));
+				}
+
+				if (!ApprovalStatus.APPROVED.equals(originalComponent.getApprovalState())) {
+					getComponentService().approveComponent(originalComponent.getComponentId());
+				}
+
+				evaluation.setLastSummaryApprovedDts(TimeUtil.currentDate());
+				getPersistenceService().persist(evaluation);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable find original entry.", "Check input");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable find evaluation to approve summary on.", "Check input");
+		}
+
 	}
 
 }

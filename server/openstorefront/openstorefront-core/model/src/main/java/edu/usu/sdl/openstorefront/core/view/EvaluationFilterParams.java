@@ -44,6 +44,16 @@ public class EvaluationFilterParams
 	@QueryParam("published")
 	private Boolean published;
 	
+			
+	@QueryParam("templateId")
+	@Size(min = 0, max = 255)	
+	private String templateId;
+	
+	@QueryParam("checklistTemplateId")
+	@Size(min = 0, max = 255)	
+	private String checklistTemplateId;
+	
+	
 	public EvaluationFilterParams()
 	{
 	}
@@ -88,4 +98,23 @@ public class EvaluationFilterParams
 		this.published = published;
 	}
 
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
+	}
+
+	public String getChecklistTemplateId()
+	{
+		return checklistTemplateId;
+	}
+
+	public void setChecklistTemplateId(String checklistTemplateId)
+	{
+		this.checklistTemplateId = checklistTemplateId;
+	}
 }

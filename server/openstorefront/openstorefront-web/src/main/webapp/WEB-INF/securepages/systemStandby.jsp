@@ -26,6 +26,7 @@
 <%@page import="edu.usu.sdl.openstorefront.core.view.SystemStatusView"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,6 +39,7 @@
 			
 			SystemStatusView systemStatusView = CoreSystem.getStatus();
 			request.setAttribute("status", systemStatusView.getSystemStatus());
+			request.setAttribute("detailedStatus", systemStatusView.getDetailedStatus());
 		%>	
 	
 		
@@ -179,7 +181,8 @@
 		</div>
 		<div class="status-text">
 			Application is initializing please wait...<br><br><br>
-			Current Status: <span id="status" style="font-weight: bold">${status}</span>			
+			Current Status: <span id="status" style="font-weight: bold">${status}</span><br>
+			<c:if test="detailedStatus">Details: ${detailedStatus}</c:if>
 		</div>
 		<div class="version">
 			${appVersion}

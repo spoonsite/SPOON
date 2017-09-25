@@ -1,5 +1,5 @@
 <%--
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,27 +22,27 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
-		</stripes:layout-render>			
-		
+		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">
+		</stripes:layout-render>
+
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
 			Ext.onReady(function () {
-								
+
 				var optionsRender = function(v, meta) {
-					if (v) {									
+					if (v) {
 						if (v.category) {
 							return 'Category: ' + v.category;
 						}
-						else if (v.startDts) {										
+						else if (v.startDts) {
 							var details = '';
 							if (v.startDts) {
 								details = details + 'Start Date: ' + Ext.util.Format.date(v.startDts, 'm/d/y H:i:s') + '<br>';
 							}
 							if (v.endDts) {
 								details = details + 'End Date: ' + Ext.util.Format.date(v.endDts, 'm/d/y H:i:s') + '<br>';
-							}																
+							}
 							return details;
 						}
 						else if (v.previousDays) {
@@ -50,15 +50,15 @@
 						}
 						else if (v.maxWaitSeconds) {
 							return 'Max Wait Seconds: ' + v.maxWaitSeconds;
-						}									
+						}
 						return '';
-					}									
+					}
 					return '';
 				};
-				
+
 				var scheduleReportsGridStore = Ext.create('Ext.data.Store', {
 					id: 'scheduleReportsGridStore',
-					autoLoad: true,										
+					autoLoad: true,
 					sorters: [
 						new Ext.util.Sorter({
 							property: 'createDts',
@@ -75,7 +75,7 @@
 							name: 'lastRanDts',
 							type: 'date',
 							dateFormat: 'c'
-						}						
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						url: 'api/v1/resource/scheduledreports',
@@ -86,8 +86,8 @@
 							totalProperty: ''
 						}
 					})
-				});				
-				
+				});
+
 				var scheduledReportsWin = Ext.create('Ext.window.Window', {
 					title: 'Scheduled Reports',
 					iconCls: 'fa fa-calendar-plus-o',
@@ -97,13 +97,13 @@
 					maximizable: true,
 					layout: 'fit',
 					items: [
-						Ext.create('Ext.grid.Panel', {							
-							id: 'scheduleReportsGrid',							
+						Ext.create('Ext.grid.Panel', {
+							id: 'scheduleReportsGrid',
 							store: scheduleReportsGridStore,
 							columnLines: true,
 							bodyCls: 'border_accent',
 							columns: [
-								{text: 'Report Type', dataIndex: 'reportType', width: 200, 
+								{text: 'Report Type', dataIndex: 'reportType', width: 200,
 									renderer: function (value, meta, record) {
 										return record.get('reportTypeDescription');
 									}
@@ -112,7 +112,7 @@
 									renderer: function (value, meta, record) {
 										return record.get('reportFormatDescription');
 									}
-								},						
+								},
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
 								{text: 'Scheduled Interval', dataIndex: 'scheduleIntervalDays', width: 200,
 									renderer: function (v, meta) {
@@ -270,10 +270,10 @@
 									scheduledReportCheckNavButtons();
 								}
 							}
-						})						
+						})
 					]
 				});
-				
+
 				var scheduledReportCheckNavButtons = function () {
 					var cnt = Ext.getCmp('scheduleReportsGrid').getSelectionModel().getCount();
 					if (cnt === 1) {
@@ -291,23 +291,23 @@
 						Ext.getCmp('reportDeleteButton').setDisabled(true);
 					}
 				};
-				
+
 				var scheduleReportRefreshGrid = function () {
 					Ext.getCmp('scheduleReportsGrid').getStore().load({
 						params: {
 							status: Ext.getCmp('scheduleReportFilter-ActiveStatus').getValue() ? Ext.getCmp('scheduleReportFilter-ActiveStatus').getValue() : ''
 						}
 					});
-				};				
-				
+				};
+
 				var scheduleReportAdd = function () {
 					scheduleReportWin(null, true);
 				};
 
 				var scheduleReportEdit = function () {
 					scheduleReportWin(Ext.getCmp('scheduleReportsGrid').getSelection()[0], true);
-				};	
-				
+				};
+
 				var scheduleReportActivate = function () {
 					var selectedObj = Ext.getCmp('scheduleReportsGrid').getSelection()[0];
 					var reportId = selectedObj.data.scheduleReportId;
@@ -333,8 +333,8 @@
 							Ext.getCmp('scheduleReportsGrid').setLoading(false);
 						}
 					});
-				};	
-				
+				};
+
 				var scheduleReportDelete = function () {
 
 					var selectedObj = Ext.getCmp('scheduleReportsGrid').getSelection()[0];
@@ -364,9 +364,9 @@
 							}
 						}
 					});
-				};				
-				
-				
+				};
+
+
 				var scheduleReportWin = function (scheduleData, reoccuring) {
 					var scheduleReportId = null;
 					//
@@ -377,7 +377,7 @@
 					}
 
 					//
-					//  This formats the emails separated by ';' strng into an array 
+					//  This formats the emails separated by ';' strng into an array
 					//
 					var createEmailAddressesList = function (emailStr) {
 						if (emailStr === '' || typeof emailStr === 'undefined') {
@@ -502,7 +502,7 @@
 									if (scheduleData.data.reportOption.startDts) {
 										Ext.getCmp('startDate').setValue(new Date(scheduleData.data.reportOption.startDts));
 										Ext.getCmp('endDate').setValue(new Date(scheduleData.data.reportOption.endDts));
-										
+
 									}
 									if (scheduleData.data.reportOption.previousDays) {
 										Ext.getCmp('previousDaysSelect').setValue(scheduleData.data.reportOption.previousDays);
@@ -532,7 +532,7 @@
 					//
 					var reportFormatsStore = Ext.create('Ext.data.Store', {
 						id: 'reportFormatsStore',
-						autoLoad: false,						
+						autoLoad: false,
 						sorters: [
 							new Ext.util.Sorter({
 								property: 'description',
@@ -555,7 +555,7 @@
 					//
 					var scheduleOptionsStore = Ext.create('Ext.data.Store', {
 						id: 'scheduleOptionsStore',
-						autoLoad: true,												
+						autoLoad: true,
 						sorters: [
 							new Ext.util.Sorter({
 								property: 'description',
@@ -564,12 +564,12 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/components/lookup'							
+							url: 'api/v1/resource/components/lookup'
 						}
 					});
 
 					//
-					//  This is the store list for the catagories 
+					//  This is the store list for the catagories
 					//
 					var scheduleCategoryStore = Ext.create('Ext.data.Store', {
 						id: 'scheduleCategoryStore',
@@ -640,11 +640,11 @@
 						Ext.getCmp('endDate').setHidden(true);
 						Ext.getCmp('previousDaysSelect').setHidden(true);
 						Ext.getCmp('assignedUser').setHidden(true);
-						Ext.getCmp('assignedGroup').setHidden(true);						
-						
+						Ext.getCmp('assignedGroup').setHidden(true);
+
 						Ext.getCmp('waitSeconds').setValue('');
 						Ext.getCmp('filterForEntries').setValue('');
-						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();											
+						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();
 						var dt = new Date();
 						Ext.getCmp('startDate').setValue(dt);
 						Ext.getCmp('endDate').setValue(dt);
@@ -662,7 +662,7 @@
 							}
 						}
 						else if (rType === 'CATCOMP') {
-							Ext.getCmp('categorySelect').setHidden(false);														
+							Ext.getCmp('categorySelect').setHidden(false);
 						}
 						else if (rType === 'LINKVALID') {
 
@@ -674,7 +674,7 @@
 							Ext.getCmp('endDate').setHidden(false);
 							Ext.getCmp('previousDaysSelect').setHidden(false);
 						}
-						else if (rType === 'EVALSTAT') {							
+						else if (rType === 'EVALSTAT') {
 							Ext.getCmp('assignedUser').setHidden(false);
 							Ext.getCmp('assignedGroup').setHidden(false);
 						}
@@ -682,11 +682,11 @@
 							//Do nothing just the base form which is already active.
 						}
 					};
-							
+
 					//
 					//  scheduleReportWin
 					//  The popup window to schedule are report to run now or on a set repeating schedule
-					// 
+					//
 					//
 					Ext.create('Ext.window.Window', {
 						title: 'Schedule Report',
@@ -696,8 +696,8 @@
 						minHeight: 500,
 						y: 100,
 						closeAction: 'destroy',
-						modal: true,						
-						alwaysOnTop: true,											
+						modal: true,
+						alwaysOnTop: true,
 						layout: 'fit',
 						items: [{
 								xtype: 'form',
@@ -732,22 +732,22 @@
 													if (data.scheduleIntervalDays === '0')
 													{
 														data.scheduleIntervalDays = null;
-													}	
+													}
 
 													if (Ext.getCmp('categorySelect').isVisible()) {
 														reportOpt.category = Ext.getCmp('categorySelect').getValue();
 													}
 													if (Ext.getCmp('assignedUser').isVisible()) {
 														reportOpt.assignedUser = Ext.getCmp('assignedUser').getValue();
-													}													
+													}
 													if (Ext.getCmp('assignedGroup').isVisible()) {
 														reportOpt.assignedGroup = Ext.getCmp('assignedGroup').getValue();
-													}													
+													}
 
 													if (Ext.getCmp('startDate').isVisible()) {
 
 														reportOpt.startDts = Ext.Date.format(Ext.getCmp('startDate').getValue(), 'Y-m-d\\TH:i:s.u');
-														
+
 														var endDate = Ext.getCmp('endDate').getValue();
 														if (endDate) {
 															endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
@@ -760,7 +760,7 @@
 													if (Ext.getCmp('waitSeconds').isVisible()) {
 														reportOpt.maxWaitSeconds = Ext.getCmp('waitSeconds').getValue();
 													}
-												
+
 													data.reportOption = reportOpt;
 
 													// retrieve each report category flag
@@ -773,29 +773,27 @@
 														}
 													}
 
-													if (data.scheduleIntervalDays === null)
-													{
-														var theData = {};
-														if (Ext.getCmp('scheduleOptionsGrid').isVisible()) {
-															var gridSelections = Ext.getCmp('scheduleOptionsGrid').getSelection();
-
-
-															theData.report = data;
-															theData.reportDataId = [];
-															for (ctr = 0; ctr < gridSelections.length; ctr++)
-															{
-																theData.reportDataId.push({id: gridSelections[ctr].data.code});
-															}
-															generateReport(theData);
-														}
-														else
-														{
-															theData.report = data;
-															theData.reportDataId = [];
-															generateReport(theData);
+													// make a list of the selected entries to run a report on
+													var ids = [];
+													var reportGrid = Ext.getCmp('scheduleOptionsGrid');
+													if (reportGrid.isVisible()) {
+														var gridSelections = reportGrid.getSelection();
+														for (var ii = 0; ii < gridSelections.length; ii++) {
+															ids.push({id: gridSelections[ii].data.code});
 														}
 													}
+
+													// if the report is NOT scheduled
+													if (data.scheduleIntervalDays === null)
+													{
+														generateReport({
+															reportDataId: ids,
+															report: data
+														});
+													}
+													// if the report IS scheduled
 													else {
+														data.componentIds = ids;
 														scheduleReport(data);
 													}
 												}
@@ -838,7 +836,7 @@
 														}
 													}
 												});
-											
+
 												if (reoccuring) {
 													Ext.getCmp('scheduledHours').setValue('1');
 												} else {
@@ -880,7 +878,7 @@
 										valueField: 'code',
 										editable: false,
 										hidden: true,
-										allowBlank: false,									
+										allowBlank: false,
 										listeners: {
 											change: function (cb, newVal, oldVal, opts) {
 												var emailTA=Ext.getCmp('emailAddresses');
@@ -893,13 +891,13 @@
 													Ext.getCmp('filterForEntries').setHidden(true);
 													Ext.getCmp('emailAddresses').setHidden(false);
 													handleReportOptions();
-													
+
 												}
 												else {
 													Ext.getCmp('filterForEntries').setHidden(false);
 													Ext.getCmp('emailAddresses').setHidden(true);
 													handleReportOptions();
-													
+
 												}
 											}
 										}
@@ -908,7 +906,7 @@
 										xtype: 'textarea',
 										name: 'emailAddresses',
 										id: 'emailAddresses',
-										fieldLabel: 'Enter email addresses separated by semi-colons<br>(To recieve a notification when the report is ready.)',										
+										fieldLabel: 'Enter email addresses separated by semi-colons<br>(To recieve a notification when the report is ready.)',
 										width: '100%',
 										maxLength: 300,
 										editable: true,
@@ -991,28 +989,29 @@
 													Ext.getCmp('startDate').setValue(null);
 													Ext.getCmp('endDate').setValue(null);
 													Ext.getCmp('startDate').setDisabled(true);
-													Ext.getCmp('endDate').setDisabled(true);													
+													Ext.getCmp('endDate').setDisabled(true);
 												} else {
 													Ext.getCmp('startDate').setDisabled(false);
-													Ext.getCmp('endDate').setDisabled(false);													
+													Ext.getCmp('endDate').setDisabled(false);
 												}
 											}
 										}
-									},	
+									},
 									{
 										xtype: 'combobox',
 										id: 'assignedUser',
 										name: 'assignedUser',
 										fieldLabel: 'Assigned User',
 										displayField: 'description',
-										valueField: 'code',								
+										valueField: 'code',
 										emptyText: 'All',
 										labelAlign: 'top',
 										width: '100%',
-										editable: false,
+										typeAhead: true,
+										editable: true,
 										hidden: true,
 										forceSelection: true,
-										store: {									
+										store: {
 											autoLoad: true,
 											proxy: {
 												type: 'ajax',
@@ -1025,8 +1024,8 @@
 														description: 'All'
 													});
 												}
-											}									
-										}										
+											}
+										}
 									},
 									{
 										xtype: 'combobox',
@@ -1034,14 +1033,14 @@
 										name: 'assignedGroup',
 										fieldLabel: 'Assign to Group',
 										displayField: 'description',
-										valueField: 'code',								
+										valueField: 'code',
 										emptyText: 'All',
 										labelAlign: 'top',
 										width: '100%',
 										hidden: true,
 										editable: false,
 										forceSelection: true,
-										store: {									
+										store: {
 											autoLoad: true,
 											proxy: {
 												type: 'ajax',
@@ -1055,7 +1054,7 @@
 													});
 												}
 											}
-										}									
+										}
 									},
 									{
 										xtype: 'fieldcontainer',
@@ -1213,14 +1212,14 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										maxHeight: 250,										
+										maxHeight: 250,
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
 										selModel: {
 											selType: 'checkboxmodel'
 										},
-										plugins: 'gridfilters',										
+										plugins: 'gridfilters',
 										columns: [
 											{text: 'Entry Name', dataIndex: 'description', flex: 1,
 												filter: {
@@ -1233,7 +1232,7 @@
 												xtype: 'textfield',
 												dock: 'top',
 												name: 'filterForEntries',
-												id: 'filterForEntries',												
+												id: 'filterForEntries',
 												emptyText: 'Filter entries by name',
 												width: '100%',
 												maxLength: 30,
@@ -1254,11 +1253,11 @@
 
 								]
 							}]
-					}).show();				
-								
-				};				
-				
-				
+					}).show();
+
+				};
+
+
 				var historyGridStore = Ext.create('Ext.data.Store', {
 					id: 'historyGridStore',
 					autoLoad: true,
@@ -1286,11 +1285,11 @@
 							totalProperty: 'totalNumber'
 						}
 					})
-				});				
-				
+				});
+
 				var historyGrid = Ext.create('Ext.grid.Panel', {
 					id: 'historyGrid',
-					title: 'Reports &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',										
+					title: 'Reports &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
@@ -1299,7 +1298,7 @@
 					},
 					bufferedRenderer: false,
 					columns: [
-						{text: 'Report Type', dataIndex: 'reportType', width: 200, 
+						{text: 'Report Type', dataIndex: 'reportType', width: 200,
 							renderer: function (value, meta, record) {
 								return record.get('reportTypeDescription');
 							}
@@ -1311,7 +1310,7 @@
 						},
 						{text: 'Run Status', dataIndex: 'runStatus', width: 150,
 							renderer: function (value, meta, record) {
-								if (value === 'E') {									
+								if (value === 'E') {
 									meta.tdCls = 'alert-danger';
 								} else if (value === 'W') {
 									meta.tdCls = 'alert-warning';
@@ -1323,6 +1322,26 @@
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
+						{
+							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>', 
+							dataIndex: 'remainingReportLifetime', 
+							width: 150,
+							sortable: false, renderer: function (value, meta, record) {
+
+								// Defined status color, info, and sybmol
+								var maxHue = 85;
+								var statusColor = (record.data.remainingReportLifetime/record.data.reportLifetimeMax)*maxHue;
+								var statusInfo = ['This report will be removed soon', 'This report still has time before cleanup', 'This report was recently created'];
+								var statusSymbol = ['fa fa-exclamation-circle', 'fa fa-exclamation-triangle', 'fa fa-check-circle'];
+								var statusIndex = Math.floor(record.data.remainingReportLifetime/record.data.reportLifetimeMax*(statusInfo.length-0.1));
+								statusInfo = record.data.remainingReportLifetime == 0 ? 'This report will be removed' : statusInfo[statusIndex];
+								statusSymbol = statusSymbol[statusIndex];
+
+								// Set the value of the cell
+								record.data.remainingReportLifetime = '<span data-qtip="' + statusInfo + '"> <i style="color: hsla(' + statusColor + ', 70%, 50%, 1.0);" class="' + statusSymbol + '" aria-hidden="true"></i> ' + record.data.remainingReportLifetime + '</span>';
+								return record.data.remainingReportLifetime;
+							} 
+						},
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
@@ -1366,7 +1385,7 @@
 										viewHistory();
 									},
 									tooltip: 'View Report'
-								},																
+								},
 								{
 									xtype: 'tbseparator'
 								},
@@ -1420,33 +1439,33 @@
 							viewHistory();
 						},
 						selectionchange: function (grid, record, index, opts) {
-							historyCheckNavButtons();							
+							historyCheckNavButtons();
 						}
 					}
 				});
 
 				addComponentToMainViewPort(historyGrid);
-				
+
 				// Actions
-				
+
 				var historyCheckNavButtons = function () {
 					var cnt = historyGrid.getSelectionModel().getCount();
 					if (cnt === 1) {
 						var record = historyGrid.getSelectionModel().getSelection()[0];
 						if (record.get('runStatus') !== 'C') {
 							Ext.getCmp('historyViewButton').setDisabled(true);
-							Ext.getCmp('historyExportButton').setDisabled(true);	
+							Ext.getCmp('historyExportButton').setDisabled(true);
 						} else {
 							Ext.getCmp('historyViewButton').setDisabled(false);
-							Ext.getCmp('historyExportButton').setDisabled(false);							
-						}						
-						
+							Ext.getCmp('historyExportButton').setDisabled(false);
+						}
+
 						if (record.get('runStatus') !== 'W') {
 							Ext.getCmp('historyDeleteButton').setDisabled(false);
 						} else {
 							Ext.getCmp('historyDeleteButton').setDisabled(true);
 						}
-						
+
 					} else if (cnt > 1) {
 						Ext.getCmp('historyDeleteButton').setDisabled(false);
 						Ext.getCmp('historyViewButton').setDisabled(true);
@@ -1456,16 +1475,16 @@
 						Ext.getCmp('historyDeleteButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
 					}
-				};				
-				
-				
+				};
+
+
 				//
-				//  HISTORY VIEW WINDOW CSV OR HTML 
+				//  HISTORY VIEW WINDOW CSV, HTML, or PDF
 				//
 				//
 				var historyViewWin = function () {
 
-		
+
 					var contentData ='';
 					var historyTitle='';
 					var setHistoryContentData = function(){
@@ -1484,6 +1503,11 @@
 								}
 								else if (reportFormat === 'text-csv') {
 									contentData = CoreUtil.csvToHTML(reportData);
+								}
+								else if (reportFormat === 'application-pdf') {
+									contentData = '<object data="' + response.request.url + '?notAttach=true" type="application/pdf" style="width:100%; height:97%;">'
+									+ 'Your browser does not support pdfs, <a href="' + response.request.url + '">click here to download the file.</a>'
+									+ '</object>';
 								}
 								else{
 									contentData = reportData;
@@ -1504,7 +1528,7 @@
 							Ext.getCmp('historyGrid').getSelectionModel().selectPrevious();
 						}
 
-						var record = historyGrid.getSelectionModel().getSelection()[0]; 
+						var record = historyGrid.getSelectionModel().getSelection()[0];
 						Ext.getCmp('previewWinTools-download').setDisabled(true);
 						var formattedDate = Ext.util.Format.date(record.get('createDts'),'m/d/y H:i:s');
 						Ext.getCmp('viewHistoryData').setTitle("View Report Data - "+record.get('reportTypeDescription') +' '+formattedDate);
@@ -1512,10 +1536,10 @@
 						if (record.get('runStatus') === 'C') {
 							Ext.getCmp('previewWinTools-download').setDisabled(false);
 							setHistoryContentData();
-						} else if (record.get('runStatus') === 'W') {						
-							Ext.getCmp('viewHistoryData').update("Generating...");						
+						} else if (record.get('runStatus') === 'W') {
+							Ext.getCmp('viewHistoryData').update("Generating...");
 						} else if (record.get('runStatus') === 'E') {
-							Ext.getCmp('viewHistoryData').update("Failed to generate.");						
+							Ext.getCmp('viewHistoryData').update("Failed to generate.");
 						}
 						checkPreviewButtons();
 					};
@@ -1591,15 +1615,15 @@
 							]
 						}]
 					}).show();
-				};				
-				
-				
+				};
+
+
 				var historyRefreshGrid = function () {
 					Ext.getCmp('historyGrid').getStore().load();
 				};
-				
+
 				var viewHistory = function () {
-					var record = historyGrid.getSelectionModel().getSelection()[0]; 
+					var record = historyGrid.getSelectionModel().getSelection()[0];
 					if (record.get('runStatus') === 'C') {
 						historyViewWin();
 					}
@@ -1674,21 +1698,21 @@
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
 					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
-				};	
-				
+				};
+
 				CoreService.userservice.getCurrentUser().then(function(user){
 					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
-						Ext.getCmp('scheduledReportBtn').setHidden(false);					
-					}				
-				});	
+						Ext.getCmp('scheduledReportBtn').setHidden(false);
+					}
+				});
 
-				
-				
-				
-				
+
+
+
+
 			});
 
         </script>
 
     </stripes:layout-component>
-</stripes:layout-render>		
+</stripes:layout-render>

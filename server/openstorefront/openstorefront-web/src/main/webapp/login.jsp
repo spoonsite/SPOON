@@ -273,7 +273,7 @@
 				<br>
 				<br>
 				Password <br>
-				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ submitForm(); } ">
+				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ keyPressLogin(); } ">
 				<p id="passwordError" class="clearError" style="color: red; font-weight: bold"></p>					
 				<br>
 				<br>
@@ -312,6 +312,12 @@
 					$('#registration').removeClass('hidden');
 				}
 			});
+			
+			var keyPressLogin = function() {
+				clearTimeout($.data(this, 'logintimer'));
+				var wait = setTimeout(submitForm, 500);
+				$(this).data('logintimer', wait);
+			};
 			
 			var QueryString = function () {				
 				  var query_string = {};

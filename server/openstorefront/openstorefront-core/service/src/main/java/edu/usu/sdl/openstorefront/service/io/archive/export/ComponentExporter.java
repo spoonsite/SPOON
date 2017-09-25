@@ -185,8 +185,8 @@ public class ComponentExporter
 						archive.save();
 
 					} catch (Exception ex) {
-						LOG.log(Level.WARNING, "Failed to Load searches", ex);
-						addError("Unable to load searches: " + dataFile.getName());
+						LOG.log(Level.WARNING, "Failed to Load component", ex);
+						addError("Unable to load component: " + dataFile.getName());
 					}
 				}
 			}

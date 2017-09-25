@@ -131,15 +131,25 @@ Ext.define('OSF.form.Attributes', {
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
 								if (attributeType.attributeValueType === 'NUMBER') {
-									if (!Ext.isNumeric(data.attributeCode)) {
+									if (!Ext.isNumeric(data.attributeCode)) {									
 										valid = false;
 									}
+									if (valid) {
+										//check percision; this will enforce max allowed
+										try {
+											var valueNumber = new Number(data.attributeCode);
+											data.attributeCode = valueNumber.toString();
+											data.componentAttributePk.attributeCode = valueNumber.toString();
+										} catch(e) {
+											valid = false;
+										}
+									}									
 								}								
 								
 								if (!valid) {
 									Ext.Msg.show({
 										title:'Validation Error',
-										message: 'Attribute Code must be numberic for this attribute type',
+										message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
 										buttons: Ext.Msg.OK,
 										icon: Ext.Msg.ERROR,
 										fn: function(btn) {

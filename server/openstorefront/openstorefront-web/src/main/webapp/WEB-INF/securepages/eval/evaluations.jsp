@@ -38,7 +38,8 @@
 			Ext.onReady(function () {
 				
 				var evaluationGrid = Ext.create('Ext.grid.Panel', {					
-					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allow editing evaluations for entries" ></i>',										
+					id: 'evaluationGrid',
+					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allows editing evaluations for entries" ></i>',										
 					columnLines: true,
 					store: {
 						autoLoad: false,
@@ -104,6 +105,13 @@
 						},						
 						selectionchange: function(selModel, selected, opts) {
 							var tools = evaluationGrid.getComponent('tools');
+							var evalGrid = Ext.getCmp('evaluationGrid');
+
+							if (evalGrid.getSelectionModel().getCount() === 1) {
+								Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+							} else {
+								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+							}
 
 							if (selected.length > 0) {									
 								tools.getComponent('edit').setDisabled(false);	
@@ -129,8 +137,9 @@
 									valueField: 'code',								
 									emptyText: 'All',
 									labelAlign: 'top',
+									typeAhead: true,
 									width: 250,
-									editable: false,
+									editable: true,
 									forceSelection: true,
 									store: {									
 										autoLoad: true,
@@ -227,6 +236,18 @@
 									}
 								},
 								{
+									text: 'View',
+									id: 'lookupGrid-tools-preview',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									disabled: true,
+									handler: function () {
+										var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
+										actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
+									}
+								},
+								{
 									xtype: 'tbseparator'
 								},
 								{
@@ -316,7 +337,8 @@
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
 										width: '100%',
-										editable: false,
+										typeAhead: true,
+										editable: true,
 										forceSelection: true,
 										store: {									
 											autoLoad: true,
@@ -388,6 +410,84 @@
 					actionRefresh();
 				});
 				
+				var previewContents = Ext.create('OSF.ux.IFrame', {
+					src: ''
+				});
+
+				var previewComponentWin = Ext.create('Ext.window.Window', {
+					width: '70%',
+					height: '80%',
+					maximizable: true,
+					title: 'Preview',
+					iconCls: 'fa fa-lg fa-eye',
+					modal: true,
+					layout: 'fit',
+					items: [
+						previewContents
+					],
+					tools: [
+						{
+							type: 'up',
+							tooltip: 'popout preview',
+							handler: function(){
+								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('evaluationGrid').getSelection()[0].get('componentId'), "Preview");
+							}
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Previous',
+									id: 'previewWinTools-previousBtn',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
+									handler: function() {
+										actionPreviewNextRecord(false);
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function() {
+										this.up('window').hide();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Next',
+									id: 'previewWinTools-nextBtn',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+									iconAlign: 'right',
+									handler: function() {
+										actionPreviewNextRecord(true);
+									}
+								}
+							]
+						}
+					]
+				});
+
+				var actionPreviewNextRecord = function(next) {
+					if (next) {
+						Ext.getCmp('evaluationGrid').getSelectionModel().selectNext();
+					} else {
+						Ext.getCmp('evaluationGrid').getSelectionModel().selectPrevious();
+					}
+					var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
+					actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
+				};
+
+				var actionPreviewComponent = function(componentId, evalId){
+					previewComponentWin.show();
+					previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
+				};
 				
 			});
 

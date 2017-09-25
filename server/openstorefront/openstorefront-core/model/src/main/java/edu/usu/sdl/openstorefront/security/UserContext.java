@@ -67,45 +67,47 @@ public class UserContext
 	{
 		Set<String> uniquePermissions = new HashSet<>();
 		for (SecurityRole role : roles) {
-			for (SecurityRolePermission securityPermission : role.getPermissions()) {
-				uniquePermissions.add(securityPermission.getPermission());
+			if (role.getPermissions() != null) {
+				for (SecurityRolePermission securityPermission : role.getPermissions()) {
+					uniquePermissions.add(securityPermission.getPermission());
+				}
 			}
 		}
 		return uniquePermissions;
 	}
-	
-	public boolean allowUnspecifiedDataSources() 
+
+	public boolean allowUnspecifiedDataSources()
 	{
 		boolean allow = false;
-		
+
 		for (SecurityRole role : roles) {
 			if (role.getAllowUnspecifiedDataSource()) {
 				allow = true;
 				break;
 			}
-		}		
-		
+		}
+
 		return allow;
 	}
-	
-	public boolean allowUnspecifiedDataSensitivty() 
+
+	public boolean allowUnspecifiedDataSensitivty()
 	{
 		boolean allow = false;
-		
+
 		for (SecurityRole role : roles) {
 			if (role.getAllowUnspecifiedDataSensitivity()) {
 				allow = true;
 				break;
 			}
-		}		
-		
-		return allow;		
-	}	
+		}
+
+		return allow;
+	}
 
 	public Set<String> dataSources()
 	{
 		Set<String> uniqueSources = new HashSet<>();
-		for (SecurityRole role : roles) {			
+		for (SecurityRole role : roles) {
 			if (role.getDataSecurity() != null) {
 				for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
 					if (StringUtils.isNotBlank(securityRoleData.getDataSource())) {
@@ -131,11 +133,11 @@ public class UserContext
 		}
 		return uniqueSensitivity;
 	}
-	
-	public String userLandingPage() 
+
+	public String userLandingPage()
 	{
 		String landingPage = "/";
-		if (userProfile != null ) {
+		if (userProfile != null) {
 			if (StringUtils.isNotBlank(userProfile.getLandingPage())) {
 				landingPage = userProfile.getLandingPage();
 			} else {
@@ -155,7 +157,7 @@ public class UserContext
 
 						return 0;
 					});
-					if (StringUtils.isNotBlank(roles.get(0).getLandingPage()))  {
+					if (StringUtils.isNotBlank(roles.get(0).getLandingPage())) {
 						landingPage = roles.get(0).getLandingPage();
 					}
 				}

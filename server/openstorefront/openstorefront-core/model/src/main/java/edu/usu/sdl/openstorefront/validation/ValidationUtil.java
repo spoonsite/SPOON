@@ -167,7 +167,9 @@ public class ValidationUtil
 									if (returnObj != null) {
 										for (Object itemObj : (Collection) returnObj) {
 											if (itemObj != null) {
-												ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+												if (ReflectionUtil.isComplexClass(itemObj.getClass())) {
+													ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+												}
 											} else {
 												log.log(Level.WARNING, "There is a NULL item in a collection.  Check data passed in to validation.");
 											}
@@ -195,7 +197,7 @@ public class ValidationUtil
 								if (validateModel.getSantize()) {
 									Sanitize santizers = field.getAnnotation(Sanitize.class);
 									if (santizers != null) {
-										for (Class<? extends Sanitizer>  sanitizeClass : santizers.value()) {
+										for (Class<? extends Sanitizer> sanitizeClass : santizers.value()) {
 											try {
 												Sanitizer santizer = sanitizeClass.newInstance();
 

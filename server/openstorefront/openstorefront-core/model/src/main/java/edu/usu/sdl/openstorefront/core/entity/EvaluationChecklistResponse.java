@@ -75,6 +75,15 @@ public class EvaluationChecklistResponse
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;
 
+	@ConsumeField
+	@APIDescription("Private information is not published; response and question will not show.")
+	private Boolean privateFlg;
+
+	private Integer sortOrder;
+
+	@APIDescription("Indicates that an evaluator manually added or removed; This used for auto syncing.")
+	private Boolean userAddRemoveFlg;
+
 	public EvaluationChecklistResponse()
 	{
 	}
@@ -86,11 +95,14 @@ public class EvaluationChecklistResponse
 		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, checklistResponse);
 		super.updateFields(entity);
 
+		setQuestionId(checklistResponse.getQuestionId());
 		setPrivateNote(checklistResponse.getPrivateNote());
 		setResponse(checklistResponse.getResponse());
 		setScore(checklistResponse.getScore());
 		setNotApplicable(checklistResponse.getNotApplicable());
 		setWorkflowStatus(checklistResponse.getWorkflowStatus());
+		setPrivateFlg(checklistResponse.getPrivateFlg());
+		setUserAddRemoveFlg(checklistResponse.getUserAddRemoveFlg());
 
 	}
 
@@ -204,6 +216,36 @@ public class EvaluationChecklistResponse
 	public void setNotApplicable(Boolean notApplicable)
 	{
 		this.notApplicable = notApplicable;
+	}
+
+	public Boolean getPrivateFlg()
+	{
+		return privateFlg;
+	}
+
+	public void setPrivateFlg(Boolean privateFlg)
+	{
+		this.privateFlg = privateFlg;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
+	}
+
+	public Boolean getUserAddRemoveFlg()
+	{
+		return userAddRemoveFlg;
+	}
+
+	public void setUserAddRemoveFlg(Boolean userAddRemoveFlg)
+	{
+		this.userAddRemoveFlg = userAddRemoveFlg;
 	}
 
 }

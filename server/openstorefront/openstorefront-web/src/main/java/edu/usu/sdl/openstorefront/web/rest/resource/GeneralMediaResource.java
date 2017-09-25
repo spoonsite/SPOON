@@ -15,15 +15,21 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GeneralMediaView;
+import edu.usu.sdl.openstorefront.core.view.GeneralMediaWrapper;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -35,6 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  *
@@ -59,14 +66,43 @@ public class GeneralMediaResource
 
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setActiveStatus(filterQueryParams.getStatus());
-		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(generalMediaExample);
-		generalMedia = filterQueryParams.filter(generalMedia);
-		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
+		QueryByExample<GeneralMedia> queryByExample = new QueryByExample<>(generalMediaExample);
 
-		GenericEntity<List<GeneralMediaView>> entity = new GenericEntity<List<GeneralMediaView>>(generalMediaViews)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		GeneralMedia generalMediaStartExample = new GeneralMedia();
+		generalMediaStartExample.setUpdateDts(filterQueryParams.getStart());
+
+		GeneralMedia generalMediaEndExample = new GeneralMedia();
+		generalMediaEndExample.setUpdateDts(filterQueryParams.getEnd());
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(generalMediaStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(generalMediaEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filterQueryParams.getMax());
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+
+		GeneralMedia generalMediaSortExample = new GeneralMedia();
+		Field sortField = ReflectionUtil.getField(generalMediaSortExample, filterQueryParams.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), generalMediaSortExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(generalMediaSortExample);
+		}
+
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(queryByExample);
+		long total = service.getPersistenceService().countByExample(queryByExample);
+		GeneralMediaWrapper wrapper = new GeneralMediaWrapper(GeneralMediaView.toViewList(generalMedia), total);
+
+		return sendSingleEntityResponse(wrapper);
 	}
 
 	@GET

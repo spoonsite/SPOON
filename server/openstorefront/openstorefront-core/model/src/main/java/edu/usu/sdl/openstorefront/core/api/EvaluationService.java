@@ -57,12 +57,21 @@ public interface EvaluationService
 	public String saveEvaluationAll(EvaluationAll evaluationAll);
 
 	/**
-	 * Get a complete evaluation model
+	 * Get a complete evaluation model This get published and unpublished data
 	 *
 	 * @param evaluationId
 	 * @return null if not found
 	 */
 	public EvaluationAll getEvaluation(String evaluationId);
+
+	/**
+	 * Get a complete evaluation model
+	 *
+	 * @param evaluationId
+	 * @param publicInformationOnly
+	 * @return
+	 */
+	public EvaluationAll getEvaluation(String evaluationId, boolean publicInformationOnly);
 
 	/**
 	 * Gets published evaluations (only public information)
@@ -81,7 +90,7 @@ public interface EvaluationService
 	public EvaluationAll getLatestEvaluation(String componentId);
 
 	/**
-	 * Create an evaluation base on the template
+	 * Create an evaluation based on the template
 	 *
 	 * @param evaluation
 	 * @return
@@ -89,10 +98,26 @@ public interface EvaluationService
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
 	/**
+	 * Update an evaluation to reflect the latest version of the template it was
+	 * based on
+	 *
+	 * @param evaluation
+	 */
+	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation);
+
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
+	public void updateEvaluationsToLatestTemplateVersion(List<String> evaluationIds);
+
+	/**
 	 * Make sure the evaluation component change request existing if it doesn't
 	 * create one.
 	 *
-	 * @param evaluation
+	 * @param evaluationId
 	 */
 	public void checkEvaluationComponent(String evaluationId);
 
@@ -130,4 +155,11 @@ public interface EvaluationService
 	 */
 	public String copyEvaluation(String evaluationId);
 
+	/**
+	 * This will approve the change request and approve entry if needed
+	 *
+	 * @param evaluationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void approveEvaluationSummary(String evaluationId);
 }
