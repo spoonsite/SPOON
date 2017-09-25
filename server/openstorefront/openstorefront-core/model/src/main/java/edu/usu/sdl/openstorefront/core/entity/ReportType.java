@@ -43,6 +43,7 @@ public class ReportType
 	public static final String CATEGORY_COMPONENT = "CATCOMP";
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
 	public static final String EVALUATION_STATUS = "EVALSTAT";
+	public static final String ACTION_REPORT = "ACTION";
 
 	private String requiredPermission;
 	private boolean componentReport;
@@ -86,6 +87,11 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
+		
+		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action Report", "Emails a TODO report"));
+		((ReportType) codeMap.get(ACTION_REPORT)).setComponentReport(true);
+		((ReportType) codeMap.get(ACTION_REPORT)).getSupportedFormats().add(ReportFormat.HTML);
+		((ReportType) codeMap.get(ACTION_REPORT)).getSupportedFormats().add(ReportFormat.PDF);
 
 
 		return codeMap;

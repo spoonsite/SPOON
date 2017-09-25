@@ -192,7 +192,6 @@ public class Component
 		this.setName(component.getName());
 		if ((ApprovalStatus.PENDING.equals(this.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(this.getApprovalState()))
 				&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
-			this.setApprovalState(component.getApprovalState());
 			component.setApprovedUser(SecurityUtil.getCurrentUserName());
 			component.setApprovedDts(TimeUtil.currentDate());
 
@@ -201,11 +200,11 @@ public class Component
 
 		} else if (ApprovalStatus.APPROVED.equals(this.getApprovalState())
 				&& (ApprovalStatus.PENDING.equals(component.getApprovalState())) || ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
-			this.setApprovalState(component.getApprovalState());
 			this.setApprovedUser(null);
 			this.setApprovedDts(null);
 		}
 
+		this.setApprovalState(component.getApprovalState());
 		this.setDescription(component.getDescription());
 		this.setGuid(component.getGuid());
 		this.setLastActivityDts(TimeUtil.currentDate());

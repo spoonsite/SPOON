@@ -109,6 +109,14 @@ Ext.define('OSF.form.ChecklistAll', {
 						{ text: 'Response', dataIndex: 'response', width: 250, cellWrap: true },
 						{ text: 'Private Notes', dataIndex: 'privateNote', width: 250, cellWrap: true }							
 					]
+				},
+				{ text: 'Private', dataIndex: 'privateFlg', width: 170, align: 'center', hidden: true,
+					renderer: function(value, meta) {
+						if (value) {
+							meta.tdCls = 'alert-danger';
+							return '<i class="fa fa-lg fa-eye-slash"></i>';
+						}
+					}
 				}
 			],
 			dockedItems: [
@@ -220,7 +228,18 @@ Ext.define('OSF.form.ChecklistAll', {
 						},
 						items: [
 							{
+								bodyStyle: 'font-size: 19px; line-height: 1.25em;',
 								html: record.get('questionText')
+							},
+							{
+								title: 'Scoring Criteria',
+								itemId: 'scoreCriteria',
+								collapsible: true,
+								titleCollapse: true,
+								collapsed: true,
+								hidden: true,
+								margin: '0 0 10 0',
+								html: record.get('scoreCriteria')
 							},
 							{
 								xtype: 'hidden',
@@ -308,6 +327,7 @@ Ext.define('OSF.form.ChecklistAll', {
 								displayField: 'description',
 								valueField: 'code',
 								labelSeparator: '',
+								labelAlign: 'top',
 								store: {
 									autoLoad: true,
 									proxy: {
@@ -315,6 +335,11 @@ Ext.define('OSF.form.ChecklistAll', {
 										url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 									}
 								}			
+							},
+							{
+								xtype: 'checkbox',
+								name: 'privateFlg',
+								boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides when published"></i>'													
 							}							
 						]
 					}
@@ -323,6 +348,9 @@ Ext.define('OSF.form.ChecklistAll', {
 			});
 			editWin.show();
 			editWin.getComponent('form').loadRecord(record);
+			if (record.get('scoreCriteria')) {
+				editWin.queryById('scoreCriteria').setHidden(false);
+			}
 			
 		};
 	

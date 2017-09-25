@@ -34,6 +34,7 @@ import static edu.usu.sdl.openstorefront.core.api.query.QueryType.COUNT;
 import static edu.usu.sdl.openstorefront.core.api.query.QueryType.COUNT_DISTINCT;
 import static edu.usu.sdl.openstorefront.core.api.query.QueryType.SELECT;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
@@ -46,6 +47,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -365,18 +367,16 @@ public class OrientPersistenceService
 			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
 		}
 
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
-			}
-		});
+		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
+		if (StringUtils.isNotBlank(extraWhere.getKey())) {
+			appendToWhere(queryString, extraWhere.getKey());
+			mappedParams.putAll(extraWhere.getValue());
+		}
 
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -491,18 +491,16 @@ public class OrientPersistenceService
 			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
 		}
 
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
-			}
-		});
+		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
+		if (StringUtils.isNotBlank(extraWhere.getKey())) {
+			appendToWhere(queryString, extraWhere.getKey());
+			mappedParams.putAll(extraWhere.getValue());
+		}
 
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
 
 		OObjectDatabaseTx db = getConnection();
 		try {
@@ -545,6 +543,14 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
+		List<T> results = query(query.getKey(), query.getValue(), queryByExample.isReturnNonProxied());
+		return results;
+	}
+
+	public SimpleEntry<String, Map<String, Object>> generateQuery(QueryByExample queryByExample)
+	{
+
 		StringBuilder queryString = new StringBuilder();
 
 		switch (queryByExample.getQueryType()) {
@@ -569,14 +575,18 @@ public class OrientPersistenceService
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions()));
 			}
 		}
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
+		if (queryByExample.getInExample() != null) {
+			String inClause = generateWhereClause(queryByExample.getInExample(), new ComplexFieldStack(), queryByExample.getInExampleOption(), queryByExample.getFieldOptions());
+			if (StringUtils.isNotBlank(inClause)) {
+				appendToWhere(queryString, inClause);
+				mappedParams.putAll(mapParameters(queryByExample.getInExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getInExampleOption(), queryByExample.getFieldOptions()));
 			}
-		});
+		}
+		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
+		if (StringUtils.isNotBlank(extraWhere.getKey())) {
+			appendToWhere(queryString, extraWhere.getKey());
+			mappedParams.putAll(extraWhere.getValue());
+		}
 
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
@@ -606,9 +616,83 @@ public class OrientPersistenceService
 		if (queryByExample.isParallelQuery()) {
 			queryString.append(" PARALLEL ");
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
+		return new SimpleEntry(queryString.toString(), mappedParams);
+	}
 
-		List<T> results = query(queryString.toString(), mappedParams, queryByExample.isReturnNonProxied());
-		return results;
+	private SimpleEntry<String, Map<String, Object>> processExtraWhereClauses(QueryByExample queryByExample)
+	{
+		StringBuilder queryString = new StringBuilder();
+		Map<String, Object> mappedParams = new HashMap<>();
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			if (item.getClass() == SpecialOperatorModel.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else if (item.getClass() == WhereClauseGroup.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
+			}
+		});
+		return new SimpleEntry(queryString.toString(), mappedParams);
+	}
+
+	private SimpleEntry<String, Map<String, Object>> ProcessSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
+	{
+		Map<String, Object> mappedParams = new HashMap<>();
+		String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
+		if (StringUtils.isNotBlank(extraWhere)) {
+			mappedParams = mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
+		}
+		return new SimpleEntry(extraWhere, mappedParams);
+	}
+
+	private SimpleEntry<String, Map<String, Object>> ProcessWhereClauseGroup(QueryByExample queryByExample, WhereClauseGroup group)
+	{
+		StringBuilder queryString = new StringBuilder();
+		Map<String, Object> mappedParams = new HashMap<>();
+		group.getExtraWhereClause().forEach(item -> {
+			if (item.getClass() == SpecialOperatorModel.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (queryString.length() > 0) {
+						queryString.append(group.getStatementOption().getCondition());
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else if (item.getClass() == WhereClauseGroup.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (queryString.length() > 0) {
+						queryString.append(group.getStatementOption().getCondition());
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
+			}
+		});
+		if (queryString.length() > 0) {
+			// wrap the group in ()
+			queryString.insert(0, "(");
+			queryString.append(" )");
+		}
+		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
 	private void appendToWhere(StringBuilder queryString, String conditionClause)
@@ -674,6 +758,21 @@ public class OrientPersistenceService
 							if (GenerateStatementOption.OPERATION_NULL.equals(fieldOperation.getOperation())
 									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(fieldOperation.getOperation())) {
 								addParameter = false;
+							}
+							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation())) {
+								addParameter = false;
+								where.append(" [ :")
+										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+										.append(fieldOperation.getParameterSuffix())
+										.append(0);
+								for (int i = 1; i < generateStatementOption.getParameterValues().size(); i++) {
+									where.append(", :")
+											.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+											.append(fieldOperation.getParameterSuffix())
+											.append(i);
+								}
+								where.append(" ]");
 							}
 
 							if (addParameter) {
@@ -768,6 +867,13 @@ public class OrientPersistenceService
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
+						} else if ((GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation()))
+								&& !generateStatementOption.getParameterValues().isEmpty()) {
+							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
+							for (Integer i = 0; i < generateStatementOption.getParameterValues().size(); i++) {
+								parameterMap.put(fieldName + fieldOperation.getParameterSuffix() + i.toString(), generateStatementOption.getParameterValues().get(i));
+							}
 						} else {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							parameterMap.put(fieldName + fieldOperation.getParameterSuffix(), value);

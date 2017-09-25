@@ -48,6 +48,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +134,16 @@ public class ReportResource
 		ReportWrapper reportWrapper = new ReportWrapper();
 		reportWrapper.getData().addAll(ReportView.toReportView(reports));
 		reportWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
-
+		
+		//	Calculate the remaining lifetime for each report being displayed
+		reportWrapper.getData().stream().forEach(report -> {
+			long timeRemaining;
+			timeRemaining = report.getReportLifetimeMax() - ChronoUnit.DAYS.between(report.getCreateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), LocalDate.now());
+			if (report.getCreateDts() != null) {
+				report.setRemainingReportLifetime(timeRemaining >= 0 ? timeRemaining : 0);
+			}
+		});
+		
 		return sendSingleEntityResponse(reportWrapper);
 	}
 
@@ -162,7 +174,8 @@ public class ReportResource
 	@DataType(Report.class)
 	@Path("/{id}/report")
 	public Response getReportData(
-			@PathParam("id") String reportId
+			@PathParam("id") String reportId,
+			@QueryParam("notAttach") boolean notAttach
 	)
 	{
 		Report reportExample = new Report();
@@ -188,7 +201,10 @@ public class ReportResource
 
 					});
 					responseBuilder.header("Content-Type", ReportFormat.mimeType(report.getReportFormat()));
-					responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+					
+					if (!notAttach) {
+						responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+					}
 					response = responseBuilder.build();
 				}
 			}

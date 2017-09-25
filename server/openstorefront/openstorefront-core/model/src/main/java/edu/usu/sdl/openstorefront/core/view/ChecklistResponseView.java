@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
+import edu.usu.sdl.openstorefront.core.sort.ChecklistResponseViewComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class ChecklistResponseView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		checklistResponseView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, checklistResponseView.getWorkflowStatus()));
-		
+
 		Service service = ServiceProxyFactory.getServiceProxy();
 		ChecklistQuestion questionFound = service.getChecklistService().findQuestion(response.getQuestionId());
 		if (questionFound != null) {
@@ -68,7 +69,20 @@ public class ChecklistResponseView
 		for (EvaluationChecklistResponse response : responses) {
 			views.add(toView(response));
 		}
+		views.sort(new ChecklistResponseViewComparator<>());
+
 		return views;
+	}
+
+	public EvaluationChecklistResponse toResponse()
+	{
+		EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+		try {
+			BeanUtils.copyProperties(response, this);
+		} catch (IllegalAccessException | InvocationTargetException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return response;
 	}
 
 	public ChecklistQuestionView getQuestion()

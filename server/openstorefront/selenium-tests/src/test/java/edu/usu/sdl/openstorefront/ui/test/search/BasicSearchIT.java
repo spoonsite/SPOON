@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.List;
 import java.util.logging.Logger;
@@ -95,7 +93,7 @@ public class BasicSearchIT
 		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchFieldLandingPage-inputEl"))).sendKeys(search);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
@@ -109,7 +107,7 @@ public class BasicSearchIT
 		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 		
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchFieldLandingPage-inputEl"))).sendKeys(search);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 		
@@ -160,20 +158,4 @@ public class BasicSearchIT
 		Assert.assertTrue(isResult);
 	}
 
-	public static void createBasicSearchComponent(String componentName)
-	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("My name is " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
-	}
 }

@@ -17,9 +17,14 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -95,9 +100,16 @@ public class EvaluationTemplateResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationTemplate.class)
-	public Response createEvaluationTemplate(EvaluationTemplate evaluationTemplate)
+	public Response createEvaluationTemplate(UpdateEvaluationTemplateModel model)
 	{
-		return saveEvaluationTemplate(evaluationTemplate, true);
+		EvaluationTemplate evaluationTemplate = model.getEvaluationTemplate();
+		ValidationResult validationResult = evaluationTemplate.validate();
+		if (validationResult.valid()) {
+			evaluationTemplate = evaluationTemplate.save();
+			return Response.created(URI.create("v1/resource/evaluationtemplates/" + evaluationTemplate.getTemplateId())).entity(evaluationTemplate).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@PUT
@@ -109,32 +121,59 @@ public class EvaluationTemplateResource
 	@Path("/{templateId}")
 	public Response updateChecklistTemplate(
 			@PathParam("templateId") String templateId,
-			EvaluationTemplate evaluationTemplate)
+			UpdateEvaluationTemplateModel model)
 	{
-		EvaluationTemplate existing = new EvaluationTemplate();
-		existing.setTemplateId(templateId);
-		existing = existing.find();
-		if (existing == null) {
+		EvaluationTemplate evaluationTemplate = model.getEvaluationTemplate();
+		EvaluationTemplate existingTemplate = new EvaluationTemplate();
+		existingTemplate.setTemplateId(templateId);
+		existingTemplate = existingTemplate.find();
+		if (existingTemplate == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		evaluationTemplate.setTemplateId(templateId);
-		return saveEvaluationTemplate(evaluationTemplate, false);
-	}
 
-	private Response saveEvaluationTemplate(EvaluationTemplate evaluationTemplate, boolean create)
-	{
+		evaluationTemplate.setTemplateId(templateId);
 		ValidationResult validationResult = evaluationTemplate.validate();
+
 		if (validationResult.valid()) {
 			evaluationTemplate = evaluationTemplate.save();
-
-			if (create) {
-				return Response.created(URI.create("v1/resource/evaluationtemplates/" + evaluationTemplate.getTemplateId())).entity(evaluationTemplate).build();
-			} else {
-				return Response.ok(evaluationTemplate).build();
-			}
+			setEvaluationUpdatePending(templateId, model.getEvaluationIdsToUpdate());
+			service.getEvaluationService().updateEvaluationsToLatestTemplateVersion(model.getEvaluationIdsToUpdate());
+			return Response.ok(evaluationTemplate).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
+	}
+
+	private void setEvaluationUpdatePending(String templateId, List<String> evaluationIdsToUpdate)
+	{
+		Evaluation evaluationExample = new Evaluation();
+		evaluationExample.setTemplateId(templateId);
+		QueryByExample queryByExample = new QueryByExample(evaluationExample);
+
+		if (evaluationIdsToUpdate.size() > 0) {
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			// Define A Special Lookup Operation (IN)
+			Evaluation exampleEvaluation = new Evaluation();
+			exampleEvaluation.setEvaluationId(QueryByExample.STRING_FLAG);
+			specialOperatorModel.setExample(exampleEvaluation);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_IN);
+			specialOperatorModel.getGenerateStatementOption().setParameterValues(evaluationIdsToUpdate);
+
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
+		
+		List<Evaluation> evaluationsToFlag = service.getPersistenceService().queryByExample(queryByExample);
+		evaluationsToFlag.forEach(eval -> {
+			if (eval.getTemplateUpdatePending() == null || !eval.getTemplateUpdatePending()) {
+				
+				Evaluation proxyExample = new Evaluation();
+				proxyExample.setEvaluationId(eval.getEvaluationId());
+				
+				Evaluation proxy = proxyExample.findProxy();
+				proxy.setTemplateUpdatePending(Boolean.TRUE);
+				proxy.save();
+			}
+		});
 	}
 
 	@PUT

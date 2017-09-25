@@ -25,6 +25,7 @@ public class SystemStatusView
 
 	private boolean started;
 	private String systemStatus;
+	private String detailedStatus;
 
 	public SystemStatusView()
 	{
@@ -48,6 +49,16 @@ public class SystemStatusView
 	public void setSystemStatus(String systemStatus)
 	{
 		this.systemStatus = systemStatus;
+	}
+
+	public String getDetailedStatus()
+	{
+		return detailedStatus;
+	}
+
+	public void setDetailedStatus(String detailedStatus)
+	{
+		this.detailedStatus = detailedStatus;
 	}
 
 }

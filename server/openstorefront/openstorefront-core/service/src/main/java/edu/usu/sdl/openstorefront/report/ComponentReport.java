@@ -62,7 +62,7 @@ public class ComponentReport
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
 		components = FilterEngine.filter(components);
-		
+
 	}
 
 	@Override
@@ -72,32 +72,32 @@ public class ComponentReport
 
 		//write header
 		cvsGenerator.addLine("Entry Report", sdf.format(TimeUtil.currentDate()));
-		
+
 		List<String> header = new ArrayList<>();
 		header.add("Name");
 		header.add("Organization");
 		header.add("Last Activity Date");
-		header.add("Approval Status");	
+		header.add("Approval Status");
 		header.add("Approval Date");
 		header.add("Approval User");
 		header.add("Active Status");
 		header.add("Create Date");
 		header.add("Create User");
 		header.add("Last Viewed");
-		header.add("Last Views");
+		header.add("Views (For Tracking Period)");
 		header.add("Resources Clicked");
 		header.add("Active Reviews");
 		header.add("Tags");
 		header.add("Active Questions");
 		header.add("Active Question Responses");
-		
+
 		if (getBranding().getAllowSecurityMarkingsFlg()) {
 			header.add("Security Marking");
-		}		
-		cvsGenerator.addLine(header.toArray());		
-		
-		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));		
-		
+		}
+		cvsGenerator.addLine(header.toArray());
+
+		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
 		//write Body
 		for (Component component : components) {
 
@@ -148,7 +148,7 @@ public class ComponentReport
 			if (componentTracking != null) {
 				lastViewed = sdf.format(componentTracking.getEventDts());
 			}
-			
+
 			List<String> data = new ArrayList<>();
 			data.add(component.getName());
 			data.add(component.getOrganization());
@@ -169,8 +169,8 @@ public class ComponentReport
 
 			if (getBranding().getAllowSecurityMarkingsFlg()) {
 				data.add(component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
-			}		
-			cvsGenerator.addLine(data.toArray());				
+			}
+			cvsGenerator.addLine(data.toArray());
 
 		}
 

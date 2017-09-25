@@ -34,6 +34,7 @@ public class SystemCleanupJob
 		service.getSystemService().cleanUpOldTemporaryMedia();
 		service.getImportService().cleanupOldFileHistory();
 		service.getNotificationService().cleanupOldEvents();
+		service.getReportService().deleteExpiredReports();
 	}
 
 }

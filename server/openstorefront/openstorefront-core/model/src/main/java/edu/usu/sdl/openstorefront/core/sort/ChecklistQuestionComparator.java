@@ -15,16 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.core.sort;
 
-import edu.usu.sdl.openstorefront.core.api.Service;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationSection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
+ * order by QID (numbers first)
  *
  * @author dshurtleff
  * @param <T>
@@ -33,27 +30,30 @@ public class ChecklistQuestionComparator<T extends ChecklistQuestion>
 		implements Comparator<T>
 {
 
-	private Map<String, Integer> sectionScore = new HashMap<>();
-
 	public ChecklistQuestionComparator()
 	{
-		Service service = ServiceProxyFactory.getServiceProxy();
-		List<EvaluationSection> sections = service.getLookupService().findLookup(EvaluationSection.class);
-		sections.sort(new LookupComparator<>());
-
-		int score = 1;
-		for (EvaluationSection section : sections) {
-			sectionScore.put(section.getCode(), score);
-		}
-
 	}
 
 	@Override
 	public int compare(T o1, T o2)
 	{
-		Integer score1 = sectionScore.get(o1.getEvaluationSection());
-		Integer score2 = sectionScore.get(o2.getEvaluationSection());
-		return score1.compareTo(score2);
+		if (o1 == null && o2 == null) {
+			return 0;
+		} else if (o1 != null && o2 == null) {
+			return 1;
+		} else if (o1 == null && o2 != null) {
+			return -1;
+		} else {
+			String quid1 = o1.getQid();
+			String quid2 = o2.getQid();
+
+			if (StringUtils.isNumeric(quid1)
+					&& StringUtils.isNumeric(quid2)) {
+				return Convert.toInteger(quid1).compareTo(Convert.toInteger(quid2));
+			} else {
+				return o1.getQid().compareTo(o2.getQid());
+			}
+		}
 	}
 
 }
