@@ -50,6 +50,9 @@ public abstract class BaseGenerator
 			case ReportFormat.HTML:
 				generator = new HtmlGenerator(report);
 				break;
+			case ReportFormat.PDF:
+				generator = new HtmlToPdfGenerator(report);
+				break;
 			default:
 				throw new UnsupportedOperationException("Unsupported report format: " + report.getReportFormat());
 		}
