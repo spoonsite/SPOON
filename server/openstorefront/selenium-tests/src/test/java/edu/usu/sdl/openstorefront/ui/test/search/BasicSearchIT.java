@@ -95,7 +95,7 @@ public class BasicSearchIT
 		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchFieldLandingPage-inputEl"))).sendKeys(search);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
@@ -109,7 +109,7 @@ public class BasicSearchIT
 		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 		
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchFieldLandingPage-inputEl"))).sendKeys(search);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 		
