@@ -2,10 +2,15 @@
 
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
 
+## Note: 2.4.3
+
+This includes the database upgrade.  Note: rollback to pervious storefront version will require restore from a backup proir to 2.4.3 for existing data to work for that version.
+
+**2.4.2** Must be deployed before 2.4.3 if you have existing data.
 
 ## Note: 2.4.2
 
-Includes a database export and import in preparation for 2.5 upgrade of DB.  If you have an existing database install 2.4.2 before 2.5.
+Includes a database export and import in preparation for 2.4.3 upgrade of DB.  If you have an existing database install 2.4.2 before 2.4.3.
 
 1. Shutdown app server
 2. Backup /var/openstorefront/db directory
