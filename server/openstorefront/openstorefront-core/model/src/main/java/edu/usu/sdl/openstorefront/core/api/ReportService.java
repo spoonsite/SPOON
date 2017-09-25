@@ -78,5 +78,10 @@ public interface ReportService
 	 * @param scheduledReportId
 	 */
 	public void deleteScheduledReport(String scheduledReportId);
+	
+	/**
+	 * Removes all expired report
+	 */
+	public void deleteExpiredReports();
 
 }

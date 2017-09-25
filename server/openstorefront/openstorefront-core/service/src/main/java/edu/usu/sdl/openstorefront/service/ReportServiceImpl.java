@@ -16,9 +16,13 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
@@ -31,6 +35,9 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,6 +200,42 @@ public class ReportServiceImpl
 		ScheduledReport scheduledReport = persistenceService.findById(ScheduledReport.class, scheduledReportId);
 		if (scheduledReport != null) {
 			persistenceService.delete(scheduledReport);
+		}
+	}
+	
+	@Override
+	public void deleteExpiredReports()
+	{
+		//	go through all reports and delete those which are
+		//		"expired" - is older than configured report lifetime.
+		LocalDate expirationLocalDate;
+		LocalDate currentDate = LocalDate.now();
+		
+		try {
+			expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_REPORT_LIFETIME)));
+		}
+		catch (NumberFormatException e) {
+			//	If the configured report lifetime is invalid, fallback to the default value for the report lifetime
+			expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
+		}
+		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		
+		Report reportExample = new Report();
+		Report filteredReportExample = new Report();
+		filteredReportExample.setCreateDts(expirationDate);
+		
+		//	Query reports that are older than the configured expiration value
+		QueryByExample queryByExample = new QueryByExample(reportExample);
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(filteredReportExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		
+		List<Report> results = getPersistenceService().queryByExample(queryByExample);
+		
+		//	Remove expired reports
+		for (Report report : results) {
+			deleteReport(report.getReportId());
 		}
 	}
 
