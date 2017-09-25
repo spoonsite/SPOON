@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.List;
 import java.util.logging.Logger;
@@ -147,4 +149,5 @@ public class BasicSearchIT
 			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
 
 		}
+	}
 }
