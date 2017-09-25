@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.admin;
+package edu.usu.sdl.openstorefront.ui.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import edu.usu.sdl.openstorefront.ui.test.admin.AdminTestBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,13 +34,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminPrintEntryIT
+public class PrintSearchResultsEntryIT
 		extends AdminTestBase
 {
-	// custom template drop-down menu class = x-box-inner x-box-scroller-body-vertical
-	// custom template btn id = customTemplateBtn
-	// print button id = printCustomizedEntryBtn
-	// search field class = home-search-field-new
+
+	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
 	private static String entryName = "A Selenium Test Entry";
 
@@ -59,25 +58,10 @@ public class AdminPrintEntryIT
 		}
 	}
 
-	protected static void createBasicSearchComponent(String componentName)
-	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("Entry name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
-	}
-
 	public void searchAndClickEntry(WebDriver driver, String entryName)
 	{
+		webDriverUtil.getPage(driver, "Landing.action");
+		
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("Test");
@@ -139,7 +123,7 @@ public class AdminPrintEntryIT
 		List<WebElement> templateSections = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#contentInfo-innerCt div h3")));
 
 		boolean isSection = false;
-		
+
 		for (WebElement section : templateSections) {
 
 			if (section.getText().equals("Description:")) {
@@ -148,15 +132,15 @@ public class AdminPrintEntryIT
 		}
 
 		Assert.assertFalse(isSection);
-		
+
 		WebElement printBtn = driver.findElement(By.cssSelector("#printCustomizedEntryBtn"));
-		
+
 		boolean canPrint = false;
-		
-		if(printBtn.isDisplayed() && printBtn.isEnabled()) {
+
+		if (printBtn.isDisplayed() && printBtn.isEnabled()) {
 			canPrint = true;
 		}
-		
+
 		Assert.assertTrue(canPrint);
 
 		driver.close();
