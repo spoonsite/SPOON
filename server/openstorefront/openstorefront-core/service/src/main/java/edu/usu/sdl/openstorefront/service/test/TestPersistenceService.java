@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,17 +32,36 @@ import java.util.Queue;
  */
 public class TestPersistenceService implements PersistenceService
 {
-	private final Map<Class<?>,Queue<List>> resultsMap = new HashMap<>(); 
+
+	// <editor-fold defaultstate="collapsed" desc="Methods for managing the Test data">
+	private Map<Class<?>, Queue<List>> listResultsMap = new HashMap<>();
 
 	public void addQuery(Class<?> cls, List queryResults)
 	{
-		if(!resultsMap.containsKey(cls))
-		{
-			resultsMap.put(cls, new LinkedList<>());
+		if (!listResultsMap.containsKey(cls)) {
+			listResultsMap.put(cls, new LinkedList<>());
 		}
-		resultsMap.get(cls).add(queryResults);
+		listResultsMap.get(cls).add(queryResults);
 	}
-	
+
+	public void clear()
+	{
+		listResultsMap = new HashMap<>();
+	}
+	// </editor-fold>
+
+	@Override
+	public <T> List<T> queryByExample(BaseEntity baseEntity)
+	{
+		List<T> result = new ArrayList<>();
+		if (listResultsMap.containsKey(baseEntity.getClass())
+				&& (!listResultsMap.get(baseEntity.getClass()).isEmpty())) {
+			result = listResultsMap.get(baseEntity.getClass()).poll();
+		}
+		return result;
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
 	@Override
 	public void begin()
 	{
@@ -169,12 +189,6 @@ public class TestPersistenceService implements PersistenceService
 	}
 
 	@Override
-	public <T> List<T> queryByExample(BaseEntity baseEntity)
-	{
-		return resultsMap.get(baseEntity.getClass()).poll();
-	}
-
-	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -239,5 +253,6 @@ public class TestPersistenceService implements PersistenceService
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+	// </editor-fold>
+
 }

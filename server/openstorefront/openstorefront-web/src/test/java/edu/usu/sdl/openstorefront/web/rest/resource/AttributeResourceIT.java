@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.OsgiManager;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
@@ -30,6 +31,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -39,6 +41,7 @@ import org.junit.Test;
  */
 public class AttributeResourceIT extends JerseyTest
 {
+
 	@Override
 	protected Application configure()
 	{
@@ -53,6 +56,12 @@ public class AttributeResourceIT extends JerseyTest
 		OsgiManager.init();
 	}
 
+	@Before
+	public void setup()
+	{
+		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).clear();
+	}
+
 	@AfterClass
 	public static void cleanup()
 	{
@@ -62,39 +71,105 @@ public class AttributeResourceIT extends JerseyTest
 	@Test
 	public void getRequiredAttributeTypesTest()
 	{
-		TestPersistenceService persistenceService = ((TestPersistenceService)ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		//Arrange
+		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
+		ComponentTypeRestriction comp = new ComponentTypeRestriction();
+		comp.setComponentType("COMP");
+		comp.setStorageVersion("1");
+		requiredRestrictions.add(comp);
+
+		List<AttributeType> dbResults = new ArrayList<>();
+		AttributeType type1 = new AttributeType();
+		type1.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type1.setAttributeType("TEST1");
+		type1.setRequiredFlg(Boolean.TRUE);
+
+		AttributeType type2 = new AttributeType();
+		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type2.setAttributeType("TEST2");
+		type2.setRequiredFlg(Boolean.TRUE);
+		type2.setRequiredRestrictions(requiredRestrictions);
+
+		dbResults.add(type1);
+		dbResults.add(type2);
+		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).addQuery(AttributeType.class, dbResults);
+
 		List<AttributeType> expected = new ArrayList<>();
-		AttributeType type = new AttributeType();
-		type.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		type.setAttributeType("TEST");
-		expected.add(type);
-		persistenceService.addQuery(AttributeType.class, expected);
+		AttributeType expectedType = new AttributeType();
+		expectedType.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		expectedType.setAttributeType("TEST1");
+		expected.add(expectedType);
+		
+		//Act
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/required")
 				.queryParam("componentType", "ARTICLE")
 				.request()
 				.get(new GenericType<List<AttributeType>>()
 				{
 				});
+		
+		//Assert
 		Assert.assertNotNull(response);
 		Assert.assertArrayEquals(expected.toArray(), response.toArray());
-
 	}
 
 	@Test
 	public void getOptionalAttributeTypesTest()
 	{
-		AttributeType[] expected = new AttributeType[1];
-		AttributeType type = new AttributeType();
-		type.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		type.setAttributeType("TEST");
-		expected[0] = type;
+		//Arrange
+		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
+		ComponentTypeRestriction comp = new ComponentTypeRestriction();
+		comp.setComponentType("COMP");
+		comp.setStorageVersion("1");
+		requiredRestrictions.add(comp);
+
+		List<AttributeType> dbResults = new ArrayList<>();
+		AttributeType type1 = new AttributeType();
+		type1.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type1.setRequiredFlg(Boolean.FALSE);
+		type1.setAttributeType("TEST1");
+
+		AttributeType type2 = new AttributeType();
+		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type2.setRequiredFlg(Boolean.TRUE);
+		type2.setAttributeType("TEST2");
+		type2.setRequiredRestrictions(requiredRestrictions);
+		
+		AttributeType type3 = new AttributeType();
+		type3.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type3.setRequiredFlg(Boolean.TRUE);
+		type3.setAttributeType("TEST3");
+
+		dbResults.add(type1);
+		dbResults.add(type2);
+		dbResults.add(type3);
+		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).addQuery(AttributeType.class, dbResults);
+
+		List<AttributeType> expected = new ArrayList<>();
+		AttributeType expectedType1 = new AttributeType();
+		expectedType1.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		expectedType1.setRequiredFlg(Boolean.FALSE);
+		expectedType1.setAttributeType("TEST1");
+		
+		AttributeType expectedType2 = new AttributeType();
+		expectedType2.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		expectedType2.setRequiredFlg(Boolean.TRUE);
+		expectedType2.setAttributeType("TEST2");
+		expectedType2.setRequiredRestrictions(requiredRestrictions);
+		
+		expected.add(expectedType1);
+		expected.add(expectedType2);
+
+		//Act
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/optional")
 				.queryParam("componentType", "ARTICLE")
 				.request()
 				.get(new GenericType<List<AttributeType>>()
 				{
 				});
+
+		//Assert
 		Assert.assertNotNull(response);
-		Assert.assertArrayEquals(expected, response.toArray());
+		Assert.assertArrayEquals(expected.toArray(), response.toArray());
 	}
 }

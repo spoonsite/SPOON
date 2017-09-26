@@ -102,6 +102,7 @@ import org.apache.commons.lang.StringUtils;
 public class AttributeResource
 		extends BaseResource
 {
+
 	private static final Logger LOG = Logger.getLogger(AttributeResource.class.getName());
 
 	@Context
@@ -325,7 +326,7 @@ public class AttributeResource
 		for (AttributeType attributeType : attributeTypes) {
 
 			boolean keep = true;
-
+			//check if attribute type is allowed for this component
 			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 				keep = false;
 				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
@@ -355,7 +356,7 @@ public class AttributeResource
 		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets optional attribute types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -366,11 +367,41 @@ public class AttributeResource
 	)
 	{
 		List<AttributeType> optionalAttributes = new ArrayList<>();
-		AttributeType type = new AttributeType();
-		type.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		type.setAttributeType("TEST");
-		optionalAttributes.add(type);
-		
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		attributeTypes.forEach((attributeType) -> {
+			boolean keep = true;
+			boolean required = false;
+			//check if attribute type is allowed for this component
+			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
+				keep = false;
+				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						keep = true;
+					}
+				}
+			}
+			//check required
+			if (keep) {
+				if (attributeType.getRequiredFlg()) {
+					if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+						for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+							if (restriction.getComponentType().equals(componentType)) {
+								required = true;
+							}
+						}
+					} else {
+						required = true;
+					}
+				}
+				if (!required) {
+					optionalAttributes.add(attributeType);
+				}
+			}
+		});
 		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(optionalAttributes)
 		{
 		};
