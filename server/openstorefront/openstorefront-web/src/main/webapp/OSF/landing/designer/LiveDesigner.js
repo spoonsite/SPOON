@@ -479,6 +479,10 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 									{ text: 'Image', dataIndex: 'imageSrc', minWidth: 150, flex: 1,
 										editor: 'textfield'
 									},
+									{
+										text: 'Background Css', dataIndex: 'toolBackground', minWidth: 150, flex: 1,
+										editor: 'textfield'										
+									},
 									{ text: 'Link', dataIndex: 'link', minWidth: 150, flex: 1,
 										editor: 'textfield'
 									}

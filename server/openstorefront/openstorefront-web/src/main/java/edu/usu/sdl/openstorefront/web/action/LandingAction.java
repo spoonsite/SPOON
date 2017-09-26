@@ -60,6 +60,9 @@ public class LandingAction
 			setLandingTemplate(fullTemplate);
 		} else {
 			String defaultLanding = PropertiesManager.getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
+			if (StringUtils.isBlank(defaultLanding)) {
+				defaultLanding = "defaultLanding.jsp";
+			}
 			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/" + defaultLanding));
 		}
 
