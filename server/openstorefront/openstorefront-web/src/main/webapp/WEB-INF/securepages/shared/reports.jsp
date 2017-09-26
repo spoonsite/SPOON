@@ -693,7 +693,7 @@
 						id: 'scheduleReportWin',
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
-						minHeight: 500,
+						height: '80%',
 						y: 100,
 						closeAction: 'destroy',
 						modal: true,
