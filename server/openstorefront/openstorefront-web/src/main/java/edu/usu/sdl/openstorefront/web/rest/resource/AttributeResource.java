@@ -102,7 +102,6 @@ import org.apache.commons.lang.StringUtils;
 public class AttributeResource
 		extends BaseResource
 {
-
 	private static final Logger LOG = Logger.getLogger(AttributeResource.class.getName());
 
 	@Context
@@ -308,7 +307,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute types based on filter")
+	@APIDescription("Gets required attribute types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes/required")
@@ -352,6 +351,27 @@ public class AttributeResource
 		}
 
 		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(requiredAttributes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+	
+	@GET
+	@APIDescription("Gets optional attribute types based on filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/optional")
+	public Response getOptionalAttributeTypes(
+			@QueryParam("componentType") String componentType
+	)
+	{
+		List<AttributeType> optionalAttributes = new ArrayList<>();
+		AttributeType type = new AttributeType();
+		type.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		type.setAttributeType("TEST");
+		optionalAttributes.add(type);
+		
+		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(optionalAttributes)
 		{
 		};
 		return sendSingleEntityResponse(entity);
