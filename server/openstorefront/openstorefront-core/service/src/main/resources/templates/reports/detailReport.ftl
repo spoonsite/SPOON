@@ -121,22 +121,22 @@
 </head>
 <body>
 	<div>
-		<p>Component Details Report: ${reportDate}</p>
-		<p>Entries (${reportSize})</p>
+		<p>Component Details Report: ${reportDate!}</p>
+		<p>Entries (${reportSize!})</p>
 	</div>
 	<hr />
 	<#list components as component>
 	
 		<!--Organization Description-->
 		<#if reportOptions.getDisplayOrgData() == true>
-			<h1>${component.component.getName()}</h1>
-			<p><b>${component.component.getOrganization()}</b></p>
+			<h1>${component.component.getName()!}</h1>
+			<p><b>${component.component.getOrganization()!}</b></p>
 			<br>
 			<br>
 		</#if>
 		<div>
 			<#if allowSecurityMargkingsFlg == true>
-				${component.component.getSecurityMarkingType()}
+				${component.component.getSecurityMarkingType()!}
 			</#if>
 		</div>
 			
@@ -144,7 +144,7 @@
 			<div>
 				<b>Tags: </b>
 				<#list component.tags as tag>
-					<i class="component-tag">${tag.text}</i>
+					<i class="component-tag">${tag.text!}</i>
 				</#list>
 			</div>
 		</#if>
@@ -152,7 +152,7 @@
 		<!--Description-->
 		<#if reportOptions.getDisplayDescription()>
 			<div>
-				${component.component.getDescription()}
+				${component.component.getDescription()!}
 			</div>
 		</#if>
 		
@@ -167,10 +167,10 @@
 				<#list component.vitals as vitals>
 					<tr>
 						<td>
-							<b>${vitals.typeLabel}</b>
+							<b>${vitals.typeLabel!}</b>
 						</td>
 						<td>
-							${vitals.attributeLabel}
+							${vitals.attributeLabel!}
 						</td>
 					</tr>
 				</#list>
@@ -191,7 +191,7 @@
 				</tr>
 				<#list component.contacts as contacts>
 					<tr>
-						<td><b>${contacts.type}</b></td>
+						<td><b>${contacts.type!}</b></td>
 						<td><#if contacts.firstName?has_content>${contacts.firstName}</#if></td>
 						<td><#if contacts.lastName?has_content>${contacts.lastName}</#if></td>
 						<td><#if contacts.org?has_content>${contacts.org}</#if></td>
@@ -214,10 +214,10 @@
 				</tr>
 				<#list component.resources as resource>
 					<tr>
-						<td><b>${resource.type}</b></td>
-						<td>${resource.description}</td>
-						<td>${resource.link}</td>
-						<td>${resource.restricted}</td>
+						<td><b>${resource.type!}</b></td>
+						<td>${resource.description!}</td>
+						<td>${resource.link!}</td>
+						<td>${resource.restricted!}</td>
 					</tr>
 				</#list>
 			</table>
@@ -230,9 +230,9 @@
 				<#list component.dependencies as dependent>
 					<tr>
 						<td>
-							<div><b>${dependent.name}</b> - ${dependent.version}</div>
+							<div><b>${dependent.name!}</b> - ${dependent.version!}</div>
 							<#if dependent.link?has_content><div>${dependent.link}</div></#if>
-							<div>${dependent.comment}</div>
+							<div>${dependent.comment!}</div>
 						</td>
 					</tr>
 				</#list>
@@ -251,9 +251,9 @@
 				
 				<#list component.relationships as relationship>
 					<tr>
-						<td>${relationship.componentName}</td>
-						<td><b>${relationship.type}</b></td>
-						<td>${relationship.targetName}</td>
+						<td>${relationship.componentName!}</td>
+						<td><b>${relationship.type!}</b></td>
+						<td>${relationship.targetName!}</td>
 					</tr>
 				</#list>
 			</table>
@@ -275,16 +275,16 @@
 				</tr>
 				<#list component.reviews as review>
 					<tr>
-						<td>${review.username}</td>
-						<td>${review.rating}/5</td>
-						<td>${review.lastUsed?string('MM/yyyy')}</td>
-						<td>${review.recommended?c}</td>
+						<td>${review.username!}</td>
+						<td>${review.rating!}/5</td>
+						<td>${review.lastUsed?string('MM/yyyy')!}</td>
+						<td>${review.recommended?c!}</td>
 						
 						<!--Pros-->
 						<td>
 							<#if review.pros?has_content>
 								<#list review.pros as pro>
-									<p>- ${pro.pro}</p>
+									<p>- ${pro.pro!}</p>
 								</#list>
 							</#if>
 						</td>
@@ -293,12 +293,12 @@
 						<td>
 							<#if review.cons?has_content>
 								<#list review.cons as con>
-									<p>- ${con.con}</p>
+									<p>- ${con.con!}</p>
 								</#list>
 							</#if>
 						</td>
 						
-						<td>${review.comment}</td>
+						<td>${review.comment!}</td>
 					</tr>
 				</#list>
 			</table>
@@ -312,10 +312,10 @@
 			<#list component.QA as qa>
 				<div>
 					<div>
-						<h3 class="qa-header">Q. </h3>${qa.question}
+						<h3 class="qa-header">Q. </h3>${qa.question!}
 					</div>
 					<div class="qa-metadata">
-						${qa.username} - ${qa.date?string('MM/DD/yyyy')}
+						${qa.username!} - ${qa.date?string('MM/DD/yyyy')!}
 					</div>
 					
 					<!--responses-->
@@ -323,10 +323,10 @@
 						<#list qa.responses as response>
 							<div class="section-indent">
 								<div>
-									<h3 class="qa-header">A. </h3>${response.response}
+									<h3 class="qa-header">A. </h3>${response.response!}
 								</div>
 								<div class="qa-metadata">
-									${response.username} - ${response.date?string('MM/dd/yyyy')}
+									${response.username!} - ${response.date?string('MM/dd/yyyy')!}
 								</div>
 							</div>
 						</#list>
@@ -343,7 +343,7 @@
 			
 					<h2 class="eval-header">Evaluation</h2>
 					<#if eval.version?has_content>
-						<div class="eval-version">Version - ${eval.version}</div>
+						<div class="eval-version">Version - ${eval.version!}</div>
 					</#if>
 						
 					<!--Evaluation Summary-->
@@ -356,17 +356,17 @@
 								<#assign scoreColumns = (eval.scores?size/10.0)?ceiling>
 								<#list eval.scores as scoreItem>
 									<div class="detail-eval-item">
-										<span class="detail-eval-label">${scoreItem.factor} </span>
-										<span class="detail-eval-score" data-qtip="${scoreItem.averageScore}">
+										<span class="detail-eval-label">${scoreItem.factor!} </span>
+										<span class="detail-eval-score" data-qtip="${scoreItem.averageScore!}">
 											<#if scoreItem.score?is_number>
 												<#list 2..scoreItem.score?number + 1 as ii>
-													<i class="score-circle">&#1010${ii};</i>
+													<i class="score-circle">&#1010${ii!};</i>
 												</#list>
 											<#else>
 												<b>N/A</b>
 											</#if>
 										</span>
-										<div class="score-average">Average: ${scoreItem.averageScore}</div>
+										<div class="score-average">Average: ${scoreItem.averageScore!}</div>
 									</div>
 								</#list>
 							</#if>
@@ -374,7 +374,7 @@
 							<!--Checklist summary-->
 							<#if eval.checklistSummary?has_content>
 								<h3 class="eval-header">Checklist Summary</h3>
-								${eval.checklistSummary}
+								${eval.checklistSummary!}
 							</#if>
 
 							<!--Checklist recommendations-->
@@ -388,9 +388,9 @@
 									</tr>
 									<#list eval.recommendations as rec>
 										<tr>
-											<td style="width: 15%;">${rec.typeDescription}</td>
-											<td style="width: 39%;">${rec.recommendation}</td>
-											<td style="width: 45%;">${rec.reason}</td>
+											<td style="width: 15%;">${rec.typeDescription!}</td>
+											<td style="width: 39%;">${rec.recommendation!}</td>
+											<td style="width: 45%;">${rec.reason!}</td>
 										</tr>
 									</#list>
 								</table>
@@ -405,9 +405,9 @@
 							<#if eval.evaluationSections?has_content>
 								<#list eval.evaluationSections as section>
 									<#if section.isPrivate == false>
-										<h3 class="eval-header">${section.title}</h3>
+										<h3 class="eval-header">${section.title!}</h3>
 										<#if section.hideContent == false>
-											${section.content}
+											${section.content!}
 										</#if>
 
 										<!--Sub Sections-->
@@ -416,10 +416,10 @@
 												<#if subSection.isPrivate == false>
 													<div class="evaluation-section">
 														<#if subSection.hideTitle == false>
-															<h3 class="eval-header">${subSection.title}</h3>
+															<h3 class="eval-header">${subSection.title!}</h3>
 														</#if>
 														<#if subSection.hideContent == false>
-															${subSection.content}
+															${subSection.content!}
 														</#if>
 													</div>
 												</#if>

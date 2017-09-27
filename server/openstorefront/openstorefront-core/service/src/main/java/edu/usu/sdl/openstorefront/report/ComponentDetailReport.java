@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -736,6 +737,7 @@ public class ComponentDetailReport
 		catch (Exception e)
 		{
 			log.log(Level.WARNING, MessageFormat.format("There was a problem when generating a detail report: {0}", e));
+			throw new OpenStorefrontRuntimeException(e);
 		}
 	}
 }
