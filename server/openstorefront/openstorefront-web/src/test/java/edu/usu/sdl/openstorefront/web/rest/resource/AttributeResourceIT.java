@@ -48,10 +48,16 @@ public class AttributeResourceIT extends JerseyTest
 		return new ResourceConfig(AttributeResource.class);
 	}
 
+	/**
+	 * NOTE: (KB) I don't want to start the full system so start minimal pieces
+	 * until they can be re-factored so only what is needed for the test is
+	 * started
+	 */
 	@BeforeClass
 	public static void init()
 	{
-		//NOTE: (KB) I don't want to start the full system so start minimal pieces untill they can be refactored
+		// NOTE: (KB) As this is an integration test it would be nice to hit the 
+		// DB however I dont have a good way to get the DB in a clean state
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		OsgiManager.init();
 	}
@@ -71,6 +77,7 @@ public class AttributeResourceIT extends JerseyTest
 	@Test
 	public void getRequiredAttributeTypesTest()
 	{
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		//Arrange
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();
@@ -92,14 +99,18 @@ public class AttributeResourceIT extends JerseyTest
 
 		dbResults.add(type1);
 		dbResults.add(type2);
-		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).addQuery(AttributeType.class, dbResults);
+		persistenceService.addQuery(AttributeType.class, dbResults);
 
 		List<AttributeType> expected = new ArrayList<>();
 		AttributeType expectedType = new AttributeType();
 		expectedType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		expectedType.setAttributeType("TEST1");
 		expected.add(expectedType);
-		
+
+		AttributeType expectedQueryExample = new AttributeType();
+		expectedQueryExample.setRequiredFlg(Boolean.TRUE);
+		expectedQueryExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
 		//Act
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/required")
 				.queryParam("componentType", "ARTICLE")
@@ -107,7 +118,7 @@ public class AttributeResourceIT extends JerseyTest
 				.get(new GenericType<List<AttributeType>>()
 				{
 				});
-		
+
 		//Assert
 		Assert.assertNotNull(response);
 		Assert.assertArrayEquals(expected.toArray(), response.toArray());
@@ -116,6 +127,7 @@ public class AttributeResourceIT extends JerseyTest
 	@Test
 	public void getOptionalAttributeTypesTest()
 	{
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		//Arrange
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();
@@ -134,7 +146,7 @@ public class AttributeResourceIT extends JerseyTest
 		type2.setRequiredFlg(Boolean.TRUE);
 		type2.setAttributeType("TEST2");
 		type2.setRequiredRestrictions(requiredRestrictions);
-		
+
 		AttributeType type3 = new AttributeType();
 		type3.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type3.setRequiredFlg(Boolean.TRUE);
@@ -143,22 +155,25 @@ public class AttributeResourceIT extends JerseyTest
 		dbResults.add(type1);
 		dbResults.add(type2);
 		dbResults.add(type3);
-		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).addQuery(AttributeType.class, dbResults);
+		persistenceService.addQuery(AttributeType.class, dbResults);
 
 		List<AttributeType> expected = new ArrayList<>();
 		AttributeType expectedType1 = new AttributeType();
 		expectedType1.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		expectedType1.setRequiredFlg(Boolean.FALSE);
 		expectedType1.setAttributeType("TEST1");
-		
+
 		AttributeType expectedType2 = new AttributeType();
 		expectedType2.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		expectedType2.setRequiredFlg(Boolean.TRUE);
 		expectedType2.setAttributeType("TEST2");
 		expectedType2.setRequiredRestrictions(requiredRestrictions);
-		
+
 		expected.add(expectedType1);
 		expected.add(expectedType2);
+
+		AttributeType expectedQueryExample = new AttributeType();
+		expectedQueryExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
 		//Act
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/optional")
@@ -171,5 +186,9 @@ public class AttributeResourceIT extends JerseyTest
 		//Assert
 		Assert.assertNotNull(response);
 		Assert.assertArrayEquals(expected.toArray(), response.toArray());
+		
+//		NOTE: we need to write a method to check all getters of a class as equality is not usually comparing all fileds
+//		AttributeType queryExample = (AttributeType) persistenceService.getListExamples(AttributeType.class).poll();
+//		Assert.assertEquals(expectedQueryExample, queryExample);
 	}
 }

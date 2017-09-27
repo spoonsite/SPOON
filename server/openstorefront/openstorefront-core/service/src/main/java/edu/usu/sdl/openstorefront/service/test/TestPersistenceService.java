@@ -33,8 +33,9 @@ import java.util.Queue;
 public class TestPersistenceService implements PersistenceService
 {
 
-	// <editor-fold defaultstate="collapsed" desc="Methods for managing the Test data">
+	// <editor-fold defaultstate="collapsed" desc="Methods for managing the Test data set">
 	private Map<Class<?>, Queue<List>> listResultsMap = new HashMap<>();
+	private Map<Class<?>, Queue<BaseEntity>> listExampleMap = new HashMap<>();
 
 	public void addQuery(Class<?> cls, List queryResults)
 	{
@@ -44,15 +45,35 @@ public class TestPersistenceService implements PersistenceService
 		listResultsMap.get(cls).add(queryResults);
 	}
 
+	private void addListExample(BaseEntity example)
+	{
+		if (!listExampleMap.containsKey(example.getClass())) {
+			listExampleMap.put(example.getClass(), new LinkedList<>());
+		}
+		listExampleMap.get(example.getClass()).add(example);
+	}
+
+	public Queue<BaseEntity> getListExamples(Class<?> cls)
+	{
+		Queue<BaseEntity> result = new LinkedList<>();
+		if (listExampleMap.containsKey(cls)
+				&& (!listExampleMap.get(cls).isEmpty())) {
+			result = listExampleMap.get(cls);
+		}
+		return result;
+	}
+
 	public void clear()
 	{
 		listResultsMap = new HashMap<>();
+		listExampleMap = new HashMap<>();
 	}
 	// </editor-fold>
 
 	@Override
 	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
+		addListExample(baseEntity);
 		List<T> result = new ArrayList<>();
 		if (listResultsMap.containsKey(baseEntity.getClass())
 				&& (!listResultsMap.get(baseEntity.getClass()).isEmpty())) {

@@ -131,7 +131,7 @@ Ext.define('OSF.form.Attributes', {
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
 								if (attributeType.attributeValueType === 'NUMBER') {
-									if (!Ext.isNumeric(data.attributeCode)) {									
+									if (!Ext.isNumeric(data.attributeCode)) {
 										valid = false;
 									}
 									if (valid) {
@@ -140,10 +140,10 @@ Ext.define('OSF.form.Attributes', {
 											var valueNumber = new Number(data.attributeCode);
 											data.attributeCode = valueNumber.toString();
 											data.componentAttributePk.attributeCode = valueNumber.toString();
-										} catch(e) {
+										} catch (e) {
 											valid = false;
 										}
-									}									
+									}
 								}
 
 								if (!valid) {
@@ -192,46 +192,47 @@ Ext.define('OSF.form.Attributes', {
 							handler: function () {
 								var getAttributeFormPanelItems = function ()
 								{
-									var items = new Array();
 									Ext.Ajax.request({
 										url: 'api/v1/resource/attributes/attributetypes/optional',
 										success: function (response, opts) {
+											var items = new Array();
 											var attributes = Ext.decode(response.responseText);
-											Ext.forEach(attributes, function (attribute, key) {
-												var name = attribute.name;
-												var toolTip = attribute.description;
-												var template = (toolTip === undefined) ? '{0}' : '{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>';
+											Ext.Array.forEach(attributes, function (attribute, key) {
+												var name = attribute.attributeType;
+												var label = attribute.description;
+												if(attribute.detailedDescription !== undefined)
+												{
+													label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g,'&quot;'));
+												}
 
 												var item = {
-													width: '100%',
+													width: '98%',
 													labelStyle: 'width:300px',
 													labelWidth: '100%',
 													xtype: 'textfield',
-													margin: '10 20 10 20',
-													fieldLabel: Ext.String.format(template, name, toolTip)
+													margin: '10 0 10 10',
+													fieldLabel: label
 												};
-
 												items.push(item);
 											});
+											formPanel.add(items);
+											multipleAttributesWin.show();
 										}
 									});
-									return items;
 								};
+								var formPanel = Ext.create('Ext.panel.Panel', {
+									layout:'anchor',
+									scrollable:true
+								});
 								var multipleAttributesWin = Ext.create('Ext.window.Window', {
 									title: 'Add Attributes',
 									iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 									modal: true,
 									width: 700,
-									maxHeight: '80%',
+									height: '50%',
 									layout: 'fit',
-									items: [
-										Ext.create('Ext.panel.Panel', {
-											items: getAttributeFormPanelItems()
-										}),
-										{
-											xtype: 'button',
-											text: 'Error'
-										}
+									items:[
+										formPanel
 									],
 									dockedItems: [{
 											xtype: 'toolbar',
@@ -266,7 +267,7 @@ Ext.define('OSF.form.Attributes', {
 										}
 									]
 								});
-								multipleAttributesWin.show();
+								getAttributeFormPanelItems();
 							}
 						}
 					],
