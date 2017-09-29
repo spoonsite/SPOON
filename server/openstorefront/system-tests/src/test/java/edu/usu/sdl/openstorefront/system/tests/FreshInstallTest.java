@@ -43,6 +43,7 @@ public class FreshInstallTest
 	private static final Logger LOG = Logger.getLogger(FreshInstallTest.class.getName());
 
 	private static final String tempFile = System.getProperty("java.io.tmpdir") + "/openstorefront.war";
+	private String dataDir = "/var/osfautotest";
 
 	@Test
 	public void testFreshInstall()
@@ -61,20 +62,15 @@ public class FreshInstallTest
 		LOG.info("Initing tomcat");
 		Tomcat tomcat = new Tomcat();
 		tomcat.setPort(7980);
-//		Context ctx = tomcat.addContext("/", new File(".").getAbsolutePath());
 
-//		Tomcat.addServlet(ctx, "hello", new HttpServlet()
-//		{
-//			protected void service(HttpServletRequest req, HttpServletResponse resp)
-//					throws ServletException, IOException
-//			{
-//				Writer w = resp.getWriter();
-//				w.write("Hello, World!");
-//				w.flush();
-//			}
-//		});
-//		ctx.addServletMapping("/*", "hello");
-		//	tomcat.setHost();
+		File dataDirCheck = new File(dataDir);
+		if (dataDirCheck.mkdirs() == false || dataDirCheck.canWrite() == false) {
+			//try temp
+			//On Windows this can cause issues as some item can't read there config?
+			//may work on linux with access restrictions.
+			dataDir = System.getProperty("java.io.tmpdir") + "/osfautotest";
+		}
+
 		return tomcat;
 	}
 
@@ -84,9 +80,11 @@ public class FreshInstallTest
 
 		//Context ctx = tomcat.addContext("/openstorefront", new File("../../../openstorefront-web/target/openstorefront").getAbsolutePath());
 		try {
+			cleanUpDirectories(true);
+
 			Path source = Paths.get(System.getProperty("user.dir").replace("system-tests", ""), "openstorefront-web/target/openstorefront.war");
 
-			System.setProperty("application.datadir", "/var/autotest");
+			System.setProperty("application.datadir", dataDir);
 
 			File missingDir = new File(System.getProperty("user.dir") + "/tomcat.7980/webapps");
 			missingDir.mkdirs();
@@ -131,19 +129,49 @@ public class FreshInstallTest
 		LOG.info("Stopping Server");
 		try {
 			tomcat.stop();
+			tomcat.destroy();
 		} catch (LifecycleException ex) {
 			throw new RuntimeException(ex);
 		} finally {
-			LOG.info("Clean up data");
-			File file = new File("/var/autotest");
+			cleanUpDirectories(false);
+		}
+	}
+
+	private void cleanUpDirectories(boolean cleanTomcatDir)
+	{
+
+		LOG.info("Clean up temp data folder");
+		File file = new File(dataDir);
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException ex) {
+				LOG.warning("Unable to delete data directory");
+			}
+		}
+
+		LOG.info("Clean up felix");
+		file = new File(System.getProperty("user.dir") + "/felix-cache");
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException ex) {
+				LOG.warning("Unable to delete felix directory");
+			}
+		}
+
+		if (cleanTomcatDir) {
+			LOG.info("Clean up tomcat temp");
+			file = new File(System.getProperty("user.dir") + "/tomcat.7980");
 			if (file.exists()) {
 				try {
 					FileUtils.deleteDirectory(file);
 				} catch (IOException ex) {
-					throw new RuntimeException("Unable to delete test directory", ex);
+					LOG.warning("Unable to delete tomcat directory");
 				}
 			}
 		}
+
 	}
 
 }
