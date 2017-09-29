@@ -98,13 +98,15 @@ public class ScheduledReportJob
 					String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
 
 					StringBuilder message = new StringBuilder();
-					message.append("Report is ready to be viewed. Please login then go to the reports section under History to view your report.<br><br><br>");
+					boolean attachFile = Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_ATTACH_FILE));
+					message.append("Report is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>")
+							.append(attachFile ? " or see the attached file" : "")
+							.append(".<br><br><br>");
 					message.append("To stop receiving this message, please contact an administrator at ").append(replyAddress);
 
 					String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 
 					byte[] reportData = null;
-					boolean attachFile = Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_ATTACH_FILE));
 					if (attachFile) {
 						Path path = reportProcessed.pathToReport();
 						try {
