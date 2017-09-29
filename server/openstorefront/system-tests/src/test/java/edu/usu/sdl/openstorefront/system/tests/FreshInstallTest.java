@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -39,6 +41,8 @@ public class FreshInstallTest
 {
 
 	private static final Logger LOG = Logger.getLogger(FreshInstallTest.class.getName());
+
+	private static final String tempFile = System.getProperty("java.io.tmpdir") + "/openstorefront.war";
 
 	@Test
 	public void testFreshInstall()
@@ -80,13 +84,21 @@ public class FreshInstallTest
 
 		//Context ctx = tomcat.addContext("/openstorefront", new File("../../../openstorefront-web/target/openstorefront").getAbsolutePath());
 		try {
+			Path source = Paths.get(System.getProperty("user.dir").replace("system-tests", ""), "openstorefront-web/target/openstorefront.war");
+
 			System.setProperty("application.datadir", "/var/autotest");
-			tomcat.addWebapp("/openstorefront", "../../../openstorefront-web/target/openstorefront");
+
+			File missingDir = new File(System.getProperty("user.dir") + "/tomcat.7980/webapps");
+			missingDir.mkdirs();
+
+			tomcat.getHost().setAutoDeploy(false);
+			tomcat.getHost().setDeployOnStartup(false);
+			tomcat.addWebapp("/openstorefront", source.toString());
 
 			LOG.info("Starting Server");
 			tomcat.start();
 
-		} catch (ServletException | LifecycleException ex) {
+		} catch (LifecycleException | ServletException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -122,6 +134,7 @@ public class FreshInstallTest
 		} catch (LifecycleException ex) {
 			throw new RuntimeException(ex);
 		} finally {
+			LOG.info("Clean up data");
 			File file = new File("/var/autotest");
 			if (file.exists()) {
 				try {
