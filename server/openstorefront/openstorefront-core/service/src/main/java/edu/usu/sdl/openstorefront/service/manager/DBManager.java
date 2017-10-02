@@ -90,12 +90,16 @@ public class DBManager
 			File dbFile = new File(dbFileDir);
 			if (dbFile.exists() == false) {
 				LOG.log(Level.INFO, "Creating DB at %s", dbFileDir);
-				OObjectDatabaseTx db = new OObjectDatabaseTx("plocal:" + dbFileDir).create();
+				ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + dbFileDir).create();
 				db.close();
 				LOG.log(Level.INFO, "Done");
 			}
 
-			//TODO: switch OPartitionedDatabasePool	after version 2.3
+			//Must use the Object database pool otherwise the connect will not be set correctly
+			//In 3.x there is a new Obect pool : ODatabaseObjectPool.java look to switch to that.
+			//Also 3.x Object API will exist it just they not add features to the api.
+			//Unless we need some feature it's not worth switching to as the we would need to provide the bindings
+			//We can also use the multi-model api in conjuction as needed for additonal features
 			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 			try (OObjectDatabaseTx db = getConnection()) {

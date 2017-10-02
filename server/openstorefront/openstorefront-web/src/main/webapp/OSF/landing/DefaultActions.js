@@ -23,8 +23,67 @@ Ext.define('OSF.landing.DefaultActions', {
 	
 	layout: 'center',
 	bodyStyle: 'padding-bottom: 40px;',
-	items: [
+	toolSize: 'large', //small, medium, large	
+	actionTools: [
 		{
+			text: 'Dashboard',
+			//icon: 'fa-th-large',
+			tip: 'Access your dashboard',
+			imageSrc: 'images/dash.png',
+			toolBackground: '',
+			link: 'UserTool.action?load=Dashboard'
+		},
+		{
+			text: 'Submissions',
+			//icon: 'fa-file-text-o',
+			imageSrc: 'images/submission.png',
+			tip: 'Add or update entries to the registry',
+			permission: 'USER-SUBMISSIONS',
+			toolBackground: '',
+			link: 'UserTool.action?load=Submissions'
+		},
+		{
+			text: 'My Searches',
+			//icon: 'fa-share-alt',
+			tip: 'View and manage your saved searches',
+			imageSrc: 'images/savedsearch.png',
+			toolBackground: '',
+			link: 'UserTool.action?load=Searches'
+		},		
+		{
+			text: 'Feedback',
+			//icon: 'fa-comments',
+			tip: 'Provide feedback about the site',
+			imageSrc: 'images/feedback.png',
+			toolBackground: '',
+			link: 'feedback.jsp'
+		}		
+	],
+	initComponent: function () {
+		this.callParent();			
+		var actionToolsPanel = this;
+				
+		var iconSize = 'fa-4x';
+		var toolCSS = 'action-tool-button-outer-large';
+		var toolCSSInner = 'action-tool-button-inner-large';
+		var iconWidth = 200;
+		if (actionToolsPanel.toolSize === 'small') {
+			iconSize = 'fa-3x';
+			toolCSS = 'action-tool-button-outer-small';
+			toolCSSInner = 'action-tool-button-inner-small';
+			iconWidth = 100;
+		} else if (actionToolsPanel.toolSize === 'medium') {
+			iconSize = 'fa-4x';
+			toolCSS = 'action-tool-button-outer-medium';
+			toolCSSInner = 'action-tool-button-inner-medium';
+			iconWidth = 150;
+		}		
+			
+		if (actionToolsPanel.textCSSOverride) {
+			toolCSSInner = actionToolsPanel.textCSSOverride;
+		}
+		
+		var dataView = Ext.create('Ext.DataView', {
 			xtype: 'dataview',
 			itemId: 'dataview',
 			store: {				
@@ -33,10 +92,10 @@ Ext.define('OSF.landing.DefaultActions', {
 			tpl: new Ext.XTemplate(
 				'<div class="action-tool-header">Quick Launch</div>',	
 				'<tpl for=".">',
-					'<div style="margin: 15px;" class="action-tool-button-outer search-tool" data-qtip="{tip}">',
-					  '<div class="action-tool-button-inner" >',	
-						'<tpl if="imageSrc"><img src="{imageSrc}" width=200/></tpl>',	
-						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
+					'<div style="margin: 15px;" class="' + toolCSS + ' {toolBackground} search-tool" data-qtip="{tip}">',
+					  '<div class="' + toolCSSInner + '" >',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" width=' + iconWidth + '/></tpl>',	
+						'<tpl if="icon"><i class="fa ' + iconSize + '  {icon}"></i></tpl>',
 						'<br/><span>{text}</span>',
 					  '</div>',
 					'</div>',
@@ -51,49 +110,9 @@ Ext.define('OSF.landing.DefaultActions', {
 					}
 				}
 			}
-		}
-	],
-	actionTools: [
-		{
-			text: 'Dashboard',
-			//icon: 'fa-th-large',
-			tip: 'Access your dashboard',
-			imageSrc: 'images/dash.png',
-			link: 'UserTool.action?load=Dashboard'
-		},
-		{
-			text: 'Submissions',
-			//icon: 'fa-file-text-o',
-			imageSrc: 'images/submission.png',
-			tip: 'Add or update entries to the registry',
-			permission: 'USER-SUBMISSIONS',
-			link: 'UserTool.action?load=Submissions'
-		},
-		{
-			text: 'My Searches',
-			//icon: 'fa-share-alt',
-			tip: 'View and manage your saved searches',
-			imageSrc: 'images/savedsearch.png',
-			link: 'UserTool.action?load=Searches'
-		},
-		{
-			text: 'Tools',
-			//icon: 'fa-gears',
-			tip: 'Access user tools to update profile and manage your data.',
-			imageSrc: 'images/tools.png',
-			link: 'UserTool.action'
-		},
-		{
-			text: 'Feedback',
-			//icon: 'fa-comments',
-			tip: 'Provide feedback about the site',
-			imageSrc: 'images/feedback.png',
-			link: 'feedback.jsp'
-		}		
-	],
-	initComponent: function () {
-		this.callParent();			
-		var actionToolsPanel = this;
+		});		
+		actionToolsPanel.add(dataView);
+		
 				
 		//check permission
 		actionToolsPanel.loadActions = function(actions) {			

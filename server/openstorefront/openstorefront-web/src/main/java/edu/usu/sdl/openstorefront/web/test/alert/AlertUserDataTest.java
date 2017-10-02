@@ -116,7 +116,7 @@ public class AlertUserDataTest extends BaseTestCase
 			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed - Tag user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - Tag user data message not found<br><br>");
+			failureReason.append("Test Failed - Tag user data message not found (Note: Your Login permission may have prevent triggering alert.)<br><br>");
 		}
 
 		results.append("Check complete<br><br>");
@@ -165,7 +165,7 @@ public class AlertUserDataTest extends BaseTestCase
 			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed - Question user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - Question user data message not found<br><br>");
+			failureReason.append("Test Failed - Question user data message not found. (Note: Your Login permission may have prevent triggering alert.)<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -210,7 +210,7 @@ public class AlertUserDataTest extends BaseTestCase
 			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed - Review user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - Review user data message not found<br><br>");
+			failureReason.append("Test Failed - Review user data message not found (Note: Your Login permission may have prevent triggering alert.)<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -267,7 +267,7 @@ public class AlertUserDataTest extends BaseTestCase
 			results.append("Test Passed - User data message not found<br><br>");
 		} else {
 			service.getUserService().removeUserMessage(messageId);
-			failureReason.append("Test Failed - User data message found<br><br>");
+			failureReason.append("Test Failed - User data message found (Note: Your Login permission may have prevent triggering alert.)<br><br>");
 		}
 
 		results.append("Check complete<br><br>");

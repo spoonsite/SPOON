@@ -202,7 +202,7 @@ public class ReportServiceImpl
 			persistenceService.delete(scheduledReport);
 		}
 	}
-	
+
 	@Override
 	public void deleteExpiredReports()
 	{
@@ -210,29 +210,23 @@ public class ReportServiceImpl
 		//		"expired" - is older than configured report lifetime.
 		LocalDate expirationLocalDate;
 		LocalDate currentDate = LocalDate.now();
-		
-		try {
-			expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_REPORT_LIFETIME)));
-		}
-		catch (NumberFormatException e) {
-			//	If the configured report lifetime is invalid, fallback to the default value for the report lifetime
-			expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
-		}
+
+		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME))-1);
 		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		
+
 		Report reportExample = new Report();
 		Report filteredReportExample = new Report();
 		filteredReportExample.setCreateDts(expirationDate);
-		
+
 		//	Query reports that are older than the configured expiration value
 		QueryByExample queryByExample = new QueryByExample(reportExample);
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(filteredReportExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-		
+
 		List<Report> results = getPersistenceService().queryByExample(queryByExample);
-		
+
 		//	Remove expired reports
 		for (Report report : results) {
 			deleteReport(report.getReportId());
