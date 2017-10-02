@@ -34,8 +34,33 @@ public class TestPersistenceService implements PersistenceService
 {
 
 	// <editor-fold defaultstate="collapsed" desc="Methods for managing the Test data set">
-	private Map<Class<?>, Queue<List>> listResultsMap = new HashMap<>();
-	private Map<Class<?>, Queue<BaseEntity>> listExampleMap = new HashMap<>();
+	private static Map<Class<?>, Queue<List>> listResultsMap = new HashMap<>();
+	private static Map<Class<?>, Queue<BaseEntity>> singleResultsMap = new HashMap<>();
+	private static Map<String, Queue<List>> listQueryResultsMap = new HashMap<>();
+	private static Map<Class<?>, Queue<BaseEntity>> listExampleMap = new HashMap<>();
+	
+public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+    try {
+        return clazz.cast(o);
+    } catch(ClassCastException e) {
+        return null;
+    }
+}
+	public void clear()
+	{
+		listResultsMap = new HashMap<>();
+		listExampleMap = new HashMap<>();
+		listQueryResultsMap = new HashMap<>();
+		singleResultsMap = new HashMap<>();
+	}
+
+	public void addQuery(String query, List queryResults)
+	{
+		if (!listQueryResultsMap.containsKey(query)) {
+			listQueryResultsMap.put(query, new LinkedList<>());
+		}
+		listQueryResultsMap.get(query).add(queryResults);
+	}
 
 	public void addQuery(Class<?> cls, List queryResults)
 	{
@@ -44,6 +69,15 @@ public class TestPersistenceService implements PersistenceService
 		}
 		listResultsMap.get(cls).add(queryResults);
 	}
+	
+	public void addObject(BaseEntity baseEntity)
+	{
+		if (!singleResultsMap.containsKey(baseEntity.getClass())) {
+			singleResultsMap.put(baseEntity.getClass(), new LinkedList<>());
+		}
+		singleResultsMap.get(baseEntity.getClass()).add(baseEntity);
+	}
+
 
 	private void addListExample(BaseEntity example)
 	{
@@ -62,12 +96,6 @@ public class TestPersistenceService implements PersistenceService
 		}
 		return result;
 	}
-
-	public void clear()
-	{
-		listResultsMap = new HashMap<>();
-		listExampleMap = new HashMap<>();
-	}
 	// </editor-fold>
 
 	@Override
@@ -82,197 +110,210 @@ public class TestPersistenceService implements PersistenceService
 		return result;
 	}
 
-	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
 	@Override
-	public void begin()
+	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return queryByExample(queryByExample.getExample());
 	}
-
+	
 	@Override
-	public void commit()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public <T> T queryOneByExample(BaseEntity baseEntity)
+	{		
+		Object result = null;
+		if (singleResultsMap.containsKey(baseEntity.getClass())
+				&& (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) {
+			result = singleResultsMap.get(baseEntity.getClass()).poll();
+		}
+		return (T)(Object)result;
 	}
-
+	
+	
 	@Override
-	public long countByExample(BaseEntity example)
+	public <T> T queryOneByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return queryOneByExample(queryByExample.getExample());
 	}
-
-	@Override
-	public long countByExample(QueryByExample queryByExample)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public long countClass(Class entityClass)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> T deattachAll(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> void delete(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> int deleteByExample(BaseEntity example)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> int deleteByExample(QueryByExample queryByExample)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> T detach(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void endTransaction()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T> T findById(Class<T> entity, Object id)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public String generateId()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public boolean isManaged(BaseEntity baseEntity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public boolean isProxy(BaseEntity baseEntity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public boolean isTransactionActive()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public <T extends BaseEntity> T persist(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
+	
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<T> result = new ArrayList<>();
+		if (listQueryResultsMap.containsKey(query)
+				&& (!listQueryResultsMap.get(query).isEmpty())) {
+			result = listQueryResultsMap.get(query).poll();
+		}
+		return result;
 	}
 
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// NOTE: (KB) currently I don't see a difference between wrapped and unwrapped 
+		// objects in testing if that changes then this may need refactored
+		return query(query, parameterMap);
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
+	@Override
+	public void begin()
+	{
+		throw new UnsupportedOperationException("Not supported yet. begin()");
 	}
 
 	@Override
-	public <T> List<T> queryByExample(QueryByExample queryByExample)
+	public void commit()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. commit()");
 	}
 
 	@Override
-	public <T> T queryOneByExample(BaseEntity baseEntity)
+	public long countByExample(BaseEntity example)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. countByExample(BaseEntity example)");
 	}
 
 	@Override
-	public <T> T queryOneByExample(QueryByExample queryByExample)
+	public long countByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. countByExample(QueryByExample queryByExample)");
+	}
+
+	@Override
+	public long countClass(Class entityClass)
+	{
+		throw new UnsupportedOperationException("Not supported yet. countClass(Class entityClass)");
+	}
+
+	@Override
+	public <T> T deattachAll(T entity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. deattachAll(T entity)");
+	}
+
+	@Override
+	public <T> void delete(T entity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. delete(T entity)");
+	}
+
+	@Override
+	public <T> int deleteByExample(BaseEntity example)
+	{
+		throw new UnsupportedOperationException("Not supported yet. deleteByExample(BaseEntity example)");
+	}
+
+	@Override
+	public <T> int deleteByExample(QueryByExample queryByExample)
+	{
+		throw new UnsupportedOperationException("Not supported yet. deleteByExample(QueryByExample queryByExample)");
+	}
+
+	@Override
+	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
+	{
+		throw new UnsupportedOperationException("Not supported yet. deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)");
+	}
+
+	@Override
+	public <T> T detach(T entity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. detach(T entity)");
+	}
+
+	@Override
+	public void endTransaction()
+	{
+		throw new UnsupportedOperationException("Not supported yet. endTransaction()");
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey)
+	{
+		throw new UnsupportedOperationException("Not supported yet. find(Class<T> entityClass, Object primaryKey)");
+	}
+
+	@Override
+	public <T> T findById(Class<T> entity, Object id)
+	{
+		throw new UnsupportedOperationException("Not supported yet. findById(Class<T> entity, Object id)");
+	}
+
+	@Override
+	public String generateId()
+	{
+		throw new UnsupportedOperationException("Not supported yet. generateId()");
+	}
+
+	@Override
+	public boolean isManaged(BaseEntity baseEntity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. isManaged(BaseEntity baseEntity)");
+	}
+
+	@Override
+	public boolean isProxy(BaseEntity baseEntity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. isProxy(BaseEntity baseEntity)");
+	}
+
+	@Override
+	public boolean isTransactionActive()
+	{
+		throw new UnsupportedOperationException("Not supported yet. isTransactionActive()");
+	}
+
+	@Override
+	public <T extends BaseEntity> T persist(T entity)
+	{
+		throw new UnsupportedOperationException("Not supported yet. persist(T entity)");
 	}
 
 	@Override
 	public void rollback()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. rollback()");
 	}
 
 	@Override
 	public <T> int runDbCommand(String query, Map<String, Object> queryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public <T> T saveNonBaseEntity(T entity)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. saveNonBaseEntity(T entity)");
 	}
 
 	@Override
 	public <T extends BaseEntity> T saveNonPkEntity(T entity)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. saveNonPkEntity(T entity)");
 	}
 
 	@Override
 	public <T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. setStatusOnEntity(Class<T> entity, Object id, String activeStatus)");
 	}
 
 	@Override
 	public <T> List<T> unwrapProxy(List<T> data)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. unwrapProxy(List<T> data)");
 	}
 
 	@Override
 	public <T> T unwrapProxyObject(T data)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. unwrapProxyObject(T data)");
 	}
 
 	@Override
 	public <T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet. updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere)");
 	}
 	// </editor-fold>
 

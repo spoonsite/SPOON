@@ -39,7 +39,7 @@ import org.junit.Test;
  *
  * @author kbair
  */
-public class AttributeResourceIT extends JerseyTest
+public class AttributeResourceTest extends JerseyTest
 {
 
 	@Override

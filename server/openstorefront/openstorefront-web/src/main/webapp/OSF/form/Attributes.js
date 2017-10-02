@@ -198,7 +198,6 @@ Ext.define('OSF.form.Attributes', {
 											var items = new Array();
 											var attributes = Ext.decode(response.responseText);
 											Ext.Array.forEach(attributes, function (attribute, key) {
-												var name = attribute.attributeType;
 												var label = attribute.description;
 												if(attribute.detailedDescription !== undefined)
 												{
@@ -206,6 +205,7 @@ Ext.define('OSF.form.Attributes', {
 												}
 
 												var item = {
+													name: attribute.attributeType,
 													width: '98%',
 													labelStyle: 'width:300px',
 													labelWidth: '100%',
@@ -220,7 +220,7 @@ Ext.define('OSF.form.Attributes', {
 										}
 									});
 								};
-								var formPanel = Ext.create('Ext.panel.Panel', {
+								var formPanel = Ext.create('Ext.form.Panel', {
 									layout:'anchor',
 									scrollable:true
 								});
@@ -248,9 +248,74 @@ Ext.define('OSF.form.Attributes', {
 													formBind: true,
 													margin: '0 20 0 0',
 													iconCls: 'fa fa-lg fa-save',
-													handler: function () {
-														Ext.Msg.alert('Status', 'Save');
+													handler: function (){
+														var rawData = formPanel.getValues();
+														var componentId = attributePanel.componentId;
+														var postData = [];
+														var valid = true;
+														Ext.Object.each(rawData, function(key, value, myself) {
+															var data = {
+																valid: true,
+																attributeType: key,
+																attributeCode: value,
+																componentAttributePk: {
+																	attributeType: key,
+																	attributeCode: value
+																}
+															};
+															//if (attributeType.attributeValueType === 'NUMBER') {
+															if (data.attributeValueType === 'NUMBER') {	
+																if (!Ext.isNumeric(data.attributeCode)) {
+																	data.valid = false;
+																}
+																else {
+																	//check percision; this will enforce max allowed
+																	try {
+																		var valueNumber = new Number(data.attributeCode);
+																		data.attributeCode = valueNumber.toString();
+																		data.componentAttributePk.attributeCode = valueNumber.toString();
+																	} catch (e) {
+																		data.valid = false;
+																	}
+																}
+															}
+															postData.push(data);
+														});
+
+														if (!valid) {
+															Ext.Msg.show({
+																title: 'Validation Error',
+																message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
+																buttons: Ext.Msg.OK,
+																icon: Ext.Msg.ERROR,
+																fn: function (btn) {
+																	if (btn === 'OK') {
+																		formPanel.getForm().markInvalid({
+																			attributeCode: 'Must be a number for this attribute Type'
+																		});
+																	}
+																}
+															});
+														} else {
+															var method = 'POST';
+															var update = '';
+
+															CoreUtil.submitForm({
+																url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
+																method: method,
+																data: postData,
+																form: formPanel,
+																success: function () {
+																	attributePanel.loadComponentAttributes();
+																	formPanel.reset();
+																}
+															});
+														}
 													}
+//													{
+//														var values = formPanel.getValues();
+//														Ext.Msg.alert('Status', 'Save'+ values);
+//													}
 												},
 												{
 													xtype: 'button',
