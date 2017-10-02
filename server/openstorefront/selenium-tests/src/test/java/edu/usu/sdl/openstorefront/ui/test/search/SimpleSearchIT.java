@@ -15,21 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
 /**
- * Run all search tests
  *
  * @author dshurtleff
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	SimpleSearchIT.class,
-	SearchResultsIT.class,
-	AdvanceSearchIT.class
-})
-public class SearchTestSuite
+public class SimpleSearchIT
+		extends SearchTestBase
 {
+
+	public SimpleSearchIT()
+	{
+	}
 
 }

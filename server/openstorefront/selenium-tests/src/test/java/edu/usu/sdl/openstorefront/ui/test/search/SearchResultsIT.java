@@ -17,10 +17,14 @@ package edu.usu.sdl.openstorefront.ui.test.search;
 
 /**
  *
- * @author ccummings
+ * @author dshurtleff
  */
-public class AddTagSearchResultEntryIT
+public class SearchResultsIT
 		extends SearchTestBase
 {
+
+	public SearchResultsIT()
+	{
+	}
 
 }
