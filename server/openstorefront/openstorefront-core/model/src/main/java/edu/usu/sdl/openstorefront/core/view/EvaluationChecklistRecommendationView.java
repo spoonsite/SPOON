@@ -61,6 +61,17 @@ public class EvaluationChecklistRecommendationView
 		return views;
 	}
 
+	public EvaluationChecklistRecommendation toRecommendation()
+	{
+		EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
+		try {
+			BeanUtils.copyProperties(recommendation, this);
+		} catch (IllegalAccessException | InvocationTargetException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return recommendation;
+	}
+
 	public String getRecommendationTypeDescription()
 	{
 		return recommendationTypeDescription;

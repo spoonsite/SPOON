@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.service.manager.model.DatabaseStatusListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,13 +89,17 @@ public class DBManager
 			String dbFileDir = home + "/databases/openstorefront";
 			File dbFile = new File(dbFileDir);
 			if (dbFile.exists() == false) {
-				LOG.log(Level.INFO, "Creating DB at {0}", dbFileDir);
-				OObjectDatabaseTx db = new OObjectDatabaseTx("plocal:" + dbFileDir).create();
+				LOG.log(Level.INFO, "Creating DB at %s", dbFileDir);
+				ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + dbFileDir).create();
 				db.close();
 				LOG.log(Level.INFO, "Done");
 			}
 
-			//TODO: switch OPartitionedDatabasePool	after version 2.3
+			//Must use the Object database pool otherwise the connect will not be set correctly
+			//In 3.x there is a new Obect pool : ODatabaseObjectPool.java look to switch to that.
+			//Also 3.x Object API will exist it just they not add features to the api.
+			//Unless we need some feature it's not worth switching to as the we would need to provide the bindings
+			//We can also use the multi-model api in conjuction as needed for additonal features
 			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 			try (OObjectDatabaseTx db = getConnection()) {
@@ -139,6 +144,11 @@ public class DBManager
 
 	public static void exportDB(OutputStream out) throws IOException
 	{
+		exportDB(out, null);
+	}
+
+	public static void exportDB(OutputStream out, DatabaseStatusListener dbListener) throws IOException
+	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (OutputStream closableOut = out) {
@@ -147,6 +157,11 @@ public class DBManager
 					LOG.log(Level.FINEST, iText);
 				}
 			};
+			if (dbListener != null) {
+				listener = (String iText) -> {
+					dbListener.statusUpdate(iText);
+				};
+			}
 
 			ODatabaseExport export = new ODatabaseExport(db, closableOut, listener);
 			export.exportDatabase();
@@ -158,6 +173,11 @@ public class DBManager
 
 	public static void importDB(InputStream in) throws IOException
 	{
+		importDB(in, null);
+	}
+
+	public static void importDB(InputStream in, DatabaseStatusListener dbListener) throws IOException
+	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (InputStream closableIn = in) {
@@ -166,6 +186,12 @@ public class DBManager
 					LOG.log(Level.FINEST, iText);
 				}
 			};
+			if (dbListener != null) {
+				listener = (String iText) -> {
+					dbListener.statusUpdate(iText);
+				};
+			}
+
 			ODatabaseImport dbImport = new ODatabaseImport(db, closableIn, listener);
 			dbImport.importDatabase();
 			dbImport.close();

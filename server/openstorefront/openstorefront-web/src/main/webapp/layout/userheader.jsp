@@ -172,13 +172,15 @@
 					dockedItems: [
 						{
 							dock: 'top',
-							xtype: 'toolbar',														
+							xtype: 'toolbar',
+							overflowHandler: 'scroller',
 							items:[
 								{
 									text: 'Dashboard',
 									scale   : 'large',
 									id: 'dashboardUserHomeButton',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -191,6 +193,7 @@
 									id: 'userHeaderProfileBtn',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('User-Profile');
 									}									
@@ -201,6 +204,7 @@
 									scale   : 'large',
 									hidden: true,
 									iconCls: 'fa fa-2x fa-list icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
@@ -211,7 +215,7 @@
 								{
 									text: 'Tools',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-wrench icon-button-color-default',
+									iconCls: 'fa fa-2x fa-wrench icon-button-color-default',									
 									width: '140px',
 									menu: {										
 										items: toolsMenu,

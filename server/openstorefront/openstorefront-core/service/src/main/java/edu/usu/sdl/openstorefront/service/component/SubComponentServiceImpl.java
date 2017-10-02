@@ -56,6 +56,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -275,6 +276,11 @@ public class SubComponentServiceImpl
 
 		ValidationResult validationResult = checkComponentAttribute(attribute);
 
+		//Need to Santize the user code to match the attribute code after the code has been converted.
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		String sanitizedCode = (String) sanitizer.santize(attribute.getComponentAttributePk().getAttributeCode());
+		attribute.getComponentAttributePk().setAttributeCode(sanitizedCode);
+
 		if (validationResult.valid()) {
 			AttributeType type = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
 			if (type.getAllowMultipleFlg() == false) {
@@ -412,13 +418,15 @@ public class SubComponentServiceImpl
 			oldMedia.updateFields(media);
 			newMedia = persistenceService.persist(oldMedia);
 		} else {
-			media.setComponentMediaId(persistenceService.generateId());
+			if (StringUtils.isBlank(media.getComponentMediaId())) {
+				media.setComponentMediaId(persistenceService.generateId());
+			}
 
 			//On a merge there may be a pre-existing file that needs to be rename
 			if (StringUtils.isNotBlank(media.getFileName())) {
 				if (media.getFileName().equals(media.getComponentMediaId()) == false) {
 					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
+					if (oldPath != null && oldPath.toFile().exists()) {
 						try {
 							Files.move(oldPath, oldPath.resolveSibling(media.getComponentMediaId()));
 						} catch (IOException ioe) {
@@ -575,13 +583,15 @@ public class SubComponentServiceImpl
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
-			resource.setResourceId(persistenceService.generateId());
+			if (StringUtils.isBlank(resource.getResourceId())) {
+				resource.setResourceId(persistenceService.generateId());
+			}
 
 			//On a merge there may be a pre-existing file that needs to be rename
 			if (StringUtils.isNotBlank(resource.getFileName())) {
 				if (resource.getFileName().equals(resource.getResourceId()) == false) {
 					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
+					if (oldPath != null && oldPath.toFile().exists()) {
 						try {
 							Files.move(oldPath, oldPath.resolveSibling(resource.getResourceId()));
 						} catch (IOException ioe) {
@@ -682,7 +692,24 @@ public class SubComponentServiceImpl
 
 	public void doSaveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
+		Objects.requireNonNull(tag);
+		Objects.requireNonNull(tag.getComponentId(), "Must set the component Id");
+		Objects.requireNonNull(tag.getText());
+
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
+		if (oldTag == null) {
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(tag.getComponentId());
+			List<ComponentTag> componentTags = componentTagExample.findByExampleProxy();
+
+			for (ComponentTag tagExisting : componentTags) {
+
+				if (tagExisting.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+					oldTag = tagExisting;
+				}
+			}
+		}
+
 		if (oldTag != null) {
 			oldTag.updateFields(tag);
 			persistenceService.persist(oldTag);

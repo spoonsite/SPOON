@@ -30,7 +30,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 			if (width < 1024) {
 				searchBar.setWidth('100%');
 			} else {
-				searchBar.setWidth('75%');
+				searchBar.setWidth('78%');
 			}
 		}
 	},

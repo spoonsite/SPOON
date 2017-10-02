@@ -971,158 +971,96 @@
 										disabled: true,
 										handler: function() {
 
-											// Get Selection
 											var selection = Ext.getCmp('attributeGrid').getSelection();
-
-											// Get Number Of Selected
-											var selected = attributeGrid.getSelectionModel().getCount();
-
-											// Get Calling Window
 											var ownerWindow = this.up('window');
-
-											// Get Form
 											var form = this.up('form');
 
 											// Inform User Of Update Process
 											attributeGrid.mask('Updating Flag(s)...');
-
-											// Close Form Window
 											ownerWindow.close();
 											
-											// Store New Values
 											var attributeValues = form.getForm().getValues();
+											var requestDataList = [];
+											
+											var attributeOptions = {};
 
-											// Initialize Update Counter
-											var attributeUpdateCount = 0;
+											// Check For Visible
+											if (typeof attributeValues.visible !== 'undefined') {
+												attributeOptions.visibleFlg = attributeValues.visible;
+											}
+											
+											// Check For Important
+											if (typeof attributeValues.important !== 'undefined') {
+												attributeOptions.importantFlg = attributeValues.important;
+											}
+											
+											// Check For Architecture
+											if (typeof attributeValues.architecture !== 'undefined') {
+												attributeOptions.architectureFlg = attributeValues.architecture;
+											}
+											
+											// Check For Allow Multiples
+											if (typeof attributeValues.multiples !== 'undefined') {
+												attributeOptions.allowMultipleFlg = attributeValues.multiples;
+											}
+											
+											// Check For Allow User Codes
+											if (typeof attributeValues.user !== 'undefined') {
+												attributeOptions.allowUserGeneratedCodes = attributeValues.user;
+											}
 
-											// Loop Through Selected Components
-											for (i = 0; i < selected; i++) {
-												
-												// Save Record Data
-												var attributeData = selection[i].getData();
-												
-												// Initialize Request Data
+											// For each attribute selected, set componentTypeRestrictions or associatedComponentTypes if needed.
+											// Per attribute, push the requestData ontop the requestDataList.
+											Ext.Array.forEach(selection, function(item, index) {
+												item = item.getData();
 												var requestData = {
-													
-													attributeType: attributeData,
+													attributeType: Ext.apply(item, attributeOptions),
 													componentTypeRestrictions: [],
 													associatedComponentTypes: []
 												};
-												
+
+												// Check For Hide On Submission
+												if (typeof attributeValues.hide !== 'undefined' && ((item.requiredFlg && item.defaultAttributeCode) || !item.requiredFlg)) {
+													requestData.attributeType.hideOnSubmission = attributeValues.hide;
+												}
+
 												// Check Required For Components
-												if (typeof attributeData.requiredRestrictions !== 'undefined' && attributeData.requiredRestrictions !== null) {
-													
-													// Store Required For Components
-													requestData.componentTypeRestrictions = attributeData.requiredRestrictions;
+												if (typeof item.requiredRestrictions !== 'undefined' && item.requiredRestrictions !== null) {
+													requestData.attributeType.componentTypeRestrictions = item.requiredRestrictions;
+												}
+												else {
+													requestData.attributeType.componentTypeRestrictions = null;	
 												}
 												
 												// Check Associated Components
-												if (typeof attributeData.associatedComponentTypes !== 'undefined' && attributeData.associatedComponentTypes !== null) {
-													
-													// Store Associated Components
-													requestData.associatedComponentTypes = attributeData.associatedComponentTypes;
+												if (typeof item.associatedComponentTypes !== 'undefined' && item.associatedComponentTypes !== null) {
+													requestData.attributeType.associatedComponentTypes = item.associatedComponentTypes;
 												}
-												
-												//////////////////
-												// Update Flags //
-												//////////////////
-												
-												// Check For Visible
-												if (typeof attributeValues.visible !== 'undefined' && attributeValues.visible !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.visibleFlg = attributeValues.visible;
+												else {
+													requestData.attributeType.associatedComponentTypes = null;	
 												}
-												
-//												// Check For Required
-//												if (typeof attributeValues.required !== 'undefined' && attributeValues.required !== null) {
-//
-//													// Set New Flag Value
-//													requestData.attributeType.requiredFlg = attributeValues.required;
-//												}
-												
-												// Check For Important
-												if (typeof attributeValues.important !== 'undefined' && attributeValues.important !== null) {
 
-													// Set New Flag Value
-													requestData.attributeType.importantFlg = attributeValues.important;
+												requestDataList.push(requestData);
+											});
+											form.reset();
+
+											Ext.Ajax.request({
+												url: 'api/v1/resource/attributes/attributetypes/types',
+												method: 'PUT',
+												jsonData: requestDataList,
+												success: function(response, opts) {
+													attributeStore.load();
+													attributeGrid.unmask();
+												},
+												failure: function(response, opts) {
+													Ext.toast('An Attribute Failed To Update', 'Error');
+													attributeStore.load();
+													attributeGrid.unmask();
+
+													// Provide Log Information
+													console.error(response);
 												}
-												
-												// Check For Architecture
-												if (typeof attributeValues.architecture !== 'undefined' && attributeValues.architecture !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.architectureFlg = attributeValues.architecture;
-												}
-												
-												// Check For Allow Multiples
-												if (typeof attributeValues.multiples !== 'undefined' && attributeValues.multiples !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.multiplesFlg = attributeValues.multiples;
-												}
-												
-												// Check For Allow User Codes
-												if (typeof attributeValues.user !== 'undefined' && attributeValues.user !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.allowUserGeneratedCodes = attributeValues.user;
-												}
-												
-												// Check For Hide On Submission
-												if (typeof attributeValues.hide !== 'undefined' && attributeValues.hide !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.hideOnSubmission = attributeValues.hide;
-												}
-												
-												// Reset Flags Form
-												form.reset();
-												console.log(requestData);
-												// Make Request
-												Ext.Ajax.request({
-
-													url: 'api/v1/resource/attributes/attributetypes/' + attributeData.attributeType,
-													method: 'PUT',
-													jsonData: requestData,
-													success: function(response, opts) {
-
-														// Check If We Are On The Final Request
-														if (++attributeUpdateCount === selected) {
-
-															// Provide Success Notification
-															Ext.toast('All Attributes Have Been Processed', 'Success');
-
-															// Refresh Store
-															attributeStore.load();
-
-															// Unmask Grid
-															attributeGrid.unmask();
-														}
-													},
-													failure: function(response, opts) {
-
-														// Provide Error Notification
-														Ext.toast('An Attribute Failed To Update', 'Error');
-
-														// Provide Log Information
-														console.log(response);
-
-														// Check If We Are On The Final Request
-														if (++attributeUpdateCount === selected) {
-
-															// Provide Success Notification
-															Ext.toast('All Attributes Have Been Processed', 'Success');
-
-															// Refresh Store
-															attributeStore.load();
-
-															// Unmask Grid
-															attributeGrid.unmask();
-														}
-													}
-												});
-											}
+											});
 										}
 									},
 									{
@@ -1186,6 +1124,25 @@
 						Ext.getCmp('set-flags-multiples-group-true').unmask();
 						Ext.getCmp('set-flags-multiples-group-false').unmask();
 						Ext.getCmp('set-flags-multiples-group-none').unmask();
+					},
+					show: function (me) {
+						var selection = Ext.getCmp('attributeGrid').getSelection();
+						var needsDefaultValueFlg = false;
+						Ext.Array.forEach(selection, function (item, index) {
+							if (item.data.requiredFlg && !item.data.defaultAttributeCode) {
+								needsDefaultValueFlg = true;
+							}
+						});
+
+						var hideOnSubmissionField = Ext.getCmp('set-flags-hide-group');
+						if (needsDefaultValueFlg) {
+							var statusInfo = 'One or more of the attributes selected appear to be \'required\', but have no <b>default value</b>. '
+											+ 'The \'Hide On Submission\' flag cannot be set for attributes that are required and do not have a default value.';
+							hideOnSubmissionField.setFieldLabel('Hide On Submission <i style="color: #f4b642" class="fa fa-exclamation-triangle" aria-hidden="true" data-qtip="' + statusInfo + '"></i>');
+						}
+						else {
+							hideOnSubmissionField.setFieldLabel('Hide On Submission');
+						}
 					}
 				}
 			});
@@ -1862,6 +1819,7 @@
 								name: 'label',
 								allowBlank: false,
 								allowDecimal: true,
+								decimalPrecision: 20,
 								hidden: true
 							},								
 							{
@@ -1877,6 +1835,7 @@
 								name: 'typeCode',
 								allowBlank: false,
 								allowDecimal: true,
+								decimalPrecision: 20,
 								hidden: true
 							},							
 							{
@@ -2225,7 +2184,11 @@
 				]
 			});
 
-
+			var formChange = {
+				change: function () {
+					Ext.getCmp('editAttributeForm').getForm().checkValidity();
+				}
+			};
 			var editAttributeWin = Ext.create('Ext.window.Window', {
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
@@ -2248,6 +2211,7 @@
 						id: 'editAttributeForm',
 						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
+						trackResetOnLoad: true,
 						defaults: {
 							labelAlign: 'top',
 							width: '100%'
@@ -2411,20 +2375,25 @@
 														select.allowBlank = true;
 														select.clearInvalid();
 													}
+												formChange.change();
 											}
 										}
 									},
 									{
 										name: 'visibleFlg',
-										boxLabel: 'Visible'
+										boxLabel: 'Visible',
+										listeners: formChange
 									},
 									{
 										name: 'importantFlg',
-										boxLabel: 'Important'
+										boxLabel: 'Important',
+										allowBlank: true,
+										listeners: formChange
 									},
 									{
 										name: 'architectureFlg',
-										boxLabel: 'Architecture'
+										boxLabel: 'Architecture',
+										listeners: formChange
 									},
 									{
 										name: 'allowMultipleFlg',
@@ -2451,12 +2420,14 @@
 														});	
 													}
 												}
+												formChange.change();
 											}
 										}
 									},
 									{
 										name: 'allowUserGeneratedCodes',
-										boxLabel: 'Allow User-Created Codes'
+										boxLabel: 'Allow User-Created Codes',
+										listeners: formChange
 									},
 									{
 										name: 'hideOnSubmission',
@@ -2475,8 +2446,7 @@
 													select.allowBlank = true;
 													select.clearInvalid();
 												}
-												var form = Ext.getCmp('editAttributeForm');
-												form.getForm().checkValidity();
+												formChange.change();
 											}
 										}
 									}
@@ -2508,7 +2478,8 @@
 										},
 										autoLoad: true
 									})
-								}
+								},
+								listeners: formChange
 							},
 						],
 						dockedItems: [

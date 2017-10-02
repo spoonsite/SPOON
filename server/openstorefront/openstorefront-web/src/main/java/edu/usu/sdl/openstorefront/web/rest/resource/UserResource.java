@@ -181,6 +181,24 @@ public class UserResource
 	}
 
 	@PUT
+	@APIDescription("Resets the failed login attempts")
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@Path("/{username}/resetfailedlogins")
+	public Response resetfailedlogins(
+			@PathParam("username") String username
+	)
+	{
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username.toLowerCase());
+		userSecurity = userSecurity.find();
+		if (userSecurity != null) {
+			service.getSecurityService().resetFailedAttempts(username);
+			return Response.ok().build();
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@PUT
 	@APIDescription("Reset a user password (Admin Reset)")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@Consumes({MediaType.APPLICATION_JSON})

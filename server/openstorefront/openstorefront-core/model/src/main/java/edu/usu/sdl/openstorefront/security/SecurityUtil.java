@@ -109,10 +109,26 @@ public class SecurityUtil
 	public static boolean isEntryAdminUser()
 	{
 		boolean admin = false;
-		try {			
+		try {
 			admin = hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		} catch (Exception e) {
 			LOG.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
+		}
+		return admin;
+	}
+
+	/**
+	 * Checks the current user to see if they are an evaluator
+	 *
+	 * @return true if the user is an evaluator
+	 */
+	public static boolean isEvaluatorUser()
+	{
+		boolean admin = false;
+		try {
+			admin = hasPermission(SecurityPermission.EVALUATIONS);
+		} catch (Exception e) {
+			LOG.log(Level.FINE, "Determining evaluator user.  No user is logged in.  This is likely an auto process.");
 		}
 		return admin;
 	}
@@ -148,9 +164,10 @@ public class SecurityUtil
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Checks the current for permission
+	 *
 	 * @param permission
 	 * @return true if the user has the permission (All of them)
 	 */
@@ -165,15 +182,15 @@ public class SecurityUtil
 				if (StringUtils.isNotBlank(permission)) {
 					toCheck.add(permission);
 				}
-			}			
+			}
 			try {
 				SecurityUtils.getSubject().checkPermissions(toCheck.toArray(new String[0]));
 				allow = true;
 			} catch (AuthorizationException authorizationException) {
-				LOG.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);			
+				LOG.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);
 			}
 		}
-		return allow;	
+		return allow;
 	}
 
 	/**
@@ -206,7 +223,7 @@ public class SecurityUtil
 	{
 		Subject currentUser = SecurityUtils.getSubject();
 		String userLoggedIn = SecurityUtil.getCurrentUserName();
-		
+
 		currentUser.logout();
 		request.getSession().invalidate();
 		try {
@@ -224,7 +241,7 @@ public class SecurityUtil
 				response.addCookie(cookie);
 			}
 		}
-		
+
 		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
 			LOG.log(Level.INFO, "User was not logged when the logout was called.");
 		} else {

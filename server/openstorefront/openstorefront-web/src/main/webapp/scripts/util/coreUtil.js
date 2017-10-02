@@ -524,7 +524,7 @@ var CoreUtil = {
 				"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen | preview",
 
 			content_css: "contents.css",
 

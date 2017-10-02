@@ -14,215 +14,541 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
-			
-			var addEditWindow = Ext.create('Ext.window.Window', {
-				title: 'Add/Edit Checklist Template',
-				iconCls: 'fa fa-edit',
-				modal: true,
-				width: '75%',
-				height: '75%',
-				maximizable: true,
-				scrollable: true,
-				layout: 'fit',
-				items: [
-					{
-						xtype: 'form',
-						itemId: 'form',
-						layout: 'border',
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Save',
-										formBind: true,
-										iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-edit',
-										width: '100px',
-										scale: 'medium',
-										handler: function() {
-											var form = this.up('form');
-											var win = this.up('window');
-											var data = form.getValues();
-
-											data.questions = [];											
-											Ext.getCmp('questionsInTemplate').getStore().each(function(item){
-												data.questions.push({
-													questionId: item.get('questionId')
-												});
-											});
-
-											var method = 'POST';
-											var update = '';
-											if (data.checklistTemplateId) {
-												update = '/' + data.checklistTemplateId;
-												method = 'PUT';
-											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/checklisttemplates' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function(){
-													actionRefresh();
-													form.reset();
-													win.close();
-												}
-											});	
-											
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
-										scale: 'medium',
-										handler: function() {
-											this.up('window').close();
-										}										
-									}							
-								]
+			var getEvaluations = function(parentWindow, form, saveCallback)
+			{
+				var selectEvaluationWin = Ext.create('Ext.window.Window', {
+					title: 'Select Evaluations',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+					modal: true,
+					width: 1050,
+					maxHeight: '80%',
+					layout: 'fit',
+					closeAction: 'destroy',
+					items: [
+					Ext.create('Ext.grid.Panel', {
+						id: 'evaluationGrid',
+						title: 'Update Evaluation <i class="fa fa-question-circle"  data-qtip="Updating evaluations may result in a loss of work."></i>',
+						columnLines: true,
+						selModel: {
+							selType: 'checkboxmodel'
+						},
+						store: {
+							id: 'evaluationGridStore',
+							autoLoad: false,
+							remoteSort: true,
+							sorters: [
+								new Ext.util.Sorter({
+									property: 'componentName',
+									direction: 'ASC'
+								})
+							],				
+							proxy: {
+								// paging will not work as you won't be able to select items on different pages
+								type: 'ajax',
+								url: 'api/v1/resource/evaluations?published=false',
+								reader: {
+									type: 'json',
+									rootProperty: 'data',
+									totalProperty: 'totalNumber'
+								}
 							}
-						],
-						items: [
-							{
-								xtype: 'hidden',
-								name: 'checklistTemplateId'
-							},
-							{
-								xtype: 'panel',
-								region: 'north',
-								layout: 'anchor',
-								bodyStyle: 'padding: 10px;',
-								defaults: {
-									labelAlign: 'top',
-									labelSeparator: '',
-									width: '100%'
-								},
-								items: [
-									{
-										xtype: 'textfield',
-										name: 'name',
-										fieldLabel: 'Name <span class="field-required" />',
-										allowBlank: false,
-										maxLength: 255										
-									},
-									{
-										xtype: 'textfield',
-										name: 'description',
-										fieldLabel: 'Description <span class="field-required" />',
-										allowBlank: false,
-										maxLength: 255										
-									},	
-									{
-										xtype: 'panel',
-										html: '<b>Instructions</b>'
-									},
-									{
-										xtype: 'tinymce_textarea',
-										fieldStyle: 'font-family: Courier New; font-size: 12px;',
-										style: { border: '0' },
-										name: 'instructions',								
-										height: 300,
-										maxLength: 16384,
-										tinyMCEConfig: CoreUtil.tinymceConfig()
-									}									
-								]
-							},
-							{
-								xtype: 'panel',
-								region: 'center',
-								layout: {
-									type: 'hbox',									
-									align: 'stretch'
-								},
-								items: [
-									{
-										xtype: 'grid',
-										title: 'Question Pool - <span class="alert-warning"> drag to add <i class="fa fa-lg fa-arrow-right"></i> </span>',
-										id: 'questionPool',
-										width: '50%',
-										margin: '0 5 0 0',
-										columnLines: true,
-										store: {
-											autoLoad: false,
-											sorters: [
-												new Ext.util.Sorter({
-													property: 'qid',
-													direction: 'ASC'
-												})
-											],
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/checklistquestions',
-												reader: {
-													type: 'json',
-													rootProperty: 'data',
-													totalProperty: 'totalNumber'
-												}												
-											}
-										},
-										viewConfig: {
-											plugins: {
-												ptype: 'gridviewdragdrop',
-												dragText: 'Drag and drop to Add to template'
-											}
-										},										
-										columns: [
-											{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125 },
-											{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200,
-												renderer: function(value, metadata, record) {
-													return record.get('evaluationSectionDescription');
-												}
-											},												
-											{ text: 'Question', dataIndex: 'question',  flex: 1,
-												renderer: function(value, metadata, record) {
-													return Ext.util.Format.stripTags(value);
-												}												
-											}
-										]
-									},
-									{
-										xtype: 'grid',
-										id: 'questionsInTemplate',
-										title: 'Questions In Template - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
-										width: '50%',
-										columnLines: true,
-										store: {											
-										},
-										viewConfig: {
-											plugins: {
-												ptype: 'gridviewdragdrop',
-												dragText: 'Drag and drop to delete from template'												
-											},
-											listeners: {
-												drop: function(node, data, overModel, dropPostition, opts){													
-												}
-											}
-										},										
-										columns: [
-											{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125 },
-											{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200,
-												renderer: function(value, metadata, record) {
-													return record.get('evaluationSectionDescription');
-												}
-											},												
-											{ text: 'Question', dataIndex: 'question',  flex: 1,
-												renderer: function(value, metadata, record) {
-													return Ext.util.Format.stripTags(value);
-												}												
-											}
-										]
+						},				
+						columns: [
+							{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
+							{ text: 'Version', dataIndex: 'version', align: 'center', width: 175 },
+							{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
+							{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
+							{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+								renderer: function(value, meta, record) {
+									if (value === 'INPROGRESS') {
+										meta.tdCls = 'alert-warning';
+									} else if (value === 'WAIT') {
+										meta.tdCls = 'alert-info';
+									} else if (value === 'COMPLETE') {
+										meta.tdCls = 'alert-success';
+									} else if (value === 'HOLD') {
+										meta.tdCls = 'alert-danager';
 									}
-								]
+									return record.get('workflowStatusDescription');
+								}
 							}
-						]
-					}
-				]
-			});
+						]			
+					})
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+							{
+								text: 'Update',
+								iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-edit',
+								width: '110px',
+								scale: 'medium',
+								handler: function() {
+									var evaluationIdsToUpdate = [];
+									var rows = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection();
+									Ext.Array.each(rows, function (item) {
+										evaluationIdsToUpdate.push(item.data.evaluationId);
+									});
+									
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form, evaluationIdsToUpdate);
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Skip',									
+								iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+								scale: 'medium',
+								handler: function() {
+									var win = this.up('window');												
+									win.close();
+									if (typeof saveCallback === "function") {
+										saveCallback(parentWindow, form);
+									}
+								}										
+							}]
+						}
+					]
+				});
+				var data = form.getValues();
+				Ext.getCmp('evaluationGrid').getStore().load({
+					url: 'api/v1/resource/evaluations?published=false&checklistTemplateId=' + data.checklistTemplateId
+				 });
+				selectEvaluationWin.show();	
+			};
+			
+			var handleAddEdit = function(record) {
+				
+				var addEditWindow = Ext.create('Ext.window.Window', {
+					title: 'Add/Edit Checklist Template',
+					iconCls: 'fa fa-edit',
+					modal: true,
+					width: '75%',
+					height: '75%',
+					maximizable: true,
+					closeAction: 'destroy',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'form',
+							layout: 'fit',
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction-edit',
+											width: '100px',
+											scale: 'medium',
+											handler: function() {
+												var saveCheckList = function(win,form, evaluationIdsToUpdate)
+												{
+													var data = {
+														checklistTemplate: form.getValues(),
+														evaluationIdsToUpdate: evaluationIdsToUpdate
+													};
+
+													data.checklistTemplate.questions = [];											
+													Ext.getCmp('questionsInTemplate').getStore().each(function(item){
+														data.checklistTemplate.questions.push({
+															questionId: item.get('questionId')
+														});
+													});
+
+													var method = 'POST';
+													var update = '';
+													if (data.checklistTemplate.checklistTemplateId) {
+														update = '/' + data.checklistTemplate.checklistTemplateId;
+														method = 'PUT';
+													}
+
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/checklisttemplates' + update,
+														method: method,
+														data: data,
+														form: form,
+														success: function(){
+															actionRefresh();
+															form.reset();
+															win.close();
+														}
+													});	
+												}
+
+												var form = this.up('form');
+												var win = this.up('window');
+												if(Ext.getCmp('updatePending').getRawValue())
+												{
+													getEvaluations(win, form, saveCheckList);
+												}
+												else
+												{
+													saveCheckList(win, form);
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',									
+											iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+											scale: 'medium',
+											handler: function() {
+												this.up('window').close();
+											}										
+										}							
+									]
+								}
+							],
+							items: [
+								{
+									xtype: 'tabpanel',
+									items: [
+										{
+											title: 'Details',
+											scrollable: true,
+											layout: 'anchor',								
+											bodyStyle: 'padding: 10px;',
+											defaults: {
+												labelAlign: 'top',
+												labelSeparator: '',
+												width: '100%'
+											},										
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'checklistTemplateId'
+												},					
+												{
+													xtype: 'textfield',
+													name: 'name',
+													fieldLabel: 'Name <span class="field-required" />',
+													allowBlank: false,
+													maxLength: 255										
+												},
+												{
+													xtype: 'textfield',
+													name: 'description',
+													fieldLabel: 'Description <span class="field-required" />',
+													allowBlank: false,
+													maxLength: 255										
+												},	
+												{
+													xtype: 'panel',
+													html: '<b>Instructions</b>'
+												},
+												{
+													xtype: 'tinymce_textarea',
+													fieldStyle: 'font-family: Courier New; font-size: 12px;',
+													style: { border: '0' },
+													name: 'instructions',								
+													height: 300,
+													maxLength: 16384,
+													tinyMCEConfig: CoreUtil.tinymceConfig()
+												},
+												{
+													xtype: 'checkboxfield',
+													id: 'updatePending',
+													boxLabel: 'Update unpublished Evaluations'		
+												}
+											]
+										},
+										{
+											title: 'Questions',
+											layout: 'fit',
+											items: [
+												{
+													xtype: 'panel',
+													region: 'center',
+													layout: {
+														type: 'hbox',									
+														align: 'stretch'
+													},
+													items: [
+														{
+															xtype: 'grid',
+															title: 'Question Pool - <span class="alert-warning"> drag to add <i class="fa fa-lg fa-arrow-right"></i> </span>',
+															id: 'questionPool',
+															width: '50%',
+															margin: '0 5 0 0',
+															columnLines: true,
+															bufferedRenderer: false,
+															selModel: {
+															   selType: 'rowmodel',
+															   mode: 'MULTI'
+															},
+															store: {
+																autoLoad: false,
+																sorters: [
+																	new Ext.util.Sorter({
+																		property: 'qid',
+																		direction: 'ASC'
+																	})
+																],
+																proxy: {
+																	type: 'ajax',
+																	url: 'api/v1/resource/checklistquestions',
+																	reader: {
+																		type: 'json',
+																		rootProperty: 'data',
+																		totalProperty: 'totalNumber'
+																	}												
+																}
+															},
+															viewConfig: {
+																plugins: {
+																	ptype: 'gridviewdragdrop',
+																	dragText: 'Drag and drop to Add to template'
+																}
+															},										
+															columns: [
+																{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125 },
+																{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200,
+																	renderer: function(value, metadata, record) {
+																		return record.get('evaluationSectionDescription');
+																	}
+																},
+																{ text: 'Tags', dataIndex: 'tags', width: 175, sortable: false, 
+																	renderer: function(value, meta, record) {
+																		var viewHtml = '';							
+																		var tags = record.get('tags');
+																		Ext.Array.each(tags, function(tag){
+																			viewHtml += '<span class="alerts-option-items">' + tag.tag + '</span>';
+																		});							
+																		return viewHtml;
+																	}
+																},
+																{ text: 'Question', dataIndex: 'question',  flex: 1,
+																	renderer: function(value, metadata, record) {
+																		return Ext.util.Format.stripTags(value);
+																	}												
+																}
+															],
+															dockedItems: [
+																{
+																	xtype: 'tagfield',												
+																	fieldLabel: 'Filter By Tags',												
+																	name: 'tags',
+																	emptyText: 'Select Tags',
+																	grow: true,
+																	width: 300,	
+																	forceSelection: true,
+																	valueField: 'tag',
+																	displayField: 'tag',
+																	createNewOnEnter: true,
+																	createNewOnBlur: false,
+																	filterPickList: true,
+																	queryMode: 'local',
+																	publishes: 'tag',								
+																	store: Ext.create('Ext.data.Store', {
+																		autoLoad: true,
+																		proxy: {
+																			type: 'ajax',
+																			url: 'api/v1/resource/checklistquestions/tags'
+																		},
+																		sorters: [{
+																			property: 'text',
+																			direction: 'ASC'
+																		}]
+																	}),
+																	listeners: {
+																		change: function(filter, newValue, oldValue, opts){
+																			var grid = filter.up('grid');
+																			grid.getStore().clearFilter();
+																			if (newValue && newValue.length > 0) {
+																				grid.getStore().filterBy(function(record){
+																					var containsAny = false;
+																					Ext.Array.each(newValue, function(value){
+																						if (record.get('tags')) {
+																							Ext.Array.each(record.get('tags'), function(tag) {
+																								if (tag.tag === value) {
+																									containsAny = true;
+																								}	
+																							});
+																						}
+																					});
+																					return containsAny;
+																				});
+																			}
+																		}
+																	}
+																}
+															]
+														},
+														{
+															xtype: 'grid',
+															id: 'questionsInTemplate',
+															title: 'Questions In Template - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
+															width: '50%',
+															columnLines: true,
+															bufferedRenderer: false,
+															selModel: {
+															   selType: 'rowmodel',
+															   mode: 'MULTI'
+															},										
+															store: {											
+															},
+															viewConfig: {
+																plugins: {
+																	ptype: 'gridviewdragdrop',
+																	dragText: 'Drag and drop to delete from template'												
+																},
+																listeners: {
+																	drop: function(node, data, overModel, dropPostition, opts){													
+																	}
+																}
+															},										
+															columns: [
+																{ text: 'QID', dataIndex: 'qid', align: 'center', width: 125, sortable: false },
+																{ text: 'Section', dataIndex: 'evaluationSection', align: 'center', width: 200, sortable: false,
+																	renderer: function(value, metadata, record) {
+																		return record.get('evaluationSectionDescription');
+																	}
+																},
+																{ text: 'Tags', dataIndex: 'tags', width: 175, sortable: false, 
+																	renderer: function(value, meta, record) {
+																		var viewHtml = '';							
+																		var tags = record.get('tags');
+																		Ext.Array.each(tags, function(tag){
+																			viewHtml += '<span class="alerts-option-items">' + tag.tag + '</span>';
+																		});							
+																		return viewHtml;
+																	}
+																},											
+																{ text: 'Question', dataIndex: 'question',  flex: 1, sortable: false,
+																	renderer: function(value, metadata, record) {
+																		return Ext.util.Format.stripTags(value);
+																	}												
+																}
+															],
+															dockedItems: [
+																{
+																	xtype: 'tagfield',												
+																	fieldLabel: 'Filter By Tags',												
+																	name: 'tags',
+																	emptyText: 'Select Tags',
+																	grow: true,
+																	width: 300,	
+																	forceSelection: true,
+																	valueField: 'tag',
+																	displayField: 'tag',
+																	createNewOnEnter: true,
+																	createNewOnBlur: false,
+																	filterPickList: true,
+																	queryMode: 'local',
+																	publishes: 'tag',								
+																	store: Ext.create('Ext.data.Store', {
+																		autoLoad: true,
+																		proxy: {
+																			type: 'ajax',
+																			url: 'api/v1/resource/checklistquestions/tags'
+																		},
+																		sorters: [{
+																			property: 'text',
+																			direction: 'ASC'
+																		}]
+																	}),
+																	listeners: {
+																		change: function(filter, newValue, oldValue, opts){
+																			var grid = filter.up('grid');
+																			grid.getStore().clearFilter();
+																			if (newValue && newValue.length > 0) {
+																				grid.getStore().filterBy(function(record){
+																					var containsAny = false;
+																					Ext.Array.each(newValue, function(value){
+																						if (record.get('tags')) {
+																							Ext.Array.each(record.get('tags'), function(tag) {
+																								if (tag.tag === value) {
+																									containsAny = true;
+																								}	
+																							});
+																						}
+																					});
+																					return containsAny;
+																				});
+																			}
+																		}
+																	}
+																}
+															]										
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				addEditWindow.show();
+				
+				Ext.getCmp('questionsInTemplate').getStore().removeAll();
+				if (record) {
+					addEditWindow.getComponent('form').loadRecord(record);
+					
+					Ext.getCmp('questionPool').getStore().load(function(records, operation, success) {
+						var recordsInTemplate = [];
+						var recordsAvaliable = [];
+						Ext.Array.each(records, function(question) {
+							var questionInTemplate = false;
+							
+							if (record.get('questions')) {
+								Ext.Array.each(record.get('questions'), function(templateQuestion) {
+									if (templateQuestion.questionId === question.get('questionId')) {
+										question.sortOrder = templateQuestion.sortOrder;
+										questionInTemplate = true;
+									}
+								});
+							}
+							
+							if (questionInTemplate) {								
+								recordsInTemplate.push(question);
+							} else {
+								recordsAvaliable.push(question);
+							}
+						});
+						recordsInTemplate = recordsInTemplate.sort(function(o1, o2){							
+							if (!o1.sortOrder && !o2.sortOrder) {
+								return 0;
+							} else if (o1.sortOrder && !o2.sortOrder) {
+								return 1;
+							} else if (!o1.sortOrder && o2.sortOrder) {
+								return -1;
+							} else {
+								if (o1.sortOrder < o2.sortOrder) {
+									return -1;
+								} else if (o1.sortOrder > o2.sortOrder) {
+									return 1;
+								} else {
+									return 0;
+								}
+							}
+						});
+						
+						Ext.getCmp('questionPool').getStore().loadData(recordsAvaliable);
+						Ext.getCmp('questionsInTemplate').getStore().loadData(recordsInTemplate);
+					});					
+				} else {
+					Ext.getCmp('questionPool').getStore().load();
+				}
+				
+			};
+			
+
 			
 			var checklistGrid = Ext.create('Ext.grid.Panel', {
 				id: 'checklistGrid',
@@ -424,39 +750,7 @@
 			};
 			
 			var actionAddEdit = function(record) {
-				addEditWindow.show();
-				addEditWindow.getComponent('form').reset();
-				
-				Ext.getCmp('questionsInTemplate').getStore().removeAll();
-				if (record) {
-					addEditWindow.getComponent('form').loadRecord(record);
-					
-					Ext.getCmp('questionPool').getStore().load(function(records, operation, success) {
-						var recordsInTemplate = [];
-						var recordsAvaliable = [];
-						Ext.Array.each(records, function(question) {
-							var questionInTemplate = false;
-							
-							if (record.get('questions')) {
-								Ext.Array.each(record.get('questions'), function(templateQuestion) {
-									if (templateQuestion.questionId === question.get('questionId')) {
-										questionInTemplate = true;
-									}
-								});
-							}
-							
-							if (questionInTemplate) {
-								recordsInTemplate.push(question);
-							} else {
-								recordsAvaliable.push(question);
-							}
-						});
-						Ext.getCmp('questionPool').getStore().loadData(recordsAvaliable);
-						Ext.getCmp('questionsInTemplate').getStore().loadData(recordsInTemplate);
-					});					
-				} else {
-					Ext.getCmp('questionPool').getStore().load();
-				}
+				handleAddEdit(record);
 			};
 			
 			var actionView = function(record) {			
@@ -527,8 +821,7 @@
 						var data = Ext.decode(response.responseText);
 						viewWin.update(data);
 					}
-				});
-				previewCheckButtons();				
+				});			
 			};
 		
 			var actionToggleStatus = function(record) {
@@ -562,7 +855,7 @@
 				Ext.Ajax.request({
 					url: 'api/v1/resource/checklisttemplates',
 					method: 'POST',
-					jsonData: data,												
+					jsonData: {checklistTemplate: data, evaluationIdsToUpdate: null},	
 					success: function(){
 						actionRefresh();													
 					}

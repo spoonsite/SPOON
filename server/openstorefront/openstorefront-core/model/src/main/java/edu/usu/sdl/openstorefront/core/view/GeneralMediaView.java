@@ -30,7 +30,7 @@ public class GeneralMediaView
 
 	private String name;
 	private String mimeType;
-	private String orignalFileName;
+	private String originalFileName;
 	private String mediaLink;
 	private Date updateDts;
 	private String updateUser;
@@ -43,7 +43,7 @@ public class GeneralMediaView
 	{
 		GeneralMediaView generalMediaView = new GeneralMediaView();
 		generalMediaView.setName(generalMedia.getName());
-		generalMediaView.setOrignalFileName(generalMedia.getOriginalFileName());
+		generalMediaView.setOriginalFileName(generalMedia.getOriginalFileName());
 		generalMediaView.setMimeType(generalMedia.getMimeType());
 		generalMediaView.setUpdateDts(generalMedia.getUpdateDts());
 		generalMediaView.setUpdateUser(generalMedia.getUpdateUser());
@@ -81,14 +81,14 @@ public class GeneralMediaView
 		this.mimeType = mimeType;
 	}
 
-	public String getOrignalFileName()
+	public String getOriginalFileName()
 	{
-		return orignalFileName;
+		return originalFileName;
 	}
 
-	public void setOrignalFileName(String orignalFileName)
+	public void setOriginalFileName(String originalFileName)
 	{
-		this.orignalFileName = orignalFileName;
+		this.originalFileName = originalFileName;
 	}
 
 	public String getMediaLink()

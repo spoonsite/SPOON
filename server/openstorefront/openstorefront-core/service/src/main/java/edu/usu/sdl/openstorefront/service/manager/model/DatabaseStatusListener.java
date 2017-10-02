@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.search;
+package edu.usu.sdl.openstorefront.service.manager.model;
 
 /**
+ * Use as a callback for status
  *
  * @author dshurtleff
  */
-public class SearchResultsIT
-		extends SearchTestBase
+@FunctionalInterface
+public interface DatabaseStatusListener
 {
 
-	public SearchResultsIT()
-	{
-	}
+	public void statusUpdate(String status);
 
 }

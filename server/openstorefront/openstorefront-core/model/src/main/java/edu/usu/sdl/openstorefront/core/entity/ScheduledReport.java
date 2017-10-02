@@ -75,6 +75,11 @@ public class ScheduledReport
 	@Max(30)
 	@ConsumeField
 	private Integer scheduleIntervalDays;
+	
+	@ConsumeField
+	@DataType(ReportDataId.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportDataId> componentIds;
 
 	private Date lastRanDts;
 
@@ -166,6 +171,16 @@ public class ScheduledReport
 	public void setScheduleIntervalDays(Integer scheduleIntervalDays)
 	{
 		this.scheduleIntervalDays = scheduleIntervalDays;
+	}
+	
+	public List<ReportDataId> getComponentIds()
+	{
+		return componentIds;
+	}
+
+	public void setComponentIds(List<ReportDataId> componentIds)
+	{
+		this.componentIds = componentIds;
 	}
 
 }

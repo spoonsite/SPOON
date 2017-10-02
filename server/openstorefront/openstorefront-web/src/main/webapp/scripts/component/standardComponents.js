@@ -299,7 +299,10 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Home',
 				iconCls: 'fa fa-2x fa-home icon-button-color-default',
-				href: 'Landing.action'			
+				href: 'Landing.action',
+				handler: function(){
+					window.location.href = 'Landing.action';			
+				}
 			});
 
 			if (userMenu.showAdminTools) {
@@ -308,7 +311,10 @@ Ext.define('OSF.component.UserMenu', {
 					itemId: 'menuAdminTools',
 					iconCls: 'fa fa-2x fa-gear icon-button-color-default',
 					hidden: true,
-					href: 'AdminTool.action'	
+					href: 'AdminTool.action',
+					handler: function(){
+						window.location.href = 'AdminTool.action';			
+					}					
 				});
 			}		
 
@@ -316,7 +322,10 @@ Ext.define('OSF.component.UserMenu', {
 				menuItems.push({
 					text: 'User Tools',
 					iconCls: 'fa fa-2x fa-user icon-button-color-default',
-					href: 'UserTool.action'		
+					href: 'UserTool.action',
+					handler: function(){
+						window.location.href = 'UserTool.action';			
+					}					
 				});
 			}			
 
@@ -326,7 +335,10 @@ Ext.define('OSF.component.UserMenu', {
 					itemId: 'menuEvalTools',
 					hidden: true,
 					iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
-					href: 'EvaluationTool.action'		
+					href: 'EvaluationTool.action',
+					handler: function(){
+						window.location.href = 'EvaluationTool.action';			
+					}					
 				});
 			}	
 			menuItems.push({
@@ -367,7 +379,10 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Logout',
 				iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
-				href: 'Login.action?Logout'			
+				href: 'Login.action?Logout',
+				handler: function(){
+					window.location.href = 'Login.action?Logout';			
+				}				
 			});
 			menu.add(menuItems);
 		};
@@ -506,7 +521,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				'<tpl for=".">',
 				'	<tpl if="changeTypeDescription">',
 				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
-				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment">{comment}</tpl><br>',									
+				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment"><br>{comment}</tpl><br>',									
 				'	<tpl if="newValue"><br><b>New Value: </b><br>',
 				'	<b>{newValue}</b><br><br></tpl>',
 				'	<tpl if="oldValue"><b>Old Value:</b> <br>',

@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.search;
+package edu.usu.sdl.openstorefront.core.api.query;
 
 /**
  *
- * @author dshurtleff
+ * @author kbair
  */
-public class SimpleSearchIT
-		extends SearchTestBase
+public interface WhereClause
 {
-
-	public SimpleSearchIT()
-	{
-	}
-
+	
 }

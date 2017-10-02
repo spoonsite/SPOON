@@ -71,6 +71,13 @@ limitations under the License.
 	font-size: 16px;
 }
 
+.text-readable {
+	font-weight: normal;
+    font-size: 19px;
+    line-height: 1.45;
+    /* font-family: "Georgia", Serif; */
+}
+
 .link {
     color: ${actionBean.branding.linkColor};
     text-decoration: none;	
@@ -188,8 +195,8 @@ limitations under the License.
 
 .home-search-field-cat {
 	font-size: 1.5em;
-	height: 35px !important;
-	line-height: 35px;
+	height: 50px !important;
+	line-height: 50px;
 	color: #555555;
 	vertical-align: middle;
 	color: #777777;
@@ -217,8 +224,8 @@ limitations under the License.
 
 .home-search-field-new {
 	font-size: 2.4em;
-	height: 35px !important;
-	line-height: 35px;
+	height: 50px !important;
+	line-height: 50px;
 	color: #555555;
 	vertical-align: middle;
 	background-color: white;
@@ -260,6 +267,14 @@ limitations under the License.
 	height: 100%;
 }
 
+.home-highlight-update {
+	font-size: 10px;
+    float: left;
+    padding-top: 10px;
+    padding-left: 45px;
+    color: BLACK;
+}
+
 .new-home-highlight-item-back {	
 	/* background: rgba(0, 0, 0, 0.5); */
 	/* height: 100%; */
@@ -276,10 +291,10 @@ limitations under the License.
 
 .home-highlight-header {
     text-align: center;
-    //font-size: 24px;
-    height: 50px;
-    padding-top: 15px;
-    //background: ${actionBean.branding.quoteColor};
+    /* font-size: 24px; */
+    /* height: 50px; */
+    margin-top: 50px;
+    /* background: ${actionBean.branding.quoteColor}; */
     letter-spacing: 5px;
     text-transform: uppercase;
     font: 20px "Lato", sans-serif;
@@ -676,14 +691,29 @@ td.info-table {
     overflow: hidden;	
 }
 
-.search-tool-button-outer {		
+.search-tool-button-outer-large {		
 	height: 200px;
 	width: 200px;
     float: left;	
 	background: ${actionBean.branding.primaryColor};
 }
 
-.search-tool-button-inner {
+.search-tool-button-outer-medium {		
+	height: 150px;
+	width: 150px;
+    float: left;	
+	background: ${actionBean.branding.primaryColor};
+}
+
+.search-tool-button-outer-small {		
+	height: 100px;
+	width: 100px;
+    float: left;	
+	background: ${actionBean.branding.primaryColor};
+}
+
+
+.search-tool-button-inner-large {
 	display: table;
 	margin: 0 auto;
 	/* Secondary Text Center */
@@ -694,15 +724,80 @@ td.info-table {
 	text-align: center;
 }
 
-.search-tool-button-outer:hover {
+.search-tool-button-inner-medium {
+	display: table;
+	margin: 0 auto;
+	/* Secondary Text Center */
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+	padding-top: 18%;
+	text-align: center;
+}
+
+.search-tool-button-inner-small {
+	display: table;
+	margin: 0 auto;
+	/* Secondary Text Center */
+	font-size: 16px;
+	font-weight: bold;
+	color: white;
+	padding-top: 18%;
+	text-align: center;
+}
+
+
+.search-tool-button-outer-large:hover {
 	cursor: pointer;
 	opacity: .9;
 }
 
-.action-tool-button-outer {		
+.search-tool-button-outer-medium:hover {
+	cursor: pointer;
+	opacity: .9;
+}
+
+.search-tool-button-outer-small:hover {
+	cursor: pointer;
+	opacity: .9;
+}
+
+
+.action-tool-button-outer-large {		
 	height: 200px;
 	width: 200px;
     float: left;	
+}
+
+.action-tool-button-outer-medium {		
+	height: 150px;
+	width: 150px;
+    float: left;	
+}
+
+.action-tool-button-outer-small {		
+	height: 100px;
+	width: 100px;
+    float: left;	
+}
+
+.action-tool-button-outer-large:hover {
+	cursor: pointer;
+	opacity: .9;
+}
+
+.action-tool-button-outer-medium:hover {
+	cursor: pointer;
+	opacity: .9;
+}
+
+.action-tool-button-outer-small:hover {
+	cursor: pointer;
+	opacity: .9;
+}
+
+.action-tool-button-background {
+	background: ${actionBean.branding.primaryColor};
 }
 
 .action-tool-header {
@@ -713,7 +808,7 @@ td.info-table {
 	background-color: rgba(255, 255, 255, .5);
 }
 
-.action-tool-button-inner {
+.action-tool-button-inner-large {
 	display: table;
 	margin: 0 auto;
 	/* Secondary Text Center */
@@ -724,9 +819,43 @@ td.info-table {
 	text-align: center;
 }
 
-.action-tool-button-outer:hover {
-	cursor: pointer;
-	opacity: .9;
+.action-tool-button-inner-medium {
+	display: table;
+	margin: 0 auto;
+	/* Secondary Text Center */
+	font-size: 24px;
+    line-height: 24px;	
+	color: #252525;
+	//padding-top: 18%;
+	text-align: center;
+}
+
+.action-tool-button-inner-small {
+	display: table;
+	margin: 0 auto;
+	/* Secondary Text Center */
+	font-size: 16px;
+    line-height: 16px;	
+	color: #252525;
+	//padding-top: 18%;
+	text-align: center;
+	font-weight: 700;
+}
+
+.search-tool-background {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0.76+0,0+100 */
+	background: -moz-linear-gradient(top, rgba(255,255,255,0.76) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(255,255,255,0.76) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(255,255,255,0.76) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c2ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+}
+
+.action-tool-background {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0.76+0,0+100 */
+	background: -moz-linear-gradient(top, rgba(255,255,255,0.76) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(255,255,255,0.76) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(255,255,255,0.76) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c2ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
 }
 
 .mediaviewer-body{
@@ -1407,9 +1536,16 @@ table.confluenceTable td.numberingColumn {
 	padding-top: 10px;
 }
 
+.checklist-question-sectionheader {
+	padding: 5px;
+    background-color: lightgray;
+    border: 1px solid darkgrey;
+}
+
 .checklist-question{
-	line-height: 100%;
-	font-size: 24px;
+	font-weight: normal;
+    font-size: 19px;
+    line-height: 1.45;   
 }
 
 .checklist-question-table{

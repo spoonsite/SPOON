@@ -144,6 +144,13 @@ public interface SecurityService
 	void unlockUser(String username);
 
 	/**
+	 * Resets failed login attempt (effectively manual unlocks an auto failed
+	 * locked account)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void resetFailedAttempts(String username);
+
+	/**
 	 * This will disable an account; prevent login (Only using the appropriate
 	 * security realm); Remove user profile based user profile rules Which
 	 * should disable watches.

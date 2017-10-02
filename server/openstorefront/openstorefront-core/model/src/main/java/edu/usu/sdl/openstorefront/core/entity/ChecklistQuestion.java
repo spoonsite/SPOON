@@ -18,11 +18,15 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
+import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -73,6 +77,12 @@ public class ChecklistQuestion
 	@FK(EvaluationSection.class)
 	private String evaluationSection;
 
+	@DataType(Tag.class)
+	@ConsumeField
+	@Embedded
+	@OneToMany(orphanRemoval = true)
+	private List<Tag> tags;
+
 	public ChecklistQuestion()
 	{
 	}
@@ -89,6 +99,7 @@ public class ChecklistQuestion
 		setObjective(checklistQuestion.getObjective());
 		setQuestion(checklistQuestion.getQuestion());
 		setScoreCriteria(checklistQuestion.getScoreCriteria());
+		setTags(checklistQuestion.getTags());
 
 	}
 
@@ -165,6 +176,16 @@ public class ChecklistQuestion
 	public void setChecklistQuestion(String questionId)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public List<Tag> getTags()
+	{
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags)
+	{
+		this.tags = tags;
 	}
 
 }

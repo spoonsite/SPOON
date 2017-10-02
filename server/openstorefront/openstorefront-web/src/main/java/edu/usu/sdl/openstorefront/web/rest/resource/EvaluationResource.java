@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
@@ -40,9 +42,11 @@ import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
+import edu.usu.sdl.openstorefront.core.view.EvaluationInfoView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.statistic.EvaluationStatistic;
@@ -51,9 +55,13 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -79,6 +87,8 @@ import org.apache.commons.lang.StringUtils;
 public class EvaluationResource
 		extends BaseResource
 {
+
+	private static final Logger LOG = Logger.getLogger(EvaluationResource.class.getSimpleName());
 
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
@@ -110,6 +120,10 @@ public class EvaluationResource
 			evaluationExample.setPublished(Convert.toBoolean(evaluationFilterParams.getPublished()));
 		}
 
+		if (StringUtils.isNotBlank(evaluationFilterParams.getTemplateId())) {
+			evaluationExample.setTemplateId(evaluationFilterParams.getTemplateId());
+		}
+
 		Evaluation startExample = new Evaluation();
 		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
@@ -131,21 +145,85 @@ public class EvaluationResource
 
 		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
 
-		queryByExample.setMaxResults(evaluationFilterParams.getMax());
-		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
-		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
+		//get component ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
+			// If given, filter the search by name
+			Component componentLikeExample = new Component();
+			componentLikeExample.setName("%" + evaluationFilterParams.getComponentName().toLowerCase() + "%");
+
+			QueryByExample componentQueryByExample = new QueryByExample(new Component());
+			componentQueryByExample.setLikeExample(componentLikeExample);
+			// Define Lookup Operation (ILIKE)
+			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+
+			List<Component> components = service.getPersistenceService().queryByExample(componentQueryByExample);
+			// get list of ids
+			List<String> ids = components.stream().map(x -> x.getComponentId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+				Evaluation idInExample = new Evaluation();
+				idInExample.setComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
+				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+
+				Evaluation originIdInExample = new Evaluation();
+				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
+				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+
+				WhereClauseGroup group = new WhereClauseGroup();
+				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
+				group.getExtraWhereClause().add(componentIdGroup);
+				group.getExtraWhereClause().add(originIdGroup);
+				queryByExample.getExtraWhereCauses().add(group);
+			}
+		}
+
+		//get Evaluation Template ids
+		if (StringUtils.isNotBlank(evaluationFilterParams.getChecklistTemplateId())) {
+			// If given, filter the search by name
+			EvaluationTemplate templateExample = new EvaluationTemplate();
+			templateExample.setChecklistTemplateId(evaluationFilterParams.getChecklistTemplateId());
+
+			List<EvaluationTemplate> templates = templateExample.findByExample();
+			// get list of ids
+			List<String> ids = templates.stream().map(x -> x.getTemplateId()).collect(Collectors.toList());
+
+			if (!ids.isEmpty()) {
+
+				Evaluation idInExample = new Evaluation();
+				idInExample.setTemplateId(QueryByExample.STRING_FLAG);
+				SpecialOperatorModel templateIdGroup = new SpecialOperatorModel(idInExample);
+				templateIdGroup.getGenerateStatementOption().setParameterValues(ids);
+				templateIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
+
+				queryByExample.getExtraWhereCauses().add(templateIdGroup);
+			}
+		}
 
 		Evaluation evaluationSortExample = new Evaluation();
 		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
+
 		if (sortField != null) {
+
+			queryByExample.setMaxResults(evaluationFilterParams.getMax());
+			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
+			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		List<EvaluationView> views = EvaluationView.toView(evaluations);
+
+		if (sortField == null) {
+			views = evaluationFilterParams.filter(views);
+		}
 
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
-		evaluationViewWrapper.getData().addAll(EvaluationView.toView(evaluations));
+		evaluationViewWrapper.getData().addAll(views);
 		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(evaluationViewWrapper);
@@ -170,6 +248,51 @@ public class EvaluationResource
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationView.class)
+	@APIDescription("Get component view (including evals) for published and current evaluation (whether published or not)")
+	@Path("/{evaluationId}/componentdetails")
+	public Response getEvaluationComponentDetails(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		String componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getComponentId();
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		List<Component> components = componentExample.findByExample();
+
+		if (components.isEmpty()) {
+			componentId = service.getEvaluationService().getEvaluation(evaluationId).getEvaluation().getOriginComponentId();
+		}
+
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId, evaluationId);
+
+		if (componentDetail != null) {
+			return sendSingleEntityResponse(componentDetail);
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Boolean.class)
+	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
+	@Path("/{evaluationId}/checkTemplateUpdate")
+	public String checkTemplateUpdate(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		Boolean result = evaluation != null && evaluation.getTemplateUpdatePending() != null && evaluation.getTemplateUpdatePending();
+		return "{ \"result\": " + result.toString() + " }";
 	}
 
 	@GET
@@ -239,6 +362,28 @@ public class EvaluationResource
 		return sendSingleEntityResponse(evaluationAll);
 	}
 
+	@GET
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationInfoView.class)
+	@APIDescription("Gets an evaluation information status")
+	@Path("/{evaluationId}/info")
+	public Response getEvaluationInfo(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		EvaluationInfoView evaluationInfoView = null;
+		EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluationId);
+		if (evaluationAll != null) {
+			evaluationInfoView = new EvaluationInfoView();
+			evaluationInfoView.setEvaluationId(evaluationId);
+			evaluationInfoView.setLastChangeDate(evaluationAll.calcLastChangeDate());
+			evaluationInfoView.setProgessPercent(evaluationAll.calcProgress());
+		}
+
+		return sendSingleEntityResponse(evaluationInfoView);
+	}
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
 	@APIDescription("Creates an evaluation from template ")
@@ -247,6 +392,12 @@ public class EvaluationResource
 	@DataType(Evaluation.class)
 	public Response createEvaluation(Evaluation evaluation)
 	{
+		//optional
+		evaluation.setAllowNewSections(Convert.toBoolean(evaluation.getAllowNewSections()));
+
+		//Not currently used
+		evaluation.setAllowNewSubSections(Boolean.FALSE);
+
 		ValidationResult validationResult = evaluation.validate();
 		if (validationResult.valid()) {
 			evaluation = service.getEvaluationService().createEvaluationFromTemplate(evaluation);
@@ -283,6 +434,25 @@ public class EvaluationResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@APIDescription("Approves the entry summary change request and approves the entry if not, approved")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/publishsummary")
+	public Response approveEvaluationSummary(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().approveEvaluationSummary(evaluationId);
+		}
+		return sendSingleEntityResponse(evaluation);
+	}
+
+	@PUT
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -309,11 +479,38 @@ public class EvaluationResource
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
+				evaluationExisting.populateBaseUpdateFields();
 				evaluationExisting.save();
 
 				return Response.ok(evaluationExisting).build();
 			} else {
 				return sendSingleEntityResponse(validationResult.toRestError());
+			}
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Updates an evaluation; to reflect changes in the template. Unpublished only.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/updateTemplate")
+	public Response updateEvaluationTemplate(
+			@PathParam("evaluationId") String evaluationId)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			if (evaluation.getPublished()) {
+				LOG.log(Level.WARNING, MessageFormat.format("Cannot update published evaluation: {0}", evaluation.getEvaluationId()));
+				return Response.status(Response.Status.FORBIDDEN).build();
+			} else {
+				service.getEvaluationService().updateEvaluationToLatestTemplateVersion(evaluation);
+				return Response.ok(evaluation).build();
 			}
 		} else {
 			return sendSingleEntityResponse(evaluation);
@@ -349,7 +546,7 @@ public class EvaluationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Toggles the allow new section flag")
 	@Path("/{evaluationId}/allownewsections")
-	public Response toggleAllowNewSecionEvaluation(
+	public Response toggleAllowNewSectionEvaluation(
 			@PathParam("evaluationId") String evaluationId
 	)
 	{
@@ -365,7 +562,34 @@ public class EvaluationResource
 			}
 			evaluation.save();
 
-			return Response.ok().build();
+			return Response.ok(evaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Toggles the question management flag")
+	@Path("/{evaluationId}/allowquestionmanagement")
+	public Response toggleAllowQuestionManagement(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+
+			if (Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				evaluation.setAllowQuestionManagement(Boolean.FALSE);
+			} else {
+				evaluation.setAllowQuestionManagement(Boolean.TRUE);
+			}
+			evaluation.save();
+
+			return Response.ok(evaluation).build();
 		} else {
 			return sendSingleEntityResponse(evaluation);
 		}
@@ -609,6 +833,9 @@ public class EvaluationResource
 			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
 			contentSectionMedia = contentSectionMedia.find();
 			if (contentSectionMedia != null) {
+				if (StringUtils.isNotBlank(sectionMedia.getMediaTypeCode())) {
+					contentSectionMedia.setMediaTypeCode(sectionMedia.getMediaTypeCode());
+				}
 				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
 				contentSectionMedia.setCaption(sectionMedia.getCaption());
 				contentSectionMedia.save();
@@ -919,6 +1146,37 @@ public class EvaluationResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Add/Remove (inactivate) questions from evaluation checklist. Evaluation must be marked to allow changing questions.")
+	@Path("/{evaluationId}/checklist/{checklistId}/syncquestions")
+	public Response syncChecklistQuestions(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@DataType(String.class) List<String> questionIdsToKeep
+	)
+	{
+		EvaluationChecklist existing = new EvaluationChecklist();
+		existing.setEvaluationId(evaluationId);
+		existing.setChecklistId(checklistId);
+		existing = existing.find();
+		if (existing != null) {
+
+			Evaluation evaluation = new Evaluation();
+			evaluation.setEvaluationId(evaluationId);
+			evaluation = evaluation.find();
+			if (evaluation != null && Convert.toBoolean(evaluation.getAllowQuestionManagement())) {
+				service.getChecklistService().syncChecklistQuestions(checklistId, questionIdsToKeep);
+				return Response.ok().build();
+			} else {
+				Response.status(Response.Status.FORBIDDEN).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -988,6 +1246,7 @@ public class EvaluationResource
 				if (result.valid()) {
 					checklistResponse.setChecklistId(checklistId);
 					checklistResponse.setResponseId(responseId);
+					checklistResponse.setQuestionId(existing.getQuestionId());
 					checklistResponse = checklistResponse.save();
 					return Response.ok(ChecklistResponseView.toView(checklistResponse)).build();
 				} else {

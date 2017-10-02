@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
@@ -34,6 +35,9 @@ public class ChecklistTemplateQuestion
 	@FK(ChecklistQuestion.class)
 	private String questionId;
 
+	@ConsumeField
+	private Integer sortOrder;
+
 	@Version
 	private String storageVersion;
 
@@ -49,6 +53,16 @@ public class ChecklistTemplateQuestion
 	public void setQuestionId(String questionId)
 	{
 		this.questionId = questionId;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
 	}
 
 	public String getStorageVersion()

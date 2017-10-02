@@ -13,18 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.search;
+package edu.usu.sdl.openstorefront.core.view;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.QueryParam;
 
 /**
  *
  * @author dshurtleff
  */
-public class AdvanceSearchIT
-		extends SearchTestBase
+public class CheckQuestionFilterParams
+		extends FilterQueryParams
 {
 
-	public AdvanceSearchIT()
+	@QueryParam("tags")
+	private List<String> tags = new ArrayList<>();
+
+	public CheckQuestionFilterParams()
 	{
+	}
+
+	public List<String> getTags()
+	{
+		return tags;
+	}
+
+	public void setTags(List<String> tags)
+	{
+		this.tags = tags;
 	}
 
 }
