@@ -25,9 +25,10 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SimpleSearchIT.class,
-	SearchResultsIT.class,
-	AdvanceSearchIT.class
+	BasicSearchIT.class,
+	PrintSearchResultsEntryIT.class,
+	ViewSearchResultEntryIT.class,
+	AddTagSearchResultEntryIT.class
 })
 public class SearchTestSuite
 {
