@@ -25,16 +25,14 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
-import edu.usu.sdl.openstorefront.security.test.TestRealm;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
-import edu.usu.sdl.openstorefront.service.manager.OsgiManager;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
-import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
+import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,17 +42,6 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import junit.framework.Assert;
-import org.glassfish.jersey.internal.util.Base64;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.test.DeploymentContext;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.ServletDeploymentContext;
-import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
-import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -62,59 +49,15 @@ import org.mockito.Mockito;
  *
  * @author kbair
  */
-public class ComponentRESTResourceTest extends JerseyTest
+public class ComponentRESTResourceTest extends JerseyShiroTest
 {
-
-	static String getBasicAuthHeader(String username, String password)
-	{
-		return "Basic " + Base64.encodeAsString(username + ":" + password);
-	}
-
+	
 	@Override
-	protected TestContainerFactory getTestContainerFactory()
+	protected Class<?> getRestClass()
 	{
-		return new GrizzlyWebTestContainerFactory();
+		return ComponentRESTResource.class;
 	}
-
-	@Override
-	protected DeploymentContext configureDeployment()
-	{
-		return ServletDeploymentContext
-				.forServlet(new ServletContainer(new ResourceConfig(ComponentRESTResource.class)))
-				.addListener(edu.usu.sdl.openstorefront.security.test.TestShiroLoader.class)
-				.addFilter(ShiroAdjustedFilter.class, "ShiroFilter")
-				.build();
-	}
-
-	/**
-	 * NOTE: (KB) I don't want to start the full system so start minimal pieces
-	 * until they can be re-factored so only what is needed for the test is
-	 * started
-	 */
-	@BeforeClass
-	public static void init()
-	{
-		// NOTE: (KB) As this is an integration test it would be nice to hit the 
-		// DB however I dont have a good way to get the DB in a clean state
-		ServiceProxy.Test.setPersistenceServiceToTest();
-		OsgiManager.init();
-		OSFCacheManager.init();
-	}
-
-	@Before
-	public void setup()
-	{
-		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).clear();
-		TestRealm.clearLogin();
-	}
-
-	@AfterClass
-	public static void cleanup()
-	{
-		OsgiManager.cleanup();
-		OSFCacheManager.cleanUp();
-	}
-
+	
 	/**
 	 * Basic test for getting a list of components from the rest API
 	 *
@@ -136,6 +79,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		persistenceService.addQuery("select componentId from Component where activeStatus='A' and approvalState='A'", dbResults);
+		persistenceService.addQuery("select componentId from Component", dbResults);
 
 		List<Component> dbResults2 = new ArrayList<>();
 		Component comp = new Component();
@@ -166,6 +110,12 @@ public class ComponentRESTResourceTest extends JerseyTest
 		dbResults5.add(tag);
 		persistenceService.addQuery("select from ComponentTag where activeStatus='A' and componentId IN :componentIdsParams", dbResults5);
 
+		persistenceService.addQuery(ComponentType.class, new ArrayList<>());
+		
+		persistenceService.addQuery(ComponentMedia.class, new ArrayList<>());
+		
+		
+		
 		List<AttributeCode> codes = new ArrayList<>();
 		AttributeCode code = new AttributeCode();
 		code.setActiveStatus(AttributeCode.ACTIVE_STATUS);
@@ -181,10 +131,11 @@ public class ComponentRESTResourceTest extends JerseyTest
 		type.setAttributeType("TestAttribute");
 		types.add(type);
 		persistenceService.addQuery(AttributeType.class, types);
-
+		
 		//Act
 		List<ComponentSearchView> response = target("v1/resource/components")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.get(new GenericType<List<ComponentSearchView>>()
 				{
 				});
@@ -205,8 +156,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 	{
 
 		//Arrange
-		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
-		TestRealm.setLogin("CompAttUser", "thisIsATestPost", new HashSet<>(Arrays.asList("admin_entry")));
+		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 
@@ -247,7 +197,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 				.path(componentId)
 				.path("attributes")
 				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPost"))
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.post(Entity.json(postAttribute), ComponentAttribute.class);
 		
 		//Assert
@@ -261,8 +211,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 	public void activateComponentAttributeTest()
 	{
 		//Arrange
-		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
-		TestRealm.setLogin("CompAttUser", "thisIsATestPut", new HashSet<>(Arrays.asList("admin_entry")));
+		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
@@ -299,7 +248,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 				.path(attributeCode)
 				.path("activate")
 				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPut"))
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.put(Entity.json(new ComponentAttribute()), ComponentAttribute.class);
 
 		//Assert
@@ -310,8 +259,7 @@ public class ComponentRESTResourceTest extends JerseyTest
 	public void inactivateComponentAttributeTest()
 	{
 		//Arrange
-		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
-		TestRealm.setLogin("CompAttUser", "thisIsATestPut", new HashSet<>(Arrays.asList("admin_entry")));
+		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
@@ -338,10 +286,11 @@ public class ComponentRESTResourceTest extends JerseyTest
 				.path(attributeType)
 				.path(attributeCode)
 				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPut"))
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.delete();
 
 		//Assert
 		Assert.assertEquals(200, response.getStatus());
 	}
+
 }

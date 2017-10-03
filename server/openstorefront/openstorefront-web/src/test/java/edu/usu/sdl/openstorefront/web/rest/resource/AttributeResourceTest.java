@@ -20,58 +20,26 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.OsgiManager;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
+import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.AfterClass;
+import javax.ws.rs.core.HttpHeaders;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  * @author kbair
  */
-public class AttributeResourceTest extends JerseyTest
+public class AttributeResourceTest extends JerseyShiroTest
 {
 
 	@Override
-	protected Application configure()
+	protected Class<?> getRestClass()
 	{
-		return new ResourceConfig(AttributeResource.class);
-	}
-
-	/**
-	 * NOTE: (KB) I don't want to start the full system so start minimal pieces
-	 * until they can be re-factored so only what is needed for the test is
-	 * started
-	 */
-	@BeforeClass
-	public static void init()
-	{
-		// NOTE: (KB) As this is an integration test it would be nice to hit the 
-		// DB however I dont have a good way to get the DB in a clean state
-		ServiceProxy.Test.setPersistenceServiceToTest();
-		OsgiManager.init();
-	}
-
-	@Before
-	public void setup()
-	{
-		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).clear();
-	}
-
-	@AfterClass
-	public static void cleanup()
-	{
-		OsgiManager.cleanup();
+		return AttributeResource.class;
 	}
 
 	@Test
@@ -115,6 +83,7 @@ public class AttributeResourceTest extends JerseyTest
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/required")
 				.queryParam("componentType", "ARTICLE")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.get(new GenericType<List<AttributeType>>()
 				{
 				});
@@ -182,6 +151,7 @@ public class AttributeResourceTest extends JerseyTest
 		List<AttributeType> response = target("v1/resource/attributes/attributetypes/optional")
 				.queryParam("componentType", "ARTICLE")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.get(new GenericType<List<AttributeType>>()
 				{
 				});
