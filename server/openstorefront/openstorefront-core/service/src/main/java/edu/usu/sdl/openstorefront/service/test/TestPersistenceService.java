@@ -19,12 +19,12 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 
 /**
  *
@@ -38,20 +38,15 @@ public class TestPersistenceService implements PersistenceService
 	private static Map<Class<?>, Queue<BaseEntity>> singleResultsMap = new HashMap<>();
 	private static Map<String, Queue<List>> listQueryResultsMap = new HashMap<>();
 	private static Map<Class<?>, Queue<BaseEntity>> listExampleMap = new HashMap<>();
-	
-public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
-    try {
-        return clazz.cast(o);
-    } catch(ClassCastException e) {
-        return null;
-    }
-}
+	private static Map<Class<?>, Map<Object, Queue<BaseEntity>>> byIdMap = new HashMap<>();
+
 	public void clear()
 	{
 		listResultsMap = new HashMap<>();
 		listExampleMap = new HashMap<>();
 		listQueryResultsMap = new HashMap<>();
 		singleResultsMap = new HashMap<>();
+		byIdMap = new HashMap<>();
 	}
 
 	public void addQuery(String query, List queryResults)
@@ -64,12 +59,15 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 
 	public void addQuery(Class<?> cls, List queryResults)
 	{
+		if ((queryResults.size() > 0) && (!cls.isInstance(queryResults.get(0)))) {
+			throw new IllegalArgumentException("List Contents do not match expected type: " + cls.getName());
+		}
 		if (!listResultsMap.containsKey(cls)) {
 			listResultsMap.put(cls, new LinkedList<>());
 		}
 		listResultsMap.get(cls).add(queryResults);
 	}
-	
+
 	public void addObject(BaseEntity baseEntity)
 	{
 		if (!singleResultsMap.containsKey(baseEntity.getClass())) {
@@ -77,7 +75,17 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 		}
 		singleResultsMap.get(baseEntity.getClass()).add(baseEntity);
 	}
-
+	
+	public void addObjectWithId(Class<?> cls, Object id, BaseEntity baseEntity)
+	{
+		if (!byIdMap.containsKey(cls)) {
+			byIdMap.put(cls, new HashMap<>());
+		}		
+		if (!byIdMap.get(cls).containsKey(id)) {
+			byIdMap.get(cls).put(id, new LinkedList<>());
+		}
+		byIdMap.get(cls).get(id).add(baseEntity);
+	}
 
 	private void addListExample(BaseEntity example)
 	{
@@ -89,12 +97,7 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 
 	public Queue<BaseEntity> getListExamples(Class<?> cls)
 	{
-		Queue<BaseEntity> result = new LinkedList<>();
-		if (listExampleMap.containsKey(cls)
-				&& (!listExampleMap.get(cls).isEmpty())) {
-			result = listExampleMap.get(cls);
-		}
-		return result;
+		return (listExampleMap.containsKey(cls)	&& (!listExampleMap.get(cls).isEmpty())) ? listExampleMap.get(cls) : null;
 	}
 	// </editor-fold>
 
@@ -102,12 +105,7 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
 		addListExample(baseEntity);
-		List<T> result = new ArrayList<>();
-		if (listResultsMap.containsKey(baseEntity.getClass())
-				&& (!listResultsMap.get(baseEntity.getClass()).isEmpty())) {
-			result = listResultsMap.get(baseEntity.getClass()).poll();
-		}
-		return result;
+		return (listResultsMap.containsKey(baseEntity.getClass()) && (!listResultsMap.get(baseEntity.getClass()).isEmpty())) ? listResultsMap.get(baseEntity.getClass()).poll() : null;
 	}
 
 	@Override
@@ -115,34 +113,23 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	{
 		return queryByExample(queryByExample.getExample());
 	}
-	
+
 	@Override
 	public <T> T queryOneByExample(BaseEntity baseEntity)
-	{		
-		Object result = null;
-		if (singleResultsMap.containsKey(baseEntity.getClass())
-				&& (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) {
-			result = singleResultsMap.get(baseEntity.getClass()).poll();
-		}
-		return (T)(Object)result;
+	{
+		return (singleResultsMap.containsKey(baseEntity.getClass())	&& (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) ? (T)singleResultsMap.get(baseEntity.getClass()).poll() : null;
 	}
-	
-	
+
 	@Override
 	public <T> T queryOneByExample(QueryByExample queryByExample)
 	{
 		return queryOneByExample(queryByExample.getExample());
 	}
-	
+
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
-		List<T> result = new ArrayList<>();
-		if (listQueryResultsMap.containsKey(query)
-				&& (!listQueryResultsMap.get(query).isEmpty())) {
-			result = listQueryResultsMap.get(query).poll();
-		}
-		return result;
+		return (listQueryResultsMap.containsKey(query) && (!listQueryResultsMap.get(query).isEmpty())) ? listQueryResultsMap.get(query).poll() : null;
 	}
 
 	@Override
@@ -153,19 +140,80 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 		return query(query, parameterMap);
 	}
 
-	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
+	@Override
+	public <T> T findById(Class<T> entity, Object id)
+	{
+		return (byIdMap.containsKey(entity) && byIdMap.get(entity).containsKey(id) && !byIdMap.get(entity).get(id).isEmpty()) ? (T)byIdMap.get(entity).get(id).poll() : null;
+	}
+
+	@Override
+	public <T> int deleteByExample(BaseEntity example)
+	{
+		// We may want to save the examples so we can check them in Asserts
+		return 0;
+	}
+
+	@Override
+	public <T extends BaseEntity> T persist(T entity)
+	{
+		// We may want to save the entities so we can check them in Asserts
+		return entity;
+	}
+
+	@Override
+	public String generateId()
+	{
+		return UUID.randomUUID().toString();
+	}
+	
+	// <editor-fold defaultstate="collapsed" desc="Transactions: Currently no need to support transactions">
 	@Override
 	public void begin()
 	{
-		throw new UnsupportedOperationException("Not supported yet. begin()");
+		// Do Nothing
+	}
+
+	@Override
+	public void endTransaction()
+	{
+		// Do Nothing
 	}
 
 	@Override
 	public void commit()
 	{
-		throw new UnsupportedOperationException("Not supported yet. commit()");
+		// Do Nothing
+	}
+	
+	@Override
+	public void rollback()
+	{
+		// Do Nothing
+	}
+	// </editor-fold>
+	
+	// <editor-fold defaultstate="collapsed" desc="Proxy: No difference between wrapped and unwrapped objects in testing">
+
+	@Override
+	public <T> List<T> unwrapProxy(List<T> data)
+	{
+		return data;
 	}
 
+	@Override
+	public <T> T unwrapProxyObject(T data)
+	{
+		return data;
+	}
+
+	@Override
+	public boolean isProxy(BaseEntity baseEntity)
+	{
+		return false;
+	}
+	// </editor-fold>
+	
+	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
 	@Override
 	public long countByExample(BaseEntity example)
 	{
@@ -197,12 +245,6 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	}
 
 	@Override
-	public <T> int deleteByExample(BaseEntity example)
-	{
-		throw new UnsupportedOperationException("Not supported yet. deleteByExample(BaseEntity example)");
-	}
-
-	@Override
 	public <T> int deleteByExample(QueryByExample queryByExample)
 	{
 		throw new UnsupportedOperationException("Not supported yet. deleteByExample(QueryByExample queryByExample)");
@@ -221,27 +263,9 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	}
 
 	@Override
-	public void endTransaction()
-	{
-		throw new UnsupportedOperationException("Not supported yet. endTransaction()");
-	}
-
-	@Override
 	public <T> T find(Class<T> entityClass, Object primaryKey)
 	{
 		throw new UnsupportedOperationException("Not supported yet. find(Class<T> entityClass, Object primaryKey)");
-	}
-
-	@Override
-	public <T> T findById(Class<T> entity, Object id)
-	{
-		throw new UnsupportedOperationException("Not supported yet. findById(Class<T> entity, Object id)");
-	}
-
-	@Override
-	public String generateId()
-	{
-		throw new UnsupportedOperationException("Not supported yet. generateId()");
 	}
 
 	@Override
@@ -251,27 +275,9 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	}
 
 	@Override
-	public boolean isProxy(BaseEntity baseEntity)
-	{
-		throw new UnsupportedOperationException("Not supported yet. isProxy(BaseEntity baseEntity)");
-	}
-
-	@Override
 	public boolean isTransactionActive()
 	{
 		throw new UnsupportedOperationException("Not supported yet. isTransactionActive()");
-	}
-
-	@Override
-	public <T extends BaseEntity> T persist(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet. persist(T entity)");
-	}
-
-	@Override
-	public void rollback()
-	{
-		throw new UnsupportedOperationException("Not supported yet. rollback()");
 	}
 
 	@Override
@@ -296,18 +302,6 @@ public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
 	public <T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
 	{
 		throw new UnsupportedOperationException("Not supported yet. setStatusOnEntity(Class<T> entity, Object id, String activeStatus)");
-	}
-
-	@Override
-	public <T> List<T> unwrapProxy(List<T> data)
-	{
-		throw new UnsupportedOperationException("Not supported yet. unwrapProxy(List<T> data)");
-	}
-
-	@Override
-	public <T> T unwrapProxyObject(T data)
-	{
-		throw new UnsupportedOperationException("Not supported yet. unwrapProxyObject(T data)");
 	}
 
 	@Override

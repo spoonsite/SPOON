@@ -24,11 +24,11 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
-import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.security.test.TestRealm;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -42,7 +42,7 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 import org.glassfish.jersey.internal.util.Base64;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -113,46 +113,6 @@ public class ComponentRESTResourceTest extends JerseyTest
 	{
 		OsgiManager.cleanup();
 		OSFCacheManager.cleanUp();
-	}
-
-	@Test
-	public void addComponentAttributeTest()
-	{
-		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
-		TestRealm.setLogin("CompAttUser", "thisIsATest", new HashSet<>(Arrays.asList("admin_entry")));
-
-		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
-
-		//Arrange
-		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
-		Component c = new Component();
-		persistenceService.addObject(c);
-		ComponentAttribute attribute = new ComponentAttribute();
-		//Act
-		ComponentAttribute response = target("v1/resource/components")
-				.path(componentId)
-				.path("attributes")
-				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATest"))
-				.post(Entity.entity(attribute, MediaType.APPLICATION_JSON_TYPE), ComponentAttribute.class);
-
-		//Assert
-	}
-
-	@Test
-	public void activateComponentAttributeTest()
-	{
-		//Arrange
-		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
-		RequiredForComponent attribute = new RequiredForComponent();
-		//Act
-		ComponentAttribute response = target("v1/resource/components")
-				.path(componentId)
-				.path("attributes")
-				.request()
-				.put(Entity.entity(attribute, MediaType.APPLICATION_JSON_TYPE), ComponentAttribute.class);
-
-		//Assert
 	}
 
 	/**
@@ -238,5 +198,150 @@ public class ComponentRESTResourceTest extends JerseyTest
 		Assert.assertEquals(1, actual.getAttributes().size());
 		Assert.assertEquals("TestAttribute", actual.getAttributes().get(0).getType());
 
+	}
+
+	@Test
+	public void addComponentAttributeTest()
+	{
+
+		//Arrange
+		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		TestRealm.setLogin("CompAttUser", "thisIsATestPost", new HashSet<>(Arrays.asList("admin_entry")));
+		
+		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
+
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		Component componentToUpdate = new Component();
+		componentToUpdate.setComponentId(componentId);
+		persistenceService.addObject(componentToUpdate);
+		
+		List<AttributeType> attributeTypes = new ArrayList<>();
+		AttributeType type = new AttributeType();
+		type.setAttributeType("TESTATT");
+		type.setAllowMultipleFlg(false);
+		attributeTypes.add(type);
+		persistenceService.addQuery(AttributeType.class, attributeTypes);
+		
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		AttributeCode code = new AttributeCode();
+		code.setAttributeCodePk(new AttributeCodePk());
+		code.getAttributeCodePk().setAttributeCode("CODE1");
+		code.getAttributeCodePk().setAttributeType("TESTATT");
+		attributeCodes.add(code);
+		persistenceService.addQuery(AttributeCode.class, attributeCodes);
+				
+		ComponentAttribute postAttribute = new ComponentAttribute();
+		postAttribute.setComponentAttributePk(new ComponentAttributePk());
+		postAttribute.getComponentAttributePk().setAttributeCode("CODE1");
+		postAttribute.getComponentAttributePk().setAttributeType("TESTATT");
+		
+		
+		
+		ComponentAttribute expectedAttribute = new ComponentAttribute();
+		expectedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		expectedAttribute.setComponentAttributePk(new ComponentAttributePk());
+		expectedAttribute.getComponentAttributePk().setAttributeCode("CODE1");
+		expectedAttribute.getComponentAttributePk().setAttributeType("TESTATT");
+		//Act
+		ComponentAttribute response = target("v1/resource/components")
+				.path(componentId)
+				.path("attributes")
+				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPost"))
+				.post(Entity.json(postAttribute), ComponentAttribute.class);
+		
+		//Assert
+		Assert.assertNotNull(response.getComponentId());
+		expectedAttribute.setComponentId(response.getComponentId()); // set system generated id
+		expectedAttribute.getComponentAttributePk().setComponentId(response.getComponentId()); // set system generated id
+		Assert.assertEquals(0, response.compareTo(expectedAttribute));
+	}
+
+	@Test
+	public void activateComponentAttributeTest()
+	{
+		//Arrange
+		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		TestRealm.setLogin("CompAttUser", "thisIsATestPut", new HashSet<>(Arrays.asList("admin_entry")));
+		
+		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
+		String attributeType = "TESTATT";
+		String attributeCode = "CODE1";		
+		
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		Component componentToUpdate = new Component();
+		componentToUpdate.setComponentId(componentId);
+		persistenceService.addObject(componentToUpdate);
+		
+		ComponentAttribute savedAttribute = new ComponentAttribute();
+		savedAttribute.setComponentId(componentId);
+		savedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		savedAttribute.setComponentAttributePk(new ComponentAttributePk());
+		savedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
+		savedAttribute.getComponentAttributePk().setAttributeType(attributeType);
+		savedAttribute.getComponentAttributePk().setComponentId(componentId);
+		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute);
+		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute); // Object is loaded twice
+				
+		ComponentAttribute expectedAttribute = new ComponentAttribute();
+		expectedAttribute.setComponentId(componentId);
+		expectedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		expectedAttribute.setComponentAttributePk(new ComponentAttributePk());
+		expectedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
+		expectedAttribute.getComponentAttributePk().setAttributeType(attributeType);
+		expectedAttribute.getComponentAttributePk().setComponentId(componentId);
+		
+		//Act
+		ComponentAttribute response = target("v1/resource/components")
+				.path(componentId)
+				.path("attributes")
+				.path(attributeType)
+				.path(attributeCode)
+				.path("activate")
+				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPut"))
+				.put(Entity.json(new ComponentAttribute()), ComponentAttribute.class);
+
+		//Assert
+		Assert.assertEquals(0, response.compareTo(expectedAttribute));
+	}
+	
+	@Test
+	public void inactivateComponentAttributeTest()
+	{
+		//Arrange
+		TestRealm.setupRoles("admin_entry", new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		TestRealm.setLogin("CompAttUser", "thisIsATestPut", new HashSet<>(Arrays.asList("admin_entry")));
+		
+		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
+		String attributeType = "TESTATT";
+		String attributeCode = "CODE1";		
+		
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		Component componentToUpdate = new Component();
+		componentToUpdate.setComponentId(componentId);
+		persistenceService.addObject(componentToUpdate);
+		
+		ComponentAttribute savedAttribute = new ComponentAttribute();
+		savedAttribute.setComponentId(componentId);
+		savedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		savedAttribute.setComponentAttributePk(new ComponentAttributePk());
+		savedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
+		savedAttribute.getComponentAttributePk().setAttributeType(attributeType);
+		savedAttribute.getComponentAttributePk().setComponentId(componentId);
+		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute);
+		
+		//Act
+		Response response = target("v1/resource/components")
+				.path(componentId)
+				.path("attributes")
+				.path(attributeType)
+				.path(attributeCode)
+				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader("CompAttUser", "thisIsATestPut"))
+				.delete();
+
+		//Assert
+		Assert.assertEquals(200, response.getStatus());
 	}
 }

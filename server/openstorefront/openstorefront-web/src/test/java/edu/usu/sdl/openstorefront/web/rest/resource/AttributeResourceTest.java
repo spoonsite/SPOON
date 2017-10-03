@@ -122,6 +122,9 @@ public class AttributeResourceTest extends JerseyTest
 		//Assert
 		Assert.assertNotNull(response);
 		Assert.assertArrayEquals(expected.toArray(), response.toArray());
+		
+		AttributeType queryExample = (AttributeType) persistenceService.getListExamples(AttributeType.class).poll();
+		Assert.assertEquals(0, expectedQueryExample.compareTo(queryExample));
 	}
 
 	@Test
@@ -187,8 +190,7 @@ public class AttributeResourceTest extends JerseyTest
 		Assert.assertNotNull(response);
 		Assert.assertArrayEquals(expected.toArray(), response.toArray());
 		
-//		NOTE: we need to write a method to check all getters of a class as equality is not usually comparing all fileds
-//		AttributeType queryExample = (AttributeType) persistenceService.getListExamples(AttributeType.class).poll();
-//		Assert.assertEquals(expectedQueryExample, queryExample);
+		AttributeType queryExample = (AttributeType) persistenceService.getListExamples(AttributeType.class).poll();
+		Assert.assertEquals(0, expectedQueryExample.compareTo(queryExample));
 	}
 }
