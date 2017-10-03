@@ -48,23 +48,69 @@ public abstract class JerseyShiroTest extends JerseyTest
 
 	private static final String USER = "TestUser";
 	private static final String PASS = "TestPass";
+	private static final String ROLE = "JerseyTest";
 	private boolean permissionsSet = false;
 
 	protected abstract Class<?> getRestClass();
 
+	/**
+	 * Sets a single user with a set of specified set of Security Permissions.
+	 * This should be called at most once per test to add additional users
+	 * and/or roles with different Security Permissions use TestRealm.setLogin()
+	 * and TestRealm.setupRoles()
+	 *
+	 * @param permissions set of Security Permissions to configure the user with
+	 */
 	protected void setPermissions(Set<String> permissions)
 	{
+		if (permissionsSet) {
+			throw new IllegalStateException("setPermissions should only be called once per test");
+		}
 		permissionsSet = true;
-		TestRealm.setupRoles("JerseyTest", permissions);
-		TestRealm.setLogin(USER, PASS, new HashSet<>(Arrays.asList("JerseyTest")));
+		TestRealm.setupRoles(ROLE, permissions);
+		TestRealm.setLogin(USER, PASS, new HashSet<>(Arrays.asList(ROLE)));
 	}
 
+	/**
+	 * Sets a single user with a single specified Security Permission. This
+	 * should be called at most once per test to set multiple permissions use
+	 * setPermissions(Set&lt;String&gt; permissions)
+	 *
+	 * @param permission Security Permission to set for the user
+	 */
+	protected void setSinglePermission(String permission)
+	{
+		if (permissionsSet) {
+			throw new IllegalStateException("setSinglePermission should only be called once per test");
+		}
+		setPermissions(new HashSet<>(Arrays.asList(permission)));
+	}
+
+	/**
+	 * creates the Basic Authentication Header with the default credentials
+	 * (i.e. base64 encoded string of "username:password")
+	 *
+	 * @return the value for the authentication header
+	 */
 	protected String getBasicAuthHeader()
+	{
+		return getBasicAuthHeader(USER, PASS);
+	}
+
+	/**
+	 * creates the Basic Authentication Header with the specified credentials
+	 * (i.e. base64 encoded string of "username:password")
+	 *
+	 * @param username desired username
+	 * @param password desired password
+	 * @return the value for the authentication header
+	 */
+	protected String getBasicAuthHeader(String username, String password)
 	{
 		if (!permissionsSet) {
 			setPermissions(new HashSet<>());
 		}
-		return "Basic " + Base64.encodeAsString(USER + ":" + PASS);
+		return "Basic " + Base64.encodeAsString(username + ":" + password);
 	}
 
 	@Override
@@ -83,16 +129,16 @@ public abstract class JerseyShiroTest extends JerseyTest
 				.build();
 	}
 
-	/**
-	 * NOTE: (KB) I don't want to start the full system so start minimal pieces
-	 * until they can be re-factored so only what is needed for the test is
-	 * started
-	 */
 	@BeforeClass
 	public static void init()
 	{
-		// NOTE: (KB) As this is an integration test it would be nice to hit the 
-		// DB however I dont have a good way to get the DB in a clean state
+		/**
+		 * NOTE: (KB) I don't want to start the full system so start minimal
+		 * pieces until they can be re-factored so only what is needed for the
+		 * test is started. As this is an integration test it would be nice to
+		 * hit the DB however I don't have a good way to get the DB in a clean
+		 * state
+		 */
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		OsgiManager.init();
 		OSFCacheManager.init();

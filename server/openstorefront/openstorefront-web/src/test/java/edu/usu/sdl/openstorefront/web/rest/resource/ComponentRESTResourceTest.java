@@ -34,8 +34,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -156,7 +154,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	{
 
 		//Arrange
-		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 
@@ -211,7 +209,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	public void activateComponentAttributeTest()
 	{
 		//Arrange
-		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
@@ -259,7 +257,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	public void inactivateComponentAttributeTest()
 	{
 		//Arrange
-		setPermissions(new HashSet<>(Arrays.asList(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)));
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
