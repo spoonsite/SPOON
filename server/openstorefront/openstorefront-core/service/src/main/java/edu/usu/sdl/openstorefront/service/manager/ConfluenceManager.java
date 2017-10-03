@@ -15,35 +15,82 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
+import edu.usu.sdl.openstorefront.service.manager.resource.ConfluenceClient;
+import java.text.MessageFormat;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
+/**
+ * This handles the general confluence client pool
+ *
+ * @author dshurtleff
+ */
 public class ConfluenceManager
-		implements Initializable
+		implements Initializable, PooledResourceManager<ConfluenceClient>
 {
 
 	private static final Logger log = Logger.getLogger(ConfluenceManager.class.getName());
-	private static Client client;
+
+	private BlockingQueue<ConfluenceClient> clientPool;
+	private int maxPoolSize;
+	private static ConfluenceManager poolInstance;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
+	public ConfluenceManager()
+	{
+	}
+
+	public ConfluenceManager(BlockingQueue<ConfluenceClient> clientPool, int maxPoolSize)
+	{
+		this.clientPool = clientPool;
+		this.maxPoolSize = maxPoolSize;
+	}
+
 	public static void init()
 	{
-		log.log(Level.FINE, "Initializing Confluence Connection");
+		log.log(Level.FINE, "Initializing Confluence Pool");
+
+		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_JIRA_POOL_SIZE, "20");
+		int maxPoolSize = Convert.toInteger(poolSize);
+		BlockingQueue<ConfluenceClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
+		poolInstance = new ConfluenceManager(clientPool, maxPoolSize);
+
+		log.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl(PropertiesManager.getValue(PropertiesManager.KEY_CONFLUENCE_URL));
 		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
 		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(connectionModel.getUsername(), connectionModel.getCredential());
-		client = ClientBuilder.newClient().register(feature);
+		for (int i = 0; i < maxPoolSize; i++) {
+			ConfluenceClient client = new ConfluenceClient(connectionModel, poolInstance);
+			clientPool.offer(client);
+		}
+	}
+
+	public static AtomicBoolean getStarted()
+	{
+		return started;
+	}
+
+	public static void setStarted(AtomicBoolean started)
+	{
+		ConfluenceManager.started = started;
+	}
+
+	public static ConfluenceManager getPoolInstance()
+	{
+		return poolInstance;
 	}
 
 	@Override
@@ -56,7 +103,13 @@ public class ConfluenceManager
 	@Override
 	public void shutdown()
 	{
-		client = null;
+		if (poolInstance != null) {
+			if (poolInstance.getAvailableConnections() != poolInstance.getMaxConnections()) {
+				log.log(Level.WARNING, MessageFormat.format("{0} confluence connections were in process. ", poolInstance.getAvailableConnections()));
+			}
+			log.log(Level.FINE, "Stopping pool.");
+			poolInstance.shutdownPool();
+		}
 		started.set(false);
 	}
 
@@ -66,24 +119,43 @@ public class ConfluenceManager
 		return started.get();
 	}
 
-	public static Client getClient()
+	public ConfluenceClient getClient()
 	{
-		return client;
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
+		try {
+			ConfluenceClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
+			if (client == null) {
+				throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection in time.  No resource available.", "Adjust confluence pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
+			}
+			return client;
+		} catch (InterruptedException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
+		}
 	}
 
-	public static void setClient(Client client)
+	@Override
+	public void releaseClient(ConfluenceClient confluenceClient)
 	{
-		ConfluenceManager.client = client;
+		clientPool.offer(confluenceClient);
 	}
 
-	public static AtomicBoolean getStarted()
+	public int getMaxConnections()
 	{
-		return started;
+		return maxPoolSize;
 	}
 
-	public static void setStarted(AtomicBoolean started)
+	public int getAvailableConnections()
 	{
-		ConfluenceManager.started = started;
+		return maxPoolSize - clientPool.remainingCapacity();
+	}
+
+	@Override
+	public void shutdownPool()
+	{
+		for (ConfluenceClient client : clientPool) {
+			client.close();
+		}
+		clientPool.clear();
 	}
 
 }

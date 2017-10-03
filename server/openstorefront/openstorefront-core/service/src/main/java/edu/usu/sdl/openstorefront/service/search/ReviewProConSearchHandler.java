@@ -35,11 +35,11 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author dshurtleff
  */
-public class ReviewProConSeatchHandler
+public class ReviewProConSearchHandler
 		extends BaseSearchHandler
 {
 
-	public ReviewProConSeatchHandler(List<SearchElement> searchElements)
+	public ReviewProConSearchHandler(List<SearchElement> searchElements)
 	{
 		super(searchElements);
 	}

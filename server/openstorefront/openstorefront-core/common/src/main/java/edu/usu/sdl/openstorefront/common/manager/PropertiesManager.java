@@ -106,6 +106,8 @@ public class PropertiesManager
 	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
 	public static final String KEY_FEEDBACK_EMAIL = "feedback.email";
 	public static final String KEY_CONFLUENCE_URL = "confluence.server.url";
+	public static final String KEY_CONFLUENCE_POOL_SIZE = "jira.connectionpool.size";
+	public static final String KEY_CONFLUENCE_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
 
 	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
 	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
