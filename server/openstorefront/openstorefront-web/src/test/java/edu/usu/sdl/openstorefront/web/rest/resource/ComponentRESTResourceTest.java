@@ -34,8 +34,10 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -49,13 +51,13 @@ import org.mockito.Mockito;
  */
 public class ComponentRESTResourceTest extends JerseyShiroTest
 {
-	
+
 	@Override
 	protected Class<?> getRestClass()
 	{
 		return ComponentRESTResource.class;
 	}
-	
+
 	/**
 	 * Basic test for getting a list of components from the rest API
 	 *
@@ -63,6 +65,9 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	 * complex REST call then it was for a given use case. if you have a use
 	 * case in mind please adapt this to match so the test provides more than
 	 * just an example
+	 *
+	 * @GET
+	 * @Path("")
 	 */
 	@Test
 	public void getComponentsTest()
@@ -109,11 +114,9 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		persistenceService.addQuery("select from ComponentTag where activeStatus='A' and componentId IN :componentIdsParams", dbResults5);
 
 		persistenceService.addQuery(ComponentType.class, new ArrayList<>());
-		
+
 		persistenceService.addQuery(ComponentMedia.class, new ArrayList<>());
-		
-		
-		
+
 		List<AttributeCode> codes = new ArrayList<>();
 		AttributeCode code = new AttributeCode();
 		code.setActiveStatus(AttributeCode.ACTIVE_STATUS);
@@ -129,7 +132,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		type.setAttributeType("TestAttribute");
 		types.add(type);
 		persistenceService.addQuery(AttributeType.class, types);
-		
+
 		//Act
 		List<ComponentSearchView> response = target("v1/resource/components")
 				.request()
@@ -149,27 +152,30 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 
 	}
 
+	/**
+	 * @POST @Path("/{id}/attributes")
+	 */
 	@Test
 	public void addComponentAttributeTest()
 	{
 
 		//Arrange
 		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
-		
+
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		Component componentToUpdate = new Component();
 		componentToUpdate.setComponentId(componentId);
 		persistenceService.addObject(componentToUpdate);
-		
+
 		List<AttributeType> attributeTypes = new ArrayList<>();
 		AttributeType type = new AttributeType();
 		type.setAttributeType("TESTATT");
 		type.setAllowMultipleFlg(false);
 		attributeTypes.add(type);
 		persistenceService.addQuery(AttributeType.class, attributeTypes);
-		
+
 		List<AttributeCode> attributeCodes = new ArrayList<>();
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(new AttributeCodePk());
@@ -177,14 +183,12 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		code.getAttributeCodePk().setAttributeType("TESTATT");
 		attributeCodes.add(code);
 		persistenceService.addQuery(AttributeCode.class, attributeCodes);
-				
+
 		ComponentAttribute postAttribute = new ComponentAttribute();
 		postAttribute.setComponentAttributePk(new ComponentAttributePk());
 		postAttribute.getComponentAttributePk().setAttributeCode("CODE1");
 		postAttribute.getComponentAttributePk().setAttributeType("TESTATT");
-		
-		
-		
+
 		ComponentAttribute expectedAttribute = new ComponentAttribute();
 		expectedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		expectedAttribute.setComponentAttributePk(new ComponentAttributePk());
@@ -197,7 +201,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 				.request()
 				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
 				.post(Entity.json(postAttribute), ComponentAttribute.class);
-		
+
 		//Assert
 		Assert.assertNotNull(response.getComponentId());
 		expectedAttribute.setComponentId(response.getComponentId()); // set system generated id
@@ -205,21 +209,24 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		Assert.assertEquals(0, response.compareTo(expectedAttribute));
 	}
 
+	/**
+	 * @PUT @Path("/{id}/attributes/{attributeType}/{attributeCode}/activate")
+	 */
 	@Test
 	public void activateComponentAttributeTest()
 	{
 		//Arrange
 		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
-		
+
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
-		String attributeCode = "CODE1";		
-		
+		String attributeCode = "CODE1";
+
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		Component componentToUpdate = new Component();
 		componentToUpdate.setComponentId(componentId);
 		persistenceService.addObject(componentToUpdate);
-		
+
 		ComponentAttribute savedAttribute = new ComponentAttribute();
 		savedAttribute.setComponentId(componentId);
 		savedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -227,9 +234,9 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		savedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
 		savedAttribute.getComponentAttributePk().setAttributeType(attributeType);
 		savedAttribute.getComponentAttributePk().setComponentId(componentId);
-		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute);
-		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute); // Object is loaded twice
-				
+		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute);
+		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute); // Object is loaded twice
+
 		ComponentAttribute expectedAttribute = new ComponentAttribute();
 		expectedAttribute.setComponentId(componentId);
 		expectedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -237,7 +244,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		expectedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
 		expectedAttribute.getComponentAttributePk().setAttributeType(attributeType);
 		expectedAttribute.getComponentAttributePk().setComponentId(componentId);
-		
+
 		//Act
 		ComponentAttribute response = target("v1/resource/components")
 				.path(componentId)
@@ -252,22 +259,25 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		//Assert
 		Assert.assertEquals(0, response.compareTo(expectedAttribute));
 	}
-	
+
+	/**
+	 * @DELETE @Path("/{id}/attributes/{attributeType}/{attributeCode}")
+	 */
 	@Test
 	public void inactivateComponentAttributeTest()
 	{
 		//Arrange
 		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
-		
+
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
-		String attributeCode = "CODE1";		
-		
+		String attributeCode = "CODE1";
+
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		Component componentToUpdate = new Component();
 		componentToUpdate.setComponentId(componentId);
 		persistenceService.addObject(componentToUpdate);
-		
+
 		ComponentAttribute savedAttribute = new ComponentAttribute();
 		savedAttribute.setComponentId(componentId);
 		savedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -275,8 +285,8 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		savedAttribute.getComponentAttributePk().setAttributeCode(attributeCode);
 		savedAttribute.getComponentAttributePk().setAttributeType(attributeType);
 		savedAttribute.getComponentAttributePk().setComponentId(componentId);
-		persistenceService.addObjectWithId(ComponentAttribute.class,savedAttribute.getComponentAttributePk(),savedAttribute);
-		
+		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute);
+
 		//Act
 		Response response = target("v1/resource/components")
 				.path(componentId)
@@ -291,4 +301,93 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		Assert.assertEquals(200, response.getStatus());
 	}
 
+	/**
+	 * @POST @Path("/{id}/attributeList")
+	 */
+	@Test
+	public void addComponentAttributeListTest()
+	{
+
+		//Arrange
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+
+		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
+
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		Component componentToUpdate = new Component();
+		componentToUpdate.setComponentId(componentId);
+		persistenceService.addObject(componentToUpdate);
+
+		AttributeType type1 = new AttributeType();
+		type1.setAttributeType("TESTATT1");
+		type1.setAllowMultipleFlg(false);
+
+		AttributeType type2 = new AttributeType();
+		type2.setAttributeType("TESTATT2");
+		type2.setAllowMultipleFlg(false);
+
+		AttributeType type3 = new AttributeType();
+		type3.setAttributeType("TESTATT3");
+		type3.setAllowMultipleFlg(false);
+
+		persistenceService.addQuery(AttributeType.class, Arrays.asList(type1));
+		persistenceService.addQuery(AttributeType.class, Arrays.asList(type2));
+		persistenceService.addQuery(AttributeType.class, Arrays.asList(type3));
+
+		AttributeCode code1 = new AttributeCode();
+		code1.setAttributeCodePk(new AttributeCodePk());
+		code1.getAttributeCodePk().setAttributeCode("CODE1");
+		code1.getAttributeCodePk().setAttributeType("TESTATT1");
+
+		AttributeCode code2 = new AttributeCode();
+		code2.setAttributeCodePk(new AttributeCodePk());
+		code2.getAttributeCodePk().setAttributeCode("CODE2");
+		code2.getAttributeCodePk().setAttributeType("TESTATT2");
+
+		AttributeCode code3 = new AttributeCode();
+		code3.setAttributeCodePk(new AttributeCodePk());
+		code3.getAttributeCodePk().setAttributeCode("CODE3");
+		code3.getAttributeCodePk().setAttributeType("TESTATT3");
+		
+		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1));
+		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code2));
+		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code3));
+
+		List<ComponentAttribute> postAttributeList = new ArrayList<>();
+		ComponentAttribute postAttribute1 = new ComponentAttribute();
+		postAttribute1.setComponentAttributePk(new ComponentAttributePk());
+		postAttribute1.getComponentAttributePk().setAttributeCode("CODE1");
+		postAttribute1.getComponentAttributePk().setAttributeType("TESTATT1");
+		postAttributeList.add(postAttribute1);
+
+		ComponentAttribute postAttribute2 = new ComponentAttribute();
+		postAttribute2.setComponentAttributePk(new ComponentAttributePk());
+		postAttribute2.getComponentAttributePk().setAttributeCode("CODE2");
+		postAttribute2.getComponentAttributePk().setAttributeType("TESTATT2");
+		postAttributeList.add(postAttribute2);
+
+		ComponentAttribute postAttribute3 = new ComponentAttribute();
+		postAttribute3.setComponentAttributePk(new ComponentAttributePk());
+		postAttribute3.getComponentAttributePk().setAttributeCode("CODE3");
+		postAttribute3.getComponentAttributePk().setAttributeType("TESTATT3");
+		postAttributeList.add(postAttribute3);
+
+		ComponentAttribute expectedAttribute = new ComponentAttribute();
+		expectedAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		expectedAttribute.setComponentAttributePk(new ComponentAttributePk());
+		expectedAttribute.getComponentAttributePk().setAttributeCode("CODE1");
+		expectedAttribute.getComponentAttributePk().setAttributeType("TESTATT1");
+		//Act
+		Response response = target("v1/resource/components")
+				.path(componentId)
+				.path("attributeList")
+				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
+				.post(Entity.json(new GenericEntity<List<ComponentAttribute>>(postAttributeList)
+				{
+				}));
+
+		//Assert
+		Assert.assertEquals(200, response.getStatus());
+	}
 }
