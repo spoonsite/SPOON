@@ -2723,7 +2723,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
 							clearInterval(templateStateCheckInterval);
 							var toggleElements = document.querySelectorAll('.toggle-collapse');
-							for (ii = 0; ii < toggleElements.length; ii += 1) {
+							for (var ii = 0; ii < toggleElements.length; ii += 1) {
 								toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
 								toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
 							}
@@ -3216,8 +3216,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 					
 					// Update Panel
 					Ext.defer(function(){
+						submissionPanel.loadComponentData();
 						submissionPanel.detailsPanel.updateLayout(true, true);
 					}, 250);					
+
 				}
 				else if (submissionPanel.currentStep === 4) {
 					
@@ -3492,9 +3494,21 @@ Ext.define('OSF.component.SubmissionPanel', {
 	editSubmission: function(componentId) {
 		var submissionPanel = this;		
 		submissionPanel.resetSubmission(true);
+
+		this.loadComponentData(componentId);
+
+		// Since we're loading a new entry, scroll to top of each panel.
+		submissionPanel.reviewPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.detailsPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.requiredForm.body.scrollTo('Top', 0, true);
 		
+	},	
+
+	loadComponentData: function (componentId) {
+		var submissionPanel = this;	
+
 		//load record
-		submissionPanel.componentId = componentId;		
+		submissionPanel.componentId = submissionPanel.componentId || componentId;		
 		
 		submissionPanel.setLoading('Loading...');
 		Ext.Ajax.request({
@@ -3542,13 +3556,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		});		
 
 		submissionPanel.loadComponentAttributes();	
-
-		// Since we're loading a new entry, scroll to top of each panel.
-		submissionPanel.reviewPanel.body.scrollTo('Top', 0, true);
-		submissionPanel.detailsPanel.body.scrollTo('Top', 0, true);
-		submissionPanel.requiredForm.body.scrollTo('Top', 0, true);
-		
-	},	
+	},
 	
 	resetSubmission: function(editMode) {
 		var submissionPanel = this;
