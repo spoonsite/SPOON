@@ -18,8 +18,16 @@
 package edu.usu.sdl.openstorefront.web.test.integration;
 
 import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.Content;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentBody;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentVersion;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.Label;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.RepresentationStorage;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.Space;
 import edu.usu.sdl.openstorefront.service.manager.resource.ConfluenceClient;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -29,6 +37,9 @@ import org.apache.commons.lang3.StringUtils;
 public class ConfluenceTest
 		extends BaseTestCase
 {
+
+	public static final String PAGE_TITLE = "AUTO-TEST-PAGE";
+	public static final String SPACE_KEY = "STORE";
 
 	private String contentId;
 
@@ -42,12 +53,65 @@ public class ConfluenceTest
 	protected void runInternalTest()
 	{
 		//check for old data
+		addResultsLines("Checking for old page");
+		try (ConfluenceClient client = ConfluenceManager.getPoolInstance().getClient()) {
+			Content content = client.getPage(SPACE_KEY, PAGE_TITLE);
+			if (content != null) {
+				addResultsLines("Found old Page");
+				deletePage(content.getId());
+			}
 
-		//delete if exists
-		//create page
-		//update page
-		//add label
-		//delete label
+			//create page
+			addResultsLines("Create Test Page");
+			Content newContent = new Content();
+
+			newContent.setTitle(PAGE_TITLE);
+			Space space = new Space();
+			space.setKey(SPACE_KEY);
+			newContent.setSpace(space);
+
+			ContentBody contentBody = new ContentBody();
+			RepresentationStorage storage = new RepresentationStorage();
+			storage.setValue("<h1>New Test Page from API</h1>");
+			contentBody.setStorage(storage);
+			newContent.setBody(contentBody);
+
+			Content savedContent = client.createPage(newContent);
+			contentId = savedContent.getId();
+			addResultsLines("Posted Page");
+
+			addResultsLines("Updating Page");
+			newContent.setId(savedContent.getId());
+			newContent.getBody().getStorage().setValue("<h2>Update Content</h2>");
+			ContentVersion version = new ContentVersion();
+			version.setNumber(2);
+			newContent.setVersion(version);
+			client.updatePage(newContent);
+			addResultsLines("Updated Page");
+
+			addResultsLines("Add Label to Page");
+			List<Label> labels = new ArrayList<>();
+			Label label = new Label();
+			label.setName("TEST");
+			labels.add(label);
+			client.addLabel(savedContent.getId(), labels);
+
+			addResultsLines("Delete Label");
+			client.deleteLabel(savedContent.getId(), "TEST");
+
+			addResultsLines("Checking to see if page posted/updated");
+			Content foundContent = client.getPage(SPACE_KEY, PAGE_TITLE);
+			if (foundContent != null) {
+				if (foundContent.getBody().getView().getValue().contains("Update")) {
+					addResultsLines("Found Page and it was updated");
+				} else {
+					addFailLines("Found page.  Not able to determine update status");
+				}
+			} else {
+				addFailLines("Unable to find test page on confluence");
+			}
+
+		}
 	}
 
 	@Override
@@ -63,9 +127,10 @@ public class ConfluenceTest
 
 	private void deletePage(String contentId)
 	{
-		ConfluenceClient client = ConfluenceManager.getPoolInstance().getClient();
-		if (client.deletePage(contentId)) {
-			results.append("Deleted Test Page");
+		try (ConfluenceClient client = ConfluenceManager.getPoolInstance().getClient()) {
+			if (client.deletePage(contentId)) {
+				addResultsLines("Deleted Test Page");
+			}
 		}
 	}
 

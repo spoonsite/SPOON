@@ -30,6 +30,7 @@ public class Content
 	private Space space;
 	private ContentBody body;
 	private List<Ancestor> ancestors;
+	private ContentVersion version;
 
 	public Content()
 	{
@@ -93,6 +94,16 @@ public class Content
 	public void setAncestors(List<Ancestor> ancestors)
 	{
 		this.ancestors = ancestors;
+	}
+
+	public ContentVersion getVersion()
+	{
+		return version;
+	}
+
+	public void setVersion(ContentVersion version)
+	{
+		this.version = version;
 	}
 
 }

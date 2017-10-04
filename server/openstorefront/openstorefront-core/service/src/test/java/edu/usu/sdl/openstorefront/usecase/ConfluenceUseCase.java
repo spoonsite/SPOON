@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Content;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentBody;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentVersion;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.RepresentationStorage;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Space;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.SpaceResults;
@@ -68,9 +69,36 @@ public class ConfluenceUseCase
 			RepresentationStorage storage = new RepresentationStorage();
 			storage.setValue("<h1>New Page from API</h1>");
 			contentBody.setStorage(storage);
+			content.setBody(contentBody);
 
 			Content savedContent = client.createPage(content);
-			StringProcessor.printObject(savedContent);
+			System.out.println(StringProcessor.printObject(savedContent));
+
+			ContentVersion version = new ContentVersion();
+			version.setNumber(2);
+			content.setVersion(version);
+			content.setId(savedContent.getId());
+			content.getBody().getStorage().setValue("Updated");
+			client.updatePage(content);
+
+			//update
+			client.deletePage(savedContent.getId());
+
+		}
+
+	}
+
+	@Test
+	public void confluenceGetPage()
+	{
+		ConnectionModel connectionModel = new ConnectionModel();
+		connectionModel.setUrl("https://confluence.di2e.net");
+		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+
+		try (ConfluenceClient client = new ConfluenceClient(connectionModel, null)) {
+			Content content = client.getPage("STORE", "AUTO-TEST-PAGE");
+			System.out.println(StringProcessor.printObject(content));
 		}
 
 	}

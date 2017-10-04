@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.service.manager.resource;
 import edu.usu.sdl.openstorefront.service.manager.PooledResourceManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Content;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentSearchResult;
+import edu.usu.sdl.openstorefront.service.manager.model.confluence.ContentSearchResults;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Label;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.NewSpace;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Space;
@@ -29,6 +31,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
@@ -135,17 +138,34 @@ public class ConfluenceClient
 		return success;
 	}
 
+	/**
+	 * Gets a confluence page
+	 *
+	 * @param spaceKey
+	 * @param title
+	 * @return Content of page or null if not found
+	 */
 	public Content getPage(String spaceKey, String title)
 	{
+		Content content = null;
+
 		Client client = getClientCache();
 		try {
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content?spaceKey=" + spaceKey + "&title=" + title);
 
-			Content result = target.request().buildGet().invoke(Content.class);
-			return result;
+			ContentSearchResults results = target.request().buildGet().invoke(ContentSearchResults.class);
+
+			if (!results.getResults().isEmpty()) {
+				//get first result
+				ContentSearchResult contentSearchResult = results.getResults().get(0);
+				target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentSearchResult.getId() + "?expand=body.view");
+				content = target.request().buildGet().invoke(Content.class);
+			}
+
 		} finally {
 			closeClient();
 		}
+		return content;
 	}
 
 	public Content createPage(Content content)
@@ -169,7 +189,7 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
-			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content");
+			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + content.getId());
 
 			Content result = target.request().buildPut(Entity.json(content)).invoke(Content.class);
 			return result;
@@ -212,8 +232,10 @@ public class ConfluenceClient
 		try {
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentId + "/label");
 
-			Response result = target.request().buildPost(Entity.json(labels)).invoke();
-
+			GenericEntity<List<Label>> entity = new GenericEntity<List<Label>>(labels)
+			{
+			};
+			Response result = target.request().buildPost(Entity.json(entity)).invoke();
 			//TODO: What is the response?
 		} finally {
 			closeClient();
