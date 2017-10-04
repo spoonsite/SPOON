@@ -18,7 +18,8 @@
 		<module>atmosphere-socketio</module>
 		<module>extjs</module>
 		<module>tinymcetextarea</module>
-		 <module>selenium-tests</module> 
+		 <module>selenium-tests</module>
+	 <module>system-tests</module>
 	</modules>
 	
 	<dependencies>

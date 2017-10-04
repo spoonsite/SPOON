@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
@@ -77,6 +78,18 @@ public class ComponentRESTTestClient
 		} else {
 			return views.get(0);
 		}
+	}
+	
+	public ComponentTag addTagToComponent(String tagName, Component component)
+	{
+		ComponentTag tag = new ComponentTag();
+		tag.setText(tagName);
+		tag.setActiveStatus("A");
+		tag.setCreateUser("admin");
+		tag.setCreateDts(TimeUtil.currentDate());
+		tag.setUpdateUser("admin");
+		tag.setUpdateDts(TimeUtil.currentDate());
+		return apiComponentREST.addComponentTag(component.getComponentId(), tag);
 	}
 
 	public Component createAPIComponent(String componentName)
