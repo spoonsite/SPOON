@@ -135,7 +135,6 @@ Ext.define('OSF.form.Attributes', {
 										var valueNumber = new Number(data.attributeCode);
 										if (isNaN(valueNumber))
 											throw "Bad Format";
-										throw "Bad Format";
 										data.attributeCode = valueNumber.toString();
 										data.componentAttributePk.attributeCode = valueNumber.toString();
 									} catch (e) {
@@ -300,6 +299,7 @@ Ext.define('OSF.form.Attributes', {
 																success: function () {
 																	attributePanel.loadComponentAttributes();
 																	formPanel.reset();
+																	formPanel.up('window').close();
 																}
 															});
 														} else {
@@ -317,7 +317,37 @@ Ext.define('OSF.form.Attributes', {
 													text: 'Cancel',
 													iconCls: 'fa fa-lg fa-close',
 													handler: function () {
-														Ext.Msg.alert('Status', "Cancel");
+														var rawData = formPanel.getValues();
+														var unSavedData = false;
+														Ext.Object.each(rawData, function (key, value) {
+															if (value)
+															{
+																unSavedData = true;
+																return false;
+															}
+														});
+														if (unSavedData)
+														{
+															Ext.Msg.show({
+																title: 'Unsaved data',
+																message: 'Warning unsaved unsaved data will be lost.',
+																buttons: Ext.Msg.YESNO,
+																buttonText: {
+																	yes: "OK",
+																	no: "Cancel"
+																},
+																icon: Ext.Msg.WARNING,
+																fn: function (btn) {
+																	if (btn === 'yes') {
+																		formPanel.up('window').close();
+																	}
+																}
+															});
+
+														} else
+														{
+															formPanel.up('window').close();
+														}
 													}
 												},
 												{
