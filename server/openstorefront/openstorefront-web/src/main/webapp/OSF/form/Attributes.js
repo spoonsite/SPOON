@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 /* global Ext, CoreUtil */
-
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
 
 	layout: 'fit',
 	initComponent: function () {
+
 		this.callParent();
 
 		var attributePanel = this;
@@ -130,42 +130,26 @@ Ext.define('OSF.form.Attributes', {
 								var valid = true;
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
-								if (attributeType.attributeValueType === 'NUMBER') {
-									if (!Ext.isNumeric(data.attributeCode)) {
+								if (attributeType.attributeValueType === 'NUMBER' && Ext.String.endsWith(data.attributeCode, ".")) {																			//check percision; this will enforce max allowed
+									try {
+										var valueNumber = new Number(data.attributeCode);
+										if (isNaN(valueNumber))
+											throw "Bad Format";
+										throw "Bad Format";
+										data.attributeCode = valueNumber.toString();
+										data.componentAttributePk.attributeCode = valueNumber.toString();
+									} catch (e) {
 										valid = false;
-									}
-									if (valid) {
-										//check percision; this will enforce max allowed
-										try {
-											var valueNumber = new Number(data.attributeCode);
-											data.attributeCode = valueNumber.toString();
-											data.componentAttributePk.attributeCode = valueNumber.toString();
-										} catch (e) {
-											valid = false;
-										}
+										form.getForm().markInvalid({
+											attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
+										});
 									}
 								}
-
-								if (!valid) {
-									Ext.Msg.show({
-										title: 'Validation Error',
-										message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
-										buttons: Ext.Msg.OK,
-										icon: Ext.Msg.ERROR,
-										fn: function (btn) {
-											if (btn === 'OK') {
-												form.getForm().markInvalid({
-													attributeCode: 'Must be a number for this attribute Type'
-												});
-											}
-										}
-									});
-								} else {
-									var method = 'POST';
-
+								if (valid)
+								{
 									CoreUtil.submitForm({
 										url: 'api/v1/resource/components/' + componentId + '/attributes',
-										method: method,
+										method: 'POST',
 										data: data,
 										form: form,
 										success: function () {
@@ -203,7 +187,12 @@ Ext.define('OSF.form.Attributes', {
 												{
 													label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g, '&quot;'));
 												}
-												valueTypes[attribute.attributeType] = attribute.attributeValueType;
+												var vtype = undefined;
+												if (attribute.attributeValueType === 'NUMBER')
+												{
+													vtype = 'AttributeNumber';
+													valueTypes[attribute.attributeType] = attribute.attributeValueType;
+												}
 												var item = {
 													name: attribute.attributeType,
 													itemId: 'multiAttributeCode_' + attribute.attributeType,
@@ -216,9 +205,10 @@ Ext.define('OSF.form.Attributes', {
 													queryMode: 'local',
 													editable: attribute.allowUserGeneratedCodes,
 													typeAhead: false,
-													allowBlank: false,
+													allowBlank: true,
 													valueField: 'code',
 													displayField: 'label',
+													vtype: vtype,
 													store: Ext.create('Ext.data.Store', {
 														fields: [
 															"code",
@@ -264,54 +254,44 @@ Ext.define('OSF.form.Attributes', {
 													margin: '0 20 0 0',
 													iconCls: 'fa fa-lg fa-save',
 													handler: function () {
-														var rawData = formPanel.getValues();
-														var componentId = attributePanel.componentId;
 														var postData = [];
-														var inValidData = [];
-														Ext.Object.each(rawData, function (key, value, myself) {
-															if (value)
-															{
-																var data = {
-																	attributeType: key,
-																	attributeCode: value,
-																	componentAttributePk: {
-																		attributeType: key,
-																		attributeCode: value
-																	}
-																};
-																if (this.valueTypes[key] === 'NUMBER') {
-																	if (!Ext.isNumeric(data.attributeCode)) {
-																		inValidData.push(key);
-																	} else {
-																		//check percision; this will enforce max allowed
+														var valid = true;
+														if (formPanel.getForm().isValid())
+														{
+															var rawData = formPanel.getValues();
+															var componentId = attributePanel.componentId;
+															Ext.Object.each(rawData, function (key, value) {
+																if (value)
+																{
+																	if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) {																			//check percision; this will enforce max allowed
 																		try {
-																			var valueNumber = new Number(data.attributeCode);
-																			data.attributeCode = valueNumber.toString();
-																			data.componentAttributePk.attributeCode = valueNumber.toString();
+																			var valueNumber = new Number(value);
+																			if (isNaN(valueNumber))
+																				throw "Bad Format";
+																			value = valueNumber.toString();
 																		} catch (e) {
-																			inValidData.push(key);
+																			valid = false;
+																			var dataError = {};
+																			dataError[key] = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+																			formPanel.getForm().markInvalid(dataError);
 																		}
 																	}
-																}
-																postData.push(data);
-															}
-														}, formPanel);
-
-														if (inValidData.length() !== 0) {
-															Ext.Msg.show({
-																title: 'Validation Error',
-																message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
-																buttons: Ext.Msg.OK,
-																icon: Ext.Msg.ERROR,
-																fn: function (btn) {
-																	if (btn === 'OK') {
-																		formPanel.getForm().markInvalid({
-																			attributeCode: 'Must be a number for this attribute Type'
+																	if (valid)
+																	{
+																		postData.push({
+																			attributeType: key,
+																			attributeCode: value,
+																			componentAttributePk: {
+																				attributeType: key,
+																				attributeCode: value
+																			}
 																		});
 																	}
 																}
-															});
-														} else {
+															}, formPanel);
+														}
+
+														if (valid) {
 															CoreUtil.submitForm({
 																url: 'api/v1/resource/components/' + componentId + '/attributeList',
 																method: 'POST',
@@ -322,12 +302,15 @@ Ext.define('OSF.form.Attributes', {
 																	formPanel.reset();
 																}
 															});
+														} else {
+															Ext.Msg.show({
+																title: 'Form Validation Error',
+																message: 'There are errors in the attributes submitted',
+																buttons: Ext.Msg.OK,
+																icon: Ext.Msg.ERROR
+															});
 														}
 													}
-//													{
-//														var values = formPanel.getValues();
-//														Ext.Msg.alert('Status', 'Save'+ values);
-//													}
 												},
 												{
 													xtype: 'button',
@@ -398,19 +381,17 @@ Ext.define('OSF.form.Attributes', {
 							},
 							listeners: {
 								change: function (field, newValue, oldValue, opts) {
-									field.up('form').getComponent('attributeCodeCB').clearValue();
+									var cbox = field.up('form').getComponent('attributeCodeCB');
+									cbox.clearValue();
 
 									var record = field.getSelection();
 									if (record) {
-										field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
-
-										if (record.get("allowUserGeneratedCodes")) {
-											field.up('form').getComponent('attributeCodeCB').setEditable(true);
-										} else {
-											field.up('form').getComponent('attributeCodeCB').setEditable(false);
-										}
+										cbox.getStore().loadData(record.data.codes);
+										cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
+										cbox.setEditable(record.get("allowUserGeneratedCodes"));
 									} else {
-										field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
+										cbox.getStore().removeAll();
+										cbox.vtype = undefined;
 									}
 								}
 							}
@@ -532,4 +513,20 @@ Ext.define('OSF.form.Attributes', {
 
 });
 
+// custom Vtype (validator) for vtype:'AttributeNumber'
+Ext.define('Override.form.field.VTypes', {
+	override: 'Ext.form.field.VTypes',
 
+	AttributeNumber: function (value) {
+		return this.AttributeNumberRe.test(value);
+	},
+	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
+	AttributeNumberRe: /^\d*(\.\d{0,20})?$/,
+	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
+			// Mask forces only charaters meeting the regular expersion are
+			// allowed to be entered. We decided to not to enforce a mask so 
+			// useres can tell the difference between readOnly fields and 
+			// incorrect input
+
+			// AttributeNumberMask: /[\d\.]/i
+});
