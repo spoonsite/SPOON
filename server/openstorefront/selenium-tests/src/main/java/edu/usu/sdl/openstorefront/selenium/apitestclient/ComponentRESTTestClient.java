@@ -25,7 +25,9 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -51,6 +53,17 @@ public class ComponentRESTTestClient
 	{
 		super(client, apiClient);
 		apiComponentREST = new ComponentRESTClient(client);
+	}
+
+	public ComponentQuestion addAPIComponentQuestion(String question, Component component)
+	{
+		ComponentQuestion compQuestion = new ComponentQuestion();
+		compQuestion.setQuestion(question);
+		compQuestion.setOrganization(component.getOrganization());
+		compQuestion.setUserTypeCode(END_USER);
+		
+		compQuestion = apiComponentREST.addComponentQuestion(component.getComponentId(), compQuestion);
+		return compQuestion;
 	}
 
 	public ComponentAdminView getComponentByName(String componentName)
