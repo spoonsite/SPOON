@@ -693,7 +693,7 @@
 						id: 'scheduleReportWin',
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						width: 700,
-						minHeight: 500,
+						height: '80%',
 						y: 100,
 						closeAction: 'destroy',
 						modal: true,
@@ -1325,7 +1325,7 @@
 						{
 							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>', 
 							dataIndex: 'remainingReportLifetime', 
-							width: 150,
+							width: 165,
 							sortable: false, renderer: function (value, meta, record) {
 
 								// Defined status color, info, and sybmol
@@ -1335,6 +1335,8 @@
 								var statusSymbol = ['fa fa-exclamation-circle', 'fa fa-exclamation-triangle', 'fa fa-check-circle'];
 								var statusIndex = Math.floor(record.data.remainingReportLifetime/record.data.reportLifetimeMax*(statusInfo.length-0.1));
 								statusInfo = record.data.remainingReportLifetime == 0 ? 'This report will be removed' : statusInfo[statusIndex];
+								record.data.remainingReportLifetime = record.data.remainingReportLifetime == 0 ? "Queued for removal" : record.data.remainingReportLifetime;
+
 								statusSymbol = statusSymbol[statusIndex];
 
 								// Set the value of the cell

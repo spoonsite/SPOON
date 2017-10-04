@@ -60,3 +60,5 @@ project*.properties
 *.swp
 *~
 *.orig
+/server/openstorefront/system-tests/tomcat.7980/
+/server/openstorefront/system-tests/felix-cache/

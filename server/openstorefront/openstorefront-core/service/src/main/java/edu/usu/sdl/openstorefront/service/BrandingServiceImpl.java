@@ -71,7 +71,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getLandingPageTitle() == null) {
-					branding.setLandingPageTitle("DI2E Clearinghouse");
+					branding.setLandingPageTitle("DI2E Storefront");
 				}
 
 				if (branding.getLandingPageBanner() == null) {

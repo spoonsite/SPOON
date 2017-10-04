@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.List;
 import java.util.logging.Logger;
@@ -132,22 +130,5 @@ public class BasicSearchIT
 		}
 
 		Assert.assertTrue(isResult);
-	}
-
-	public static void createBasicSearchComponent(String componentName)
-	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("Entry Name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
 	}
 }

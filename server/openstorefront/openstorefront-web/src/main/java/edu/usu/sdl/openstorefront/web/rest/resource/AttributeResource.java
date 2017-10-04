@@ -656,6 +656,23 @@ public class AttributeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
+	
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
+	@APIDescription("Updates a list of attribute types")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/types")
+	public Response updateAttributeTypes(
+			List<AttributeTypeSave> attributeTypeSaves
+	)
+	{
+		if (attributeTypeSaves != null) {
+			for (AttributeTypeSave typeSave : attributeTypeSaves) {
+				doUpdateAttributeType(typeSave, typeSave.getAttributeType().getAttributeType());
+			}
+		}
+		return Response.ok().build();
+	}
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
@@ -666,6 +683,11 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type,
 			AttributeTypeSave attributeTypeSave)
+	{
+		return doUpdateAttributeType(attributeTypeSave, type);
+	}
+	
+	private Response doUpdateAttributeType(AttributeTypeSave attributeTypeSave, String type)
 	{
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);
 		if (existing != null) {

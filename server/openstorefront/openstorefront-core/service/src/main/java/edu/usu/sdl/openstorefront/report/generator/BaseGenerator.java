@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.report.generator;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public abstract class BaseGenerator
 					log.log(Level.WARNING, "Unable to cleanup failed report.", ex);
 				}
 			}
+			throw new OpenStorefrontRuntimeException("The report failed to run.");
 		}
 	}
 
