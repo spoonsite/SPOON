@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.LOG;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
@@ -27,9 +28,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -39,9 +44,34 @@ import org.junit.Test;
 public class BaseGeneratorTest
 {
 	String tempReportId = "TEMP-REPORT-ID";
+	private static String baseDir;
 	/**
 	 *	Test of getGenerator method, of class BaseGenerator.
 	 */
+	
+	@BeforeClass
+	public static void setup ()
+	{
+//		init dir
+		baseDir = System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString();
+		File file = new File(baseDir);
+		file.mkdirs();
+		System.setProperty("application.datadir", baseDir);
+	}
+	
+	@AfterClass
+	public static void tearDown ()
+	{
+		File file = new File(baseDir);
+			if (file.exists()) {
+				try {
+					FileUtils.deleteDirectory(file);
+				} catch (IOException ex) {
+					LOG.warning("Unable to delete tomcat directory");
+				}
+			}
+	}
+	
 	@Test
 	public void testGetGenerator ()
 	{
