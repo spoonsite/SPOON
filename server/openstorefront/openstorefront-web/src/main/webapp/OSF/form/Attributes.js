@@ -162,10 +162,9 @@ Ext.define('OSF.form.Attributes', {
 									});
 								} else {
 									var method = 'POST';
-									var update = '';
 
 									CoreUtil.submitForm({
-										url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
+										url: 'api/v1/resource/components/' + componentId + '/attributes',
 										method: method,
 										data: data,
 										form: form,
@@ -193,36 +192,52 @@ Ext.define('OSF.form.Attributes', {
 								var getAttributeFormPanelItems = function ()
 								{
 									Ext.Ajax.request({
-										url: 'api/v1/resource/attributes/attributetypes/optional',
+										url: 'api/v1/resource/attributes/optional',
 										success: function (response, opts) {
 											var items = new Array();
 											var attributes = Ext.decode(response.responseText);
+											var valueTypes = [];
 											Ext.Array.forEach(attributes, function (attribute, key) {
 												var label = attribute.description;
-												if(attribute.detailedDescription !== undefined)
+												if (attribute.detailedDescription !== undefined)
 												{
-													label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g,'&quot;'));
+													label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g, '&quot;'));
 												}
-
+												valueTypes[attribute.attributeType] = attribute.attributeValueType;
 												var item = {
 													name: attribute.attributeType,
+													itemId: 'multiAttributeCode_' + attribute.attributeType,
 													width: '98%',
 													labelStyle: 'width:300px',
 													labelWidth: '100%',
-													xtype: 'textfield',
+													xtype: 'combobox',
 													margin: '10 0 10 10',
-													fieldLabel: label
+													fieldLabel: label,
+													queryMode: 'local',
+													editable: attribute.allowUserGeneratedCodes,
+													typeAhead: false,
+													allowBlank: false,
+													valueField: 'code',
+													displayField: 'label',
+													store: Ext.create('Ext.data.Store', {
+														fields: [
+															"code",
+															"label"
+														],
+														data: attribute.codes
+													})
 												};
 												items.push(item);
 											});
 											formPanel.add(items);
+											formPanel.valueTypes = valueTypes;
 											multipleAttributesWin.show();
 										}
 									});
 								};
 								var formPanel = Ext.create('Ext.form.Panel', {
-									layout:'anchor',
-									scrollable:true
+									layout: 'anchor',
+									scrollable: true
 								});
 								var multipleAttributesWin = Ext.create('Ext.window.Window', {
 									title: 'Add Attributes',
@@ -231,7 +246,7 @@ Ext.define('OSF.form.Attributes', {
 									width: 700,
 									height: '50%',
 									layout: 'fit',
-									items:[
+									items: [
 										formPanel
 									],
 									dockedItems: [{
@@ -248,41 +263,41 @@ Ext.define('OSF.form.Attributes', {
 													formBind: true,
 													margin: '0 20 0 0',
 													iconCls: 'fa fa-lg fa-save',
-													handler: function (){
+													handler: function () {
 														var rawData = formPanel.getValues();
 														var componentId = attributePanel.componentId;
 														var postData = [];
-														var valid = true;
-														Ext.Object.each(rawData, function(key, value, myself) {
-															var data = {
-																valid: true,
-																attributeType: key,
-																attributeCode: value,
-																componentAttributePk: {
+														var inValidData = [];
+														Ext.Object.each(rawData, function (key, value, myself) {
+															if (value)
+															{
+																var data = {
 																	attributeType: key,
-																	attributeCode: value
-																}
-															};
-															//if (attributeType.attributeValueType === 'NUMBER') {
-															if (data.attributeValueType === 'NUMBER') {	
-																if (!Ext.isNumeric(data.attributeCode)) {
-																	data.valid = false;
-																}
-																else {
-																	//check percision; this will enforce max allowed
-																	try {
-																		var valueNumber = new Number(data.attributeCode);
-																		data.attributeCode = valueNumber.toString();
-																		data.componentAttributePk.attributeCode = valueNumber.toString();
-																	} catch (e) {
-																		data.valid = false;
+																	attributeCode: value,
+																	componentAttributePk: {
+																		attributeType: key,
+																		attributeCode: value
+																	}
+																};
+																if (this.valueTypes[key] === 'NUMBER') {
+																	if (!Ext.isNumeric(data.attributeCode)) {
+																		inValidData.push(key);
+																	} else {
+																		//check percision; this will enforce max allowed
+																		try {
+																			var valueNumber = new Number(data.attributeCode);
+																			data.attributeCode = valueNumber.toString();
+																			data.componentAttributePk.attributeCode = valueNumber.toString();
+																		} catch (e) {
+																			inValidData.push(key);
+																		}
 																	}
 																}
+																postData.push(data);
 															}
-															postData.push(data);
-														});
+														}, formPanel);
 
-														if (!valid) {
+														if (inValidData.length() !== 0) {
 															Ext.Msg.show({
 																title: 'Validation Error',
 																message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
@@ -297,12 +312,9 @@ Ext.define('OSF.form.Attributes', {
 																}
 															});
 														} else {
-															var method = 'POST';
-															var update = '';
-
 															CoreUtil.submitForm({
-																url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
-																method: method,
+																url: 'api/v1/resource/components/' + componentId + '/attributeList',
+																method: 'POST',
 																data: postData,
 																form: formPanel,
 																success: function () {
