@@ -398,7 +398,8 @@ public class SearchServiceImpl
 					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
 				}
 				
-				if (StringUtils.isNotBlank(searchModel.getSortField()) && "searchScore".equals(searchModel.getSortField())) {
+				//	Order by relevance then name
+				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
 					Collections.sort(views, new RelevanceComparator<>());
 				}
 
