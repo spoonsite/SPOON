@@ -56,10 +56,9 @@ public class Report
 	@FK(ReportType.class)
 	private String reportType;
 
-	@NotNull
+	@Deprecated("Use report outputs")
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
-	@ConsumeField
 	@FK(ReportFormat.class)
 	private String reportFormat;
 
@@ -76,11 +75,17 @@ public class Report
 	private List<ReportDataId> ids;
 
 	@ConsumeField
-	@Embedded	
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
 	private Boolean scheduled;
+
+	@ConsumeField
+	@Embedded
+	@DataType(ReportOutput.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportOutput> reportOutputs;
 
 	public Report()
 	{
@@ -157,11 +162,13 @@ public class Report
 		this.scheduled = scheduled;
 	}
 
+	@Deprecated
 	public String getReportFormat()
 	{
 		return reportFormat;
 	}
 
+	@Deprecated
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
@@ -175,6 +182,16 @@ public class Report
 	public void setIds(List<ReportDataId> ids)
 	{
 		this.ids = ids;
+	}
+
+	public List<ReportOutput> getReportOutputs()
+	{
+		return reportOutputs;
+	}
+
+	public void setReportOutputs(List<ReportOutput> reportOutputs)
+	{
+		this.reportOutputs = reportOutputs;
 	}
 
 }

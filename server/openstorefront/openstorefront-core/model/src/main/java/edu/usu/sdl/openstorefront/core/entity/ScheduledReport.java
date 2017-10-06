@@ -52,6 +52,7 @@ public class ScheduledReport
 	@FK(ReportType.class)
 	private String reportType;
 
+	@Deprecated("Use report outputs")
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
@@ -75,7 +76,7 @@ public class ScheduledReport
 	@Max(30)
 	@ConsumeField
 	private Integer scheduleIntervalDays;
-	
+
 	@ConsumeField
 	@DataType(ReportDataId.class)
 	@OneToMany(orphanRemoval = true)
@@ -172,7 +173,7 @@ public class ScheduledReport
 	{
 		this.scheduleIntervalDays = scheduleIntervalDays;
 	}
-	
+
 	public List<ReportDataId> getComponentIds()
 	{
 		return componentIds;

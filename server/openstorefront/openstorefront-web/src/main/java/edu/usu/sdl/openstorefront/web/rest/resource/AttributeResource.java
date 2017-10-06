@@ -540,7 +540,6 @@ public class AttributeResource
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
-
 	@Path("/attributetypes")
 	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
@@ -600,14 +599,14 @@ public class AttributeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates a list of attribute types")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/types")
 	public Response updateAttributeTypes(
-			List<AttributeTypeSave> attributeTypeSaves
+			@DataType(AttributeTypeSave.class) List<AttributeTypeSave> attributeTypeSaves
 	)
 	{
 		if (attributeTypeSaves != null) {
@@ -630,7 +629,7 @@ public class AttributeResource
 	{
 		return doUpdateAttributeType(attributeTypeSave, type);
 	}
-	
+
 	private Response doUpdateAttributeType(AttributeTypeSave attributeTypeSave, String type)
 	{
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);

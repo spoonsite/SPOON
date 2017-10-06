@@ -281,7 +281,6 @@ public class EvaluationResource
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Boolean.class)
 	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
 	@Path("/{evaluationId}/checkTemplateUpdate")
 	public String checkTemplateUpdate(
