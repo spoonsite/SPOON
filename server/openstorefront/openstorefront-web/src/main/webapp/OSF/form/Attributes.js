@@ -174,8 +174,12 @@ Ext.define('OSF.form.Attributes', {
 							handler: function () {
 								var getAttributeFormPanelItems = function ()
 								{
+									formPanel.setLoading(true);
 									Ext.Ajax.request({
 										url: 'api/v1/resource/attributes/optional',
+										callback: function () {
+											formPanel.setLoading(false);
+										},
 										success: function (response, opts) {
 											var items = new Array();
 											var attributes = Ext.decode(response.responseText);
@@ -219,8 +223,7 @@ Ext.define('OSF.form.Attributes', {
 												items.push(item);
 											});
 											formPanel.add(items);
-											formPanel.valueTypes = valueTypes;
-											multipleAttributesWin.show();
+											formPanel.valueTypes = valueTypes;											
 										}
 									});
 								};
@@ -233,6 +236,7 @@ Ext.define('OSF.form.Attributes', {
 									iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 									modal: true,
 									width: 700,
+									closeAction: 'destroy',
 									height: '50%',
 									layout: 'fit',
 									items: [
@@ -358,6 +362,7 @@ Ext.define('OSF.form.Attributes', {
 									]
 								});
 								getAttributeFormPanelItems();
+								multipleAttributesWin.show();
 							}
 						}
 					],
