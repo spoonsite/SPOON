@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 /* global Ext, CoreUtil */
-
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
 
 	layout: 'fit',
-	initComponent: function () {		
+	initComponent: function () {
+
 		this.callParent();
-		
+
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function(status) {
-			if (!status) {					
-				var tools = attributePanel.attributeGrid.getComponent('tools');				
-				status = tools.getComponent('attributeFilterActiveStatus').getValue();				
+		attributePanel.loadComponentAttributes = function (status) {
+			if (!status) {
+				var tools = attributePanel.attributeGrid.getComponent('tools');
+				status = tools.getComponent('attributeFilterActiveStatus').getValue();
 			}
 
 			attributePanel.attributeGrid.setLoading(true);
@@ -39,22 +39,22 @@ Ext.define('OSF.form.Attributes', {
 				params: {
 					status: status
 				},
-				callback: function() {
+				callback: function () {
 					attributePanel.attributeGrid.setLoading(false);
 				},
-				success: function(response, opts) {
+				success: function (response, opts) {
 					var data = Ext.decode(response.responseText);
 
 					var optionalAttributes = [];
-					Ext.Array.each(data, function(attribute) {
-						if (!attribute.requiredFlg) {															
+					Ext.Array.each(data, function (attribute) {
+						if (!attribute.requiredFlg) {
 							optionalAttributes.push(attribute);
 						}
 					});
 					optionalAttributes.reverse();
 					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
 				}
-			});			
+			});
 		};
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
@@ -69,31 +69,31 @@ Ext.define('OSF.form.Attributes', {
 					"activeStatus",
 					{
 						name: 'updateDts',
-						type:	'date',
+						type: 'date',
 						dateFormat: 'c'
 					}
 				],
 				autoLoad: false,
 				proxy: {
-					type: 'ajax'							
+					type: 'ajax'
 				}
-			}),				
+			}),
 			columns: [
-				{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
-				{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200 },
-				{ text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
+				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
+				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 			],
 			listeners: {
-				selectionchange: function(grid, record, index, opts){
+				selectionchange: function (grid, record, index, opts) {
 					var fullgrid = attributePanel.attributeGrid;
-					if (fullgrid.getSelectionModel().getCount() === 1) {								
+					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
-					} else {								
+					} else {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 					}
-				}						
+				}
 			},
 			dockedItems: [
 				{
@@ -104,7 +104,7 @@ Ext.define('OSF.form.Attributes', {
 					border: true,
 					layout: 'vbox',
 					bodyStyle: 'padding: 10px;',
-					margin: '0 0 5 0', 
+					margin: '0 0 5 0',
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: '',
@@ -118,7 +118,7 @@ Ext.define('OSF.form.Attributes', {
 							formBind: true,
 							margin: '0 20 0 0',
 							iconCls: 'fa fa-lg fa-save',
-							handler: function(){	
+							handler: function () {
 								var form = this.up('form');
 								var data = form.getValues();
 								var componentId = attributePanel.componentId;
@@ -130,46 +130,28 @@ Ext.define('OSF.form.Attributes', {
 								var valid = true;
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
-								if (attributeType.attributeValueType === 'NUMBER') {
-									if (!Ext.isNumeric(data.attributeCode)) {									
+								if (attributeType.attributeValueType === 'NUMBER' && Ext.String.endsWith(data.attributeCode, ".")) {																			//check percision; this will enforce max allowed
+									try {
+										var valueNumber = new Number(data.attributeCode);
+										if (isNaN(valueNumber))
+											throw "Bad Format";
+										data.attributeCode = valueNumber.toString();
+										data.componentAttributePk.attributeCode = valueNumber.toString();
+									} catch (e) {
 										valid = false;
+										form.getForm().markInvalid({
+											attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
+										});
 									}
-									if (valid) {
-										//check percision; this will enforce max allowed
-										try {
-											var valueNumber = new Number(data.attributeCode);
-											data.attributeCode = valueNumber.toString();
-											data.componentAttributePk.attributeCode = valueNumber.toString();
-										} catch(e) {
-											valid = false;
-										}
-									}									
-								}								
-								
-								if (!valid) {
-									Ext.Msg.show({
-										title:'Validation Error',
-										message: 'Attribute Code must be numberic with decimal precision <= 20 for this attribute type',
-										buttons: Ext.Msg.OK,
-										icon: Ext.Msg.ERROR,
-										fn: function(btn) {
-											if (btn === 'OK') {
-												form.getForm().markInvalid({
-													attributeCode: 'Must be a number for this attribute Type'
-												});
-											} 
-										}
-									});
-								} else {
-									var method = 'POST';
-									var update = '';										
-
+								}
+								if (valid)
+								{
 									CoreUtil.submitForm({
-										url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
-										method: method,
+										url: 'api/v1/resource/components/' + componentId + '/attributes',
+										method: 'POST',
 										data: data,
 										form: form,
-										success: function(){										
+										success: function () {
 											attributePanel.loadComponentAttributes();
 											form.reset();
 										}
@@ -179,12 +161,210 @@ Ext.define('OSF.form.Attributes', {
 						},
 						{
 							xtype: 'button',
-							text: 'Cancel',										
+							text: 'Cancel',
 							iconCls: 'fa fa-lg fa-close',
-							handler: function(){
+							handler: function () {
 								this.up('form').reset();
-							}									
-						}								
+							}
+						},
+						{
+							xtype: 'button',
+							text: 'Add Multiple Attributes',
+							iconCls: 'fa fa-lg fa-plus',
+							handler: function () {
+								var getAttributeFormPanelItems = function ()
+								{
+									formPanel.setLoading(true);
+									Ext.Ajax.request({
+										url: 'api/v1/resource/attributes/optional',
+										callback: function () {
+											formPanel.setLoading(false);
+										},
+										success: function (response, opts) {
+											var items = new Array();
+											var attributes = Ext.decode(response.responseText);
+											var valueTypes = [];
+											Ext.Array.forEach(attributes, function (attribute, key) {
+												var label = attribute.description;
+												if (attribute.detailedDescription !== undefined)
+												{
+													label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g, '&quot;'));
+												}
+												var vtype = undefined;
+												if (attribute.attributeValueType === 'NUMBER')
+												{
+													vtype = 'AttributeNumber';
+													valueTypes[attribute.attributeType] = attribute.attributeValueType;
+												}
+												var item = {
+													name: attribute.attributeType,
+													itemId: 'multiAttributeCode_' + attribute.attributeType,
+													width: '98%',
+													labelStyle: 'width:300px',
+													labelWidth: '100%',
+													xtype: 'combobox',
+													margin: '10 0 10 10',
+													fieldLabel: label,
+													queryMode: 'local',
+													editable: attribute.allowUserGeneratedCodes,
+													typeAhead: false,
+													allowBlank: true,
+													valueField: 'code',
+													displayField: 'label',
+													vtype: vtype,
+													store: Ext.create('Ext.data.Store', {
+														fields: [
+															"code",
+															"label"
+														],
+														data: attribute.codes
+													})
+												};
+												items.push(item);
+											});
+											formPanel.add(items);
+											formPanel.valueTypes = valueTypes;											
+										}
+									});
+								};
+								var formPanel = Ext.create('Ext.form.Panel', {
+									layout: 'anchor',
+									scrollable: true
+								});
+								var multipleAttributesWin = Ext.create('Ext.window.Window', {
+									title: 'Add Attributes',
+									iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
+									modal: true,
+									width: 700,
+									closeAction: 'destroy',
+									height: '50%',
+									layout: 'fit',
+									items: [
+										formPanel
+									],
+									dockedItems: [{
+											xtype: 'toolbar',
+											itemId: 'buttonToolBar',
+											dock: 'bottom',
+											items: [
+												{
+													xtype: 'tbfill'
+												},
+												{
+													xtype: 'button',
+													text: 'Save',
+													formBind: true,
+													margin: '0 20 0 0',
+													iconCls: 'fa fa-lg fa-save',
+													handler: function () {
+														var postData = [];
+														var valid = true;
+														if (formPanel.getForm().isValid())
+														{
+															var rawData = formPanel.getValues();
+															var componentId = attributePanel.componentId;
+															Ext.Object.each(rawData, function (key, value) {
+																if (value)
+																{
+																	if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) {																			//check percision; this will enforce max allowed
+																		try {
+																			var valueNumber = new Number(value);
+																			if (isNaN(valueNumber))
+																				throw "Bad Format";
+																			value = valueNumber.toString();
+																		} catch (e) {
+																			valid = false;
+																			var dataError = {};
+																			dataError[key] = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+																			formPanel.getForm().markInvalid(dataError);
+																		}
+																	}
+																	if (valid)
+																	{
+																		postData.push({
+																			attributeType: key,
+																			attributeCode: value,
+																			componentAttributePk: {
+																				attributeType: key,
+																				attributeCode: value
+																			}
+																		});
+																	}
+																}
+															}, formPanel);
+														}
+
+														if (valid) {
+															CoreUtil.submitForm({
+																url: 'api/v1/resource/components/' + componentId + '/attributeList',
+																method: 'POST',
+																data: postData,
+																form: formPanel,
+																success: function () {
+																	attributePanel.loadComponentAttributes();
+																	formPanel.reset();
+																	formPanel.up('window').close();
+																}
+															});
+														} else {
+															Ext.Msg.show({
+																title: 'Form Validation Error',
+																message: 'There are errors in the attributes submitted',
+																buttons: Ext.Msg.OK,
+																icon: Ext.Msg.ERROR
+															});
+														}
+													}
+												},
+												{
+													xtype: 'button',
+													text: 'Cancel',
+													iconCls: 'fa fa-lg fa-close',
+													handler: function () {
+														var rawData = formPanel.getValues();
+														var unSavedData = false;
+														Ext.Object.each(rawData, function (key, value) {
+															if (value)
+															{
+																unSavedData = true;
+																return false;
+															}
+														});
+														if (unSavedData)
+														{
+															Ext.Msg.show({
+																title: 'Unsaved data',
+																message: 'Warning unsaved unsaved data will be lost.',
+																buttons: Ext.Msg.YESNO,
+																buttonText: {
+																	yes: "OK",
+																	no: "Cancel"
+																},
+																icon: Ext.Msg.WARNING,
+																fn: function (btn) {
+																	if (btn === 'yes') {
+																		formPanel.up('window').close();
+																	}
+																}
+															});
+
+														} else
+														{
+															formPanel.up('window').close();
+														}
+													}
+												},
+												{
+													xtype: 'tbfill'
+												}
+											]
+										}
+									]
+								});
+								getAttributeFormPanelItems();
+								multipleAttributesWin.show();
+							}
+						}
 					],
 					items: [
 						{
@@ -192,18 +372,18 @@ Ext.define('OSF.form.Attributes', {
 							itemId: 'attributeTypeCB',
 							fieldLabel: 'Attribute Type <span class="field-required" />',
 							name: 'attributeType',
-							forceSelection: true,	
+							forceSelection: true,
 							queryMode: 'local',
 							editable: true,
-							typeAhead: true,										
+							typeAhead: true,
 							allowBlank: false,
 							valueField: 'attributeType',
-							displayField: 'description',										
+							displayField: 'description',
 							store: {
 								autoLoad: false,
 								proxy: {
 									type: 'ajax',
-									url: 'api/v1/resource/attributes'									
+									url: 'api/v1/resource/attributes'
 								},
 								filters: [
 									{
@@ -212,10 +392,10 @@ Ext.define('OSF.form.Attributes', {
 									}
 								],
 								listeners: {
-									load: function(store, records, opts) {
-										store.filterBy(function(attribute){
+									load: function (store, records, opts) {
+										store.filterBy(function (attribute) {
 											if (attribute.associatedComponentTypes) {
-												var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+												var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
 													if (item.componentType === attributePanel.component.componentType) {
 														return true;
 													} else {
@@ -227,7 +407,7 @@ Ext.define('OSF.form.Attributes', {
 												} else {
 													return false;
 												}
-											}else {
+											} else {
 												return true;
 											}
 										});
@@ -236,19 +416,17 @@ Ext.define('OSF.form.Attributes', {
 							},
 							listeners: {
 								change: function (field, newValue, oldValue, opts) {
-									field.up('form').getComponent('attributeCodeCB').clearValue();
+									var cbox = field.up('form').getComponent('attributeCodeCB');
+									cbox.clearValue();
 
-									var record = field.getSelection();		
+									var record = field.getSelection();
 									if (record) {
-										field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
-										
-										if (record.get("allowUserGeneratedCodes")) {																							
-											field.up('form').getComponent('attributeCodeCB').setEditable(true);
-										} else {											
-											field.up('form').getComponent('attributeCodeCB').setEditable(false);
-										}																				
+										cbox.getStore().loadData(record.data.codes);
+										cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
+										cbox.setEditable(record.get("allowUserGeneratedCodes"));
 									} else {
-										field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
+										cbox.getStore().removeAll();
+										cbox.vtype = undefined;
 									}
 								}
 							}
@@ -257,22 +435,22 @@ Ext.define('OSF.form.Attributes', {
 							xtype: 'combobox',
 							itemId: 'attributeCodeCB',
 							fieldLabel: 'Attribute Code <span class="field-required" />',
-							name: 'attributeCode',							
+							name: 'attributeCode',
 							queryMode: 'local',
 							editable: false,
-							typeAhead: false,										
+							typeAhead: false,
 							allowBlank: false,
 							valueField: 'code',
-							displayField: 'label',										
+							displayField: 'label',
 							store: Ext.create('Ext.data.Store', {
 								fields: [
 									"code",
 									"label"
-								]																							
-							})									
+								]
+							})
 						}
 					]
-				},						
+				},
 				{
 					xtype: 'toolbar',
 					itemId: 'tools',
@@ -282,9 +460,9 @@ Ext.define('OSF.form.Attributes', {
 							itemId: 'attributeFilterActiveStatus',
 							fieldLabel: 'Filter Status',
 							store: {
-								data: [												
-									{ code: 'A', description: 'Active' },
-									{ code: 'I', description: 'Inactive' }
+								data: [
+									{code: 'A', description: 'Active'},
+									{code: 'I', description: 'Inactive'}
 								]
 							},
 							forceSelection: true,
@@ -293,28 +471,28 @@ Ext.define('OSF.form.Attributes', {
 							valueField: 'code',
 							value: 'A',
 							listeners: {
-								change: function(combo, newValue, oldValue, opts){
+								change: function (combo, newValue, oldValue, opts) {
 									attributePanel.loadComponentAttributes(newValue);
 								}
 							}
-						}, 								
+						},
 						{
 							text: 'Refresh',
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
-							handler: function(){
+							handler: function () {
 								attributePanel.loadComponentAttributes();
 							}
-						},								
+						},
 						{
 							xtype: 'tbseparator'
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
-							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
-							handler: function(){
-								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function(){
+							handler: function () {
+								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function () {
 									attributePanel.loadComponentAttributes();
 								});
 							}
@@ -325,49 +503,65 @@ Ext.define('OSF.form.Attributes', {
 						{
 							text: 'Delete',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash fa-lg icon-button-color-warning',									
+							iconCls: 'fa fa-trash fa-lg icon-button-color-warning',
 							disabled: true,
-							handler: function(){
-								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, true, function(){
+							handler: function () {
+								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, true, function () {
 									attributePanel.loadComponentAttributes();
 								});
 							}
 						}
 					]
 				}
-			]																					
+			]
 		});
 
 		attributePanel.add(attributePanel.attributeGrid);
-	},	
-	loadData: function(evaluationId, componentId, data, opts) {
+	},
+	loadData: function (evaluationId, componentId, data, opts) {
 		//just load option (filter out required)
 		var attributePanel = this;
-		
+
 		attributePanel.componentId = componentId;
 		attributePanel.attributeGrid.componentId = componentId;
 		attributePanel.loadComponentAttributes();
-		
+
 		var form = attributePanel.attributeGrid.down('form');
 		form.setLoading(true);
 		Ext.Ajax.request({
 			url: 'api/v1/resource/components/' + attributePanel.componentId,
-			callback: function() {
+			callback: function () {
 				form.setLoading(false);
 			},
-			success: function(response, opts) {
+			success: function (response, opts) {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
 				attributePanel.attributeGrid.down('form').getComponent('attributeTypeCB').getStore().load();
 			}
 		});
-		
-		
+
+
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Attribute", componentId);
 		}
 	}
-	
+
 });
 
+// custom Vtype (validator) for vtype:'AttributeNumber'
+Ext.define('Override.form.field.VTypes', {
+	override: 'Ext.form.field.VTypes',
 
+	AttributeNumber: function (value) {
+		return this.AttributeNumberRe.test(value);
+	},
+	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
+	AttributeNumberRe: /^\d*(\.\d{0,20})?$/,
+	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
+			// Mask forces only charaters meeting the regular expersion are
+			// allowed to be entered. We decided to not to enforce a mask so 
+			// useres can tell the difference between readOnly fields and 
+			// incorrect input
+
+			// AttributeNumberMask: /[\d\.]/i
+});
