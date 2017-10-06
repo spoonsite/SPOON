@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeConditi
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.RelevanceComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -392,9 +393,14 @@ public class SearchServiceImpl
 					String indexQuery = indexSearches.get(0).getValue();
 					SearchServerManager.updateSearchScore(indexQuery, views);
 				}
-
+				
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {
 					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+				}
+				
+				//	Order by relevance then name
+				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
+					Collections.sort(views, new RelevanceComparator<>());
 				}
 
 				//trim descriptions to max length
