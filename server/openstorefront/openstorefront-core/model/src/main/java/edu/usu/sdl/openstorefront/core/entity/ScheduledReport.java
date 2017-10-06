@@ -71,11 +71,18 @@ public class ScheduledReport
 	@OneToMany(orphanRemoval = true)
 	private List<EmailAddress> emailAddresses;
 
-	@NotNull
 	@Min(1)
 	@Max(30)
 	@ConsumeField
 	private Integer scheduleIntervalDays;
+
+	@ConsumeField
+	@Min(1)
+	private Integer scheduleIntervalMinutes;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String scheduleIntervalCron;
 
 	@ConsumeField
 	@DataType(ReportDataId.class)
@@ -83,6 +90,12 @@ public class ScheduledReport
 	private List<ReportDataId> componentIds;
 
 	private Date lastRanDts;
+
+	@ConsumeField
+	@Embedded
+	@DataType(ReportOutput.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportOutput> reportOutputs;
 
 	public ScheduledReport()
 	{
@@ -182,6 +195,38 @@ public class ScheduledReport
 	public void setComponentIds(List<ReportDataId> componentIds)
 	{
 		this.componentIds = componentIds;
+	}
+
+	@Deprecated
+	public List<ReportOutput> getReportOutputs()
+	{
+		return reportOutputs;
+	}
+
+	@Deprecated
+	public void setReportOutputs(List<ReportOutput> reportOutputs)
+	{
+		this.reportOutputs = reportOutputs;
+	}
+
+	public Integer getScheduleIntervalMinutes()
+	{
+		return scheduleIntervalMinutes;
+	}
+
+	public void setScheduleIntervalMinutes(Integer scheduleIntervalMinutes)
+	{
+		this.scheduleIntervalMinutes = scheduleIntervalMinutes;
+	}
+
+	public String getScheduleIntervalCron()
+	{
+		return scheduleIntervalCron;
+	}
+
+	public void setScheduleIntervalCron(String scheduleIntervalCron)
+	{
+		this.scheduleIntervalCron = scheduleIntervalCron;
 	}
 
 }

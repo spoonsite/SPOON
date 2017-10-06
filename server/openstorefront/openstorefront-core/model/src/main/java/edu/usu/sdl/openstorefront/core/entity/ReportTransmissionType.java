@@ -35,6 +35,8 @@ public class ReportTransmissionType
 	public static final String EMAIL = "EMAIL";
 	public static final String CONFLUENCE = "CONFLUENCE";
 
+	private boolean supportsMultiple = false;
+
 	public ReportTransmissionType()
 	{
 	}
@@ -47,7 +49,21 @@ public class ReportTransmissionType
 		codeMap.put(VIEW, newLookup(ReportTransmissionType.class, VIEW, "View"));
 		codeMap.put(EMAIL, newLookup(ReportTransmissionType.class, EMAIL, "Email"));
 		codeMap.put(CONFLUENCE, newLookup(ReportTransmissionType.class, CONFLUENCE, "Confluence"));
+
+		((ReportTransmissionType) codeMap.get(EMAIL)).setSupportsMultiple(true);
+		((ReportTransmissionType) codeMap.get(CONFLUENCE)).setSupportsMultiple(true);
+
 		return codeMap;
+	}
+
+	public boolean getSupportsMultiple()
+	{
+		return supportsMultiple;
+	}
+
+	public void setSupportsMultiple(boolean supportsMultiple)
+	{
+		this.supportsMultiple = supportsMultiple;
 	}
 
 }
