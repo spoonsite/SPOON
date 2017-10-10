@@ -176,7 +176,7 @@ Ext.define('OSF.form.Attributes', {
 								{
 									formPanel.setLoading(true);
 									Ext.Ajax.request({
-										url: 'api/v1/resource/attributes/optional',
+										url: 'api/v1/resource/attributes/optional?componentType=' + attributePanel.component.componentType,
 										callback: function () {
 											formPanel.setLoading(false);
 										},
@@ -223,7 +223,7 @@ Ext.define('OSF.form.Attributes', {
 												items.push(item);
 											});
 											formPanel.add(items);
-											formPanel.valueTypes = valueTypes;											
+											formPanel.valueTypes = valueTypes;
 										}
 									});
 								};
