@@ -87,6 +87,7 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
+		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.PDF);
 		
 		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action Report", "Emails a TODO report"));
 		((ReportType) codeMap.get(ACTION_REPORT)).setComponentReport(true);
