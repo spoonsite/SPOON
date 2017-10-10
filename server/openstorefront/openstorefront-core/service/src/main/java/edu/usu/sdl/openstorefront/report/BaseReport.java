@@ -141,7 +141,7 @@ public abstract class BaseReport
 		}
 	}
 
-	protected abstract BaseReportModel gatherData();
+	protected abstract <T extends BaseReportModel> T gatherData();
 
 	protected void handleOutputs(BaseReportModel reportModel)
 	{

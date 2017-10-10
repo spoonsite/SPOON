@@ -22,12 +22,17 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.report.model.UserReportModel;
+import edu.usu.sdl.openstorefront.report.output.BaseOutput;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +53,22 @@ public class UserReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected UserReportModel gatherData()
 	{
+		UserReportModel userReportModel = new UserReportModel();
+		
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userProfiles = service.getPersistenceService().queryByExample(userProfileExample);
+		
+		userReportModel.setTitle("User Report");
+		userReportModel.setCreateTime(TimeUtil.currentDate());
+		
+		
+		
+		
+		
+		return userReportModel;		
 	}
 
 	@Override
@@ -139,6 +155,24 @@ public class UserReport
 			);
 		}
 
+	}
+
+	@Override
+	protected void doOutput(BaseOutput outputHandler, BaseReportModel reportModel)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }
