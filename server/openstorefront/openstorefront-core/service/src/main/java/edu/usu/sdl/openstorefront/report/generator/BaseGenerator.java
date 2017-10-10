@@ -40,10 +40,10 @@ public abstract class BaseGenerator
 		this.report = report;
 	}
 
-	public static BaseGenerator getGenerator(Report report)
+	public static BaseGenerator getGenerator(Report report, String reportFormat)
 	{
 		BaseGenerator generator = null;
-		switch (report.getReportFormat()) {
+		switch (reportFormat) {
 			case ReportFormat.CSV:
 				generator = new CSVGenerator(report);
 				break;

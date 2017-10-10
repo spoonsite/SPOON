@@ -74,6 +74,7 @@ public class ReportType
 		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
+		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
@@ -87,12 +88,11 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).getSupportedFormats().add(ReportFormat.HTML);
-		
+
 		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action Report", "Emails a TODO report"));
 		((ReportType) codeMap.get(ACTION_REPORT)).setComponentReport(true);
 		((ReportType) codeMap.get(ACTION_REPORT)).getSupportedFormats().add(ReportFormat.HTML);
 		((ReportType) codeMap.get(ACTION_REPORT)).getSupportedFormats().add(ReportFormat.PDF);
-
 
 		return codeMap;
 	}

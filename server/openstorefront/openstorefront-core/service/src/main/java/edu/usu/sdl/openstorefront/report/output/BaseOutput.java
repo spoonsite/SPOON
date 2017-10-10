@@ -17,6 +17,11 @@ package edu.usu.sdl.openstorefront.report.output;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,6 +30,8 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 public abstract class BaseOutput
 {
 
+	private static final Logger LOG = Logger.getLogger(BaseOutput.class.getName());
+
 	protected ReportOutput reportOutput;
 	protected Report report;
 
@@ -32,6 +39,32 @@ public abstract class BaseOutput
 	{
 		this.reportOutput = reportOutput;
 		this.report = report;
+	}
+
+	public void outputReport(BaseReportModel reportModel, Map<String, ReportWriter> writerMap)
+	{
+		BaseGenerator generator = init();
+
+		String key = reportOutput.getReportTransmissionType() + "-" + reportOutput.getReportTransmissionOption().getReportFormat();
+
+		ReportWriter writer = writerMap.get(key);
+		if (writer != null) {
+			writer.writeReport(generator, reportModel);
+		} else {
+			LOG.log(Level.WARNING, "No writer support for " + key);
+		}
+
+		finishOutput();
+	}
+
+	protected abstract BaseGenerator init();
+
+	protected abstract void finishOutput();
+
+	protected BaseGenerator getBaseGenerator()
+	{
+		BaseGenerator.getGenerator()
+
 	}
 
 }

@@ -38,6 +38,7 @@ public class SecurityPermission
 	public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 	public static final String EVALUATIONS = "EVALUATIONS";
 	public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
+	public static final String REPORT_ACTION_REPORT = "REPORT-ACTION-REPORT";
 
 	public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
@@ -91,6 +92,7 @@ public class SecurityPermission
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations"));
 		codeMap.put(RELATIONSHIP_VIEW_TOOL, newLookup(SecurityPermission.class, RELATIONSHIP_VIEW_TOOL, "Relationship View Tool"));
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allow User Attribute Type Creation"));
+		codeMap.put(REPORT_ACTION_REPORT, newLookup(SecurityPermission.class, REPORT_ACTION_REPORT, "Allows running action report"));
 
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management"));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "Admin system management"));

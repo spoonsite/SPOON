@@ -15,33 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.report.output;
 
-import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 
 /**
  *
  * @author dshurtleff
  */
-public class ViewOutput
-		extends BaseOutput
+public interface ReportWriter
 {
 
-	public ViewOutput(ReportOutput reportOutput, Report report)
-	{
-		super(reportOutput, report);
-	}
-
-	@Override
-	protected BaseGenerator init()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	protected void finishOutput()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	public void writeReport(BaseGenerator generator, BaseReportModel reportModel);
 
 }
