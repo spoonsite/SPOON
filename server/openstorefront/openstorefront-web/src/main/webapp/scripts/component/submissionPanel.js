@@ -707,6 +707,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 													// Nothing Selcted, Remove All Codes
 													codeField.getStore().removeAll();
+													codeField.vtype = undefined;
 												}
 											}
 										}

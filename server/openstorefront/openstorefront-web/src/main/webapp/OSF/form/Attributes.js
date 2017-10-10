@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext, CoreUtil */
+/* global Ext, CoreUtil, CoreService */
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
@@ -106,7 +106,7 @@ Ext.define('OSF.form.Attributes', {
 					bodyStyle: 'padding: 10px;',
 					margin: '0 0 5 0',
 					defaults: {
-						labelAlign: 'top',
+						labelAlign: 'right',
 						labelSeparator: '',
 						width: '100%'
 					},
@@ -363,68 +363,190 @@ Ext.define('OSF.form.Attributes', {
 					],
 					items: [
 						{
-							xtype: 'combobox',
-							itemId: 'attributeTypeCB',
-							fieldLabel: 'Attribute Type <span class="field-required" />',
-							name: 'attributeType',
-							forceSelection: true,
-							queryMode: 'local',
-							editable: true,
-							typeAhead: true,
-							allowBlank: false,
-							valueField: 'attributeType',
-							displayField: 'description',
-							store: {
-								autoLoad: false,
-								proxy: {
-									type: 'ajax',
-									url: 'api/v1/resource/attributes'
-								},
-								filters: [
-									{
-										property: 'requiredFlg',
-										value: 'false'
-									}
-								],
-								listeners: {
-									load: function (store, records, opts) {
-										store.filterBy(function (attribute) {
-											if (attribute.associatedComponentTypes) {
-												var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
-													if (item.componentType === attributePanel.component.componentType) {
-														return true;
+							xtype: 'panel',
+							layout: 'hbox',
+							margin: '0 0 10 0',
+							width: '100%',
+							itemId: 'attributeTypePanel',
+							items: [
+								{
+									xtype: 'combobox',
+									itemId: 'attributeTypeCB',
+									fieldLabel: 'Attribute Type <span class="field-required" />',
+									name: 'attributeType',
+									forceSelection: true,
+									queryMode: 'local',
+									editable: true,
+									typeAhead: true,
+									allowBlank: false,
+									valueField: 'attributeType',
+									displayField: 'description',
+									labelWidth: 150,
+									labelAlign: 'right',
+									flex: 1,
+									store: {
+										autoLoad: false,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/attributes'
+										},
+										filters: [
+											{
+												property: 'requiredFlg',
+												value: 'false'
+											}
+										],
+										listeners: {
+											load: function (store, records, opts) {
+												store.filterBy(function (attribute) {
+													if (attribute.associatedComponentTypes) {
+														var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
+															if (item.componentType === attributePanel.component.componentType) {
+																return true;
+															} else {
+																return false;
+															}
+														});
+														if (optFound) {
+															return true;
+														} else {
+															return false;
+														}
 													} else {
-														return false;
+														return true;
 													}
 												});
-												if (optFound) {
-													return true;
-												} else {
-													return false;
-												}
-											} else {
-												return true;
 											}
-										});
-									}
-								}
-							},
-							listeners: {
-								change: function (field, newValue, oldValue, opts) {
-									var cbox = field.up('form').getComponent('attributeCodeCB');
-									cbox.clearValue();
+										}
+									},
+									listeners: {
+										change: function (field, newValue, oldValue, opts) {
+											var cbox = field.up('form').getComponent('attributeCodeCB');
+											cbox.clearValue();
 
-									var record = field.getSelection();
-									if (record) {
-										cbox.getStore().loadData(record.data.codes);
-										cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
-										cbox.setEditable(record.get("allowUserGeneratedCodes"));
-									} else {
-										cbox.getStore().removeAll();
-										cbox.vtype = undefined;
+											var record = field.getSelection();
+											if (record) {
+												cbox.getStore().loadData(record.data.codes);
+												cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
+												cbox.setEditable(record.get("allowUserGeneratedCodes"));
+											} else {
+												cbox.getStore().removeAll();
+												cbox.vtype = undefined;
+											}
+										}
+									}
+								},
+								{
+									xtype: 'button',
+									itemId: 'addAttributeType',
+									text: 'Add',
+									iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+									minWidth: 100,
+									hidden: true,
+									handler: function () {
+										var attributeTypeCb = attributePanel.queryById('attributeTypeCB');
+
+
+										var addTypeWin = Ext.create('Ext.window.Window', {
+											title: 'Add Type',
+											iconCls: 'fa fa-plus',
+											closeAction: 'destroy',
+											alwaysOnTop: true,
+											modal: true,
+											width: 400,
+											height: 380,
+											layout: 'fit',
+											items: [
+												{
+													xtype: 'form',
+													scrollable: true,
+													layout: 'anchor',
+													bodyStyle: 'padding: 10px',
+													defaults: {
+														labelAlign: 'top',
+														labelSeparator: '',
+														width: '100%'
+													},
+													items: [
+														{
+															xtype: 'textfield',
+															name: 'label',
+															fieldLabel: 'Label <span class="field-required" />',
+															allowBlank: false,
+															maxLength: 255
+														},
+														{
+															xtype: 'textarea',
+															name: 'detailedDescription',
+															fieldLabel: 'Description',
+															maxLength: 255
+														},
+														{
+															xtype: 'combobox',
+															fieldLabel: 'Code Label Value Type <span class="field-required" />',
+															displayField: 'description',
+															valueField: 'code',
+															typeAhead: false,
+															editable: false,
+															allowBlank: false,
+															name: 'attributeValueType',
+															store: {
+																autoLoad: true,
+																proxy: {
+																	type: 'ajax',
+																	url: 'api/v1/resource/lookuptypes/AttributeValueType'
+																}
+															}
+														}
+													],
+													dockedItems: [
+														{
+															xtype: 'toolbar',
+															dock: 'bottom',
+															items: [
+																{
+																	text: 'Save',
+																	formBind: true,
+																	iconCls: 'fa fa-lg fa-save icon-button-color-save',
+																	handler: function () {
+																		var form = this.up('form');
+																		var data = form.getValues();
+																		var addTypeWin = this.up('window');
+
+																		CoreUtil.submitForm({
+																			url: 'api/v1/resource/attributes/attributetypes/metadata',
+																			method: 'POST',
+																			data: data,
+																			form: form,
+																			success: function (response, opts) {
+																				attributeTypeCb.getStore().load();
+																				addTypeWin.close();
+																			}
+																		});
+
+																	}
+																},
+																{
+																	xtype: 'tbfill'
+																},
+																{
+																	text: 'Cancel',
+																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																	handler: function () {
+																		this.up('window').close();
+																	}
+																}
+															]
+														}
+													]
+												}
+											]
+										});
+										addTypeWin.show();
+
 									}
 								}
-							}
+							]
 						},
 						{
 							xtype: 'combobox',
@@ -437,6 +559,7 @@ Ext.define('OSF.form.Attributes', {
 							allowBlank: false,
 							valueField: 'code',
 							displayField: 'label',
+							labelWidth: 150,
 							store: Ext.create('Ext.data.Store', {
 								fields: [
 									"code",
@@ -531,7 +654,7 @@ Ext.define('OSF.form.Attributes', {
 			success: function (response, opts) {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
-				attributePanel.attributeGrid.down('form').getComponent('attributeTypeCB').getStore().load();
+				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
 			}
 		});
 
@@ -539,6 +662,13 @@ Ext.define('OSF.form.Attributes', {
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Attribute", componentId);
 		}
+		CoreService.userservice.getCurrentUser().then(function (user) {
+
+			if (CoreService.userservice.userHasPermisson(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
+				attributePanel.queryById('addAttributeType').setHidden(false);
+			}
+
+		});
 	}
 
 });
