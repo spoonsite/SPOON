@@ -37,14 +37,14 @@ public class UserAnswerQuestionIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static final String submissionName = "Selenium Question";
+	private static final String SUBMISSION_NAME = "Selenium Question";
+	private static final String SUBMISSION_ANSWER = "Selenium Answer";
 
 	@BeforeClass
 	public static void setupTest()
 	{
-		Component questionComponent = createUserComponent(submissionName);
+		Component questionComponent = createUserComponent(SUBMISSION_NAME);
 		apiClient.getComponentRESTTestClient().addAPIComponentQuestion("Are you Selenium?", questionComponent);
-
 	}
 
 	@Test
@@ -53,63 +53,78 @@ public class UserAnswerQuestionIT
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			webDriverUtil.getPage(driver, "UserTool.action?load=Questions");
 			answerQuestion(driver);
+			verifyQuestionAnswer(driver);
 		}
-
 	}
-	
+
 	public void answerQuestion(WebDriver driver)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		List<WebElement> table = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#questionGrid-body tr td")));
-		WebElement question = null;
-		boolean found = false;
-		
-		for (WebElement element : table)
-		{
-			if (element.getText().equals("Are you Selenium?"))
-			{
-				question = element;
-				found = true;
-				break;
-			}
-		}
-		Assert.assertTrue(found);
+
+		String mainWindow = driver.getWindowHandle();
+
+		WebElement question = findElementByString(driver, "#questionGrid-body tr td", "Are you Selenium?");
+		Assert.assertTrue(question != null);
 		question.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='viewQuestionEntryBtn']"))).click();
 
-		//find the Questions & Answers tab
-		
-		String winHandleBefore = driver.getWindowHandle();
-
 		WebElement frame = driver.findElement(By.cssSelector("iframe"));
-		System.out.println("Frame: " + frame.getAttribute("name"));
-
 		driver.switchTo().frame(frame);
-		sleep(500);
-		
-		List<WebElement> tabs = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("[role='tab']")));
-		System.out.println("Num tabs: " + tabs.size());
-		WebElement tab = null;
-		found = false;
-		for (WebElement element : tabs)
-		{
-			System.out.println("Element: " + element.getText());
-			if (element.getText().equals("Questions & Answers"))
-			{
-				tab = element;
-				found = true;
-				break;
-			}
-		}
-		Assert.assertTrue(found);
+
+		WebElement tab = findElementByString(driver, "[role='tab']", "Questions & Answers");
+		Assert.assertTrue(tab != null);
 		tab.click();
-		sleep(1000);
+
+		WebElement asnBtn = findElementByString(driver, ".x-btn", "Answer");
+		Assert.assertTrue(asnBtn != null);
+		asnBtn.click();
+
+		WebElement answerIframe = driver.findElement(By.cssSelector(".x-htmleditor-iframe"));
+		driver.switchTo().frame(answerIframe);
+		WebElement answerTextArea = driver.findElement(By.cssSelector("body"));
+		Assert.assertTrue(answerTextArea != null);
+		answerTextArea.sendKeys(SUBMISSION_ANSWER);
+
+		driver.switchTo().parentFrame();
+
+		WebElement post = findElementByString(driver, ".x-btn-inner", "Post");
+		Assert.assertTrue(post != null);
+		post.click();
+
+		driver.switchTo().window(mainWindow);
 	}
 
 	public void verifyQuestionAnswer(WebDriver driver)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".question-response")));
+
+		WebElement frame = driver.findElement(By.cssSelector("iframe"));
+		driver.switchTo().frame(frame);
+
+		List<WebElement> questionResponseList = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".question-response")));
+		boolean isFound = false;
+		for (WebElement response : questionResponseList) {
+			if (response.getText().equals("A. " + SUBMISSION_ANSWER)) {
+				isFound = true;
+				break;
+			}
+		}
+		Assert.assertTrue(isFound);
+	}
+
+	private WebElement findElementByString(WebDriver driver, String selector, String text)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+		List<WebElement> els = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(selector)));
+		WebElement element = null;
+
+		for (WebElement el : els) {
+			if (el.getText().equals(text)) {
+				element = el;
+				break;
+			}
+		}
+		return element;
 	}
 
 }
