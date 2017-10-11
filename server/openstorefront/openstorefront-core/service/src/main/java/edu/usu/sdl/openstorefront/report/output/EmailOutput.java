@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.report.output;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 
 /**
@@ -27,9 +28,9 @@ public class EmailOutput
 		extends BaseOutput
 {
 
-	public EmailOutput(ReportOutput reportOutput, Report report)
+	public EmailOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
 	{
-		super(reportOutput, report);
+		super(reportOutput, report, reportGenerator);
 	}
 
 	@Override

@@ -24,17 +24,14 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
-import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import edu.usu.sdl.openstorefront.report.output.BaseOutput;
-import edu.usu.sdl.openstorefront.report.output.ConfluenceOutput;
-import edu.usu.sdl.openstorefront.report.output.EmailOutput;
-import edu.usu.sdl.openstorefront.report.output.ViewOutput;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,10 +46,9 @@ public abstract class BaseReport
 	private static final Logger LOG = Logger.getLogger(BaseReport.class.getName());
 
 	protected Report report;
-	protected BaseGenerator generator;
-	protected ServiceProxy service = ServiceProxy.getProxy();
+	protected ServiceProxy service;
 
-	//Note: not thread-safe
+	//Note: not thread-safe; don't make static need a new one per thread
 	protected SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
 
 	private Branding branding;
@@ -60,12 +56,21 @@ public abstract class BaseReport
 	public BaseReport(Report report)
 	{
 		Objects.requireNonNull(report, "Report must set");
+		service = ServiceProxy.getProxy();
 
 		this.report = report;
 		if (this.report.getReportOption() == null) {
 			this.report.setReportOption(new ReportOption());
 		}
-		generator = BaseGenerator.getGenerator(report);
+	}
+
+	public BaseReport(Report report, ServiceProxy service)
+	{
+		this.report = report;
+		this.service = service;
+		if (this.report.getReportOption() == null) {
+			this.report.setReportOption(new ReportOption());
+		}
 	}
 
 	public static BaseReport getReport(Report report)
@@ -115,7 +120,7 @@ public abstract class BaseReport
 		return baseReport;
 	}
 
-	public Branding getBranding()
+	protected Branding getBranding()
 	{
 		if (branding == null) {
 			branding = service.getBrandingService().getCurrentBrandingView();
@@ -129,16 +134,18 @@ public abstract class BaseReport
 	 */
 	public void generateReport()
 	{
-		generator.init();
 		try {
-			BaseReportModel baseReportModel = gatherData();
+			BaseReportModel baseReportModel = gatherDataOnly();
 			handleOutputs(baseReportModel);
 		} catch (Exception e) {
-			generator.setFailed(true);
 			throw new OpenStorefrontRuntimeException("Report failed to generate.", e, ErrorTypeCode.REPORT);
-		} finally {
-			generator.finish();
 		}
+	}
+
+	public BaseReportModel gatherDataOnly()
+	{
+		BaseReportModel baseReportModel = gatherData();
+		return baseReportModel;
 	}
 
 	protected abstract <T extends BaseReportModel> T gatherData();
@@ -149,33 +156,48 @@ public abstract class BaseReport
 			LOG.log(Level.SEVERE, "No report output defined; Report should have at least one.");
 		} else {
 			for (ReportOutput reportOutput : report.getReportOutputs()) {
-
-				BaseOutput outputHandler = null;
-				switch (reportOutput.getReportTransmissionType()) {
-					case ReportTransmissionType.VIEW:
-						outputHandler = new ViewOutput(reportOutput, report);
-						break;
-					case ReportTransmissionType.EMAIL:
-						outputHandler = new EmailOutput(reportOutput, report);
-						break;
-					case ReportTransmissionType.CONFLUENCE:
-						outputHandler = new ConfluenceOutput(reportOutput, report);
-						break;
-				}
-				if (outputHandler != null) {
-					doOutput(outputHandler, reportModel);
-				} else {
-					LOG.log(Level.SEVERE, MessageFormat.format("No report output handler for {0}", reportOutput.getReportTransmissionType()));
-				}
+				BaseOutput outputHandler = BaseOutput.getOutput(reportOutput, report, this);
+				doOutput(outputHandler, reportModel);
 			}
 		}
 	}
 
-	protected abstract void doOutput(BaseOutput outputHandler, BaseReportModel reportModel);
+	protected void doOutput(BaseOutput outputHandler, BaseReportModel reportModel)
+	{
+		Map<String, ReportWriter> writerMap = getWriterMap();
+		outputHandler.outputReport(reportModel, writerMap);
+	}
+
+	protected abstract Map<String, ReportWriter> getWriterMap();
 
 	public abstract List<ReportTransmissionType> getSupportedOutputs();
 
 	public abstract List<ReportFormat> getSupportedFormat(String reportTransmissionType);
+
+	protected String outputKey(String transmissionType, String reportFormat)
+	{
+		String key = transmissionType + "-" + reportFormat;
+		return key;
+	}
+
+	/**
+	 * Override to create summary; some outputs may use this. Example: EMAIL
+	 *
+	 * @param reportModel
+	 * @return html/text with a summary of the report
+	 */
+	protected String reportSummmary(BaseReportModel reportModel)
+	{
+		StringBuilder summary = new StringBuilder();
+		summary.append("<h2>Report: ")
+				.append(reportModel.getTitle())
+				.append("</h2>");
+		summary.append("Generated on ");
+		summary.append(sdf.format(reportModel.getCreateTime()));
+		summary.append(" is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>");
+
+		return summary.toString();
+	}
 
 	/**
 	 * Get user who created the report or scheduled report
@@ -185,8 +207,7 @@ public abstract class BaseReport
 	 */
 	protected UserContext getReportUserContext()
 	{
-		UserContext userContext = new UserContext();
-
+		UserContext userContext = service.getSecurityService().getUserContext(report.getCreateUser());
 		return userContext;
 	}
 

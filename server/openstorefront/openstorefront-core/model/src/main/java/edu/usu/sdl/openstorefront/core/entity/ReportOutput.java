@@ -51,6 +51,12 @@ public class ReportOutput
 	{
 	}
 
+	public String toFormatKey()
+	{
+		String key = getReportTransmissionType() + "-" + getReportTransmissionOption().getReportFormat();
+		return key;
+	}
+
 	//TODO: Requires custom validation on certain types
 	public String getReportTransmissionType()
 	{

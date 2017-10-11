@@ -15,10 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.report.output;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
+import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,27 +38,52 @@ public abstract class BaseOutput
 
 	protected ReportOutput reportOutput;
 	protected Report report;
+	protected BaseReport reportGenerator;
 
-	public BaseOutput(ReportOutput reportOutput, Report report)
+	public BaseOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
 	{
 		this.reportOutput = reportOutput;
 		this.report = report;
+		this.reportGenerator = reportGenerator;
+	}
+
+	public static BaseOutput getOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
+	{
+		BaseOutput output = null;
+		switch (reportOutput.getReportTransmissionType()) {
+			case ReportTransmissionType.VIEW:
+				output = new ViewOutput(reportOutput, report, reportGenerator);
+				break;
+			case ReportTransmissionType.EMAIL:
+				output = new EmailOutput(reportOutput, report, reportGenerator);
+				break;
+			case ReportTransmissionType.CONFLUENCE:
+				output = new ConfluenceOutput(reportOutput, report, reportGenerator);
+				break;
+			default:
+				throw new OpenStorefrontRuntimeException("Output Type not supported", "Add Support to BaseOutput");
+		}
+		return output;
 	}
 
 	public void outputReport(BaseReportModel reportModel, Map<String, ReportWriter> writerMap)
 	{
 		BaseGenerator generator = init();
-
-		String key = reportOutput.getReportTransmissionType() + "-" + reportOutput.getReportTransmissionOption().getReportFormat();
-
-		ReportWriter writer = writerMap.get(key);
-		if (writer != null) {
-			writer.writeReport(generator, reportModel);
-		} else {
-			LOG.log(Level.WARNING, "No writer support for " + key);
+		try {
+			String key = reportOutput.toFormatKey();
+			ReportWriter writer = writerMap.get(key);
+			if (writer != null) {
+				writer.writeReport(generator, reportModel);
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("No writer support for {0}", key));
+			}
+		} catch (Exception e) {
+			generator.setFailed(true);
+		} finally {
+			generator.finish();
+			finishOutput();
 		}
 
-		finishOutput();
 	}
 
 	protected abstract BaseGenerator init();
@@ -63,8 +92,9 @@ public abstract class BaseOutput
 
 	protected BaseGenerator getBaseGenerator()
 	{
-		BaseGenerator.getGenerator()
+		BaseGenerator generator = BaseGenerator.getGenerator(report, reportOutput.getReportTransmissionOption().getReportFormat());
 
+		return generator;
 	}
 
 }
