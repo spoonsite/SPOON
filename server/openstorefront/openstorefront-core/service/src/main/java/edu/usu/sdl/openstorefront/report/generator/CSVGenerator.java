@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.report.generator;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.core.entity.Report;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -36,21 +37,33 @@ public class CSVGenerator
 
 	private CSVWriter writer;
 
-	public CSVGenerator(Report report)
+	public CSVGenerator(GeneratorOptions generatorOption)
 	{
-		super(report);
+		super(generatorOption);
 	}
 
 	@Override
 	public void init()
 	{
-		Objects.requireNonNull(report, "The generator requires the report to exist.");
-		Objects.requireNonNull(report.getReportId(), "The report id is required.");
-		try {
-			writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(report.pathToReport().toFile())));
-		} catch (FileNotFoundException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+		if (generatorOptions.getOutputStream() != null) {
+			writer = new CSVWriter(new OutputStreamWriter(generatorOptions.getOutputStream()));
+		} else {
+			File reportFile = null;
+			if (StringUtils.isNotBlank(generatorOptions.getOverrideOutputPath())) {
+				reportFile = new File(generatorOptions.getOverrideOutputPath());
+			} else {
+				Objects.requireNonNull(report, "The generator requires the report to exist.");
+				Objects.requireNonNull(report.getReportId(), "The report id is required.");
+				reportFile = report.pathToReport().toFile();
+			}
+
+			try {
+				writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(reportFile)));
+			} catch (FileNotFoundException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			}
 		}
+
 	}
 
 	public void addLine(Object... data)
@@ -74,7 +87,7 @@ public class CSVGenerator
 			try {
 				writer.close();
 			} catch (IOException ex) {
-				throw new OpenStorefrontRuntimeException("Failed to close report file. Report: " + report.pathToReport(), ex);
+				throw new OpenStorefrontRuntimeException("Failed to close report output.", ex);
 			}
 		}
 

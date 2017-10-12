@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 
 /**
+ * Normal view/save report
  *
  * @author dshurtleff
  */
@@ -36,13 +37,14 @@ public class ViewOutput
 	@Override
 	protected BaseGenerator init()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		BaseGenerator generator = getBaseGenerator();
+		return generator;
 	}
 
 	@Override
 	protected void finishOutput()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//nothing to do
 	}
 
 }

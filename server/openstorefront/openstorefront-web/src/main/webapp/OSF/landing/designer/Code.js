@@ -36,14 +36,7 @@ Ext.define('OSF.landing.designer.Code', {
 			flex: 1,
 			fieldLabel: 'Stucture Start',
 			value: '<script type="text/javascript"> \n' +			
-					'Ext.require("OSF.landing.DefaultHeader"); \n' + 
-					'Ext.require("OSF.landing.DefaultFooter"); \n' + 
-					'Ext.require("OSF.landing.DefaultSearch"); \n' + 
-					'Ext.require("OSF.landing.DefaultVersion"); \n' + 
-					'Ext.require("OSF.landing.DefaultSearchTools"); \n' + 
-					'Ext.require("OSF.landing.DefaultActions"); \n' + 
-					'Ext.require("OSF.landing.DefaultCategory"); \n' +
-					'Ext.require("OSF.landing.DefaultInfo"); \n\n' + 
+					'Ext.require("OSF.landing.*"); \n\n' +					
 					'Ext.onReady(function(){ \n'
 		},
 		{

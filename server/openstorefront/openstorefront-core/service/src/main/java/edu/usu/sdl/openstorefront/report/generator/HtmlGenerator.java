@@ -16,8 +16,9 @@
 package edu.usu.sdl.openstorefront.report.generator;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.core.entity.Report;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -34,21 +35,36 @@ public class HtmlGenerator
 
 	BufferedWriter writer;
 
-	public HtmlGenerator(Report report)
+	public HtmlGenerator(GeneratorOptions generatorOption)
 	{
-		super(report);
+		super(generatorOption);
 	}
 
 	@Override
 	public void init()
 	{
-		Objects.requireNonNull(report, "The generator requires the report to exist.");
-		Objects.requireNonNull(report.getReportId(), "The report id is required.");
+		if (generatorOptions.getOutputStream() != null) {
+			writer = new BufferedWriter(new OutputStreamWriter(generatorOptions.getOutputStream()));
+		} else {
+			File reportFile = null;
+			if (StringUtils.isNotBlank(generatorOptions.getOverrideOutputPath())) {
+				reportFile = new File(generatorOptions.getOverrideOutputPath());
+			} else {
+				Objects.requireNonNull(report, "The generator requires the report to exist.");
+				Objects.requireNonNull(report.getReportId(), "The report id is required.");
+				reportFile = report.pathToReport().toFile();
+			}
+
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reportFile)));
+			} catch (FileNotFoundException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			}
+		}
 		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(report.pathToReport().toFile())));
 			writer.append("<html><body style='padding: 20px'>");
 		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			throw new OpenStorefrontRuntimeException("Unable write to report.", "System error or bad outputstream", ex);
 		}
 	}
 
@@ -109,7 +125,7 @@ public class HtmlGenerator
 				writer.append("</body></html>");
 				writer.close();
 			} catch (IOException ex) {
-				throw new OpenStorefrontRuntimeException("Failed to close report file. Report: " + report.pathToReport(), ex);
+				throw new OpenStorefrontRuntimeException("Failed to close report output.", ex);
 			}
 		}
 	}

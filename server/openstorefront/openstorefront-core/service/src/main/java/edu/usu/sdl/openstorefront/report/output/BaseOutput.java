@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.generator.GeneratorOptions;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -92,8 +93,8 @@ public abstract class BaseOutput
 
 	protected BaseGenerator getBaseGenerator()
 	{
-		BaseGenerator generator = BaseGenerator.getGenerator(report, reportOutput.getReportTransmissionOption().getReportFormat());
-
+		GeneratorOptions generatorOptions = new GeneratorOptions(report);
+		BaseGenerator generator = BaseGenerator.getGenerator(reportOutput.getReportTransmissionOption().getReportFormat(), generatorOptions);
 		return generator;
 	}
 

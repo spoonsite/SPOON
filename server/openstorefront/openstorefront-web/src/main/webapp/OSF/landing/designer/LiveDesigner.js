@@ -22,15 +22,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.ofs-liveDesigner',
 	requires: [
-		'OSF.landing.DefaultHeader',
-		'OSF.landing.DefaultFooter',
-		'OSF.landing.DefaultSearch',
-		'OSF.landing.DefaultVersion',
-		'OSF.landing.DefaultSearchTools',
-		'OSF.landing.DefaultActions',
-		'OSF.landing.DefaultCategory',
-		'OSF.landing.DefaultInfo',
-		'OSF.landing.StaticInfo'
+		'OSF.landing.*'
 	],
 	
 	layout: 'border',

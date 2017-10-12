@@ -36,12 +36,17 @@ public class EmailOutput
 	@Override
 	protected BaseGenerator init()
 	{
+		//write to a temp file if attaching
+
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	protected void finishOutput()
 	{
+
+		//if body pull summary
+		//if neither just email notification
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 

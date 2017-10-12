@@ -17,9 +17,10 @@ package edu.usu.sdl.openstorefront.report.generator;
 
 import com.lowagie.text.DocumentException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.core.entity.Report;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -37,25 +39,39 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 public class HtmlToPdfGenerator
 		extends BaseGenerator
 {
-	OutputStream writer;
-	
-	public HtmlToPdfGenerator(Report report)
+
+	private static final Logger LOG = Logger.getLogger(HtmlToPdfGenerator.class.getName());
+
+	private OutputStream writer;
+
+	public HtmlToPdfGenerator(GeneratorOptions generatorOptions)
 	{
-		super(report);
+		super(generatorOptions);
 	}
-	
+
 	@Override
 	public void init()
 	{
-		Objects.requireNonNull(report, "The generator requires the report to exist.");
-		Objects.requireNonNull(report.getReportId(), "The report id is required.");
-		try {
-			writer = new FileOutputStream(report.pathToReport().toFile());
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+		if (generatorOptions.getOutputStream() != null) {
+			writer = generatorOptions.getOutputStream();
+		} else {
+			File reportFile = null;
+			if (StringUtils.isNotBlank(generatorOptions.getOverrideOutputPath())) {
+				reportFile = new File(generatorOptions.getOverrideOutputPath());
+			} else {
+				Objects.requireNonNull(report, "The generator requires the report to exist.");
+				Objects.requireNonNull(report.getReportId(), "The report id is required.");
+				reportFile = report.pathToReport().toFile();
+			}
+
+			try {
+				writer = new FileOutputStream(reportFile);
+			} catch (FileNotFoundException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			}
 		}
 	}
-	
+
 	@Override
 	protected void internalFinish()
 	{
@@ -63,11 +79,16 @@ public class HtmlToPdfGenerator
 			try {
 				writer.close();
 			} catch (IOException ex) {
-				throw new OpenStorefrontRuntimeException("Failed to close report file. Report: " + report.pathToReport(), ex);
+				throw new OpenStorefrontRuntimeException("Failed to close report output.", ex);
 			}
 		}
 	}
-	
+
+	/**
+	 * Saves to output can not be written to after this point
+	 *
+	 * @param htmlContent
+	 */
 	public void savePdfDocument(String htmlContent)
 	{
 		//	Convert HTML to XHTML
@@ -80,9 +101,9 @@ public class HtmlToPdfGenerator
 			tidy.parseDOM(inputStream, outputStream);
 			htmlContent = outputStream.toString("UTF-8");
 		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(HtmlToPdfGenerator.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
-		
+
 		//	Set XHTML as the document string
 		renderer.setDocumentFromString(htmlContent);
 		renderer.layout();
@@ -91,7 +112,7 @@ public class HtmlToPdfGenerator
 			//	Create and save the PDF
 			renderer.createPDF(writer, true);
 		} catch (DocumentException ex) {
-			Logger.getLogger(HtmlToPdfGenerator.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 }
