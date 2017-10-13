@@ -1104,6 +1104,9 @@ Ext.define('OSF.component.template.Questions', {
 							xtype: 'button',
 							dock: 'bottom',
 							text: 'Answer',
+							autoEl: {
+								"data-test": "viewEntryAnsBtn"
+							},
 							maxWidth: 150,
 							scale: 'medium',								
 							margin: 10,

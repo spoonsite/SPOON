@@ -164,9 +164,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response addComponentQuestion(String componentId, ComponentQuestion question)
+	public ComponentQuestion addComponentQuestion(String componentId, ComponentQuestion question)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/questions", question, null);
+		return response.getResponse(ComponentQuestion.class);
 	}
 
 	public Response addComponentQuestionResponse(String componentId, String questionId, ComponentQuestionResponse response)

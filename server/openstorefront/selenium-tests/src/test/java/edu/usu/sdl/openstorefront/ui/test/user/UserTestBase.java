@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import org.junit.BeforeClass;
 
@@ -30,5 +31,13 @@ public class UserTestBase
 	public static void setupBaseTest()
 	{
 		login();
+	}
+	
+	protected static Component createUserComponent(String componentName)
+	{
+		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
+		System.out.println("Entry name: " + myEntry.getName());
+		
+		return myEntry;
 	}
 }
