@@ -264,6 +264,7 @@
 								scale: 'large',
 								width: '58px',
 								margin: '0 10 0 0',
+								hidden: true,
 								handler: function(){
 									var watch = {
 											componentId: componentId,
@@ -335,6 +336,7 @@
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
+								hidden: true,
 								menu: {
 									items: [
 										{
@@ -364,6 +366,7 @@
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
+								hidden: true,
 								menu: {
 									items: [										
 										{
@@ -409,7 +412,18 @@
 										}										
 									]
 								}
-							}							
+							},
+							{
+								xtype: 'button',
+								iconCls: 'fa fa-2x fa-sign-in',						
+								id: 'loginBtn',
+								tooltip: 'Sign In',
+								scale: 'large',
+								margin: '0 10 0 0',
+								hidden: true,
+								href: 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true'),
+								hrefTarget: '_self'
+							}						
 						]
 					}
 				],
@@ -536,10 +550,22 @@
 					contentPanel
 				]
 			});
-			
+			var setHeaderButtons = function(isAnonymousUser)
+			{
+				if(isAnonymousUser)
+				{
+					Ext.getCmp('loginBtn').setHidden(false);	
+				}
+				else
+				{
+					Ext.getCmp('watchBtn').setHidden(false);
+					Ext.getCmp('nonOwnerMenu').setHidden(false);
+				}
+			}
 			var entry;
 			var componentTypeDetail;
-			var loadDetails = function(){
+			var loadDetails = function(user){
+				setHeaderButtons(user.isAnonymousUser);
 				if (componentId) {
 					headerPanel.setLoading(true);
 					contentPanel.setLoading(true);
@@ -562,8 +588,8 @@
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
 							}, 1000);
-														
-							if (entry.createUser === '${user}'){
+							
+							if(!user.isAnonymousUser && entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
 								Ext.getCmp('ownerMenu').setHidden(false);								
 							}
@@ -649,7 +675,7 @@
 			};
 			
 			var currentWatch;			
-			var loadWatches = function(){
+			var loadWatches = function(user){
 				Ext.Ajax.request({
 					url: 'api/v1/resource/userprofiles/' + '${user}' + '/watches',
 					success: function(response, opts) {
@@ -664,11 +690,21 @@
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
 						}
 
-						loadDetails();
+						loadDetails(user);
 					}
 				});
 			};
-			loadWatches();
+			CoreService.userservice.getCurrentUser().then(function(user)
+			{
+				if(!user.isAnonymousUser)
+				{
+					loadWatches(user);
+				}
+				else
+				{
+					loadDetails(user);
+				}
+			});
 			
 			
 			var processTags = function(tagList){
