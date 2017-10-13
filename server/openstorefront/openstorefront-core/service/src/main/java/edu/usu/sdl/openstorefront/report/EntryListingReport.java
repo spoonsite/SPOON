@@ -13,34 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.report.model;
-
-import java.util.ArrayList;
-import java.util.List;
+package edu.usu.sdl.openstorefront.report;
 
 /**
  *
  * @author dshurtleff
  */
-public class UserReportModel
-		extends BaseReportModel
+public class EntryListingReport
 {
-
-	private List<UserReportLineModel> data = new ArrayList<>();
-
-	public UserReportModel()
-	{
-	}
-
-	@Override
-	public List<UserReportLineModel> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<UserReportLineModel> data)
-	{
-		this.data = data;
-	}
 
 }

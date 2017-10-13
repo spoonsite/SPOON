@@ -15,10 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.report.output;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.generator.GeneratorOptions;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import javax.mail.Message;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -28,6 +42,8 @@ public class EmailOutput
 		extends BaseOutput
 {
 
+	private ByteArrayOutputStream attachedReport;
+
 	public EmailOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
 	{
 		super(reportOutput, report, reportGenerator);
@@ -36,18 +52,54 @@ public class EmailOutput
 	@Override
 	protected BaseGenerator init()
 	{
+		BaseGenerator generator = null;
 		//write to a temp file if attaching
-
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (Convert.toBoolean(reportOutput.getReportTransmissionOption().getAttachReport())) {
+			GeneratorOptions generatorOptions = new GeneratorOptions(report);
+			attachedReport = new ByteArrayOutputStream();
+			generatorOptions.setOutputStream(attachedReport);
+			generator = BaseGenerator.getGenerator(reportOutput.getReportTransmissionOption().getReportFormat(), generatorOptions);
+		}
+		return generator;
 	}
 
 	@Override
-	protected void finishOutput()
+	protected void finishOutput(BaseReportModel reportModel)
 	{
+		StringBuilder message = new StringBuilder();
 
-		//if body pull summary
-		//if neither just email notification
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (Convert.toBoolean(reportOutput.getReportTransmissionOption().getPostToEmailBody())) {
+			message.append(reportGenerator.reportSummmary(reportModel));
+		} else {
+			String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
+			message.append("Report is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>")
+					.append(attachedReport != null ? " or see the attached file" : "")
+					.append(".<br><br><br>");
+			message.append("To stop receiving this message, please contact an administrator at ").append(replyAddress);
+
+		}
+
+		String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
+		if (reportOutput.getReportTransmissionOption().getEmailAddresses() == null) {
+			reportOutput.getReportTransmissionOption().setEmailAddresses(new ArrayList<>());
+		}
+		for (EmailAddress emailAddress : reportOutput.getReportTransmissionOption().getEmailAddresses()) {
+			Email email = MailManager.newEmail();
+			email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()) + " Report");
+			email.setTextHTML(message.toString());
+
+			if (attachedReport != null) {
+				String extension = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(reportOutput.getReportTransmissionOption().getReportFormat()));
+				email.addAttachment(TranslateUtil.translate(ReportType.class,
+						report.getReportType()) + extension,
+						attachedReport.toByteArray(),
+						ReportFormat.mimeType(reportOutput.getReportTransmissionOption().getReportFormat()));
+			}
+
+			email.addRecipient("", emailAddress.getEmail(), Message.RecipientType.TO);
+			MailManager.send(email);
+		}
+
 	}
 
 }

@@ -70,26 +70,29 @@ public abstract class BaseOutput
 	public void outputReport(BaseReportModel reportModel, Map<String, ReportWriter> writerMap)
 	{
 		BaseGenerator generator = init();
-		try {
-			String key = reportOutput.toFormatKey();
-			ReportWriter writer = writerMap.get(key);
-			if (writer != null) {
-				writer.writeReport(generator, reportModel);
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("No writer support for {0}", key));
+		if (generator != null) {
+			try {
+				String key = reportOutput.toFormatKey();
+				ReportWriter writer = writerMap.get(key);
+				if (writer != null) {
+					writer.writeReport(generator, reportModel);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("No writer support for {0}", key));
+				}
+			} catch (Exception e) {
+				generator.setFailed(true);
+			} finally {
+				generator.finish();
+				finishOutput(reportModel);
 			}
-		} catch (Exception e) {
-			generator.setFailed(true);
-		} finally {
-			generator.finish();
-			finishOutput();
+		} else {
+			LOG.log(Level.FINER, MessageFormat.format("No generator for output...not writing report. Output: {0}", this.getClass().getSimpleName()));
 		}
-
 	}
 
 	protected abstract BaseGenerator init();
 
-	protected abstract void finishOutput();
+	protected abstract void finishOutput(BaseReportModel reportModel);
 
 	protected BaseGenerator getBaseGenerator()
 	{

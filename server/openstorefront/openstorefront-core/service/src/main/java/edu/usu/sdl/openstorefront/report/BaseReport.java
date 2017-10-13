@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.Report;
@@ -30,6 +31,9 @@ import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -186,7 +190,7 @@ public abstract class BaseReport
 	 * @param reportModel
 	 * @return html/text with a summary of the report
 	 */
-	protected String reportSummmary(BaseReportModel reportModel)
+	public String reportSummmary(BaseReportModel reportModel)
 	{
 		StringBuilder summary = new StringBuilder();
 		summary.append("<h2>Report: ")
@@ -209,6 +213,24 @@ public abstract class BaseReport
 	{
 		UserContext userContext = service.getSecurityService().getUserContext(report.getCreateUser());
 		return userContext;
+	}
+
+	protected void updateReportTimeRange()
+	{
+		if (report.getReportOption().getPreviousDays() != null) {
+			Instant instantEnd = Instant.now();
+			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
+		}
+
+		if (report.getReportOption().getStartDts() == null) {
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(TimeUtil.currentDate()));
+		}
+
+		if (report.getReportOption().getEndDts() == null) {
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(TimeUtil.currentDate()));
+		}
 	}
 
 }

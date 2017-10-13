@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -61,7 +60,6 @@ public class UserReport
 		UserReportModel userReportModel = new UserReportModel();
 
 		userReportModel.setTitle("User Report");
-		userReportModel.setCreateTime(TimeUtil.currentDate());
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);

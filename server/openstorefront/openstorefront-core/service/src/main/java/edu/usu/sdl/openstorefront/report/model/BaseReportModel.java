@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import java.util.Date;
+import java.util.List;
 
 /**
  * All Report report models should extend this.
@@ -26,13 +28,15 @@ public abstract class BaseReportModel
 {
 
 	private String title;
-	private Date createTime;
+	private Date createTime = TimeUtil.currentDate();
 	private Date dataStartDate;
 	private Date dataEndDate;
 
 	public BaseReportModel()
 	{
 	}
+
+	public abstract <T> List<T> getData();
 
 	public String getTitle()
 	{

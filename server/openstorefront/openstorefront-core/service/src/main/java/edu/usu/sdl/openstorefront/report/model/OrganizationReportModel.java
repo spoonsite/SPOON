@@ -22,23 +22,23 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class UserReportModel
+public class OrganizationReportModel
 		extends BaseReportModel
 {
 
-	private List<UserReportLineModel> data = new ArrayList<>();
+	private List<OrganizationReportLineModel> data = new ArrayList<>();
 
-	public UserReportModel()
+	public OrganizationReportModel()
 	{
 	}
 
 	@Override
-	public List<UserReportLineModel> getData()
+	public List<OrganizationReportLineModel> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<UserReportLineModel> data)
+	public void setData(List<OrganizationReportLineModel> data)
 	{
 		this.data = data;
 	}

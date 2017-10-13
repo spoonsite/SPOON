@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 
 /**
  * Normal view/save report
@@ -42,7 +43,7 @@ public class ViewOutput
 	}
 
 	@Override
-	protected void finishOutput()
+	protected void finishOutput(BaseReportModel reportModel)
 	{
 		//nothing to do
 	}

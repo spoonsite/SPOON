@@ -22,10 +22,15 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.OrganizationReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,11 +55,41 @@ public class OrganizationReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected OrganizationReportModel gatherData()
 	{
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-		userProfiles = service.getPersistenceService().queryByExample(userProfileExample);
+		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(userProfileExample);
+
+		OrganizationReportModel organizationReportModel = new OrganizationReportModel();
+		organizationReportModel.setTitle("User Organization Report");
+
+		Map<String, List<UserProfile>> orgMap = new HashMap<>();
+		for (UserProfile userProfile : userProfiles) {
+			String organization = userProfile.getOrganization();
+			if (StringUtils.isBlank(organization)) {
+				if (orgMap.get(NO_ORG) == null) {
+					orgMap.put(NO_ORG, new ArrayList<>());
+				}
+				orgMap.get(NO_ORG).add(userProfile);
+			}
+
+			if (StringUtils.isNotBlank(organization)) {
+				if (orgMap.containsKey(organization)) {
+					orgMap.get(organization).add(userProfile);
+				} else {
+					List<UserProfile> orgUsers = new ArrayList<>();
+					orgUsers.add(userProfile);
+					orgMap.put(organization, orgUsers);
+				}
+			}
+		}
+
+		for (String org : orgMap.keySet()) {
+
+		}
+
+		return organizationReportModel;
 	}
 
 	@Override
@@ -150,6 +185,63 @@ public class OrganizationReport
 		}
 
 		return count;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (OrganizationReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (OrganizationReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, OrganizationReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
 	}
 
 }
