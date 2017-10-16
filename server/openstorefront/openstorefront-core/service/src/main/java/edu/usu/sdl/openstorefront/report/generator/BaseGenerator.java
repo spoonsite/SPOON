@@ -74,7 +74,6 @@ public abstract class BaseGenerator
 					log.log(Level.WARNING, "Unable to cleanup failed report.", ex);
 				}
 			}
-			throw new OpenStorefrontRuntimeException("The report failed to run.");
 		}
 	}
 
