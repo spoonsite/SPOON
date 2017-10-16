@@ -63,6 +63,8 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidateNestedProperties;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
 
 /**
  * Use to transmit media
@@ -126,6 +128,12 @@ public class MediaAction
 		//return new ForwardResolution("/WEB-INF/securepages/test/audioTest.jsp");
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
+	
+	@ValidationMethod(on={"UploadMedia","UploadOrganizationLogo","UploadGeneralMedia","UploadSectionMedia"})
+	public void uploadHook(ValidationErrors errors)
+	{
+		checkUploadSizeValidation(errors, file, "file");
+	}
 
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia() throws FileNotFoundException
@@ -181,11 +189,8 @@ public class MediaAction
 				}
 				if (allow) {
 
-					if (doesFileExceedLimit(file)) {
-						deleteUploadFile(file);
-						errors.put("file", "File size exceeds max allowed.");
-					} else {
-
+					if (!doesFileExceedLimit(file)) {
+						
 						componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 						componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());

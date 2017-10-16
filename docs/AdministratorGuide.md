@@ -296,6 +296,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **role.admin** -Set this before strarting the application the first time to set the name of the Admin Role
 -  **test.email** -Set to run container tests that require email
 -  **system.archive.maxprocessminutes** -Set the max time for running archive process; this used to clean up stuck working archives ( **60** )
+-  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **2000** )
 
 # 3. Database Management
 -----

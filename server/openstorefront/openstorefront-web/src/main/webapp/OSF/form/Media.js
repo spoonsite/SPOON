@@ -175,7 +175,7 @@ Ext.define('OSF.form.Media', {
 				{
 					xtype: 'filefield',
 					itemId: 'upload',
-					fieldLabel: 'Upload Media (Limit of 1GB)',																											
+					fieldLabel: 'Upload Media<br />(Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',																											
 					name: 'file',
 					listeners: {
 						change: CoreUtil.handleMaxFileLimit

@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.view.JsonFormLoad;
@@ -41,6 +43,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
+import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrorHandler;
 import net.sourceforge.stripes.validation.ValidationErrors;
@@ -56,8 +59,6 @@ public abstract class BaseAction
 		implements ActionBean, ValidationErrorHandler
 {
 
-	private static final long MAX_UPLOAD_SIZE = 1048576000L;
-
 	private static final Logger LOG = Logger.getLogger(BaseAction.class.getName());
 
 	protected ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -67,7 +68,7 @@ public abstract class BaseAction
 	protected String brandingId;
 
 	protected final ServiceProxy service = new ServiceProxy();
-
+	
 	public String getApplicationVersion()
 	{
 		return PropertiesManager.getApplicationVersion();
@@ -91,7 +92,9 @@ public abstract class BaseAction
 
 	protected boolean doesFileExceedLimit(FileBean fileBean)
 	{
-		return doesFileExceedLimit(fileBean, MAX_UPLOAD_SIZE);
+		//	get the number of of max file size we can have in bytes
+		long maxFileSize = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_MAX_POST_SIZE))*OpenStorefrontConstant.FIELD_SIZE_1MB;
+		return doesFileExceedLimit(fileBean, maxFileSize);
 	}
 
 	protected boolean doesFileExceedLimit(FileBean fileBean, long limit)
@@ -345,6 +348,14 @@ public abstract class BaseAction
 	public void setBrandingId(String brandingId)
 	{
 		this.brandingId = brandingId;
+	}
+	
+	public void checkUploadSizeValidation (ValidationErrors errors, FileBean file, String fileField) {
+		
+		if (doesFileExceedLimit(file)) {
+			errors.add(fileField, new SimpleError("File size exceeds max allowed."));
+			deleteUploadFile(file);
+		}
 	}
 
 }
