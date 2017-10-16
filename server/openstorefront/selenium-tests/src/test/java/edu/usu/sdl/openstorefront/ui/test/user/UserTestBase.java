@@ -40,7 +40,7 @@ public class UserTestBase
 	{
 		
 	}
-		
+
 	protected static Component createUserComponent(String componentName)
 	{
 		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
@@ -48,11 +48,11 @@ public class UserTestBase
 		
 		return myEntry;
 	}
-  
-  	
+
 	@AfterClass
 	public static void cleanupBase()
 	{
-  
-  }
+		
+	}
+
 }
