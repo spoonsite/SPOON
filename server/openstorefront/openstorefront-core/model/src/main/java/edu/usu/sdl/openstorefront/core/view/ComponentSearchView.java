@@ -41,6 +41,7 @@ public class ComponentSearchView
 {
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_ORGANIZATION = "organization";
+	public static final String FIELD_SEARCH_SCORE = "searchScore";
 	
 	private String listingType;
 	private String componentId;
