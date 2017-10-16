@@ -394,8 +394,8 @@ Ext.define('OSF.form.Attributes', {
 								listeners: {
 									load: function (store, records, opts) {
 										store.filterBy(function (attribute) {
-											if (attribute.associatedComponentTypes) {
-												var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
+											if (attribute.data.associatedComponentTypes) {
+												var optFound = Ext.Array.findBy(attribute.data.associatedComponentTypes, function (item) {
 													if (item.componentType === attributePanel.component.componentType) {
 														return true;
 													} else {
