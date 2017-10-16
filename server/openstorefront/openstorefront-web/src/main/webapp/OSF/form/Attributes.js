@@ -49,6 +49,17 @@ Ext.define('OSF.form.Attributes', {
 					Ext.Array.each(data, function (attribute) {
 						if (!attribute.requiredFlg) {
 							optionalAttributes.push(attribute);
+						} else if (attribute.requiredRestrictions) {
+							var optFound = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
+								if (item.componentType === attributePanel.component.componentType) {
+									return true;
+								} else {
+									return false;
+								}
+							});
+							if (!optFound) {
+								optionalAttributes.push(attribute);
+							}
 						}
 					});
 					optionalAttributes.reverse();
@@ -395,17 +406,11 @@ Ext.define('OSF.form.Attributes', {
 											type: 'ajax',
 											url: 'api/v1/resource/attributes'
 										},
-										filters: [
-											{
-												property: 'requiredFlg',
-												value: 'false'
-											}
-										],
 										listeners: {
 											load: function (store, records, opts) {
 												store.filterBy(function (attribute) {
-													if (attribute.associatedComponentTypes) {
-														var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
+													if (attribute.data.associatedComponentTypes) {
+														var optFound = Ext.Array.findBy(attribute.data.associatedComponentTypes, function (item) {
 															if (item.componentType === attributePanel.component.componentType) {
 																return true;
 															} else {
@@ -418,7 +423,22 @@ Ext.define('OSF.form.Attributes', {
 															return false;
 														}
 													} else {
+												if (attribute.data.requiredRestrictions) {
+													var optFound = Ext.Array.findBy(attribute.data.requiredRestrictions, function (item) {
+														if (item.componentType === attributePanel.component.componentType) {
+															return true;
+														} else {
+															return false;
+														}
+													});
+													if (optFound) {
+														return false;
+													} else {
 														return true;
+													}
+												} else {
+													return true;
+												} 
 													}
 												});
 											}
