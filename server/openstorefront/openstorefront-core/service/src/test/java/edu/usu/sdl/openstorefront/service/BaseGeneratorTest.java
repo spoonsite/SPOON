@@ -140,14 +140,9 @@ public class BaseGeneratorTest
 		//	Check both states of the file, before and after finish method is called.
 		//	Check the "Failed" state of the report is toggled to true
 		//		as it was set to "false" in the "internalFinish" method.
-		try {
-			Assert.assertEquals(Boolean.TRUE, (Boolean) new File(pathToReport.toString()).exists());
-			generatorExample.finish();
-			Assert.fail();
-		}
-		catch (Exception e) {
-			Assert.assertEquals(Boolean.TRUE, (Boolean) generatorExample.isFailed());
-			Assert.assertEquals(Boolean.FALSE, (Boolean) new File(pathToReport.toString()).exists());
-		}
+		Assert.assertEquals(Boolean.TRUE, (Boolean) new File(pathToReport.toString()).exists());
+		generatorExample.finish();
+		Assert.assertEquals(Boolean.TRUE, (Boolean) generatorExample.isFailed());
+		Assert.assertEquals(Boolean.FALSE, (Boolean) new File(pathToReport.toString()).exists());
 	}
 }
