@@ -32,6 +32,7 @@ public class APIClient
 	private ClientAPI client;
 	private ContactTestClient apiContactClient;
 	private AttributeTestClient apiAttributeClient;
+	private ApplicationTestClient apiApplicationClient;
 	private ComponentTypeTestClient apiComponentTypeClient;
 	private HighlightTestClient apiHighlightClient;
 	private UserSavedSearchTestClient apiUserSavedSearchClient;
@@ -46,6 +47,16 @@ public class APIClient
 		String username = PropertiesUtil.getProperties().getProperty("test.username");
 		String password = PropertiesUtil.getProperties().getProperty("test.password");
 		client.connect(username, password, server);
+	}
+	
+	public ApplicationTestClient getApplicationTestClient()
+	{
+		if (apiApplicationClient == null) {
+			apiApplicationClient = new ApplicationTestClient(client, this);
+			testClients.add(apiApplicationClient);
+		}
+		
+		return apiApplicationClient;
 	}
 	
 	public ComponentRESTTestClient getComponentRESTTestClient() 

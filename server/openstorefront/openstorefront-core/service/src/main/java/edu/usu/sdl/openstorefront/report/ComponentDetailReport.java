@@ -56,6 +56,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import freemarker.template.*;
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class ComponentDetailReport
 	private Map<String, Map<String, List<ComponentAttribute>>> codeToComponent = new HashMap<>();
 	private Map<String, List<ComponentContact>> contactMap = new HashMap<>();
 	private Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
+	private final Map root = new HashMap();
 
 	public ComponentDetailReport(Report report)
 	{
@@ -154,8 +156,34 @@ public class ComponentDetailReport
 	{
 		if (ReportFormat.CSV.equals(report.getReportFormat())) {
 			generateCSV();
-		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
+		} else if (ReportFormat.HTML.equals(report.getReportFormat()) || ReportFormat.PDF.equals(report.getReportFormat())) {
 			generateHtml();
+			
+			try {
+				Configuration templateConfig = ReportManager.getTemplateConfig();
+
+				//	Generate the report template
+				Template template = templateConfig.getTemplate("detailReport.ftl");
+				Writer writer = new StringWriter();
+				template.process(root, writer);
+				String renderedTemplate = writer.toString();
+
+				//	Save/write as the appropriate report
+				//	HTML report
+				if (ReportFormat.HTML.equals(report.getReportFormat())) {
+					HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
+					htmlGenerator.addLine(renderedTemplate);
+				}
+				//	PDF report
+				else if (ReportFormat.PDF.equals(report.getReportFormat())) {
+					HtmlToPdfGenerator htmlPdfGenerator = (HtmlToPdfGenerator) generator;
+					htmlPdfGenerator.savePdfDocument(renderedTemplate);
+				}
+				
+			}
+			catch (TemplateException | IOException e) {
+				throw new OpenStorefrontRuntimeException("Failed to write the report! - " + e);
+			}
 		}
 	}
 
@@ -347,12 +375,8 @@ public class ComponentDetailReport
 
 	private void generateHtml()
 	{	
-		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
 		try
-		{
-			Configuration templateConfig = ReportManager.getTemplateConfig();
-			Map root = new HashMap();
-			
+		{	
 			// create a list of components
 			List<Map> componentList = new ArrayList<>();
 			for (Component component : components)
@@ -722,17 +746,12 @@ public class ComponentDetailReport
 				componentList.add(componentRoot);
 			}
 			
-			// generate the template
+			//  build the data root to be used in the report
 			root.put("components", componentList);
 			root.put("reportOptions", report.getReportOption());
 			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
 			root.put("reportSize", components.size());
 			root.put("reportDate", sdf.format(TimeUtil.currentDate()));
-			Template template = templateConfig.getTemplate("detailReport.ftl");
-			Writer writer = new StringWriter();
-			template.process(root, writer);
-			String renderedTemplate = writer.toString();
-			htmlGenerator.addLine(renderedTemplate);
 		}
 		catch (Exception e)
 		{

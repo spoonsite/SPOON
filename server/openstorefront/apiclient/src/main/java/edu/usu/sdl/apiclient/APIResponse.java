@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import java.io.IOException;
 
 /**
@@ -44,6 +46,9 @@ public class APIResponse
 		this.objectMapper = objectMapper;
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		SimpleModule module = new SimpleModule();
+		module.addDeserializer(RestErrorModel.class, new RestErrorModelDeserializer());
+		objectMapper.registerModule(module);
 	}
 
 	public int getResponseCode()

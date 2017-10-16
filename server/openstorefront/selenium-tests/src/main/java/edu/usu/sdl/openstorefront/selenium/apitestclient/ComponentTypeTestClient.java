@@ -42,11 +42,17 @@ public class ComponentTypeTestClient
 	{
 		ComponentType compType = new ComponentType();
 		compType.setComponentType(componentType);
-		compType.setLabel(componentType + " - cool label");
-		compType.setDescription(componentType + " - cool description");
+		compType.setLabel(componentType + " - test label");
+		compType.setDescription(componentType + " - test description");
+		compType.setAllowOnSubmission(Boolean.TRUE);
+		compType.setDataEntryAttributes(Boolean.TRUE);
+		compType.setDataEntryContacts(Boolean.TRUE);
+		compType.setDataEntryQuestions(Boolean.TRUE);
+		compType.setDataEntryReviews(Boolean.TRUE);
 
 		ComponentType apiCompType = apiComponentType.createNewComponentType(compType);
 		componentTypeIds.add(apiCompType.getComponentType());
+		
 		return apiCompType;
 	}
 
@@ -59,7 +65,7 @@ public class ComponentTypeTestClient
 	public void cleanup()
 	{
 		for (String id : componentTypeIds) {
-			System.out.println("****@@@ In ComponentTYpe cleanup");
+
 			deleteAPIEntryType(id);
 		}
 	}

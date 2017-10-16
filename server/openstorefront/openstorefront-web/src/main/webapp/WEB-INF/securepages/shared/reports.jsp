@@ -473,7 +473,7 @@
 					//
 					//  This is the store list for the Report Types
 					//
-					var reportTypesStore = Ext.create('Ext.data.Store', {
+					reportTypesStore = Ext.create('Ext.data.Store', {
 						id: 'reportTypesStore',
 						autoLoad: true,
 						pageSize: 100,
@@ -813,44 +813,82 @@
 								],
 								items: [
 									{
-										xtype: 'combobox',
-										name: 'reportType',
-										id: 'reportType',
-										fieldLabel: 'Choose Report Type<span class="field-required" />',
-										width: '100%',
-										maxLength: 50,
-										store: reportTypesStore,
-										displayField: 'description',
-										valueField: 'code',
-										editable: false,
-										allowBlank: false,
-										listeners: {
-											change: function (cb, newVal, oldVal, opts) {
-												Ext.getCmp('reportFormat').getStore().removeAll();
-												Ext.getCmp('reportFormat').clearValue();
-												Ext.getCmp('reportFormat').getStore().getProxy().setUrl('api/v1/resource/reports/' + encodeURIComponent(newVal) + '/formats');
-												Ext.getCmp('reportFormat').getStore().load({
-													callback: function (records, operation, success) {
-														if (records.length === 1) {
-															Ext.getCmp('reportFormat').setValue(records[0].data.code);
+										layout: 'column',
+										items: [
+											{
+												columnWidth: 0.7,
+												items: [
+													{
+														xtype: 'combobox',
+														name: 'reportType',
+														id: 'reportType',
+														labelAlign: 'top',
+														fieldLabel: 'Choose Report Type<span class="field-required" />',
+														width: 375,
+														store: reportTypesStore,
+														displayField: 'description',
+														valueField: 'code',
+														editable: false,
+														allowBlank: false,
+														listeners: {
+															change: function (cb, newVal, oldVal, opts) {
+																Ext.getCmp('reportFormat').getStore().removeAll();
+																Ext.getCmp('reportFormat').clearValue();
+																Ext.getCmp('reportFormat').getStore().getProxy().setUrl('api/v1/resource/reports/' + encodeURIComponent(newVal) + '/formats');
+																Ext.getCmp('reportFormat').getStore().load({
+																	callback: function (records, operation, success) {
+																		if (records.length >= 1) {
+																			Ext.getCmp('reportFormat').setValue(records[0].data.code);
+																			var selectedText = '';
+																			var description = '';
+
+																			// Which description and detailed description was selected?
+																			Ext.Array.forEach(reportTypesStore.data.items, function (item) {
+																				if (newVal === item.data.code) {
+																					description = item.data.detailedDescription;
+																					selectedText = item.data.description;
+																					return;
+																				}
+																			});
+
+																			Ext.getCmp('reportDescriptionLabel').setHtml('<div style="width: 250px;"><b>' + selectedText + ' Report: </b>' + description + '</div>');
+
+																			var reportDescriptionLabel = Ext.getCmp('reportDescriptionLabelCol');
+																			reportDescriptionLabel.setStyle('border', 'solid 2px #ccc');
+																			reportDescriptionLabel.setStyle('border-style', 'dashed');
+																		}
+																	}
+																});
+
+																if (reoccuring) {
+																	Ext.getCmp('scheduledHours').setValue('1');
+																} else {
+																	Ext.getCmp('scheduledHours').setValue('0');
+																}
+																Ext.getCmp('reportFormat').setHidden(false);
+																Ext.getCmp('scheduledHours').setHidden(false);
+																//Ext.getCmp('emailAddresses').setHidden(true);
+
+																handleReportOptions();
+															}
 														}
 													}
-												});
-
-												if (reoccuring) {
-													Ext.getCmp('scheduledHours').setValue('1');
-												} else {
-													Ext.getCmp('scheduledHours').setValue('0');
-												}
-												Ext.getCmp('reportFormat').setHidden(false);
-												Ext.getCmp('scheduledHours').setHidden(false);
-												//Ext.getCmp('emailAddresses').setHidden(true);
-
-												handleReportOptions();
+												]
+											},
+											{
+												columnWidth: 0.3,
+												margin: '25% 0 0 20%',
+												style: 'border-radius: 10px; border: none;',
+												id: 'reportDescriptionLabelCol',
+												padding: 10,
+												items: [
+													{
+														xtype: 'panel',
+												        id: 'reportDescriptionLabel'
+													}
+												]
 											}
-										}
-
-
+										]
 									},
 									{
 										xtype: 'combobox',
@@ -1212,10 +1250,10 @@
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
-										maxHeight: 250,
 										columnLines: true,
 										margin: '10 0 0 0',
 										bodyCls: 'border_accent',
+										flex: 1,
 										selModel: {
 											selType: 'checkboxmodel'
 										},
