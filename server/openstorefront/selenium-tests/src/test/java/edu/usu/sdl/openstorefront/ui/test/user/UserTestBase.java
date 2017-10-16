@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.ui.test.user;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
@@ -27,12 +28,19 @@ public class UserTestBase
 		extends BrowserTestBase
 {
 
+	String prevApprovalState = null;
+	
 	@BeforeClass
 	public static void setupBaseTest()
 	{
 		login();
 	}
 	
+	public void setUserAutoApprove()
+	{
+		
+	}
+		
 	protected static Component createUserComponent(String componentName)
 	{
 		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
@@ -40,4 +48,11 @@ public class UserTestBase
 		
 		return myEntry;
 	}
+  
+  	
+	@AfterClass
+	public static void cleanupBase()
+	{
+  
+  }
 }

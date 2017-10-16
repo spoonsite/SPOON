@@ -133,9 +133,10 @@ public class AttributeClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getAttributeTypeById(String type, boolean view, boolean all)
+	public AttributeType getAttributeTypeById(String type, boolean view, boolean all)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpGet(basePath + "/attributetypes/" + type, null);
+		return response.getResponse(AttributeType.class);
 	}
 
 	public Response getAttributeTypes(FilterQueryParams filterQueryParams)
@@ -187,9 +188,10 @@ public class AttributeClient
 		client.httpDelete(basePath + "/attributetypes/" + type + "/force", null);
 	}
 
-	public Response postAttributeCode(String type, AttributeCode attributeCode)
+	public AttributeCode postAttributeCode(String type, AttributeCode attributeCode)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/attributetypes/" + type + "/attributecodes", attributeCode, null);
+		return response.getResponse(AttributeCode.class);
 	}
 
 	public AttributeType postAttributeType(AttributeTypeSave attributeTypeSave)
