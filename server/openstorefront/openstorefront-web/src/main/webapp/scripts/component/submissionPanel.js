@@ -1351,7 +1351,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								xtype: 'filefield',
 								itemId: 'upload',
 								hidden: true,
-								fieldLabel: 'Upload Resource (Limit of 1GB)',
+								fieldLabel: 'Upload Resource (Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',
 								name: 'file',
 								listeners: {
 									change: CoreUtil.handleMaxFileLimit
@@ -1571,7 +1571,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							{
 								xtype: 'filefield',
 								itemId: 'upload',
-								fieldLabel: 'Upload Media (Limit of 1GB)',
+								fieldLabel: 'Upload Media (Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',
 								name: 'file',
 								listeners: {
 									change: CoreUtil.handleMaxFileLimit

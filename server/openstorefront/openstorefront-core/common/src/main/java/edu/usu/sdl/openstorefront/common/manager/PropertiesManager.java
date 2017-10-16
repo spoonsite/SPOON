@@ -76,6 +76,7 @@ public class PropertiesManager
 	public static final String KEY_REPORT_LIFETIME = "report.lifetime";
 	public static final String KEY_TEST_EMAIL = "test.email";
 	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
+        public static final String KEY_MAX_POST_SIZE = "max.post.size"; // in MB
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
@@ -269,6 +270,7 @@ public class PropertiesManager
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 			defaults.put(KEY_REPORT_LIFETIME, "180");
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
+                        defaults.put(KEY_MAX_POST_SIZE, "2000"); // 2MB
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

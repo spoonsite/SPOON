@@ -886,15 +886,32 @@ var CoreUtil = {
 		}
 		return null;
 	},
-	maxFileSize: 1048576000,
+	maxFileSize: (function () {
+
+		Ext.Ajax.request({
+			url: 'api/v1/service/application/configproperties/max.post.size',
+			success: function (response) {
+				var sizeMB = 1048576;
+				CoreUtil.maxFileSize = Number(Ext.decode(response.responseText).description) * sizeMB;
+			}
+		});
+
+	}()),
+	getFileSizeMB: function (fileSize) {
+		var fileSize = fileSize || CoreUtil.maxFileSize;
+		return (fileSize/1000000).toFixed(2).replace(/\.0+0$/, '');
+	},
+	getFileSizeGB: function (fileSize) {
+		var fileSize = fileSize || CoreUtil.maxFileSize;
+		return (fileSize/1000000000).toFixed(2).replace(/\.0+0$/, '');
+	},
 	handleMaxFileLimit: function (field, value, opts) {
 		var el = field.fileInputEl.dom;
-
-		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';
-		field.setFieldLabel(field.getFieldLabel().replace(errorMessage, ''));
+		var file = el.files[0];
+		var errorMessage = ' <span class="fileUploadError" style="margin-left: 10px; color: rgb(255,55,55); font-weight: bold">' + file.name + ' (' + CoreUtil.getFileSizeGB(file.size) + ' GB) exceeded size limit</span>';
+		field.setFieldLabel(field.getFieldLabel().replace(/<span class="fileUploadError".*<\/span>/, ''));
 
 		if (el.files && el.files.length > 0) {
-			var file = el.files[0];
 			if (file.size > CoreUtil.maxFileSize) {
 				Ext.defer(function () {
 					field.reset();

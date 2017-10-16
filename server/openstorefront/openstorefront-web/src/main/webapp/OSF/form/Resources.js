@@ -181,7 +181,7 @@ Ext.define('OSF.form.Resources', {
 				{
 					xtype: 'filefield',
 					itemId: 'upload',
-					fieldLabel: 'Upload Resource (Limit of 1GB)',																											
+					fieldLabel: 'Upload Resource<br />(Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',																											
 					name: 'file',
 					listeners: {
 						change: CoreUtil.handleMaxFileLimit
