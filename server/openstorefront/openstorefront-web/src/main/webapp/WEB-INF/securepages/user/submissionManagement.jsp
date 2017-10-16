@@ -265,7 +265,10 @@
 								},
 								{
 									text: 'New Submission',									
-									scale: 'medium',								
+									scale: 'medium',
+									autoEl: {
+										"data-test": "newSubmissionBtn"
+									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
 									handler: function () {
 										Ext.getCmp('submissionWindow').show();

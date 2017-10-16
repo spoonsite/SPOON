@@ -47,6 +47,7 @@ public class ComponentRESTTestClient
 
 	private static Set<String> componentIds = new HashSet<>();
 	private ComponentRESTClient apiComponentREST;
+	private AttributeTestClient apiAttributeTestClient = new AttributeTestClient(client, apiClient);
 
 	public ComponentRESTTestClient(ClientAPI client, APIClient apiClient)
 	{
@@ -81,11 +82,14 @@ public class ComponentRESTTestClient
 
 	public Component createAPIComponent(String componentName)
 	{
-		return createAPIComponent(componentName, "AAA-BATMAN-AAA", "This an API test component", componentName + " - organization");
+		return createAPIComponent(componentName, "Arcturus-Canopus", "This an API test component", componentName + " - organization");
 	}
 
+	// Component is created with a required attribute
 	public Component createAPIComponent(String componentName, String componentType, String description, String organization)
 	{
+		apiAttributeTestClient.createAPIAttribute("BETELGEUSE","POLARIS","Polaris-star Test");
+		
 		Component component;
 		ComponentTypeTestClient componentTypeClient = apiClient.getComponentTypeTestClient();
 		ComponentType type = componentTypeClient.createAPIComponentType(componentType);
@@ -125,9 +129,11 @@ public class ComponentRESTTestClient
 			RequiredForComponent reqComponent = new RequiredForComponent();
 			reqComponent.setComponent(component);
 			reqComponent.setAttributes(compAttributes);
+			
 
 			RequiredForComponent reqComponentAPI = apiComponentREST.createComponent(reqComponent);
 			component = reqComponentAPI.getComponent();
+
 		}
 
 		if (component != null) {

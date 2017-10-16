@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -77,7 +76,7 @@ public class AdminAttributesIT
 	
 	private void createAPIAttributeType()
 	{
-		apiClient.getAttributeTestClient().createAPIAttribute();
+		apiClient.getAttributeTestClient().createAPIAttribute("Rigel-Altair", "ALTAIR", "ALTAIR");
 	}
 
 	public void createAttribute(WebDriver driver, String attrName, String attrCode)
@@ -277,11 +276,5 @@ public class AdminAttributesIT
 
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#manageCodesCloseBtn"))).click();
 		}
-	}
-	
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
 	}
 }
