@@ -50,7 +50,9 @@ import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
@@ -95,14 +97,23 @@ public class ServiceProxy
 	private ChangeLogServicePrivate changeLogServicePrivate;
 	private SystemArchiveService systemArchiveService;
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
-
+	
 	public ServiceProxy()
 	{
+		if(Test.isTestPersistenceService.get())
+		{
+			this.persistenceService = new TestPersistenceService();
+		}
 	}
 
 	public ServiceProxy(String modificationType)
 	{
 		this.modificationType = modificationType;
+		
+		if(Test.isTestPersistenceService.get())
+		{
+			this.persistenceService = new TestPersistenceService();
+		}
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
@@ -129,7 +140,7 @@ public class ServiceProxy
 	@Override
 	public PersistenceService getNewPersistenceService()
 	{
-		return new OrientPersistenceService();
+		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService();
 	}
 
 	@Override
@@ -418,6 +429,15 @@ public class ServiceProxy
 			systemArchiveServicePrivate = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
 		}
 		return systemArchiveServicePrivate;
+	}
+	
+	public static class Test
+	{
+		private static AtomicBoolean isTestPersistenceService = new AtomicBoolean(false);
+		public static void setPersistenceServiceToTest()
+		{
+			isTestPersistenceService.set(true);
+		}
 	}
 
 }

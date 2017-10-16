@@ -37,7 +37,7 @@ public class BasicSearchIT
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 	private static String entryName = "A Selenium Test Entry";
-	
+
 	@BeforeClass
 	public static void basicSearchComponent()
 	{
@@ -56,41 +56,41 @@ public class BasicSearchIT
 		}
 
 	}
-	 
+
 	@Test
 	public void basicSearchWithQuotesLandingPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromLandingPage(driver, "\"A Selenium Test Entry\"");
 			verifyResults(driver, entryName);
 		}
- 	}
+	}
 
 	@Test
 	public void basicSearchWithQuotesResultsPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromResultsPage(driver, "\"A Selenium Test Entry\"");
 			verifyResults(driver, entryName);
 		}
 	}
-	
+
 	@Test
 	public void basicSearchWithoutQuotesResultsPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromResultsPage(driver, "Test");
 			verifyResults(driver, entryName);
 		}
 	}
-	
+
 	protected void searchFromLandingPage(WebDriver driver, String search)
 	{
 		webDriverUtil.getPage(driver, "Landing.action");
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
@@ -100,17 +100,17 @@ public class BasicSearchIT
 		sleep(1500);
 
 	}
-	
+
 	protected void searchFromResultsPage(WebDriver driver, String search)
 	{
 		webDriverUtil.getPage(driver, "searchResults.jsp");
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchTextFieldResults-inputEl"))).sendKeys(search);
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
-		
+
 		sleep(1500);
 	}
 

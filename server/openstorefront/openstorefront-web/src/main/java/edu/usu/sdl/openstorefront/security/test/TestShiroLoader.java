@@ -15,22 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-package edu.usu.sdl.openstorefront.web.init;
+package edu.usu.sdl.openstorefront.security.test;
 
-import javax.inject.Inject;
+import javax.servlet.ServletContextEvent;
+import org.apache.shiro.web.env.EnvironmentLoader;
+import org.apache.shiro.web.env.EnvironmentLoaderListener;
 
 /**
  *
- * bootstrap class for missing @Imidiate support in jersey
- * Jersey 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is resolved for the version we are using
- * replace register(new AppStart()); with ServiceLocatorUtilities.enableImmediateScope(locator); in RestConfiguration.java
- * then delete this file
- * 
  * @author kbair
  */
-public class AppStart
+public class TestShiroLoader
+		extends EnvironmentLoaderListener
 {
-	@Inject
-	private ApplicationInit init;
-	
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce)
+	{
+		sce.getServletContext().setInitParameter(EnvironmentLoader.CONFIG_LOCATIONS_PARAM, "classpath:test.shiro.ini");
+		super.contextInitialized(sce);
+	}
 }
