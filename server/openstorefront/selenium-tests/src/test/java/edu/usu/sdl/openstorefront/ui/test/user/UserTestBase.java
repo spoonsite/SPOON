@@ -48,10 +48,11 @@ public class UserTestBase
 		
 		return myEntry;
 	}
-	
-		@AfterClass
+
+	@AfterClass
 	public static void cleanupBase()
 	{
 		
 	}
+
 }
