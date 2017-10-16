@@ -166,7 +166,7 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Checks the current for permission
+	 * Checks the current user for permission
 	 *
 	 * @param permission
 	 * @return true if the user has the permission (All of them)

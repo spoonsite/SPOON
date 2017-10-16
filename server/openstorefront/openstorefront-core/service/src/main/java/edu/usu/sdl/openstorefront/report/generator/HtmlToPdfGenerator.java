@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.tidy.Tidy;
@@ -101,7 +100,7 @@ public class HtmlToPdfGenerator
 			tidy.parseDOM(inputStream, outputStream);
 			htmlContent = outputStream.toString("UTF-8");
 		} catch (UnsupportedEncodingException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			throw new OpenStorefrontRuntimeException("Encoding not supported on the output.", ex);
 		}
 
 		//	Set XHTML as the document string
@@ -112,7 +111,7 @@ public class HtmlToPdfGenerator
 			//	Create and save the PDF
 			renderer.createPDF(writer, true);
 		} catch (DocumentException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
 }

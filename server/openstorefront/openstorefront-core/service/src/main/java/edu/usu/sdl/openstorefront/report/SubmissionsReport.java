@@ -79,6 +79,8 @@ public class SubmissionsReport
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<Component> found = service.getPersistenceService().queryByExample(queryByExample);
+		found = filterEngine.filter(found);
+
 		List<Component> componentsSubmited = new ArrayList<>();
 		for (Component component : found) {
 			if (component.getSubmittedDts() != null) {

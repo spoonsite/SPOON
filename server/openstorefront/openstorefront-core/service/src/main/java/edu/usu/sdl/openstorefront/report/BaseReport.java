@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.Report;
@@ -25,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import edu.usu.sdl.openstorefront.report.output.BaseOutput;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
@@ -50,7 +52,8 @@ public abstract class BaseReport
 	private static final Logger LOG = Logger.getLogger(BaseReport.class.getName());
 
 	protected Report report;
-	protected ServiceProxy service;
+	protected Service service;
+	protected FilterEngine filterEngine;
 
 	//Note: not thread-safe; don't make static need a new one per thread
 	protected SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
@@ -59,19 +62,27 @@ public abstract class BaseReport
 
 	public BaseReport(Report report)
 	{
-		Objects.requireNonNull(report, "Report must set");
-		service = ServiceProxy.getProxy();
-
-		this.report = report;
-		if (this.report.getReportOption() == null) {
-			this.report.setReportOption(new ReportOption());
-		}
+		initBaseReport(report, ServiceProxy.getProxy(), null);
 	}
 
-	public BaseReport(Report report, ServiceProxy service)
+	public BaseReport(Report report, Service service)
 	{
+		initBaseReport(report, service, null);
+	}
+
+	private void initBaseReport(Report report, Service service, FilterEngine filterEngine)
+	{
+		Objects.requireNonNull(report, "Report must set");
+		Objects.requireNonNull(service);
+
 		this.report = report;
 		this.service = service;
+		if (filterEngine != null) {
+			this.filterEngine = filterEngine;
+		} else {
+			this.filterEngine = FilterEngine.getInstance(getReportUserContext());
+		}
+
 		if (this.report.getReportOption() == null) {
 			this.report.setReportOption(new ReportOption());
 		}

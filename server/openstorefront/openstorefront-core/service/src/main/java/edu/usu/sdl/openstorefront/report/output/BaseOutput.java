@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.GeneratorOptions;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
@@ -99,6 +100,13 @@ public abstract class BaseOutput
 		GeneratorOptions generatorOptions = new GeneratorOptions(report);
 		BaseGenerator generator = BaseGenerator.getGenerator(reportOutput.getReportTransmissionOption().getReportFormat(), generatorOptions);
 		return generator;
+	}
+
+	protected boolean hasPermission(String permissions)
+	{
+		UserContext userContext = service.getSecurityService().getUserContext(report.getCreateUser());
+
+		return userContext.permissions().contains(permissions);
 	}
 
 }

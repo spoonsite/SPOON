@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.report;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -29,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.OrganizationReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.OrganizationReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
@@ -46,8 +46,6 @@ public class OrganizationReport
 {
 
 	private static final String NO_ORG = "No Organization";
-
-	private List<UserProfile> userProfiles;
 
 	public OrganizationReport(Report report)
 	{
@@ -86,52 +84,7 @@ public class OrganizationReport
 		}
 
 		for (String org : orgMap.keySet()) {
-
-		}
-
-		return organizationReportModel;
-	}
-
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("User Organization Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine(
-				"Organization",
-				"# Users",
-				"# Reviews",
-				"# Questions",
-				"# Question Responses",
-				"# Component Views",
-				"# Component Resources Clicked",
-				"# Logins"
-		);
-
-		Map<String, List<UserProfile>> orgMap = new HashMap<>();
-		for (UserProfile userProfile : userProfiles) {
-			String organization = userProfile.getOrganization();
-			if (StringUtils.isBlank(organization)) {
-				if (orgMap.get(NO_ORG) == null) {
-					orgMap.put(NO_ORG, new ArrayList<>());
-				}
-				orgMap.get(NO_ORG).add(userProfile);
-			}
-
-			if (StringUtils.isNotBlank(organization)) {
-				if (orgMap.containsKey(organization)) {
-					orgMap.get(organization).add(userProfile);
-				} else {
-					List<UserProfile> orgUsers = new ArrayList<>();
-					orgUsers.add(userProfile);
-					orgMap.put(organization, orgUsers);
-				}
-			}
-		}
-
-		for (String org : orgMap.keySet()) {
+			OrganizationReportLineModel lineModel = new OrganizationReportLineModel();
 
 			long reviews = getRecordCounts(ComponentReview.class, orgMap.get(org), null);
 			long questions = getRecordCounts(ComponentQuestion.class, orgMap.get(org), null);
@@ -140,19 +93,19 @@ public class OrganizationReport
 			long componentResourceClick = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.EXTERNAL_LINK_CLICK);
 			long logins = getRecordCounts(UserTracking.class, orgMap.get(org), TrackEventCode.LOGIN);
 
-			cvsGenerator.addLine(
-					org,
-					orgMap.get(org).size(),
-					reviews,
-					questions,
-					response,
-					componentViews,
-					componentResourceClick,
-					logins
-			);
+			lineModel.setUsers(orgMap.get(org).size());
+			lineModel.setOrganization(org);
+			lineModel.setReviews(reviews);
+			lineModel.setQuestions(questions);
+			lineModel.setComponentViews(componentViews);
+			lineModel.setQuestionResponse(response);
+			lineModel.setComponentResourcesClick(componentResourceClick);
+			lineModel.setLogins(logins);
 
+			organizationReportModel.getData().add(lineModel);
 		}
 
+		return organizationReportModel;
 	}
 
 	private long getRecordCounts(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
@@ -241,6 +194,31 @@ public class OrganizationReport
 	private void writeCSV(BaseGenerator generator, OrganizationReportModel reportModel)
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		cvsGenerator.addLine(
+				"Organization",
+				"# Users",
+				"# Reviews",
+				"# Questions",
+				"# Question Responses",
+				"# Component Views",
+				"# Component Resources Clicked",
+				"# Logins"
+		);
+
+		for (OrganizationReportLineModel lineModel : reportModel.getData()) {
+			cvsGenerator.addLine(
+					lineModel.getOrganization(),
+					lineModel.getUsers(),
+					lineModel.getReviews(),
+					lineModel.getQuestions(),
+					lineModel.getQuestionResponse(),
+					lineModel.getComponentViews(),
+					lineModel.getComponentResourcesClick(),
+					lineModel.getLogins()
+			);
+		}
 
 	}
 
