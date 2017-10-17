@@ -329,6 +329,16 @@
 								hrefTarget: '_blank'
 							},
 							{
+								xtype: 'button',
+								iconCls: 'fa fa-2x fa-home',
+								tooltip: 'Home',
+								hidden: !fullPage,
+								scale: 'large',
+								margin: '0 10 0 0',
+								href: 'index.jsp',
+								hrefTarget: '_self'
+							},
+							{
 								xtype: 'button',								
 								id: 'ownerMenu',
 								hidden: true,
@@ -336,7 +346,6 @@
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
-								hidden: true,
 								menu: {
 									items: [
 										{
@@ -438,6 +447,7 @@
 							{
 								xtype: 'panel',
 								layout: 'hbox',
+								id: 'addTagPanel',
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
@@ -555,6 +565,7 @@
 				if(isAnonymousUser)
 				{
 					Ext.getCmp('loginBtn').setHidden(false);	
+					Ext.getCmp('addTagPanel').setHidden(true);					
 				}
 				else
 				{
