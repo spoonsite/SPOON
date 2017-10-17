@@ -22,34 +22,32 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class ComponentOrganizationReportLineModel
+public class CategoryComponentReportModel
+		extends BaseReportModel
 {
 
-	private String organization;
-	private List<EntryOrgDetailModel> entries = new ArrayList<>();
+	private String category;
+	private List<CategoryComponentReportLineModel> data = new ArrayList<>();
 
-	public ComponentOrganizationReportLineModel()
+	@Override
+	public List<CategoryComponentReportLineModel> getData()
 	{
+		return data;
 	}
 
-	public String getOrganization()
+	public void setData(List<CategoryComponentReportLineModel> data)
 	{
-		return organization;
+		this.data = data;
 	}
 
-	public void setOrganization(String organization)
+	public String getCategory()
 	{
-		this.organization = organization;
+		return category;
 	}
 
-	public List<EntryOrgDetailModel> getEntries()
+	public void setCategory(String category)
 	{
-		return entries;
-	}
-
-	public void setEntries(List<EntryOrgDetailModel> entries)
-	{
-		this.entries = entries;
+		this.category = category;
 	}
 
 }

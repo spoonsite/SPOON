@@ -15,41 +15,51 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentOrganizationReportLineModel
+public class EntryOrgDetailModel
 {
 
-	private String organization;
-	private List<EntryOrgDetailModel> entries = new ArrayList<>();
+	private String name;
+	private Date lastActivityDts;
+	private String approvalState;
 
-	public ComponentOrganizationReportLineModel()
+	public EntryOrgDetailModel()
 	{
 	}
 
-	public String getOrganization()
+	public String getName()
 	{
-		return organization;
+		return name;
 	}
 
-	public void setOrganization(String organization)
+	public void setName(String name)
 	{
-		this.organization = organization;
+		this.name = name;
 	}
 
-	public List<EntryOrgDetailModel> getEntries()
+	public Date getLastActivityDts()
 	{
-		return entries;
+		return lastActivityDts;
 	}
 
-	public void setEntries(List<EntryOrgDetailModel> entries)
+	public void setLastActivityDts(Date lastActivityDts)
 	{
-		this.entries = entries;
+		this.lastActivityDts = lastActivityDts;
+	}
+
+	public String getApprovalState()
+	{
+		return approvalState;
+	}
+
+	public void setApprovalState(String approvalState)
+	{
+		this.approvalState = approvalState;
 	}
 
 }

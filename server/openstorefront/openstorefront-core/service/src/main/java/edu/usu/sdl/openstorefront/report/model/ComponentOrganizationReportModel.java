@@ -26,7 +26,7 @@ public class ComponentOrganizationReportModel
 		extends BaseReportModel
 {
 
-	private List<ComponentOrganizationReportModel> data = new ArrayList<>();
+	private List<ComponentOrganizationReportLineModel> data = new ArrayList<>();
 
 	private long totalOrganizations;
 	private long totalComponent;
@@ -36,12 +36,12 @@ public class ComponentOrganizationReportModel
 	}
 
 	@Override
-	public List<ComponentOrganizationReportModel> getData()
+	public List<ComponentOrganizationReportLineModel> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<ComponentOrganizationReportModel> data)
+	public void setData(List<ComponentOrganizationReportLineModel> data)
 	{
 		this.data = data;
 	}

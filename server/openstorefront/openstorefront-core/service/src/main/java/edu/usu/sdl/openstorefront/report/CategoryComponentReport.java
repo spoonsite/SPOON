@@ -25,11 +25,15 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.CategoryComponentReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +57,11 @@ public class CategoryComponentReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected CategoryComponentReportModel gatherData()
 	{
+		CategoryComponentReportModel reportModel = new CategoryComponentReportModel();
+
+		return reportModel;
 	}
 
 	@Override
@@ -77,17 +84,17 @@ public class CategoryComponentReport
 		cvsGenerator.addLine("Category Entry Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine("Category: " + category + categoryMessage);
 		cvsGenerator.addLine("");
-		
+
 		List<String> header = new ArrayList<>();
 		header.add("Category Label");
 		header.add("Category Description");
 		header.add("Entry Name");
 		header.add("Entry Description");
 		header.add("Last Update Date");
-		
+
 		if (getBranding().getAllowSecurityMarkingsFlg()) {
 			header.add("Security Marking");
-		}		
+		}
 		cvsGenerator.addLine(header.toArray());
 
 		if (NO_CATEGORY.equals(category)) {
@@ -98,8 +105,8 @@ public class CategoryComponentReport
 
 			List<Component> components = componentExample.findByExample();
 			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
-			
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
 			for (Component component : components) {
 				List<String> data = new ArrayList<>();
 				data.add("");
@@ -154,8 +161,8 @@ public class CategoryComponentReport
 
 			List<Component> components = componentExample.findByExample();
 			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
-			
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
 			if (!report.dataIdSet().isEmpty()) {
 				components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 			}
@@ -184,7 +191,7 @@ public class CategoryComponentReport
 									data.add("");
 								}
 							}
-							cvsGenerator.addLine(data.toArray());							
+							cvsGenerator.addLine(data.toArray());
 						}
 
 					}
@@ -192,6 +199,24 @@ public class CategoryComponentReport
 			}
 
 		}
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }
