@@ -667,7 +667,6 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.componentId = componentId;
 		attributePanel.attributeGrid.componentId = componentId;
-		attributePanel.loadComponentAttributes();
 
 		var form = attributePanel.attributeGrid.down('form');
 		form.setLoading(true);
@@ -679,6 +678,7 @@ Ext.define('OSF.form.Attributes', {
 			success: function (response, opts) {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
+				attributePanel.loadComponentAttributes();
 				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
 			}
 		});
