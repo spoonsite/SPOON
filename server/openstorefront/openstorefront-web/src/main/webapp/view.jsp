@@ -438,6 +438,7 @@
 							{
 								xtype: 'panel',
 								layout: 'hbox',
+								id: 'addTagPanel',
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
@@ -555,6 +556,7 @@
 				if(isAnonymousUser)
 				{
 					Ext.getCmp('loginBtn').setHidden(false);	
+					Ext.getCmp('addTagPanel').setHidden(true);					
 				}
 				else
 				{
