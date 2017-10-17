@@ -20,10 +20,15 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.ComponentOrganizationReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +49,44 @@ public class ComponentOrganizationReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected ComponentOrganizationReportModel gatherData()
 	{
+		ComponentOrganizationReportModel reportModel = new ComponentOrganizationReportModel();
+
+		Map<String, Object> params = new HashMap<>();
+		String componentFilter = "";
+		if (!report.dataIdSet().isEmpty()) {
+			params = new HashMap<>();
+			params.put("idlistParam", report.dataIdSet());
+			componentFilter = " and componentId in :idlistParam";
+		}
+
+		String restrictionQuery = filterEngine.queryComponentRestriction();
+
+		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
+				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
+
+		//group by org
+		Map<String, List<ODocument>> orgMap = new HashMap<>();
+
+		documents.forEach(document
+				-> {
+			String org = document.field("organization");
+			if (StringUtils.isBlank(org)) {
+				org = "No Organization Specified";
+			}
+			if (orgMap.containsKey(org)) {
+				orgMap.get(org).add(document);
+			} else {
+				List<ODocument> records = new ArrayList<>();
+				records.add(document);
+				orgMap.put(org, records);
+			}
+		});
+
+		return reportModel;
 	}
 
 	@Override
@@ -74,9 +115,9 @@ public class ComponentOrganizationReport
 			params.put("idlistParam", report.dataIdSet());
 			componentFilter = " and componentId in :idlistParam";
 		}
-		
+
 		String restrictionQuery = FilterEngine.queryComponentRestriction();
-		
+
 		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
 				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
@@ -98,14 +139,12 @@ public class ComponentOrganizationReport
 				records.add(document);
 				orgMap.put(org, records);
 			}
-		}
-		);
+		});
 
 		long totalComponents = 0;
 		List<String> sortedOrganizations = new ArrayList<>(orgMap.keySet());
 
-		sortedOrganizations.sort(
-				null);
+		sortedOrganizations.sort(null);
 
 		for (String organization : sortedOrganizations) {
 			cvsGenerator.addLine(organization);
@@ -113,7 +152,7 @@ public class ComponentOrganizationReport
 
 				List<String> data = new ArrayList<>();
 				data.add("");
-				data.add(document.field("name"));		
+				data.add(document.field("name"));
 				data.add(sdf.format(document.field("lastActivityDts")));
 				data.add(document.field("approvalState"));
 
@@ -137,6 +176,77 @@ public class ComponentOrganizationReport
 				"Total Organizations: " + orgMap.keySet().size());
 		cvsGenerator.addLine(
 				"Total Entries: " + totalComponents);
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentOrganizationReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentOrganizationReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, ComponentOrganizationReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+
+		cvsGenerator.addLine(
+				"Organization",
+				"Entry Name",
+				"Last Update Date",
+				"Approve Status"
+		);
+
+		cvsGenerator.addLine("");
+		cvsGenerator.addLine("Report Totals");
+		cvsGenerator.addLine("Total Organizations: " + reportModel.getTotalOrganizations());
+		cvsGenerator.addLine("Total Entries: " + reportModel.getTotalComponent());
+
 	}
 
 }

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.security.UserContext;
 
 /**
  * Normal view/save report
@@ -30,9 +31,9 @@ public class ViewOutput
 		extends BaseOutput
 {
 
-	public ViewOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
+	public ViewOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
-		super(reportOutput, report, reportGenerator);
+		super(reportOutput, report, reportGenerator, userContext);
 	}
 
 	@Override

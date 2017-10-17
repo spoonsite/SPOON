@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.GeneratorOptions;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -44,9 +45,9 @@ public class EmailOutput
 
 	private ByteArrayOutputStream attachedReport;
 
-	public EmailOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
+	public EmailOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
-		super(reportOutput, report, reportGenerator);
+		super(reportOutput, report, reportGenerator, userContext);
 	}
 
 	@Override

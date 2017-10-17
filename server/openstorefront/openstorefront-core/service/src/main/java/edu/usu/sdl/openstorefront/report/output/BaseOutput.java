@@ -41,26 +41,28 @@ public abstract class BaseOutput
 	protected ReportOutput reportOutput;
 	protected Report report;
 	protected BaseReport reportGenerator;
+	protected UserContext userContext;
 
-	public BaseOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
+	public BaseOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
 		this.reportOutput = reportOutput;
 		this.report = report;
 		this.reportGenerator = reportGenerator;
+		this.userContext = userContext;
 	}
 
-	public static BaseOutput getOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator)
+	public static BaseOutput getOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
 		BaseOutput output = null;
 		switch (reportOutput.getReportTransmissionType()) {
 			case ReportTransmissionType.VIEW:
-				output = new ViewOutput(reportOutput, report, reportGenerator);
+				output = new ViewOutput(reportOutput, report, reportGenerator, userContext);
 				break;
 			case ReportTransmissionType.EMAIL:
-				output = new EmailOutput(reportOutput, report, reportGenerator);
+				output = new EmailOutput(reportOutput, report, reportGenerator, userContext);
 				break;
 			case ReportTransmissionType.CONFLUENCE:
-				output = new ConfluenceOutput(reportOutput, report, reportGenerator);
+				output = new ConfluenceOutput(reportOutput, report, reportGenerator, userContext);
 				break;
 			default:
 				throw new OpenStorefrontRuntimeException("Output Type not supported", "Add Support to BaseOutput");
@@ -102,11 +104,20 @@ public abstract class BaseOutput
 		return generator;
 	}
 
-	protected boolean hasPermission(String permissions)
+	/**
+	 * Keep in mind: Since the user is not login in...this can't be verified via
+	 * Security That means we have to rely on the database for external
+	 * management it will use the last know state of the user. Since the user is
+	 * tied to roles not permissions the role can dynamically change which will
+	 * effect scheduled reports. Which is a desired effect otherwise the user
+	 * would have 'baked' in permissions.
+	 *
+	 * @param permission
+	 * @return
+	 */
+	protected boolean hasPermission(String permission)
 	{
-		UserContext userContext = service.getSecurityService().getUserContext(report.getCreateUser());
-
-		return userContext.permissions().contains(permissions);
+		return userContext.permissions().contains(permission);
 	}
 
 }
