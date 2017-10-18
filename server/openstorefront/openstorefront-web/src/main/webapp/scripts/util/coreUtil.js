@@ -534,7 +534,8 @@ var CoreUtil = {
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: {border: 'solid 1px #ddd'}
+			table_default_styles: {border: 'solid 1px #ddd'},
+			paste_data_images: true
 		};
 
 		if (additionalPlugins) {
@@ -567,7 +568,8 @@ var CoreUtil = {
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: {border: 'solid 1px #ddd'}
+			table_default_styles: {border: 'solid 1px #ddd'},
+			paste_data_images: true
 
 		};
 
