@@ -299,6 +299,7 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 							field.reset();
 							field.markInvalid('File exceeds size limit.');
 							field.setFieldLabel(field.getFieldLabel() + errorMessage);
+							field.validate();
 						}, 250);
 					}
 				}
