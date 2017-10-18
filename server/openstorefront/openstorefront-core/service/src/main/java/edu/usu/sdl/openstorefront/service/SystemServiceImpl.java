@@ -49,6 +49,7 @@ import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -68,6 +69,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -482,19 +484,49 @@ public class SystemServiceImpl
 		TemporaryMedia temporaryMedia = new TemporaryMedia();
 		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
 		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
-		if(originalFileName.length() == 0)
-		{
-			originalFileName = "dynamicImage";
+		if (originalFileName.length() == 0) {
+			originalFileName = "unknown";
 		}
 		temporaryMedia.setOriginalFileName(originalFileName);
 		temporaryMedia.setFileName(hash);
 		temporaryMedia.setName(hash);
-		temporaryMedia.setOriginalSourceURL(urlStr);
 		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
 		temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 		temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
 
+		TemporaryMedia savedMedia;
+		if (urlStr.startsWith("data:")) {
+			savedMedia = saveDataImage(temporaryMedia, urlStr);
+		} else {
+			savedMedia = saveUrlImage(temporaryMedia, urlStr);
+		}
+		return savedMedia;
+
+	}
+
+	private TemporaryMedia saveDataImage(TemporaryMedia temporaryMedia, String urlStr) throws OpenStorefrontRuntimeException
+	{
+		String[] urlParts = urlStr.split(";");
+		String contentType = urlParts[0].replace("data:", "");
+		String encodedImageData = urlParts[1].replace("base64,", "");
+		temporaryMedia.setOriginalSourceURL("unknown");
+		
+		if (!contentType.contains("image")) {
+			LOG.log(Level.INFO, MessageFormat.format("Not an image:  {0}", contentType));
+			return null;
+		}
+
+		temporaryMedia.setMimeType(contentType);
+		byte[] imageData = Base64.getDecoder().decode(encodedImageData);
+		InputStream input = new ByteArrayInputStream(imageData);
+		saveTemporaryMedia(temporaryMedia, input);
+		return temporaryMedia;
+	}
+
+	private TemporaryMedia saveUrlImage(TemporaryMedia temporaryMedia, String urlStr) throws OpenStorefrontRuntimeException
+	{
 		try {
+			temporaryMedia.setOriginalSourceURL(urlStr);
 			URL url = new URL(urlStr);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -518,7 +550,6 @@ public class SystemServiceImpl
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
 		}
-
 	}
 
 	@Override
