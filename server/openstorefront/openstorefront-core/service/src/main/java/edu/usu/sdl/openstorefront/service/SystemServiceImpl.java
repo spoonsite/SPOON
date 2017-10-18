@@ -482,12 +482,6 @@ public class SystemServiceImpl
 		}
 
 		TemporaryMedia temporaryMedia = new TemporaryMedia();
-		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
-		if (originalFileName.length() == 0) {
-			originalFileName = "unknown";
-		}
-		temporaryMedia.setOriginalFileName(originalFileName);
 		temporaryMedia.setFileName(hash);
 		temporaryMedia.setName(hash);
 		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
@@ -509,8 +503,9 @@ public class SystemServiceImpl
 		String[] urlParts = urlStr.split(";");
 		String contentType = urlParts[0].replace("data:", "");
 		String encodedImageData = urlParts[1].replace("base64,", "");
-		temporaryMedia.setOriginalSourceURL("unknown");
-		
+		temporaryMedia.setOriginalSourceURL("local data unknown");
+		temporaryMedia.setOriginalFileName("unknown");
+
 		if (!contentType.contains("image")) {
 			LOG.log(Level.INFO, MessageFormat.format("Not an image:  {0}", contentType));
 			return null;
@@ -526,6 +521,12 @@ public class SystemServiceImpl
 	private TemporaryMedia saveUrlImage(TemporaryMedia temporaryMedia, String urlStr) throws OpenStorefrontRuntimeException
 	{
 		try {
+			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+			if (originalFileName.length() == 0) {
+				originalFileName = "unknown";
+			}
+			temporaryMedia.setOriginalFileName(originalFileName);
 			temporaryMedia.setOriginalSourceURL(urlStr);
 			URL url = new URL(urlStr);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
