@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationChecklistModel;
 import edu.usu.sdl.openstorefront.core.view.ChecklistTemplateDetailView;
@@ -148,6 +149,11 @@ public class ChecklistTemplateResource
 			if (create) {
 				return Response.created(URI.create("v1/resource/checklisttemplates/" + checklistTemplate.getChecklistTemplateId())).entity(checklistTemplate).build();
 			} else {
+				EvaluationTemplate evalExample = new EvaluationTemplate();
+				evalExample.setChecklistTemplateId(checklistTemplate.getChecklistTemplateId());
+				evalExample.findByExample().forEach(evalTemplate -> {
+					service.getEvaluationService().setEvaluationUpdatePending(evalTemplate.getTemplateId(), evaluationIdsToUpdate);
+				});
 				service.getEvaluationService().updateEvaluationsToLatestTemplateVersion(evaluationIdsToUpdate);
 				return Response.ok(checklistTemplate).build();
 			}

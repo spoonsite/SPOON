@@ -104,6 +104,13 @@ public interface EvaluationService
 	 * @param evaluation
 	 */
 	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation);
+	
+	/**
+	 * set the updatePending flag for all evaluations with the given templateId
+	 * @param templateId Id of the evaluation template being updated 
+	 * @param evaluationIdsToSkip list of evaluations to skip the update
+	 */
+	public void setEvaluationUpdatePending(String templateId, List<String> evaluationIdsToSkip);
 
 	/**
 	 * Update a List of evaluations to reflect the latest version of the
