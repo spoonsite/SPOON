@@ -264,6 +264,67 @@ Ext.define('OSF.component.DataSourceComboBox', {
 	
 });
 
+Ext.define('OSF.component.fileFieldMaxLabel', {
+	alias: 'widget.fileFieldMaxLabel',
+	extend: 'Ext.form.field.File',
+
+	resourceLabel: 'Upload Rescource',
+	checkFileLimit: true,
+	displayFileLimit: true,
+
+	initComponent: function () {
+		var fileField = this;
+		fileField.callParent();
+
+		var getFileSizeGB = function (fileSize) {
+			return (fileSize/1000000000).toFixed(2).replace(/\.0+0$/, '');
+		};
+
+		//	Handles file size limits
+		var handleFileLimit = function (field, value, opts) {
+			var el = field.fileInputEl.dom;
+			var file = el.files[0];
+			if (file && fileField.checkFileLimit) {
+
+				// 	create error string
+				var errorMessage = '<span class="fileUploadError" style="color: rgb(255,55,55); font-weight: bold"><br />' 
+									+ file.name + ' (' + getFileSizeGB(file.size) + ' GB) exceeded size limit' 
+									+ (!fileField.displayFileLimit ? ' of ' + getFileSizeGB(fileField.getMaxFileSize()) + ' GB' : '') + '</span>';
+
+				field.setFieldLabel(field.getFieldLabel().replace(/<span class="fileUploadError".*<\/span>/, ''));
+
+				if (el.files && el.files.length > 0) {
+					if (file.size > this.getMaxFileSize()) {
+						Ext.defer(function () {
+							field.reset();
+							field.markInvalid('File exceeds size limit.');
+							field.setFieldLabel(field.getFieldLabel() + errorMessage);
+							field.validate();
+						}, 250);
+					}
+				}
+			}
+		};
+
+		//	Request the max post size, then set the fieldLabel accordingly
+		Ext.Ajax.request({
+			url: 'api/v1/service/application/configproperties/max.post.size',
+			success: function (response) {
+				var sizeMB = 1048576;
+				var maxFileSize = Number(Ext.decode(response.responseText).description) * sizeMB;
+				fileField.getMaxFileSize = function () {return maxFileSize;};
+
+				var fileLimitDisplay = fileField.displayFileLimit ? ('<br /> (Limit of ' + getFileSizeGB(maxFileSize) + ' GB)') : '';
+				var requiredDisplay = !fileField.allowBlank ? '<span class="field-required" />' : '';
+				fileField.setFieldLabel(fileField.resourceLabel + fileLimitDisplay + requiredDisplay);
+			}
+		});
+
+		// add change listener
+		fileField.addListener('change', handleFileLimit);
+	}
+});
+
 
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',

@@ -1348,14 +1348,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'originalLink'
 							},
 							{
-								xtype: 'filefield',
+								xtype: 'fileFieldMaxLabel',
 								itemId: 'upload',
-								hidden: true,
-								fieldLabel: 'Upload Resource (Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',
 								name: 'file',
-								listeners: {
-									change: CoreUtil.handleMaxFileLimit
-								}
+								width: '100%',
+								allowBlank: false
 							},
 							Ext.create('OSF.component.SecurityComboBox', {
 								itemId: 'securityMarkings',
@@ -1478,6 +1475,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Media</span>',
 				width: '50%',
+				height: 500,
 				maxHeight: 700,
 				layout: 'fit',
 				items: [
@@ -1569,13 +1567,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'iconFlag'
 							},
 							{
-								xtype: 'filefield',
+								xtype: 'fileFieldMaxLabel',
 								itemId: 'upload',
-								fieldLabel: 'Upload Media (Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',
 								name: 'file',
-								listeners: {
-									change: CoreUtil.handleMaxFileLimit
-								}
+								width: '100%',
+								resourceLabel: 'Upload Media',
+								allowBlank: false
 							},
 							{
 								xtype: 'textfield',

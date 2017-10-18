@@ -636,18 +636,15 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					},
 					items: [
 						{
-							xtype: 'filefield',
+							xtype: 'fileFieldMaxLabel',
 							title: 'Upload New ' + mediaInsertWindow.mediaName,
+							resourceLabel: 'Upload Media',
 							name: 'file',
+							width: '100%',
 							allowBlank: false,
-							flex: 1,
-							fieldLabel: 'Upload an ' + mediaInsertWindow.mediaName + ' (Limit of ' + CoreUtil.getFileSizeGB() + ' GB)<span class="field-required" />',
 							labelAlign: 'top',
 							labelWidth: 175,
-							buttonText: 'Select ' + mediaInsertWindow.mediaName + ' File...',
-							listeners: {
-								change: CoreUtil.handleMaxFileLimit
-							}
+							buttonText: 'Select ' + mediaInsertWindow.mediaName + ' File...'
 						},
 						{
 							xtype: 'panel',
