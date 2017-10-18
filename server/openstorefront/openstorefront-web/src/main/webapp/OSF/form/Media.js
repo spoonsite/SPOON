@@ -173,13 +173,12 @@ Ext.define('OSF.form.Media', {
 					name: 'caption'
 				},
 				{
-					xtype: 'filefield',
+					xtype: 'fileFieldMaxLabel',
 					itemId: 'upload',
-					fieldLabel: 'Upload Media<br />(Limit of ' + CoreUtil.getFileSizeGB() + ' GB)',																											
+					resourceLabel: 'Upload Media',
 					name: 'file',
-					listeners: {
-						change: CoreUtil.handleMaxFileLimit
-					}
+					width: '100%',
+					allowBlank: false
 				},
 				{
 					xtype: 'textfield',
