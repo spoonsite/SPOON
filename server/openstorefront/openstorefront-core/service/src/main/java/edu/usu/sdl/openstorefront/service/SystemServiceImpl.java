@@ -482,6 +482,10 @@ public class SystemServiceImpl
 		TemporaryMedia temporaryMedia = new TemporaryMedia();
 		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
 		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+		if(originalFileName.length() == 0)
+		{
+			originalFileName = "dynamicImage";
+		}
 		temporaryMedia.setOriginalFileName(originalFileName);
 		temporaryMedia.setFileName(hash);
 		temporaryMedia.setName(hash);
