@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.selenium.apitestclient;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -40,19 +41,23 @@ public class AttributeTestClient extends BaseTestClient
 		apiAttribute = new AttributeClient(client);
 	}
 	
-	public AttributeType createAPIAttribute()
+	public AttributeType createAPIAttribute(String attributeType, String attrDefaultCode, String codeLabel)
 	{
 		AttributeType type = new AttributeType();
-		type.setAttributeType("AAA-KING-TEST");
-		type.setDescription("A King Test Attribute-Storefront");
+		type.setAttributeType(attributeType);
+		type.setDescription("The Star Betelgeuse");
 		type.setVisibleFlg(Boolean.TRUE);
 		type.setImportantFlg(Boolean.TRUE);
+		type.setRequiredFlg(Boolean.TRUE);
+		type.setDefaultAttributeCode(attrDefaultCode);
 		AttributeTypeSave attributeTypeSave = new AttributeTypeSave();
 		attributeTypeSave.setAttributeType(type);
 		
-		AttributeType apiType = apiAttribute.postAttributeType(attributeTypeSave);
-		attributeIDs.add(apiType.getAttributeType());
-		return apiType;
+		AttributeType apiAttrType = apiAttribute.postAttributeType(attributeTypeSave);
+		addAttributeCode(apiAttrType.getAttributeType(), attrDefaultCode, codeLabel);
+		attributeIDs.add(apiAttrType.getAttributeType());
+		
+		return apiAttrType;
 	}
 	
 	public void deleteAPIAttribute(String type)
@@ -63,6 +68,21 @@ public class AttributeTestClient extends BaseTestClient
 	public List<AttributeType> getReqAttributeTypes(String componentType)
 	{
 		return apiAttribute.getRequiredAttributeTypes(componentType);
+	}
+	
+	public AttributeCode addAttributeCode(String attributeType, String codeLabel, String code)
+	{	
+		AttributeType type = apiAttribute.getAttributeTypeById(attributeType, false, false);
+		
+		AttributeCodePk codePk = new AttributeCodePk();
+		codePk.setAttributeCode(code);
+		codePk.setAttributeType(type.getAttributeType());
+		
+		AttributeCode attrCode = new AttributeCode();
+		attrCode.setLabel(codeLabel);
+		attrCode.setAttributeCodePk(codePk);
+		
+		return apiAttribute.postAttributeCode(attributeType, attrCode);
 	}
 	
 	public List<AttributeCode> getListAttributeCodes(String attrType, FilterQueryParams params)

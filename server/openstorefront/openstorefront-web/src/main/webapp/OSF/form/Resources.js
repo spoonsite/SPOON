@@ -179,13 +179,12 @@ Ext.define('OSF.form.Resources', {
 					name: 'originalLink'
 				},
 				{
-					xtype: 'filefield',
+					xtype: 'fileFieldMaxLabel',
 					itemId: 'upload',
-					fieldLabel: 'Upload Resource (Limit of 1GB)',																											
 					name: 'file',
-					listeners: {
-						change: CoreUtil.handleMaxFileLimit
-					}
+					width: '100%',
+					resourceLabel: 'Upload Resource',
+					allowBlank: false
 				},
 				Ext.create('OSF.component.SecurityComboBox', {						
 				}),

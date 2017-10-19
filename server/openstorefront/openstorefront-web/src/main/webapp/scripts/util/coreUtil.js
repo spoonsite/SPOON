@@ -886,25 +886,6 @@ var CoreUtil = {
 		}
 		return null;
 	},
-	maxFileSize: 1048576000,
-	handleMaxFileLimit: function (field, value, opts) {
-		var el = field.fileInputEl.dom;
-
-		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';
-		field.setFieldLabel(field.getFieldLabel().replace(errorMessage, ''));
-
-		if (el.files && el.files.length > 0) {
-			var file = el.files[0];
-			if (file.size > CoreUtil.maxFileSize) {
-				Ext.defer(function () {
-					field.reset();
-					field.markInvalid('File exceeds size limit.');
-					field.setFieldLabel(field.getFieldLabel() + errorMessage);
-				}, 250);
-			}
-		}
-
-	},
 	descriptionOfAdvancedSearch: function (searchElements) {
 		if (searchElements) {
 			var desc = '';

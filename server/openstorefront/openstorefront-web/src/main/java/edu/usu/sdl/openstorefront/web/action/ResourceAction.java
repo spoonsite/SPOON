@@ -50,6 +50,8 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidateNestedProperties;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
 
 /**
  * Handles Resources Interaction
@@ -111,6 +113,12 @@ public class ResourceAction
 				.createRangeResolution();
 
 	}
+	
+	@ValidationMethod(on={"UploadResource"})
+	public void uploadHook(ValidationErrors errors)
+	{
+		checkUploadSizeValidation(errors, file, "file");
+	}
 
 	@HandlesEvent("UploadResource")
 	public Resolution uploadResource()
@@ -135,10 +143,8 @@ public class ResourceAction
 					}
 				}
 				if (allow) {
-					if (doesFileExceedLimit(file)) {
-						deleteUploadFile(file);
-						errors.put("file", "File size exceeds max allowed.");
-					} else {
+					if (!doesFileExceedLimit(file)) {
+						
 						componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 						componentResource.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentResource.setCreateUser(SecurityUtil.getCurrentUserName());

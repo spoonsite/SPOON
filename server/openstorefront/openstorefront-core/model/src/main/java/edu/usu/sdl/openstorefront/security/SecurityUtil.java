@@ -166,9 +166,9 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Checks the current user for permission
+	 * Checks the current for permission
 	 *
-	 * @param permission
+	 * @param permissions
 	 * @return true if the user has the permission (All of them)
 	 */
 	public static boolean hasPermission(String... permissions)

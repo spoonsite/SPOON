@@ -54,6 +54,7 @@ nbdist/
 
 
 # other files to ignore
+/server/openstorefront/openstorefront-web/felix-cache
 /server/openstorefront/selenium-tests/drivers
 project*.properties
 *.swp

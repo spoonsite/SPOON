@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.List;
 import java.util.logging.Logger;
@@ -39,7 +37,7 @@ public class BasicSearchIT
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 	private static String entryName = "A Selenium Test Entry";
-	
+
 	@BeforeClass
 	public static void basicSearchComponent()
 	{
@@ -58,41 +56,41 @@ public class BasicSearchIT
 		}
 
 	}
-	 
+
 	@Test
 	public void basicSearchWithQuotesLandingPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromLandingPage(driver, "\"A Selenium Test Entry\"");
 			verifyResults(driver, entryName);
 		}
- 	}
+	}
 
 	@Test
 	public void basicSearchWithQuotesResultsPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromResultsPage(driver, "\"A Selenium Test Entry\"");
 			verifyResults(driver, entryName);
 		}
 	}
-	
+
 	@Test
 	public void basicSearchWithoutQuotesResultsPage()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			
+
 			searchFromResultsPage(driver, "Test");
 			verifyResults(driver, entryName);
 		}
 	}
-	
+
 	protected void searchFromLandingPage(WebDriver driver, String search)
 	{
 		webDriverUtil.getPage(driver, "Landing.action");
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys(search);
@@ -102,17 +100,17 @@ public class BasicSearchIT
 		sleep(1500);
 
 	}
-	
+
 	protected void searchFromResultsPage(WebDriver driver, String search)
 	{
 		webDriverUtil.getPage(driver, "searchResults.jsp");
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchTextFieldResults-inputEl"))).sendKeys(search);
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
-		
+
 		sleep(1500);
 	}
 
@@ -132,22 +130,5 @@ public class BasicSearchIT
 		}
 
 		Assert.assertTrue(isResult);
-	}
-
-	public static void createBasicSearchComponent(String componentName)
-	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("Entry Name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
 	}
 }

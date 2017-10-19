@@ -676,7 +676,7 @@ public class ComponentRESTResource
 			@RequiredParam RequiredForComponent component)
 	{
 		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
-			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+			component.getComponent().setApprovalState(ApprovalStatus.APPROVED);
 		}
 
 		ValidationModel validationModel = new ValidationModel(component);
@@ -1331,6 +1331,30 @@ public class ComponentRESTResource
 	}
 
 	@POST
+	@APIDescription("Add a list of attributes to the entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attributeList")
+	public Response addComponentAttributes(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam List<ComponentAttribute> attributeList)
+	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+		ValidationResult validationResult = new ValidationResult();
+		attributeList.forEach((attribute) -> {
+			validationResult.merge(saveAttribute(componentId, attribute));
+		});
+		if (!validationResult.valid()) {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok().build();
+	}
+
+	@POST
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAttribute.class)
@@ -1344,7 +1368,18 @@ public class ComponentRESTResource
 		if (response != null) {
 			return response;
 		}
+		ValidationResult validationResult = saveAttribute(componentId, attribute);
+		if (!validationResult.valid()) {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.created(URI.create("v1/resource/components/"
+				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
+	}
 
+	private ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
+	{
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
 
@@ -1354,13 +1389,8 @@ public class ComponentRESTResource
 		validationResult.merge(service.getComponentService().checkComponentAttribute(attribute));
 		if (validationResult.valid()) {
 			service.getComponentService().saveComponentAttribute(attribute);
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create("v1/resource/components/"
-				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
-				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
-				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
+		return validationResult;
 	}
 	// </editor-fold>
 

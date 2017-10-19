@@ -88,6 +88,7 @@ public class ComponentDetailReport
 	private Map<String, Map<String, List<ComponentAttribute>>> codeToComponent = new HashMap<>();
 	private Map<String, List<ComponentContact>> contactMap = new HashMap<>();
 	private Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
+	private final Map root = new HashMap();
 
 	public ComponentDetailReport(Report report)
 	{
@@ -156,8 +157,34 @@ public class ComponentDetailReport
 	{
 		if (ReportFormat.CSV.equals(report.getReportFormat())) {
 			generateCSV();
-		} else if (ReportFormat.HTML.equals(report.getReportFormat())) {
+		} else if (ReportFormat.HTML.equals(report.getReportFormat()) || ReportFormat.PDF.equals(report.getReportFormat())) {
 			generateHtml();
+			
+			try {
+				Configuration templateConfig = ReportManager.getTemplateConfig();
+
+				//	Generate the report template
+				Template template = templateConfig.getTemplate("detailReport.ftl");
+				Writer writer = new StringWriter();
+				template.process(root, writer);
+				String renderedTemplate = writer.toString();
+
+				//	Save/write as the appropriate report
+				//	HTML report
+				if (ReportFormat.HTML.equals(report.getReportFormat())) {
+					HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
+					htmlGenerator.addLine(renderedTemplate);
+				}
+				//	PDF report
+				else if (ReportFormat.PDF.equals(report.getReportFormat())) {
+					HtmlToPdfGenerator htmlPdfGenerator = (HtmlToPdfGenerator) generator;
+					htmlPdfGenerator.savePdfDocument(renderedTemplate);
+				}
+				
+			}
+			catch (TemplateException | IOException e) {
+				throw new OpenStorefrontRuntimeException("Failed to write the report! - " + e);
+			}
 		}
 	}
 

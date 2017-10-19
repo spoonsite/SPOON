@@ -399,7 +399,7 @@
 					iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 					modal: true,
 					width: '40%',
-					height: 260,
+					height: 300,
 					y: 40,
 					resizable: false,
 					layout: 'fit',
@@ -426,15 +426,12 @@
 											width: '100%'
 										},
 										{
-											xtype: 'filefield',
-											name: 'file',
+											xtype: 'fileFieldMaxLabel',
+											resourceLabel: 'Upload Media',
 											id: 'file',
-											fieldLabel: 'Upload Media  (Limit of 1GB)<span class="field-required" />',
+											name: 'file',
 											width: '100%',
-											allowBlank: false,
-											listeners: {
-												change: CoreUtil.handleMaxFileLimit
-											}											
+											allowBlank: false
 										}
 									]
 								}

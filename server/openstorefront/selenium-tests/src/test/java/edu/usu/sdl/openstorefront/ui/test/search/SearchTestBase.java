@@ -34,7 +34,7 @@ public class SearchTestBase
 		login();
 	}
 	
-	protected static void createBasicSearchComponent(String componentName)
+	protected static Component createBasicSearchComponent(String componentName)
 	{
 		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
 		System.out.println("Entry name: " + myEntry.getName());
@@ -49,5 +49,7 @@ public class SearchTestBase
 			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
 
 		}
+		
+		return myEntry;
 	}
 }

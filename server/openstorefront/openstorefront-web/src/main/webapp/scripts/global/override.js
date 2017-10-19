@@ -111,8 +111,6 @@ Ext.define('LookupDataModel', {
 		]
 });
 
-
-
 //Overrides
 
 /**

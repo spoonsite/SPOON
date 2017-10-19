@@ -118,9 +118,8 @@ public class AttributeResource
 			@DefaultValue("false") boolean all,
 			@QueryParam("important") Boolean important)
 	{
-		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
-
 		AttributeType attributeTypeExample = new AttributeType();
+
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
@@ -134,6 +133,63 @@ public class AttributeResource
 		}
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(codeStatus);
 
+		return createAttributeTypeViews(attributeCodesAll, attributeTypes);
+	}
+
+	@GET
+	@APIDescription("Gets optional attribute types based on filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/optional")
+	public List<AttributeTypeView> getOptionalAttributeView(
+			@QueryParam("componentType") String componentType
+	)
+	{
+		List<AttributeType> optionalAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		attributeTypes.forEach((attributeType) -> {
+			boolean keep = true;
+			boolean required = false;
+			//check if attribute type is allowed for this component
+			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
+				keep = false;
+				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						keep = true;
+					}
+				}
+			}
+			//check required
+			if (keep) {
+				if (attributeType.getRequiredFlg()) {
+					if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+						for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+							if (restriction.getComponentType().equals(componentType)) {
+								required = true;
+							}
+						}
+					} else {
+						required = true;
+					}
+				}
+				if (!required) {
+					optionalAttributes.add(attributeType);
+				}
+			}
+		});
+		
+		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
+
+		return createAttributeTypeViews(attributeCodesAll, optionalAttributes);
+	}
+	
+	private List<AttributeTypeView> createAttributeTypeViews(List<AttributeCode> attributeCodesAll, List<AttributeType> attributeTypes)
+	{
+		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 		Map<String, List<AttributeCode>> codeMap = new HashMap<>();
 		for (AttributeCode code : attributeCodesAll) {
 			if (codeMap.containsKey(code.getAttributeCodePk().getAttributeType())) {
@@ -308,7 +364,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute types based on filter")
+	@APIDescription("Gets required attribute types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes/required")
@@ -326,7 +382,7 @@ public class AttributeResource
 		for (AttributeType attributeType : attributeTypes) {
 
 			boolean keep = true;
-
+			//check if attribute type is allowed for this component
 			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 				keep = false;
 				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {

@@ -548,7 +548,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 				load: function(store, records, success, eOpts) {
 					if (!store.getCount()) {
 						mediaInsertWindow.mediaSelection.up('panel').hide();
-						mediaInsertWindow.setHeight(220);
+						mediaInsertWindow.setHeight(270);
 					}
 					//normalize records
 					var showRecords = [];
@@ -625,7 +625,6 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			region: 'north',
 			layout: 'fit',
 			width: '100%',
-			height: 150,
 			bodyStyle: 'padding: 10px;',
 			title: "Upload New " + mediaInsertWindow.mediaName,
 			items: [
@@ -637,12 +636,13 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					},
 					items: [
 						{
-							xtype: 'filefield',
+							xtype: 'fileFieldMaxLabel',
 							title: 'Upload New ' + mediaInsertWindow.mediaName,
+							resourceLabel: 'Upload Media',
 							name: 'file',
+							width: '100%',
 							allowBlank: false,
-							flex: 1,
-							fieldLabel: 'Upload an ' + mediaInsertWindow.mediaName + ' <span class="field-required" />',
+							labelAlign: 'top',
 							labelWidth: 175,
 							buttonText: 'Select ' + mediaInsertWindow.mediaName + ' File...'
 						},
@@ -657,7 +657,8 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									flex: 9,
 									labelWidth: 175,
 									fieldLabel: 'Caption / Name <span class="field-required" />',
-									style: 'padding-right: 3px;'
+									labelAlign: 'top',
+									style: 'padding-right: 3px; margin-top: 30px + 1em;'
 								},
 								{
 									xtype: 'button',
@@ -666,6 +667,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									iconCls: 'fa fa-lg fa-upload',
 									formBind: true,
 									text: 'Upload',
+									style: 'margin-top: 30px;',
 									handler: function() {
 										var uploadForm = this.up('form');
 																				

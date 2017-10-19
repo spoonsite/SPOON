@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.report.generator;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import java.io.IOException;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -349,11 +348,5 @@ public class AdminContactsIT
 				break;
 			}
 		}
-	}
-
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
 	}
 }

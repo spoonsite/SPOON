@@ -1410,15 +1410,14 @@
 						},
 						items: [
 							{
-								xtype: 'filefield',
+								xtype: 'fileFieldMaxLabel',
+								resourceLabel: 'Upload File',
+								itemId: 'upload',
+								buttonText: 'Select File...',
 								name: 'uploadFile',
 								width: '100%',
-								allowBlank: false,
-								fieldLabel: 'Choose a file to upload<span class="field-required" />',
-								buttonText: 'Select File...',
-								listeners: {
-									change: CoreUtil.handleMaxFileLimit
-								}
+								labelAlign: 'top',
+								allowBlank: false
 							}
 						]
 					}

@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
@@ -286,6 +289,44 @@ public class EvaluationServiceImpl
 		return evaluation;
 	}
 
+	/**
+	 * Update a List of evaluations to reflect the latest version of the
+	 * templates they were based on
+	 *
+	 * @param evaluationIds
+	 */
+	@Override
+	public void setEvaluationUpdatePending(String templateId, List<String> evaluationIdsToSkip)
+	{
+		Evaluation evaluationExample = new Evaluation();
+		evaluationExample.setTemplateId(templateId);
+		QueryByExample queryByExample = new QueryByExample(evaluationExample);
+
+		if (evaluationIdsToSkip.size() > 0) {
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			// Define A Special Lookup Operation (IN)
+			Evaluation exampleEvaluation = new Evaluation();
+			exampleEvaluation.setEvaluationId(QueryByExample.STRING_FLAG);
+			specialOperatorModel.setExample(exampleEvaluation);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_IN);
+			specialOperatorModel.getGenerateStatementOption().setParameterValues(evaluationIdsToSkip);
+
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
+		
+		List<Evaluation> evaluationsToFlag = persistenceService.queryByExample(queryByExample);
+		evaluationsToFlag.forEach(eval -> {
+			if (eval.getTemplateUpdatePending() == null || !eval.getTemplateUpdatePending()) {
+				
+				Evaluation proxyExample = new Evaluation();
+				proxyExample.setEvaluationId(eval.getEvaluationId());
+				
+				Evaluation proxy = proxyExample.findProxy();
+				proxy.setTemplateUpdatePending(Boolean.TRUE);
+				proxy.save();
+			}
+		});
+	}
 	/**
 	 * Update a List of evaluations to reflect the latest version of the
 	 * templates they were based on

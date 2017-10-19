@@ -478,7 +478,7 @@
 								xtype: 'tbseparator'
 							},
 							{
-								text: 'Toggle Staus',
+								text: 'Toggle Status',
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,									
