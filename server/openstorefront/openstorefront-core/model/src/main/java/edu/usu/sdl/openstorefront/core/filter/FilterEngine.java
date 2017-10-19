@@ -46,6 +46,7 @@ public class FilterEngine
 
 	private UserContext userContext;
 	private Service service;
+	private boolean forceFiltering;
 
 	public FilterEngine(UserContext userContext, Service service)
 	{
@@ -156,7 +157,7 @@ public class FilterEngine
 				//look at both sides of relationship
 				ComponentRelationship componentRelationship = (ComponentRelationship) data;
 
-				boolean keepData = false;
+				boolean keepData;
 				keepData = keepComponent(acceptedDataSources, acceptedDataSensitivity, userContext, componentRelationship.getComponentId());
 
 				//check target
@@ -175,7 +176,7 @@ public class FilterEngine
 				}
 			} else if (data instanceof BaseComponent) {
 
-				boolean keepData = false;
+				boolean keepData;
 				if (checkParentComponent) {
 					//if base component - check component data restrictions
 					BaseComponent baseComponent = (BaseComponent) data;
@@ -250,7 +251,7 @@ public class FilterEngine
 
 		if (data != null
 				&& !data.isEmpty()
-				&& SecurityUtil.isLoggedIn()) {
+				&& (SecurityUtil.isLoggedIn() || forceFiltering)) {
 			filterable = true;
 		}
 
@@ -270,7 +271,7 @@ public class FilterEngine
 		boolean filterable = false;
 
 		if (data != null
-				&& SecurityUtil.isLoggedIn()) {
+				&& (SecurityUtil.isLoggedIn() || forceFiltering)) {
 			filterable = true;
 		}
 
@@ -364,6 +365,16 @@ public class FilterEngine
 		}
 
 		return query.toString();
+	}
+
+	public boolean getForceFiltering()
+	{
+		return forceFiltering;
+	}
+
+	public void setForceFiltering(boolean forceFiltering)
+	{
+		this.forceFiltering = forceFiltering;
 	}
 
 }

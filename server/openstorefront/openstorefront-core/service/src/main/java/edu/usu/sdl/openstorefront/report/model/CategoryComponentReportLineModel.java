@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
+import java.util.Date;
+
 /**
  *
  * @author dshurtleff
@@ -24,7 +26,7 @@ public class CategoryComponentReportLineModel
 
 	private String name;
 	private String decription;
-	private String lastActivityDts;
+	private Date lastActivityDts;
 	private String categoryLabel;
 	private String categoryDescription;
 
@@ -52,12 +54,12 @@ public class CategoryComponentReportLineModel
 		this.decription = decription;
 	}
 
-	public String getLastActivityDts()
+	public Date getLastActivityDts()
 	{
 		return lastActivityDts;
 	}
 
-	public void setLastActivityDts(String lastActivityDts)
+	public void setLastActivityDts(Date lastActivityDts)
 	{
 		this.lastActivityDts = lastActivityDts;
 	}

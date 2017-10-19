@@ -81,6 +81,7 @@ public abstract class BaseReport
 			this.filterEngine = filterEngine;
 		} else {
 			this.filterEngine = FilterEngine.getInstance(getReportUserContext());
+			this.filterEngine.setForceFiltering(true);
 		}
 
 		if (this.report.getReportOption() == null) {
