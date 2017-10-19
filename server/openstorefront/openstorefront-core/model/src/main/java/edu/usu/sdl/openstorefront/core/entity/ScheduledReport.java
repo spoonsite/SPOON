@@ -52,12 +52,13 @@ public class ScheduledReport
 	@FK(ReportType.class)
 	private String reportType;
 
-	@Deprecated("Use report outputs")
+	@Deprecated
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
 	@FK(ReportFormat.class)
+	@APIDescription("Use Report Outputs and not this field")
 	private String reportFormat;
 
 	@ConsumeField
@@ -157,11 +158,13 @@ public class ScheduledReport
 		this.emailAddresses = emailAddresses;
 	}
 
+	@Deprecated
 	public String getReportFormat()
 	{
 		return reportFormat;
 	}
 
+	@Deprecated
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
@@ -197,13 +200,11 @@ public class ScheduledReport
 		this.componentIds = componentIds;
 	}
 
-	@Deprecated
 	public List<ReportOutput> getReportOutputs()
 	{
 		return reportOutputs;
 	}
 
-	@Deprecated
 	public void setReportOutputs(List<ReportOutput> reportOutputs)
 	{
 		this.reportOutputs = reportOutputs;
