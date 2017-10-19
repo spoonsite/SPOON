@@ -64,24 +64,7 @@ public class SecurityUtil
 		}
 		return loggedIn;
 	}
-
-	/**
-	 * Check for Guest or Anonymous user
-	 *
-	 * @return true if guest
-	 */
-	public static boolean isGuest()
-	{
-		boolean guest;
-		try {
-			guest = !SecurityUtils.getSubject().isRemembered();
-		} catch (Exception e) {
-			//ignore
-			guest = true;
-		}
-		return guest;
-	}
-
+	
 	/**
 	 * Gets the current user logged in.
 	 *

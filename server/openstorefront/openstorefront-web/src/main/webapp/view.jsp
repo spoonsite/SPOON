@@ -675,11 +675,9 @@
 									
 								}
 							});
-							
-							
-							
-														
-							
+						},
+						failure: function(response, opts) {
+								window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
 						}
 					});
 				}

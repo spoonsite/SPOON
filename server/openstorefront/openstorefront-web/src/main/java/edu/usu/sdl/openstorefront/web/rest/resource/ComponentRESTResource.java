@@ -147,6 +147,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+import org.jsoup.helper.StringUtil;
 
 /**
  * ComponentRESTResource Resource
@@ -884,12 +885,14 @@ public class ComponentRESTResource
 			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
 		ComponentPrintView componentPrint = null;
-		ComponentDetailView componentDetail = null;
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+		if(!SecurityUtil.isLoggedIn() && !StringUtil.isBlank(componentDetail.getDataSensitivity()))
+		{
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 		if (type.equals("print")) {
-			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
-			componentPrint = ComponentPrintView.toView(temp);
-		} else {
-			componentDetail = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(componentDetail);
+			componentDetail = null;
 		}
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
