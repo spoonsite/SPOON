@@ -332,7 +332,7 @@
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-home',
 								tooltip: 'Home',
-								hidden: !fullPage,
+								hidden: !fullPage || ('${param.evalId}' !== ''),
 								scale: 'large',
 								margin: '0 10 0 0',
 								href: 'index.jsp',
