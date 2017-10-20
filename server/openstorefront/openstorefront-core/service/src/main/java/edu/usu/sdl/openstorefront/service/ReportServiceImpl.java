@@ -56,7 +56,7 @@ public class ReportServiceImpl
 		implements ReportService
 {
 
-	private static final Logger log = Logger.getLogger(OrientPersistenceService.class.getName());
+	private static final Logger LOG = Logger.getLogger(OrientPersistenceService.class.getName());
 
 	private static final int MAX_RETRIES = 3;
 
@@ -81,7 +81,7 @@ public class ReportServiceImpl
 		//save Report
 		Report managedReport;
 		if (StringUtils.isBlank(report.getReportId())) {
-			managedReport = queueReport(report);
+			queueReport(report);
 			managedReport = persistenceService.findById(Report.class, report.getReportId());
 		} else {
 			managedReport = persistenceService.findById(Report.class, report.getReportId());
@@ -155,7 +155,7 @@ public class ReportServiceImpl
 				if (path.toFile().exists()) {
 					boolean success = path.toFile().delete();
 					if (success == false) {
-						log.log(Level.WARNING, MessageFormat.format("Unable to remove old report: {0}", path.toString()));
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to remove old report: {0}", path.toString()));
 					}
 				}
 			}
@@ -211,7 +211,7 @@ public class ReportServiceImpl
 		LocalDate expirationLocalDate;
 		LocalDate currentDate = LocalDate.now();
 
-		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME))-1);
+		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1);
 		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 		Report reportExample = new Report();
@@ -231,6 +231,18 @@ public class ReportServiceImpl
 		for (Report report : results) {
 			deleteReport(report.getReportId());
 		}
+	}
+
+	@Override
+	public void disableAllScheduledReportsForUser(String username)
+	{
+		ScheduledReport scheduledReportExample = new ScheduledReport();
+		scheduledReportExample.setCreateUser(username);
+
+		ScheduledReport scheduledReportSetExample = new ScheduledReport();
+		scheduledReportSetExample.setActiveStatus(ScheduledReport.INACTIVE_STATUS);
+		scheduledReportSetExample.populateBaseUpdateFields();
+		persistenceService.updateByExample(ScheduledReport.class, scheduledReportSetExample, scheduledReportExample);
 	}
 
 }

@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import edu.usu.sdl.openstorefront.report.output.BaseOutput;
@@ -172,7 +173,7 @@ public abstract class BaseReport
 			LOG.log(Level.SEVERE, "No report output defined; Report should have at least one.");
 		} else {
 			for (ReportOutput reportOutput : report.getReportOutputs()) {
-				BaseOutput outputHandler = BaseOutput.getOutput(reportOutput, report, this);
+				BaseOutput outputHandler = BaseOutput.getOutput(reportOutput, report, this, getReportUserContext());
 				doOutput(outputHandler, reportModel);
 			}
 		}
@@ -219,11 +220,23 @@ public abstract class BaseReport
 	 * Get user who created the report or scheduled report
 	 *
 	 * @return if user is not known or groups is unknown than only default group
-	 * will return
+	 * will return (Assumes the report belongs to a registered user)
 	 */
 	protected UserContext getReportUserContext()
 	{
 		UserContext userContext = service.getSecurityService().getUserContext(report.getCreateUser());
+		if (userContext == null) {
+			userContext = new UserContext();
+
+			SecurityRole defaultRole = new SecurityRole();
+			defaultRole.setRoleName(SecurityRole.DEFAULT_GROUP);
+			defaultRole = defaultRole.find();
+			if (defaultRole != null) {
+				userContext.getRoles().add(defaultRole);
+			}
+
+		}
+
 		return userContext;
 	}
 

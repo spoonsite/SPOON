@@ -57,6 +57,8 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportModel;
+import edu.usu.sdl.openstorefront.report.model.UsageReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import freemarker.template.*;
@@ -96,7 +98,7 @@ public class ComponentDetailReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected ComponentDetailReportModel gatherData()
 	{
 		//Grab all active attributes
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
@@ -144,12 +146,17 @@ public class ComponentDetailReport
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = componentExample.findByExample();
-		components = FilterEngine.filter(components);
+		components = filterEngine.filter(components);
 
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
 		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
+		ComponentDetailReportModel reportModel = new ComponentDetailReportModel();
+		reportModel.setTitle("Entry Details Report");
+
+		return reportModel;
 	}
 
 	@Override
@@ -159,7 +166,7 @@ public class ComponentDetailReport
 			generateCSV();
 		} else if (ReportFormat.HTML.equals(report.getReportFormat()) || ReportFormat.PDF.equals(report.getReportFormat())) {
 			generateHtml();
-			
+
 			try {
 				Configuration templateConfig = ReportManager.getTemplateConfig();
 
@@ -174,15 +181,13 @@ public class ComponentDetailReport
 				if (ReportFormat.HTML.equals(report.getReportFormat())) {
 					HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
 					htmlGenerator.addLine(renderedTemplate);
-				}
-				//	PDF report
+				} //	PDF report
 				else if (ReportFormat.PDF.equals(report.getReportFormat())) {
 					HtmlToPdfGenerator htmlPdfGenerator = (HtmlToPdfGenerator) generator;
 					htmlPdfGenerator.savePdfDocument(renderedTemplate);
 				}
-				
-			}
-			catch (TemplateException | IOException e) {
+
+			} catch (TemplateException | IOException e) {
 				throw new OpenStorefrontRuntimeException("Failed to write the report! - " + e);
 			}
 		}
@@ -767,18 +772,54 @@ public class ComponentDetailReport
 	@Override
 	protected Map<String, ReportWriter> getWriterMap()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (UsageReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (UsageReportModel) reportModel);
+		});
+
+		return writerMap;
 	}
 
 	@Override
 	public List<ReportTransmissionType> getSupportedOutputs()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
 	}
 
 	@Override
 	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
 	}
 }

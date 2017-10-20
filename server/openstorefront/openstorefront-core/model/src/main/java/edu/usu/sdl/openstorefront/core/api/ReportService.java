@@ -78,7 +78,15 @@ public interface ReportService
 	 * @param scheduledReportId
 	 */
 	public void deleteScheduledReport(String scheduledReportId);
-	
+
+	/**
+	 * In-activates all scheduled report for a user
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void disableAllScheduledReportsForUser(String username);
+
 	/**
 	 * Removes all expired report
 	 */

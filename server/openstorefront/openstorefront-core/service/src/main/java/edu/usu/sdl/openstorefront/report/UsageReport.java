@@ -131,7 +131,7 @@ public class UsageReport
 		Map<String, Long> trackMap = new HashMap<>();
 		userTrackings.forEach(userTracting -> {
 			if (trackMap.containsKey(userTracting.getCreateUser())) {
-				trackMap.put(userTracting.getCreateUser(), trackMap.get(userTracting) + 1);
+				trackMap.put(userTracting.getCreateUser(), trackMap.get(userTracting.getCreateUser()) + 1);
 			} else {
 				trackMap.put(userTracting.getCreateUser(), 1L);
 			}
