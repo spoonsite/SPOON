@@ -147,7 +147,6 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-import org.jsoup.helper.StringUtil;
 
 /**
  * ComponentRESTResource Resource
@@ -886,10 +885,7 @@ public class ComponentRESTResource
 	{
 		ComponentPrintView componentPrint = null;
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
-		if(!SecurityUtil.isLoggedIn() && !StringUtil.isBlank(componentDetail.getDataSensitivity()))
-		{
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
+
 		if (type.equals("print")) {
 			componentPrint = ComponentPrintView.toView(componentDetail);
 			componentDetail = null;
@@ -3234,6 +3230,7 @@ public class ComponentRESTResource
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
 		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
+		componentReview.setDataSensitivity(review.getDataSensitivity());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {

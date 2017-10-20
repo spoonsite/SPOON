@@ -226,7 +226,7 @@ public class FilterEngine
 
 		if (data != null
 				&& !data.isEmpty()
-				&& SecurityUtil.isLoggedIn()) {
+				&& !SecurityUtil.isSystemUser()) {
 			filterable = true;
 		}
 
@@ -246,7 +246,7 @@ public class FilterEngine
 		boolean filterable = false;
 
 		if (data != null
-				&& SecurityUtil.isLoggedIn()) {
+				&& !SecurityUtil.isSystemUser()) {
 			filterable = true;
 		}
 

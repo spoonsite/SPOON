@@ -95,4 +95,10 @@ public class DBDataMigration
 		return results.toString();
 	}
 
+	@Override
+	public int getPriority()
+	{
+		return 99;
+	}
+
 }

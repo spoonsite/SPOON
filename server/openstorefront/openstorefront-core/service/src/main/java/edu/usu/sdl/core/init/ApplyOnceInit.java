@@ -16,6 +16,7 @@
 package edu.usu.sdl.core.init;
 
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -49,7 +50,8 @@ public abstract class ApplyOnceInit
 
 	public void applyChanges()
 	{
-		log.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it''s applied.", appliedKey));
+		SecurityUtil.initSystemUser();
+		log.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it's applied.", appliedKey));
 
 		String lastRunString = service.getSystemService().getPropertyValue(appliedKey + "_LASTRUN_DTS");
 		if (StringUtils.isNotBlank(lastRunString)) {
@@ -68,5 +70,10 @@ public abstract class ApplyOnceInit
 	 * @return true if applied successfully
 	 */
 	protected abstract String internalApply();
+
+	/**
+	 * Order to run in....lower run first
+	 */
+	public abstract int getPriority();
 
 }

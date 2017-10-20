@@ -83,6 +83,16 @@ public class SecurityInit
 		service.getSecurityService().saveSecurityRole(securityRole);
 		LOG.log(Level.CONFIG, "Setup default group");
 
+		//Guest Role
+		securityRole = new SecurityRole();
+		securityRole.setRoleName(SecurityRole.GUEST_GROUP);
+		securityRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		securityRole.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		securityRole.setDescription("Used for guests when allowed based on URL");
+		securityRole.setLandingPage("/");
+		service.getSecurityService().saveSecurityRole(securityRole);
+		LOG.log(Level.CONFIG, "Guest group was setup");
+
 		//Admin Role
 		String adminRoleName = PropertiesManager.getValue(
 				PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP,
@@ -244,6 +254,12 @@ public class SecurityInit
 		LOG.log(Level.CONFIG, "Add Admin User to Admin Group");
 
 		return "Setup Security";
+	}
+
+	@Override
+	public int getPriority()
+	{
+		return 15;
 	}
 
 }

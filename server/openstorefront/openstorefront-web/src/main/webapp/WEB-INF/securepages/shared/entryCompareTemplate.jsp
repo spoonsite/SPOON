@@ -345,7 +345,7 @@ limitations under the License.
 						<tr class="details-table">
 							<td class="details-table">{ownerComponentName}</td>
 							<td class="details-table" style="text-align: center"><b>{relationshipTypeDescription}</b></td>
-							<td class="details-table"><a href="view.jsp?id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>
+							<td class="details-table"><a href="view.jsp?fullPage=true&id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>
 						</tr>
 					</tpl>
 				</table>

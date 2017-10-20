@@ -87,7 +87,7 @@ public class UserProfileView
 
 	@DataType(SecurityRole.class)
 	private List<SecurityRole> roles = new ArrayList<>();
-	
+
 	@ConsumeField
 	private boolean isAnonymousUser;
 

@@ -120,6 +120,7 @@
 			var componentId = '${param.id}';
 			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
+			var embedded = '${param.embedded}' !== '' ? true : false;
 			var hideSecurityBanner =  '${param.hideSecurityBanner}' !==  '' ? true : false;
 			
 			var relatedStore = Ext.create('Ext.data.Store', {
@@ -332,7 +333,7 @@
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-home',
 								tooltip: 'Home',
-								hidden: !fullPage || ('${param.evalId}' !== ''),
+								hidden: embedded,
 								scale: 'large',
 								margin: '0 10 0 0',
 								href: 'index.jsp',
@@ -568,8 +569,7 @@
 					Ext.getCmp('addTagPanel').setHidden(true);					
 				}
 				else
-				{
-					Ext.getCmp('watchBtn').setHidden(false);
+				{	
 					Ext.getCmp('nonOwnerMenu').setHidden(false);
 				}
 			}
@@ -677,7 +677,7 @@
 							});
 						},
 						failure: function(response, opts) {
-								window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
+							window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
 						}
 					});
 				}
@@ -697,8 +697,10 @@
 						if (currentWatch) {
 							Ext.getCmp('watchBtn').setHidden(true);
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
+						} else {
+							Ext.getCmp('watchBtn').setHidden(false);
 						}
-
+							
 						loadDetails(user);
 					}
 				});

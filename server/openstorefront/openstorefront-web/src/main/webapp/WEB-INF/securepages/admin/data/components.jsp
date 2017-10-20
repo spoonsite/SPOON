@@ -2532,7 +2532,7 @@
 
 				var actionPreviewComponent = function(id){
 					previewComponentWin.show();
-					previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + id);
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + id);
 					previewCheckButtons();
 				};
 

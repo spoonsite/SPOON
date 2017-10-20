@@ -96,4 +96,10 @@ public class AttributeKeyCorrectionInit
 		return "Fixed: " + fixTypes;
 	}
 
+	@Override
+	public int getPriority()
+	{
+		return 10;
+	}
+
 }

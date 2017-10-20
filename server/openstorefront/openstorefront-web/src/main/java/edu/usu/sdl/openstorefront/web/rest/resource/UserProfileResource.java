@@ -212,14 +212,6 @@ public class UserProfileResource
 	public Response getCurrentUser()
 	{
 		UserContext userContext = SecurityUtil.getUserContext();
-		if (userContext == null) {
-			userContext = new UserContext();
-			userContext.setAdmin(false);
-			userContext.setUserProfile(new UserProfile());
-			userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
-			userContext.getUserProfile().setFirstName("Guest");
-			userContext.getUserProfile().setUsername(OpenStorefrontConstant.ANONYMOUS_USER);
-		}
 		UserProfileView userProfileView = UserProfileView.toView(userContext);
 		return sendSingleEntityResponse(userProfileView);
 	}
