@@ -560,7 +560,7 @@ Ext.define('OSF.form.Section', {
 							height: 400,
 							width: '100%',
 							value: originalData.section.content,
-							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
 									mediaSelectionUrl: mediaSelectionUrl,
 									mediaUploadHandler: mediaUploadHandler
 							}),
@@ -596,7 +596,7 @@ Ext.define('OSF.form.Section', {
 								maxLength: 1048576,
 								height: 400,
 								value: subsection.content,
-								tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+								tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
 										mediaSelectionUrl: mediaSelectionUrl,
 										mediaUploadHandler: mediaUploadHandler
 								}),
@@ -644,7 +644,7 @@ Ext.define('OSF.form.Section', {
 										height: 250,
 										width: '100%',
 										value: field.value,
-										tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+										tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
 												mediaSelectionUrl: mediaSelectionUrl,
 												mediaUploadHandler: mediaUploadHandler
 										}),
@@ -763,7 +763,7 @@ Ext.define('OSF.form.Section', {
 							name: 'content',			
 							maxLength: 1048576,
 							value: originalData.section.content,
-							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
 									mediaSelectionUrl: mediaSelectionUrl,
 									mediaUploadHandler: mediaUploadHandler
 							}),
