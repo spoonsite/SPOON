@@ -163,7 +163,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					flex: 1,
 					autoSizeColumn: false,
 					renderer: function (value, metaData, record) {
-						var url = '<a style="text-decoration: none" href="/openstorefront/view.jsp?id=';
+						var url = '<a style="text-decoration: none" href="/openstorefront/view.jsp?fullPage=true&id=';
 						url += record.getData().componentId;
 						url += '">';
 						url += '<span class="search-tools-column-orange-text">' + value + '</span></a>';
@@ -860,7 +860,8 @@ Ext.define('OSF.component.FullScreenEditor', {
 				extended_valid_elements: fswin.editor.settings.extended_valid_elements,
 				table_default_styles: fswin.editor.settings.table_default_styles,
 				mediaSelectionUrl: fswin.editor.settings.mediaSelectionUrl,
-				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler
+				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler,
+				paste_data_images: true
 			}
 		});
 		

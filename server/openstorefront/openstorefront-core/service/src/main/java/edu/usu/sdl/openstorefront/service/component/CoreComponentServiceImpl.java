@@ -382,14 +382,15 @@ public class CoreComponentServiceImpl
 		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
 		String currentUser = SecurityUtil.getCurrentUserName();
-		tempPendingReviews.forEach(review
-				-> {
+		for (ComponentReview review : tempPendingReviews) {
 			if (review.getCreateUser().equals(currentUser)) {
 				tempReviews.add(review);
 			}
-		});
+		}
 		tempReviews.addAll(tempApprovedReviews);
 		List<ComponentReviewView> reviews = new ArrayList();
+		tempReviews = FilterEngine.filter(tempReviews);
+
 		tempReviews.forEach(review
 				-> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
@@ -417,12 +418,13 @@ public class CoreComponentServiceImpl
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
 		List<ComponentQuestion> pendingQuestions = componentService.getBaseComponent(ComponentQuestion.class, componentId, ComponentQuestion.PENDING_STATUS);
-		pendingQuestions.forEach(question
-				-> {
+		for (ComponentQuestion question : pendingQuestions) {
 			if (question.getCreateUser().equals(currentUser)) {
 				questions.add(question);
 			}
-		});
+		}
+		questions = FilterEngine.filter(questions);
+
 		questions.stream().forEach((question)
 				-> {
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
@@ -663,7 +665,7 @@ public class CoreComponentServiceImpl
 							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
 							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
-							componentMedia.setHideInDisplay(false);
+							componentMedia.setHideInDisplay(true);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
 								//stripe generated part of name
 								String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);

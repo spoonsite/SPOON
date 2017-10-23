@@ -39,6 +39,8 @@ public class UserContext
 	private UserProfile userProfile;
 	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean admin;
+	private boolean guest;
+	private boolean systemUser;
 	private Set<String> externalGroups = new HashSet<>();
 
 	public UserContext()
@@ -204,6 +206,26 @@ public class UserContext
 	public void setExternalGroups(Set<String> externalGroups)
 	{
 		this.externalGroups = externalGroups;
+	}
+
+	public boolean isGuest()
+	{
+		return guest;
+	}
+
+	public void setGuest(boolean guest)
+	{
+		this.guest = guest;
+	}
+
+	public boolean isSystemUser()
+	{
+		return systemUser;
+	}
+
+	public void setSystemUser(boolean systemUser)
+	{
+		this.systemUser = systemUser;
 	}
 
 }

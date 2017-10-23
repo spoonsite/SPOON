@@ -211,12 +211,8 @@ public class UserProfileResource
 	@Path("/currentuser")
 	public Response getCurrentUser()
 	{
-		UserProfileView userProfileView = null;
-
 		UserContext userContext = SecurityUtil.getUserContext();
-		if (userContext != null) {
-			userProfileView = UserProfileView.toView(userContext);
-		}
+		UserProfileView userProfileView = UserProfileView.toView(userContext);
 		return sendSingleEntityResponse(userProfileView);
 	}
 

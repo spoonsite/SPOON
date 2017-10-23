@@ -46,6 +46,7 @@ public class TaskFuture
 	private AsyncTaskCallback callback;
 	private Map<String, Object> taskData = new HashMap<>();
 	private Date expireDts;
+	private boolean systemUser;
 
 	public TaskFuture()
 	{
@@ -189,14 +190,16 @@ public class TaskFuture
 	{
 		this.allowMultiple = allowMultiple;
 	}
-	
-	public boolean isQueueable() {
-		
+
+	public boolean isQueueable()
+	{
+
 		return this.queueable;
 	}
-	
-	public void setQueueable(boolean queueable) {
-		
+
+	public void setQueueable(boolean queueable)
+	{
+
 		this.queueable = queueable;
 	}
 
@@ -258,6 +261,16 @@ public class TaskFuture
 	public void setDetails(String details)
 	{
 		this.details = details;
+	}
+
+	public boolean isSystemUser()
+	{
+		return systemUser;
+	}
+
+	public void setSystemUser(boolean systemUser)
+	{
+		this.systemUser = systemUser;
 	}
 
 }

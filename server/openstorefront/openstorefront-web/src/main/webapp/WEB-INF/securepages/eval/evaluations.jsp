@@ -430,7 +430,9 @@
 							type: 'up',
 							tooltip: 'popout preview',
 							handler: function(){
-								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('evaluationGrid').getSelection()[0].get('componentId'), "Preview");
+								var changeRequestComponentId = Ext.getCmp('evaluationGrid').getSelection()[0].get('componentId');
+								var evalId = Ext.getCmp('evaluationGrid').getSelection()[0].get('evaluationId');
+								window.open('view.jsp?fullPage=true&id=' + changeRequestComponentId + '&evalId=' + evalId, "Preview");
 							}
 						}
 					],
@@ -486,7 +488,7 @@
 
 				var actionPreviewComponent = function(componentId, evalId){
 					previewComponentWin.show();
-					previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
 				};
 				
 			});

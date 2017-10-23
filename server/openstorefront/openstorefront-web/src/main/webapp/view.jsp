@@ -120,6 +120,7 @@
 			var componentId = '${param.id}';
 			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
+			var embedded = '${param.embedded}' !== '' ? true : false;
 			var hideSecurityBanner =  '${param.hideSecurityBanner}' !==  '' ? true : false;
 			
 			var relatedStore = Ext.create('Ext.data.Store', {
@@ -264,6 +265,7 @@
 								scale: 'large',
 								width: '58px',
 								margin: '0 10 0 0',
+								hidden: true,
 								handler: function(){
 									var watch = {
 											componentId: componentId,
@@ -328,6 +330,16 @@
 								hrefTarget: '_blank'
 							},
 							{
+								xtype: 'button',
+								iconCls: 'fa fa-2x fa-home',
+								tooltip: 'Home',
+								hidden: embedded,
+								scale: 'large',
+								margin: '0 10 0 0',
+								href: 'index.jsp',
+								hrefTarget: '_self'
+							},
+							{
 								xtype: 'button',								
 								id: 'ownerMenu',
 								hidden: true,
@@ -364,6 +376,7 @@
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
+								hidden: true,
 								menu: {
 									items: [										
 										{
@@ -409,7 +422,18 @@
 										}										
 									]
 								}
-							}							
+							},
+							{
+								xtype: 'button',
+								iconCls: 'fa fa-2x fa-sign-in',						
+								id: 'loginBtn',
+								tooltip: 'Sign In',
+								scale: 'large',
+								margin: '0 10 0 0',
+								hidden: true,
+								href: 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true'),
+								hrefTarget: '_self'
+							}						
 						]
 					}
 				],
@@ -424,6 +448,7 @@
 							{
 								xtype: 'panel',
 								layout: 'hbox',
+								id: 'addTagPanel',
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
@@ -536,10 +561,22 @@
 					contentPanel
 				]
 			});
-			
+			var setHeaderButtons = function(isAnonymousUser)
+			{
+				if(isAnonymousUser)
+				{
+					Ext.getCmp('loginBtn').setHidden(false);	
+					Ext.getCmp('addTagPanel').setHidden(true);					
+				}
+				else
+				{	
+					Ext.getCmp('nonOwnerMenu').setHidden(false);
+				}
+			}
 			var entry;
 			var componentTypeDetail;
-			var loadDetails = function(){
+			var loadDetails = function(user){
+				setHeaderButtons(user.isAnonymousUser);
 				if (componentId) {
 					headerPanel.setLoading(true);
 					contentPanel.setLoading(true);
@@ -562,8 +599,8 @@
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
 							}, 1000);
-														
-							if (entry.createUser === '${user}'){
+							
+							if(!user.isAnonymousUser && entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
 								Ext.getCmp('ownerMenu').setHidden(false);								
 							}
@@ -638,18 +675,16 @@
 									
 								}
 							});
-							
-							
-							
-														
-							
+						},
+						failure: function(response, opts) {
+							window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
 						}
 					});
 				}
 			};
 			
 			var currentWatch;			
-			var loadWatches = function(){
+			var loadWatches = function(user){
 				Ext.Ajax.request({
 					url: 'api/v1/resource/userprofiles/' + '${user}' + '/watches',
 					success: function(response, opts) {
@@ -662,13 +697,25 @@
 						if (currentWatch) {
 							Ext.getCmp('watchBtn').setHidden(true);
 							Ext.getCmp('watchRemoveBtn').setHidden(false);							
+						} else {
+							Ext.getCmp('watchBtn').setHidden(false);
 						}
-
-						loadDetails();
+							
+						loadDetails(user);
 					}
 				});
 			};
-			loadWatches();
+			CoreService.userservice.getCurrentUser().then(function(user)
+			{
+				if(!user.isAnonymousUser)
+				{
+					loadWatches(user);
+				}
+				else
+				{
+					loadDetails(user);
+				}
+			});
 			
 			
 			var processTags = function(tagList){

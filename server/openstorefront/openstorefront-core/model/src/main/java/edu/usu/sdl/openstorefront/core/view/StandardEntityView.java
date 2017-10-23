@@ -21,7 +21,12 @@ import edu.usu.sdl.openstorefront.core.entity.DataSensitivity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.helper.StringUtil;
 
 /**
  *
@@ -36,6 +41,7 @@ public abstract class StandardEntityView
 	private String securityMarkingStyle;
 	private String dataSensitivity;
 	private String dataSensitivityDescription;
+	private Map<String, String> dataSensitivityDescriptionMap = new HashMap<>();
 
 	public StandardEntityView()
 	{
@@ -66,10 +72,12 @@ public abstract class StandardEntityView
 						securityMarkingRank = marking.getSortOrder();
 						securityMarkingStyle = marking.getHighlightStyle();
 					}
+					dataSensitivity = entity.getDataSensitivity();
+					dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);
+					if (!StringUtil.isBlank(dataSensitivity) && !dataSensitivityDescriptionMap.containsKey(dataSensitivity)) {
+						dataSensitivityDescriptionMap.put(dataSensitivity, dataSensitivityDescription);
+					}
 				}
-				
-				dataSensitivity = entity.getDataSensitivity();
-				dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);				
 			}
 		}
 	}
@@ -99,10 +107,12 @@ public abstract class StandardEntityView
 						securityMarkingRank = marking.getSortOrder();
 						securityMarkingStyle = marking.getHighlightStyle();
 					}
+					dataSensitivity = entity.getDataSensitivity();
+					dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);
+					if (!StringUtil.isBlank(dataSensitivity) && !dataSensitivityDescriptionMap.containsKey(dataSensitivity)) {
+						dataSensitivityDescriptionMap.put(dataSensitivity, dataSensitivityDescription);
+					}
 				}
-				
-				dataSensitivity = entity.getDataSensitivity();
-				dataSensitivityDescription = TranslateUtil.translate(DataSensitivity.class, dataSensitivity);				
 			}
 		}
 	}
@@ -167,4 +177,66 @@ public abstract class StandardEntityView
 		this.dataSensitivityDescription = dataSensitivityDescription;
 	}
 
+	/**
+	 * creates a CSV of each of the data sensitivities of the given components
+	 * in a Collection View such as ComponentDetailView
+	 *
+	 * @return comma separated list of sensitivity values
+	 */
+	protected String getDataSensitivityList()
+	{
+		return StringUtils.join(this.dataSensitivityDescriptionMap.keySet(), ",");
+	}
+
+	/**
+	 * adds the values values in the provided dataSensitivity string to the
+	 * DataSensitivityDescriptionMap with the value as the map key and an empty
+	 * string a the map value. if the key exists no change is made to the map
+	 *
+	 * @param dataSensitivity comma separated list of sensitivity values
+	 */
+	protected void setDataSensitivityDescriptionMapFromDataSensitivityString(String dataSensitivity)
+	{
+		if (!StringUtil.isBlank(dataSensitivity)) {
+			Arrays.asList(dataSensitivity.split(",")).forEach((item) -> {
+				if (!this.dataSensitivityDescriptionMap.containsKey(item)) {
+					this.dataSensitivityDescriptionMap.put(item.trim(), "");
+				}
+			});
+		}
+	}
+
+	/**
+	 * creates a string of each of the data sensitivities and their descriptions
+	 * of the given components in a Collection View such as ComponentDetailView
+	 *
+	 * @return A string containing data sensitivity the values in the format
+	 * "key1:value1,key2:value2,..."
+	 */
+	protected String getDataSensitivityDescriptionMapAsString()
+	{
+		StringBuilder result = new StringBuilder();
+		this.dataSensitivityDescriptionMap.forEach((k, v) -> {
+			result.append(",").append(k).append(":").append(v);
+		});
+		return result.toString();
+	}
+
+	/**
+	 * populates the DataSensitivityDescriptionMap with the values provided
+	 *
+	 * @param dataSensitivityDescription A string containing data sensitivity
+	 * the values in the format "key1:value1,key2:value2,..."
+	 */
+	protected void setDataSensitivityDescriptionMapFromString(String dataSensitivityDescription)
+	{
+		if (!StringUtil.isBlank(dataSensitivityDescription)) {
+			Arrays.asList(dataSensitivityDescription.split(",")).forEach((mapItem) -> {
+				String[] data = mapItem.split(":");
+				if (data.length == 2) {
+					this.dataSensitivityDescriptionMap.put(data[0].trim(), data[1].trim());
+				}
+			});
+		}
+	}
 }

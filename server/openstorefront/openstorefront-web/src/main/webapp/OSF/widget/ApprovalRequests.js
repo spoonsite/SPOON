@@ -202,7 +202,7 @@ Ext.define('OSF.widget.ApprovalRequests', {
 									]
 								});
 								previewComponentWin.show();
-								previewContents.load('view.jsp?id=' + componentId +'&fullPage=true');
+								previewContents.load('view.jsp?id=' + componentId +'&fullPage=true&embedded=true');
 							}
 						}
 					]

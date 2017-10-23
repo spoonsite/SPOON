@@ -392,7 +392,7 @@
 						]
 					});					
 					entryViewWindow.show();
-					frame.load('view.jsp?fullPage=true&id=' + componentId);
+					frame.load('view.jsp?fullPage=true&embedded=true&id=' + componentId);
 				};
 				
 				var actionRefreshQuestions = function() {

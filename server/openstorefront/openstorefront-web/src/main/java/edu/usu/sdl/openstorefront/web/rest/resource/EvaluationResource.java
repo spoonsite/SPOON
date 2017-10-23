@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -736,6 +737,16 @@ public class EvaluationResource
 			contentSectionAll.getSection().setEntityId(evaluationId);
 
 			service.getContentSectionService().saveAll(contentSectionAll);
+
+			//reload sections to get updated changes from DB
+			ContentSection dbSection = new ContentSection();
+			dbSection.setContentSectionId(sectionId);
+
+			ContentSubSection contentSubSectionExample = new ContentSubSection();
+			contentSubSectionExample.setContentSectionId(sectionId);
+
+			contentSectionAll.setSection(dbSection.find());
+			contentSectionAll.setSubsections(contentSubSectionExample.findByExample());
 			return Response.ok(contentSectionAll).build();
 		} else {
 			return sendSingleEntityResponse(contentSection);
