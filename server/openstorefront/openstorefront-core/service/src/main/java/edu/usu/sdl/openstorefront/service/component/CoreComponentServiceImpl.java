@@ -665,7 +665,7 @@ public class CoreComponentServiceImpl
 							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
 							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
-							componentMedia.setHideInDisplay(false);
+							componentMedia.setHideInDisplay(true);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
 								//stripe generated part of name
 								String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);

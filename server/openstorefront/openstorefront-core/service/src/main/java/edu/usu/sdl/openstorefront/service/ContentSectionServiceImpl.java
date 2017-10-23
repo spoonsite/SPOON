@@ -16,16 +16,21 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +38,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  *
@@ -57,6 +66,7 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(contentSectionAll);
 		Objects.requireNonNull(contentSectionAll.getSection(), "Content Section is required");
 
+		contentSectionAll.getSection().setContent(parseTemporaryMedia(contentSectionAll.getSection().getContentSectionId(), contentSectionAll.getSection().getContent()));
 		ContentSection contentSection = contentSectionAll.getSection().save();
 
 		ContentSubSection contentSubSectionExample = new ContentSubSection();
@@ -68,16 +78,103 @@ public class ContentSectionServiceImpl
 		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
 			if (subSection.getSubSectionId() != null && subSectionMap.containsKey(subSection.getSubSectionId())) {
 				ContentSubSection existing = subSectionMap.get(subSection.getSubSectionId()).get(0);
+				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				existing.updateFields(subSection);
 				persistenceService.persist(existing);
 			} else {
 				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				subSection.populateBaseCreateFields();
 				persistenceService.persist(subSection);
 			}
 		}
 
 		return contentSection.getContentSectionId();
+	}
+
+	/**
+	 * Convert inline-referenced temporary media to section-specific media
+	 *
+	 * @param sectionId Id of the content section
+	 * @param content html content to check
+	 * @return updated html content that reflects the changed urls
+	 */
+	private String parseTemporaryMedia(String sectionId, String content)
+	{
+		Document descriptionDoc = Jsoup.parse(content);
+
+		Elements media = descriptionDoc.select("[src]");
+
+		// Map <temporaryId, componentMediaId>
+		Map<String, String> processedConversions = new HashMap<>();
+		for (org.jsoup.nodes.Element mediaItem : media) {
+			String url = mediaItem.attr("src");
+			if (url.contains("Media.action?TemporaryMedia")) {
+				// This src url contains temporary media -- we should convert it.
+				String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
+				tempMediaId = StringProcessor.urlDecode(tempMediaId);
+
+				TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
+				if (existingTemporaryMedia != null) {
+					// Check map if we've already processed this temporary media, otherwise, do conversion
+					ContentSectionMedia contentSectionMedia;
+					if (processedConversions.containsKey(tempMediaId)) {
+						contentSectionMedia = persistenceService.findById(ContentSectionMedia.class, processedConversions.get(tempMediaId));
+					} else {
+						contentSectionMedia = new ContentSectionMedia();
+						contentSectionMedia.setActiveStatus(Component.ACTIVE_STATUS);
+						contentSectionMedia.setContentSectionId(sectionId);
+						contentSectionMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+						contentSectionMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+						contentSectionMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
+						contentSectionMedia.setMimeType(existingTemporaryMedia.getMimeType());
+						contentSectionMedia.setPrivateMedia(Boolean.FALSE);
+						if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
+							//stripe generated part of name
+							String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);
+							contentSectionMedia.setCaption(nameParts[0]);
+						}
+
+						// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
+						String mediaTypeCode;
+						String mimeType = existingTemporaryMedia.getMimeType();
+						if (mimeType.contains("image")) {
+							mediaTypeCode = "IMG";
+						} else if (mimeType.contains("video")) {
+							mediaTypeCode = "VID";
+						} else if (mimeType.contains("audio")) {
+							mediaTypeCode = "AUD";
+						} else {
+							mediaTypeCode = "OTH";
+						}
+
+						contentSectionMedia.setMediaTypeCode(mediaTypeCode);
+
+						try {
+							Path path = existingTemporaryMedia.pathToMedia();
+							InputStream in = new FileInputStream(path.toFile());
+							contentSectionMedia.setContentSectionMediaId(persistenceService.generateId());
+							contentSectionMedia.populateBaseCreateFields();
+							contentSectionMedia.setFileName(contentSectionMedia.getContentSectionMediaId());
+							Files.copy(in, contentSectionMedia.pathToMedia());
+							persistenceService.persist(contentSectionMedia);
+							persistenceService.commit();
+							processedConversions.put(tempMediaId, contentSectionMedia.getContentSectionMediaId());
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Failed to convert temporary media to section media", ex);
+						}
+					}
+					// Replace converted url
+					String replaceUrl = "SectionMedia&mediaId=".concat(contentSectionMedia.getContentSectionMediaId());
+					String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
+					LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
+					mediaItem.attr("src", newUrl);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find existing temporary media for temporaryID: {0}", tempMediaId));
+				}
+			}
+		}
+		return descriptionDoc.toString();
 	}
 
 	@Override
