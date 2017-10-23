@@ -25,11 +25,11 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 public class ComponentTypeInit
 		extends ApplyOnceInit
 {
-	
+
 	public ComponentTypeInit()
 	{
 		super("Component-Type");
-	}	
+	}
 
 	@Override
 	protected String internalApply()
@@ -42,19 +42,17 @@ public class ComponentTypeInit
 		componentType.setDescription("Main entry representing a DI2E Component");
 		componentType.setAllowOnSubmission(true);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
-		componentType.setDataEntryContacts(Boolean.TRUE);		
+		componentType.setDataEntryContacts(Boolean.TRUE);
 		componentType.setDataEntryEvaluationInformation(Boolean.TRUE);
-		componentType.setDataEntryMedia(Boolean.TRUE);		
+		componentType.setDataEntryMedia(Boolean.TRUE);
 		componentType.setDataEntryRelationships(Boolean.TRUE);
 		componentType.setDataEntryResources(Boolean.TRUE);
 		componentType.setDataEntryReviews(Boolean.TRUE);
 		componentType.setDataEntryQuestions(Boolean.TRUE);
-		
+
 		//Skip
 		//componentType.setDataEntryDependencies(Boolean.TRUE);
 		//componentType.setDataEntryMetadata(Boolean.TRUE);
-		
-
 		service.getComponentService().saveComponentType(componentType);
 
 		componentType = new ComponentType();
@@ -71,6 +69,12 @@ public class ComponentTypeInit
 
 		service.getComponentService().saveComponentType(componentType);
 		return "Added defaults";
+	}
+
+	@Override
+	public int getPriority()
+	{
+		return 5;
 	}
 
 }

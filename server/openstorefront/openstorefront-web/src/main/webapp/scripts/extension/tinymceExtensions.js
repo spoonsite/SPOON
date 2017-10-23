@@ -163,7 +163,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					flex: 1,
 					autoSizeColumn: false,
 					renderer: function (value, metaData, record) {
-						var url = '<a style="text-decoration: none" href="/openstorefront/view.jsp?id=';
+						var url = '<a style="text-decoration: none" href="/openstorefront/view.jsp?fullPage=true&id=';
 						url += record.getData().componentId;
 						url += '">';
 						url += '<span class="search-tools-column-orange-text">' + value + '</span></a>';

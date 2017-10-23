@@ -46,7 +46,7 @@
 						resultElm.scrollIntoView(container, null, true, true);						
 					}, 1000);					
 					
-					SearchPage.detailContent.load('view.jsp?id=' + componentId);
+					SearchPage.detailContent.load('view.jsp?embedded=true&id=' + componentId);
 					SearchPage.currentLoadedComponent = componentId;
 				}
 			},

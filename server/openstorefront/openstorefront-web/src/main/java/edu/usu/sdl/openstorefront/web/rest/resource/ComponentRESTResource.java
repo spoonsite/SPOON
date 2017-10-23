@@ -884,12 +884,11 @@ public class ComponentRESTResource
 			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
 		ComponentPrintView componentPrint = null;
-		ComponentDetailView componentDetail = null;
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+
 		if (type.equals("print")) {
-			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
-			componentPrint = ComponentPrintView.toView(temp);
-		} else {
-			componentDetail = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(componentDetail);
+			componentDetail = null;
 		}
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
@@ -3261,6 +3260,7 @@ public class ComponentRESTResource
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
 		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
+		componentReview.setDataSensitivity(review.getDataSensitivity());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
