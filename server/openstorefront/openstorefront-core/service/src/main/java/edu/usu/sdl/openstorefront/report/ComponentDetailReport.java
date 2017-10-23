@@ -55,16 +55,21 @@ import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportModel;
-import edu.usu.sdl.openstorefront.report.model.UsageReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
+import freemarker.core.ParseException;
 import freemarker.template.*;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,13 +90,6 @@ public class ComponentDetailReport
 
 	private static final Logger LOG = Logger.getLogger(ComponentDetailReport.class.getName());
 
-	private List<Component> components;
-	private Map<String, List<ComponentMetadata>> metaDataMap = new HashMap<>();
-	private Map<String, Map<String, List<ComponentAttribute>>> codeToComponent = new HashMap<>();
-	private Map<String, List<ComponentContact>> contactMap = new HashMap<>();
-	private Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
-	private final Map root = new HashMap();
-
 	public ComponentDetailReport(Report report)
 	{
 		super(report);
@@ -105,6 +103,7 @@ public class ComponentDetailReport
 		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		List<ComponentAttribute> allCodes = componentAttributeExample.findByExample();
 
+		Map<String, Map<String, List<ComponentAttribute>>> codeToComponent = new HashMap<>();
 		allCodes.forEach(attribute -> {
 			if (codeToComponent.containsKey(attribute.getComponentId())) {
 				if (codeToComponent.get(attribute.getComponentId()).containsKey(attribute.getComponentAttributePk().getAttributeType())) {
@@ -123,19 +122,15 @@ public class ComponentDetailReport
 			}
 		});
 
-		//Grab all metadata
-		ComponentMetadata metadata = new ComponentMetadata();
-		metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
-		List<ComponentMetadata> allMetadata = metadata.findByExample();
-		metaDataMap = allMetadata.stream().collect(Collectors.groupingBy(ComponentMetadata::getComponentId));
-
 		//Contacts
+		Map<String, List<ComponentContact>> contactMap = new HashMap<>();
 		ComponentContact componentContact = new ComponentContact();
 		componentContact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 		List<ComponentContact> allContacts = componentContact.findByExample();
 		contactMap = allContacts.stream().collect(Collectors.groupingBy(ComponentContact::getComponentId));
 
 		//Resources
+		Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
 		ComponentResource componentResource = new ComponentResource();
 		componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		List<ComponentResource> allResources = componentResource.findByExample();
@@ -145,7 +140,7 @@ public class ComponentDetailReport
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		components = componentExample.findByExample();
+		List<Component> components = componentExample.findByExample();
 		components = filterEngine.filter(components);
 
 		if (!report.dataIdSet().isEmpty()) {
@@ -155,6 +150,21 @@ public class ComponentDetailReport
 
 		ComponentDetailReportModel reportModel = new ComponentDetailReportModel();
 		reportModel.setTitle("Entry Details Report");
+
+		for (Component component : components) {
+			ComponentDetailReportLineModel lineModel = new ComponentDetailReportLineModel();
+			lineModel.setComponent(component);
+
+			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
+			contacts = filterEngine.filter(contacts);
+			lineModel.setContacts(contacts);
+
+			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
+			resources = filterEngine.filter(resources);
+			lineModel.setResources(resources);
+
+			lineModel.setAttributes(codeToComponent.get(component.getComponentId()));
+		}
 
 		return reportModel;
 	}
@@ -776,12 +786,32 @@ public class ComponentDetailReport
 
 		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
 		writerMap.put(viewCSV, (generator, reportModel) -> {
-			writeCSV(generator, (UsageReportModel) reportModel);
+			writeCSV(generator, (ComponentDetailReportModel) reportModel);
+		});
+
+		viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.HTML);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeHTML(generator, (ComponentDetailReportModel) reportModel);
+		});
+
+		viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.PDF);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writePDF(generator, (ComponentDetailReportModel) reportModel);
 		});
 
 		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
 		writerMap.put(emailCSV, (generator, reportModel) -> {
-			writeCSV(generator, (UsageReportModel) reportModel);
+			writeCSV(generator, (ComponentDetailReportModel) reportModel);
+		});
+
+		viewCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.HTML);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeHTML(generator, (ComponentDetailReportModel) reportModel);
+		});
+
+		viewCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.PDF);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writePDF(generator, (ComponentDetailReportModel) reportModel);
 		});
 
 		return writerMap;
@@ -805,21 +835,217 @@ public class ComponentDetailReport
 	{
 		List<ReportFormat> formats = new ArrayList<>();
 
+		List<String> formatCodes = Arrays.asList(
+				ReportFormat.CSV,
+				ReportFormat.HTML,
+				ReportFormat.PDF
+		);
+
 		switch (reportTransmissionType) {
 			case ReportTransmissionType.VIEW:
-				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
-				formats.add(format);
-				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
-				formats.add(format);
-
-				break;
-
 			case ReportTransmissionType.EMAIL:
-				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
-				formats.add(format);
+				for (String code : formatCodes) {
+					ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, code);
+					formats.add(format);
+				}
 				break;
 		}
 
 		return formats;
 	}
+
+	private void writeCSV(BaseGenerator generator, ComponentDetailReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		//write header
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		cvsGenerator.addLine("");
+
+		cvsGenerator.addLine(
+				"Entry Name",
+				"Entry Organization",
+				"Entry Description"
+		);
+
+		for (ComponentDetailReportLineModel lineModel : reportModel.getData()) {
+
+			cvsGenerator.addLine(
+					lineModel.getComponent().getName(),
+					lineModel.getComponent().getOrganization(),
+					StringProcessor.stripHtml(lineModel.getComponent().getDescription())
+			);
+
+			Map<String, List<ComponentAttribute>> attributeMap = lineModel.getAttributes();
+			if (attributeMap != null) {
+				cvsGenerator.addLine("Vitals");
+
+				Map<String, String> typeDescriptionMap = new HashMap<>();
+				for (String type : attributeMap.keySet()) {
+					String typeLabel = service.getAttributeService().findType(type).getDescription();
+					typeDescriptionMap.put(typeLabel, type);
+				}
+
+				List<String> attributeTypeList = new ArrayList<>(typeDescriptionMap.keySet());
+				attributeTypeList.sort(null);
+
+				for (String typeLabel : attributeTypeList) {
+					String type = typeDescriptionMap.get(typeLabel);
+					List<ComponentAttribute> attributes = attributeMap.get(type);
+
+					if (attributes != null) {
+						if (attributes.size() == 1) {
+							ComponentAttributePk attributePk = attributes.get(0).getComponentAttributePk();
+							AttributeCodePk attributeCodePk = new AttributeCodePk();
+
+							attributeCodePk.setAttributeCode(attributePk.getAttributeCode());
+							attributeCodePk.setAttributeType(attributePk.getAttributeType());
+							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+							String attributeLabel;
+							if (attributeCode != null) {
+								String securityMarking = "";
+								if (getBranding().getAllowSecurityMarkingsFlg()
+										&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
+									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+								}
+								attributeLabel = securityMarking + attributeCode.getLabel();
+							} else {
+								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+							}
+							cvsGenerator.addLine(
+									"",
+									typeLabel,
+									attributeLabel
+							);
+						} else {
+							cvsGenerator.addLine(
+									"",
+									typeLabel
+							);
+							for (ComponentAttribute componentAttribute : attributes) {
+								AttributeCodePk attributeCodePk = new AttributeCodePk();
+
+								attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
+								attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+								AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+								String attributeLabel;
+								if (attributeCode != null) {
+									String securityMarking = "";
+									if (getBranding().getAllowSecurityMarkingsFlg()
+											&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
+										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+									}
+									attributeLabel = securityMarking + attributeCode.getLabel();
+								} else {
+									attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+								}
+
+								cvsGenerator.addLine(
+										"",
+										"",
+										attributeLabel
+								);
+							}
+						}
+					}
+				}
+			}
+
+			if (lineModel.getContacts() != null) {
+				cvsGenerator.addLine("Contacts");
+				for (ComponentContact contact : lineModel.getContacts()) {
+
+					String securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(contact.getSecurityMarkingType())) {
+						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
+					}
+
+					Contact contactFull = contact.fullContact();
+					cvsGenerator.addLine(
+							"",
+							TranslateUtil.translate(ContactType.class, contact.getContactType()),
+							securityMarking + contactFull.getFirstName(),
+							contactFull.getLastName(),
+							contactFull.getOrganization(),
+							contactFull.getEmail(),
+							contactFull.getPhone()
+					);
+				}
+			}
+
+			if (lineModel.getResources() != null) {
+
+				cvsGenerator.addLine("Resources");
+				for (ComponentResource resource : lineModel.getResources()) {
+
+					String securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg()
+							&& StringUtils.isNotBlank(resource.getSecurityMarkingType())) {
+						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
+					}
+
+					ComponentResourceView view = ComponentResourceView.toView(resource);
+
+					cvsGenerator.addLine(
+							"",
+							TranslateUtil.translate(ResourceType.class, view.getResourceType()),
+							view.getDescription(),
+							securityMarking + view.getLink()
+					);
+				}
+			}
+
+			cvsGenerator.addLine("");
+		}
+
+	}
+
+	private void writeHTML(BaseGenerator generator, ComponentDetailReportModel reportModel)
+	{
+		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
+
+		String renderedTemplate = createHtml(reportModel);
+		htmlGenerator.addLine(renderedTemplate);
+	}
+
+	private void writePDF(BaseGenerator generator, ComponentDetailReportModel reportModel)
+	{
+		HtmlToPdfGenerator pdfGenerator = (HtmlToPdfGenerator) generator;
+		String renderedTemplate = createHtml(reportModel);
+		pdfGenerator.savePdfDocument(renderedTemplate);
+	}
+
+	private String createHtml(ComponentDetailReportModel reportModel)
+	{
+		String renderedTemplate = null;
+		try {
+			Configuration templateConfig = ReportManager.getTemplateConfig();
+
+			//	Generate the report template
+			Template template = templateConfig.getTemplate("detailReport.ftl");
+			Writer writer = new StringWriter();
+			template.process(root, writer);
+			renderedTemplate = writer.toString();
+
+		} catch (MalformedTemplateNameException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		} catch (ParseException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return renderedTemplate;
+	}
+
+	@Override
+	public String reportSummmary(BaseReportModel reportModel)
+	{
+		StringBuilder summary = new StringBuilder();
+
+		//summary
+		//list entries in report
+		return summary.toString();
+	}
+
 }

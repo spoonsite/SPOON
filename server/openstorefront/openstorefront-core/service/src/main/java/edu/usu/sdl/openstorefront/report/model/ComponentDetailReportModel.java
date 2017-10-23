@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,14 +26,21 @@ public class ComponentDetailReportModel
 		extends BaseReportModel
 {
 
+	private List<ComponentDetailReportLineModel> data = new ArrayList<>();
+
 	public ComponentDetailReportModel()
 	{
 	}
 
 	@Override
-	public <T> List<T> getData()
+	public List<ComponentDetailReportLineModel> getData()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return data;
+	}
+
+	public void setData(List<ComponentDetailReportLineModel> data)
+	{
+		this.data = data;
 	}
 
 }
