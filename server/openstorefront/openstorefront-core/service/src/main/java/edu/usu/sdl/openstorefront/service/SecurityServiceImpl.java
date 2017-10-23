@@ -930,6 +930,7 @@ public class SecurityServiceImpl
 		systemRole.setDescription("The group is only for the System");
 
 		List<SecurityPermission> permissions = getLookupService().findLookup(SecurityPermission.class);
+		systemRole.setPermissions(new ArrayList<>());
 		for (SecurityPermission permission : permissions) {
 			SecurityRolePermission rolePermission = new SecurityRolePermission();
 			rolePermission.setPermission(permission.getCode());
@@ -937,6 +938,7 @@ public class SecurityServiceImpl
 		}
 
 		List<DataSource> dataSources = getLookupService().findLookup(DataSource.class);
+		systemRole.setDataSecurity(new ArrayList<>());
 		for (DataSource dataSource : dataSources) {
 			SecurityRoleData securityRoleData = new SecurityRoleData();
 			securityRoleData.setDataSource(dataSource.getCode());
