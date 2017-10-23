@@ -78,13 +78,13 @@ public class ContentSectionServiceImpl
 		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
 			if (subSection.getSubSectionId() != null && subSectionMap.containsKey(subSection.getSubSectionId())) {
 				ContentSubSection existing = subSectionMap.get(subSection.getSubSectionId()).get(0);
+				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				existing.updateFields(subSection);
-				existing.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				persistenceService.persist(existing);
 			} else {
 				subSection.setContentSectionId(contentSection.getContentSectionId());
-				subSection.populateBaseCreateFields();
 				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
+				subSection.populateBaseCreateFields();
 				persistenceService.persist(subSection);
 			}
 		}

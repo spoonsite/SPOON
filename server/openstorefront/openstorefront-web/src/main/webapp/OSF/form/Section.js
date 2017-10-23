@@ -20,9 +20,9 @@ Ext.define('OSF.form.Section', {
 	extend: 'Ext.form.Panel',
 	alias: 'osf.form.Section',
 
-	layout: 'fit',	
+	layout: 'fit',
 	listeners: {
-		close: function(panel, opts) {
+		close: function (panel, opts) {
 			if (panel.saveTask) {
 				panel.saveTask.cancel();
 			}
@@ -35,29 +35,29 @@ Ext.define('OSF.form.Section', {
 			dock: 'top',
 			boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides whole section when published"></i>',
 			listeners: {
-				change: function(field, newValue, oldValue, opts) {	
+				change: function (field, newValue, oldValue, opts) {
 					var sectionForm = field.up('panel');
 					if (!sectionForm.initialSet) {
-						sectionForm.markUnsaved();	
+						sectionForm.markUnsaved();
 					}
 				}
-			}												
+			}
 		},
 		{
 			xtype: 'toolbar',
 			itemId: 'tools',
 			dock: 'bottom',
-			items: [		
+			items: [
 				{
 					xtype: 'combo',
 					itemId: 'workflowStatus',
-					name: 'workflowStatus',										
-					labelAlign: 'right',												
+					name: 'workflowStatus',
+					labelAlign: 'right',
 					margin: '0 0 5 0',
 					editable: false,
 					typeAhead: false,
 					width: 400,
-					fieldLabel: 'Status <span class="field-required" />',	
+					fieldLabel: 'Status <span class="field-required" />',
 					displayField: 'description',
 					valueField: 'code',
 					labelSeparator: '',
@@ -67,7 +67,7 @@ Ext.define('OSF.form.Section', {
 							type: 'ajax',
 							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 						}
-					}		
+					}
 				},
 				{
 					xtype: 'tbfill'
@@ -76,23 +76,23 @@ Ext.define('OSF.form.Section', {
 					text: 'Save',
 					itemId: 'saveBtn',
 					iconCls: 'fa fa-lg fa-save icon-button-color-save',
-					handler: function() {										
+					handler: function () {
 						var sectionForm = this.up('panel');
 						sectionForm.saveData();
 					}
-				},				
+				},
 				{
 					xtype: 'tbtext',
 					itemId: 'status'
-				},				
+				},
 				{
-					text: '&nbsp;Manage Media',					
+					text: '&nbsp;Manage Media',
 					iconCls: 'fa fa-lg fa-image icon-button-color-default',
 					scale: 'small',
-					handler: function(){
+					handler: function () {
 						var sectionForm = this.up('form');
-						
-						var mediaWindow = Ext.create('Ext.window.Window',{
+
+						var mediaWindow = Ext.create('Ext.window.Window', {
 							title: 'Section Media',
 							iconCls: 'fa fa-lg fa-image',
 							modal: true,
@@ -109,7 +109,7 @@ Ext.define('OSF.form.Section', {
 										fields: [
 											{
 												name: 'updateDts',
-												type:	'date',
+												type: 'date',
 												dateFormat: 'c'
 											}
 										],
@@ -119,28 +119,28 @@ Ext.define('OSF.form.Section', {
 										}
 									},
 									columnLines: true,
-									columns: [		
-										{ text: 'Media Type', dataIndex: 'mediaTypeDescription', width: 150, hidden: true },
-										{ text: 'Original Name', dataIndex: 'originalName', flex: 1, minWidth: 200 },
-										{ text: 'Mime Type', dataIndex: 'mimeType', width: 150, hidden: true },
-										{ text: 'Private', dataIndex: 'privateMedia', width: 150 },
-										{ text: 'Caption', dataIndex: 'caption', flex: 2, minWidth: 200 },		
-										{ text: 'Preview', dataIndex: 'caption', width: 200, 
-											renderer: function(value, meta, record) {
+									columns: [
+										{text: 'Media Type', dataIndex: 'mediaTypeDescription', width: 150, hidden: true},
+										{text: 'Original Name', dataIndex: 'originalName', flex: 1, minWidth: 200},
+										{text: 'Mime Type', dataIndex: 'mimeType', width: 150, hidden: true},
+										{text: 'Private', dataIndex: 'privateMedia', width: 150},
+										{text: 'Caption', dataIndex: 'caption', flex: 2, minWidth: 200},
+										{text: 'Preview', dataIndex: 'caption', width: 200,
+											renderer: function (value, meta, record) {
 												if (record.get('mediaTypeCode') === 'VID') {
 													return '<video width="170" height="120" controls><source src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '#t=10" onloadedmetadata="this.currentTime=10;" type="' + (record.get('mimeType') ? record.get('mimeType') : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
 												} else if (record.get('mediaTypeCode') === 'IMG') {
-													return '<img src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '" alt="' + value + '" width="100%" />';													
+													return '<img src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '" alt="' + value + '" width="100%" />';
 												} else {
 													return '<a href="' + record.get('link') + '">Download</a>';
 												}
 											}
-										},		
-										{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true },
-										{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s', hidden: true }
+										},
+										{text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true},
+										{text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s', hidden: true}
 									],
 									listeners: {
-										selectionChange: function(selModel, selected, opts) {
+										selectionChange: function (selModel, selected, opts) {
 											var grid = mediaWindow.down('grid');
 											var tools = grid.getComponent('tools');
 											if (selected.length > 0) {
@@ -163,10 +163,10 @@ Ext.define('OSF.form.Section', {
 													itemId: 'edit',
 													iconCls: 'fa fa-lg fa-edit icon-button-color-edit icon-lg-vertical-correction',
 													disabled: true,
-													handler: function() {
+													handler: function () {
 														var grid = this.up('grid');
 														var record = grid.getSelectionModel().getSelection()[0];
-														
+
 														//set private and caption
 														var editWindow = Ext.create('Ext.window.Window', {
 															title: 'Edit Media',
@@ -180,12 +180,12 @@ Ext.define('OSF.form.Section', {
 																{
 																	xtype: 'form',
 																	scrollable: 'true',
-																	layout: 'anchor',																	
+																	layout: 'anchor',
 																	bodyStyle: 'padding: 10px;',
 																	items: [
 																		Ext.create('OSF.component.StandardComboBox', {
-																			name: 'mediaTypeCode',									
-																			allowBlank: false,								
+																			name: 'mediaTypeCode',
+																			allowBlank: false,
 																			margin: '0 0 5 0',
 																			editable: false,
 																			typeAhead: false,
@@ -203,7 +203,7 @@ Ext.define('OSF.form.Section', {
 																			width: '100%',
 																			maxLength: 255,
 																			labelSeparator: ''
-																		}, 
+																		},
 																		{
 																			xtype: 'checkbox',
 																			boxLabel: 'Private',
@@ -218,28 +218,28 @@ Ext.define('OSF.form.Section', {
 																				{
 																					text: 'Save',
 																					iconCls: 'fa fa-lg fa-save icon-button-color-save',
-																					handler: function() {
+																					handler: function () {
 																						var form = this.up('form');
 																						var formData = form.getValues();
-																						
+
 																						record.set('caption', formData.caption);
 																						record.set('privateMedia', formData.privateMedia);
 																						record.set('mediaTypeCode', formData.mediaTypeCode);
-																						
+
 																						var recordData = record.data;
 																						delete recordData.type;
-																						
+
 																						CoreUtil.submitForm({
 																							url: 'api/v1/resource/evaluations/' +
-																								sectionForm.evaluationId +
-																								'/sections/' +
-																								sectionForm.sectionId + 
-																								'/media/' +
-																								record.get('contentSectionMediaId'),
+																									sectionForm.evaluationId +
+																									'/sections/' +
+																									sectionForm.sectionId +
+																									'/media/' +
+																									record.get('contentSectionMediaId'),
 																							method: 'PUT',
 																							form: form,
-																							data: recordData,																							
-																							success: function(form, action) {
+																							data: recordData,
+																							success: function (form, action) {
 																								grid.getStore().load();
 																								editWindow.close();
 																							}
@@ -248,13 +248,13 @@ Ext.define('OSF.form.Section', {
 																				},
 																				{
 																					xtype: 'tbfill'
-																				}, 
+																				},
 																				{
 																					text: 'Cancel',
 																					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																					handler: function() {
+																					handler: function () {
 																						editWindow.close();
-																					}																					
+																					}
 																				}
 																			]
 																		}
@@ -272,9 +272,9 @@ Ext.define('OSF.form.Section', {
 												{
 													text: 'Upload',
 													iconCls: 'fa fa-lg fa-upload icon-button-color-default',
-													handler: function() {
+													handler: function () {
 														var grid = this.up('grid');
-														
+
 														var uploadWin = Ext.create('Ext.window.Window', {
 															title: 'Upload Media',
 															iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
@@ -287,12 +287,12 @@ Ext.define('OSF.form.Section', {
 																{
 																	xtype: 'form',
 																	scrollable: 'true',
-																	layout: 'anchor',																	
+																	layout: 'anchor',
 																	bodyStyle: 'padding: 10px;',
 																	items: [
 																		Ext.create('OSF.component.StandardComboBox', {
-																			name: 'mediaTypeCode',									
-																			allowBlank: false,								
+																			name: 'mediaTypeCode',
+																			allowBlank: false,
 																			margin: '0 0 5 0',
 																			editable: false,
 																			typeAhead: false,
@@ -310,7 +310,7 @@ Ext.define('OSF.form.Section', {
 																			width: '100%',
 																			maxLength: 255,
 																			labelSeparator: ''
-																		}, 
+																		},
 																		{
 																			xtype: 'checkbox',
 																			boxLabel: 'Private',
@@ -333,11 +333,11 @@ Ext.define('OSF.form.Section', {
 																				{
 																					text: 'Save',
 																					iconCls: 'fa fa-lg fa-save icon-button-color-save',
-																					handler: function() {
+																					handler: function () {
 																						var uploadForm = this.up('form');
 																						var formData = uploadForm.getValues();
-																						
-																						uploadForm.setLoading("Uploading Media...");																							
+
+																						uploadForm.setLoading("Uploading Media...");
 																						uploadForm.submit({
 																							url: 'Media.action?UploadSectionMedia',
 																							method: 'POST',
@@ -347,44 +347,44 @@ Ext.define('OSF.form.Section', {
 																								'contentSectionMedia.caption': formData.caption,
 																								'contentSectionMedia.privateMedia': formData.privateMedia ? formData.privateMedia : false
 																							},
-																							callback: function() {
+																							callback: function () {
 																								uploadForm.setLoading(false);
 																							},
-																							success: function(form, action) {	
+																							success: function (form, action) {
 																								uploadForm.setLoading(false);
 																								grid.getStore().load();
 																								uploadWin.close();
 																							},
-																							failure: function(form, action){																								
+																							failure: function (form, action) {
 																								uploadForm.setLoading(false);
 																								Ext.Msg.show({
 																									title: 'Upload Failed',
 																									msg: 'The file upload was not successful.',
 																									icon: Ext.Msg.ERROR,
 																									buttons: Ext.Msg.OK
-																								});	
+																								});
 																							}
 																						});
 																					}
 																				},
 																				{
 																					xtype: 'tbfill'
-																				}, 
+																				},
 																				{
 																					text: 'Cancel',
 																					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																					handler: function() {
+																					handler: function () {
 																						uploadWin.close();
-																					}																					
+																					}
 																				}
-																			]																			
+																			]
 																		}
 																	]
 																}
 															]
 														});
 														uploadWin.show();
-														
+
 													}
 												},
 												{
@@ -395,37 +395,37 @@ Ext.define('OSF.form.Section', {
 													itemId: 'delete',
 													iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 													disabled: true,
-													handler: function() {
+													handler: function () {
 														var grid = this.up('grid');
 														var record = grid.getSelectionModel().getSelection()[0];
 														Ext.Msg.show({
-															title:'Delete Media?',
+															title: 'Delete Media?',
 															message: 'Are you sure you want delete selected media?',
 															buttons: Ext.Msg.YESNO,
 															icon: Ext.Msg.QUESTION,
-															fn: function(btn) {
+															fn: function (btn) {
 																if (btn === 'yes') {
-																	
+
 																	mediaWindow.setLoading('Deleting Media...');
 																	Ext.Ajax.request({
 																		url: 'api/v1/resource/evaluations/' +
-																		sectionForm.evaluationId +
-																		'/sections/' +
-																		sectionForm.sectionId + 
-																		'/media/' +
-																		record.get('contentSectionMediaId'),
+																				sectionForm.evaluationId +
+																				'/sections/' +
+																				sectionForm.sectionId +
+																				'/media/' +
+																				record.get('contentSectionMediaId'),
 																		method: 'DELETE',
-																		callback: function() {
+																		callback: function () {
 																			mediaWindow.setLoading(false);
 																		},
-																		success: function(response, opts) {
+																		success: function (response, opts) {
 																			grid.getStore().load();
 																		}
 																	});
-																	
+
 																}
 															}
-														});	
+														});
 													}
 												}
 											]
@@ -445,7 +445,7 @@ Ext.define('OSF.form.Section', {
 											text: 'Close',
 											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-lg-vertical-correction',
 											scale: 'medium',
-											handler: function() {
+											handler: function () {
 												mediaWindow.close();
 											}
 										},
@@ -457,38 +457,38 @@ Ext.define('OSF.form.Section', {
 							]
 						});
 						mediaWindow.show();
-						
+
 					}
 				}
 			]
 		}
 	],
-	initComponent: function () {		
+	initComponent: function () {
 		this.callParent();
-		
+
 		var sectionForm = this;
-		
-		sectionForm.saveTask = new Ext.util.DelayedTask(function(){
+
+		sectionForm.saveTask = new Ext.util.DelayedTask(function () {
 			sectionForm.saveData();
-		});	
-		
+		});
+
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
-	
+	loadData: function (evaluationId, componentId, data, opts) {
+
 		var sectionForm = this;
-		
+
 		sectionForm.setLoading(true);
 		Ext.Ajax.request({
 			url: 'api/v1/resource/evaluations/' + evaluationId + '/sections/' + data.section.contentSectionId + '/details',
-			callback: function() {
+			callback: function () {
 				sectionForm.setLoading(false);
 			},
-			success: function(response, opts) {
+			success: function (response, opts) {
 				var originalData = Ext.decode(response.responseText);
-				
+
 				sectionForm.originalData = originalData;
-				
-				var record = Ext.create('Ext.data.Model', {			
+
+				var record = Ext.create('Ext.data.Model', {
 				});
 				record.set(originalData.section);
 				sectionForm.initialSet = true;
@@ -496,14 +496,14 @@ Ext.define('OSF.form.Section', {
 				sectionForm.initialSet = false;
 				sectionForm.evaluationId = evaluationId;
 				sectionForm.sectionId = data.section.contentSectionId;
-				
-				var mediaSelectionUrl = function() {
+
+				var mediaSelectionUrl = function () {
 					return 'api/v1/resource/evaluations/' + evaluationId + '/sections/' + data.section.contentSectionId + '/media';
-				};		
-				
-				var mediaUploadHandler = function(uploadForm, mediaInsertWindow){
+				};
+
+				var mediaUploadHandler = function (uploadForm, mediaInsertWindow) {
 					//check name 
-					uploadForm.setLoading("Uploading Media...");	
+					uploadForm.setLoading("Uploading Media...");
 					var formData = uploadForm.getValues();
 					uploadForm.submit({
 						url: 'Media.action?UploadSectionMedia',
@@ -514,95 +514,97 @@ Ext.define('OSF.form.Section', {
 							'contentSectionMedia.caption': formData['temporaryMedia.name'],
 							'contentSectionMedia.privateMedia': false
 						},
-						callback: function() {
+						callback: function () {
 							uploadForm.setLoading(false);
 						},
-						success: function(form, action) {		
+						success: function (form, action) {
 							uploadForm.setLoading(false);
 							var sectionMediaResponse = Ext.decode(action.response.responseText);
 							var sectionMedia = sectionMediaResponse.data[0];
-							
-							var link = "Media.action?SectionMedia&mediaId=" + sectionMedia.contentSectionMediaId;							
-							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, sectionMedia.mimeType);													
+
+							var link = "Media.action?SectionMedia&mediaId=" + sectionMedia.contentSectionMediaId;
+							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, sectionMedia.mimeType);
 							mediaInsertWindow.close();
 						},
-						failure: function(form, action){
+						failure: function (form, action) {
 							uploadForm.setLoading(false);
 							Ext.Msg.show({
 								title: 'Upload Failed',
 								msg: 'The file upload was not successful.',
 								icon: Ext.Msg.ERROR,
 								buttons: Ext.Msg.OK
-							});	
+							});
 						}
 					});
 				};
-			
+
 				if (originalData.subsections && originalData.subsections.length > 0) {
 					var contentPanel = Ext.create('Ext.panel.Panel', {
 						scrollable: true,
 						itemId: 'contentPanel',
 						bodyStyle: 'padding: 20px;'
 					});
-					var items = [];			
-					if (!originalData.section.noContent) {			
+					var items = [];
+					if (!originalData.section.noContent) {
 						var border = '0';
 						if (originalData.section.privateSection) {
 							border = '1px dash steelblue';
 						}
 
 						items.push({
-							xtype: 'tinymce_textarea',											
+							xtype: 'tinymce_textarea',
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
-							style: { border: border },					
-							name: 'content',			
+							style: {border: border},
+							name: 'content',
+							itemId: 'content',
 							maxLength: 1048576,
 							height: 400,
 							width: '100%',
 							value: originalData.section.content,
 							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
-									mediaSelectionUrl: mediaSelectionUrl,
-									mediaUploadHandler: mediaUploadHandler
+								mediaSelectionUrl: mediaSelectionUrl,
+								mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {									
-									fn: function(field, newValue, oldValue) {
+								change: {
+									fn: function (field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
 								}
 							}
-						});				
+						});
 					}
 
 					//create sub-sections
-					Ext.Array.each(originalData.subsections, function(subsection){
+					Ext.Array.each(originalData.subsections, function (subsection) {
 
 						var extraTitleInfo = '';
 						var border = '1px';
 						if (subsection.hideTitle) {
 							extraTitleInfo = " (Hidden on View)";
 						}
-						if (subsection.privateSection) {							
+						if (subsection.privateSection) {
 							border = '1px dash steelblue';
 						}
 
-						var subItems = [];	
+						var subItems = [];
 						if (!subsection.noContent) {
 							subItems.push({
-								xtype: 'tinymce_textarea',												
+								xtype: 'tinymce_textarea',
 								fieldStyle: 'font-family: Courier New; font-size: 12px;',
-								style: { border: border },								
-								name: 'subcontent',			
+								style: {border: border},
+								name: 'subcontent',
+								itemId: 'subcontent-' + subsection.subSectionId,
 								maxLength: 1048576,
 								height: 400,
 								value: subsection.content,
 								tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
-										mediaSelectionUrl: mediaSelectionUrl,
-										mediaUploadHandler: mediaUploadHandler
+									mediaSelectionUrl: mediaSelectionUrl,
+									mediaUploadHandler: mediaUploadHandler
 								}),
 								listeners: {
-									change: {										
-										fn: function(field, newValue, oldValue) {
+									change: {
+										fn: function (field, newValue, oldValue) {
 											sectionForm.markUnsaved();
 										}
 									}
@@ -610,7 +612,7 @@ Ext.define('OSF.form.Section', {
 							});
 						}
 
-						Ext.Array.each(subsection.customFields, function(field) {
+						Ext.Array.each(subsection.customFields, function (field) {
 
 							if (field.fieldType === 'TEXT') {
 								subItems.push({
@@ -621,8 +623,8 @@ Ext.define('OSF.form.Section', {
 									value: field.value,
 									maxLength: 1048576,
 									listeners: {
-										change: {											
-											fn: function(field, newValue, oldValue) {
+										change: {
+											fn: function (field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
 										}
@@ -630,33 +632,33 @@ Ext.define('OSF.form.Section', {
 								});
 							} else if (field.fieldType === 'RICHTEXT') {
 								subItems.push(
-									{
-										xtype: 'panel',						
-										html: '<b>' + field.label + '</b>'
-									},
-									{
-										xtype: 'tinymce_textarea',											
-										fieldStyle: 'font-family: Courier New; font-size: 12px;',
-										style: { border: border },					
-										name: 'customValue',			
-										customField: field,
-										maxLength: 1048576,
-										height: 250,
-										width: '100%',
-										value: field.value,
-										tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
+										{
+											xtype: 'panel',
+											html: '<b>' + field.label + '</b>'
+										},
+										{
+											xtype: 'tinymce_textarea',
+											fieldStyle: 'font-family: Courier New; font-size: 12px;',
+											style: {border: border},
+											name: 'customValue',
+											customField: field,
+											maxLength: 1048576,
+											height: 250,
+											width: '100%',
+											value: field.value,
+											tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
 												mediaSelectionUrl: mediaSelectionUrl,
 												mediaUploadHandler: mediaUploadHandler
-										}),
-										listeners: {
-											change: {												
-												fn: function(field, newValue, oldValue) {
-													sectionForm.markUnsaved();
+											}),
+											listeners: {
+												change: {
+													fn: function (field, newValue, oldValue) {
+														sectionForm.markUnsaved();
+													}
 												}
 											}
-										}								
-									}
-								);						
+										}
+								);
 							} else if (field.fieldType === 'COMBO') {
 								subItems.push({
 									xtype: 'combobox',
@@ -673,13 +675,13 @@ Ext.define('OSF.form.Section', {
 										data: field.validValues
 									},
 									listeners: {
-										change: {											
-											fn: function(field, newValue, oldValue) {
+										change: {
+											fn: function (field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
 										}
-									}								
-								});						
+									}
+								});
 							} else if (field.fieldType === 'COMBOEDIT') {
 								subItems.push({
 									xtype: 'combobox',
@@ -688,20 +690,20 @@ Ext.define('OSF.form.Section', {
 									fieldLabel: field.label,
 									value: field.value,
 									editable: true,
-									typeAhead: true,							
+									typeAhead: true,
 									displayField: 'value',
 									valueField: 'value',
 									store: {
 										data: field.validValues
 									},
 									listeners: {
-										change: {											
-											fn: function(field, newValue, oldValue) {
+										change: {
+											fn: function (field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
 										}
-									}								
-								});							
+									}
+								});
 							} else if (field.fieldType === 'CHECKBOX') {
 								subItems.push({
 									xtype: 'checkbox',
@@ -710,12 +712,12 @@ Ext.define('OSF.form.Section', {
 									boxLabel: field.label,
 									value: field.value,
 									listeners: {
-										change: {											
-											fn: function(field, newValue, oldValue) {
+										change: {
+											fn: function (field, newValue, oldValue) {
 												sectionForm.markUnsaved();
 											}
 										}
-									}								
+									}
 								});
 							}
 
@@ -726,6 +728,7 @@ Ext.define('OSF.form.Section', {
 							border: border,
 							subsection: subsection,
 							layout: 'anchor',
+							itemId: 'subSectionPanel',
 							defaults: {
 								labelAlign: 'right',
 								width: '100%'
@@ -738,12 +741,12 @@ Ext.define('OSF.form.Section', {
 									value: subsection.privateSection,
 									boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides this section when published"></i>',
 									listeners: {
-										change: function(field, newValue, oldValue, opts) {	
+										change: function (field, newValue, oldValue, opts) {
 											subsection.privateSection = newValue;
 											sectionForm.markUnsaved();
 										}
-									}												
-								}								
+									}
+								}
 							],
 							items: subItems
 						});
@@ -757,28 +760,29 @@ Ext.define('OSF.form.Section', {
 						sectionForm.update("There's no content allowed for this section. Check template.");
 					} else {
 						sectionForm.add({
-							xtype: 'tinymce_textarea',											
+							xtype: 'tinymce_textarea',
 							fieldStyle: 'font-family: Courier New; font-size: 12px;',
-							style: { border: '0' },					
-							name: 'content',			
+							style: {border: '0'},
+							name: 'content',
+							itemId: 'content',
 							maxLength: 1048576,
 							value: originalData.section.content,
 							tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
-									mediaSelectionUrl: mediaSelectionUrl,
-									mediaUploadHandler: mediaUploadHandler
+								mediaSelectionUrl: mediaSelectionUrl,
+								mediaUploadHandler: mediaUploadHandler
 							}),
 							listeners: {
-								change: {									
-									fn: function(field, newValue, oldValue) {
+								change: {
+									fn: function (field, newValue, oldValue) {
 										sectionForm.markUnsaved();
 									}
 								}
-							}	
+							}
 						});
 					}
 				}
 
-				if (originalData.section.privateSection) {		
+				if (originalData.section.privateSection) {
 					sectionForm.initialSet = true;
 					sectionForm.getForm().setValues({
 						privateSection: originalData.section.privateSection
@@ -786,33 +790,33 @@ Ext.define('OSF.form.Section', {
 					sectionForm.initialSet = false;
 				}
 
-				sectionForm.getComponent('tools').getComponent('workflowStatus').on('change', function(field, newValue, oldValue){
+				sectionForm.getComponent('tools').getComponent('workflowStatus').on('change', function (field, newValue, oldValue) {
 					sectionForm.saveData();
 				}, undefined, {
 					buffer: 1000
-				});				
+				});
 			}
 		});
-		
+
 		opts.commentPanel.loadComments(evaluationId, data.section.title, componentId);
 	},
 	markUnsaved: function () {
 		var sectionForm = this;
-		sectionForm.saveTask.delay(1000*60*3);	
-		
+		sectionForm.saveTask.delay(1000 * 60 * 3);
+
 		if (!sectionForm.unsavedChanges) {
-			sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');		
+			sectionForm.getComponent('tools').getComponent('status').setText('<span style="color: red; font-weight: bold;">Unsaved Changes</span>');
 			sectionForm.unsavedChanges = true;
 		}
-	},		
-	saveData: function(){
-		
+	},
+	saveData: function () {
+
 		var sectionForm = this;
-		
+
 		if (sectionForm.firstLoadDone) {
-		
+
 			var data = sectionForm.getValues();
-			
+
 			sectionForm.originalData.section.privateSection = data.privateSection ? data.privateSection : false;
 			sectionForm.originalData.section.content = data.content;
 			sectionForm.originalData.section.workflowStatus = data.workflowStatus;
@@ -824,12 +828,12 @@ Ext.define('OSF.form.Section', {
 
 			var contentPanel = sectionForm.getComponent('contentPanel');
 			if (contentPanel) {
-				Ext.Array.each(contentPanel.items.items, function(subsectionPanel){
-					
+				Ext.Array.each(contentPanel.items.items, function (subsectionPanel) {
+
 					if (subsectionPanel.subsection) {
 						//find the matching original data
 						var originalSubSection = null;
-						Ext.Array.each(sectionForm.originalData.subsections, function(subSection){
+						Ext.Array.each(sectionForm.originalData.subsections, function (subSection) {
 							if (subsectionPanel.subsection.subSectionId === subSection.subSectionId) {
 								originalSubSection = subSection;
 							}
@@ -838,56 +842,61 @@ Ext.define('OSF.form.Section', {
 						//update data
 						if (originalSubSection) {
 
-							Ext.Array.each(subsectionPanel.items.items, function(formItem){
+							Ext.Array.each(subsectionPanel.items.items, function (formItem) {
 								if (formItem.name === 'subcontent') {
-									originalSubSection.content = formItem.getValue();									
+									originalSubSection.content = formItem.getValue();
 								}
 								if (formItem.name === 'subPrivateSection') {
 									originalSubSection.privateSection = formItem.getValue();
 								}
-							});	
+							});
 
 
-							if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {						
+							if (originalSubSection.customFields && originalSubSection.customFields.length > 0) {
 								var customFieldIndex = 0;
-								Ext.Array.each(subsectionPanel.items.items, function(formItem){
+								Ext.Array.each(subsectionPanel.items.items, function (formItem) {
 									if (formItem.name !== 'subcontent') {
 										originalSubSection.customFields[customFieldIndex].value = formItem.getValue();
 										customFieldIndex++;
-									}								
-								});						
-							}						
+									}
+								});
+							}
 							contentSectionAll.subsections.push(originalSubSection);
-						}	
+						}
 					}
-						
+
 				});
 			}
 			sectionForm.saveTask.cancel();
-			
+
 			sectionForm.getComponent('tools').getComponent('saveBtn').setLoading("Saving...");
 			CoreUtil.submitForm({
-				url: 'api/v1/resource/evaluations/' + 
-					sectionForm.evaluationId
-					+ '/sections/' + 
-					sectionForm.originalData.section.contentSectionId,
+				url: 'api/v1/resource/evaluations/' +
+						sectionForm.evaluationId
+						+ '/sections/' +
+						sectionForm.originalData.section.contentSectionId,
 				method: 'PUT',
 				data: contentSectionAll,
 				form: sectionForm,
 				noLoadmask: true,
-				callback: function(form, action) {
+				callback: function (form, action) {
 					sectionForm.getComponent('tools').getComponent('saveBtn').setLoading(false);
 				},
-				success: function(action, opts) {			
+				success: function (action, opts) {
 					Ext.toast('Saved Section');
-					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));					
+					var newContentSectionAll = Ext.decode(action.responseText);
+					sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
+					Ext.Array.each(newContentSectionAll.subsections, function(subsection){
+						sectionForm.getComponent('contentPanel').getComponent('subSectionPanel').getComponent('subcontent-'+subsection.subSectionId).setValue(subsection.content);
+					});
+					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
 					sectionForm.unsavedChanges = false;
-				}	
-			});			
-		
+				}
+			});
+
 		} else {
 			sectionForm.firstLoadDone = true;
 		}
 	}
-	
+
 });
