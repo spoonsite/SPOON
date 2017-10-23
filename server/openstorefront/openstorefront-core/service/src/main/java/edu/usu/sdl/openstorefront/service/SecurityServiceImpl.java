@@ -27,10 +27,14 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.DataSensitivity;
+import edu.usu.sdl.openstorefront.core.entity.DataSource;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRoleData;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRolePermission;
 import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
@@ -887,6 +891,70 @@ public class SecurityServiceImpl
 		email.addRecipient("", emailAddress, Message.RecipientType.TO);
 		MailManager.send(email, true);
 
+	}
+
+	@Override
+	public UserContext getGuestContext()
+	{
+		UserContext userContext = new UserContext();
+		userContext.setGuest(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName("Guest");
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.ANONYMOUS_USER);
+
+		SecurityRole guestRole = new SecurityRole();
+		guestRole.setRoleName(SecurityRole.GUEST_GROUP);
+		guestRole = guestRole.find();
+		if (guestRole != null) {
+			userContext.getRoles().add(guestRole);
+		}
+		return userContext;
+	}
+
+	@Override
+	public UserContext getSystemContext()
+	{
+		UserContext userContext = new UserContext();
+		userContext.setSystemUser(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName(OpenStorefrontConstant.SYSTEM_USER);
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.SYSTEM_USER);
+
+		//puedo role with all permission and access to all data
+		SecurityRole systemRole = new SecurityRole();
+		systemRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		systemRole.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		systemRole.setRoleName("SPECIAL SYSTEM GROUP");
+		systemRole.setDescription("The group is only for the System");
+
+		List<SecurityPermission> permissions = getLookupService().findLookup(SecurityPermission.class);
+		systemRole.setPermissions(new ArrayList<>());
+		for (SecurityPermission permission : permissions) {
+			SecurityRolePermission rolePermission = new SecurityRolePermission();
+			rolePermission.setPermission(permission.getCode());
+			systemRole.getPermissions().add(rolePermission);
+		}
+
+		List<DataSource> dataSources = getLookupService().findLookup(DataSource.class);
+		systemRole.setDataSecurity(new ArrayList<>());
+		for (DataSource dataSource : dataSources) {
+			SecurityRoleData securityRoleData = new SecurityRoleData();
+			securityRoleData.setDataSource(dataSource.getCode());
+			systemRole.getDataSecurity().add(securityRoleData);
+		}
+
+		List<DataSensitivity> dataSensitivities = getLookupService().findLookup(DataSensitivity.class);
+		for (DataSensitivity dataSensitivity : dataSensitivities) {
+			SecurityRoleData securityRoleData = new SecurityRoleData();
+			securityRoleData.setDataSensitivity(dataSensitivity.getCode());
+			systemRole.getDataSecurity().add(securityRoleData);
+		}
+
+		userContext.getRoles().add(systemRole);
+
+		return userContext;
 	}
 
 }

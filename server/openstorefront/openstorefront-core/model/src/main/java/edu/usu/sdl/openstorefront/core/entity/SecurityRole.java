@@ -38,13 +38,14 @@ public class SecurityRole
 {
 
 	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";
+	public static final String GUEST_GROUP = "GUEST-GROUP";
 
 	public static final String FIELD_ROLENAME = "roleName";
 
 	@PK(generated = false)
 	@NotNull
 	@ConsumeField
-	@APIDescription("Should match LDAP group if use external IDAM and should be unique")
+	@APIDescription("Should match LDAP group if using external IDAM and should be unique")
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String roleName;
 

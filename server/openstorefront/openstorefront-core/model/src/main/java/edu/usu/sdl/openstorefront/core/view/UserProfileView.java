@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -87,6 +88,9 @@ public class UserProfileView
 	@DataType(SecurityRole.class)
 	private List<SecurityRole> roles = new ArrayList<>();
 
+	@ConsumeField
+	private boolean isAnonymousUser;
+
 	public UserProfileView()
 	{
 	}
@@ -131,6 +135,7 @@ public class UserProfileView
 		view.setNotifyOfNew(profile.getNotifyOfNew());
 		view.setActiveStatus(profile.getActiveStatus());
 		view.setUserTypeDescription(TranslateUtil.translate(UserTypeCode.class, profile.getUserTypeCode()));
+		view.setIsAnonymousUser(profile.getUsername().equals(OpenStorefrontConstant.ANONYMOUS_USER));
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
@@ -338,6 +343,16 @@ public class UserProfileView
 	public void setPositionTitle(String positionTitle)
 	{
 		this.positionTitle = positionTitle;
+	}
+
+	private void setIsAnonymousUser(boolean isAnonymousUser)
+	{
+		this.isAnonymousUser = isAnonymousUser;
+	}
+
+	public boolean getIsAnonymousUser()
+	{
+		return isAnonymousUser;
 	}
 
 }

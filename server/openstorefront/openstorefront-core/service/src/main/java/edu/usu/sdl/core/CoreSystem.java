@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
@@ -96,6 +97,7 @@ public class CoreSystem
 	{
 		started.set(false);
 		systemStatus = "Starting application...";
+		SecurityUtil.initSystemUser();
 
 		managers.forEach(manager -> {
 			startupManager(manager);
@@ -107,10 +109,18 @@ public class CoreSystem
 		for (Object testObject : resolverUtil.getClasses()) {
 			Class testClass = (Class) testObject;
 			try {
+				List<ApplyOnceInit> initSetups = new ArrayList<>();
 				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
 					systemStatus = "Checking data init: " + testClass.getSimpleName();
-					((ApplyOnceInit) testClass.newInstance()).applyChanges();
+					initSetups.add((ApplyOnceInit) testClass.newInstance());
 				}
+				initSetups.sort((a, b) -> {
+					return new Integer(a.getPriority()).compareTo(b.getPriority());
+				});
+				for (ApplyOnceInit applyOnceInit : initSetups) {
+					applyOnceInit.applyChanges();
+				}
+
 			} catch (InstantiationException | IllegalAccessException ex) {
 				throw new OpenStorefrontRuntimeException(ex);
 			}

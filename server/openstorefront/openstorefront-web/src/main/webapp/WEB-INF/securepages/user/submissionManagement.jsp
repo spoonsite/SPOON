@@ -580,7 +580,7 @@
 				var actionPreviewComponent = function(){
 					previewComponentWin.show();
 					var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true');
+					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true&embedded=true');
 					previewCheckButtons();					
 				};
 				

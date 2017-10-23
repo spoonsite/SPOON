@@ -256,4 +256,19 @@ public interface SecurityService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void updateRoleGroup(String username, Set<String> groups);
 
+	/**
+	 * Use this for Guest accounts that should have a special role Guest
+	 *
+	 * @return
+	 */
+	UserContext getGuestContext();
+
+	/**
+	 * Use this for the System user which has all permissions and no restriction
+	 * and special role System
+	 *
+	 * @return
+	 */
+	UserContext getSystemContext();
+
 }

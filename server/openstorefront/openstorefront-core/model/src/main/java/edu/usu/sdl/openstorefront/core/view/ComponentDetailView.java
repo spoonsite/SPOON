@@ -685,4 +685,27 @@ public class ComponentDetailView
 		this.componentTypeIconUrl = componentTypeIconUrl;
 	}
 
+	@Override
+	public String getDataSensitivity()
+	{
+		return getDataSensitivityList();
+	}
+
+	@Override
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		setDataSensitivityDescriptionMapFromDataSensitivityString(dataSensitivity);
+	}
+
+	@Override
+	public String getDataSensitivityDescription()
+	{
+		return getDataSensitivityDescriptionMapAsString();
+	}
+
+	@Override
+	public void setDataSensitivityDescription(String dataSensitivityDescription)
+	{
+		setDataSensitivityDescriptionMapFromString(dataSensitivityDescription);
+	}
 }

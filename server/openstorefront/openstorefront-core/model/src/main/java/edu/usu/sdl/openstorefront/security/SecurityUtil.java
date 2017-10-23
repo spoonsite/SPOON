@@ -18,12 +18,14 @@ package edu.usu.sdl.openstorefront.security;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -47,6 +49,8 @@ public class SecurityUtil
 
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
+	private static final ThreadLocal<AtomicBoolean> systemUser = new ThreadLocal<>();
+
 	/**
 	 * Is the current request logged in
 	 *
@@ -66,23 +70,6 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Check for Guest or Anonymous user
-	 *
-	 * @return true if guest
-	 */
-	public static boolean isGuest()
-	{
-		boolean guest;
-		try {
-			guest = !SecurityUtils.getSubject().isRemembered();
-		} catch (Exception e) {
-			//ignore
-			guest = true;
-		}
-		return guest;
-	}
-
-	/**
 	 * Gets the current user logged in.
 	 *
 	 * @return the username
@@ -90,6 +77,9 @@ public class SecurityUtil
 	public static String getCurrentUserName()
 	{
 		String username = OpenStorefrontConstant.ANONYMOUS_USER;
+		if (isSystemUser()) {
+			username = OpenStorefrontConstant.SYSTEM_USER;
+		}
 		try {
 			Subject currentUser = SecurityUtils.getSubject();
 			if (currentUser.getPrincipal() != null) {
@@ -99,6 +89,28 @@ public class SecurityUtil
 			LOG.log(Level.FINE, "Determing Username.  No user is logged in.  This is likely an auto process.");
 		}
 		return username;
+	}
+
+	/**
+	 * Sets the current thread a running under the system user
+	 */
+	public static void initSystemUser()
+	{
+		systemUser.set(new AtomicBoolean(true));
+	}
+
+	/**
+	 * Check to see if this the system user
+	 *
+	 * @return
+	 */
+	public static boolean isSystemUser()
+	{
+		if (systemUser.get() == null) {
+			return false;
+		} else {
+			return systemUser.get().get();
+		}
 	}
 
 	/**
@@ -134,19 +146,41 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Find the current user context in the session
+	 * Find the current user context in the session. If the no user is no login
+	 * the guest user is returned unless the user is the system in which case
+	 * the system user is return
 	 *
 	 * @return context or null if not found
 	 */
 	public static UserContext getUserContext()
 	{
 		UserContext userContext = null;
-		try {
-			Subject currentUser = SecurityUtils.getSubject();
-			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
-		} catch (Exception e) {
-			LOG.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+		if (!isLoggedIn()) {
+			if (isSystemUser()) {
+				userContext = getSystemUserContext();
+			} else {
+				userContext = getGuestUserContext();
+			}
+		} else {
+			try {
+				Subject currentUser = SecurityUtils.getSubject();
+				userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+			}
 		}
+		return userContext;
+	}
+
+	private static UserContext getGuestUserContext()
+	{
+		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getGuestContext();
+		return userContext;
+	}
+
+	private static UserContext getSystemUserContext()
+	{
+		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getSystemContext();
 		return userContext;
 	}
 
