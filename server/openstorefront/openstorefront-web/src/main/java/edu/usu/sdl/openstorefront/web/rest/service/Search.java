@@ -301,7 +301,7 @@ public class Search
 			String data[] = {
 				view.getName(),
 				view.getOrganization(),
-				view.getDescription(),
+				StringProcessor.stripHtml(view.getDescription()),
 				sdf.format(view.getLastActivityDts()),
 				view.getComponentTypeDescription()
 			};
