@@ -17,10 +17,15 @@ package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import org.jsoup.helper.StringUtil;
 
 /**
  *
@@ -64,9 +69,22 @@ public class TagView
 	public static List<TagView> toView(List<ComponentTag> tags)
 	{
 		List<TagView> views = new ArrayList<>();
-		tags.forEach(tag -> {
-			views.add(toView(tag));
-		});
+		if (tags != null) {
+			UserContext userContext = SecurityUtil.getUserContext();
+
+			Set<String> acceptedDataSources = userContext.dataSources();
+			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+			tags.forEach(tag -> {
+				Component example = new Component();
+				example.setActiveStatus(Component.ACTIVE_STATUS);
+				example.setComponentId(tag.getComponentId());
+				example = example.find();
+				if ((StringUtil.isBlank(example.getDataSource()) || acceptedDataSources.contains(example.getDataSource()))
+						&& (StringUtil.isBlank(example.getDataSensitivity()) || acceptedDataSensitivity.contains(example.getDataSensitivity()))) {
+					views.add(toView(tag));
+				}
+			});
+		}
 		return views;
 	}
 

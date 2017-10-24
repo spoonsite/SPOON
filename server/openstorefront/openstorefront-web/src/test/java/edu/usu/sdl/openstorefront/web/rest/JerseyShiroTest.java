@@ -18,6 +18,9 @@
 package edu.usu.sdl.openstorefront.web.rest;
 
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.test.TestRealm;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -49,9 +52,34 @@ public abstract class JerseyShiroTest extends JerseyTest
 	private static final String USER = "TestUser";
 	private static final String PASS = "TestPass";
 	private static final String ROLE = "JerseyTest";
+	private UserContext userContext = null;
 	private boolean permissionsSet = false;
+	private boolean userContextSet = false;
 
 	protected abstract Class<?> getRestClass();
+	
+	/**
+	 * sets the userContext to be retrieved from the session
+	 * @param userContext user context to return
+	 */
+	protected void setUserContext(UserContext userContext)
+	{
+		if (userContextSet) {
+			throw new IllegalStateException("setUserContext should only be called once per test");
+		}
+		userContextSet = true;
+		this.userContext = userContext;
+		TestRealm.setUserContext(this.userContext);
+	}
+	
+	protected UserContext getUserContext()
+	{
+		if(!userContextSet)
+		{
+			createUserContext();
+		}
+		return this.userContext;
+	}
 
 	/**
 	 * Sets a single user with a set of specified set of Security Permissions.
@@ -67,6 +95,10 @@ public abstract class JerseyShiroTest extends JerseyTest
 			throw new IllegalStateException("setPermissions should only be called once per test");
 		}
 		permissionsSet = true;
+		if(!userContextSet)
+		{
+			createUserContext();
+		}
 		TestRealm.setupRoles(ROLE, permissions);
 		TestRealm.setLogin(USER, PASS, new HashSet<>(Arrays.asList(ROLE)));
 	}
@@ -157,6 +189,25 @@ public abstract class JerseyShiroTest extends JerseyTest
 	{
 		OsgiManager.cleanup();
 		OSFCacheManager.cleanUp();
+	}
+
+	private void createUserContext()
+	{
+		UserProfile userProfile = new UserProfile();
+		userProfile.setUsername(USER);
+		userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		userProfile.setFirstName("TEST");
+		userProfile.setLastName("USER");
+		UserContext context = new UserContext();
+		context.setAdmin(false);
+		context.setUserProfile(userProfile);
+		
+		SecurityRole role = new SecurityRole();
+		role.setActiveStatus(SecurityRole.ACTIVE_STATUS);
+		role.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		role.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		context.setRoles(Arrays.asList(role));
+		setUserContext(context);
 	}
 
 }
