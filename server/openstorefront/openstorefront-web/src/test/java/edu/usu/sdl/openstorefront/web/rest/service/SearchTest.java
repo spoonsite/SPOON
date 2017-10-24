@@ -46,7 +46,7 @@ import org.mockito.Mockito;
  *
  * @author kbair
  */
-public class SearchIT extends JerseyShiroTest
+public class SearchTest extends JerseyShiroTest
 {
 
 	@Override
