@@ -22,9 +22,9 @@ import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
  *
  * @author dshurtleff
  */
-public interface ReportWriter
+public interface ReportWriter<T extends BaseReportModel>
 {
 
-	public void writeReport(BaseGenerator generator, BaseReportModel reportModel);
+	public void writeReport(BaseGenerator generator, T reportModel);
 
 }

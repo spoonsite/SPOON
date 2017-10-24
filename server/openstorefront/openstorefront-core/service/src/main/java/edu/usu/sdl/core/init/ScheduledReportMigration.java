@@ -15,6 +15,13 @@
  */
 package edu.usu.sdl.core.init;
 
+import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionOption;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
+import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Convert remove in 2.6 This will convert the old scheduled reports to using
  * the new output modes
@@ -22,6 +29,53 @@ package edu.usu.sdl.core.init;
  * @author dshurtleff
  */
 public class ScheduledReportMigration
+		extends ApplyOnceInit
 {
+
+	public ScheduledReportMigration()
+	{
+		super("SREPORT-Migration-Init");
+	}
+
+	@Override
+	protected String internalApply()
+	{
+		//find all
+		ScheduledReport scheduledReport = new ScheduledReport();
+
+		List<ScheduledReport> reports = scheduledReport.findByExample();
+		for (ScheduledReport report : reports) {
+			List<ReportOutput> reportOutputs = new ArrayList<>();
+
+			//move formats
+			ReportOutput viewOutput = new ReportOutput();
+			viewOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
+			ReportTransmissionOption option = new ReportTransmissionOption();
+			option.setReportFormat(report.getReportFormat());
+			viewOutput.setReportTransmissionOption(option);
+			reportOutputs.add(viewOutput);
+
+			//emails
+			if (report.getEmailAddresses() != null) {
+				ReportOutput emailOutput = new ReportOutput();
+				emailOutput.setReportTransmissionType(ReportTransmissionType.EMAIL);
+				option = new ReportTransmissionOption();
+				option.setReportFormat(report.getReportFormat());
+				option.setEmailAddresses(report.getEmailAddresses());
+				emailOutput.setReportTransmissionOption(option);
+			}
+
+			report.setReportOutputs(reportOutputs);
+			service.getReportService().saveScheduledReport(scheduledReport);
+		}
+
+		return "Converted: " + reports.size();
+	}
+
+	@Override
+	public int getPriority()
+	{
+		return 30;
+	}
 
 }

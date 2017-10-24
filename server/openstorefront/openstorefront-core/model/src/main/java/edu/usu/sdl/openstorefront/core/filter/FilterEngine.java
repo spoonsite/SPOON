@@ -48,6 +48,12 @@ public class FilterEngine
 	private Service service;
 	private boolean forceFiltering;
 
+	public FilterEngine()
+	{
+		this.userContext = SecurityUtil.getUserContext();
+		this.service = ServiceProxyFactory.getServiceProxy();
+	}
+
 	public FilterEngine(UserContext userContext, Service service)
 	{
 		this.userContext = userContext;

@@ -121,11 +121,11 @@
 </head>
 <body>
 	<div>
-		<p>Component Details Report: ${reportDate!}</p>
-		<p>Entries (${reportSize!})</p>
+		<p>Component Details Report: ${createTime!}</p>
+		<p>Entries (${reportModel.data.size()})</p>
 	</div>
 	<hr />
-	<#list components as component>
+	<#list reportModel.data as component>
 	
 		<!--Organization Description-->
 		<#if reportOptions.getDisplayOrgData() == true>
@@ -134,10 +134,8 @@
 			<br>
 			<br>
 		</#if>
-		<div>
-			<#if allowSecurityMargkingsFlg == true>
-				${component.component.getSecurityMarkingType()!}
-			</#if>
+		<div>			
+			${component.component.getSecurityMarkingType()!}			
 		</div>
 			
 		<#if component.tags?has_content && reportOptions.getDisplayTags() == true>
@@ -157,20 +155,20 @@
 		</#if>
 		
 		<!--Vitals-->
-		<#if component.vitals?has_content && reportOptions.getDisplayVitals() == true>
+		<#if component.attributes?has_content && reportOptions.getDisplayVitals() == true>
 			<h2>Vitals</h2>
 			<table>
 				<tr>
 					<th>Vital</th>
 					<th>Value</th>
 				</tr>
-				<#list component.vitals as vitals>
+				<#list component.attributes as vital>
 					<tr>
 						<td>
-							<b>${vitals.typeLabel!}</b>
+							<b>${vital.typeLabel!}</b>
 						</td>
 						<td>
-							${vitals.attributeLabel!}
+							${vital.codeDescription!}
 						</td>
 					</tr>
 				</#list>
@@ -251,9 +249,9 @@
 				
 				<#list component.relationships as relationship>
 					<tr>
-						<td>${relationship.componentName!}</td>
-						<td><b>${relationship.type!}</b></td>
-						<td>${relationship.targetName!}</td>
+						<td>${relationship.ownerComponentName!}</td>
+						<td><b>${relationship.relationshipTypeDescription!}</b></td>
+						<td>${relationship.targetComponentName!}</td>
 					</tr>
 				</#list>
 			</table>
@@ -284,7 +282,7 @@
 						<td>
 							<#if review.pros?has_content>
 								<#list review.pros as pro>
-									<p>- ${pro.pro!}</p>
+									<p>- ${pro.text!}</p>
 								</#list>
 							</#if>
 						</td>
@@ -293,7 +291,7 @@
 						<td>
 							<#if review.cons?has_content>
 								<#list review.cons as con>
-									<p>- ${con.con!}</p>
+									<p>- ${con.text!}</p>
 								</#list>
 							</#if>
 						</td>
@@ -305,11 +303,11 @@
 		</#if>
 			
 		<!--Q/A-->
-		<#if component.QA?has_content && reportOptions.getDisplayQA() == true>
+		<#if component.questions?has_content && reportOptions.getDisplayQA() == true>
 			<h2>Questions & Answers</h2>
 			
 			<!--questions-->
-			<#list component.QA as qa>
+			<#list component.questions as qa>
 				<div>
 					<div>
 						<h3 class="qa-header">Q. </h3>${qa.question!}
@@ -342,7 +340,7 @@
 				<#if flag == true>
 			
 					<h2 class="eval-header">Evaluation</h2>
-					<#if eval.version?has_content>
+					<#if eval.evaluation.version?has_content>
 						<div class="eval-version">Version - ${eval.version!}</div>
 					</#if>
 						
@@ -351,34 +349,34 @@
 						<div class="evaluation-section">
 							
 							<!--Reusability Factors-->
-							<#if eval.scores?has_content>
+							<#if eval.checkListAll.scores()?has_content>
 								<h3 class="eval-header">Reusability Factors (5 = best)</h3>
-								<#assign scoreColumns = (eval.scores?size/10.0)?ceiling>
-								<#list eval.scores as scoreItem>
+								<#assign scoreColumns = (eval.checkListAll.scores()?size/10.0)?ceiling>
+								<#list eval.checkListAll.scores()?keys as sectionName>
 									<div class="detail-eval-item">
-										<span class="detail-eval-label">${scoreItem.factor!} </span>
-										<span class="detail-eval-score" data-qtip="${scoreItem.averageScore!}">
-											<#if scoreItem.score?is_number>
-												<#list 2..scoreItem.score?number + 1 as ii>
+										<span class="detail-eval-label">${sectionName!} </span>
+										<span class="detail-eval-score" data-qtip="${eval.checkListAll.scores()[sectionName]!}">
+											<#if eval.checkListAll.scores()[sectionName]?is_number>
+												<#list 2..eval.checkListAll.scores()[sectionName]?number + 1 as ii>
 													<i class="score-circle">&#1010${ii!};</i>
 												</#list>
 											<#else>
 												<b>N/A</b>
 											</#if>
 										</span>
-										<div class="score-average">Average: ${scoreItem.averageScore!}</div>
+										<div class="score-average">Average: ${eval.checkListAll.scores()[sectionName]!}</div>
 									</div>
 								</#list>
 							</#if>
 							
 							<!--Checklist summary-->
-							<#if eval.checklistSummary?has_content>
+							<#if eval.checkListAll.evaluationChecklist.summary?has_content>
 								<h3 class="eval-header">Checklist Summary</h3>
-								${eval.checklistSummary!}
+								${eval.checkListAll.evaluationChecklist.summary!}
 							</#if>
 
 							<!--Checklist recommendations-->
-							<#if eval.recommendations?has_content>
+							<#if eval.checkListAll.recommendations?has_content>
 								<h3 class="eval-header">Evaluation Recommendations</h3>
 								<table>
 									<tr>
@@ -386,9 +384,9 @@
 										<th>Recommendation</th>
 										<th>Reason</th>
 									</tr>
-									<#list eval.recommendations as rec>
+									<#list eval.checkListAll.recommendations as rec>
 										<tr>
-											<td style="width: 15%;">${rec.typeDescription!}</td>
+											<td style="width: 15%;">${rec.recommendationTypeDescription!}</td>
 											<td style="width: 39%;">${rec.recommendation!}</td>
 											<td style="width: 45%;">${rec.reason!}</td>
 										</tr>
@@ -402,17 +400,17 @@
 					<#if reportOptions.getDisplayEvalDetails() == true>
 						<div class="evaluation-section">
 							<!--Evaluation Sections-->
-							<#if eval.evaluationSections?has_content>
-								<#list eval.evaluationSections as section>
-									<#if section.isPrivate == false>
+							<#if eval.contentSections?has_content>
+								<#list eval.contentSections as sectionAll>
+									<#if sectionAll.section.isPrivate == false>
 										<h3 class="eval-header">${section.title!}</h3>
-										<#if section.hideContent == false>
-											${section.content!}
+										<#if sectionAll.section.hideContent == false>
+											${sectionAll.section.content!}
 										</#if>
 
 										<!--Sub Sections-->
-										<#if section.subSections?has_content>
-											<#list section.subSections as subSection>
+										<#if sectionAll.subSections?has_content>
+											<#list sectionAll.subSections as subSection>
 												<#if subSection.isPrivate == false>
 													<div class="evaluation-section">
 														<#if subSection.hideTitle == false>
@@ -430,7 +428,7 @@
 							</#if>
 							
 							<!--Checklist Details-->
-							<#if eval.checklistDetails?has_content>
+							<#if eval.checkListAll.responses?has_content>
 								<h3 class="eval-header">Evaluation Checklist Details</h3>
 								<table>
 									<tr>
@@ -440,7 +438,7 @@
 										<th style="width: 2.5%;">Score</th>
 										<th style="width: 45%;">Response</th>
 									</tr>
-									<#list eval.checklistDetails as detail>
+									<#list eval.checkListAll.responses as detail>
 										<tr>
 											<td><#if detail.qId?has_content>${detail.qId}</#if></td>
 											<td><#if detail.section?has_content>${detail.section}</#if></td>

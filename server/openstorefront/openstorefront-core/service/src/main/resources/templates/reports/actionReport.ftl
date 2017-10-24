@@ -92,19 +92,10 @@
 	</head>
 	<body>
 		<div>
-			<p>Action Report: ${reportDate}</p>
+			<p>Action Report: ${createTime}</p>
 			<hr></hr>
 			
-			<#if !pendingAdminEntries?has_content 
-				&& !pendingUserEntries?has_content
-				&& !changeRequests?has_content
-				&& !pendingReviews?has_content
-				&& !pendingQuestions?has_content
-				&& !questionsWithPendingResponses?has_content
-				&& !pendingFeedbackTickets?has_content
-				&& !pendingUsers?has_content
-				&& !entriesWithPendingEvaluations?has_content
-			>
+			<#if !outstandingItems()>
 				<h1>There are no administrative tasks that require attention.</h1>
 			<#else>
 				<!--Admin Entries-->
@@ -154,16 +145,16 @@
 					<h1 class="section-header">Pending Reviews</h1>
 					<#list pendingReviews as review>
 						<div class="section-indent section-indent-border">
-							<h2>${review.review.getTitle()}</h2>
+							<h2>${review.getTitle()}</h2>
 							<div class="section-user-data">
-								${review.review.getCreateUser()} - ${review.review.getCreateDts()?date}
+								${review.getCreateUser()} - ${review.getCreateDts()?date}
 							</div>
 							<div class="review-score-section">
 								<p>Entry: ${review.componentName}</p>
-								<p>Recommended: <b>${review.review.getRecommend()?string('Yes', 'No')}</b></p>
-								<p>Score: <#list 1..review.review.getRating() as ii> &#9733; </#list> (${review.review.getRating()})</p>
+								<p>Recommended: <b>${review.getRecommend()?string('Yes', 'No')}</b></p>
+								<p>Score: <#list 1..review.getRating() as ii> &#9733; </#list> (${review.getRating()})</p>
 							</div>
-							<p>${review.review.getComment()}</p>
+							<p>${review.getComment()}</p>
 						</div>
 					</#list>
 				</#if>
@@ -174,32 +165,29 @@
 					<#list pendingQuestions as question>
 						<div class="section-indent section-indent-border">
 							<div class="section-user-data">
-								${question.question.getCreateUser()} - ${question.question.getCreateDts()?date}
+								${question.getCreateUser()} - ${question.getCreateDts()?date}
 							</div>
 							<div class="review-score-section">
 								<p>Entry: <b>${question.componentName}</b></p>
 							</div>
-							<p>${question.question.getQuestion()}</p>
+							<p>${question.getQuestion()}</p>
 						</div>
 					</#list>
 				</#if>
 
 				<!--Question Responses-->
-				<#if questionsWithPendingResponses?has_content>
+				<#if pendingResponses?has_content>
 					<h1 class="section-header">Pending Question Responses</h1>
-					<#list questionsWithPendingResponses?keys as key>
+					<#list pendingResponses as response>
 						<div class="section-indent section-indent-border">
 							<div class="section-user-data">
-								<p><b>Entry:</b> ${entriesWithPendingResponses[key]}</p>
-								<p><b>In response to the question:</b> "${key}"</p>
+								<p><b>Entry:</b> ${response.componentName}</p>
+								<p><b>In response to the question:</b> "${response.questionText}"</p>
 							</div>
-							<h3>Pending Response(s):</h3>
-							<#list questionsWithPendingResponses[key] as response>
-								<div class="section-indent">
-									<h4 style="color: #848484;">${response.getCreateUser()} - ${response.getCreateDts()?date}</h4>
-									<p>${response.getResponse()}</p>
-								</div>
-							</#list>
+							<div class="section-indent">
+								<h4 style="color: #848484;">${response.getCreateUser()} - ${response.getCreateDts()?date}</h4>
+								<p>${response.getResponse()}</p>
+							</div>						
 						</div>
 					</#list>
 				</#if>
@@ -233,18 +221,18 @@
 				</#if>
 
 				<!--Evaluations-->
-				<#if entriesWithPendingEvaluations?has_content>
+				<#if pendingEvaluations?has_content>
 					<h1 class="section-header">Unpublished Evaluations</h1>
-					<#list entriesWithPendingEvaluations?keys as evalKey>
+					<#list pendingEvaluations as eval>
 						<div class="section-indent section-indent-border">
-							<h4>Entry: ${evalKey}</h4>
-							<#list entriesWithPendingEvaluations[evalKey] as evaluation>
-								<div class="section-indent">
-									<div>${evaluation.getCreateUser()} - ${evaluation.getCreateDts()?date}</div>
-									<div><b>Workflow Status</b>: ${evaluation.getWorkflowStatus()}</div>
-								</div>
-								<br />
-							</#list>
+							<h4>Entry: ${eval.componentName}</h4>
+							<div class="section-indent">
+								<div><b>Version</b>: ${eval.version}</div>
+								<div><b>Assigned User</b>: ${eval.assignedUser}</div>
+								<div><b>Assigned Group</b>: ${eval.assignedGroup}</div>
+								<div><b>Workflow Status</b>: ${eval.getWorkflowStatus()}</div>
+							</div>
+							<br />							
 						</div>
 					</#list>
 				</#if>

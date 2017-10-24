@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Embedded;
@@ -83,9 +85,11 @@ public class ScheduledReport
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
 	private String scheduleIntervalCron;
 
 	@ConsumeField
+	@Embedded
 	@DataType(ReportDataId.class)
 	@OneToMany(orphanRemoval = true)
 	private List<ReportDataId> componentIds;
@@ -115,6 +119,10 @@ public class ScheduledReport
 		this.setReportOption(scheduledReport.getReportOption());
 		this.setReportType(scheduledReport.getReportType());
 		this.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
+		this.setScheduleIntervalMinutes(scheduledReport.getScheduleIntervalMinutes());
+		this.setScheduleIntervalCron(scheduledReport.getScheduleIntervalCron());
+		this.setComponentIds(scheduledReport.getComponentIds());
+		this.setReportOutputs(scheduledReport.getReportOutputs());
 
 	}
 

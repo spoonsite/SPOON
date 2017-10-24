@@ -15,14 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
-import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 
 /**
  *
@@ -31,53 +24,20 @@ import java.util.Map;
 public class ComponentDetailReportLineModel
 {
 
-	private Component component;
-	private Map<String, List<ComponentAttribute>> attributes = new HashMap<>();
-	private List<ComponentContact> contacts = new ArrayList<>();
-	private List<ComponentResource> resources = new ArrayList<>();
+	private ComponentDetailView component;
 
 	public ComponentDetailReportLineModel()
 	{
 	}
 
-	public Component getComponent()
+	public ComponentDetailView getComponent()
 	{
 		return component;
 	}
 
-	public void setComponent(Component component)
+	public void setComponent(ComponentDetailView component)
 	{
 		this.component = component;
-	}
-
-	public List<ComponentContact> getContacts()
-	{
-		return contacts;
-	}
-
-	public void setContacts(List<ComponentContact> contacts)
-	{
-		this.contacts = contacts;
-	}
-
-	public List<ComponentResource> getResources()
-	{
-		return resources;
-	}
-
-	public void setResources(List<ComponentResource> resources)
-	{
-		this.resources = resources;
-	}
-
-	public Map<String, List<ComponentAttribute>> getAttributes()
-	{
-		return attributes;
-	}
-
-	public void setAttributes(Map<String, List<ComponentAttribute>> attributes)
-	{
-		this.attributes = attributes;
 	}
 
 }

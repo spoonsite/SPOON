@@ -47,7 +47,6 @@ import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
@@ -104,7 +103,7 @@ public class SubComponentServiceImpl
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
 			List<T> data = persistenceService.queryByExample(new QueryByExample(baseComponentExample));
-			data = FilterEngine.filter(data);
+			data = filterEngine.filter(data);
 			return data;
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -769,7 +768,7 @@ public class SubComponentServiceImpl
 	{
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
 		List<ComponentTag> tags = persistenceService.query(query, null);
-		tags = FilterEngine.filter(tags, true);
+		tags = filterEngine.filter(tags, true);
 		return tags;
 	}
 
