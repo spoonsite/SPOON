@@ -30,12 +30,16 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRoleData;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.GenericType;
@@ -89,7 +93,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		comp.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
 		comp.setName("My Test");
 		dbResults2.add(comp);
-		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and  componentId IN :componentIdsParams", dbResults2);
+		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and ( dataSensitivity IS NULL ) and ( dataSource IS NULL ) and  componentId IN :componentIdsParams", dbResults2);
 
 		List<ODocument> dbResults3 = new ArrayList<>();
 		ODocument componentAttributePk = Mockito.mock(ODocument.class);
@@ -348,7 +352,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		code3.setAttributeCodePk(new AttributeCodePk());
 		code3.getAttributeCodePk().setAttributeCode("CODE3");
 		code3.getAttributeCodePk().setAttributeType("TESTATT3");
-		
+
 		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1));
 		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code2));
 		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code3));
@@ -389,5 +393,115 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 
 		//Assert
 		Assert.assertEquals(200, response.getStatus());
+	}
+
+	/**
+	 * @GET @Path("/tagviews")
+	 */
+	@Test
+	public void getAllComponentTagsTest()
+	{
+		SecurityRole role1 = new SecurityRole();
+		role1.setActiveStatus(SecurityRole.ACTIVE_STATUS);
+		role1.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		role1.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		SecurityRoleData security = new SecurityRoleData();
+		security.setDataSource("SOURCE1");
+		security.setDataSensitivity("DATA1");
+		role1.setDataSecurity(Arrays.asList(security));
+		getUserContext().setRoles(Arrays.asList(role1));
+		//Arrange
+		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+
+		ComponentTag tag1 = new ComponentTag();
+		tag1.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag1.setComponentId("a0000000-0000-0000-0000-000000000000");
+		tag1.setText("TAG1");
+
+		ComponentTag tag2 = new ComponentTag();
+		tag2.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag2.setComponentId("b0000000-0000-0000-0000-000000000000");
+		tag2.setText("TAG2");
+
+		ComponentTag tag3 = new ComponentTag();
+		tag3.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag3.setComponentId("c0000000-0000-0000-0000-000000000000");
+		tag3.setText("TAG3");
+
+		ComponentTag tag4 = new ComponentTag();
+		tag4.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag4.setComponentId("d0000000-0000-0000-0000-000000000000");
+		tag4.setText("TAG4");
+
+		ComponentTag tag5 = new ComponentTag();
+		tag5.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag5.setComponentId("e0000000-0000-0000-0000-000000000000");
+		tag5.setText("TAG5");
+		List<ComponentTag> tags = Arrays.asList(tag1, tag2, tag3, tag4, tag5);
+		persistenceService.addQuery(ComponentTag.class, tags);
+
+		String query = "select componentId, name from Component";
+		ODocument item1 = Mockito.mock(ODocument.class);
+		Mockito.when(item1.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
+		Mockito.when(item1.field("name")).thenReturn("Test Component 1");
+		ODocument item2 = Mockito.mock(ODocument.class);
+		Mockito.when(item2.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
+		Mockito.when(item2.field("name")).thenReturn("Test Component 2");
+		ODocument item3 = Mockito.mock(ODocument.class);
+		Mockito.when(item3.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+		Mockito.when(item3.field("name")).thenReturn("Test Component 3");
+		ODocument item4 = Mockito.mock(ODocument.class);
+		Mockito.when(item4.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+		Mockito.when(item4.field("name")).thenReturn("Test Component 3");
+		ODocument item5 = Mockito.mock(ODocument.class);
+		Mockito.when(item5.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+		Mockito.when(item5.field("name")).thenReturn("Test Component 3");
+		List<ODocument> items = Arrays.asList(item1, item2, item3, item4, item5);
+		//NOTE: it might be good to add a sticky bit to persistenceService.addQuery()
+		tags.forEach(tag -> {
+			persistenceService.addQuery(query, items);
+		});
+
+		Component comp1 = new Component();
+		comp1.setActiveStatus(Component.ACTIVE_STATUS);
+		comp1.setComponentId("a0000000-0000-0000-0000-000000000000");
+		persistenceService.addObject(comp1);
+
+		Component comp2 = new Component();
+		comp2.setActiveStatus(Component.ACTIVE_STATUS);
+		comp2.setComponentId("b0000000-0000-0000-0000-000000000000");
+		comp2.setDataSensitivity("DATA1");
+		persistenceService.addObject(comp2);
+
+		Component comp3 = new Component();
+		comp3.setActiveStatus(Component.ACTIVE_STATUS);
+		comp3.setComponentId("c0000000-0000-0000-0000-000000000000");
+		comp3.setDataSensitivity("DATA2");
+		persistenceService.addObject(comp3);
+
+		Component comp4 = new Component();
+		comp4.setActiveStatus(Component.ACTIVE_STATUS);
+		comp4.setComponentId("d0000000-0000-0000-0000-000000000000");
+		comp4.setDataSource("SOURCE1");
+		persistenceService.addObject(comp4);
+
+		Component comp5 = new Component();
+		comp5.setActiveStatus(Component.ACTIVE_STATUS);
+		comp5.setComponentId("e0000000-0000-0000-0000-000000000000");
+		comp5.setDataSource("SOURCE2");
+		persistenceService.addObject(comp5);
+
+		//Act
+		List<TagView> response = target("v1/resource/components/tagviews")
+				.request()
+				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
+				.get(new GenericType<List<TagView>>()
+				{
+				});
+
+		//Assert
+		Assert.assertEquals(3, response.size());
+		List<String> tagNames = response.stream().map(TagView::getText).collect(Collectors.toList());
+		Assert.assertEquals(Arrays.asList("TAG1","TAG2","TAG4"), tagNames);
 	}
 }
