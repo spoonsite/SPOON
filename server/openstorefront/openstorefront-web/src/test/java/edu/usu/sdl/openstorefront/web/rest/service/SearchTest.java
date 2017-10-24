@@ -145,7 +145,7 @@ public class SearchTest extends JerseyShiroTest
 							"<li>list item</li>\n" +
 							"</ul>\n" +
 							"<p><strong>this is bold</strong></p>");
-		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and  componentId IN :componentIdsParams", Arrays.asList(comp1, comp2, comp3, comp4));
+		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and ( dataSensitivity IS NULL ) and ( dataSource IS NULL ) and  componentId IN :componentIdsParams", Arrays.asList(comp1, comp2, comp3, comp4));
 
 		ODocument componentAttributePk1 = Mockito.mock(ODocument.class);
 		Mockito.when(componentAttributePk1.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
