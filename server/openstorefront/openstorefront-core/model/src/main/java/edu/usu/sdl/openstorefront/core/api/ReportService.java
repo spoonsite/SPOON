@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handles generation of report and tracking them
@@ -60,9 +59,18 @@ public interface ReportService
 	/**
 	 * Gets the supported formats for a report
 	 *
+	 * @param reportTranmissionType
 	 * @return Report Type, Value list reportFormats keys
 	 */
-	public Map<String, List<String>> getSupportedFormats();
+	public List<String> getSupportedFormats(String reportType, String reportTranmissionType);
+
+	/**
+	 * Gets the report output for a given type
+	 *
+	 * @param reportType
+	 * @return
+	 */
+	public List<String> getSupportedOutputs(String reportType);
 
 	/**
 	 * Saves a scheduled report
@@ -91,5 +99,12 @@ public interface ReportService
 	 * Removes all expired report
 	 */
 	public void deleteExpiredReports();
+
+	/**
+	 * Typically this is called from a job
+	 *
+	 * @param scheduledReport
+	 */
+	public void runScheduledReportNow(ScheduledReport scheduledReport);
 
 }

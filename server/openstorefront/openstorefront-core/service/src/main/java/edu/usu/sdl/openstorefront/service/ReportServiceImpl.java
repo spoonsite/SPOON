@@ -164,7 +164,7 @@ public class ReportServiceImpl
 	}
 
 	@Override
-	public Map<String, List<String>> getSupportedFormats()
+	public List<String> getSupportedFormats(String reportType, String reportTranmissionType)
 	{
 		Map<String, List<String>> formatMap = new HashMap<>();
 
@@ -175,6 +175,12 @@ public class ReportServiceImpl
 		});
 
 		return formatMap;
+	}
+
+	@Override
+	public List<String> getSupportedOutputs(String reportType)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
@@ -243,6 +249,30 @@ public class ReportServiceImpl
 		scheduledReportSetExample.setActiveStatus(ScheduledReport.INACTIVE_STATUS);
 		scheduledReportSetExample.populateBaseUpdateFields();
 		persistenceService.updateByExample(ScheduledReport.class, scheduledReportSetExample, scheduledReportExample);
+	}
+
+	@Override
+	public void runScheduledReportNow(ScheduledReport scheduledReport)
+	{
+		Report reportHistory = new Report();
+		reportHistory.setScheduled(true);
+		reportHistory.setReportFormat(scheduledReport.getReportFormat());
+		reportHistory.setReportType(scheduledReport.getReportType());
+		reportHistory.setReportOption(scheduledReport.getReportOption());
+		reportHistory.setCreateUser(scheduledReport.getCreateUser());
+		reportHistory.setIds(scheduledReport.getComponentIds());
+		reportHistory.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+		reportHistory.setReportOutputs(scheduledReport.getReportOutputs());
+
+		Report reportProcessed = generateReport(reportHistory);
+
+		scheduledReport.setLastRanDts(TimeUtil.currentDate());
+		scheduledReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+		saveScheduledReport(scheduledReport);
+
+		if (RunStatus.ERROR.equals(reportProcessed.getRunStatus())) {
+			LOG.log(Level.SEVERE, MessageFormat.format("A scheduled report failed to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, scheduledReport.getReportType()), scheduledReport.getScheduleReportId()}));
+		}
 	}
 
 }

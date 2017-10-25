@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.job.ImportJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
+import edu.usu.sdl.openstorefront.service.job.ScheduledReportCronJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
 import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
@@ -74,6 +75,7 @@ public class JobManager
 	private static final Logger LOG = Logger.getLogger(JobManager.class.getName());
 
 	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
+	private static final String JOB_GROUP_REPORT = AddJobModel.JOB_GROUP_REPORT;
 	private static Scheduler scheduler;
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -194,6 +196,46 @@ public class JobManager
 	{
 		try {
 			TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, JOB_GROUP_SYSTEM);
+			if (scheduler.checkExists(triggerKey)) {
+				scheduler.unscheduleJob(triggerKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
+		}
+	}
+
+	public static void addReportJob(String scheduledReportId, String reportType, String cronExpression) throws SchedulerException
+	{
+		String jobName = "ReportJob-" + scheduledReportId;
+
+		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_REPORT);
+		if (scheduler.checkExists(jobKey)) {
+			LOG.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
+		} else {
+			JobDetail job = JobBuilder.newJob(ScheduledReportCronJob.class)
+					.withIdentity(jobName, JOB_GROUP_REPORT)
+					.withDescription("Report Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
+					.build();
+
+			job.getJobDataMap().put(ScheduledReportCronJob.SCHEDULED_REPORT_ID, scheduledReportId);
+			String cron = componentIntegration.getRefreshRate();
+			if (cron == null) {
+				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
+			}
+			Trigger trigger = newTrigger()
+					.withIdentity("ComponentTrigger-" + scheduledReportId, JOB_GROUP_REPORT)
+					.startNow()
+					.withSchedule(cronSchedule(cron))
+					.build();
+
+			scheduler.scheduleJob(job, trigger);
+		}
+	}
+
+	public static void removeReportJob(String reportJobName)
+	{
+		try {
+			TriggerKey triggerKey = TriggerKey.triggerKey(reportJobName, JOB_GROUP_REPORT);
 			if (scheduler.checkExists(triggerKey)) {
 				scheduler.unscheduleJob(triggerKey);
 			}
