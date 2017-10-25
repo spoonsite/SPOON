@@ -88,7 +88,7 @@ public class PrintSearchResultsEntryIT
 	protected void selectCustomTemplate(WebDriver driver)
 	{
 		//[data-qtip = 'Print']
-		WebDriverWait wait = new WebDriverWait(driver, 8);
+		WebDriverWait wait = new WebDriverWait(driver, 15);
 
 		String winHandleBefore = driver.getWindowHandle();
 
@@ -105,7 +105,12 @@ public class PrintSearchResultsEntryIT
 		String printWindow = (String) windows.get(windows.size() - 1);
 		driver.switchTo().window(printWindow);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#customTemplateBtn"))).click();
+		sleep(1000);
+		
+		WebDriverWait wait10 = new WebDriverWait(driver, 10);
+		WebElement element = wait10.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#customTemplateBtn")));
+		element.click();
+		
 
 		List<WebElement> templateItems = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-menu-body.x-menu-body.x-unselectable .x-menu-item-text.x-menu-item-text-default.x-menu-item-indent-no-separator")));
 
