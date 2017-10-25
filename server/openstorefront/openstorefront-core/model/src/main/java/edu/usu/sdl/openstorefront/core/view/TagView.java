@@ -76,10 +76,9 @@ public class TagView
 			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
 			tags.forEach(tag -> {
 				Component example = new Component();
-				example.setActiveStatus(Component.ACTIVE_STATUS);
 				example.setComponentId(tag.getComponentId());
 				example = example.find();
-				if ((StringUtil.isBlank(example.getDataSource()) || (acceptedDataSources != null && acceptedDataSources.contains(example.getDataSource())))
+				if((example == null) || (StringUtil.isBlank(example.getDataSource()) || (acceptedDataSources != null && acceptedDataSources.contains(example.getDataSource())))
 						&& (StringUtil.isBlank(example.getDataSensitivity()) || (acceptedDataSensitivity != null && acceptedDataSensitivity.contains(example.getDataSensitivity())))) {
 					views.add(toView(tag));
 				}
