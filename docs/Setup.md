@@ -67,7 +67,7 @@ The Storefront relies upon the following external dependencies:
 	
 	-   Solr 6.x + *Recommended for greater control*
 
-	-   **Elasticsearch 2.3.x *Recommended for simple install*  Recommended search server**
+	-   **Elasticsearch 5.6.x *Recommended for simple install*  Recommended search server**
 	
 *Support for ESA 1.0 and Solr 4.3.1 has been dropped*
 
@@ -185,7 +185,7 @@ http://localhost:9200 should return some json with stats.
 ### 1.4.2.1 Yum install of Elasticsearch 
 
 1. Download and install with YUM 
-https://www.elastic.co/downloads/elasticsearch (2.x) 
+https://www.elastic.co/downloads/elasticsearch (5.x) 
 (see https://www.elastic.co/guide/en/elasticsearch/reference/2.3/setup-repositories.html for yum install instructions) 
 
 2. service elasticsearch start 
@@ -738,15 +738,15 @@ should give you a response something like this:
                 <p class="lead">This page is used to test the proper operation of the <a href="http://apache.org">Apache HTTP server</a> after it has been installed. If you can read this page it means that this site is working properly. This server is powered by <a href="http://centos.org">CentOS</a>.</p>
 ```
 
-### Install elasticsearch 2.x:
+### Install elasticsearch 5.x:
 1)	rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, 
 for example /etc/yum.repos.d/elasticsearch.repo
 
 ```
-[elasticsearch-2.x]
-name=Elasticsearch repository for 2.x packages
-baseurl=https://packages.elastic.co/elasticsearch/2.x/centos
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://packages.elastic.co/elasticsearch/5.x/centos
 gpgcheck=1
 gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1

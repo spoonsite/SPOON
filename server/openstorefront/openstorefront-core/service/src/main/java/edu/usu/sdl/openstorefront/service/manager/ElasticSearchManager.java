@@ -60,14 +60,17 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 /**
  *
@@ -95,8 +98,7 @@ public class ElasticSearchManager
 		try {
 			LOG.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
 
-			client = TransportClient.builder().build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+			client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
 
 		} catch (UnknownHostException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
@@ -289,7 +291,7 @@ public class ElasticSearchManager
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
 			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
-
+			
 			// Custom query for description
 			esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
 
@@ -503,13 +505,16 @@ public class ElasticSearchManager
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 
 				try {
-					bulkRequest.add(ElasticSearchManager.getClient().prepareIndex(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+					bulkRequest.add(
+						ElasticSearchManager
+							.getClient()
+							.prepareIndex(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
 							.setSource(objectMapper.writeValueAsBytes(componentSearchView)));
 				} catch (JsonProcessingException ex) {
 					LOG.log(Level.SEVERE, MessageFormat.format("Unable to index component: {0}  Component will be missing from search.", componentSearchView.getName()));
 				}
 			}
-
+			
 			BulkResponse bulkResponse = bulkRequest.get();
 			if (bulkResponse.hasFailures()) {
 				bulkResponse.forEach(response -> {
@@ -520,6 +525,36 @@ public class ElasticSearchManager
 			} else {
 				LOG.log(Level.FINE, "Index components successfully");
 			}
+			
+			// Update description field to use fielddata=true
+			//	Here, we must update all types
+			try {
+				
+				// construct body of request
+				final XContentBuilder source = JsonXContent
+					.contentBuilder()
+					.startObject()
+						.startObject("properties")
+							.startObject("description")
+								.field("type", "text")
+								.field("fielddata", true)
+							.endObject()
+						.endObject()
+					.endObject();
+
+				ElasticSearchManager.getClient()
+					.admin()
+					.indices()
+					.preparePutMapping(INDEX)
+					.setUpdateAllTypes(true)
+					.setType("description")
+					.setSource(source)
+					.execute()
+					.actionGet();
+				
+			} catch (IOException ex) {
+				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 
@@ -527,7 +562,7 @@ public class ElasticSearchManager
 	public void deleteById(String id)
 	{
 		DeleteResponse response = client.prepareDelete(INDEX, INDEX_TYPE, id).get();
-		LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.isFound()));
+		LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
 	}
 
 	@Override
