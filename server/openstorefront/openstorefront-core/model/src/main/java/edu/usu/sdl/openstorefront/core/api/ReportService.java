@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import java.util.List;
 
@@ -59,10 +61,11 @@ public interface ReportService
 	/**
 	 * Gets the supported formats for a report
 	 *
+	 * @param reportType
 	 * @param reportTranmissionType
 	 * @return Report Type, Value list reportFormats keys
 	 */
-	public List<String> getSupportedFormats(String reportType, String reportTranmissionType);
+	public List<ReportFormat> getSupportedFormats(String reportType, String reportTranmissionType);
 
 	/**
 	 * Gets the report output for a given type
@@ -70,7 +73,7 @@ public interface ReportService
 	 * @param reportType
 	 * @return
 	 */
-	public List<String> getSupportedOutputs(String reportType);
+	public List<ReportTransmissionType> getSupportedOutputs(String reportType);
 
 	/**
 	 * Saves a scheduled report

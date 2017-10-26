@@ -189,7 +189,7 @@ public abstract class BaseReport
 
 	public abstract List<ReportTransmissionType> getSupportedOutputs();
 
-	public abstract List<ReportFormat> getSupportedFormat(String reportTransmissionType);
+	public abstract List<ReportFormat> getSupportedFormats(String reportTransmissionType);
 
 	protected String outputKey(String transmissionType, String reportFormat)
 	{

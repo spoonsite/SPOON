@@ -137,7 +137,7 @@ public class EvaluationStatusReport
 	}
 
 	@Override
-	public List<ReportFormat> getSupportedFormat(String reportTransmissionType)
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
 	{
 		List<ReportFormat> formats = new ArrayList<>();
 

@@ -27,6 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
@@ -38,9 +40,7 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,23 +164,23 @@ public class ReportServiceImpl
 	}
 
 	@Override
-	public List<String> getSupportedFormats(String reportType, String reportTranmissionType)
+	public List<ReportFormat> getSupportedFormats(String reportType, String reportTranmissionType)
 	{
-		Map<String, List<String>> formatMap = new HashMap<>();
-
-		//formats
-		List<ReportType> reportTypes = getLookupService().findLookup(ReportType.class);
-		reportTypes.stream().forEach((reportType) -> {
-			formatMap.put(reportType.getCode(), reportType.getSupportedFormats());
-		});
-
-		return formatMap;
+		Report report = new Report();
+		report.setReportType(reportType);
+		BaseReport baseReport = BaseReport.getReport(report);
+		List<ReportFormat> reportFormat = baseReport.getSupportedFormats(reportTranmissionType);
+		return reportFormat;
 	}
 
 	@Override
-	public List<String> getSupportedOutputs(String reportType)
+	public List<ReportTransmissionType> getSupportedOutputs(String reportType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Report report = new Report();
+		report.setReportType(reportType);
+		BaseReport baseReport = BaseReport.getReport(report);
+		List<ReportTransmissionType> transmissionTypes = baseReport.getSupportedOutputs();
+		return transmissionTypes;
 	}
 
 	@Override

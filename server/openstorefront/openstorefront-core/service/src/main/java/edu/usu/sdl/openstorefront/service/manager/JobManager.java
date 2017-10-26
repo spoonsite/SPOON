@@ -214,18 +214,14 @@ public class JobManager
 		} else {
 			JobDetail job = JobBuilder.newJob(ScheduledReportCronJob.class)
 					.withIdentity(jobName, JOB_GROUP_REPORT)
-					.withDescription("Report Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
+					.withDescription("Report Job for " + reportType)
 					.build();
 
 			job.getJobDataMap().put(ScheduledReportCronJob.SCHEDULED_REPORT_ID, scheduledReportId);
-			String cron = componentIntegration.getRefreshRate();
-			if (cron == null) {
-				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
-			}
 			Trigger trigger = newTrigger()
-					.withIdentity("ComponentTrigger-" + scheduledReportId, JOB_GROUP_REPORT)
+					.withIdentity("ReportJob-" + scheduledReportId, JOB_GROUP_REPORT)
 					.startNow()
-					.withSchedule(cronSchedule(cron))
+					.withSchedule(cronSchedule(cronExpression))
 					.build();
 
 			scheduler.scheduleJob(job, trigger);
