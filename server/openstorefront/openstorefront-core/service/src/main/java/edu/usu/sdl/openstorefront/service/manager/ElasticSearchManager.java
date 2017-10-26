@@ -104,6 +104,7 @@ public class ElasticSearchManager
 			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
 		}
 
+		updateFieldData();
 	}
 
 	public static Client getClient()
@@ -472,6 +473,7 @@ public class ElasticSearchManager
 	public void index(List<Component> components)
 	{
 		Objects.requireNonNull(components);
+		updateFieldData();
 
 		if (!components.isEmpty()) {
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -524,36 +526,6 @@ public class ElasticSearchManager
 				});
 			} else {
 				LOG.log(Level.FINE, "Index components successfully");
-			}
-			
-			// Update description field to use fielddata=true
-			//	Here, we must update all types
-			try {
-				
-				// construct body of request
-				final XContentBuilder source = JsonXContent
-					.contentBuilder()
-					.startObject()
-						.startObject("properties")
-							.startObject("description")
-								.field("type", "text")
-								.field("fielddata", true)
-							.endObject()
-						.endObject()
-					.endObject();
-
-				ElasticSearchManager.getClient()
-					.admin()
-					.indices()
-					.preparePutMapping(INDEX)
-					.setUpdateAllTypes(true)
-					.setType("description")
-					.setSource(source)
-					.execute()
-					.actionGet();
-				
-			} catch (IOException ex) {
-				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	}
@@ -628,4 +600,36 @@ public class ElasticSearchManager
 		return started.get();
 	}
 
+	private static void updateFieldData ()
+	{
+		// Update description field to use fielddata=true
+		//	Here, we must update all types
+		try {
+
+			// construct body of request
+			final XContentBuilder source = JsonXContent
+				.contentBuilder()
+				.startObject()
+					.startObject("properties")
+						.startObject("description")
+							.field("type", "text")
+							.field("fielddata", true)
+						.endObject()
+					.endObject()
+				.endObject();
+
+			ElasticSearchManager.getClient()
+				.admin()
+				.indices()
+				.preparePutMapping(INDEX)
+				.setUpdateAllTypes(true)
+				.setType("description")
+				.setSource(source)
+				.execute()
+				.actionGet();
+
+		} catch (IOException ex) {
+			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 }

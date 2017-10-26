@@ -34,6 +34,19 @@ orientdb> DISCONNECT
   (orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
 orientdb> IMPORT DATABASE /temp/mydb.json.gz
 
+## Upgrading from 2.4 to 2.5
+-------------
+
+Pre-Deployment 
+------------------------------------------------------------------------------------------------------------------------------- 
+1. Install and extract Elasticsearch 5.6.3 on the system
+2. Remove/delete the root directory of Elasticsearch 2.x from the system
+3. Start Elasticsearch 5.6.3
+
+When you build and deploy Openstorefront, listings should be automatically indexed (if Elasticsearch has been started.)
+However, out of good measure you should:
+1. In Openstorefront, navigate to Admin Tools -> Application Management -> System -> Search Control
+2. Click "Re-Index Listings"
 
 
 ## Upgrading from 2.3 to 2.4

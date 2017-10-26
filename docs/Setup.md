@@ -186,7 +186,7 @@ http://localhost:9200 should return some json with stats.
 
 1. Download and install with YUM 
 https://www.elastic.co/downloads/elasticsearch (5.x) 
-(see https://www.elastic.co/guide/en/elasticsearch/reference/2.3/setup-repositories.html for yum install instructions) 
+(see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html for yum install instructions) 
 
 2. service elasticsearch start 
 
