@@ -106,7 +106,6 @@ public class ServiceProxy
 		if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
-		initFiltering(FilterEngine.getInstance());
 	}
 
 	public ServiceProxy(String modificationType)
@@ -116,18 +115,11 @@ public class ServiceProxy
 		if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
-		initFiltering(FilterEngine.getInstance());
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
 	{
 		this.persistenceService = persistenceService;
-		initFiltering(FilterEngine.getInstance());
-	}
-
-	private void initFiltering(FilterEngine filterEngine)
-	{
-		this.filterEngine = filterEngine;
 	}
 
 	public static ServiceProxy getProxy()
@@ -142,6 +134,10 @@ public class ServiceProxy
 
 	public FilterEngine getFilterEngine()
 	{
+		//*must be lazy loaded otherwise it would create circular reference
+		if (filterEngine == null) {
+			filterEngine = FilterEngine.getInstance();
+		}
 		return filterEngine;
 	}
 

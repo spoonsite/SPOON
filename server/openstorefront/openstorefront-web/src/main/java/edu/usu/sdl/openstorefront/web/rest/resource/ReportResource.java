@@ -32,8 +32,8 @@ import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ReportFilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ReportGenerateView;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
@@ -68,6 +68,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -84,7 +85,7 @@ public class ReportResource
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
-	public Response getReports(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getReports(@BeanParam ReportFilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -95,6 +96,16 @@ public class ReportResource
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
 		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		} else {
+			if (!filterQueryParams.getShowAllUsers()) {
+				reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			}
+		}
+		if (StringUtils.isNotBlank(filterQueryParams.getReportType())) {
+			reportExample.setReportType(filterQueryParams.getReportType());
+		}
+		if (filterQueryParams.getShowScheduledOnly()) {
+			reportExample.setScheduled(filterQueryParams.getShowScheduledOnly());
 		}
 
 		Report reportStartExample = new Report();
@@ -104,6 +115,16 @@ public class ReportResource
 		reportEndExample.setCreateDts(filterQueryParams.getEnd());
 
 		QueryByExample queryByExample = new QueryByExample(reportExample);
+
+		if (!filterQueryParams.getShowScheduledOnly()) {
+			Report reportScheduleExample = new Report();
+			reportScheduleExample.setScheduled(QueryByExample.BOOLEAN_FLAG);
+
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(reportScheduleExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
 
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(reportStartExample);

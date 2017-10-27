@@ -75,6 +75,27 @@
 							name: 'lastRanDts',
 							type: 'date',
 							dateFormat: 'c'
+						},
+						{
+							name: 'schedule', mapping: function(data) {								
+								if (data.scheduleIntervalDays) {
+									if (v === 1) {
+										return 'Daily';
+									}
+									else if (v == 7) {
+										return 'Weekly';
+									}
+									else if (v == 30) {
+										return 'Monthly' ;
+									} else {
+										return 'Every: ' + data.scheduleIntervalDays + ' days)' 
+									}
+								} else if (data.scheduleIntervalMinutes) {
+									return 'Every: ' + data.scheduleIntervalMinutes + ' minutes';
+								} else if (data.cronDescription) {
+									return data.cronDescription;
+								}								
+							}
 						}
 					],
 					proxy: CoreUtil.pagingProxy({
@@ -103,6 +124,7 @@
 							columnLines: true,
 							bodyCls: 'border_accent',
 							columns: [
+								{text: 'Id', dataIndex: 'scheduledReportId', width: 250, hidden: true },
 								{text: 'Report Type', dataIndex: 'reportType', width: 200,
 									renderer: function (value, meta, record) {
 										return record.get('reportTypeDescription');
@@ -114,20 +136,7 @@
 									}
 								},
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
-								{text: 'Scheduled Interval', dataIndex: 'scheduleIntervalDays', width: 200,
-									renderer: function (v, meta) {
-										if (v === 1) {
-											return 'Daily';
-										}
-										else if (v > 1 && v < 8) {
-											return 'Weekly';
-										}
-										else if (v > 8) {
-											return 'Monthly';
-										}
-
-									}
-								},
+								{text: 'Scheduled Interval', dataIndex: 'schedule', width: 200 },
 								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 								{text: 'Email Addresses', dataIndex: 'emailAddresses', minWidth: 200, flex: 1,
 									renderer: function (v, meta) {
@@ -1322,7 +1331,16 @@
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								reportType: Ext.getCmp('historyFilter-reportType').getValue() ? Ext.getCmp('historyFilter-reportType').getValue() : null,
+								showScheduledOnly: Ext.getCmp('historyFilter-showScheduledOnly').getValue(),
+								showAllUsers: Ext.getCmp('historyFilter-showAll').getValue() 
+							};
+						}
+					}
 				});
 
 				var historyGrid = Ext.create('Ext.grid.Panel', {
@@ -1336,6 +1354,7 @@
 					},
 					bufferedRenderer: false,
 					columns: [
+						{text: 'Report Id', dataIndex: 'reportId', width: 250, hidden: true },
 						{text: 'Report Type', dataIndex: 'reportType', width: 200,
 							renderer: function (value, meta, record) {
 								return record.get('reportTypeDescription');
@@ -1346,7 +1365,7 @@
 								return record.get('reportFormatDescription');
 							}
 						},
-						{text: 'Run Status', dataIndex: 'runStatus', width: 150,
+						{text: 'Run Status', dataIndex: 'runStatus', width: 150, align: 'center',
 							renderer: function (value, meta, record) {
 								if (value === 'E') {
 									meta.tdCls = 'alert-danger';
@@ -1359,18 +1378,19 @@
 							}
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-						{text: 'Create User', dataIndex: 'createUser', width: 150},
+						{text: 'Create User', dataIndex: 'createUser', width: 150, align: 'center'},
 						{
 							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>', 
 							dataIndex: 'remainingReportLifetime', 
 							width: 165,
+							align: 'center',
 							sortable: false, renderer: function (value, meta, record) {
 
 								// Defined status color, info, and sybmol
 								var maxHue = 85;
 								var statusColor = (record.data.remainingReportLifetime/record.data.reportLifetimeMax)*maxHue;
 								var statusInfo = ['This report will be removed soon', 'This report still has time before cleanup', 'This report was recently created'];
-								var statusSymbol = ['fa fa-exclamation-circle', 'fa fa-exclamation-triangle', 'fa fa-check-circle'];
+								var statusSymbol = ['fa fa-lg fa-exclamation-circle', 'fa fa-lg fa-exclamation-triangle', 'fa fa-lg fa-check-circle'];
 								var statusIndex = Math.floor(record.data.remainingReportLifetime/record.data.reportLifetimeMax*(statusInfo.length-0.1));
 								statusInfo = record.data.remainingReportLifetime == 0 ? 'This report will be removed' : statusInfo[statusIndex];
 								record.data.remainingReportLifetime = record.data.remainingReportLifetime == 0 ? "Queued for removal" : record.data.remainingReportLifetime;
@@ -1388,6 +1408,63 @@
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender }
 					],
 					dockedItems: [
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'historyFilter-reportType',
+									emptyText: 'All',
+									fieldLabel: 'Report Type',
+									labelAlign: 'left',
+									name: 'reportType',
+									typeAhead: false,
+									editable: false,
+									width: 325,
+									margin: '0 20 0 0',
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											historyRefreshGrid();
+										}
+									},
+									storeConfig: {
+										url: 'api/v1/resource/lookuptypes/ReportType',
+										addRecords: [
+											{
+												code: null,
+												description: 'All'
+											}
+										]
+									}
+								}),
+								{
+									xtype: 'checkbox',
+									id: 'historyFilter-showScheduledOnly',
+									boxLabel: 'Show Scheduled Only',									
+									margin: '0 20 0 0',
+									enableToggle: true,
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											historyRefreshGrid();
+										}
+									},
+									name: 'showScheduledOnly'
+								},
+								{
+									xtype: 'checkbox',
+									id: 'historyFilter-showAll',
+									padding: '0 20 0 0',
+									hidden: true,
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											historyRefreshGrid();
+										}
+									},
+									boxLabel: 'Show All Users',
+									name: 'showAllUsers'									
+								}								
+							]
+						}, 
 						{
 							dock: 'top',
 							xtype: 'toolbar',
@@ -1743,6 +1820,9 @@
 				CoreService.userservice.getCurrentUser().then(function(user){
 					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
 						Ext.getCmp('scheduledReportBtn').setHidden(false);
+					}
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-ALL")) {
+						Ext.getCmp('historyFilter-showAll').setHidden(false);
 					}
 				});
 

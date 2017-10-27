@@ -37,7 +37,7 @@ public class ReportOutput
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
+	@ValidValueType(value = {}, lookupClass = ReportTransmissionType.class)
 	@ConsumeField
 	@FK(ReportFormat.class)
 	private String reportTransmissionType;

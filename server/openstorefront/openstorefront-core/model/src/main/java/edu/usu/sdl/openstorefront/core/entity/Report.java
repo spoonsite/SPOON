@@ -57,7 +57,7 @@ public class Report
 	private String reportType;
 
 	@Deprecated
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@FK(ReportFormat.class)
 	@APIDescription("Use Report Outputs and not this field")

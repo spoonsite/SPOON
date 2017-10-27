@@ -21,9 +21,12 @@ import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import net.redhogs.cronparser.CronExpressionDescriptor;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -35,6 +38,7 @@ public class ScheduledReportView
 
 	private String reportTypeDescription;
 	private String reportFormatDescription;
+	private String cronDescription;
 
 	public ScheduledReportView()
 	{
@@ -50,6 +54,16 @@ public class ScheduledReportView
 		}
 		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 		view.setReportFormatDescription(TranslateUtil.translate(ReportFormat.class, report.getReportFormat()));
+
+		if (StringUtils.isNotBlank(report.getScheduleIntervalCron())) {
+			try {
+				view.setCronDescription(CronExpressionDescriptor.getDescription(report.getScheduleIntervalCron()));
+			} catch (ParseException ex) {
+				//ignore ex
+				view.setCronDescription(report.getScheduleIntervalCron());
+			}
+		}
+
 		return view;
 	}
 
@@ -80,6 +94,16 @@ public class ScheduledReportView
 	public void setReportFormatDescription(String reportFormatDescription)
 	{
 		this.reportFormatDescription = reportFormatDescription;
+	}
+
+	public String getCronDescription()
+	{
+		return cronDescription;
+	}
+
+	public void setCronDescription(String cronDescription)
+	{
+		this.cronDescription = cronDescription;
 	}
 
 }

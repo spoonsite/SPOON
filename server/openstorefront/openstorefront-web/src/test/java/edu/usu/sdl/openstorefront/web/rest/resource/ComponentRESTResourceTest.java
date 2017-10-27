@@ -45,7 +45,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -78,8 +78,8 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	{
 		//Arrange
 		List<ODocument> dbResults = new ArrayList<>();
-		// NOTE: (KB) as a general rule I don't like to mock thirdparty classes 
-		// however why is ODocument exposed above the persistance service layer 
+		// NOTE: (KB) as a general rule I don't like to mock thirdparty classes
+		// however why is ODocument exposed above the persistance service layer
 		ODocument item1 = Mockito.mock(ODocument.class);
 		Mockito.when(item1.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
 		dbResults.add(item1);
@@ -462,34 +462,42 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 			persistenceService.addQuery(query, items);
 		});
 
-		Component comp1 = new Component();
-		comp1.setActiveStatus(Component.ACTIVE_STATUS);
-		comp1.setComponentId("a0000000-0000-0000-0000-000000000000");
-		persistenceService.addObject(comp1);
+		String sensitivityQuery = "select componentId, dataSource, dataSensitivity from Component where dataSource IS NOT NULL OR dataSensitivity IS NOT NULL";
+		ODocument compSourceNone = Mockito.mock(ODocument.class);
+		Mockito.when(compSourceNone.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
+		Mockito.when(compSourceNone.field("dataSensitivity")).thenReturn(null);
+		Mockito.when(compSourceNone.field("dataSource")).thenReturn(null);
 
-		Component comp2 = new Component();
-		comp2.setActiveStatus(Component.ACTIVE_STATUS);
-		comp2.setComponentId("b0000000-0000-0000-0000-000000000000");
-		comp2.setDataSensitivity("DATA1");
-		persistenceService.addObject(comp2);
+		ODocument compData1 = Mockito.mock(ODocument.class);
+		Mockito.when(compData1.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
+		Mockito.when(compData1.field("dataSensitivity")).thenReturn("DATA1");
+		Mockito.when(compData1.field("dataSource")).thenReturn(null);
 
-		Component comp3 = new Component();
-		comp3.setActiveStatus(Component.ACTIVE_STATUS);
-		comp3.setComponentId("c0000000-0000-0000-0000-000000000000");
-		comp3.setDataSensitivity("DATA2");
-		persistenceService.addObject(comp3);
+		ODocument compData2 = Mockito.mock(ODocument.class);
+		Mockito.when(compData2.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+		Mockito.when(compData2.field("dataSensitivity")).thenReturn("DATA2");
+		Mockito.when(compData2.field("dataSource")).thenReturn(null);
 
-		Component comp4 = new Component();
-		comp4.setActiveStatus(Component.ACTIVE_STATUS);
-		comp4.setComponentId("d0000000-0000-0000-0000-000000000000");
-		comp4.setDataSource("SOURCE1");
-		persistenceService.addObject(comp4);
+		ODocument compSource1 = Mockito.mock(ODocument.class);
+		Mockito.when(compSource1.field("componentId")).thenReturn("d0000000-0000-0000-0000-000000000000");
+		Mockito.when(compSource1.field("dataSensitivity")).thenReturn(null);
+		Mockito.when(compSource1.field("dataSource")).thenReturn("SOURCE1");
 
-		Component comp5 = new Component();
-		comp5.setActiveStatus(Component.ACTIVE_STATUS);
-		comp5.setComponentId("e0000000-0000-0000-0000-000000000000");
-		comp5.setDataSource("SOURCE2");
-		persistenceService.addObject(comp5);
+		ODocument compSource2 = Mockito.mock(ODocument.class);
+		Mockito.when(compSource2.field("componentId")).thenReturn("e0000000-0000-0000-0000-000000000000");
+		Mockito.when(compSource2.field("dataSensitivity")).thenReturn(null);
+		Mockito.when(compSource2.field("dataSource")).thenReturn("SOURCE2");
+
+		List<ODocument> components = Arrays.asList(
+				compSourceNone,
+				compData1,
+				compData2,
+				compSource1,
+				compSource2
+		);
+		persistenceService.addQuery(sensitivityQuery, components);
+
+		persistenceService.addQuery("select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL", new ArrayList<>());
 
 		//Act
 		List<TagView> response = target("v1/resource/components/tagviews")
@@ -502,6 +510,6 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		//Assert
 		Assert.assertEquals(3, response.size());
 		List<String> tagNames = response.stream().map(TagView::getText).collect(Collectors.toList());
-		Assert.assertEquals(Arrays.asList("TAG1","TAG2","TAG4"), tagNames);
+		Assert.assertEquals(Arrays.asList("TAG1", "TAG2", "TAG4"), tagNames);
 	}
 }

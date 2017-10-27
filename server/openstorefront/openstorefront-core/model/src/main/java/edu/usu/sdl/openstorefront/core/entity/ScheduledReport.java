@@ -56,7 +56,7 @@ public class ScheduledReport
 
 	@Deprecated
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
 	@FK(ReportFormat.class)

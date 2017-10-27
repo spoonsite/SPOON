@@ -66,7 +66,7 @@ public class ScheduledReportMigration
 			}
 
 			report.setReportOutputs(reportOutputs);
-			service.getReportService().saveScheduledReport(scheduledReport);
+			service.getReportService().saveScheduledReport(report);
 		}
 
 		return "Converted: " + reports.size();
