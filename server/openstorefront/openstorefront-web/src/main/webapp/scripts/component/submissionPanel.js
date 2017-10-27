@@ -17,6 +17,7 @@
  */
 /* global Ext, CoreUtil, CoreService */
 
+Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
@@ -255,7 +256,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						var data = Ext.decode(response.responseText);
 
 						var requiredStore = submissionPanel.requiredAttributeStore;
-
+						
 						var optionalAttributes = [];
 						Ext.Array.each(data, function (attribute) {
 							if (!attribute.hideOnSubmission) {
@@ -603,6 +604,65 @@ Ext.define('OSF.component.SubmissionPanel', {
 					}
 				}
 			});
+		};
+
+		var addMultipleAttribute = function () {
+			//	Create multiple attributes form panel
+			var multipleAttributesFP = Ext.create('OSF.form.MultipleAttributes', {
+				componentId: submissionPanel.componentId,
+				componentType: submissionPanel.componentTypeSelected
+			});
+
+			var multipleAttributesWin = Ext.create('Ext.window.Window', {
+				title: 'Add Attributes',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
+				modal: true,
+				width: 700,
+				closeAction: 'destroy',
+				height: '50%',
+				layout: 'fit',
+				items: [
+					multipleAttributesFP
+				],
+				dockedItems: [{
+						xtype: 'toolbar',
+						itemId: 'buttonToolBar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'
+							},
+							{
+								xtype: 'button',
+								text: 'Save',
+								formBind: true,
+								margin: '0 20 0 0',
+								iconCls: 'fa fa-lg fa-save icon-button-color-save',
+								handler: function () {
+									multipleAttributesFP.submit(function (attrForm) {
+										attrForm.up('window').close();
+										submissionPanel.loadComponentAttributes();
+									});
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									multipleAttributesFP.cancel(function (attrForm) {
+										attrForm.up('window').close();
+									});
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}
+						]
+					}
+				]
+			});
+			multipleAttributesWin.show();
 		};
 
 		var addEditAttribute = function (record) {
@@ -2025,6 +2085,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function () {
 												addEditAttribute();
+											}
+										},
+										{
+											text: 'Add Multiple Attributes',
+											itemId: 'multipleAttrBtn',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+											handler: function () {
+												addMultipleAttribute();
 											}
 										},
 										{
