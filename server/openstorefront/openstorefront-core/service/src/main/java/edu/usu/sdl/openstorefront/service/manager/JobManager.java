@@ -41,6 +41,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -206,6 +207,10 @@ public class JobManager
 
 	public static void addReportJob(String scheduledReportId, String reportType, String cronExpression) throws SchedulerException
 	{
+		Objects.requireNonNull(scheduledReportId);
+		Objects.requireNonNull(reportType);
+		Objects.requireNonNull(cronExpression);
+
 		String jobName = "ReportJob-" + scheduledReportId;
 
 		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_REPORT);

@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -45,6 +46,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.SchedulerException;
 
 /**
  * Handles report work-flow
@@ -197,6 +199,15 @@ public class ReportServiceImpl
 			scheduledReport.populateBaseCreateFields();
 			persistenceService.persist(scheduledReport);
 		}
+
+		if (StringUtils.isNotBlank(scheduledReport.getScheduleIntervalCron())) {
+			try {
+				JobManager.addReportJob(scheduledReport.getScheduleReportId(), scheduledReport.getReportType(), scheduledReport.getScheduleIntervalCron());
+			} catch (SchedulerException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to create the cron job for report.", "See error ticket/log for issue", ex);
+			}
+		}
+
 		return scheduledReport;
 	}
 

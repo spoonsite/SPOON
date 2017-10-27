@@ -16,18 +16,24 @@
 package edu.usu.sdl.openstorefront.web.test.report;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionOption;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import static edu.usu.sdl.openstorefront.core.entity.ReportType.COMPONENT;
 import static edu.usu.sdl.openstorefront.core.entity.RunStatus.PENDING;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
+ * This runs all report for view only and for one format only Still this is
+ * expensive test especially if there is a lot of data.
  *
  * @author ccummings
  */
@@ -45,14 +51,29 @@ public class ReportServiceTest extends BaseTestCase
 		List<ReportType> types = service.getLookupService().findLookup(ReportType.class);
 
 		reports = new ArrayList();
-		Map<String, List<String>> formats = service.getReportService().getSupportedFormats();
 
 		for (ReportType type : types) {
-			List<String> validFormats = formats.get(type.getCode());
-			Report report = new Report();
-			report.setReportType(type.getCode());
-			report.setReportFormat(validFormats.get(0));
-			reports.add(service.getReportService().generateReport(report));
+
+			//only try one format
+			List<ReportFormat> formats = service.getReportService().getSupportedFormats(type.getCode(), ReportTransmissionType.VIEW);
+
+			if (!formats.isEmpty()) {
+
+				Report report = new Report();
+				report.setReportType(type.getCode());
+
+				ReportOutput reportOutput = new ReportOutput();
+				reportOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
+				ReportTransmissionOption options = new ReportTransmissionOption();
+				options.setReportFormat(formats.get(0).getCode());
+				reportOutput.setReportTransmissionOption(options);
+				report.setReportOutputs(new ArrayList<>());
+				report.getReportOutputs().add(reportOutput);
+
+				reports.add(service.getReportService().generateReport(report));
+			} else {
+				addResultsLines("Unable to run " + type.getDescription() + " no View formats.");
+			}
 		}
 
 		boolean isPending = true;
@@ -86,14 +107,24 @@ public class ReportServiceTest extends BaseTestCase
 
 		schedule = new ScheduledReport();
 		schedule.setReportType(COMPONENT);
-		List<String> validTypeFormats = formats.get("COMPONENT");
-		schedule.setReportFormat(validTypeFormats.get(0));
+
+		List<ReportFormat> formats = service.getReportService().getSupportedFormats(COMPONENT, ReportTransmissionType.VIEW);
+		ReportOutput reportOutput = new ReportOutput();
+		reportOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
+		ReportTransmissionOption options = new ReportTransmissionOption();
+		options.setReportFormat(formats.get(0).getCode());
+		reportOutput.setReportTransmissionOption(options);
+		schedule.setReportOutputs(new ArrayList<>());
+		schedule.getReportOutputs().add(reportOutput);
+
+		schedule.setCreateUser(SecurityUtil.getCurrentUserName());
 		schedule.setScheduleIntervalDays(1);
 		schedule = service.getReportService().saveScheduledReport(schedule);
+
 		ScheduledReport scheduledReportCheck = new ScheduledReport();
 		scheduledReportCheck.setReportType(COMPONENT);
-		scheduledReportCheck.setReportFormat(validTypeFormats.get(0));
 		scheduledReportCheck.setScheduleIntervalDays(1);
+		scheduledReportCheck.setCreateUser(SecurityUtil.getCurrentUserName());
 		scheduledReportCheck = scheduledReportCheck.find();
 		if (scheduledReportCheck.getScheduleReportId().equals(schedule.getScheduleReportId())) {
 			results.append("Report Scheduled<br><br>");

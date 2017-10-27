@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -232,7 +233,7 @@ public class ReportResource
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("/{reportType}/formats")
+	@Path("/{reportType}/{reportTransmissionType}/formats")
 	public Response getReportFormats(
 			@PathParam("reportType") String reportType,
 			@PathParam("reportTransmissionType") String reportTransmissionType
@@ -250,6 +251,24 @@ public class ReportResource
 		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(formats)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.REPORTS)
+	@APIDescription("Gets report supported transmissiontypes for report")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportTransmissionType.class)
+	@Path("/{reportType}/transmissiontypes")
+	public Response getReportTransmissionTypes(
+			@PathParam("reportType") String reportType
+	)
+	{
+		List<ReportTransmissionType> reportTransmissionTypes = service.getReportService().getSupportedOutputs(reportType);
+		reportTransmissionTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
+		GenericEntity<List<ReportTransmissionType>> entity = new GenericEntity<List<ReportTransmissionType>>(reportTransmissionTypes)
 		{
 		};
 		return sendSingleEntityResponse(entity);
