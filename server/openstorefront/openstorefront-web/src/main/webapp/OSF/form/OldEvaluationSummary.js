@@ -114,7 +114,7 @@ Ext.define('OSF.form.OldEvaluationSummary', {
 				   maxWidth: 25,						   
 				   handler: function() {
 					 var record = this.getWidgetRecord();
-					 var componentId = evalPanel.evaluationGrid.componentRecord.get('componentId');
+					 var componentId = evalPanel.componentId;
 						evalPanel.evaluationGrid.setLoading('Clearing Section...');
 						Ext.Ajax.request({
 							url: 'api/v1/resource/components/' + componentId + '/sections/'+ record.get('code'),

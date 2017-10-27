@@ -97,7 +97,7 @@ Ext.define('OSF.landing.TagCloudView', {
 		});			
 
 		Ext.Ajax.request({
-			url: 'api/v1/resource/components/tagviews',				
+			url: 'api/v1/resource/components/tagviews?approvedOnly=true',				
 			success: function(response, opts) {
 				var tags = Ext.decode(response.responseText);
 				var groupedTags = [];

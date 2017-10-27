@@ -17,10 +17,13 @@
  */
 package edu.usu.sdl.openstorefront.security.test;
 
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -44,14 +47,21 @@ public class TestRealm extends AuthorizingRealm
 	private static Map<String, String> passwords = new HashMap<>();
 	private static Map<String, Set<String>> roles = new HashMap<>();
 	private static Map<String, Set<String>> permissions = new HashMap<>();
+	private static UserContext userContext;
 
 	public static void clearLogin()
 	{
 		passwords = new HashMap<>();
 		roles = new HashMap<>();
 		permissions = new HashMap<>();
+		userContext = null;
 	}
 
+	public static void setUserContext(UserContext userContext)
+	{
+		TestRealm.userContext = userContext;
+	}
+	
 	public static void setLogin(String username, String password, Set<String> userRoles)
 	{
 		passwords.put(username, password);
@@ -87,7 +97,10 @@ public class TestRealm extends AuthorizingRealm
 		if (password == null) {
 			throw new AuthenticationException("No account found for user [" + username + "]");
 		}
-
+		if(TestRealm.userContext != null)
+		{
+			SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, TestRealm.userContext);			
+		}
 		return new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
 	}
 
