@@ -97,17 +97,10 @@
         </dependency>  
 		
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>5.6.3</version>
-		</dependency>		
-		
-		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
-			<artifactId>transport</artifactId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>5.6.3</version>
 		</dependency>
-
 		
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
