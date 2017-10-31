@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -601,7 +602,6 @@ public class SubComponentServiceImpl
 					}
 				}
 			}
-
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 			componentService.getChangeLogService().addEntityChange(resource);
@@ -828,46 +828,67 @@ public class SubComponentServiceImpl
 		return reviews;
 	}
 
-	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		return saveMediaFile(media, fileInput, true);
+		return saveMediaFile(media, fileInput, mimeType, originalFileName, true);
 	}
 
-	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, boolean updateLastActivity)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName, boolean updateLastActivity)
 	{
-		Objects.requireNonNull(media);
-		Objects.requireNonNull(fileInput);
-
 		if (StringUtils.isBlank(media.getComponentMediaId())) {
 			media = saveComponentMedia(media, updateLastActivity);
 		}
-		media.setFileName(media.getComponentMediaId());
+
+		media.setFile(saveMediaFile((media.getFile() == null ? new MediaFile() : media.getFile()), fileInput, mimeType, originalFileName));
+		media.setUpdateUser(SecurityUtil.getCurrentUserName());
+		media = saveComponentMedia(media, updateLastActivity);
+		return media;
+	}
+
+	public MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
+	{
 		try (InputStream in = fileInput) {
-			Files.copy(in, media.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
-			media.setUpdateUser(SecurityUtil.getCurrentUserName());
-			media = saveComponentMedia(media, updateLastActivity);
+			saveMediaFile(media, in, mimeType, originalFileName, media.pathToMedia());
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 		return media;
 	}
 
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput)
+	public MediaFile saveResourceFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		Objects.requireNonNull(resource);
-		Objects.requireNonNull(fileInput);
-
-		if (StringUtils.isBlank(resource.getResourceId())) {
-			resource.setResourceId(persistenceService.generateId());
-		}
-		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, resource.pathToResource(), StandardCopyOption.REPLACE_EXISTING);
-			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveComponentResource(resource);
+			saveMediaFile(media, in, mimeType, originalFileName, media.pathToResource());
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
+		return media;
+	}
+
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, Path filePath) throws IOException
+	{
+		Objects.requireNonNull(media);
+		Objects.requireNonNull(fileInput);
+
+		if (StringUtils.isBlank(media.getMediaFileId())) {
+			media.setMediaFileId(persistenceService.generateId());
+		}
+		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setMimeType(mimeType);
+		media.setOriginalName(originalFileName);
+		Files.copy(fileInput, filePath, StandardCopyOption.REPLACE_EXISTING);
+		return media;
+	}
+
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
+	{
+		if (StringUtils.isBlank(resource.getResourceId())) {
+			resource.setResourceId(persistenceService.generateId());
+		}
+		resource.setFile(saveMediaFile((resource.getFile() == null ? new MediaFile() : resource.getFile()), fileInput, mimeType, originalFileName));
+		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
+		resource = saveComponentResource(resource);
+		return resource;
 	}
 
 	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons)

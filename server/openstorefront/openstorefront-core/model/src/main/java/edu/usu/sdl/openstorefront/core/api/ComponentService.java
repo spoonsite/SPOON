@@ -494,16 +494,20 @@ public interface ComponentService
 	 *
 	 * @param media
 	 * @param fileInput
+	 * @param mimeType
+	 * @param originalFileName
 	 */
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput);
+	public void saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Saves component resource to disk sets the filename
 	 *
 	 * @param resource
 	 * @param fileInput
+	 * @param mimeType
+	 * @param originalFileName
 	 */
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput);
+	public void saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Find Recently Added

@@ -662,8 +662,6 @@ public class CoreComponentServiceImpl
 							componentMedia.setComponentId(component.getComponent().getComponentId());
 							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
-							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(true);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
@@ -692,8 +690,7 @@ public class CoreComponentServiceImpl
 								InputStream in = new FileInputStream(path.toFile());
 								componentMedia.setComponentMediaId(persistenceService.generateId());
 								componentMedia.populateBaseCreateFields();
-								componentMedia.setFileName(componentMedia.getComponentMediaId());
-								Files.copy(in, componentMedia.pathToMedia());
+								componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
@@ -702,7 +699,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 						// Replace converted url
-						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getComponentMediaId());
+						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getFile().getMediaFileId());
 						String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
 						LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
 						mediaItem.attr("src", newUrl);
@@ -1895,7 +1892,7 @@ public class CoreComponentServiceImpl
 				List<ComponentMedia> localMedia = new ArrayList<>();
 				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
 					ComponentMedia media = componentAll.getMedia().get(i);
-					if (media.getFileName() != null) {
+					if (media.getFile() != null && StringUtils.isNotBlank(media.getFile().getFileName())) {
 						localMedia.add(componentAll.getMedia().remove(i));
 					} else {
 						media.clearKeys();
@@ -1906,7 +1903,7 @@ public class CoreComponentServiceImpl
 				List<ComponentResource> localResources = new ArrayList<>();
 				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
 					ComponentResource resource = componentAll.getResources().get(i);
-					if (resource.getFileName() != null) {
+					if (resource.getFile() != null && StringUtils.isNotBlank(resource.getFile().getFileName())) {
 						localResources.add(componentAll.getResources().remove(i));
 					} else {
 						resource.clearKeys();
@@ -1925,7 +1922,7 @@ public class CoreComponentServiceImpl
 					Path oldPath = media.pathToMedia();
 					if (oldPath != null) {
 						media.setComponentMediaId(persistenceService.generateId());
-						media.setFileName(media.getComponentMediaId());
+						media.getFile().setFileName(persistenceService.generateId());
 						Path newPath = media.pathToMedia();
 						try {
 							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
@@ -1942,7 +1939,7 @@ public class CoreComponentServiceImpl
 					Path oldPath = resource.pathToResource();
 					if (oldPath != null) {
 						resource.setResourceId(persistenceService.generateId());
-						resource.setFileName(resource.getResourceId());
+						resource.getFile().setFileName(persistenceService.generateId());
 						Path newPath = resource.pathToResource();
 						try {
 							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -25,14 +24,11 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -54,12 +50,20 @@ public class ContentSectionMedia
 	@FK(ContentSection.class)
 	private String contentSectionId;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored name filename")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file uploaded")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalName;
 
 	@NotNull
@@ -69,9 +73,17 @@ public class ContentSectionMedia
 	@FK(MediaType.class)
 	private String mediaTypeCode;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
+	@APIDescription("A local media file")
+	private MediaFile file;
+	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String caption;
@@ -92,10 +104,10 @@ public class ContentSectionMedia
 		super.updateFields(entity);
 
 		setContentSectionMediaId(contentSectionMedia.contentSectionMediaId);
-		setFileName(contentSectionMedia.getFileName());
 		setMediaTypeCode(contentSectionMedia.getMediaTypeCode());
-		setMimeType(contentSectionMedia.getMimeType());
-		setOriginalName(contentSectionMedia.getOriginalName());
+//		setFileName(contentSectionMedia.getFileName());
+//		setMimeType(contentSectionMedia.getMimeType());
+//		setOriginalName(contentSectionMedia.getOriginalName());
 		setPrivateMedia(contentSectionMedia.getPrivateMedia());
 		setCaption(contentSectionMedia.getCaption());
 	}
@@ -108,12 +120,7 @@ public class ContentSectionMedia
 	 */
 	public Path pathToMedia()
 	{
-		Path path = null;
-		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
-		}
-		return path;
+		return getFile().pathToMedia();
 	}
 
 	@Override
@@ -137,7 +144,7 @@ public class ContentSectionMedia
 	@Override
 	public String addRemoveComment()
 	{
-		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + getOriginalName();
+		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getFile() == null ? "" : getFile().getOriginalName());
 	}
 
 	public String getContentSectionMediaId()
@@ -160,22 +167,46 @@ public class ContentSectionMedia
 		this.contentSectionId = contentSectionId;
 	}
 
-	public String getFileName()
+	/**
+	 * @return name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getFileName()}
+	 */
+	@Deprecated
+	public String _getFileName()
 	{
 		return fileName;
 	}
 
-	public void setFileName(String fileName)
+	/**
+	 * @param fileName name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setFileName(String fileName)}
+	 */
+	@Deprecated
+	public void _setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
-
-	public String getOriginalName()
+	
+	/**
+	 * @return filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getOriginalName()}
+	 */
+	@Deprecated
+	public String _getOriginalName()
 	{
 		return originalName;
 	}
-
-	public void setOriginalName(String originalName)
+	
+	/**
+	 * @param originalName filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setOriginalName(String originalName)}
+	 */
+	@Deprecated
+	public void _setOriginalName(String originalName)
 	{
 		this.originalName = originalName;
 	}
@@ -190,12 +221,24 @@ public class ContentSectionMedia
 		this.mediaTypeCode = mediaTypeCode;
 	}
 
-	public String getMimeType()
+	/**
+	 * @return the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getMimeType()}
+	 */
+	@Deprecated
+	public String _getMimeType()
 	{
 		return mimeType;
 	}
 
-	public void setMimeType(String mimeType)
+	/**
+	 * @param mimeType the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setMimeType(String mimeType)}
+	 */
+	@Deprecated
+	public void _setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
 	}
@@ -218,6 +261,16 @@ public class ContentSectionMedia
 	public void setCaption(String caption)
 	{
 		this.caption = caption;
+	}
+
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
 	}
 
 }
