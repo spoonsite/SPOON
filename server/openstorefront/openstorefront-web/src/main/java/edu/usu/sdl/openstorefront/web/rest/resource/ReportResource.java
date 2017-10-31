@@ -241,7 +241,7 @@ public class ReportResource
 		}
 
 		reportTypes = reportTypes.stream().filter(r -> r.getRequiredPermission() == null || SecurityUtil.hasPermission(r.getRequiredPermission())).collect(Collectors.toList());
-		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
+		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupEntity.FIELD_DESCRIPTION));
 
 		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)
 		{
@@ -269,7 +269,7 @@ public class ReportResource
 			lookupModel.setDescription(format.getDescription());
 			formats.add(lookupModel);
 		}
-		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
+		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(formats)
 		{
@@ -288,7 +288,7 @@ public class ReportResource
 	)
 	{
 		List<ReportTransmissionType> reportTransmissionTypes = service.getReportService().getSupportedOutputs(reportType);
-		reportTransmissionTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
+		reportTransmissionTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupEntity.FIELD_DESCRIPTION));
 		GenericEntity<List<ReportTransmissionType>> entity = new GenericEntity<List<ReportTransmissionType>>(reportTransmissionTypes)
 		{
 		};

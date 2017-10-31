@@ -18,7 +18,7 @@
  */
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
+<%@taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
@@ -376,9 +376,273 @@
 				};
 
 
+				var showAddEditWin = function(scheduleData, reoccuring) {
+					
+					var scheduleWin = Ext.create('Ext.window.Window', {
+						title: 'Schedule Report',
+						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+						width: '80%',
+						height: '80%',
+						closeAction: 'destroy',
+						modal: true,
+						alwaysOnTop: true,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								bodyStyle: 'padding: 20px;',
+								scrollable: true,
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'combobox',
+										name: 'reportType',
+										itemId: 'reportType',
+										labelAlign: 'top',
+										fieldLabel: 'Choose Report Type<span class="field-required" />',
+										width: '100%',
+										store: {
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/reports/reporttypes'
+											}
+										},
+										displayField: 'description',
+										valueField: 'code',
+										editable: false,
+										allowBlank: false,
+										listeners: {
+											change: function (cb, newVal, oldVal, opts) {
+												var reportType = cb.getSelection();
+												var form = cb.up('form');
+												form.queryById('reportDescription').update(reportType.get('detailedDescription'));												
+												
+												scheduleOptionsShow(form);
+												showReportOptions(form, newVal);
+												showOutputs(form, newVal);
+											}
+										}
+									},
+									{
+										itemId: 'reportDescription',
+										html: ''
+									},
+									{
+										xtype: 'fieldset',
+										title: 'Schedule',
+										defaults: {
+											labelAlign: 'top',
+											width: '100%'
+										},
+										items: [
+											{
+												xtype: 'combobox',
+												itemId: 'scheduleOptions',
+												name: 'scheduleOption',												
+												fieldLabel: 'How often to run the report?<span class="field-required" />',																							
+												store: {
+													data: [
+														{ code: 'NOW', description: 'Now (One Time Only)'},
+														{ code: 'PERIOD', description: 'Periodically'},
+														{ code: 'DAYS', description: 'Every X Days'},
+														{ code: 'MINUTES', description: 'Every X Minutes'},
+														{ code: 'CUSTOM', description: 'Custom'}
+													]
+												},
+												displayField: 'description',
+												valueField: 'code',
+												value: 'NOW',
+												editable: false,
+												hidden: true,
+												allowBlank: false,
+												listeners: {
+													change: function (cb, newVal, oldVal, opts) {
+													
+														//hide fields
+														var fieldSet = cb.up('fieldset');
+														var period = fieldSet.queryById('scheduleOptionPeriod').setHidden(true);
+														var daily = fieldSet.queryById('scheduleOptionDays').setHidden(true);
+														var minutes = fieldSet.queryById('scheduleOptionMinutes').setHidden(true);
+														var cron = fieldSet.queryById('scheduleOptionCron').setHidden(true);
+													
+														//show options for time
+														if ('PERIOD' === newVal) {
+															period.setHidden(false);
+														} else if ('DAYS' === newVal) {
+															daily.setHidden(false);
+														} else if ('MINUTES' === newVal) {	
+															minutes.setHidden(false);
+														} else if ('CUSTOM' === newVal) {	
+															cron.setHidden(false);
+														}
+													}
+												}
+											},
+											{
+												xtype: 'combobox',
+												fieldLabel: 'Schedule Period',
+												itemId: 'scheduleOptionPeriod',
+												name: 'scheduleOptionPeriod',
+												editable: false,
+												hidden: true,
+												value: 'DAILY',
+												store: {
+													data: [
+														{ code: 'DAILY', description: 'Daily'},
+														{ code: 'WEEKLY', description: 'Weekly'},
+														{ code: 'MONTHLY', description: 'Monthly'}
+													]
+												}
+											},
+											{
+												xtype: 'numberfield',
+												fieldLabel: 'Days Between Runs',
+												itemId: 'scheduleOptionDays',
+												name: 'scheduleOptionDays',
+												hidden: true,
+												value: 1,
+												minValue: 1,
+												maxValue: 30												
+											},
+											{
+												xtype: 'numberfield',
+												fieldLabel: 'Minutes Between Runs',
+												itemId: 'scheduleOptionMinutes',
+												name: 'scheduleOptionMinutes',
+												hidden: true,
+												value: 1,
+												minValue: 1,
+												maxValue: 525600												
+											},
+											{
+												xtype: 'textfield',
+												itemId: 'scheduleOptionCron',
+												name: 'scheduleOptionCron',
+												fieldLabel: 'Cron Expression (See <a href="https://www.freeformatter.com/cron-expression-generator-quartz.html\" target="_blank">Help</a>)',
+												emptyText: 'Eg. 0 0 6 * * ? (Every day at 6am)',
+												hidden: true,
+												maxLength: 255												
+											}
+										]
+									},
+									{
+										xtype: 'fieldset',
+										itemId: 'reportOptionSet',
+										title: 'Report Options',
+										items: [											
+										]
+									},
+									{
+										xtype: 'fieldset',
+										title: 'Outputs',
+										items: [
+											
+										],
+										dockedItems: [
+											{
+												xtype: 'button',
+												text: 'Add',
+												iconCls: 'fa fa-lg fa-add icon-button-color-save',
+												handler: function () {
+													
+												}
+											}
+										]
+									}
+								],
+								dockedItems: [
+									{
+										dock: 'bottom',
+										xtype: 'toolbar',
+										items: [
+											{
+												text: 'Run Report',
+												formBind: true,
+												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
+												handler: function () {
+													
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Cancel',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												handler: function () {
+													scheduleWin.close();
+												}												
+											}
+										]
+									}
+								]
+							}
+						]
+					});
+					scheduleWin.show();
+					if (scheduleData) {
+						
+					}
+					
+					var scheduleOptionsShow = function(form) {
+						form.queryById('scheduleOptions').setHidden(false);
+		
+					};
+					
+					var	showReportOptions = function(form, reportType) {
+						
+						var reportOptionSet = form.queryById('reportOptionSet');
+						reportOptionSet.removeAll();
+						
+						if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
+
+							//add grid for entries
+
+
+
+							Ext.getCmp('filterForEntries').setHidden(false);
+							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+							if (rType === 'TYPECOMP') {
+								
+								//add detail selection
+								
+								Ext.getCmp('detailReportCategories').setHidden(false);
+								Ext.getCmp('detailReportCol4').setHidden(false);
+							}
+						}
+						else if (rType === 'CATCOMP') {
+							Ext.getCmp('categorySelect').setHidden(false);
+						}
+						else if (rType === 'LINKVALID') {
+
+							Ext.getCmp('waitSeconds').setHidden(false);
+						}
+						else if (rType === 'SUBMISSION' || rType === 'USAGE') {
+
+							Ext.getCmp('startDate').setHidden(false);
+							Ext.getCmp('endDate').setHidden(false);
+							Ext.getCmp('previousDaysSelect').setHidden(false);
+						}
+						else if (rType === 'EVALSTAT') {
+							
+							
+							Ext.getCmp('assignedUser').setHidden(false);
+							Ext.getCmp('assignedGroup').setHidden(false);
+						}
+						
+					};
+					
+					var	showOutputs = function(form, reportType) {
+						
+					};
+					
+				};
+				
+
 				var scheduleReportWin = function (scheduleData, reoccuring) {
 					var scheduleReportId = null;
-					//
+					
 					//This is for editing schedule report
 					//
 					if (scheduleData) {
@@ -1487,9 +1751,23 @@
 									text: 'New Report',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
 									scale: 'medium',
-									handler: function () {
-										scheduleReportWin();
+									handler: function () {										
+										showAddEditWin();
 									}
+								},
+								{
+									text: 'Scheduled Reports',
+									id: 'scheduledReportBtn',
+									hidden: true,
+									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
+									scale: 'medium',
+									handler: function () {
+										scheduledReportsWin.show();
+									},
+									tooltip: 'Schedule Reports'
+								},								
+								{
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'View',
@@ -1502,20 +1780,6 @@
 										viewHistory();
 									},
 									tooltip: 'View Report'
-								},
-								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'Scheduled Reports',
-									id: 'scheduledReportBtn',
-									hidden: true,
-									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
-									scale: 'medium',
-									handler: function () {
-										scheduledReportsWin.show();
-									},
-									tooltip: 'Schedule Reports'
 								},
 								{
 									text: 'Download',
@@ -1733,7 +1997,6 @@
 						}]
 					}).show();
 				};
-
 
 				var historyRefreshGrid = function () {
 					Ext.getCmp('historyGrid').getStore().load();

@@ -85,7 +85,7 @@ public class SpaceResults
 
 	public void setLinks(Links _links)
 	{
-		this.links = links;
+		this.links = _links;
 	}
 
 }
