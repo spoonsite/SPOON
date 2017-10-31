@@ -91,6 +91,7 @@ public class ElasticSearchManager
 	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
+	private static AtomicBoolean indexCreated = new AtomicBoolean(false);
 	
 	private static RestClient lowLevelRestClient;
 	private static RestHighLevelClient client;
@@ -112,23 +113,29 @@ public class ElasticSearchManager
 	{
 		
 		//	Check if index already exists...
-		try {
-			XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
-			StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
-			
-			//	High-level REST client doesn't support checking/creating indices (as of Elasticsearch 5.6.3)
-			Response response = lowLevelRestClient.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
-			
-			//	If the index has just been created, update the mapping...
-			updateMapping();
-			
-			LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
-		} catch (ResponseException e) {
-			LOG.log(Level.INFO, "Search index: " + INDEX + " has already been created.");
-		} catch (IOException e) {
-			
-		}
+		//	As of now (Elasticsearch 5.6.3), the best way to check if an index exists is to try and create it!
+		//	... then catch the error if thrown... High/Low-level REST client doesn't support checking the existence indices.
+		//		per: https://discuss.elastic.co/t/high-level-rest-client-admin-api/100461
 		
+		
+		if (!indexCreated.get() && client != null) {
+			try {
+				
+				XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
+				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
+				
+				//	Perform a request attempting to create an index
+				Response response = lowLevelRestClient.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
+				indexCreated.set(true);
+				
+				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
+				
+			} catch (ResponseException e) {
+				//	Index was already created...
+			} catch (IOException e) {
+				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, e);	
+			}
+		}
 
 		return client;
 	}
@@ -325,34 +332,8 @@ public class ElasticSearchManager
 		SearchRequest searchRequest = new SearchRequest(INDEX)
 			.source(searchSourceBuilder);
 		
-		SearchResponse response;
 		try {
-			// perform search
-			response = ElasticSearchManager.getClient().search(searchRequest);
-			
-			indexSearchResult.setTotalResults(response.getHits().getTotalHits());
-			indexSearchResult.setMaxScore(response.getHits().getMaxScore());
-
-			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-			for (SearchHit hit : response.getHits().getHits()) {
-				try {
-					ComponentSearchView view = objectMapper.readValue(hit.getSourceAsString(), new TypeReference<ComponentSearchView>()
-					{
-					});
-					if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
-						view.setSearchScore(hit.getScore());
-						indexSearchResult.getSearchViews().add(view);
-						indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
-					} else {
-						LOG.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));
-						indexSearchResult.setTotalResults(indexSearchResult.getTotalResults() - 1);
-						deleteById(view.getComponentId());
-					}
-				} catch (IOException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
-				}
-			}
-			indexSearchResult.applyDataFilter();
+			performIndexSearch(searchRequest, indexSearchResult);
 		} catch (IOException ex) {
 			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (ElasticsearchStatusException e) {
@@ -360,10 +341,46 @@ public class ElasticSearchManager
 			//	if a status exception occurs, it is likely the fielddata == false for description.
 			//		Thus, update the mapping.
 			updateMapping();
+			
+			//	try to perform the index search one more time...
+			try {
+				performIndexSearch(searchRequest, indexSearchResult);
+			} catch (IOException | ElasticsearchStatusException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
+			}
 		}
 
-
 		return indexSearchResult;
+	}
+	
+	private void performIndexSearch (SearchRequest searchRequest, IndexSearchResult indexSearchResult) throws IOException, ElasticsearchStatusException
+	{
+		// perform search
+		SearchResponse response = ElasticSearchManager.getClient().search(searchRequest);
+
+		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
+		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
+
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		for (SearchHit hit : response.getHits().getHits()) {
+			try {
+				ComponentSearchView view = objectMapper.readValue(hit.getSourceAsString(), new TypeReference<ComponentSearchView>()
+				{
+				});
+				if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
+					view.setSearchScore(hit.getScore());
+					indexSearchResult.getSearchViews().add(view);
+					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
+				} else {
+					LOG.log(Level.FINER, MessageFormat.format("Component is no longer approved and active.  Removing index.  {0}", view.getComponentId()));
+					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults() - 1);
+					deleteById(view.getComponentId());
+				}
+			} catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
+			}
+		}
+		indexSearchResult.applyDataFilter();
 	}
 
 	protected String toProperCase(String query)
@@ -496,7 +513,6 @@ public class ElasticSearchManager
 
 		if (!components.isEmpty()) {
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-//			BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
 			BulkRequest bulkRequest = new BulkRequest();
 
 			//pull attribute and map
@@ -532,7 +548,6 @@ public class ElasticSearchManager
 				}
 			}
 			
-//			BulkResponse bulkResponse = bulkRequest.get();
 			BulkResponse bulkResponse;
 			try {
 				bulkResponse = ElasticSearchManager.getClient().bulk(bulkRequest);
@@ -632,6 +647,7 @@ public class ElasticSearchManager
 	{
 		deleteAll();
 		saveAll();
+		updateMapping();
 	}
 
 	@Override
@@ -661,7 +677,7 @@ public class ElasticSearchManager
 			//	Use low-level REST client to perform re-mapping
 			StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 			
-			//	Perform a PUT request to update the description field
+			//	Perform a PUT request to update the description mapping
 			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "description?update_all_types", Collections.emptyMap(), entity);
 
 		} catch (IOException ex) {
