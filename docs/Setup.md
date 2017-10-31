@@ -174,7 +174,7 @@ http://localhost:9200 should return some json with stats.
 
 		elastic.server.host=localhost
 
-		elastic.server.port=9300
+		elastic.server.port=9200
 
 4. Resync data 
 
@@ -198,7 +198,7 @@ http://localhost:9200 should return some json with stats.
 
 search.server=elasticsearch 
 elastic.server.host=localhost 
-elastic.server.port=9300 
+elastic.server.port=9200 
 
 5. Resync data 
 
