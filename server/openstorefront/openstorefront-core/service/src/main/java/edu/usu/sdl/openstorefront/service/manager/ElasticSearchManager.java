@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -65,6 +66,7 @@ import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -117,8 +119,8 @@ public class ElasticSearchManager
 			//	High-level REST client doesn't support checking/creating indices (as of Elasticsearch 5.6.3)
 			Response response = lowLevelRestClient.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
 			
-			//	If the index has just been created, update the description field...
-			updateFieldData();
+			//	If the index has just been created, update the mapping...
+			updateMapping();
 			
 			LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
 		} catch (ResponseException e) {
@@ -353,6 +355,11 @@ public class ElasticSearchManager
 			indexSearchResult.applyDataFilter();
 		} catch (IOException ex) {
 			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ElasticsearchStatusException e) {
+			
+			//	if a status exception occurs, it is likely the fielddata == false for description.
+			//		Thus, update the mapping.
+			updateMapping();
 		}
 
 
@@ -374,7 +381,7 @@ public class ElasticSearchManager
 				capNext = (DELIMITERS.indexOf((int) c) >= 0);
 			} else {
 				searchQuery.append(c);
-				capNext = (DELIMITERS.indexOf((int) c) >= 0);;
+				capNext = (DELIMITERS.indexOf((int) c) >= 0);
 			}
 		}
 		return searchQuery.toString();
@@ -542,7 +549,6 @@ public class ElasticSearchManager
 			} catch (IOException ex) {
 				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			updateFieldData();
 		}
 	}
 
@@ -587,7 +593,8 @@ public class ElasticSearchManager
 				if (searchHits.getTotalHits() > 0) {
 					//bulk delete results
 					searchHits.forEach(hit -> {
-						bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, hit.getId()));
+						bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, hit.getId()).source(XContentType.JSON, "componentId", hit.getId()));
+						deleteById(hit.getId());
 					});
 
 					//	Process the bulk request (ensure there were no failures)
@@ -633,7 +640,7 @@ public class ElasticSearchManager
 		return started.get();
 	}
 
-	private static void updateFieldData ()
+	private static void updateMapping ()
 	{
 		// Update description field to use fielddata=true
 		//	Here, we must update all types
@@ -655,7 +662,7 @@ public class ElasticSearchManager
 			StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 			
 			//	Perform a PUT request to update the description field
-			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "description", Collections.emptyMap(), entity);
+			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "description?update_all_types", Collections.emptyMap(), entity);
 
 		} catch (IOException ex) {
 			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
