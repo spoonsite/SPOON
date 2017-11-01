@@ -487,6 +487,8 @@
 												editable: false,
 												hidden: true,
 												value: 'DAILY',
+												displayField: 'description',
+												valueField: 'code',
 												store: {
 													data: [
 														{ code: 'DAILY', description: 'Daily'},
@@ -530,7 +532,11 @@
 										xtype: 'fieldset',
 										itemId: 'reportOptionSet',
 										title: 'Report Options',
-										items: [											
+										defaults: {
+											labelAlign: 'top',
+											width: '100%'
+										},										
+										items: [
 										]
 									},
 									{
@@ -595,41 +601,128 @@
 						var reportOptionSet = form.queryById('reportOptionSet');
 						reportOptionSet.removeAll();
 						
-						if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
+						var optionsToAdd = [];
+						if (reportType === 'COMPONENT' || 
+							reportType === 'CMPORG' || 
+							reportType === 'TYPECOMP') {
 
 							//add grid for entries
 
-
-
-							Ext.getCmp('filterForEntries').setHidden(false);
-							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
-							if (rType === 'TYPECOMP') {
+							//Ext.getCmp('filterForEntries').setHidden(false);
+							//Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+							if (reportType === 'TYPECOMP') {
 								
 								//add detail selection
 								
-								Ext.getCmp('detailReportCategories').setHidden(false);
-								Ext.getCmp('detailReportCol4').setHidden(false);
+							//	Ext.getCmp('detailReportCategories').setHidden(false);
+							//	Ext.getCmp('detailReportCol4').setHidden(false);
 							}
 						}
-						else if (rType === 'CATCOMP') {
-							Ext.getCmp('categorySelect').setHidden(false);
+						else if (reportType === 'CATCOMP') {
+							optionsToAdd.push(
+								{
+									xtype: 'combobox',
+									name: 'categorySelect',
+									itemId: 'categorySelect',
+									fieldLabel: 'Select Category<span class="field-required" />',
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/attributes/attributetypes',
+											reader: {
+												type: 'json',
+												rootProperty: 'data'
+											}
+										}
+									},
+									displayField: 'description',
+									valueField: 'attributeType',
+									editable: false,									
+									allowBlank: true
+								}		
+							);							
 						}
-						else if (rType === 'LINKVALID') {
+						else if (reportType === 'LINKVALID') {							
+							optionsToAdd.push(
+								{
+									xtype: 'numberfield',
+									name: 'waitSeconds',
+									itemId: 'waitSeconds',
+									fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',									
+									maxLength: 3,
+									minValue: 1,
+									maxValue: 300,
+									value: '5',
+									editable: true,									
+									allowBlank: true									
+								}									
+							);							
+						}
+						else if (reportType === 'SUBMISSION' || reportType === 'USAGE') {
 
-							Ext.getCmp('waitSeconds').setHidden(false);
+							//Ext.getCmp('startDate').setHidden(false);
+							//Ext.getCmp('endDate').setHidden(false);
+							//Ext.getCmp('previousDaysSelect').setHidden(false);
 						}
-						else if (rType === 'SUBMISSION' || rType === 'USAGE') {
-
-							Ext.getCmp('startDate').setHidden(false);
-							Ext.getCmp('endDate').setHidden(false);
-							Ext.getCmp('previousDaysSelect').setHidden(false);
-						}
-						else if (rType === 'EVALSTAT') {
+						else if (reportType === 'EVALSTAT') {
 							
+							optionsToAdd.push({
+								xtype: 'combobox',
+								id: 'assignedUser',
+								name: 'assignedUser',
+								fieldLabel: 'Assigned User',
+								displayField: 'description',
+								valueField: 'code',
+								emptyText: 'All',
+								typeAhead: true,
+								editable: true,							
+								forceSelection: true,
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/userprofiles/lookup'
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											store.add({
+												code: null,
+												description: 'All'
+											});
+										}
+									}
+								}
+							});
 							
-							Ext.getCmp('assignedUser').setHidden(false);
-							Ext.getCmp('assignedGroup').setHidden(false);
+							optionsToAdd.push({
+								xtype: 'combobox',
+								id: 'assignedGroup',
+								name: 'assignedGroup',
+								fieldLabel: 'Assign to Group',
+								displayField: 'description',
+								valueField: 'code',
+								emptyText: 'All',															
+								editable: false,
+								forceSelection: true,
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/securityroles/lookup'
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											store.add({
+												code: null,
+												description: 'All'
+											});
+										}
+									}
+								}
+							});
 						}
+						reportOptionSet.add(optionsToAdd);						
 						
 					};
 					
