@@ -377,15 +377,15 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		sub.saveMediaFile(media, fileInput, mimeType, originalFileName);
+		return sub.saveMediaFile(media, fileInput, mimeType, originalFileName);
 	}
 
 	@Override
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		sub.saveResourceFile(resource, fileInput, mimeType, originalFileName);
+		return sub.saveResourceFile(resource, fileInput, mimeType, originalFileName);
 	}
 	
 	@Override

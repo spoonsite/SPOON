@@ -690,7 +690,7 @@ public class CoreComponentServiceImpl
 								InputStream in = new FileInputStream(path.toFile());
 								componentMedia.setComponentMediaId(persistenceService.generateId());
 								componentMedia.populateBaseCreateFields();
-								componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
+								componentMedia = componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());

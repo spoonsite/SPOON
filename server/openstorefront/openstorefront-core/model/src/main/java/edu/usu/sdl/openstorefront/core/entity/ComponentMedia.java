@@ -198,7 +198,11 @@ public class ComponentMedia
 	@Override
 	public String addRemoveComment()
 	{
-		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getLink() != null ? getLink() : getFile().getOriginalName());
+		String typeString = TranslateUtil.translate(MediaType.class, getMediaTypeCode());
+		String fileNameString = (getFile() != null ? getFile().getOriginalName() : "");
+		String linkString = (getLink() != null ? getLink() : fileNameString);
+		String comment = typeString + " - " + linkString;
+		return comment;
 	}
 
 	public String getComponentMediaId()
