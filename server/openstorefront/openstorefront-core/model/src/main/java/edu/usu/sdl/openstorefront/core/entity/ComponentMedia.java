@@ -175,14 +175,14 @@ public class ComponentMedia
 	}
 
 	/**
-	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use fields directly
+	 * Get the path to the media on disk. 
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
 	public Path pathToMedia()
 	{
-		return (this.getFile() == null) ? null : this.getFile().getPath();
+		//Note: this may be ran from a proxy so don't use fields directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	@Override

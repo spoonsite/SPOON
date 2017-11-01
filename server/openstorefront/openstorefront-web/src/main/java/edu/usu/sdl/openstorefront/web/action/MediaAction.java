@@ -152,16 +152,16 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = mediaFile.getPath();
+		Path path = mediaFile.path();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
 			if (componentMedia != null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.getPath(), mediaId, component.getName(), component.getComponentId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.path(), mediaId, component.getName(), component.getComponentId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.getPath(), mediaId}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.path(), mediaId}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
@@ -486,15 +486,15 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = mediaFile.getPath();
+		Path path = mediaFile.path();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
 			if (sectionMedia != null) {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.getPath(), sectionMedia.getContentSectionMediaId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.path(), sectionMedia.getContentSectionMediaId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.getPath(), mediaFile.getMediaFileId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;

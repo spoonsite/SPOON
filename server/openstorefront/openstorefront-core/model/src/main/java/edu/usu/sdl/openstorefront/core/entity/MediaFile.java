@@ -52,13 +52,13 @@ public class MediaFile
 	private MediaFileType fileType;
 
 	/**
-	 * Get the path to the file on disk. Note: this may be ran from a proxy so
-	 * don't use fields directly
+	 * Get the path to the file on disk. 
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
-	public Path getPath()
+	public Path path()
 	{
+		//Note: this may be ran from a proxy so don't use fields directly
 		Path path = null;
 		if (StringUtils.isNotBlank(getFileName())) {
 			path = Paths.get(this.getFileType().getPath() + "/" + getFileName());

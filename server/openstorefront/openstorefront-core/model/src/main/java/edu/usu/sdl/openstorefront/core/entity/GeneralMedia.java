@@ -52,25 +52,21 @@ public class GeneralMedia
 	/**
 	 * @deprecated As of release 2.5, replaced by {@link #file}
 	 */
-	@Deprecated	
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Deprecated
 	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
 	/**
 	 * @deprecated As of release 2.5, replaced by {@link #file}
 	 */
-	@Deprecated	
-	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Deprecated
 	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalFileName;
 
 	/**
 	 * @deprecated As of release 2.5, replaced by {@link #file}
 	 */
-	@Deprecated	
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Deprecated
 	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
@@ -79,14 +75,14 @@ public class GeneralMedia
 	}
 
 	/**
-	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use variable directly
+	 * Get the path to the media on disk.
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
 	public Path pathToMedia()
 	{
-		return (this.getFile() == null) ? null : this.getFile().getPath();
+		//Note: this may be ran from a proxy so don't use variable directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	public String getName()
@@ -141,7 +137,7 @@ public class GeneralMedia
 	{
 		return originalFileName;
 	}
-	
+
 	/**
 	 * @param originalFileName filename used by the original source
 	 * @deprecated As of release 2.5, replaced by

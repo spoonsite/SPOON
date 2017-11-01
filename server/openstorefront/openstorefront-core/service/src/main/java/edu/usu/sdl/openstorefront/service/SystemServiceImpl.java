@@ -416,6 +416,10 @@ public class SystemServiceImpl
 	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName) throws IOException
 	{
 		Objects.requireNonNull(fileInput);
+		if(media == null)
+		{
+			media = new MediaFile();
+		}
 
 		if (StringUtils.isBlank(media.getMediaFileId())) {
 			media.setMediaFileId(persistenceService.generateId());

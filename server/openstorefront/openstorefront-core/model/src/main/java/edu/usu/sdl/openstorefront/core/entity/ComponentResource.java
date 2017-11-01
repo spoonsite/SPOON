@@ -156,14 +156,14 @@ public class ComponentResource
 	}
 
 	/**
-	 * Get the path to the resource on disk. Note: this may be ran from a proxy
-	 * so don't use variable directly
+	 * Get the path to the resource on disk. 
 	 *
 	 * @return Resource or null if this doesn't represent a disk resource
 	 */
 	public Path pathToResource()
 	{
-		return (this.getFile() == null) ? null : this.getFile().getPath();
+		//Note: this may be ran from a proxy so don't use variable directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	@Override
