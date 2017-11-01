@@ -125,16 +125,17 @@ public class ElasticSearchManager
 				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 				
 				//	Perform a request attempting to create an index
-				Response response = lowLevelRestClient.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
-				indexCreated.set(true);
-				
+				Response response = lowLevelRestClient.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);												
 				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
+				indexCreated.set(true);
 				
 			} catch (ResponseException e) {
 				//	Index was already created...
+				indexCreated.set(true);
 			} catch (IOException e) {
-				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, e);	
+				LOG.log(Level.SEVERE, null, e);	
 			}
+			
 		}
 
 		return client;
@@ -146,7 +147,7 @@ public class ElasticSearchManager
 			try {
 				lowLevelRestClient.close();
 			} catch (IOException ex) {
-				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 		}
 	}
@@ -544,7 +545,7 @@ public class ElasticSearchManager
 				try {
 					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId()).source(objectMapper.writeValueAsBytes(componentSearchView)));
 				} catch (JsonProcessingException ex) {
-					Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+					LOG.log(Level.SEVERE, null, ex);
 				}
 			}
 			
@@ -562,7 +563,7 @@ public class ElasticSearchManager
 					LOG.log(Level.FINE, "Index components successfully");
 				}
 			} catch (IOException ex) {
-				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 		}
 	}
@@ -576,7 +577,7 @@ public class ElasticSearchManager
 			response = client.delete(deleteRequest);
 			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
 		} catch (IOException ex) {
-			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -625,7 +626,7 @@ public class ElasticSearchManager
 				start += searchHits.getHits().length;
 				total = searchHits.getTotalHits();
 			} catch (IOException ex) {
-				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 
 		}
@@ -681,7 +682,7 @@ public class ElasticSearchManager
 			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "description?update_all_types", Collections.emptyMap(), entity);
 
 		} catch (IOException ex) {
-			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 }
