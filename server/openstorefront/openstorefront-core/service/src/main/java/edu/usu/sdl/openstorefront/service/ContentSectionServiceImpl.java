@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.FileInputStream;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -155,7 +157,7 @@ public class ContentSectionServiceImpl
 							InputStream in = new FileInputStream(path.toFile());
 							contentSectionMedia.setContentSectionMediaId(persistenceService.generateId());
 							contentSectionMedia.populateBaseCreateFields();
-							contentSectionMedia.setFile(saveMediaFile(new MediaFile(), in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName(), contentSectionMedia.pathToMedia()));
+							contentSectionMedia.setFile(saveMediaFile(new MediaFile(), in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName()));
 							persistenceService.persist(contentSectionMedia);
 							//NOTE: (KB) commit so that we can find section media via sql
 							persistenceService.commit();
@@ -228,7 +230,7 @@ public class ContentSectionServiceImpl
 			getChangeLogService().addEntityChange(savedMedia);
 		}
 		try {
-			savedMedia.setFile(saveMediaFile((savedMedia.getFile() == null ? new MediaFile() : savedMedia.getFile()), fileInput, mimeType, originalFileName, savedMedia.pathToMedia()));
+			savedMedia.setFile(saveMediaFile(savedMedia.getFile(), fileInput, mimeType, originalFileName));
 			persistenceService.persist(savedMedia);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
@@ -242,18 +244,21 @@ public class ContentSectionServiceImpl
 		return updatedMedia;
 	}
 
-	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, Path filePath) throws IOException
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName) throws IOException
 	{
-		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
-
+		if (media == null) {
+			media = new MediaFile();
+		}
 		if (StringUtils.isBlank(media.getMediaFileId())) {
 			media.setMediaFileId(persistenceService.generateId());
 		}
 		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
-		Files.copy(fileInput, filePath, StandardCopyOption.REPLACE_EXISTING);
+		media.setFileType(MediaFileType.MEDIA);
+		Path path = Paths.get(MediaFileType.MEDIA.getPath() + "/" + media.getFileName());
+		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
 		return media;
 	}
 
@@ -461,7 +466,7 @@ public class ContentSectionServiceImpl
 			if (path != null) {
 				if (path.toFile().exists()) {
 					try (InputStream in = new FileInputStream(path.toFile())) {
-						getContentSectionService().saveMedia(sectionMedia, in,templateMedia.getFile().getMimeType(),templateMedia.getFile().getOriginalName());
+						getContentSectionService().saveMedia(sectionMedia, in, templateMedia.getFile().getMimeType(), templateMedia.getFile().getOriginalName());
 					} catch (IOException ex) {
 						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
 							path.toString(), templateMedia.getFile().getOriginalName()

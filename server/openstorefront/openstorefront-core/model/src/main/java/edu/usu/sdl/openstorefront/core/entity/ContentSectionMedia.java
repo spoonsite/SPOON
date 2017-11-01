@@ -105,11 +105,12 @@ public class ContentSectionMedia
 
 		setContentSectionMediaId(contentSectionMedia.contentSectionMediaId);
 		setMediaTypeCode(contentSectionMedia.getMediaTypeCode());
-//		setFileName(contentSectionMedia.getFileName());
-//		setMimeType(contentSectionMedia.getMimeType());
-//		setOriginalName(contentSectionMedia.getOriginalName());
+		setFileName(contentSectionMedia.getFileName());
+		setMimeType(contentSectionMedia.getMimeType());
+		setOriginalName(contentSectionMedia.getOriginalName());
 		setPrivateMedia(contentSectionMedia.getPrivateMedia());
 		setCaption(contentSectionMedia.getCaption());
+		setFile(contentSectionMedia.getFile());
 	}
 
 	/**
@@ -120,7 +121,7 @@ public class ContentSectionMedia
 	 */
 	public Path pathToMedia()
 	{
-		return getFile().pathToMedia();
+		return getFile().getPath();
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().getFileName()}
 	 */
 	@Deprecated
-	public String _getFileName()
+	public String getFileName()
 	{
 		return fileName;
 	}
@@ -184,7 +185,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().setFileName(String fileName)}
 	 */
 	@Deprecated
-	public void _setFileName(String fileName)
+	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
@@ -195,7 +196,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().getOriginalName()}
 	 */
 	@Deprecated
-	public String _getOriginalName()
+	public String getOriginalName()
 	{
 		return originalName;
 	}
@@ -206,7 +207,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().setOriginalName(String originalName)}
 	 */
 	@Deprecated
-	public void _setOriginalName(String originalName)
+	public void setOriginalName(String originalName)
 	{
 		this.originalName = originalName;
 	}
@@ -227,7 +228,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().getMimeType()}
 	 */
 	@Deprecated
-	public String _getMimeType()
+	public String getMimeType()
 	{
 		return mimeType;
 	}
@@ -238,7 +239,7 @@ public class ContentSectionMedia
 	 * {@link #getFile().setMimeType(String mimeType)}
 	 */
 	@Deprecated
-	public void _setMimeType(String mimeType)
+	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
 	}

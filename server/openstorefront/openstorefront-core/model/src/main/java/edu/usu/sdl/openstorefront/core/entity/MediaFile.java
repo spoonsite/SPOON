@@ -15,11 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import java.io.File;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.validation.constraints.NotNull;
@@ -50,41 +49,19 @@ public class MediaFile
 	@APIDescription("Type of the file uploaded")
 	private String mimeType;
 
-	/**
-	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use fields directly
-	 *
-	 * @return Path or null if this doesn't represent a disk resource
-	 */
-	public Path pathToMedia()
-	{
-		return this.pathToFile(FileSystemManager.MEDIA_DIR);
-	}
-
-	/**
-	 * Get the path to the resource on disk. Note: this may be ran from a proxy
-	 * so don't use fields directly
-	 *
-	 * @return Path or null if this doesn't represent a disk resource
-	 */
-	public Path pathToResource()
-	{
-		return this.pathToFile(FileSystemManager.RESOURCE_DIR);
-	}
+	private MediaFileType fileType;
 
 	/**
 	 * Get the path to the file on disk. Note: this may be ran from a proxy so
 	 * don't use fields directly
 	 *
-	 * @param basePath directory files are stored in
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
-	private Path pathToFile(String basePath)
+	public Path getPath()
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(basePath);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
+			path = Paths.get(this.getFileType().getPath() + "/" + getFileName());
 		}
 		return path;
 	}
@@ -174,5 +151,23 @@ public class MediaFile
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public MediaFileType getFileType()
+	{
+		return fileType;
+	}
+
+	/**
+	 *
+	 * @param fileType
+	 */
+	public void setFileType(MediaFileType fileType)
+	{
+		this.fileType = fileType;
 	}
 }

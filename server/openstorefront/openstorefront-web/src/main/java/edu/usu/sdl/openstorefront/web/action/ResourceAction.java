@@ -101,7 +101,7 @@ public class ResourceAction
 
 		InputStream in;
 		long length;
-		Path path = mediaFile.pathToResource();
+		Path path = mediaFile.getPath();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();

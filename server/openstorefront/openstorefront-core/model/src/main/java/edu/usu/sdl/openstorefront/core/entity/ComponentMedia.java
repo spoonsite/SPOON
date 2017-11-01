@@ -182,7 +182,7 @@ public class ComponentMedia
 	 */
 	public Path pathToMedia()
 	{
-		return (this.getFile() == null) ? null : this.getFile().pathToMedia();
+		return (this.getFile() == null) ? null : this.getFile().getPath();
 	}
 
 	@Override

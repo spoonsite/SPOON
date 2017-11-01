@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -24,16 +23,14 @@ import edu.usu.sdl.openstorefront.core.annotation.Unique;
 import edu.usu.sdl.openstorefront.validation.GeneralMediaUniqueHandler;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author dshurtleff
+ * @author kbair
  */
 @APIDescription("General media used for articles, bagdes, etc.")
 public class GeneralMedia
@@ -49,17 +46,32 @@ public class GeneralMedia
 	private String name;
 
 	@NotNull
+	@APIDescription("Stored file information")
+	private MediaFile file;
+
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated	
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored filename")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
-	@NotNull
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated	
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file uploaded")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalFileName;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
 	public GeneralMedia()
@@ -74,12 +86,7 @@ public class GeneralMedia
 	 */
 	public Path pathToMedia()
 	{
-		Path path = null;
-		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.GENERAL_MEDIA_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
-		}
-		return path;
+		return (this.getFile() == null) ? null : this.getFile().getPath();
 	}
 
 	public String getName()
@@ -92,31 +99,77 @@ public class GeneralMedia
 		this.name = name;
 	}
 
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
+	}
+
+	/**
+	 * @return name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getFileName()}
+	 */
+	@Deprecated
 	public String getFileName()
 	{
 		return fileName;
 	}
 
+	/**
+	 * @param fileName name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setFileName(String fileName)}
+	 */
+	@Deprecated
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
 
+	/**
+	 * @return filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getOriginalName()}
+	 */
+	@Deprecated
 	public String getOriginalFileName()
 	{
 		return originalFileName;
 	}
-
+	
+	/**
+	 * @param originalFileName filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setOriginalName(String originalName)}
+	 */
+	@Deprecated
 	public void setOriginalFileName(String originalFileName)
 	{
 		this.originalFileName = originalFileName;
 	}
 
+	/**
+	 * @return the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getMimeType()}
+	 */
+	@Deprecated
 	public String getMimeType()
 	{
 		return mimeType;
 	}
 
+	/**
+	 * @param mimeType the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setMimeType(String mimeType)}
+	 */
+	@Deprecated
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;

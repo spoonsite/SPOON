@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
@@ -66,6 +67,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -835,11 +837,12 @@ public class SubComponentServiceImpl
 
 	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName, boolean updateLastActivity)
 	{
+		Objects.requireNonNull(media);
 		if (StringUtils.isBlank(media.getComponentMediaId())) {
 			media = saveComponentMedia(media, updateLastActivity);
 		}
 
-		media.setFile(saveMediaFile((media.getFile() == null ? new MediaFile() : media.getFile()), fileInput, mimeType, originalFileName));
+		media.setFile(saveMediaFile(media.getFile(), fileInput, mimeType, originalFileName));
 		media.setUpdateUser(SecurityUtil.getCurrentUserName());
 		media = saveComponentMedia(media, updateLastActivity);
 		return media;
@@ -848,7 +851,7 @@ public class SubComponentServiceImpl
 	public MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		try (InputStream in = fileInput) {
-			saveMediaFile(media, in, mimeType, originalFileName, media.pathToMedia());
+			saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.MEDIA);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -858,34 +861,39 @@ public class SubComponentServiceImpl
 	public MediaFile saveResourceFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		try (InputStream in = fileInput) {
-			saveMediaFile(media, in, mimeType, originalFileName, media.pathToResource());
+			saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.RESOURCE);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 		return media;
 	}
 
-	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, Path filePath) throws IOException
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, MediaFileType type) throws IOException
 	{
-		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
-
+		if (media == null) {
+			media = new MediaFile();
+		}
 		if (StringUtils.isBlank(media.getMediaFileId())) {
 			media.setMediaFileId(persistenceService.generateId());
 		}
 		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
-		Files.copy(fileInput, filePath, StandardCopyOption.REPLACE_EXISTING);
+		media.setFileType(type);
+
+		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
+		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
 		return media;
 	}
 
 	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
 	{
+		Objects.requireNonNull(resource);
 		if (StringUtils.isBlank(resource.getResourceId())) {
 			resource.setResourceId(persistenceService.generateId());
 		}
-		resource.setFile(saveMediaFile((resource.getFile() == null ? new MediaFile() : resource.getFile()), fileInput, mimeType, originalFileName));
+		resource.setFile(saveMediaFile(resource.getFile(), fileInput, mimeType, originalFileName));
 		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 		resource = saveComponentResource(resource);
 		return resource;

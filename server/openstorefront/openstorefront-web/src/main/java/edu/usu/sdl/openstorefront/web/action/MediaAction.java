@@ -152,16 +152,16 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = mediaFile.pathToMedia();
+		Path path = mediaFile.getPath();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
 			if (componentMedia != null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.pathToMedia(), mediaId, component.getName(), component.getComponentId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.getPath(), mediaId, component.getName(), component.getComponentId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.pathToMedia(), mediaId}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.getPath(), mediaId}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
@@ -276,11 +276,11 @@ public class MediaAction
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(generalMedia.getMimeType())
+				.setContentType(generalMedia.getFile().getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(generalMedia.getOriginalFileName())
+				.setFilename(generalMedia.getFile().getOriginalName())
 				.createRangeResolution();
 	}
 
@@ -295,15 +295,13 @@ public class MediaAction
 			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 			generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-			generalMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
-			generalMedia.setMimeType(file.getContentType());
 
 			ValidationModel validationModel = new ValidationModel(generalMedia);
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				try {
-					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream(),file.getContentType(),StringProcessor.getJustFileName(file.getFileName()));
 					return streamResults(generalMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
@@ -488,15 +486,15 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = mediaFile.pathToMedia();
+		Path path = mediaFile.getPath();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
 			if (sectionMedia != null) {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.pathToMedia(), sectionMedia.getContentSectionMediaId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.getPath(), sectionMedia.getContentSectionMediaId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.pathToMedia(), mediaFile.getMediaFileId()}));
+				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.getPath(), mediaFile.getMediaFileId()}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;

@@ -163,7 +163,7 @@ public class ComponentResource
 	 */
 	public Path pathToResource()
 	{
-		return (this.getFile() == null) ? null : this.getFile().pathToResource();
+		return (this.getFile() == null) ? null : this.getFile().getPath();
 	}
 
 	@Override
