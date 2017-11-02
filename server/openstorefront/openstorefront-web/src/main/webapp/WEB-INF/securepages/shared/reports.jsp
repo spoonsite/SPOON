@@ -386,6 +386,7 @@
 						closeAction: 'destroy',
 						modal: true,
 						alwaysOnTop: true,
+						maximizable: true,
 						layout: 'fit',
 						items: [
 							{
@@ -541,6 +542,7 @@
 									},
 									{
 										xtype: 'fieldset',
+										itemId: 'reportOutputs',
 										title: 'Outputs',
 										items: [
 											
@@ -587,9 +589,37 @@
 						]
 					});
 					scheduleWin.show();
+					
+					var outputs = [];
 					if (scheduleData) {
+						//edit
 						
+						
+						
+					} else {
+						//add view
+						outputs.push( {
+							reportTransmissionType: 'VIEW',
+							reportTransmissionOption: {}
+						});
 					}
+					
+					var days = [];
+					days.push({
+						code: null,
+						days: 'Select'
+					});
+					for (var i = 1; i<29; i++) {
+						days.push({
+							code: '' + i,
+							days: '' + i
+						});
+					}
+					var previousDaysStore = Ext.create('Ext.data.Store', {						
+						fields: ['code', 'days'],
+						data: days
+					});					
+					
 					
 					var scheduleOptionsShow = function(form) {
 						form.queryById('scheduleOptions').setHidden(false);
@@ -606,42 +636,157 @@
 							reportType === 'CMPORG' || 
 							reportType === 'TYPECOMP') {
 
-							//add grid for entries
-
-							//Ext.getCmp('filterForEntries').setHidden(false);
-							//Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+							//add grid for entries							
+							optionsToAdd.push({
+								xtype: 'entryselect'						
+							});
+							
 							if (reportType === 'TYPECOMP') {
 								
 								//add detail selection
-								
-							//	Ext.getCmp('detailReportCategories').setHidden(false);
-							//	Ext.getCmp('detailReportCol4').setHidden(false);
+								optionsToAdd.push({
+										xtype: 'fieldcontainer',
+										fieldLabel: 'Included Report Categories',										
+										items: [
+											{
+												layout: 'column',
+												items: [
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',														
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'Description',																															
+																name: 'description',
+																value: true
+															},
+															{
+																boxLabel: 'Contacts',																														
+																name: 'contacts',
+																value: true
+															},
+															{
+																boxLabel: 'Resources',																															
+																name: 'resources',
+																value: true
+															},
+															{
+																boxLabel: 'Vitals',
+																name: 'vitals',
+																value: true
+															}
+														]
+													},
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',														
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'Dependencies',																																
+																name: 'dependencies',
+																value: true
+															},
+															{
+																boxLabel: 'Relationships',																
+																
+																name: 'relationships',
+																value: true
+															},
+															{
+																boxLabel: 'Tags',																
+																name: 'tags',
+																value: true
+															},
+															{
+																boxLabel: 'Organization Data',																																
+																name: 'orgData',
+																value: true,
+																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
+															}
+														]
+													},
+													{
+														xtype: 'fieldcontainer',
+														defaultType: 'checkboxfield',														
+														columnWidth: 0.32,
+														baseCls: 'detailReportColumn',
+														items: [
+															{
+																boxLabel: 'All Evaluation Versions',
+																name: 'evalVersions',
+																inputAttrTpl: 'data-qtip=An&nbsp;evaluation&nbsp;category&nbsp;type&nbsp;must&nbsp;be&nbsp;specified'
+															},
+															{
+																boxLabel: 'Reviews',
+																name: 'reportReviews'
+															},
+															{
+																boxLabel: 'Q/A',
+																name: 'QA'
+															}
+														]
+													}
+												]
+											}
+										]
+									});
+									
+									optionsToAdd.push({
+										xtype: 'fieldcontainer',
+										defaultType: 'radiofield',
+										fieldLabel: 'Include Evaluation',																				
+									    defaults: {
+									        columnWidth: 0.32
+									    },
+									    layout: 'column',
+										items: [
+											{
+												boxLabel: 'Evaluation Summary',
+												name: 'evaluationType',											
+												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
+												value: true
+											},
+											{
+												boxLabel: 'Evaluation Details',												
+												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
+												name: 'evaluationType'
+											},
+											{
+												boxLabel: 'None',
+												inputAttrTpl: 'data-qtip=Exclude&nbsp;evaluations&nbsp;from&nbsp;this&nbsp;report',
+												name: 'evaluationType'
+											}
+										]
+									});
+
 							}
 						}
 						else if (reportType === 'CATCOMP') {
-							optionsToAdd.push(
-								{
-									xtype: 'combobox',
-									name: 'categorySelect',
-									itemId: 'categorySelect',
-									fieldLabel: 'Select Category<span class="field-required" />',
-									store: {
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/attributes/attributetypes',
-											reader: {
-												type: 'json',
-												rootProperty: 'data'
-											}
+							optionsToAdd.push({
+								xtype: 'combobox',
+								name: 'categorySelect',
+								itemId: 'categorySelect',
+								fieldLabel: 'Select Category<span class="field-required" />',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/attributes/attributetypes',
+										reader: {
+											type: 'json',
+											rootProperty: 'data'
 										}
-									},
-									displayField: 'description',
-									valueField: 'attributeType',
-									editable: false,									
-									allowBlank: true
-								}		
-							);							
+									}
+								},
+								displayField: 'description',
+								valueField: 'attributeType',
+								editable: false,									
+								allowBlank: true
+							});							
 						}
 						else if (reportType === 'LINKVALID') {							
 							optionsToAdd.push(
@@ -661,9 +806,57 @@
 						}
 						else if (reportType === 'SUBMISSION' || reportType === 'USAGE') {
 
-							//Ext.getCmp('startDate').setHidden(false);
-							//Ext.getCmp('endDate').setHidden(false);
-							//Ext.getCmp('previousDaysSelect').setHidden(false);
+							optionsToAdd.push({
+								xtype: 'datefield',
+								name: 'startDate',
+								id: 'startDate',
+								fieldLabel: 'Start Date (Blank = Current Day)',
+								width: '100%',
+								format: 'm/d/Y',
+								submitFormat: 'Y-m-d\\TH:i:s.u',																
+								allowBlank: true,
+								style: {
+									marginTop: '20px'
+								}
+							});
+							
+							optionsToAdd.push({
+								xtype: 'datefield',
+								name: 'endDate',
+								id: 'endDate',
+								fieldLabel: 'End Date (Blank = Current Day)',
+								width: '100%',
+								format: 'm/d/Y',																
+								allowBlank: true
+							});
+							
+							optionsToAdd.push({
+								xtype: 'combobox',
+								name: 'previousDaysSelect',
+								id: 'previousDaysSelect',
+								fieldLabel: 'Previous Days',
+								width: '100%',
+								maxLength: 50,
+								store: previousDaysStore,
+								displayField: 'days',
+								valueField: 'code',
+								editable: false,								
+								allowBlank: true,
+								listeners: {
+									change: function(cb, newValue, oldValue, opts){
+										if (newValue){
+											Ext.getCmp('startDate').setValue(null);
+											Ext.getCmp('endDate').setValue(null);
+											Ext.getCmp('startDate').setDisabled(true);
+											Ext.getCmp('endDate').setDisabled(true);
+										} else {
+											Ext.getCmp('startDate').setDisabled(false);
+											Ext.getCmp('endDate').setDisabled(false);
+										}
+									}
+								}
+							});							
+							
 						}
 						else if (reportType === 'EVALSTAT') {
 							
@@ -726,9 +919,89 @@
 						
 					};
 					
+					
 					var	showOutputs = function(form, reportType) {
 						
+						var reportOutputPanel = form.queryById('reportOutputs');
+						reportOutputPanel.removeAll();
+						
+						reportOutputPanel.setLoading(true);
+						Ext.Ajax.request({
+							url: 'api/v1/resource/reports/' + reportType + '/transmissiontypes',
+							callback: function() {
+								reportOutputPanel.setLoading(false);
+							},
+							success: function(response, opts) {
+								var transmissionTypes = Ext.decode(response.responseText);
+								
+								var outputComponents = [];
+						
+								Ext.Array.each(outputs, function(output){
+									switch (reportTransmissionType) {
+										case 'VIEW':
+											outputComponents.push(constructViewOutput(output));
+											break;
+										case 'EMAIL':
+											outputComponents.push(constructEmailOutput(output));
+											break;
+										case 'CONFLUENCE':
+											outputComponents.push(constructConfluenceOutput(output));
+											break;
+									}
+									
+								});
+						
+						
+								outputToAdd = [];
+								
+								Ext.Array.each(transmissionTypes, function(avaliable) {
+									//check if already added and multiple is not allowed.
+									if (!avaliable.supportsMultiple) {
+										
+									} else {
+										outputToAdd.push({
+											text: avaliable.description,
+											transmissionType: avaliable,
+											handler: function() {
+												
+												
+												showOutputs(form, reportType);
+											}
+										});
+									}
+									
+								});
+								
+								
+								outputComponents.add({
+									xtype: 'button',
+									text: 'Add',
+									iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
+									menu: [								
+									]
+								});
+
+								reportOutputPanel.add(outputComponents);
+
+							}
+						});
+						
+						
+						
 					};
+					
+					var constructViewOutput = function(reportOutput) {
+						
+					};
+
+					var constructEmailOutput = function(reportOutput) {
+						
+					};
+
+					var constructConfluenceOutput = function(reportOutput) {
+						
+					};
+					
 					
 				};
 				

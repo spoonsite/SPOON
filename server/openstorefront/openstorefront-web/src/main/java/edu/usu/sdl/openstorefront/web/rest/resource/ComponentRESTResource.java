@@ -76,6 +76,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.core.view.ComponentPrintView;
@@ -177,7 +178,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(LookupModel.class)
+	@DataType(ComponentLookupModel.class)
 	@Path("/lookup")
 	public Response getComponentLookupList(
 			@BeanParam ComponentFilterParams filterQueryParams,
@@ -193,7 +194,7 @@ public class ComponentRESTResource
 				return sendSingleEntityResponse(validationResult.toRestError());
 			}
 
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
@@ -223,20 +224,15 @@ public class ComponentRESTResource
 			}
 
 			components = filterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
-			}
+			lookupModels = ComponentLookupModel.toView(components);
 			lookupModels = filterQueryParams.filter(lookupModels);
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
 		} else {
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
@@ -249,14 +245,9 @@ public class ComponentRESTResource
 			}
 
 			components = filterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
-			}
+			lookupModels = ComponentLookupModel.toView(components);
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
