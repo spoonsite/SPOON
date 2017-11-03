@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -198,9 +197,4 @@ public class AdminHighlightIT
 
 	}
 
-	@AfterClass
-	public static void cleanup()
-	{
-		apiClient.cleanup();
-	}
 }
