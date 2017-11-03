@@ -31,6 +31,8 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
@@ -68,6 +70,7 @@ public class ComponentMedia
 	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalName;
 
+	@ManyToOne(cascade = {CascadeType.ALL})
 	@APIDescription("A local media file")
 	private MediaFile file;
 
@@ -198,11 +201,7 @@ public class ComponentMedia
 	@Override
 	public String addRemoveComment()
 	{
-		String typeString = TranslateUtil.translate(MediaType.class, getMediaTypeCode());
-		String fileNameString = (getFile() != null ? getFile().getOriginalName() : "");
-		String linkString = (getLink() != null ? getLink() : fileNameString);
-		String comment = typeString + " - " + linkString;
-		return comment;
+		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getLink() != null ? getLink() : (getFile() != null ? getFile().getOriginalName() : ""));
 	}
 
 	public String getComponentMediaId()

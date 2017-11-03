@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,10 @@ public class MediaFile
 		extends BaseEntity<MediaFile>
 {
 
+	@Id
 	@PK(generated = true)
+	private String rid;
+	
 	@NotNull
 	private String mediaFileId;
 
@@ -89,6 +93,16 @@ public class MediaFile
 		return this.getFileName().equals(((MediaFile) obj).getFileName());
 	}
 
+	public String getRid()
+	{
+		return rid;
+	}
+
+	public void setRid(String rid)
+	{
+		this.rid = rid;
+	}
+	
 	public String getMediaFileId()
 	{
 		return mediaFileId;

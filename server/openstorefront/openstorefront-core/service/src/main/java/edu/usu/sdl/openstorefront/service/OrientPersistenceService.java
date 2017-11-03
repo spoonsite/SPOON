@@ -74,10 +74,11 @@ public class OrientPersistenceService
 	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
+	private final DBManager manager;
 
-	public OrientPersistenceService()
+	public OrientPersistenceService(DBManager manager)
 	{
-		//Nothing to set
+		this.manager = manager;
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class OrientPersistenceService
 	{
 		OObjectDatabaseTx db;
 		if (transaction == null) {
-			db = DBManager.getConnection();
+			db = manager.getConnection();
 		} else {
 			db = transaction;
 		}
@@ -109,7 +110,7 @@ public class OrientPersistenceService
 	public void begin()
 	{
 		if (transaction == null) {
-			transaction = DBManager.getConnection();
+			transaction = manager.getConnection();
 			transaction.begin();
 		} else {
 			throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");

@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.validation.GeneralMediaUniqueHandler;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.nio.file.Path;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,6 +48,7 @@ public class GeneralMedia
 	private String name;
 
 	@NotNull
+	@OneToOne(cascade = {CascadeType.ALL}, optional = false, orphanRemoval = true)
 	@APIDescription("Stored file information")
 	private MediaFile file;
 
