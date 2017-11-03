@@ -87,10 +87,10 @@ public class ConfluenceOutput
 			contentBody.setStorage(storage);
 			content.setBody(contentBody);
 
-			if (StringUtils.isNotBlank(options.getConfuenceParentPageId())) {
+			if (StringUtils.isNotBlank(options.getConfluenceParentPageId())) {
 				List<Ancestor> ancestors = new ArrayList<>();
 				Ancestor ancestor = new Ancestor();
-				ancestor.setId(options.getConfuenceParentPageId());
+				ancestor.setId(options.getConfluenceParentPageId());
 				ancestors.add(ancestor);
 
 				content.setAncestors(ancestors);

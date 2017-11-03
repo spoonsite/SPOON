@@ -69,7 +69,7 @@ public class ReportTransmissionOption
 	private String confluencePage;
 
 	@ConsumeField
-	private String confuenceParentPageId;
+	private String confluenceParentPageId;
 
 	@Version
 	private String storageVersion;
@@ -138,14 +138,14 @@ public class ReportTransmissionOption
 		this.confluencePage = confluencePage;
 	}
 
-	public String getConfuenceParentPageId()
+	public String getConfluenceParentPageId()
 	{
-		return confuenceParentPageId;
+		return confluenceParentPageId;
 	}
 
-	public void setConfuenceParentPageId(String confuenceParentPageId)
+	public void setConfluenceParentPageId(String confluenceParentPageId)
 	{
-		this.confuenceParentPageId = confuenceParentPageId;
+		this.confluenceParentPageId = confluenceParentPageId;
 	}
 
 	public String getStorageVersion()

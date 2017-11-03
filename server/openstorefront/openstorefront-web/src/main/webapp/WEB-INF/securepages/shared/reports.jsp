@@ -599,7 +599,8 @@
 					} else {
 						//add view
 						outputs.push( {
-							reportTransmissionType: 'VIEW',
+							outputId: Ext.id,
+							reportTransmissionType: 'VIEW',							
 							reportTransmissionOption: {}
 						});
 					}
@@ -937,34 +938,43 @@
 								var outputComponents = [];
 						
 								Ext.Array.each(outputs, function(output){
-									switch (reportTransmissionType) {
+									switch (output.reportTransmissionType) {
 										case 'VIEW':
-											outputComponents.push(constructViewOutput(output));
+											outputComponents.push(constructViewOutput(output, reportType, form));
 											break;
 										case 'EMAIL':
-											outputComponents.push(constructEmailOutput(output));
+											outputComponents.push(constructEmailOutput(output, reportType, form));
 											break;
 										case 'CONFLUENCE':
-											outputComponents.push(constructConfluenceOutput(output));
+											outputComponents.push(constructConfluenceOutput(output, reportType, form));
 											break;
-									}
-									
+									}									
 								});
 						
 						
-								outputToAdd = [];
-								
+								outputToAdd = [];								
 								Ext.Array.each(transmissionTypes, function(avaliable) {
 									//check if already added and multiple is not allowed.
+									var add = true;
 									if (!avaliable.supportsMultiple) {
-										
-									} else {
+										//see if already added										
+										Ext.Array.each(outputs, function(output){
+											if (avaliable.code === output.reportTransmissionType) {
+												add = false;
+											}
+										});
+									} 
+									
+									if (add) {
 										outputToAdd.push({
-											text: avaliable.description,
-											transmissionType: avaliable,
-											handler: function() {
-												
-												
+											text: avaliable.description,											
+											transmissionType: avaliable.code,
+											handler: function() {																								
+												outputs.push({
+													outputId: Ext.id,
+													reportTransmissionType: avaliable.code,
+													reportTransmissionOption: {}
+												});
 												showOutputs(form, reportType);
 											}
 										});
@@ -972,34 +982,181 @@
 									
 								});
 								
-								
-								outputComponents.add({
-									xtype: 'button',
-									text: 'Add',
-									iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
-									menu: [								
-									]
-								});
+								if (outputToAdd.length > 0) {
+									outputComponents.push({
+										xtype: 'button',
+										text: 'Add',
+										margin: '20 0 0 0',
+										iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
+										menu: outputToAdd
+									});
+								}
 
 								reportOutputPanel.add(outputComponents);
 
 							}
-						});
-						
-						
+						});						
 						
 					};
 					
-					var constructViewOutput = function(reportOutput) {
+					var constructViewOutput = function(reportOutput, reportType, form) {
 						
+						var panel = {
+							xtype: 'panel',
+							title: 'Viewable Output',
+							width: '100%',
+							border: 1,
+							closable: true,
+							layout: 'anchor',
+							bodyStyle: 'padding: 10px;',
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'reportFormat',
+									labelAlign: 'top',
+									fieldLabel: 'Choose Report Format<span class="field-required" />',
+									width: '100%',
+									maxLength: 50,
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+										}
+									},
+									displayField: 'description',
+									valueField: 'code',
+									editable: false,								
+									allowBlank: false
+								}
+							],
+							listeners: {
+								close: function(p, opts) {
+									Ext.Array.remove(outputs, reportOutput);
+									showOutputs(form, reportType);
+								}
+							}
+						}
+						
+						return panel;
 					};
 
-					var constructEmailOutput = function(reportOutput) {
+					var constructEmailOutput = function(reportOutput, reportType, form) {
+						var panel = {
+							xtype: 'panel',
+							title: 'Email',
+							width: '100%',
+							border: 1,
+							closable: true,
+							layout: 'anchor',
+							bodyStyle: 'padding: 10px;',
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'reportFormat',
+									labelAlign: 'top',
+									fieldLabel: 'Choose Report Format<span class="field-required" />',
+									width: '100%',
+									maxLength: 50,
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+										}
+									},
+									displayField: 'description',
+									valueField: 'code',
+									editable: false,								
+									allowBlank: false
+								},
+								{
+									xtype: 'textarea',
+									name: 'emailAddresses',
+									labelAlign: 'top',
+									fieldLabel: 'Enter email addresses separated by semi-colons or space or comma',
+									width: '100%',
+									maxLength: 300,																	
+									allowBlank: true																		
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Attach Report',
+									name: 'attachReport'									
+								},								
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Add Summary to Body',
+									name: 'postToEmailBody'									
+								}
+							]
+						}
 						
+						//check permissions to hide options that require permissions
+						
+						
+						return panel;
 					};
 
-					var constructConfluenceOutput = function(reportOutput) {
-						
+					var constructConfluenceOutput = function(reportOutput, reportType, form) {
+						var panel = {
+							xtype: 'panel',
+							title: 'Confluence',
+							width: '100%',
+							border: 1,
+							closable: true,
+							layout: 'anchor',
+							bodyStyle: 'padding: 10px;',
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'reportFormat',
+									labelAlign: 'top',
+									fieldLabel: 'Choose Report Format<span class="field-required" />',
+									width: '100%',
+									maxLength: 50,
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+										}
+									},
+									displayField: 'description',
+									valueField: 'code',
+									editable: false,								
+									allowBlank: false
+								},
+								{
+									xtype: 'textfield',
+									name: 'confluenceSpace',
+									labelAlign: 'top',
+									fieldLabel: 'Space <span class="field-required" />',
+									width: '100%',
+									allowBlank: false,
+									maxLength: 255									
+								},
+								{
+									xtype: 'textfield',
+									name: 'confluencePage',
+									labelAlign: 'top',
+									fieldLabel: 'Page Title <span class="field-required" />',
+									width: '100%',
+									allowBlank: false,
+									maxLength: 255
+								},
+								{
+									xtype: 'textfield',
+									name: 'confluenceParentPageId',
+									labelAlign: 'top',
+									fieldLabel: 'Parent Page Title',
+									width: '100%',
+									allowBlank: true,
+									maxLength: 255
+								}
+							]
+						}
+						return panel;						
 					};
 					
 					
