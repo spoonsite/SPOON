@@ -28,11 +28,12 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import static edu.usu.sdl.openstorefront.core.view.FilterQueryParams.FILTER_ALL;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,7 +71,11 @@ public class ComponentRESTTestClient
 
 	public ComponentAdminView getComponentByName(String componentName)
 	{
-		FilterQueryParams param = new ComponentFilterParams();
+		ComponentFilterParams param = new ComponentFilterParams();
+		param.setStatus(FILTER_ALL);
+		param.setApprovalState(FILTER_ALL);
+		param.setAll(Boolean.TRUE);
+		param.setMax(Integer.MAX_VALUE);
 		param.setComponentName(componentName);
 		ComponentAdminWrapper compAdminWrapper = apiComponentREST.getComponentList(param);
 		List<ComponentAdminView> views = compAdminWrapper.getComponents();
@@ -95,7 +100,7 @@ public class ComponentRESTTestClient
 
 	public Component createAPIComponent(String componentName)
 	{
-		return createAPIComponent(componentName, "Arcturus-Canopus", "This an API test component", componentName + " - organization");
+		return createAPIComponent(componentName, "Arcturus-Canopus", "This an API test component", componentName + " Organization");
 	}
 
 	// Component is created with a required attribute
@@ -106,6 +111,7 @@ public class ComponentRESTTestClient
 		Component component;
 		ComponentTypeTestClient componentTypeClient = apiClient.getComponentTypeTestClient();
 		ComponentType type = componentTypeClient.createAPIComponentType(componentType);
+		Organization entryOrg = apiClient.getOrganizationTestClient().createOrganization(organization);
 
 		ComponentAdminView adminView = getComponentByName(componentName);
 		if (adminView != null) {
@@ -115,7 +121,7 @@ public class ComponentRESTTestClient
 			component.setName(componentName);
 			component.setDescription(description);
 			component.setComponentType(type.getComponentType());
-			component.setOrganization(organization);
+			component.setOrganization(entryOrg.getName());
 			component.setApprovalState(ApprovalStatus.APPROVED);
 			component.setLastActivityDts(TimeUtil.currentDate());
 
@@ -156,7 +162,7 @@ public class ComponentRESTTestClient
 		return component;
 	}
 
-	protected void deleteAPIComponent(String id)
+	public void deleteAPIComponent(String id)
 	{
 		apiComponentREST.deleteComponent(id);
 	}

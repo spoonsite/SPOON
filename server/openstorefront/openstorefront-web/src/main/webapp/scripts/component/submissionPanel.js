@@ -519,6 +519,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				Ext.create('OSF.component.StandardComboBox', {
 					name: 'organization',
+					autoEl: {
+						"data-test" : "organizationInput"
+					},
 					allowBlank: false,
 					margin: '0 0 10 0',
 					width: '100%',
