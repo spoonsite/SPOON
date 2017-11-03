@@ -137,7 +137,7 @@ public class AccountSignupActivateIT
 		String registrationId = getRegistrationId(driver);
 		Assert.assertNotEquals("faild to load registration ID", registrationId, "");
 
-		UserRegistrationTestClient client = apiClient.getUserRegistrationClient();
+		UserRegistrationTestClient client = apiClient.getUserRegistrationTestClient();
 		UserRegistration registration = client.getUserRegistration(registrationId);
 
 		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
