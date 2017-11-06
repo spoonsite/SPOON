@@ -869,7 +869,7 @@ public class OrientPersistenceService
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
 						} else if ((GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
-									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation()))
+								|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation()))
 								&& !generateStatementOption.getParameterValues().isEmpty()) {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							for (Integer i = 0; i < generateStatementOption.getParameterValues().size(); i++) {
@@ -974,12 +974,7 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
-			String pkValue = EntityUtil.getPKFieldValue(entity);
-			if (pkValue == null) {
-				if (EntityUtil.isPKFieldGenerated(entity)) {
-					EntityUtil.updatePKFieldValue(entity, generateId());
-				}
-			}
+			updatePKFieldValue(entity);
 
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
@@ -996,6 +991,25 @@ public class OrientPersistenceService
 		}
 
 		return t;
+	}
+
+	private <T extends BaseEntity> void updatePKFieldValue(T entity) throws IllegalAccessException, IllegalArgumentException
+	{
+		String pkValue = EntityUtil.getPKFieldValue(entity);
+		if (pkValue == null) {
+			if (EntityUtil.isPKFieldGenerated(entity)) {
+				EntityUtil.updatePKFieldValue(entity, generateId());
+			}
+		}
+		List<Field> fields = ReflectionUtil.getAllFields(entity.getClass());
+		for (Field field : fields) {
+			if (BaseEntity.class.isAssignableFrom(field.getType())) {
+				field.setAccessible(true);
+				if (field.get(entity) != null) {
+					updatePKFieldValue(BaseEntity.class.cast(field.get(entity)));
+				}
+			}
+		}
 	}
 
 	@Override

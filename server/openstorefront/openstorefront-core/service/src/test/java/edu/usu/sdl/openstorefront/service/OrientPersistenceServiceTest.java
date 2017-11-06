@@ -15,26 +15,27 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.TestEntity;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.manager.MemoryDBManager;
-import edu.usu.sdl.openstorefront.service.testModels.*;
+import edu.usu.sdl.openstorefront.service.testModels.TestChild;
+import edu.usu.sdl.openstorefront.service.testModels.TestParent;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
 /**
  *
@@ -43,74 +44,37 @@ import org.mockito.Mockito;
 public class OrientPersistenceServiceTest
 {
 
-	private static final String URL = "memory:test";
-	
-	@BeforeClass
-	public static void setup()
-	{
-		if(PropertiesManager.getValue(PropertiesManager.KEY_DB_AT) == null)
-		{
-			PropertiesManager.setProperty(PropertiesManager.KEY_DB_AT, "pass");
-		}
-	}
-
+	/**
+	 * Test generating id's during persist of nested objects.
+	 */
 	@Test
 	public void testPersistNestedObjects()
 	{
-		//Arrage
+		//Arrange
 		System.out.println("persist - NestedObjects");
-		DBManager.getInstance().shutdown();
-		String modelPackage = "edu.usu.sdl.openstorefront.service.testModels";
-		DBManager manager = MemoryDBManager.getInstance(URL, modelPackage);
-//		//NOTE: (KB) this will fail if DBManager is alreay initilzed
-		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
-		DBManager.getInstance().initialize();
-
-		//Act
-		OrientPersistenceService service = new OrientPersistenceService(DBManager.getInstance());
-		TestParent p = new TestParent();
-		p.setParentId(service.generateId());
-		p.setChild(new TestChild());
-		p.getChild().setChildId(service.generateId());
-		p.getChild().setValue("This is a Test");
-		TestParent result = service.persist(p);
-
-		//Assert
-		DBManager.getInstance().shutdown();
-	}
-
-	@Test
-	public void testPersistSharedObjects()
-	{
+		OObjectDatabaseTx mockDatabase = Mockito.mock(OObjectDatabaseTx.class);
+		Mockito.when(mockDatabase.save(Mockito.any(BaseEntity.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArguments()[0]);
 		
-		//Arrage
-		System.out.println("persist - SharedObjects");
-		DBManager.getInstance().shutdown();
-		String modelPackage = "edu.usu.sdl.openstorefront.service.testModels";
-		DBManager manager = MemoryDBManager.getInstance(URL, modelPackage);
-//		//NOTE: (KB) this will fail if DBManager is alreay initilzed
-		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
-		DBManager.getInstance().initialize();
-
-		//Act
-		OrientPersistenceService service = new OrientPersistenceService(DBManager.getInstance());
-		TestChild sharedChild = new TestChild();
-		sharedChild.setChildId(service.generateId());
-		sharedChild.setValue("This is a Test");
-
+		DBManager mockManager = Mockito.mock(DBManager.class);
+		Mockito.when(mockManager.getConnection()).thenReturn(mockDatabase);
+		
 		TestParent p1 = new TestParent();
-		p1.setParentId(service.generateId());
-		p1.setChild(sharedChild);
-
-		TestParent p2 = new TestParent();
-		p2.setParentId(service.generateId());
-		p1.setChild(sharedChild);
-
-		service.persist(p1);
-		service.persist(p2);
-
+		p1.setChild(new TestChild());
+		p1.getChild().setValue("This is a Test");
+		
+		//Act
+		Assert.assertNull(p1.getParentId());
+		Assert.assertNull(p1.getChild().getChildId());
+		
+		OrientPersistenceService service = new OrientPersistenceService(mockManager);
+		TestParent actual = service.persist(p1);
+		
 		//Assert
-		DBManager.getInstance().shutdown();
+		Assert.assertNotNull(actual.getParentId());
+		Assert.assertNotNull(actual.getChild().getChildId());
+		Mockito.verify(mockManager, Mockito.times(1)).getConnection();
+		Mockito.verify(mockDatabase, Mockito.times(1)).save(Mockito.any(BaseEntity.class));
+		Mockito.verify(mockDatabase, Mockito.times(1)).close();
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="generateQuery() Tests">

@@ -27,7 +27,7 @@ public class TestChild
 		extends BaseEntity<TestChild>
 {
 	
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String childId;
 	

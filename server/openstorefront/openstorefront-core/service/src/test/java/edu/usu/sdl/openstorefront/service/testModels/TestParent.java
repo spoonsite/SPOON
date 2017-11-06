@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 public class TestParent
 		extends BaseEntity<TestParent>
 {
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String parentId;
 
