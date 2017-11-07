@@ -236,8 +236,8 @@ public class ReportServiceImpl
 		filteredReportExample.setCreateDts(expirationDate);
 
 		//	Query reports that are older than the configured expiration value
-		QueryByExample queryByExample = new QueryByExample(reportExample);
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		QueryByExample<Report> queryByExample = new QueryByExample<>(reportExample);
+		SpecialOperatorModel<Report> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(filteredReportExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
@@ -271,7 +271,7 @@ public class ReportServiceImpl
 		reportHistory.setReportType(scheduledReport.getReportType());
 		reportHistory.setReportOption(scheduledReport.getReportOption());
 		reportHistory.setCreateUser(scheduledReport.getCreateUser());
-		reportHistory.setIds(scheduledReport.getComponentIds());
+		reportHistory.setIds(scheduledReport.getIds());
 		reportHistory.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 		reportHistory.setReportOutputs(scheduledReport.getReportOutputs());
 

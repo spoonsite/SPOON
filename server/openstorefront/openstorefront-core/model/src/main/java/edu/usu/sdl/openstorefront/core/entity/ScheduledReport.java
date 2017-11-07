@@ -55,12 +55,11 @@ public class ScheduledReport
 	private String reportType;
 
 	@Deprecated
-	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
 	@FK(ReportFormat.class)
-	@APIDescription("Use Report Outputs and not this field")
+	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
 	private String reportFormat;
 
 	@ConsumeField
@@ -68,10 +67,12 @@ public class ScheduledReport
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
+	@Deprecated
 	@ConsumeField
 	@Embedded
 	@DataType(EmailAddress.class)
 	@OneToMany(orphanRemoval = true)
+	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
 	private List<EmailAddress> emailAddresses;
 
 	@Min(1)
@@ -92,7 +93,7 @@ public class ScheduledReport
 	@Embedded
 	@DataType(ReportDataId.class)
 	@OneToMany(orphanRemoval = true)
-	private List<ReportDataId> componentIds;
+	private List<ReportDataId> ids;
 
 	private Date lastRanDts;
 
@@ -121,7 +122,7 @@ public class ScheduledReport
 		this.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
 		this.setScheduleIntervalMinutes(scheduledReport.getScheduleIntervalMinutes());
 		this.setScheduleIntervalCron(scheduledReport.getScheduleIntervalCron());
-		this.setComponentIds(scheduledReport.getComponentIds());
+		this.setIds(scheduledReport.getIds());
 		this.setReportOutputs(scheduledReport.getReportOutputs());
 
 	}
@@ -156,11 +157,13 @@ public class ScheduledReport
 		this.reportOption = reportOption;
 	}
 
+	@Deprecated
 	public List<EmailAddress> getEmailAddresses()
 	{
 		return emailAddresses;
 	}
 
+	@Deprecated
 	public void setEmailAddresses(List<EmailAddress> emailAddresses)
 	{
 		this.emailAddresses = emailAddresses;
@@ -198,16 +201,6 @@ public class ScheduledReport
 		this.scheduleIntervalDays = scheduleIntervalDays;
 	}
 
-	public List<ReportDataId> getComponentIds()
-	{
-		return componentIds;
-	}
-
-	public void setComponentIds(List<ReportDataId> componentIds)
-	{
-		this.componentIds = componentIds;
-	}
-
 	public List<ReportOutput> getReportOutputs()
 	{
 		return reportOutputs;
@@ -236,6 +229,16 @@ public class ScheduledReport
 	public void setScheduleIntervalCron(String scheduleIntervalCron)
 	{
 		this.scheduleIntervalCron = scheduleIntervalCron;
+	}
+
+	public List<ReportDataId> getIds()
+	{
+		return ids;
+	}
+
+	public void setIds(List<ReportDataId> ids)
+	{
+		this.ids = ids;
 	}
 
 }

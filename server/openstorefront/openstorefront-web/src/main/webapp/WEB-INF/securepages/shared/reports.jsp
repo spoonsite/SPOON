@@ -573,16 +573,148 @@
 												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 												handler: function () {
 													var form = this.up('form');
+																										
+													if (!outputs || outputs.length == 0) {																										
+														Ext.Msg.show({
+															title: 'Validation',
+															message: 'Please add at least one output.',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {																
+															}																
+														});
+													} else {													
 													
-													//check validity of confluence; if selected
+														//TODO: check validity of confluence; if selected
+
+														var formData = form.getValues();
+
+														//construct report object
+														var reportData = {
+															report: null,
+															reportDataId: []
+														};
 													
-													var data = form.getValues();
+														//unpack emails
+														Ext.Array.each(outputs, function(reportOutput){
+															if (reportOutput.emailAddressRaw &&
+																reportOutput.emailAddressRaw !== '') {
+																
+																var emails = Ext.String.splitWords(reportOutput.emailAddressRaw);
+																var emailAddresses = [];
+																Ext.Array(emails, function(email){
+																	emailAddresses.push({
+																		email: email
+																	});
+																});
+																reportOutput.emailAddresses = emailAddresses;
+															}
+														});
+														
+
+														var report = {
+															reportType: formData.reportType,															  
+															reportOption: formData,
+															scheduleIntervalDays: null,
+															scheduleIntervalMinutes: null,
+															scheduleIntervalCron: null,
+															ids: null,
+															reportOutputs: outputs
+														};
+														reportData.report = report;
 													
-													//construct report object
 													
-													//submit run or scheduled
+														//read in restriction ids
+														var reportOptionSet = form.queryById('reportOptionSet');
+														var entryselect = reportOptionSet.queryById('entryselect');														
+														var entryRestrictions = [];
+														if (entryselect) {
+															Ext.Array.each(entryselect.getSelected(), function(selected) {
+																entryRestrictions.push({
+																	id: selected.componentId
+																});
+															});
+															reportData.report.ids = entryRestrictions;														
+															reportData.reportDataId = entryRestrictions;
+														}
 													
-													
+														var scheduled = formData.scheduleOption !== 'NOW' ? true : false;
+														if (!scheduled) {														
+
+															CoreUtil.submitForm({
+																url: 'api/v1/resource/reports',
+																method: 'POST',
+																data: reportData,
+																removeBlankDataItems: true,
+																form: form,
+																loadingText: 'Submitting Report Request...',
+																success: function (response, opts) {
+																	Ext.toast('Submitted report request.', '', 'tr');
+
+																	scheduleWin.close();
+																	historyRefreshGrid();
+																},
+																failure: function (response, opts) {
+																	Ext.toast('Failed to submit report generation request.', '', 'tr');
+																}
+															});														
+
+														} else {														
+
+															//resolve schedule
+															switch(formData.scheduleOption){
+																case 'PERIOD':
+																	switch(formData.scheduleOption){
+																		case 'DAILY':
+																			eport.scheduleOptionDays = 1;
+																		break;	
+																		case 'WEEKLY':
+																			eport.scheduleOptionDays = 7;
+																		break;																	
+																		case 'MONTHLY':
+																			eport.scheduleOptionDays = 28;
+																		break;																	
+																	}
+																	break;
+																case 'DAYS':
+																	report.scheduleOptionDays = formData.scheduleOptionDays;
+																	break;
+																case 'MINUTES':
+																	report.scheduleOptionMinutes = formData.scheduleOptionMinutes;
+																	break;																
+																case 'CUSTOM':
+																	report.scheduleOptionCron = formData.scheduleOptionCron;
+																	break;																																
+															}														
+
+															var url = '';
+															var method = '';
+															if (scheduleReportId) {
+																url = 'api/v1/resource/scheduledreports/' + scheduleReportId;
+																method = 'PUT';
+															}
+															else {
+																url = 'api/v1/resource/scheduledreports';
+																method = 'POST';
+															}
+
+															CoreUtil.submitForm({
+																url: url,
+																method: method,
+																data: report,
+																removeBlankDataItems: true,
+																form: form,															
+																success: function (response, opts) {
+																	Ext.toast('Saved Successfully', '', 'tr');
+																	scheduleWin.close();
+																	scheduleReportRefreshGrid();																
+																},
+																failure: function (response, opts) {
+																	Ext.toast('Failed to Save', '', 'tr');																
+																}
+															});																												
+														}
+													}
 												}
 											},
 											{
@@ -644,7 +776,8 @@
 
 							//add grid for entries							
 							optionsToAdd.push({
-								xtype: 'entryselect'						
+								xtype: 'entryselect',
+								itemId: 'entryselect'
 							});
 							
 							if (reportType === 'TYPECOMP') {
@@ -665,22 +798,22 @@
 														items: [
 															{
 																boxLabel: 'Description',																															
-																name: 'description',
+																name: 'displayDescription',
 																value: true
 															},
 															{
 																boxLabel: 'Contacts',																														
-																name: 'contacts',
+																name: 'displayContacts',
 																value: true
 															},
 															{
 																boxLabel: 'Resources',																															
-																name: 'resources',
+																name: 'displayResources',
 																value: true
 															},
 															{
 																boxLabel: 'Vitals',
-																name: 'vitals',
+																name: 'displayVitals',
 																value: true
 															}
 														]
@@ -693,23 +826,22 @@
 														items: [
 															{
 																boxLabel: 'Dependencies',																																
-																name: 'dependencies',
+																name: 'displayDependencies',
 																value: true
 															},
 															{
-																boxLabel: 'Relationships',																
-																
-																name: 'relationships',
+																boxLabel: 'Relationships',
+																name: 'displayRelationships',
 																value: true
 															},
 															{
 																boxLabel: 'Tags',																
-																name: 'tags',
+																name: 'displayTags',
 																value: true
 															},
 															{
 																boxLabel: 'Organization Data',																																
-																name: 'orgData',
+																name: 'displayOrgData',
 																value: true,
 																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
 															}
@@ -723,16 +855,16 @@
 														items: [
 															{
 																boxLabel: 'All Evaluation Versions',
-																name: 'evalVersions',
+																name: 'displayEvalVersions',
 																inputAttrTpl: 'data-qtip=An&nbsp;evaluation&nbsp;category&nbsp;type&nbsp;must&nbsp;be&nbsp;specified'
 															},
 															{
 																boxLabel: 'Reviews',
-																name: 'reportReviews'
+																name: 'displayReportReviews'
 															},
 															{
 																boxLabel: 'Q/A',
-																name: 'QA'
+																name: 'displayQA'
 															}
 														]
 													}
@@ -752,17 +884,20 @@
 										items: [
 											{
 												boxLabel: 'Evaluation Summary',
-												name: 'evaluationType',											
+												name: 'evaluationType',		
+												inputValue: 'summary',
 												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
 												value: true
 											},
 											{
-												boxLabel: 'Evaluation Details',												
+												boxLabel: 'Evaluation Details',	
+												inputValue: 'detail',
 												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
 												name: 'evaluationType'
 											},
 											{
 												boxLabel: 'None',
+												inputValue: 'none',
 												inputAttrTpl: 'data-qtip=Exclude&nbsp;evaluations&nbsp;from&nbsp;this&nbsp;report',
 												name: 'evaluationType'
 											}
@@ -774,7 +909,7 @@
 						else if (reportType === 'CATCOMP') {
 							optionsToAdd.push({
 								xtype: 'combobox',
-								name: 'categorySelect',
+								name: 'category',
 								itemId: 'categorySelect',
 								fieldLabel: 'Select Category<span class="field-required" />',
 								store: {
@@ -798,7 +933,7 @@
 							optionsToAdd.push(
 								{
 									xtype: 'numberfield',
-									name: 'waitSeconds',
+									name: 'maxWaitSeconds',
 									itemId: 'waitSeconds',
 									fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',									
 									maxLength: 3,
@@ -814,8 +949,7 @@
 
 							optionsToAdd.push({
 								xtype: 'datefield',
-								name: 'startDate',
-								id: 'startDate',
+								name: 'startDts',								
 								fieldLabel: 'Start Date (Blank = Current Day)',
 								width: '100%',
 								format: 'm/d/Y',
@@ -828,8 +962,7 @@
 							
 							optionsToAdd.push({
 								xtype: 'datefield',
-								name: 'endDate',
-								id: 'endDate',
+								name: 'endDts',								
 								fieldLabel: 'End Date (Blank = Current Day)',
 								width: '100%',
 								format: 'm/d/Y',																
@@ -838,8 +971,7 @@
 							
 							optionsToAdd.push({
 								xtype: 'combobox',
-								name: 'previousDaysSelect',
-								id: 'previousDaysSelect',
+								name: 'previousDays',								
 								fieldLabel: 'Previous Days',
 								width: '100%',
 								maxLength: 50,
@@ -867,8 +999,7 @@
 						else if (reportType === 'EVALSTAT') {
 							
 							optionsToAdd.push({
-								xtype: 'combobox',
-								id: 'assignedUser',
+								xtype: 'combobox',								
 								name: 'assignedUser',
 								fieldLabel: 'Assigned User',
 								displayField: 'description',
@@ -895,8 +1026,7 @@
 							});
 							
 							optionsToAdd.push({
-								xtype: 'combobox',
-								id: 'assignedGroup',
+								xtype: 'combobox',								
 								name: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
@@ -930,6 +1060,10 @@
 						
 						var reportOutputPanel = form.queryById('reportOutputs-inner');
 						reportOutputPanel.removeAll();
+						
+						Ext.Array.each(reportOutputPanel.getDockedItems('button'), function(item){
+							reportOutputPanel.removeDocked(item);
+						});
 						
 						reportOutputPanel.setLoading(true);
 						Ext.Ajax.request({
@@ -1027,7 +1161,7 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses separated by semi-colons or space or comma',
+												fieldLabel: 'Enter email addresses separated by a space',
 												width: '100%',
 												maxLength: 300,																	
 												allowBlank: true,
@@ -1271,936 +1405,6 @@
 					
 					
 				};
-				
-
-				var scheduleReportWin = function (scheduleData, reoccuring) {
-					var scheduleReportId = null;
-					
-					//This is for editing schedule report
-					//
-					if (scheduleData) {
-						scheduleReportId = scheduleData.data.scheduleReportId;
-					}
-
-					//
-					//  This formats the emails separated by ';' strng into an array
-					//
-					var createEmailAddressesList = function (emailStr) {
-						if (emailStr === '' || typeof emailStr === 'undefined') {
-							return null;
-						}
-						var emailArr = [];
-						var eArr = String(emailStr).trim().split(';');
-						for (ctr = 0; ctr < eArr.length; ctr++) {
-							var tmpStr = String(eArr[ctr]).trim();
-							if (tmpStr !== '') {
-								emailArr.push({email: tmpStr});
-							}
-						}
-						return emailArr;
-					};
-
-					var emailsArrayToString = function (emailArr) {
-						if (emailArr === undefined) {
-							return '';
-						}
-						var emailStr = '';
-						for (ctr = 0; ctr < emailArr.length; ctr++) {
-							emailStr += emailArr[ctr].email + "; ";
-						}
-						return emailStr;
-					};
-
-					//
-					//  This is for the one time report run
-					//
-					var generateReport = function (data) {
-
-						Ext.getCmp('scheduleReportForm').setLoading(true);
-
-						CoreUtil.submitForm({
-							url: 'api/v1/resource/reports',
-							method: 'POST',
-							data: data,
-							removeBlankDataItems: true,
-							form: Ext.getCmp('scheduleReportForm'),
-							success: function (response, opts) {
-								Ext.toast('Submitted report request.', '', 'tr');
-
-								Ext.getCmp('scheduleReportWin').close();
-								historyRefreshGrid();
-							},
-							failure: function (response, opts) {
-								Ext.toast('Failed to submit report generation request.', '', 'tr');
-							}
-						});
-					};
-
-					//
-					//   This is to schedule a report to run daily, monthly etc.
-					//
-					var scheduleReport = function (data) {
-
-						Ext.getCmp('scheduleReportForm').setLoading(true);
-						var url = '';
-						var method = '';
-						if (scheduleReportId) {
-							url = 'api/v1/resource/scheduledreports/' + scheduleReportId;
-							method = 'PUT';
-						}
-						else {
-							url = 'api/v1/resource/scheduledreports';
-							method = 'POST';
-						}
-
-						CoreUtil.submitForm({
-							url: url,
-							method: method,
-							data: data,
-							removeBlankDataItems: true,
-							form: Ext.getCmp('scheduleReportForm'),
-							success: function (response, opts) {
-								Ext.toast('Saved Successfully', '', 'tr');
-
-								Ext.getCmp('scheduleReportForm').setLoading(false);
-								Ext.getCmp('scheduleReportForm').destroy();
-
-								Ext.getCmp('scheduleReportWin').destroy();
-								Ext.getCmp('scheduleReportsGrid').getStore().load();
-							},
-							failure: function (response, opts) {
-
-								Ext.toast('Failed to Save', '', 'tr');
-								Ext.getCmp('scheduleReportForm').setLoading(false);
-							}
-						});
-					};
-
-					//
-					//  This is the store list for the Report Types
-					//
-					reportTypesStore = Ext.create('Ext.data.Store', {
-						id: 'reportTypesStore',
-						autoLoad: true,
-						pageSize: 100,
-						remoteSort: true,
-						listeners: {
-							endupdate: function (opts) {
-								if (scheduleReportId !== null) {
-									//Edit data
-									Ext.getCmp('reportType').setValue(scheduleData.data.reportType);
-									Ext.getCmp('reportFormat').setValue(scheduleData.data.reportFormat);
-									Ext.getCmp('scheduledHours').setValue(String(scheduleData.data.scheduleIntervalDays));
-									Ext.getCmp('emailAddresses').setValue(emailsArrayToString(scheduleData.data.emailAddresses));
-
-									if (scheduleData.data.reportOption.category) {
-										Ext.getCmp('categorySelect').setValue(scheduleData.data.reportOption.category);
-									}
-									if (scheduleData.data.reportOption.assignedUser) {
-										Ext.getCmp('assignedUser').setValue(scheduleData.data.reportOption.assignedUser);
-									}
-									if (scheduleData.data.reportOption.assignedGroup) {
-										Ext.getCmp('assignedGroup').setValue(scheduleData.data.reportOption.assignedGroup);
-									}
-									if (scheduleData.data.reportOption.maxWaitSeconds) {
-										Ext.getCmp('waitSeconds').setValue(scheduleData.data.reportOption.maxWaitSeconds);
-									}
-									if (scheduleData.data.reportOption.startDts) {
-										Ext.getCmp('startDate').setValue(new Date(scheduleData.data.reportOption.startDts));
-										Ext.getCmp('endDate').setValue(new Date(scheduleData.data.reportOption.endDts));
-
-									}
-									if (scheduleData.data.reportOption.previousDays) {
-										Ext.getCmp('previousDaysSelect').setValue(scheduleData.data.reportOption.previousDays);
-									}
-								}
-							}
-						},
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'description',
-								direction: 'DESC'
-							})
-						],
-						proxy: CoreUtil.pagingProxy({
-							url: 'api/v1/resource/reports/reporttypes',
-							method: 'GET',
-							reader: {
-								type: 'json',
-								rootProperty: '',
-								totalProperty: ''
-							}
-						})
-					});
-
-					//
-					//  This is the store list for the Report Formats
-					//
-					var reportFormatsStore = Ext.create('Ext.data.Store', {
-						id: 'reportFormatsStore',
-						autoLoad: false,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'description',
-								direction: 'DESC'
-							})
-						],
-						proxy: CoreUtil.pagingProxy({
-							url: '',
-							method: 'GET',
-							reader: {
-								type: 'json',
-								rootProperty: '',
-								totalProperty: ''
-							}
-						})
-					});
-
-					//
-					//  This is the store list for the Report Options
-					//
-					var scheduleOptionsStore = Ext.create('Ext.data.Store', {
-						id: 'scheduleOptionsStore',
-						autoLoad: true,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'description',
-								direction: 'ASC'
-							})
-						],
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/components/lookup'
-						}
-					});
-
-					//
-					//  This is the store list for the catagories
-					//
-					var scheduleCategoryStore = Ext.create('Ext.data.Store', {
-						id: 'scheduleCategoryStore',
-						autoLoad: true,
-						pageSize: 100,
-						remoteSort: true,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'description',
-								direction: 'ASC'
-							})
-						],
-						proxy: CoreUtil.pagingProxy({
-							url: 'api/v1/resource/attributes/attributetypes',
-							method: 'GET',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: ''
-							}
-						})
-					});
-
-					//
-					//  This is the store list for the how often to schedule report combo
-					//
-					var scheduleHowOften = Ext.create('Ext.data.Store', {
-						fields: ['code', 'description'],
-						data: [
-							{"code": "0", "description": "Now (One Time Only)"},
-							{"code": "1", "description": "Daily"},
-							{"code": "7", "description": "Weekly"},
-							{"code": "28", "description": "Monthly"}
-						]
-					});
-
-
-					//
-					//  This is the store list for the Previous Days combo
-					//
-					var days = [];
-					days.push({
-						code: null,
-						days: 'Select'
-					});
-					for (var i = 1; i<29; i++) {
-						days.push({
-							code: '' + i,
-							days: '' + i
-						});
-					}
-					var previousDaysStore = Ext.create('Ext.data.Store', {
-						id: 'previousDaysStore',
-						fields: ['code', 'days'],
-						data: days
-					});
-
-
-					var handleReportOptions = function() {
-						//Hide and clear data from all the form elements at first and turn them on based on what rtype is selected
-						Ext.getCmp('filterForEntries').setHidden(true);
-						Ext.getCmp('scheduleOptionsGrid').setHidden(true);
-						Ext.getCmp('detailReportCategories').setHidden(true);
-						Ext.getCmp('detailReportCol4').setHidden(true);
-						Ext.getCmp('categorySelect').setHidden(true);
-						Ext.getCmp('waitSeconds').setHidden(true);
-						Ext.getCmp('startDate').setHidden(true);
-						Ext.getCmp('endDate').setHidden(true);
-						Ext.getCmp('previousDaysSelect').setHidden(true);
-						Ext.getCmp('assignedUser').setHidden(true);
-						Ext.getCmp('assignedGroup').setHidden(true);
-
-						Ext.getCmp('waitSeconds').setValue('');
-						Ext.getCmp('filterForEntries').setValue('');
-						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();
-						var dt = new Date();
-						Ext.getCmp('startDate').setValue(dt);
-						Ext.getCmp('endDate').setValue(dt);
-						Ext.getCmp('previousDaysSelect').clearValue();
-
-						var rType = Ext.getCmp('reportType').value;
-
-						if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
-
-							Ext.getCmp('filterForEntries').setHidden(false);
-							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
-							if (rType === 'TYPECOMP') {
-								Ext.getCmp('detailReportCategories').setHidden(false);
-								Ext.getCmp('detailReportCol4').setHidden(false);
-							}
-						}
-						else if (rType === 'CATCOMP') {
-							Ext.getCmp('categorySelect').setHidden(false);
-						}
-						else if (rType === 'LINKVALID') {
-
-							Ext.getCmp('waitSeconds').setHidden(false);
-						}
-						else if (rType === 'SUBMISSION' || rType === 'USAGE') {
-
-							Ext.getCmp('startDate').setHidden(false);
-							Ext.getCmp('endDate').setHidden(false);
-							Ext.getCmp('previousDaysSelect').setHidden(false);
-						}
-						else if (rType === 'EVALSTAT') {
-							Ext.getCmp('assignedUser').setHidden(false);
-							Ext.getCmp('assignedGroup').setHidden(false);
-						}
-						else if (rType === 'USER' || rType === 'ORGANIZATION') {
-							//Do nothing just the base form which is already active.
-						}
-					};
-
-					//
-					//  scheduleReportWin
-					//  The popup window to schedule are report to run now or on a set repeating schedule
-					//
-					//
-					Ext.create('Ext.window.Window', {
-						title: 'Schedule Report',
-						id: 'scheduleReportWin',
-						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
-						width: 700,
-						height: '80%',
-						y: 100,
-						closeAction: 'destroy',
-						modal: true,
-						alwaysOnTop: true,
-						layout: 'fit',
-						items: [{
-								xtype: 'form',
-								id: 'scheduleReportForm',
-								layout: 'vbox',
-								scrollable: true,
-								bodyStyle: 'padding: 10px;',
-								submitEmptyText: false,
-								defaults: {
-									labelAlign: 'top'
-								},
-								dockedItems: [
-									{
-										dock: 'bottom',
-										xtype: 'toolbar',
-										items: [
-											{
-												text: 'Run Report',
-												formBind: true,
-												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
-												handler: function () {
-
-													var data = {};
-													var reportOpt = {};
-
-													data.reportType = Ext.getCmp('reportType').getValue();
-													data.reportFormat = Ext.getCmp('reportFormat').getValue();
-													data.reportOption = null;
-													data.emailAddresses = createEmailAddressesList(Ext.getCmp('emailAddresses').getValue());
-													data.scheduleIntervalDays = Ext.getCmp('scheduledHours').getValue();
-
-													if (data.scheduleIntervalDays === '0')
-													{
-														data.scheduleIntervalDays = null;
-													}
-
-													if (Ext.getCmp('categorySelect').isVisible()) {
-														reportOpt.category = Ext.getCmp('categorySelect').getValue();
-													}
-													if (Ext.getCmp('assignedUser').isVisible()) {
-														reportOpt.assignedUser = Ext.getCmp('assignedUser').getValue();
-													}
-													if (Ext.getCmp('assignedGroup').isVisible()) {
-														reportOpt.assignedGroup = Ext.getCmp('assignedGroup').getValue();
-													}
-
-													if (Ext.getCmp('startDate').isVisible()) {
-
-														reportOpt.startDts = Ext.Date.format(Ext.getCmp('startDate').getValue(), 'Y-m-d\\TH:i:s.u');
-
-														var endDate = Ext.getCmp('endDate').getValue();
-														if (endDate) {
-															endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
-															endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
-														}
-														reportOpt.endDts = Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u');
-														reportOpt.previousDays = Ext.getCmp('previousDaysSelect').getValue();
-													}
-
-													if (Ext.getCmp('waitSeconds').isVisible()) {
-														reportOpt.maxWaitSeconds = Ext.getCmp('waitSeconds').getValue();
-													}
-
-													data.reportOption = reportOpt;
-
-													// retrieve each report category flag
-													for (var ii = 1; ii < 5; ii += 1) {
-														var detailCats = Ext.getCmp('detailReportCol' + ii).items.items;
-														for (var jj = 0; jj < detailCats.length; jj += 1) {
-
-															// mold the name of each value to match that of the API
-															data.reportOption[detailCats[jj].id] = detailCats[jj].value;
-														}
-													}
-
-													// make a list of the selected entries to run a report on
-													var ids = [];
-													var reportGrid = Ext.getCmp('scheduleOptionsGrid');
-													if (reportGrid.isVisible()) {
-														var gridSelections = reportGrid.getSelection();
-														for (var ii = 0; ii < gridSelections.length; ii++) {
-															ids.push({id: gridSelections[ii].data.code});
-														}
-													}
-
-													// if the report is NOT scheduled
-													if (data.scheduleIntervalDays === null)
-													{
-														generateReport({
-															reportDataId: ids,
-															report: data
-														});
-													}
-													// if the report IS scheduled
-													else {
-														data.componentIds = ids;
-														scheduleReport(data);
-													}
-												}
-											},
-											{
-												xtype: 'tbfill'
-											},
-											{
-												text: 'Cancel',
-												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-												handler: function () {
-													Ext.getCmp('scheduleReportWin').destroy();
-												}
-											}
-										]
-									}
-								],
-								items: [
-									{
-										layout: 'column',
-										items: [
-											{
-												columnWidth: 0.7,
-												items: [
-													{
-														xtype: 'combobox',
-														name: 'reportType',
-														id: 'reportType',
-														labelAlign: 'top',
-														fieldLabel: 'Choose Report Type<span class="field-required" />',
-														width: 375,
-														store: reportTypesStore,
-														displayField: 'description',
-														valueField: 'code',
-														editable: false,
-														allowBlank: false,
-														listeners: {
-															change: function (cb, newVal, oldVal, opts) {
-																Ext.getCmp('reportFormat').getStore().removeAll();
-																Ext.getCmp('reportFormat').clearValue();
-																Ext.getCmp('reportFormat').getStore().getProxy().setUrl('api/v1/resource/reports/' + encodeURIComponent(newVal) + '/formats');
-																Ext.getCmp('reportFormat').getStore().load({
-																	callback: function (records, operation, success) {
-																		if (records.length >= 1) {
-																			Ext.getCmp('reportFormat').setValue(records[0].data.code);
-																			var selectedText = '';
-																			var description = '';
-
-																			// Which description and detailed description was selected?
-																			Ext.Array.forEach(reportTypesStore.data.items, function (item) {
-																				if (newVal === item.data.code) {
-																					description = item.data.detailedDescription;
-																					selectedText = item.data.description;
-																					return;
-																				}
-																			});
-
-																			Ext.getCmp('reportDescriptionLabel').setHtml('<div style="width: 250px;"><b>' + selectedText + ' Report: </b>' + description + '</div>');
-
-																			var reportDescriptionLabel = Ext.getCmp('reportDescriptionLabelCol');
-																			reportDescriptionLabel.setStyle('border', 'solid 2px #ccc');
-																			reportDescriptionLabel.setStyle('border-style', 'dashed');
-																		}
-																	}
-																});
-
-																if (reoccuring) {
-																	Ext.getCmp('scheduledHours').setValue('1');
-																} else {
-																	Ext.getCmp('scheduledHours').setValue('0');
-																}
-																Ext.getCmp('reportFormat').setHidden(false);
-																Ext.getCmp('scheduledHours').setHidden(false);
-																//Ext.getCmp('emailAddresses').setHidden(true);
-
-																handleReportOptions();
-															}
-														}
-													}
-												]
-											},
-											{
-												columnWidth: 0.3,
-												margin: '25% 0 0 20%',
-												style: 'border-radius: 10px; border: none;',
-												id: 'reportDescriptionLabelCol',
-												padding: 10,
-												items: [
-													{
-														xtype: 'panel',
-												        id: 'reportDescriptionLabel'
-													}
-												]
-											}
-										]
-									},
-									{
-										xtype: 'combobox',
-										name: 'reportFormat',
-										id: 'reportFormat',
-										fieldLabel: 'Choose Report Format<span class="field-required" />',
-										width: '100%',
-										maxLength: 50,
-										store: reportFormatsStore,
-										displayField: 'description',
-										valueField: 'code',
-										editable: false,
-										hidden: true,
-										allowBlank: false
-									},
-									{
-										xtype: 'combobox',
-										name: 'scheduledHours',
-										id: 'scheduledHours',
-										fieldLabel: 'How often to run the report?<span class="field-required" />',
-										width: '100%',
-										maxLength: 50,
-										store: scheduleHowOften,
-										displayField: 'description',
-										valueField: 'code',
-										editable: false,
-										hidden: true,
-										allowBlank: false,
-										listeners: {
-											change: function (cb, newVal, oldVal, opts) {
-												var emailTA=Ext.getCmp('emailAddresses');
-												if (oldVal !== null && newVal === '0' && scheduleReportId) {
-													Ext.toast('You cannot run that report now, you are editing a scheduled report. Click the Add button to run a report now.');
-													Ext.getCmp('scheduledHours').setValue(String(scheduleData.data.scheduleIntervalDays));
-													return;
-												} else if (newVal !== '0') {
-
-													Ext.getCmp('filterForEntries').setHidden(true);
-													Ext.getCmp('emailAddresses').setHidden(false);
-													handleReportOptions();
-
-												}
-												else {
-													Ext.getCmp('filterForEntries').setHidden(false);
-													Ext.getCmp('emailAddresses').setHidden(true);
-													handleReportOptions();
-
-												}
-											}
-										}
-									},
-									{
-										xtype: 'textarea',
-										name: 'emailAddresses',
-										id: 'emailAddresses',
-										fieldLabel: 'Enter email addresses separated by semi-colons<br>(To recieve a notification when the report is ready.)',
-										width: '100%',
-										maxLength: 300,
-										editable: true,
-										hidden: true,
-										allowBlank: true
-									},
-									{
-										xtype: 'combobox',
-										name: 'categorySelect',
-										id: 'categorySelect',
-										fieldLabel: 'Select Category<span class="field-required" />',
-										width: '100%',
-										maxLength: 50,
-										store: scheduleCategoryStore,
-										displayField: 'description',
-										valueField: 'attributeType',
-										editable: false,
-										hidden: true,
-										allowBlank: true
-									},
-									{
-										xtype: 'numberfield',
-										name: 'waitSeconds',
-										id: 'waitSeconds',
-										fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',
-										width: '100%',
-										maxLength: 3,
-										minValue: 1,
-										maxValue: 300,
-										value: '5',
-										editable: true,
-										hidden: true,
-										allowBlank: true,
-										style: {
-											marginTop: '20px'
-										}
-									},
-									{
-										xtype: 'datefield',
-										name: 'startDate',
-										id: 'startDate',
-										fieldLabel: 'Start Date (Blank = Current Day)',
-										width: '100%',
-										format: 'm/d/Y',
-										submitFormat: 'Y-m-d\\TH:i:s.u',
-										editable: true,
-										hidden: true,
-										allowBlank: true,
-										style: {
-											marginTop: '20px'
-										}
-									},
-									{
-										xtype: 'datefield',
-										name: 'endDate',
-										id: 'endDate',
-										fieldLabel: 'End Date (Blank = Current Day)',
-										width: '100%',
-										format: 'm/d/Y',
-										editable: true,
-										hidden: true,
-										allowBlank: true
-									},
-									{
-										xtype: 'combobox',
-										name: 'previousDaysSelect',
-										id: 'previousDaysSelect',
-										fieldLabel: 'Previous Days',
-										width: '100%',
-										maxLength: 50,
-										store: previousDaysStore,
-										displayField: 'days',
-										valueField: 'code',
-										editable: false,
-										hidden: true,
-										allowBlank: true,
-										listeners: {
-											change: function(cb, newValue, oldValue, opts){
-												if (newValue){
-													Ext.getCmp('startDate').setValue(null);
-													Ext.getCmp('endDate').setValue(null);
-													Ext.getCmp('startDate').setDisabled(true);
-													Ext.getCmp('endDate').setDisabled(true);
-												} else {
-													Ext.getCmp('startDate').setDisabled(false);
-													Ext.getCmp('endDate').setDisabled(false);
-												}
-											}
-										}
-									},
-									{
-										xtype: 'combobox',
-										id: 'assignedUser',
-										name: 'assignedUser',
-										fieldLabel: 'Assigned User',
-										displayField: 'description',
-										valueField: 'code',
-										emptyText: 'All',
-										labelAlign: 'top',
-										width: '100%',
-										typeAhead: true,
-										editable: true,
-										hidden: true,
-										forceSelection: true,
-										store: {
-											autoLoad: true,
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/userprofiles/lookup'
-											},
-											listeners: {
-												load: function(store, records, opts) {
-													store.add({
-														code: null,
-														description: 'All'
-													});
-												}
-											}
-										}
-									},
-									{
-										xtype: 'combobox',
-										id: 'assignedGroup',
-										name: 'assignedGroup',
-										fieldLabel: 'Assign to Group',
-										displayField: 'description',
-										valueField: 'code',
-										emptyText: 'All',
-										labelAlign: 'top',
-										width: '100%',
-										hidden: true,
-										editable: false,
-										forceSelection: true,
-										store: {
-											autoLoad: true,
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/securityroles/lookup'
-											},
-											listeners: {
-												load: function(store, records, opts) {
-													store.add({
-														code: null,
-														description: 'All'
-													});
-												}
-											}
-										}
-									},
-									{
-										xtype: 'fieldcontainer',
-										fieldLabel: 'Included Report Categories',
-										id: 'detailReportCategories',
-										hidden: true,
-										width: '100%',
-										items: [
-											{
-												layout: 'column',
-												items: [
-													{
-														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',
-														id: 'detailReportCol1',
-														columnWidth: 0.32,
-														baseCls: 'detailReportColumn',
-														items: [
-															{
-																boxLabel: 'Description',
-																inputValue: '1',
-																id: 'displayDescription',
-																name: 'description',
-																value: true
-															},
-															{
-																boxLabel: 'Contacts',
-																inputValue: '1',
-																id: 'displayContacts',
-																name: 'contacts',
-																value: true
-															},
-															{
-																boxLabel: 'Resources',
-																inputValue: '1',
-																id: 'displayResources',
-																name: 'resources',
-																value: true
-															},
-															{
-																boxLabel: 'Vitals',
-																inputValue: '1',
-																id: 'displayVitals',
-																name: 'vitals',
-																value: true
-															}
-														]
-													},
-													{
-														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',
-														id: 'detailReportCol2',
-														columnWidth: 0.32,
-														baseCls: 'detailReportColumn',
-														items: [
-															{
-																boxLabel: 'Dependencies',
-																inputValue: '1',
-																id: 'displayDependencies',
-																name: 'dependencies',
-																value: true
-															},
-															{
-																boxLabel: 'Relationships',
-																inputValue: '1',
-																id: 'displayRelationships',
-																name: 'relationships',
-																value: true
-															},
-															{
-																boxLabel: 'Tags',
-																inputValue: '1',
-																id: 'displayTags',
-																name: 'tags',
-																value: true
-															},
-															{
-																boxLabel: 'Organization Data',
-																inputValue: '1',
-																id: 'displayOrgData',
-																name: 'orgData',
-																value: true,
-																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
-															}
-														]
-													},
-													{
-														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',
-														id: 'detailReportCol3',
-														columnWidth: 0.32,
-														baseCls: 'detailReportColumn',
-														items: [
-															{
-																boxLabel: 'All Evaluation Versions',
-																inputValue: '1',
-																id: 'displayEvalVersions',
-																name: 'evalVersions',
-																inputAttrTpl: 'data-qtip=An&nbsp;evaluation&nbsp;category&nbsp;type&nbsp;must&nbsp;be&nbsp;specified'
-															},
-															{
-																boxLabel: 'Reviews',
-																inputValue: '1',
-																id: 'displayReportReviews',
-																name: 'reportReviews'
-															},
-															{
-																boxLabel: 'Q/A',
-																inputValue: '1',
-																id: 'displayQA',
-																name: 'QA'
-															}
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										xtype: 'fieldcontainer',
-										defaultType: 'radiofield',
-										fieldLabel: 'Included Evaluation Category Type',
-										id: 'detailReportCol4',
-										hidden: true,
-										width: '100%',
-									    defaults: {
-									        columnWidth: 0.32,
-									        inputValue: '1'
-									    },
-									    layout: 'column',
-										items: [
-											{
-												boxLabel: 'Evaluation Summary',
-												name: 'evaluationType',
-												id: 'displayEvalSummary',
-												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
-												value: true
-											},
-											{
-												boxLabel: 'Evaluation Details',
-												name: 'evaluationType',
-												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
-												id: 'displayEvalDetails'
-											},
-											{
-												boxLabel: 'None',
-												inputAttrTpl: 'data-qtip=Exclude&nbsp;evaluations&nbsp;from&nbsp;this&nbsp;report',
-												name: 'evaluationType'
-											}
-										]
-									},
-									{
-										xtype: 'gridpanel',
-										title: 'Restrict By Entry',
-										id: 'scheduleOptionsGrid',
-										store: 'scheduleOptionsStore',
-										width: '100%',
-										columnLines: true,
-										margin: '10 0 0 0',
-										bodyCls: 'border_accent',
-										flex: 1,
-										selModel: {
-											selType: 'checkboxmodel'
-										},
-										plugins: 'gridfilters',
-										columns: [
-											{text: 'Entry Name', dataIndex: 'description', flex: 1,
-												filter: {
-													type: 'string'
-												}
-											}
-										],
-										dockedItems: [
-											{
-												xtype: 'textfield',
-												dock: 'top',
-												name: 'filterForEntries',
-												id: 'filterForEntries',
-												emptyText: 'Filter entries by name',
-												width: '100%',
-												maxLength: 30,
-												listeners: {
-													change: function (tb, newVal, oldVal, opts) {
-														Ext.getCmp('scheduleOptionsGrid').getStore().filter([
-															{
-																property: 'description',
-																value: tb.value
-															}
-														]);
-													}
-												}
-											}
-										],
-										hidden: true
-									}
-
-								]
-							}]
-					}).show();
-
-				};
-
 
 				var historyGridStore = Ext.create('Ext.data.Store', {
 					id: 'historyGridStore',
