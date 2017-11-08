@@ -12,7 +12,7 @@ Utah State University Research Foundation
 
 North Logan, Utah 84341
 
-![logo](images/sdl.png)
+![logo](../images/sdl.png)
 
 
 # Overview
@@ -46,11 +46,11 @@ licensed under Apache V2.**
 This guide has been organized into separate documents to make it easier to navigate.
 The focus of this document is for configuration.  See other guides for other topics.
 
-[Architecture](Architecture.md)
+[Architecture](../dev/Architecture.md)
 
 [Setup](Setup.md)
 
-[Developer Guide](DevelopersGuide.md)
+[Developer Guide](../dev/DevelopersGuide.md)
 
 # 2.  Configuration
 ------

@@ -82,7 +82,7 @@ The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
 
 **NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup.
-See [Setup](Setup.md)
+See [Setup](../systemadmin/Setup.md)
 
 
 ## 1.7 Testing
