@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.service.testModels;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import javax.persistence.CascadeType;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -33,7 +33,7 @@ public class TestParent
 	private String parentId;
 
 	@NotNull
-	@OneToOne(cascade = {CascadeType.ALL}, optional = false, orphanRemoval = true)
+	@ManyToOne(cascade = {CascadeType.ALL})
 	private TestChild child;
 
 	public String getParentId()

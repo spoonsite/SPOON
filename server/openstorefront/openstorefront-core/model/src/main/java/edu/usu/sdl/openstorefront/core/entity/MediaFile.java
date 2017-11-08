@@ -69,7 +69,7 @@ public class MediaFile
 	public int hashCode()
 	{
 		int hash = 7;
-		hash = 13 * hash + this.fileName.hashCode();
+		hash = 13 * hash + (this.fileName != null ? this.fileName.hashCode() : 0);
 		return hash;
 	}
 

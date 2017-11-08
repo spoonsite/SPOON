@@ -192,27 +192,41 @@ public class SubComponentServiceImpl
 	void removeLocalResource(ComponentResource componentResource)
 	{
 		//Note: this can't be rolled back
-		Path path = componentResource.pathToResource();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete() == false) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
-				}
-			}
+		ComponentResource example = new ComponentResource();
+		example.setFile(new MediaFile());
+		example.getFile().setMediaFileId(componentResource.getFile().getMediaFileId());
+
+		long count = persistenceService.countByExample(example);
+		if (count == 1) {
+			removeLocalMedia(componentResource.getFile().getMediaFileId());
 		}
 	}
 
 	void removeLocalMedia(ComponentMedia componentMedia)
 	{
 		//Note: this can't be rolled back
-		Path path = componentMedia.pathToMedia();
+		ComponentMedia example = new ComponentMedia();
+		example.setFile(new MediaFile());
+		example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
+
+		long count = persistenceService.countByExample(example);
+		if (count == 1) {
+			removeLocalMedia(componentMedia.getFile().getMediaFileId());
+		}
+	}
+
+	void removeLocalMedia(String mediaFileId)
+	{
+		MediaFile mediaFile = persistenceService.findById(MediaFile.class, mediaFileId);
+		Path path = mediaFile.path();
 		if (path != null) {
 			if (path.toFile().exists()) {
 				if (path.toFile().delete() == false) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
 				}
 			}
 		}
+		persistenceService.delete(mediaFile);
 	}
 
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId)
