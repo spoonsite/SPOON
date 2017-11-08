@@ -48,7 +48,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -249,9 +248,6 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(fileInput);
 		if (media == null) {
 			media = new MediaFile();
-		}
-		if (StringUtils.isBlank(media.getMediaFileId())) {
-			media.setMediaFileId(persistenceService.generateId());
 		}
 		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);

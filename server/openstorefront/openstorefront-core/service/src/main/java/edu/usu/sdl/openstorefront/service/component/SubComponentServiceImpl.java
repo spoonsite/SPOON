@@ -873,9 +873,6 @@ public class SubComponentServiceImpl
 		if (media == null) {
 			media = new MediaFile();
 		}
-		if (StringUtils.isBlank(media.getMediaFileId())) {
-			media.setMediaFileId(persistenceService.generateId());
-		}
 		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
