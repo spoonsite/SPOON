@@ -1888,22 +1888,28 @@ public class CoreComponentServiceImpl
 				componentAll.setQuestions(new ArrayList<>());
 
 				//Handle local media seperately
-				List<ComponentMedia> localMedia = new ArrayList<>();
 				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
 					ComponentMedia media = componentAll.getMedia().get(i);
 					if (media.getFile() != null && StringUtils.isNotBlank(media.getFile().getFileName())) {
-						localMedia.add(componentAll.getMedia().remove(i));
+						media.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						media.setFile(persistenceService.findById(MediaFile.class, media.getFile().getMediaFileId()));
+						media.setComponentMediaId(null);
+						media.populateBaseUpdateFields();
 					} else {
 						media.clearKeys();
 					}
 				}
 
 				//Handle local resource seperately
-				List<ComponentResource> localResources = new ArrayList<>();
 				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
 					ComponentResource resource = componentAll.getResources().get(i);
 					if (resource.getFile() != null && StringUtils.isNotBlank(resource.getFile().getFileName())) {
-						localResources.add(componentAll.getResources().remove(i));
+						resource.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						resource.setFile(persistenceService.findById(MediaFile.class, resource.getFile().getMediaFileId()));
+						resource.setResourceId(null);
+						resource.populateBaseUpdateFields();
 					} else {
 						resource.clearKeys();
 					}
@@ -1915,30 +1921,6 @@ public class CoreComponentServiceImpl
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
-				//copy over local resources
-				for (ComponentMedia media : localMedia) {
-					media.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
-						MediaFile proxy = media.getFile().findProxy();
-						media.setFile(proxy);
-						media.setComponentMediaId(persistenceService.generateId());
-						media.populateBaseUpdateFields();
-						persistenceService.persist(media);
-					}
-				}
-
-				for (ComponentResource resource : localResources) {
-					resource.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
-						MediaFile proxy = resource.getFile().findProxy();
-						resource.setFile(proxy);
-						resource.setResourceId(persistenceService.generateId());
-						resource.populateBaseUpdateFields();
-						persistenceService.persist(resource);
-					}
-				}
 				cleanupCache(orignalComponentId);
 				cleanupCache(componentAll.getComponent().getComponentId());
 

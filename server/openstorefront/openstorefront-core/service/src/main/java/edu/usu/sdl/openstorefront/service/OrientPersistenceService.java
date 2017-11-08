@@ -993,7 +993,7 @@ public class OrientPersistenceService
 		return t;
 	}
 
-	private <T extends BaseEntity> void updatePKFieldValue(T entity) throws IllegalAccessException, IllegalArgumentException
+	private <T extends BaseEntity> void updatePKFieldValue(T entity) throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException, InvocationTargetException
 	{
 		String pkValue = EntityUtil.getPKFieldValue(entity);
 		if (pkValue == null) {
@@ -1004,9 +1004,10 @@ public class OrientPersistenceService
 		List<Field> fields = ReflectionUtil.getAllFields(entity.getClass());
 		for (Field field : fields) {
 			if (BaseEntity.class.isAssignableFrom(field.getType())) {
-				field.setAccessible(true);
-				if (field.get(entity) != null) {
-					updatePKFieldValue(BaseEntity.class.cast(field.get(entity)));
+				Method method = entity.getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+				Object nestaedObj = method.invoke(entity, (Object[]) null);
+				if (nestaedObj != null) {
+					updatePKFieldValue(BaseEntity.class.cast(nestaedObj));
 				}
 			}
 		}

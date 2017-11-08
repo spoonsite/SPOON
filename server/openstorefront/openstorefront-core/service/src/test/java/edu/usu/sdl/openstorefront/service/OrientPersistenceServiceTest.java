@@ -25,8 +25,7 @@ import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.TestEntity;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.testModels.TestChild;
-import edu.usu.sdl.openstorefront.service.testModels.TestParent;
+import edu.usu.sdl.openstorefront.service.testModels.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,12 +87,29 @@ public class OrientPersistenceServiceTest
 		TestEntity example = new TestEntity();
 		QueryByExample queryByExample = new QueryByExample(example);
 		String expQuery = "select   from TestEntity";
-		Map<String, Object> expPrams = new HashMap<>();
+		Map<String, String> expPrams = new HashMap<>();
 		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
-		Assert.assertEquals(expPrams, result.getValue());
+		assertMapEquals(expPrams, result.getValue());
 	}
-
+	/**
+	 * Test of generateQuery method, of class OrientPersistenceService.
+	 */
+	@Test
+	public void testGenerateQuerySelectWithEnum()
+	{
+		System.out.println("generateQuery - BasicSelect");
+		TestClassWithEnum example = new TestClassWithEnum();
+		example.setMyEnum(TestEnum.ONE);
+		QueryByExample queryByExample = new QueryByExample(example);
+		String expQuery = "select   from TestClassWithEnum where  myEnum = :myEnumParam";
+		Map<String, String> expPrams = new HashMap<>();
+		expPrams.put("myEnumParam","ONE");
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		Assert.assertEquals(expQuery, result.getKey());
+		assertMapEquals(expPrams, result.getValue());
+	}
+	
 	/**
 	 * Test of generateQuery method, of class OrientPersistenceService.
 	 */
@@ -124,11 +140,11 @@ public class OrientPersistenceServiceTest
 		example.setCode("TestTestEntity");
 		QueryByExample queryByExample = new QueryByExample(example);
 		String expQuery = "select   from TestEntity where  code = :codeParam";
-		Map<String, Object> expPrams = new HashMap<>();
+		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("codeParam", "TestTestEntity");
 		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
-		Assert.assertEquals(expPrams, result.getValue());
+		assertMapEquals(expPrams, result.getValue());
 	}
 
 	/**
