@@ -356,32 +356,17 @@ public class OrientPersistenceService
 	@Override
 	public int deleteByExample(QueryByExample queryByExample)
 	{
+		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			queryByExample.setQueryType(QueryType.DELETE);
+		} else if (!QueryType.DELETE.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports DELETE type");
+		}
 		int deleteCount = 0;
-		StringBuilder queryString = new StringBuilder();
-
-		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
-
-		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
-		if (StringUtils.isNotBlank(whereClause)) {
-			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
-		}
-
-		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
-		if (StringUtils.isNotBlank(extraWhere.getKey())) {
-			appendToWhere(queryString, extraWhere.getKey());
-			mappedParams.putAll(extraWhere.getValue());
-		}
-
-		if (queryByExample.getAdditionalWhere() != null) {
-			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}
-		mappedParams.putAll(queryByExample.getExtraParamMapping());
-
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
+		
 		OObjectDatabaseTx db = getConnection();
 		try {
-			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
+			deleteCount = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
 		} finally {
 			closeConnection(db);
 		}
@@ -462,50 +447,24 @@ public class OrientPersistenceService
 	{
 		QueryByExample queryByExample = new QueryByExample(example);
 		queryByExample.setQueryType(QueryType.COUNT);
-		return countByExample(new QueryByExample(example));
+		return countByExample(queryByExample);
 	}
 
 	@Override
 	public long countByExample(QueryByExample queryByExample)
 	{
-		long count = 0;
-		StringBuilder queryString = new StringBuilder();
 		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
 			queryByExample.setQueryType(QueryType.COUNT);
-		}
-		switch (queryByExample.getQueryType()) {
-			case COUNT:
-				queryString.append("select count(*) ");
-				break;
-			case COUNT_DISTINCT:
-				queryString.append("select count(distinct(").append(queryByExample.getDistinctField()).append(") ");
-				break;
-			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
-		}
-		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
-
-		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
-		if (StringUtils.isNotBlank(whereClause)) {
-			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
+		} else if (!QueryType.COUNT.equals(queryByExample.getQueryType())
+				&& !QueryType.COUNT_DISTINCT.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
 		}
 
-		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
-		if (StringUtils.isNotBlank(extraWhere.getKey())) {
-			appendToWhere(queryString, extraWhere.getKey());
-			mappedParams.putAll(extraWhere.getValue());
-		}
-
-		if (queryByExample.getAdditionalWhere() != null) {
-			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}
-		mappedParams.putAll(queryByExample.getExtraParamMapping());
-
+		long count = 0;
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
 		OObjectDatabaseTx db = getConnection();
 		try {
-			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
+			List<ODocument> documents = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
 			if (documents.isEmpty() == false) {
 				count = documents.get(0).field("count");
 			}
@@ -544,6 +503,9 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
+		if (!QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");
+		}
 		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
 		List<T> results = query(query.getKey(), query.getValue(), queryByExample.isReturnNonProxied());
 		return results;
@@ -556,10 +518,19 @@ public class OrientPersistenceService
 
 		switch (queryByExample.getQueryType()) {
 			case SELECT:
-				queryString.append("select  ");
+				queryString.append("select");
+				break;
+			case COUNT:
+				queryString.append("select count(*)");
+				break;
+			case COUNT_DISTINCT:
+				queryString.append("select count(distinct(").append(queryByExample.getDistinctField()).append("))");
+				break;
+			case DELETE:
+				queryString.append("delete");
 				break;
 			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");
+				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Invalid QueryType");
 		}
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
 
