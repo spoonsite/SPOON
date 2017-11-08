@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 @APIDescription("General media used for articles, bagdes, etc.")
 public class GeneralMedia
 		extends StandardEntity<GeneralMedia>
+		implements MediaModel
 {
 
 	@PK

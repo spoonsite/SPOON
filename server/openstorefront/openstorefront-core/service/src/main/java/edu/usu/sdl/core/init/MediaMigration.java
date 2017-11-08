@@ -23,12 +23,16 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.MediaModel;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,7 +50,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MediaMigration extends ApplyOnceInit
 {
-	private static final Logger LOG = Logger.getLogger(DBDataMigration.class.getName());
+	private static final Logger LOG = Logger.getLogger(MediaMigration.class.getName());
 	protected PersistenceService persistenceService = service.getNewPersistenceService();
 	
 	public MediaMigration()
@@ -57,7 +61,6 @@ public class MediaMigration extends ApplyOnceInit
 	private static int noFileCount = 0;
 	private static int failedDeleteCount = 0;
 	private static int failedFileReadCount = 0;
-	private static List<Path> filesToDelete = new ArrayList<>();
 	
 	@Override
 	protected String internalApply()
@@ -78,7 +81,6 @@ public class MediaMigration extends ApplyOnceInit
 			
 			if (generalMedia.getFileName() != null) {
 				Path originalFilePath = Paths.get(MediaFileType.GENERAL.getPath() + "\\" + generalMedia.getFileName());
-				filesToDelete.add(originalFilePath);
 
 				GeneralMedia newGeneralMedia = new GeneralMedia();
 				
@@ -93,22 +95,10 @@ public class MediaMigration extends ApplyOnceInit
 				newGeneralMedia.setOriginalFileName(null);
 				newGeneralMedia.populateBaseUpdateFields();
 				
-				try (InputStream inputStream = new FileInputStream(originalFilePath.toString())) {
-					
-					MediaFile newMediaFile = saveMediaFile(null, inputStream, generalMedia.getMimeType(), generalMedia.getFileName(), MediaFileType.GENERAL);
-					newMediaFile = persistenceService.persist(newMediaFile);
-					newGeneralMedia.setFile(newMediaFile);
-					persistenceService.delete(generalMedia);
-					persistenceService.persist(newGeneralMedia);
-					
-				} catch (FileNotFoundException ex) {
-//					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					System.out.println("General Media, cant find file!");
-					noFileCount += 1;
-				} catch (IOException ex) {
-					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					failedFileReadCount += 1;
-				}
+				MediaFile newMediaFile = saveMediaFile(null, originalFilePath, generalMedia.getMimeType(), generalMedia.getFileName(), MediaFileType.GENERAL, newGeneralMedia);
+				newGeneralMedia.setFile(newMediaFile);
+				persistenceService.delete(generalMedia);
+				persistenceService.persist(newGeneralMedia);
 			}
 		}
 		
@@ -120,40 +110,13 @@ public class MediaMigration extends ApplyOnceInit
 			
 			if (componentMedia.getFileName() != null) {
 				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + "\\" + componentMedia.getFileName());
-				filesToDelete.add(originalFilePath);
+				MediaFile newMediaFile = saveMediaFile(null, originalFilePath, componentMedia.getMimeType(), componentMedia.getFileName(), MediaFileType.MEDIA, componentMedia);
+				componentMedia.setFile(newMediaFile);
 
-				ComponentMedia newCompMedia = new ComponentMedia();
-				
-				newCompMedia.setCreateDts(componentMedia.getCreateDts());
-				newCompMedia.setCreateUser(componentMedia.getCreateUser());
-				newCompMedia.setMediaTypeCode(componentMedia.getMediaTypeCode());
-				newCompMedia.setDataSensitivity(componentMedia.getDataSensitivity());
-				newCompMedia.setSecurityMarkingType(componentMedia.getSecurityMarkingType());
-				newCompMedia.setComponentId(componentMedia.getComponentId());
-				
-				newCompMedia.populateBaseUpdateFields();
-				
-				System.out.println("Comp Media path: " + originalFilePath.toString());
-				try (InputStream inputStream = new FileInputStream(originalFilePath.toString())) {
-					
-					MediaFile newMediaFile = saveMediaFile(null, inputStream, componentMedia.getMimeType(), componentMedia.getFileName(), MediaFileType.MEDIA);
-					newMediaFile = persistenceService.persist(newMediaFile);
-					newCompMedia.setFile(newMediaFile);
-					persistenceService.delete(componentMedia);
-					
-					newCompMedia.setFileName(null);
-					newCompMedia.setMimeType(null);
-					newCompMedia.setOriginalName(null);
-					persistenceService.persist(newCompMedia);
-					
-				} catch (FileNotFoundException ex) {
-					System.out.println("CompMedia, cant find file!" + ex.toString());
-//					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					noFileCount += 1;
-				} catch (IOException ex) {
-					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					failedFileReadCount += 1;
-				}
+				componentMedia.setFileName(null);
+				componentMedia.setMimeType(null);
+				componentMedia.setOriginalName(null);
+				persistenceService.persist(componentMedia);
 			}
 		}
 		
@@ -165,39 +128,13 @@ public class MediaMigration extends ApplyOnceInit
 			
 			if (componentResource.getFileName() != null) {
 				Path originalFilePath = Paths.get(MediaFileType.RESOURCE.getPath() + "\\" + componentResource.getFileName());
-				filesToDelete.add(originalFilePath);
+				MediaFile newMediaFile = saveMediaFile(null, originalFilePath, componentResource.getMimeType(), componentResource.getFileName(), MediaFileType.RESOURCE, componentResource);
+				componentResource.setFile(newMediaFile);
 
-				ComponentResource newCompResource = new ComponentResource();
-				
-				newCompResource.setCreateDts(componentResource.getCreateDts());
-				newCompResource.setCreateUser(componentResource.getCreateUser());
-				newCompResource.setResourceType(componentResource.getResourceType());
-				newCompResource.setDataSensitivity(componentResource.getDataSensitivity());
-				newCompResource.setSecurityMarkingType(componentResource.getSecurityMarkingType());
-				newCompResource.setComponentId(componentResource.getComponentId());
-				
-				newCompResource.populateBaseUpdateFields();
-				
-				try (InputStream inputStream = new FileInputStream(originalFilePath.toString())) {
-					
-					MediaFile newMediaFile = saveMediaFile(null, inputStream, componentResource.getMimeType(), componentResource.getFileName(), MediaFileType.RESOURCE);
-					newMediaFile = persistenceService.persist(newMediaFile);
-					newCompResource.setFile(newMediaFile);
-					persistenceService.delete(componentResource);
-					
-					newCompResource.setFileName(null);
-					newCompResource.setMimeType(null);
-					newCompResource.setOriginalName(null);
-					persistenceService.persist(newCompResource);
-					
-				} catch (FileNotFoundException ex) {
-//					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					System.out.println("comp resource, cant find file!");
-					noFileCount += 1;
-				} catch (IOException ex) {
-					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					failedFileReadCount += 1;
-				}
+				componentResource.setFileName(null);
+				componentResource.setMimeType(null);
+				componentResource.setOriginalName(null);
+				persistenceService.persist(componentResource);
 			}
 		}
 		
@@ -209,50 +146,13 @@ public class MediaMigration extends ApplyOnceInit
 			
 			if (sectionMedia.getFileName() != null) {
 				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + "\\" + sectionMedia.getFileName());
-				filesToDelete.add(originalFilePath);
+				MediaFile newMediaFile = saveMediaFile(null, originalFilePath, sectionMedia.getMimeType(), sectionMedia.getFileName(), MediaFileType.MEDIA, sectionMedia);
+				sectionMedia.setFile(newMediaFile);
 
-				ContentSectionMedia newSectionMedia = new ContentSectionMedia();
-				
-				newSectionMedia.setCreateDts(sectionMedia.getCreateDts());
-				newSectionMedia.setCreateUser(sectionMedia.getCreateUser());
-				newSectionMedia.setMediaTypeCode(sectionMedia.getMediaTypeCode());
-				newSectionMedia.setDataSensitivity(sectionMedia.getDataSensitivity());
-				newSectionMedia.setSecurityMarkingType(sectionMedia.getSecurityMarkingType());
-				newSectionMedia.setPrivateMedia(sectionMedia.getPrivateMedia());
-				newSectionMedia.setContentSectionId(sectionMedia.getContentSectionId());
-				
-				newSectionMedia.populateBaseUpdateFields();
-				
-				try (InputStream inputStream = new FileInputStream(originalFilePath.toString())) {
-					
-					MediaFile newMediaFile = saveMediaFile(null, inputStream, sectionMedia.getMimeType(), sectionMedia.getFileName(), MediaFileType.MEDIA);
-					newMediaFile = persistenceService.persist(newMediaFile);
-					newSectionMedia.setFile(newMediaFile);
-					persistenceService.delete(sectionMedia);
-					
-					newSectionMedia.setFileName(null);
-					newSectionMedia.setMimeType(null);
-					newSectionMedia.setOriginalName(null);
-					persistenceService.persist(newSectionMedia);
-					
-				} catch (FileNotFoundException ex) {
-//					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					System.out.println("section media, cant find file!");
-					noFileCount += 1;
-				} catch (IOException ex) {
-					Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
-					failedFileReadCount += 1;
-				}
-			}
-		}
-		
-		// Delete files
-		for (Path fileToDelete : filesToDelete) {
-			try {
-				deleteOriginalFile(fileToDelete);
-			} catch (IOException ex) {
-				failedDeleteCount += 1;
-				Logger.getLogger(MediaMigration.class.getName()).log(Level.SEVERE, null, ex);
+				sectionMedia.setFileName(null);
+				sectionMedia.setMimeType(null);
+				sectionMedia.setOriginalName(null);
+				persistenceService.persist(sectionMedia);
 			}
 		}
 		
@@ -278,14 +178,9 @@ public class MediaMigration extends ApplyOnceInit
 		return 9999;
 	}
 	
-	private void deleteOriginalFile(Path filePath) throws IOException
+	public <T extends StandardEntity & MediaModel> MediaFile saveMediaFile(MediaFile media, Path sourcePath, String mimeType, String originalFileName, MediaFileType type, T mediaToPersist)
 	{
-		boolean deletedFile = Files.deleteIfExists(filePath);
-	}
-	
-	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, MediaFileType type) throws IOException
-	{
-		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(sourcePath);
 		if (media == null) {
 			media = new MediaFile();
 		}
@@ -297,10 +192,18 @@ public class MediaMigration extends ApplyOnceInit
 		media.setOriginalName(originalFileName);
 		media.setFileType(type);
 
-		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
-		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		Path targetPath = Paths.get(type.getPath() + "/" + media.getFileName());
 		
-//		results.append("Successfully saved the file: ").append(path.toString());
+		mediaToPersist.setFile(media);
+		
+		try {
+			Files.move(sourcePath, targetPath);
+			persistenceService.persist(mediaToPersist);
+		} catch (IOException ex) {
+			// Mention class name, source and target paths
+			LOG.log(Level.SEVERE, null, ex);
+		}
+		
 		return media;
 	}
 }

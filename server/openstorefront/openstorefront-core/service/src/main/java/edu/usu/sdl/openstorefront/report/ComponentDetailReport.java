@@ -662,7 +662,9 @@ public class ComponentDetailReport
 								String attributeLabel;
 								if (attributeCode != null) {
 									securityMarking = "";
-								if (getBranding().getAllowSecurityMarkingsFlg()
+								if (getBranding() != null 
+										&& getBranding().getAllowSecurityMarkingsFlg() != null
+										&& getBranding().getAllowSecurityMarkingsFlg()
 										&& StringUtils.isNotBlank(attributeCode.getSecurityMarkingType())) {
 										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
 									}
@@ -693,7 +695,8 @@ public class ComponentDetailReport
 					for (ComponentContactView contact : contacts) {
 
 						securityMarking = "";
-					if (getBranding().getAllowSecurityMarkingsFlg()
+					if (getBranding() != null
+							&& getBranding().getAllowSecurityMarkingsFlg()
 							&& StringUtils.isNotBlank(contact.getSecurityMarkingType())) {
 							securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
 					}

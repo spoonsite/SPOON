@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
 @APIDescription("Section Media")
 public class ContentSectionMedia
 		extends StandardEntity<ContentSectionMedia>
-		implements LoggableModel<ContentSectionMedia>
+		implements LoggableModel<ContentSectionMedia>, MediaModel
 {
 
 	@PK(generated = true)
@@ -105,9 +105,9 @@ public class ContentSectionMedia
 
 		setContentSectionMediaId(contentSectionMedia.contentSectionMediaId);
 		setMediaTypeCode(contentSectionMedia.getMediaTypeCode());
-		setFileName(contentSectionMedia.getFileName());
-		setMimeType(contentSectionMedia.getMimeType());
-		setOriginalName(contentSectionMedia.getOriginalName());
+//		setFileName(contentSectionMedia.getFileName());
+//		setMimeType(contentSectionMedia.getMimeType());
+//		setOriginalName(contentSectionMedia.getOriginalName());
 		setPrivateMedia(contentSectionMedia.getPrivateMedia());
 		setCaption(contentSectionMedia.getCaption());
 		setFile(contentSectionMedia.getFile());

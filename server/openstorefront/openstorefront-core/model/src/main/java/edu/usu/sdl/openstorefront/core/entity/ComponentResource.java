@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent<ComponentResource>
-		implements LoggableModel<ComponentResource>
+		implements LoggableModel<ComponentResource>, MediaModel
 {
 
 	@PK(generated = true)

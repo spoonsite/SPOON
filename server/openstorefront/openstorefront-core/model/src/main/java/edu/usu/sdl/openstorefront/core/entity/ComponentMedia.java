@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
 		extends BaseComponent<ComponentMedia>
-		implements LoggableModel<ComponentMedia>
+		implements LoggableModel<ComponentMedia>, MediaModel
 {
 
 	@PK(generated = true)
