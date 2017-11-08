@@ -239,7 +239,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + lookClassName);
+			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnity(lookupClass, code);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
@@ -279,7 +279,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + lookClassName);
+			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnityByDesc(lookupClass, description);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");

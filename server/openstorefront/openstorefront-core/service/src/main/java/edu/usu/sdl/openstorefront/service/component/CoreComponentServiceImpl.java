@@ -65,6 +65,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -124,9 +125,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -690,7 +689,7 @@ public class CoreComponentServiceImpl
 								InputStream in = new FileInputStream(path.toFile());
 								componentMedia.setComponentMediaId(persistenceService.generateId());
 								componentMedia.populateBaseCreateFields();
-								componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
+								componentMedia = componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
@@ -1068,7 +1067,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(componentId, "Component Id is required.");
 		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
-		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
@@ -1921,14 +1920,9 @@ public class CoreComponentServiceImpl
 					media.setComponentId(componentAll.getComponent().getComponentId());
 					Path oldPath = media.pathToMedia();
 					if (oldPath != null) {
+						MediaFile proxy = media.getFile().findProxy();
+						media.setFile(proxy);
 						media.setComponentMediaId(persistenceService.generateId());
-						media.getFile().setFileName(persistenceService.generateId());
-						Path newPath = media.pathToMedia();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
-						}
 						media.populateBaseUpdateFields();
 						persistenceService.persist(media);
 					}
@@ -1938,14 +1932,9 @@ public class CoreComponentServiceImpl
 					resource.setComponentId(componentAll.getComponent().getComponentId());
 					Path oldPath = resource.pathToResource();
 					if (oldPath != null) {
+						MediaFile proxy = resource.getFile().findProxy();
+						resource.setFile(proxy);
 						resource.setResourceId(persistenceService.generateId());
-						resource.getFile().setFileName(persistenceService.generateId());
-						Path newPath = resource.pathToResource();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
-						}
 						resource.populateBaseUpdateFields();
 						persistenceService.persist(resource);
 					}

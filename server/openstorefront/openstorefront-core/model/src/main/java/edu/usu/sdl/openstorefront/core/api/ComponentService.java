@@ -496,8 +496,9 @@ public interface ComponentService
 	 * @param fileInput
 	 * @param mimeType
 	 * @param originalFileName
+	 * @return 
 	 */
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName);
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Saves component resource to disk sets the filename
@@ -506,8 +507,9 @@ public interface ComponentService
 	 * @param fileInput
 	 * @param mimeType
 	 * @param originalFileName
+	 * @return 
 	 */
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName);
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Find Recently Added

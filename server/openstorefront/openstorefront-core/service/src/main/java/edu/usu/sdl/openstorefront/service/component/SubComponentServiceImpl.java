@@ -841,7 +841,6 @@ public class SubComponentServiceImpl
 		if (StringUtils.isBlank(media.getComponentMediaId())) {
 			media = saveComponentMedia(media, updateLastActivity);
 		}
-
 		media.setFile(saveMediaFile(media.getFile(), fileInput, mimeType, originalFileName));
 		media.setUpdateUser(SecurityUtil.getCurrentUserName());
 		media = saveComponentMedia(media, updateLastActivity);
@@ -851,7 +850,7 @@ public class SubComponentServiceImpl
 	public MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		try (InputStream in = fileInput) {
-			saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.MEDIA);
+			media = saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.MEDIA);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -861,7 +860,7 @@ public class SubComponentServiceImpl
 	public MediaFile saveResourceFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		try (InputStream in = fileInput) {
-			saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.RESOURCE);
+			media = saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.RESOURCE);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -893,7 +892,7 @@ public class SubComponentServiceImpl
 		if (StringUtils.isBlank(resource.getResourceId())) {
 			resource.setResourceId(persistenceService.generateId());
 		}
-		resource.setFile(saveMediaFile(resource.getFile(), fileInput, mimeType, originalFileName));
+		resource.setFile(saveResourceFile(resource.getFile(), fileInput, mimeType, originalFileName));
 		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 		resource = saveComponentResource(resource);
 		return resource;

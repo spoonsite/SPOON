@@ -48,92 +48,114 @@ public class DBManager
 
 	private static final Logger LOG = Logger.getLogger(DBManager.class.getName());
 
-	public static final String ENTITY_MODEL_PACKAGE = "edu.usu.sdl.openstorefront.core.entity";
-
-	private static AtomicBoolean started = new AtomicBoolean(false);
-	private static OServer server;
-	private static final String REMOTE_URL = "remote:localhost/openstorefront";
-
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private OServer server;
 	private static OObjectDatabasePool globalInstance;
+	private final String entityModelPackage;
+	private final String url;
+	private String dbFileDir;
 
-	@Override
-	public void initialize()
+	// <editor-fold defaultstate="collapsed" desc="Singleton getInstance() Methods">
+	protected static DBManager singleton = null;
+
+	public static DBManager getInstance()
 	{
-		DBManager.init();
+		if (singleton == null) {
+			singleton = new DBManager("remote:localhost/openstorefront", "edu.usu.sdl.openstorefront.core.entity");
+		}
+		return singleton;
 	}
 
-	@Override
-	public void shutdown()
+	// </editor-fold>
+	protected DBManager(String url, String entityModelPackage)
 	{
-		DBManager.cleanup();
+		this.url = url;
+		this.entityModelPackage = entityModelPackage;
 	}
 
 	/**
 	 * Called once at application Startup
 	 */
-	public static void init()
+	@Override
+	public void initialize()
 	{
+		synchronized (this) {
+			if (!isStarted()) {
+				try {
+					LOG.info("Starting Orient DB...");
+					server = OServerMain.create();
+					
+					String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
+					System.setProperty("ORIENTDB_HOME", home);
+					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+					server.setServerRootDirectory(home);
 
-		try {
-			LOG.info("Starting Orient DB...");
-			server = OServerMain.create();
+					server.startup(FileSystemManager.getConfig("orientdb-server-config.xml"));
+					server.activate();
+					this.dbFileDir = home + "/databases/openstorefront";
+					createDatabase();
+					createPool();
 
-			String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
-			System.setProperty("ORIENTDB_HOME", home);
-			System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
-			server.setServerRootDirectory(home);
-
-			server.startup(FileSystemManager.getConfig("orientdb-server-config.xml"));
-			server.activate();
-
-			String dbFileDir = home + "/databases/openstorefront";
-			File dbFile = new File(dbFileDir);
-			if (dbFile.exists() == false) {
-				LOG.log(Level.INFO, "Creating DB at %s", dbFileDir);
-				ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + dbFileDir).create();
-				db.close();
-				LOG.log(Level.INFO, "Done");
+					started.set(true);
+					LOG.info("Finished.");
+				} catch (Exception ex) {
+					LOG.log(Level.SEVERE, "Error occuring starting orient", ex);
+					throw new OpenStorefrontRuntimeException(ex);
+				}
 			}
+		}
+	}
 
-			//Must use the Object database pool otherwise the connect will not be set correctly
-			//In 3.x there is a new Obect pool : ODatabaseObjectPool.java look to switch to that.
-			//Also 3.x Object API will exist it just they not add features to the api.
-			//Unless we need some feature it's not worth switching to as the we would need to provide the bindings
-			//We can also use the multi-model api in conjuction as needed for additonal features
-			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
+	/**
+	 * Must use the Object database pool otherwise the connect will not be set
+	 * correctly, In 3.x there is a new Obect pool : ODatabaseObjectPool.java
+	 * look to switch to that. Also 3.x Object API will exist it just they not
+	 * add features to the api. Unless we need some feature it's not worth
+	 * switching to as the we would need to provide the bindings. We can also
+	 * use the multi-model api in conjuction as needed for additonal features
+	 */
+	protected synchronized void createPool()
+	{
+		globalInstance = new OObjectDatabasePool(url, PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 
-			try (OObjectDatabaseTx db = getConnection()) {
-				db.getEntityManager().registerEntityClasses(ENTITY_MODEL_PACKAGE, BaseEntity.class.getClassLoader());
-			}
+		globalInstance.setup(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
-			started.set(true);
-			LOG.info("Finished.");
-		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "Error occuring starting orient", ex);
-			throw new OpenStorefrontRuntimeException(ex);
+		try (OObjectDatabaseTx db = getConnection()) {
+			db.getEntityManager().registerEntityClasses(entityModelPackage, BaseEntity.class.getClassLoader());
+		}
+	}
+
+	protected synchronized void createDatabase()
+	{
+		File dbFile = new File(this.dbFileDir);
+		if (dbFile.exists() == false) {
+			LOG.log(Level.INFO, "Creating DB at %s", this.dbFileDir);
+			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir).create();
+			db.close();
+			LOG.log(Level.INFO, "Done");
 		}
 	}
 
 	/**
 	 * Called once at application shutdown
 	 */
-	public static void cleanup()
+	@Override
+	public void shutdown()
 	{
-
-		LOG.info("Shutting down Orient DB...");
-		if (globalInstance != null) {
-			globalInstance.close();
+		synchronized (this) {
+			if (isStarted()) {
+				LOG.info("Shutting down Orient DB...");
+				if (globalInstance != null) {
+					globalInstance.close();
+				}
+				if (server != null) {
+					server.shutdown();
+				}
+				started.set(false);
+				LOG.info("Finished.");
+			}
+			singleton = null;
 		}
-		if (server != null) {
-			server.shutdown();
-		}
-		started.set(false);
-		LOG.info("Finished.");
-	}
-
-	public static OObjectDatabaseTx getConnection()
-	{
-		return globalInstance.acquire(REMOTE_URL, PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 	}
 
 	@Override
@@ -142,14 +164,30 @@ public class DBManager
 		return started.get();
 	}
 
-	public static void exportDB(OutputStream out) throws IOException
+	public OObjectDatabaseTx getConnection()
 	{
-		exportDB(out, null);
+		return globalInstance.acquire();
 	}
 
-	public static void exportDB(OutputStream out, DatabaseStatusListener dbListener) throws IOException
+	public String getEntityModelPackage()
 	{
-		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
+		return entityModelPackage;
+	}
+
+	protected String getURL()
+	{
+		return url;
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="Import/Export Methods">
+	public void exportDB(OutputStream out) throws IOException
+	{
+		singleton.exportDB(out, null);
+	}
+
+	public void exportDB(OutputStream out, DatabaseStatusListener dbListener) throws IOException
+	{
+		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (OutputStream closableOut = out) {
 			OCommandOutputListener listener = (String iText) -> {
@@ -171,14 +209,14 @@ public class DBManager
 		}
 	}
 
-	public static void importDB(InputStream in) throws IOException
+	public void importDB(InputStream in) throws IOException
 	{
-		importDB(in, null);
+		singleton.importDB(in, null);
 	}
 
-	public static void importDB(InputStream in, DatabaseStatusListener dbListener) throws IOException
+	public void importDB(InputStream in, DatabaseStatusListener dbListener) throws IOException
 	{
-		ODatabaseDocumentTx db = new ODatabaseDocumentTx(REMOTE_URL);
+		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
 		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		try (InputStream closableIn = in) {
 			OCommandOutputListener listener = (String iText) -> {
@@ -199,5 +237,5 @@ public class DBManager
 			db.close();
 		}
 	}
-
+	// </editor-fold>
 }
