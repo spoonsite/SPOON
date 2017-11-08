@@ -148,7 +148,7 @@ public class GeneralMedia
 	 * {@link #getFile().setOriginalName(String originalName)}
 	 */
 	@Deprecated
-	public void setOriginalFileName(String originalFileName)
+	public void setOriginalName(String originalFileName)
 	{
 		this.originalFileName = originalFileName;
 	}

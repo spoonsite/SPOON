@@ -20,13 +20,44 @@ package edu.usu.sdl.openstorefront.core.entity;
  * @author cyearsley
  */
 
-/**
-	 * Saves a MediaFile and sets the MediaFile
-	 *
-	 * @param MediaFile
-	 */
 public interface MediaModel
 {
+	/**
+	 * Saves a MediaFile and sets the MediaFile
+	 *
+	 * @param mediaFile
+	 */
 	public void setFile(MediaFile mediaFile);
+	
+	/**
+	 * Gets the appropriate MediaFile
+	 * @return the components mediaFile
+	 */
 	public MediaFile getFile();
+	
+	
+	/**
+	 * Saves a MediaFile and sets the MediaFile
+	 *
+	 * @param fileName
+	 * @deprecated 
+	 */
+	public void setOriginalName(String fileName);
+	
+	/**
+	 * Saves a MediaFile and sets the MediaFile
+	 *
+	 * @param fileName
+	 * @deprecated 
+	 */
+	public void setFileName(String fileName);
+	
+	/**
+	 * Saves a MediaFile and sets the MediaFile
+	 *
+	 * @param mimeType
+	 * @deprecated 
+	 */
+	public void setMimeType(String mimeType);
+	
 }
