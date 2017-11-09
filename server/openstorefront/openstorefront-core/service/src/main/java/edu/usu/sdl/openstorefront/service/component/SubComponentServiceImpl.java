@@ -852,9 +852,6 @@ public class SubComponentServiceImpl
 	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName, boolean updateLastActivity)
 	{
 		Objects.requireNonNull(media);
-		if (StringUtils.isBlank(media.getComponentMediaId())) {
-			media = saveComponentMedia(media, updateLastActivity);
-		}
 		media.setFile(saveMediaFile(media.getFile(), fileInput, mimeType, originalFileName));
 		media.setUpdateUser(SecurityUtil.getCurrentUserName());
 		media = saveComponentMedia(media, updateLastActivity);
@@ -900,9 +897,6 @@ public class SubComponentServiceImpl
 	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		Objects.requireNonNull(resource);
-		if (StringUtils.isBlank(resource.getResourceId())) {
-			resource.setResourceId(persistenceService.generateId());
-		}
 		resource.setFile(saveResourceFile(resource.getFile(), fileInput, mimeType, originalFileName));
 		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 		resource = saveComponentResource(resource);

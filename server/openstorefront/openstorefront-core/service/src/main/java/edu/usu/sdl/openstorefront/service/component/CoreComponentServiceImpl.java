@@ -2301,7 +2301,8 @@ public class CoreComponentServiceImpl
 					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
-
+				
+				persistenceService.commit();
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 
