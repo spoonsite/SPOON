@@ -110,8 +110,10 @@ public class CreateUserSubmissionIT
 		sleep(1000);
 		nextBtn.click();
 		sleep(1000);
-		setButtons(buttons);
-		submitReviewBtn.click();
+		driverWait(() -> {
+			setButtons(buttons);
+			submitReviewBtn.click();
+		}, 5);
 		sleep(1000);
 		
 		ComponentAdminView compView = apiClient.getComponentRESTTestClient().getComponentByName(entryName);
