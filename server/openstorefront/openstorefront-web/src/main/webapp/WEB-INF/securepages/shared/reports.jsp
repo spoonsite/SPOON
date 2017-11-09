@@ -592,7 +592,7 @@
 														//construct report object
 														var reportData = {
 															report: null,
-															reportDataId: []
+															reportDataId: null
 														};
 													
 														//unpack emails
@@ -634,8 +634,10 @@
 																	id: selected.componentId
 																});
 															});
-															reportData.report.ids = entryRestrictions;														
-															reportData.reportDataId = entryRestrictions;
+															if (entryRestrictions.length > 0) {
+																reportData.report.ids = entryRestrictions;														
+																reportData.reportDataId = entryRestrictions;
+															}
 														}
 													
 														var scheduled = formData.scheduleOption !== 'NOW' ? true : false;
@@ -1463,7 +1465,11 @@
 						},
 						{text: 'Format', dataIndex: 'reportFormat', width: 250,
 							renderer: function (value, meta, record) {
-								return record.get('reportFormatDescription');
+								if (record.get('noViewAvaliable')) {
+									return 'No View Available';
+								} else {
+									return record.get('reportFormatDescription');
+								}
 							}
 						},
 						{text: 'Run Status', dataIndex: 'runStatus', width: 150, align: 'center',
@@ -1670,7 +1676,7 @@
 					var cnt = historyGrid.getSelectionModel().getCount();
 					if (cnt === 1) {
 						var record = historyGrid.getSelectionModel().getSelection()[0];
-						if (record.get('runStatus') !== 'C') {
+						if (record.get('runStatus') !== 'C' || record.get('noViewAvaliable')) {
 							Ext.getCmp('historyViewButton').setDisabled(true);
 							Ext.getCmp('historyExportButton').setDisabled(true);
 						} else {
@@ -1715,7 +1721,7 @@
 							method: 'GET',
 							success: function (response, opts) {
 								var reportData = response.responseText;
-								var reportFormat = selectedObj.data.reportFormat;
+								var reportFormat = selectedObj.data.reportViewFormat;
 								if (reportFormat === 'text-html') {
 									contentData = reportData;
 								}

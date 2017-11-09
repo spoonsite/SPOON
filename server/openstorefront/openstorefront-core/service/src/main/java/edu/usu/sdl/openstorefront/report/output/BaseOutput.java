@@ -84,6 +84,7 @@ public abstract class BaseOutput
 				}
 			} catch (Exception e) {
 				generator.setFailed(true);
+				throw new OpenStorefrontRuntimeException("Output failed.", "See trace.", e);
 			} finally {
 				generator.finish();
 				finishOutput(reportModel);

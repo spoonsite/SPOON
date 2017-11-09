@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -237,9 +238,9 @@ public class CategoryComponentReport
 		for (CategoryComponentReportLineModel lineModel : reportModel.getData()) {
 			cvsGenerator.addLine(
 					lineModel.getCategoryLabel(),
-					lineModel.getCategoryDescription(),
+					StringProcessor.stripHtml(lineModel.getCategoryDescription()),
 					lineModel.getName(),
-					lineModel.getDecription(),
+					StringProcessor.ellipseString(StringProcessor.stripHtml(lineModel.getDecription()), 300),
 					sdf.format(lineModel.getLastActivityDts())
 			);
 		}

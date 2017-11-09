@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.report.generator;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import java.io.IOException;
@@ -59,10 +58,13 @@ public abstract class BaseGenerator
 			default:
 				throw new UnsupportedOperationException("Unsupported report format: " + reportFormat);
 		}
+		if (generator != null) {
+			generator.init();
+		}
 		return generator;
 	}
 
-	public abstract void init();
+	protected abstract void init();
 
 	public void finish()
 	{

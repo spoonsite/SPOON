@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Action Report - ${reportDate}</title>
+		<title>Action Report - ${createTime?datetime}</title>
 		<meta charset="UTF-8"></meta>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 		<style>
@@ -92,7 +92,7 @@
 	</head>
 	<body>
 		<div>
-			<p>Action Report: ${createTime}</p>
+			<p>Action Report: ${createTime?datetime}</p>
 			<hr></hr>
 			
 			<#if !outstandingItems()>

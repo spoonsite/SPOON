@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -27,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
@@ -208,11 +210,25 @@ public class ReportResource
 				java.nio.file.Path path = report.pathToReport();
 
 				if (path.toFile().exists()) {
-					String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
+
+					String format = report.getReportFormat();
+					if (StringUtils.isBlank(format)) {
+						for (ReportOutput output : report.getReportOutputs()) {
+							if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+								format = output.getReportTransmissionOption().getReportFormat();
+							}
+						}
+					}
+
+					if (StringUtils.isBlank(format)) {
+						throw new OpenStorefrontRuntimeException("No Viewable Format for this report");
+					}
+
+					String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(format));
 					Response.ResponseBuilder responseBuilder = Response.ok((StreamingOutput) (OutputStream output) -> {
 						Files.copy(path, output);
 					});
-					responseBuilder.header("Content-Type", ReportFormat.mimeType(report.getReportFormat()));
+					responseBuilder.header("Content-Type", ReportFormat.mimeType(format));
 
 					if (!notAttach) {
 						responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
@@ -307,6 +323,10 @@ public class ReportResource
 		ValidationModel validationModel = new ValidationModel(report);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		if (reportView.getReportDataId() == null) {
+			reportView.setReportDataId(new ArrayList<>());
+		}
 
 		for (ReportDataId dataId : reportView.getReportDataId()) {
 			validationModel = new ValidationModel(dataId);

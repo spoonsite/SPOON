@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -169,8 +168,8 @@ public abstract class BaseReport
 
 	protected void handleOutputs(BaseReportModel reportModel)
 	{
-		if (report.getReportOutputs() != null) {
-			LOG.log(Level.SEVERE, "No report output defined; Report should have at least one.");
+		if (report.getReportOutputs() == null || report.getReportOutputs().isEmpty()) {
+			throw new OpenStorefrontRuntimeException("No report output defined", "Report should have at least one.");
 		} else {
 			for (ReportOutput reportOutput : report.getReportOutputs()) {
 				BaseOutput outputHandler = BaseOutput.getOutput(reportOutput, report, this, getReportUserContext());

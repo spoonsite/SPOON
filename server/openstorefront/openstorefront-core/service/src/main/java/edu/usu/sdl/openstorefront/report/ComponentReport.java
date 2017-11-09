@@ -128,6 +128,7 @@ public class ComponentReport
 			lineModel.setApprovalDts(component.getApprovedDts());
 			lineModel.setApprovalStatus(component.getApprovalState());
 			lineModel.setApprovalUser(component.getApprovedUser());
+			lineModel.setLastActivityDts(component.getLastActivityDts());
 			lineModel.setCreateDts(component.getCreateDts());
 			lineModel.setCreateUser(component.getCreateUser());
 			lineModel.setLastViewed(lastViewed);
