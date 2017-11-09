@@ -2006,7 +2006,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 			' <table class="details-table" width="100%">',
 			'	<tpl for="checkListAll.recommendations">',
 			'		<tr class="details-table">',
-			'			<td class="details-table" width="150"><b>{recommendationTypeDescription}</b></td>',
+			'			<td class="details-table" width="230"><b>{recommendationTypeDescription}</b></td>',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
 			'				<tpl if="recommendation">{recommendation}</tpl>',
 			'			</td>',
