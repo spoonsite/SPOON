@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -111,6 +113,24 @@ public class Report
 			}
 		}
 		return dataSet;
+	}
+
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (getReportOutputs() == null || getReportOutputs().isEmpty()) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ReportOutput.class.getSimpleName());
+			ruleResult.setFieldName("reportOutputs");
+			ruleResult.setMessage("Must have at least one output");
+			validationResult.getRuleResults().add(ruleResult);
+		} else {
+			for (ReportOutput output : getReportOutputs()) {
+				validationResult.merge(output.customValidation());
+			}
+		}
+		return validationResult;
 	}
 
 	public String getReportId()

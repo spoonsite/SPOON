@@ -79,11 +79,12 @@ public class ComponentDetailReport
 		ComponentDetailReportModel reportModel = new ComponentDetailReportModel();
 		reportModel.setTitle("Entry Details Report");
 
-		//This can be very memory intensive as it pull alot of data and hold on to it until the report is written.
+		//This can be very memory intensive as it pulls alot of data and holds on to it until the report is written.
 		for (Component component : components) {
 			ComponentDetailReportLineModel lineModel = new ComponentDetailReportLineModel();
 			ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(component.getComponentId());
 			lineModel.setComponent(componentDetail);
+			reportModel.getData().add(lineModel);
 		}
 
 		return reportModel;

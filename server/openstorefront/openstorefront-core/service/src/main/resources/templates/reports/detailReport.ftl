@@ -122,7 +122,7 @@
 <body>
 	<div>
 		<p>Component Details Report: ${createTime!}</p>
-		<p>Entries (${reportModel.data.size()})</p>
+		<p>Entries (${reportModel.data?size})</p>
 	</div>
 	<hr />
 	<#list reportModel.data as component>

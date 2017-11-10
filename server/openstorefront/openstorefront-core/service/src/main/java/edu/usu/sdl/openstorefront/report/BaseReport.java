@@ -250,10 +250,14 @@ public abstract class BaseReport
 
 		if (report.getReportOption().getStartDts() == null) {
 			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(TimeUtil.currentDate()));
+		} else {
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(report.getReportOption().getStartDts()));
 		}
 
 		if (report.getReportOption().getEndDts() == null) {
 			report.getReportOption().setEndDts(TimeUtil.endOfDay(TimeUtil.currentDate()));
+		} else {
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(report.getReportOption().getEndDts()));
 		}
 	}
 

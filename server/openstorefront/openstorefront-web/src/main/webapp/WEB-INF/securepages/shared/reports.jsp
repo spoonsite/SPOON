@@ -77,18 +77,19 @@
 							dateFormat: 'c'
 						},
 						{
-							name: 'schedule', mapping: function(data) {								
+							name: 'schedule', mapping: function(data) {	
+								var days = data.scheduleIntervalDays
 								if (data.scheduleIntervalDays) {
-									if (v === 1) {
+									if (days === 1) {
 										return 'Daily';
 									}
-									else if (v == 7) {
+									else if (days == 7) {
 										return 'Weekly';
 									}
-									else if (v == 30) {
+									else if (days == 30) {
 										return 'Monthly' ;
 									} else {
-										return 'Every: ' + data.scheduleIntervalDays + ' days)' 
+										return 'Every: ' + data.scheduleIntervalDays + ' days' 
 									}
 								} else if (data.scheduleIntervalMinutes) {
 									return 'Every: ' + data.scheduleIntervalMinutes + ' minutes';
@@ -138,16 +139,22 @@
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
 								{text: 'Scheduled Interval', dataIndex: 'schedule', width: 200 },
 								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-								{text: 'Email Addresses', dataIndex: 'emailAddresses', minWidth: 200, flex: 1,
-									renderer: function (v, meta) {
-										var emailStr = '';
-										if (v && v.length) {
-											for (index = 0; index < v.length; ++index) {
-
-												emailStr += v[index].email + '<br/>';
-											}
+								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1,
+									renderer: function (value, meta, record) {										
+										var outputs = '';
+								
+										if (record.data.reportOutputs) {
+											var outputOpts = [];
+											Ext.Array.each(record.data.reportOutputs, function(item){																				
+												Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
+													if (key !== 'storageVersion') {
+														outputOpts.push('<b>' + key + '</b>: ' + value);
+													}
+												});											
+											});
+											outputs = outputOpts.join('<br> ');
 										}
-										return emailStr;
+										return outputs;
 									}
 								},
 								{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false,
@@ -310,11 +317,11 @@
 				};
 
 				var scheduleReportAdd = function () {
-					scheduleReportWin(null, true);
+					showAddEditWin();
 				};
 
 				var scheduleReportEdit = function () {
-					scheduleReportWin(Ext.getCmp('scheduleReportsGrid').getSelection()[0], true);
+					showAddEditWin(Ext.getCmp('scheduleReportsGrid').getSelection()[0]);
 				};
 
 				var scheduleReportActivate = function () {
@@ -376,7 +383,7 @@
 				};
 
 
-				var showAddEditWin = function(scheduleData, reoccuring) {
+				var showAddEditWin = function(scheduleData) {
 					
 					var scheduleWin = Ext.create('Ext.window.Window', {
 						title: 'Schedule Report',
@@ -573,19 +580,9 @@
 												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 												handler: function () {
 													var form = this.up('form');
-																										
-													if (!outputs || outputs.length == 0) {																										
-														Ext.Msg.show({
-															title: 'Validation',
-															message: 'Please add at least one output.',
-															buttons: Ext.Msg.OK,
-															icon: Ext.Msg.ERROR,
-															fn: function(btn) {																
-															}																
-														});
-													} else {													
-													
-														//TODO: check validity of confluence; if selected
+																
+		
+													if (validateOutputs){										
 
 														var formData = form.getValues();
 
@@ -597,17 +594,17 @@
 													
 														//unpack emails
 														Ext.Array.each(outputs, function(reportOutput){
-															if (reportOutput.emailAddressRaw &&
-																reportOutput.emailAddressRaw !== '') {
+															if (reportOutput.reportTransmissionOption.emailAddressRaw &&
+																reportOutput.reportTransmissionOption.emailAddressRaw !== '') {
 																
-																var emails = Ext.String.splitWords(reportOutput.emailAddressRaw);
+																var emails = Ext.String.splitWords(reportOutput.reportTransmissionOption.emailAddressRaw);
 																var emailAddresses = [];
-																Ext.Array(emails, function(email){
+																Ext.Array.each(emails, function(email){
 																	emailAddresses.push({
 																		email: email
 																	});
 																});
-																reportOutput.emailAddresses = emailAddresses;
+																reportOutput.reportTransmissionOption.emailAddresses = emailAddresses;
 															}
 														});
 														
@@ -639,10 +636,19 @@
 																reportData.reportDataId = entryRestrictions;
 															}
 														}
+														
+														if (reportData.report.reportOption.previousDays === '') {
+															reportData.report.reportOption.previousDays = null;
+														}
+															
 													
 														var scheduled = formData.scheduleOption !== 'NOW' ? true : false;
 														if (!scheduled) {														
-
+															reportData.report.reportOption.scheduleIntervalDays = null;															
+															reportData.report.reportOption.scheduleIntervalMinutes = null;
+															reportData.report.reportOption.scheduleIntervalCron = null;													
+															
+															
 															CoreUtil.submitForm({
 																url: 'api/v1/resource/reports',
 																method: 'POST',
@@ -740,11 +746,52 @@
 					var outputs = [];
 					if (scheduleData) {
 						//edit
+						var genform = scheduleWin.down('form');
 						
+						console.log(scheduleData);
+						var data = scheduleData.data;
+						
+						//restore outputs
+						outputs = data.reportOutputs;
+						
+						//set report Type
+						var reportTypeField = scheduleWin.queryById('reportType');
+						reportTypeField.setValue(data.reportType);
+						
+						
+						//update schedule options
+						
+						
+						//unpack options and load						
 						
 						
 					} 
 					
+					var validateOutputs = function() {
+						var valid = true;
+		
+						if (!outputs || outputs.length == 0) {																										
+							Ext.Msg.show({
+								title: 'Validation',
+								message: 'Please add at least one output.',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) {																
+								}																
+							});
+							valid = false;
+						} else {
+							Ext.Array.each(outputs, function(output){
+								if (output.reportTransmissionType == 'CONFLUENCE') {
+									//May need to check parent									
+								} 	
+							});			
+						} 
+		
+						return valid;
+					};
+					
+		
 					var days = [];
 					days.push({
 						code: null,
@@ -955,6 +1002,7 @@
 								fieldLabel: 'Start Date (Blank = Current Day)',
 								width: '100%',
 								format: 'm/d/Y',
+								value: new Date(),
 								submitFormat: 'Y-m-d\\TH:i:s.u',																
 								allowBlank: true,
 								style: {
@@ -967,6 +1015,7 @@
 								name: 'endDts',								
 								fieldLabel: 'End Date (Blank = Current Day)',
 								width: '100%',
+								value: new Date(),
 								format: 'm/d/Y',																
 								allowBlank: true
 							});
@@ -980,8 +1029,7 @@
 								store: previousDaysStore,
 								displayField: 'days',
 								valueField: 'code',
-								editable: false,								
-								allowBlank: true,
+								editable: false,
 								listeners: {
 									change: function(cb, newValue, oldValue, opts){
 										if (newValue){
@@ -1163,10 +1211,10 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses separated by a space',
+												fieldLabel: 'Enter email addresses separated by a space <span class="field-required" />',
 												width: '100%',
 												maxLength: 300,																	
-												allowBlank: true,
+												allowBlank: false,
 												value: reportOutput.reportTransmissionOption.emailAddressRaw,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
@@ -1512,7 +1560,39 @@
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
-						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender }
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender },
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150,
+							renderer: function(value, meta, record) {
+								var outputs = 'VIEW';
+								
+								if (record.data.reportOutputs) {
+									var outputTypes = [];
+									Ext.Array.each(record.data.reportOutputs, function(item){									
+										outputTypes.push(item.reportTransmissionType); 
+									});
+									outputs = outputTypes.join(', ');
+								}
+								return outputs;
+							}
+						},
+						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true,
+							renderer: function (value, meta, record) {										
+								var outputs = '';
+								if (record.data.reportOutputs) {
+									var outputOpts = [];
+									Ext.Array.each(record.data.reportOutputs, function(item){																				
+										Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
+											if (key !== 'storageVersion') {
+												outputOpts.push('<b>' + key + '</b>: ' + value);
+											}
+										});												
+									});
+									outputs = outputOpts.join('<br> ');
+								}
+								return outputs;
+							}
+						}						
+						
 					],
 					dockedItems: [
 						{

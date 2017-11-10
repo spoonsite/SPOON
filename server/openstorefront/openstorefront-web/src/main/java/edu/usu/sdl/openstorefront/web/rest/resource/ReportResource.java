@@ -324,6 +324,8 @@ public class ReportResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
+		validationResult.merge(report.customValidation());
+
 		if (reportView.getReportDataId() == null) {
 			reportView.setReportDataId(new ArrayList<>());
 		}

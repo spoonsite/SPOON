@@ -229,7 +229,7 @@ public class AdminActionReport
 						.append("<br>");
 			}
 			if (!actionReportModel.getPendingFeedbackTickets().isEmpty()) {
-				summary.append("Outstanding evaluations(see detail for status): ")
+				summary.append("Outstanding evaluations(see details for status): ")
 						.append(actionReportModel.getPendingEvaluations().size())
 						.append("<br>");
 			}

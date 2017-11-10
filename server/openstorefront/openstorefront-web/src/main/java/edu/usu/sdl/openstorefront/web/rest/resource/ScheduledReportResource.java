@@ -68,7 +68,7 @@ public class ScheduledReportResource
 
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {	
+		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
 		}
 
@@ -82,7 +82,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -138,11 +138,14 @@ public class ScheduledReportResource
 		ValidationModel validationModel = new ValidationModel(scheduledReport);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		validationResult.merge(scheduledReport.customValidation());
+
 		if (validationResult.valid()) {
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, scheduledReport.getReportType());
 			boolean run = true;
-			if (!SecurityUtil.hasPermission(reportType.getRequiredPermission())) {						
+			if (!SecurityUtil.hasPermission(reportType.getRequiredPermission())) {
 				run = false;
 			}
 			if (run) {
@@ -203,7 +206,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
 	public void deleteReport(

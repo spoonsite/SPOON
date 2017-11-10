@@ -66,6 +66,8 @@ public class ReportType
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));
 		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evaluation Status", "Reports on the status of unpublished evaluations."));
+		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action", "Report on items that need administrative attention."));
+		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 
 		//update metadata
 		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);
@@ -74,17 +76,13 @@ public class ReportType
 		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
+		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
 		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT)).setComponentReport(true);
-
-		//Add  formats
-		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
-
-		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action", "Report on items that need administrative attention."));
 
 		return codeMap;
 	}

@@ -19,12 +19,15 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -57,7 +60,55 @@ public class ReportOutput
 		return key;
 	}
 
-	//TODO: Requires custom validation on certain types
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (StringUtils.isNotBlank(reportTransmissionType)) {
+
+			if (reportTransmissionOption != null) {
+				switch (reportTransmissionType) {
+					case ReportTransmissionType.EMAIL:
+						if (reportTransmissionOption.getEmailAddresses() == null
+								|| reportTransmissionOption.getEmailAddresses().isEmpty()) {
+
+							RuleResult ruleResult = new RuleResult();
+							ruleResult.setEntityClassName(ReportTransmissionOption.class.getSimpleName());
+							ruleResult.setFieldName("emailAddress");
+							ruleResult.setMessage("Must have at least one email address.");
+							validationResult.getRuleResults().add(ruleResult);
+						}
+						break;
+					case ReportTransmissionType.CONFLUENCE:
+						if (StringUtils.isBlank(reportTransmissionOption.getConfluenceSpace())) {
+							RuleResult ruleResult = new RuleResult();
+							ruleResult.setEntityClassName(ReportTransmissionOption.class.getSimpleName());
+							ruleResult.setFieldName("confluenceSpace");
+							ruleResult.setMessage("Confluence Requires Space name");
+							validationResult.getRuleResults().add(ruleResult);
+						}
+						if (StringUtils.isBlank(reportTransmissionOption.getConfluencePage())) {
+							RuleResult ruleResult = new RuleResult();
+							ruleResult.setEntityClassName(ReportTransmissionOption.class.getSimpleName());
+							ruleResult.setFieldName("confluencePage");
+							ruleResult.setMessage("Confluence Requires Page name");
+							validationResult.getRuleResults().add(ruleResult);
+						}
+						break;
+				}
+			}
+
+		} else {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ReportOutput.class.getSimpleName());
+			ruleResult.setFieldName("reportTransmissionType");
+			ruleResult.setMessage("Missing tranmission type");
+			validationResult.getRuleResults().add(ruleResult);
+		}
+
+		return validationResult;
+	}
+
 	public String getReportTransmissionType()
 	{
 		return reportTransmissionType;

@@ -230,7 +230,7 @@
 								<div><b>Version</b>: ${eval.version}</div>
 								<div><b>Assigned User</b>: ${eval.assignedUser}</div>
 								<div><b>Assigned Group</b>: ${eval.assignedGroup}</div>
-								<div><b>Workflow Status</b>: ${eval.getWorkflowStatus()}</div>
+								<div><b>Workflow Status</b>: ${eval.workflowStatusDescription}</div>
 							</div>
 							<br />							
 						</div>

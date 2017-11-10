@@ -75,7 +75,7 @@ public class UserReport
 			lineModel.setGUID(userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid());
 			lineModel.setOrganization(userProfile.getOrganization());
 			lineModel.setUserType(TranslateUtil.translate(UserTypeCode.class, userProfile.getUserTypeCode()));
-			lineModel.setFirstLoginDate(userProfile.getCreateUser());
+			lineModel.setFirstLoginDate(userProfile.getCreateDts());
 
 			UserWatch watchExample = new UserWatch();
 			watchExample.setCreateUser(userProfile.getUsername());
@@ -102,9 +102,9 @@ public class UserReport
 			componentQuestionResponseExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			long questionResponse = service.getPersistenceService().countByExample(componentQuestionResponseExample);
 
-			String lastLogin = "";
+			Date lastLogin = null;
 			if (loginMap.containsKey(userProfile.getUsername())) {
-				lastLogin = sdf.format(loginMap.get(userProfile.getUsername()));
+				lastLogin = loginMap.get(userProfile.getUsername());
 			}
 
 			ComponentTracking componentTrackingExample = new ComponentTracking();
@@ -215,7 +215,7 @@ public class UserReport
 					reportLineModel.getEmail(),
 					reportLineModel.getUserType(),
 					sdf.format(reportLineModel.getFirstLoginDate()),
-					sdf.format(reportLineModel.getLastLoginDate()),
+					reportLineModel.getLastLoginDate() != null ? sdf.format(reportLineModel.getLastLoginDate()) : "",
 					reportLineModel.getActiveWatches(),
 					reportLineModel.getActiveReviews(),
 					reportLineModel.getActiveQuestions(),

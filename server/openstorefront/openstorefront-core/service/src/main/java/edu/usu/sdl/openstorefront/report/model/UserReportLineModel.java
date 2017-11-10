@@ -15,12 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.report.model;
 
+import java.util.Date;
+
 /**
  *
  * @author dshurtleff
  */
 public class UserReportLineModel
 {
+
 	private String username;
 	private String organization;
 	private String GUID;
@@ -28,8 +31,8 @@ public class UserReportLineModel
 	private String lastName;
 	private String email;
 	private String userType;
-	private String firstLoginDate;
-	private String lastLoginDate;
+	private Date firstLoginDate;
+	private Date lastLoginDate;
 	private long activeWatches;
 	private long activeReviews;
 	private long activeQuestions;
@@ -111,22 +114,22 @@ public class UserReportLineModel
 		this.userType = userType;
 	}
 
-	public String getFirstLoginDate()
+	public Date getFirstLoginDate()
 	{
 		return firstLoginDate;
 	}
 
-	public void setFirstLoginDate(String firstLoginDate)
+	public void setFirstLoginDate(Date firstLoginDate)
 	{
 		this.firstLoginDate = firstLoginDate;
 	}
 
-	public String getLastLoginDate()
+	public Date getLastLoginDate()
 	{
 		return lastLoginDate;
 	}
 
-	public void setLastLoginDate(String lastLoginDate)
+	public void setLastLoginDate(Date lastLoginDate)
 	{
 		this.lastLoginDate = lastLoginDate;
 	}
@@ -190,5 +193,5 @@ public class UserReportLineModel
 	{
 		this.entryViews = entryViews;
 	}
-			
+
 }
