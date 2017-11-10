@@ -187,7 +187,12 @@ Ext.define('OSF.form.MultipleAttributes', {
 								"label"
 							],
 							data: attribute.codes
-						})
+						}),
+						listConfig: {
+							getInnerTpl: function () {
+								return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+							}
+						}
 					};
 					if (attrForm.viewHiddenAttributes || !attribute.hideOnSubmission) {
 						items.push(item);

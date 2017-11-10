@@ -406,6 +406,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								data: record.data.codes
 							}),
+							listConfig: {
+								getInnerTpl: function () {
+									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+								}
+							},
 							listeners: {
 								change: function (fieldLocal, newValue, oldValue, opts) {
 									var recordLocal = fieldLocal.record;
@@ -731,6 +736,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 											],
 											data: submissionPanel.optionalAttributes
 										}),
+										listConfig: {
+											getInnerTpl: function () {
+												return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+											}
+										},
 										listeners: {
 
 											change: function (field, newValue, oldValue, opts) {
@@ -752,7 +762,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 														Ext.Array.each(attributeCodes, function (attributeCode) {
 															lookUpCodes.push({
 																code: attributeCode.attributeCodePk.attributeCode,
-																label: attributeCode.label
+																label: attributeCode.label,
+																description: attributeCode.description
 															});
 														});
 														codeField.getStore().loadData(lookUpCodes);
@@ -904,6 +915,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,
 								valueField: 'code',
 								displayField: 'label',
+								listConfig: {
+									getInnerTpl: function () {
+										return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+									}
+								},
 								store: Ext.create('Ext.data.Store', {
 									sorters: [
 										{
