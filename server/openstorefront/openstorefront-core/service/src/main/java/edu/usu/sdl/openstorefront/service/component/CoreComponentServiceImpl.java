@@ -767,10 +767,43 @@ public class CoreComponentServiceImpl
 				component.getComponent().setComponentId(existing.getComponentId());
 				snapshotVersion(component.getComponent().getComponentId(), component.getComponent().getFileHistoryId());
 			}
+			if (component.getMedia() != null) {
+				component.getMedia().forEach(componentMedia -> {
+					MediaFile existingFile = getExistingMediaFile(componentMedia.getFile());
+					if (existingFile != null) {
+						componentMedia.setFile(existingFile);
+					}
+				});
+			}
+			if (component.getResources() != null) {
+				component.getResources().forEach(componentResource -> {
+					MediaFile existingFile = getExistingMediaFile(componentResource.getFile());
+					if (existingFile != null) {
+						componentResource.setFile(existingFile);
+					}
+				});
+			}
+
 			saveFullComponent(component, options, false);
 			componentsToIndex.add(component.getComponent());
 		});
 		componentService.getSearchService().indexComponents(componentsToIndex);
+	}
+
+	private MediaFile getExistingMediaFile(MediaFile file)
+	{
+		MediaFile existing = null;
+		if (file != null
+				&& !StringUtils.isBlank(file.getFileName())
+				&& !StringUtils.isBlank(file.getMediaFileId())) {
+			// if it is the same fileName and directory it is the same file
+			// or the file is already overwritten the previous file
+			MediaFile example = new MediaFile();
+			example.setFileName(file.getFileName());
+			example.setFileType(file.getFileType());
+			existing = example.findProxy();
+		}
+		return existing;
 	}
 
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
@@ -2301,7 +2334,7 @@ public class CoreComponentServiceImpl
 					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
-				
+
 				persistenceService.commit();
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
