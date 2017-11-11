@@ -24,10 +24,11 @@ section is for the librarian to give instructions to an evaluator.  The Default 
 text area is optional but recommended.  A librarian is able top add custom fields
 to a subsection by clicking on the Add Custom Field button. 
 
-Description of Flags:
-*Private:* section/subsection will be filled out by an evaluator but content will be hidden from the user.
-*Hide Title:* title of section/subsection will be hidden from user.
-*No Content:* removes the evaluator's ability to input content under a section header.
+__Description of Flags:__
+
+* *Private:* section/subsection will be filled out by an evaluator but content will be hidden from the user.
+* *Hide Title:* title of section/subsection will be hidden from user.
+* *No Content:* removes the evaluator's ability to input content under a section header.
 
 ## Step 2: Adding Checklist Questions
 
