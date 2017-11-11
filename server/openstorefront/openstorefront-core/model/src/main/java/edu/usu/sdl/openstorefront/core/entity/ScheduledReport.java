@@ -35,6 +35,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -144,6 +145,18 @@ public class ScheduledReport
 				validationResult.merge(output.customValidation());
 			}
 		}
+
+		if (scheduleIntervalDays == null
+				&& scheduleIntervalMinutes == null
+				&& StringUtils.isBlank(scheduleIntervalCron)) {
+
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ScheduledReport.class.getSimpleName());
+			ruleResult.setFieldName("scheduleIntervalDays");
+			ruleResult.setMessage("Must have some scheduled option");
+			validationResult.getRuleResults().add(ruleResult);
+		}
+
 		return validationResult;
 	}
 

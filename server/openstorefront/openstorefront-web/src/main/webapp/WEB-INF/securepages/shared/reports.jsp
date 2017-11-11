@@ -55,6 +55,34 @@
 					}
 					return '';
 				};
+				
+				var outputOptionRender = function(value, meta, record) {
+					var outputs = '';
+								
+					if (record.data.reportOutputs) {
+						var outputOpts = [];
+						Ext.Array.each(record.data.reportOutputs, function(item){																				
+							Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
+								if (key !== 'storageVersion') {
+									outputOpts.push('<b>' + key + '</b>: ' + value);
+								}
+							});											
+						});
+						outputs = outputOpts.join('<br> ');
+					}
+					return outputs;
+				};
+				
+				var formatRender = function(value, meta, record) {
+
+					if (record.get('noViewAvaliable')) {
+						return 'No View Available';
+					} else {
+						return record.get('reportFormatDescription');
+					}
+					
+				};
+				
 
 				var scheduleReportsGridStore = Ext.create('Ext.data.Store', {
 					id: 'scheduleReportsGridStore',
@@ -78,7 +106,7 @@
 						},
 						{
 							name: 'schedule', mapping: function(data) {	
-								var days = data.scheduleIntervalDays
+								var days = data.scheduleIntervalDays;
 								if (data.scheduleIntervalDays) {
 									if (days === 1) {
 										return 'Daily';
@@ -86,13 +114,13 @@
 									else if (days == 7) {
 										return 'Weekly';
 									}
-									else if (days == 30) {
+									else if (days == 28) {
 										return 'Monthly' ;
 									} else {
-										return 'Every: ' + data.scheduleIntervalDays + ' days' 
+										return 'Every ' + days + ' days' 
 									}
 								} else if (data.scheduleIntervalMinutes) {
-									return 'Every: ' + data.scheduleIntervalMinutes + ' minutes';
+									return 'Every ' + data.scheduleIntervalMinutes + ' minutes';
 								} else if (data.cronDescription) {
 									return data.cronDescription;
 								}								
@@ -132,35 +160,18 @@
 									}
 								},
 								{text: 'Format', dataIndex: 'reportFormat', width: 250,
-									renderer: function (value, meta, record) {
-										return record.get('reportFormatDescription');
-									}
+									renderer: formatRender
 								},
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
 								{text: 'Scheduled Interval', dataIndex: 'schedule', width: 200 },
 								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1,
-									renderer: function (value, meta, record) {										
-										var outputs = '';
-								
-										if (record.data.reportOutputs) {
-											var outputOpts = [];
-											Ext.Array.each(record.data.reportOutputs, function(item){																				
-												Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
-													if (key !== 'storageVersion') {
-														outputOpts.push('<b>' + key + '</b>: ' + value);
-													}
-												});											
-											});
-											outputs = outputOpts.join('<br> ');
-										}
-										return outputs;
-									}
+									renderer: outputOptionRender
 								},
 								{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false,
 									renderer: optionsRender
 								},
-								{text: 'Active Status', dataIndex: 'activeStatus', width: 125,
+								{text: 'Active Status', dataIndex: 'activeStatus', width: 125, align: 'center',
 									filter: {
 										type: 'string'
 									}
@@ -429,14 +440,19 @@
 												scheduleOptionsShow(form);
 												showReportOptions(form, newVal);
 												
-												//clear outputs
-												outputs = [];
-												outputs.push({
-													outputId: Ext.id(),
-													reportTransmissionType: 'VIEW',							
-													reportTransmissionOption: {}
-												});												
-												showOutputs(form, newVal);
+												if (cb.finishEditLoading) {
+													cb.finishEditLoading();
+												} else {
+													//clear outputs
+													outputs = [];
+													outputs.push({
+														outputId: Ext.id(),
+														reportTransmissionType: 'VIEW',							
+														reportTransmissionOption: {}
+													});												
+													showOutputs(form, newVal);
+												}
+												
 											}
 										}
 									},
@@ -672,33 +688,33 @@
 															//resolve schedule
 															switch(formData.scheduleOption){
 																case 'PERIOD':
-																	switch(formData.scheduleOption){
+																	switch(formData.scheduleOptionPeriod){
 																		case 'DAILY':
-																			eport.scheduleOptionDays = 1;
+																			report.scheduleIntervalDays = 1;
 																		break;	
 																		case 'WEEKLY':
-																			eport.scheduleOptionDays = 7;
+																			report.scheduleIntervalDays = 7;
 																		break;																	
 																		case 'MONTHLY':
-																			eport.scheduleOptionDays = 28;
+																			report.scheduleIntervalDays = 28;
 																		break;																	
 																	}
 																	break;
 																case 'DAYS':
-																	report.scheduleOptionDays = formData.scheduleOptionDays;
+																	report.scheduleIntervalDays = formData.scheduleOptionDays;
 																	break;
 																case 'MINUTES':
-																	report.scheduleOptionMinutes = formData.scheduleOptionMinutes;
+																	report.scheduleIntervalMinutes = formData.scheduleOptionMinutes;
 																	break;																
 																case 'CUSTOM':
-																	report.scheduleOptionCron = formData.scheduleOptionCron;
+																	report.scheduleIntervalCron = formData.scheduleOptionCron;
 																	break;																																
-															}														
+															}																
 
 															var url = '';
 															var method = '';
-															if (scheduleReportId) {
-																url = 'api/v1/resource/scheduledreports/' + scheduleReportId;
+															if (scheduleWin.scheduleReportId) {
+																url = 'api/v1/resource/scheduledreports/' + scheduleWin.scheduleReportId;
 																method = 'PUT';
 															}
 															else {
@@ -744,28 +760,7 @@
 					scheduleWin.show();
 					
 					var outputs = [];
-					if (scheduleData) {
-						//edit
-						var genform = scheduleWin.down('form');
-						
-						console.log(scheduleData);
-						var data = scheduleData.data;
-						
-						//restore outputs
-						outputs = data.reportOutputs;
-						
-						//set report Type
-						var reportTypeField = scheduleWin.queryById('reportType');
-						reportTypeField.setValue(data.reportType);
-						
-						
-						//update schedule options
-						
-						
-						//unpack options and load						
-						
-						
-					} 
+				
 					
 					var validateOutputs = function() {
 						var valid = true;
@@ -848,21 +843,25 @@
 															{
 																boxLabel: 'Description',																															
 																name: 'displayDescription',
+																itemId: 'displayDescription',
 																value: true
 															},
 															{
 																boxLabel: 'Contacts',																														
 																name: 'displayContacts',
+																itemId: 'displayContacts',
 																value: true
 															},
 															{
 																boxLabel: 'Resources',																															
 																name: 'displayResources',
+																itemId: 'displayResources',
 																value: true
 															},
 															{
 																boxLabel: 'Vitals',
 																name: 'displayVitals',
+																itemId: 'displayVitals',
 																value: true
 															}
 														]
@@ -876,21 +875,25 @@
 															{
 																boxLabel: 'Dependencies',																																
 																name: 'displayDependencies',
+																itemId: 'displayDependencies',
 																value: true
 															},
 															{
 																boxLabel: 'Relationships',
 																name: 'displayRelationships',
+																itemId: 'displayRelationships',
 																value: true
 															},
 															{
 																boxLabel: 'Tags',																
 																name: 'displayTags',
+																itemId: 'displayTags',
 																value: true
 															},
 															{
 																boxLabel: 'Organization Data',																																
 																name: 'displayOrgData',
+																itemId: 'displayOrgData',
 																value: true,
 																inputAttrTpl: 'data-qtip=Title,&nbsp;organization,&nbsp;etc.'
 															}
@@ -905,15 +908,18 @@
 															{
 																boxLabel: 'All Evaluation Versions',
 																name: 'displayEvalVersions',
+																itemId: 'displayEvalVersions',
 																inputAttrTpl: 'data-qtip=An&nbsp;evaluation&nbsp;category&nbsp;type&nbsp;must&nbsp;be&nbsp;specified'
 															},
 															{
 																boxLabel: 'Reviews',
-																name: 'displayReportReviews'
+																name: 'displayReportReviews',
+																itemId: 'displayReportReviews'
 															},
 															{
 																boxLabel: 'Q/A',
-																name: 'displayQA'
+																name: 'displayQA',
+																itemId: 'displayQA'
 															}
 														]
 													}
@@ -925,6 +931,7 @@
 									optionsToAdd.push({
 										xtype: 'fieldcontainer',
 										defaultType: 'radiofield',
+										itemId: 'evaluationTypeField',
 										fieldLabel: 'Include Evaluation',																				
 									    defaults: {
 									        columnWidth: 0.32
@@ -933,7 +940,7 @@
 										items: [
 											{
 												boxLabel: 'Evaluation Summary',
-												name: 'evaluationType',		
+												name: 'evaluationType',													
 												inputValue: 'summary',
 												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
 												value: true
@@ -941,7 +948,7 @@
 											{
 												boxLabel: 'Evaluation Details',	
 												inputValue: 'detail',
-												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
+												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',												
 												name: 'evaluationType'
 											},
 											{
@@ -959,7 +966,7 @@
 							optionsToAdd.push({
 								xtype: 'combobox',
 								name: 'category',
-								itemId: 'categorySelect',
+								itemId: 'category',
 								fieldLabel: 'Select Category<span class="field-required" />',
 								store: {
 									autoLoad: true,
@@ -983,7 +990,7 @@
 								{
 									xtype: 'numberfield',
 									name: 'maxWaitSeconds',
-									itemId: 'waitSeconds',
+									itemId: 'maxWaitSeconds',
 									fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',									
 									maxLength: 3,
 									minValue: 1,
@@ -998,7 +1005,8 @@
 
 							optionsToAdd.push({
 								xtype: 'datefield',
-								name: 'startDts',								
+								name: 'startDts',
+								itemId: 'startDts',
 								fieldLabel: 'Start Date (Blank = Current Day)',
 								width: '100%',
 								format: 'm/d/Y',
@@ -1012,7 +1020,8 @@
 							
 							optionsToAdd.push({
 								xtype: 'datefield',
-								name: 'endDts',								
+								name: 'endDts',	
+								itemId: 'endDts',
 								fieldLabel: 'End Date (Blank = Current Day)',
 								width: '100%',
 								value: new Date(),
@@ -1022,7 +1031,8 @@
 							
 							optionsToAdd.push({
 								xtype: 'combobox',
-								name: 'previousDays',								
+								name: 'previousDays',
+								itemId: 'previousDays',
 								fieldLabel: 'Previous Days',
 								width: '100%',
 								maxLength: 50,
@@ -1033,13 +1043,13 @@
 								listeners: {
 									change: function(cb, newValue, oldValue, opts){
 										if (newValue){
-											Ext.getCmp('startDate').setValue(null);
-											Ext.getCmp('endDate').setValue(null);
-											Ext.getCmp('startDate').setDisabled(true);
-											Ext.getCmp('endDate').setDisabled(true);
+											form.queryById('startDts').setValue(null);
+											form.queryById('endDts').setValue(null);
+											form.queryById('startDts').setDisabled(true);
+											form.queryById('endDts').setDisabled(true);
 										} else {
-											Ext.getCmp('startDate').setDisabled(false);
-											Ext.getCmp('endDate').setDisabled(false);
+											form.queryById('startDts').setDisabled(false);
+											form.queryById('endDts').setDisabled(false);
 										}
 									}
 								}
@@ -1051,6 +1061,7 @@
 							optionsToAdd.push({
 								xtype: 'combobox',								
 								name: 'assignedUser',
+								itemId: 'assignedUser',
 								fieldLabel: 'Assigned User',
 								displayField: 'description',
 								valueField: 'code',
@@ -1078,6 +1089,7 @@
 							optionsToAdd.push({
 								xtype: 'combobox',								
 								name: 'assignedGroup',
+								itemId: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
 								valueField: 'code',
@@ -1454,6 +1466,76 @@
 					};
 					
 					
+					if (scheduleData) {
+						//edit
+						var genform = scheduleWin.down('form');
+						
+						console.log(scheduleData);
+						var data = scheduleData.data;
+						
+						scheduleWin.scheduleReportId = data.scheduleReportId
+						
+						//set report Type
+						var reportTypeField = scheduleWin.queryById('reportType');
+						reportTypeField.setValue(data.reportType);
+						reportTypeField.finishEditLoading = function() {
+						
+							//update schedule options
+							if (data.scheduleIntervalDays) {
+								if (data.scheduleIntervalDays === 1) {
+									genform.queryById('scheduleOptions').setValue('PERIOD');
+									genform.queryById('scheduleOptionPeriod').setValue('DAILY');
+								} else if (data.scheduleIntervalDays === 7) {								
+									genform.queryById('scheduleOptions').setValue('PERIOD');
+									genform.queryById('scheduleOptionPeriod').setValue('WEEKLY');
+								} else if (data.scheduleIntervalDays === 28) {								
+									genform.queryById('scheduleOptions').setValue('PERIOD');
+									genform.queryById('scheduleOptionPeriod').setValue('MONTHLY');
+								} else {
+									genform.queryById('scheduleOptions').setValue('DAYS');
+									genform.queryById('scheduleOptionDays').setValue(data.scheduleIntervalDays);
+								}
+							} else if (data.scheduleIntervalMinutes) {
+								genform.queryById('scheduleOptions').setValue('MINUTES');
+								genform.queryById('scheduleOptionMinutes').setValue(data.scheduleIntervalMinutes);								
+							} else if (data.scheduleIntervalCron) {
+								genform.queryById('scheduleOptions').setValue('CUSTOM');
+								genform.queryById('scheduleOptionCron').setValue(data.scheduleIntervalCron);								
+							}
+
+							//unpack options and load	
+							Ext.Object.each(data.reportOption, function(key, value){
+								
+								if (key === 'evaluationType') {
+									var field = genform.queryById('evaluationTypeField');
+									if (field) {
+										field.setValue(value);
+									}
+								} else {
+									var field = genform.queryById(key);
+									if (field) {
+										field.setValue(value);
+									}
+								}
+								
+							});							
+							
+							
+							//load entry select (if available)
+							var entrySelect = genform.queryById('entryselect');
+							if (entrySelect) {
+								entrySelect.loadCurrentSelection(data.ids);
+							}
+
+							//restore outputs						
+							outputs = data.reportOutputs;						
+							showOutputs(genform, data.reportType);
+							
+							reportTypeField.finishLoading = null;
+						};						
+						
+					} 
+					
 				};
 
 				var historyGridStore = Ext.create('Ext.data.Store', {
@@ -1512,13 +1594,7 @@
 							}
 						},
 						{text: 'Format', dataIndex: 'reportFormat', width: 250,
-							renderer: function (value, meta, record) {
-								if (record.get('noViewAvaliable')) {
-									return 'No View Available';
-								} else {
-									return record.get('reportFormatDescription');
-								}
-							}
+							renderer: formatRender
 						},
 						{text: 'Run Status', dataIndex: 'runStatus', width: 150, align: 'center',
 							renderer: function (value, meta, record) {
@@ -1576,21 +1652,7 @@
 							}
 						},
 						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true,
-							renderer: function (value, meta, record) {										
-								var outputs = '';
-								if (record.data.reportOutputs) {
-									var outputOpts = [];
-									Ext.Array.each(record.data.reportOutputs, function(item){																				
-										Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
-											if (key !== 'storageVersion') {
-												outputOpts.push('<b>' + key + '</b>: ' + value);
-											}
-										});												
-									});
-									outputs = outputOpts.join('<br> ');
-								}
-								return outputs;
-							}
+							renderer: outputOptionRender
 						}						
 						
 					],
@@ -1686,6 +1748,7 @@
 									scale: 'medium',
 									handler: function () {
 										scheduledReportsWin.show();
+										scheduleReportRefreshGrid();
 									},
 									tooltip: 'Schedule Reports'
 								},								

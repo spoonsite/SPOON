@@ -178,7 +178,8 @@ public class ScheduledReportResource
 		if (scheduledReport != null) {
 			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
-				scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+				service.getReportService().updateStatusOnScheduledReport(scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+				scheduledReport.setActiveStatus(ScheduledReport.ACTIVE_STATUS);
 				return sendSingleEntityResponse(scheduledReport);
 			} else {
 				return response;
@@ -191,7 +192,7 @@ public class ScheduledReportResource
 	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
-	public void inactiveAlert(
+	public void inactiveScheduledReport(
 			@PathParam("id") String scheduleReportId)
 	{
 		ScheduledReport scheduledReport = new ScheduledReport();
@@ -200,7 +201,7 @@ public class ScheduledReportResource
 		if (scheduledReport != null) {
 			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
-				service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
+				service.getReportService().updateStatusOnScheduledReport(scheduleReportId, ScheduledReport.INACTIVE_STATUS);
 			}
 		}
 	}
@@ -209,7 +210,7 @@ public class ScheduledReportResource
 	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
-	public void deleteReport(
+	public void deleteScheduledReport(
 			@PathParam("id") String scheduleReportId)
 	{
 		ScheduledReport scheduledReport = new ScheduledReport();

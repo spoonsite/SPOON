@@ -49,9 +49,9 @@ public class ScheduledReportJob
 			boolean run = true;
 
 			if (report.getScheduleIntervalDays() != null) {
-				run = checkReportRunTime(scheduleReportExample, ChronoUnit.DAYS);
+				run = checkReportRunTime(report, ChronoUnit.DAYS);
 			} else if (report.getScheduleIntervalMinutes() != null) {
-				run = checkReportRunTime(scheduleReportExample, ChronoUnit.MINUTES);
+				run = checkReportRunTime(report, ChronoUnit.MINUTES);
 			} else {
 				//Filter out cron base reports
 				run = false;
@@ -68,7 +68,11 @@ public class ScheduledReportJob
 		boolean run = true;
 		if (scheduledReport.getLastRanDts() != null) {
 			Instant instant = Instant.ofEpochMilli(scheduledReport.getLastRanDts().getTime());
-			instant = instant.plus(scheduledReport.getScheduleIntervalMinutes(), chronoUnit);
+			if (ChronoUnit.DAYS.equals(chronoUnit)) {
+				instant = instant.plus(scheduledReport.getScheduleIntervalDays(), chronoUnit);
+			} else {
+				instant = instant.plus(scheduledReport.getScheduleIntervalMinutes(), chronoUnit);
+			}
 			if (Instant.now().isBefore(instant)) {
 				run = false;
 				if (LOG.isLoggable(Level.FINEST)) {

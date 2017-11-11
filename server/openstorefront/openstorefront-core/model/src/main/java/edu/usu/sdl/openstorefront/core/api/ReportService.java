@@ -110,4 +110,13 @@ public interface ReportService
 	 */
 	public void runScheduledReportNow(ScheduledReport scheduledReport);
 
+	/**
+	 * This will set status and add/or remove scheduled report if cron-based;
+	 *
+	 * @param scheduledReportId
+	 * @param activeStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void updateStatusOnScheduledReport(String scheduledReportId, String activeStatus);
+
 }

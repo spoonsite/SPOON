@@ -286,4 +286,50 @@ public class ReportServiceImpl
 		}
 	}
 
+	@Override
+	public void updateStatusOnScheduledReport(String scheduledReportId, String activeStatus)
+	{
+		Objects.requireNonNull(scheduledReportId);
+		Objects.requireNonNull(activeStatus);
+
+		ScheduledReport report = persistenceService.findById(ScheduledReport.class, scheduledReportId);
+		if (report != null) {
+
+			boolean updateRecord = true;
+			boolean addJob = false;
+			switch (activeStatus) {
+				case ScheduledReport.ACTIVE_STATUS:
+					addJob = true;
+					break;
+				case ScheduledReport.INACTIVE_STATUS:
+					addJob = false;
+					break;
+				default:
+					LOG.log(Level.FINE, MessageFormat.format("Active Status not supported: {0}", activeStatus));
+					updateRecord = false;
+					break;
+			}
+
+			if (updateRecord) {
+				report.setActiveStatus(activeStatus);
+				report.populateBaseUpdateFields();
+				persistenceService.persist(report);
+			}
+
+			if (addJob
+					&& StringUtils.isNotBlank(report.getScheduleIntervalCron())) {
+				try {
+					JobManager.addReportJob(scheduledReportId, report.getReportType(), report.getScheduleIntervalCron());
+				} catch (SchedulerException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to schedule report.", ex);
+				}
+			} else {
+				JobManager.removeReportJob(scheduledReportId);
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find scheduled report", "Check id");
+		}
+	}
+
 }

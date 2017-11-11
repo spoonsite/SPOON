@@ -75,8 +75,8 @@ public class JobManager
 
 	private static final Logger LOG = Logger.getLogger(JobManager.class.getName());
 
-	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
-	private static final String JOB_GROUP_REPORT = AddJobModel.JOB_GROUP_REPORT;
+	public static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
+	public static final String JOB_GROUP_REPORT = AddJobModel.JOB_GROUP_REPORT;
 	private static Scheduler scheduler;
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -211,34 +211,38 @@ public class JobManager
 		Objects.requireNonNull(reportType);
 		Objects.requireNonNull(cronExpression);
 
-		String jobName = "ReportJob-" + scheduledReportId;
+		String jobName = REPORT_JOB_PREFIX + scheduledReportId;
 
 		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_REPORT);
 		if (scheduler.checkExists(jobKey)) {
-			LOG.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
-		} else {
-			JobDetail job = JobBuilder.newJob(ScheduledReportCronJob.class)
-					.withIdentity(jobName, JOB_GROUP_REPORT)
-					.withDescription("Report Job for " + reportType)
-					.build();
-
-			job.getJobDataMap().put(ScheduledReportCronJob.SCHEDULED_REPORT_ID, scheduledReportId);
-			Trigger trigger = newTrigger()
-					.withIdentity("ReportJob-" + scheduledReportId, JOB_GROUP_REPORT)
-					.startNow()
-					.withSchedule(cronSchedule(cronExpression))
-					.build();
-
-			scheduler.scheduleJob(job, trigger);
+			LOG.log(Level.FINER, MessageFormat.format("Job already Exist: {0} removing job; adding changed", jobName));
+			scheduler.deleteJob(jobKey);
 		}
+		JobDetail job = JobBuilder.newJob(ScheduledReportCronJob.class)
+				.withIdentity(jobKey)
+				.withDescription("Report Job for " + reportType)
+				.build();
+
+		job.getJobDataMap().put(ScheduledReportCronJob.SCHEDULED_REPORT_ID, scheduledReportId);
+		Trigger trigger = newTrigger()
+				.withIdentity(REPORT_JOB_PREFIX + scheduledReportId, JOB_GROUP_REPORT)
+				.startNow()
+				.withSchedule(cronSchedule(cronExpression))
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
 	}
+	private static final String REPORT_JOB_PREFIX = "ReportJob-";
 
 	public static void removeReportJob(String reportJobName)
 	{
+		if (reportJobName.startsWith(REPORT_JOB_PREFIX) == false) {
+			reportJobName = REPORT_JOB_PREFIX + reportJobName;
+		}
 		try {
-			TriggerKey triggerKey = TriggerKey.triggerKey(reportJobName, JOB_GROUP_REPORT);
-			if (scheduler.checkExists(triggerKey)) {
-				scheduler.unscheduleJob(triggerKey);
+			JobKey jobKey = JobKey.jobKey(reportJobName, JOB_GROUP_REPORT);
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
 			}
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
@@ -508,19 +512,19 @@ public class JobManager
 		}
 	}
 
-	public static void pauseSystemJob(String jobName)
+	public static void pauseJob(String jobName, String group)
 	{
 		try {
-			scheduler.pauseJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+			scheduler.pauseJob(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
 		}
 	}
 
-	public static void resumeSystemJob(String jobName)
+	public static void resumeJob(String jobName, String group)
 	{
 		try {
-			scheduler.resumeJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+			scheduler.resumeJob(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
 		}
