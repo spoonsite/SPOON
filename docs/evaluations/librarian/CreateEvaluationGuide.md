@@ -19,7 +19,7 @@ Librarian has an entry that needs to be evaluated or reevaluated.
 A Section template allows a librarian to create a custom layout for an evaluation 
 form.  The librarian can give each section a title and a description of the section.
 Subsections can be added to individual sections and require the librarian to enter a title.  
-The Private, Hide Title, and No Content flags are optional.  The Default Content
+The _Private_, _Hide Title_, and _No Content_ flags are optional.  The Default Content
 section is for the librarian to give instructions to an evaluator.  The Default Content
 text area is optional but recommended.  A librarian is able top add custom fields
 to a subsection by clicking on the Add Custom Field button. 
