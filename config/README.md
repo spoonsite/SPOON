@@ -1,1 +1,1 @@
-Holds configuration for optional external dependancies.
+Holds configuration for optional external dependencies.
