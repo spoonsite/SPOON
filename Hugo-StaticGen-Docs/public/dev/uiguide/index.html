@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Storefront Docs</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.25.1" />
+
+<title> :: Storefront Docs</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/hybrid.css" rel="stylesheet">
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<link href="/css/auto-complete.css" rel="stylesheet">
+<link href="/theme-original/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<style type="text/css">
+  :root #header + #content > #left > #rlblock_left {
+    display:none !important;
+  }
+</style>
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/dev/uiguide/">
+    
+      <div id="headermain"></div>
+<nav id="sidebar" class="showVisitedLinks">
+
+
+
+<div class="highlightable">
+  <div id="header-wrapper">
+    <div id="header">
+      
+	
+  
+    <span style="font-size:smaller">
+    <a id="logo" href="/">
+    <span class="fa fa-gears" style="font-size:large"></span>
+    </a>
+    Create a _header.md to customize this
+    </span>
+  
+
+    </div>
+        <div class="searchbox">
+		    <label for="search-by"><i class="fa fa-search"></i></label>
+		    <input data-search-input id="search-by" type="text" placeholder="Search...">
+		    <span data-search-clear=""><i class="fa fa-close"></i></span>
+		</div>
+		<script type="text/javascript" src="/js/lunr.min.js"></script>
+		<script type="text/javascript" src="/js/auto-complete.js"></script>
+		<script type="text/javascript">
+        
+            var baseurl = "\/";
+        
+		</script>
+		<script type="text/javascript" src="/js/search.js"></script>
+  </div>
+
+      <ul class="topics">
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+    <li data-nav-id="/dev/" class="dd-item parent">
+      <a href="/dev/">
+        <span>Devs</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/dev/architecture/" class="dd-item">
+        <a href="/dev/architecture/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/developersguide/" class="dd-item">
+        <a href="/dev/developersguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/uiguide/" class="dd-item active">
+        <a href="/dev/uiguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/front-end-code-standard/" class="dd-item">
+        <a href="/dev/front-end-code-standard/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/gitworkflow/" class="dd-item">
+        <a href="/dev/gitworkflow/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/jira-workflow/" class="dd-item">
+        <a href="/dev/jira-workflow/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/server-code-standard/" class="dd-item">
+        <a href="/dev/server-code-standard/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/testing/" class="dd-item">
+        <a href="/dev/testing/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/evaluations/" class="dd-item">
+      <a href="/evaluations/">
+        <span>Evaluations</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/evaluator/readme/" class="dd-item">
+        <a href="/evaluations/evaluator/readme/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
+        <a href="/evaluations/evaluator/storefront-evaluators-guide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/basic-entry-template-for-storefront/" class="dd-item">
+        <a href="/evaluations/librarian/basic-entry-template-for-storefront/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/createevaluationguide/" class="dd-item">
+        <a href="/evaluations/librarian/createevaluationguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/readme/" class="dd-item">
+        <a href="/evaluations/librarian/readme/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/systemadmin/" class="dd-item">
+      <a href="/systemadmin/">
+        <span>Systemadmins</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
+        <a href="/systemadmin/administratorguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/docker/" class="dd-item">
+        <a href="/systemadmin/docker/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/setup/" class="dd-item">
+        <a href="/systemadmin/setup/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
+        <a href="/systemadmin/versionmigrationguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/user/" class="dd-item">
+      <a href="/user/">
+        <span>Users</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/user/quick-overview-of-submitting-a-new-component/" class="dd-item">
+        <a href="/user/quick-overview-of-submitting-a-new-component/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/user/userguide/" class="dd-item">
+        <a href="/user/userguide/">
+          <span></span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+
+
+
+        <section id="shortcuts">
+                <li class="" role=""><h3>More</h3><a href="https://github.com/vjeantet/hugo-theme-docdock" target="_blank" rel="noopener"><i class='fa fa-github'></i> Github repo</a></li>
+                <li class="" role=""><a href="/showcase" target="_blank" rel="noopener"><i class='fa fa-camera'></i> Showcases</a></li>
+                <li class="" role=""><a href="https://gohugo.io/" target="_blank" rel="noopener"><i class='fa fa-bookmark'></i> Hugo Documentation</a></li>
+                <li class="" role=""><a href="/credits" target="_blank" rel="noopener"><i class='fa fa-bullhorn'></i> Credits</a></li>
+        </section>
+            <a id="clear-history" class="" href="#" data-clear-history-toggle=""><i class="fa  fa-history"></i> Clear History</a>
+
+    <hr />
+    <li></li>
+    
+    </ul>
+
+ <section id="footer">
+    </section>
+  </div>
+</nav>
+
+
+
+<section id="body">
+<div id="overlay"></div>
+<div class="padding highlightable">
+
+  <div id="top-bar">
+    
+      
+      
+      
+    <div id="top-github-link">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/dev/UIGuide.md" target="blank">
+        <i class="fa fa-code-fork"></i>
+        Edit page
+      </a>
+    </div><div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <span id="sidebar-toggle-span">
+          <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+            <i class="fa fa-bars"></i>
+          </a>
+        </span>
+        <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+        <span class="links">
+        
+
+
+
+
+
+
+
+ <a href='/'></a> > <a href='/dev/'>Devs</a> > 
+
+ 
+
+ 
+
+   
+        </span>
+    </div>
+    
+    
+    <div class="progress">
+        <div class="wrapper">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#user-interface-guide">User Interface Guide</a>
+<ul>
+<li><a href="#general-items">General Items</a></li>
+<li><a href="#buttons-and-icons">Buttons and Icons</a>
+<ul>
+<li><a href="#category-1-warning">Category 1: Warning</a></li>
+<li><a href="#category-2-save">Category 2: Save</a></li>
+<li><a href="#category-3-refresh">Category 3: Refresh</a></li>
+<li><a href="#category-4-view">Category 4: View</a></li>
+<li><a href="#category-5-edit">Category 5: Edit</a></li>
+<li><a href="#category-6-run">Category 6: Run</a></li>
+<li><a href="#category-7-default">Category 7: Default</a></li>
+<li><a href="#icon-sizes">Icon Sizes</a></li>
+<li><a href="#available-icon-alignments">Available Icon Alignments</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+        </div>
+    </div>
+    
+
+  </div>
+
+
+<div id="body-inner">
+  
+    <h1></h1>
+  
+
+
+
+    
+    
+    
+    
+
+<h1 id="user-interface-guide">User Interface Guide</h1>
+
+<h2 id="general-items">General Items</h2>
+
+<ol>
+<li>Remember this is a guide there can be variations as appropriate to the feature.  Focus on the usability and having a clear workflow.</li>
+<li>Dialog bodies should be padded 10px</li>
+<li>Use toolbars for actions and enable/disable buttons to guide the user to valid actions.</li>
+<li>Add text to icons on button so it&rsquo;s very clear as to what they are.  (Where possible)</li>
+<li>Form action should be left to right with the Action on right and the anti-action on the left.  English is left to right.  Action should be common choise and the anti-action the uncommon.</li>
+<li>Most windows should be resizeable so they should adjust their layout accordingly.   Make sure window adjust to smaller screen sizes.  Use the percentages where appropriate but remember IE 9 can have issues.  Making the window maximizable can resolve the issues.</li>
+<li>Client should handle data rendering in most cases.</li>
+<li>CSS should all be kept in the dynamic CSS file for branding.  However, page/feature specific styling can be appropriate especially if it&rsquo;s layout related specific to the page.</li>
+<li>Use the appropriate font-awesome icons for the action. See other pages.</li>
+</ol>
+
+<p><img src="ui-guide.png" alt="ui-guide" /></p>
+
+<hr />
+
+<h2 id="buttons-and-icons">Buttons and Icons</h2>
+
+<p>This section is a guide to the naming convention of buttons, icons used with the buttons, and the colors associated with those icons.  Each button belongs to a category based on action and CSS properties.  Icons used in this application come from Font Awesome 4.7.0.</p>
+
+<h3 id="category-1-warning">Category 1: Warning</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-warning</em>.</p>
+
+<ol>
+<li><p><strong>Delete Button</strong></p>
+
+<ul>
+<li>Icon: trash can (class = &ldquo;fa fa-trash&rdquo;).<br /></li>
+</ul></li>
+
+<li><p><strong>Close Button</strong></p>
+
+<ul>
+<li>Icon: times symbol (class = &ldquo;fa fa-close&rdquo;).</li>
+</ul></li>
+
+<li><p><strong>Cancel Button</strong></p>
+
+<ul>
+<li>Icon: &lsquo;X&rsquo; (class = &ldquo;fa fa-close&rdquo;).<br /></li>
+</ul></li>
+
+<li><p><strong>Clear or Clear All Button</strong></p>
+
+<ul>
+<li>Icon: trash can (class = &ldquo;fa fa-trash&rdquo;).</li>
+</ul></li>
+
+<li><p><strong>Uninstall</strong></p>
+
+<ul>
+<li>Icon: trash can (class = &ldquo;fa fa-trash&rdquo;).</li>
+</ul></li>
+
+<li><p><strong>Flush Cache</strong></p>
+
+<ul>
+<li>Icon: trash can (class = &ldquo;fa fa-trash&rdquo;).<br /></li>
+</ul></li>
+
+<li><p><strong>Rollback</strong></p>
+
+<ul>
+<li>Returns the database to its previous state.</li>
+<li>Icon: &lsquo;X&rsquo; (class = &ldquo;fa fa-close&rdquo;).
+<br /></li>
+</ul></li>
+</ol>
+
+<h3 id="category-2-save">Category 2: Save</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-save</em>.</p>
+
+<ol>
+<li><p><strong>Add Button</strong></p>
+
+<ul>
+<li>Icon: plus symbol (class = &ldquo;fa fa-plus&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Create Button</strong></p>
+
+<ul>
+<li>Icon: plus symbol (class = &ldquo;fa fa-plus&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Save Button</strong></p>
+
+<ul>
+<li>Icon: floppy disk (class = &ldquo;fa fa-save&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Apply Button</strong></p>
+
+<ul>
+<li>Icon: check mark (class = &ldquo;fa fa-check&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Approve Button</strong></p>
+
+<ul>
+<li>Icon: box with check mark (class = &ldquo;fa fa-check-square-o&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Comment/Post Button</strong></p>
+
+<ul>
+<li>Icon: speech bubble (class = &ldquo;fa fa-comment&rdquo;)</li>
+</ul></li>
+
+<li><p><strong>Publish</strong></p>
+
+<ul>
+<li>Icon: book (class = &ldquo;fa fa-book&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Mark Complete</strong></p>
+
+<ul>
+<li>Icon: box with check mark (class = &ldquo;fa fa-check-square-o&rdquo;)<br /></li>
+</ul></li>
+</ol>
+
+<h3 id="category-3-refresh">Category 3: Refresh</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-refresh</em>.</p>
+
+<ol>
+<li><p><strong>Refresh Button</strong></p>
+
+<ul>
+<li>Icon: cycle symbol (class = &ldquo;fa fa-refresh&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Restart Button</strong></p>
+
+<ul>
+<li>Icon: redo arrow (class = &ldquo;fa fa-repeat&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Reprocess Button</strong></p>
+
+<ul>
+<li>Icon: undo arrow (class = &ldquo;fa fa-undo&rdquo;)<br /></li>
+</ul></li>
+</ol>
+
+<h3 id="category-4-view">Category 4: View</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-view</em>.</p>
+
+<ol>
+<li><p><strong>View/Preview Button</strong></p>
+
+<ul>
+<li>Icon: eye (class = &ldquo;fa fa-eye&rdquo;)<br /></li>
+</ul></li>
+</ol>
+
+<h3 id="category-5-edit">Category 5: Edit</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-edit</em>.</p>
+
+<ol>
+<li><p><strong>Edit Button</strong></p>
+
+<ul>
+<li>Icon: pencil in square (class = &ldquo;fa fa-edit&rdquo;)</li>
+</ul></li>
+</ol>
+
+<h3 id="category-6-run">Category 6: Run</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-run</em>.</p>
+
+<ol>
+<li><p><strong>Run Button</strong></p>
+
+<ul>
+<li>Icon: lightning bolt (class = &ldquo;fa fa-bolt&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Start Button</strong></p>
+
+<ul>
+<li>Icon: play (class = &ldquo;fa fa-play-circle&rdquo;)</li>
+</ul></li>
+
+<li><p><strong>Process Messages</strong></p>
+
+<ul>
+<li>Icon: lightning bolt (class = &ldquo;fa fa-bolt&rdquo;)<br /></li>
+</ul></li>
+</ol>
+
+<h3 id="category-7-default">Category 7: Default</h3>
+
+<p><strong>Note:</strong> All icons in this category have the CSS class <em>icon-button-color-default</em>.</p>
+
+<ol>
+<li><p><strong>Toggle Status Button</strong></p>
+
+<ul>
+<li>Icon: power off/on (class = &ldquo;fa fa-power-off&rdquo;)</li>
+</ul></li>
+
+<li><p><strong>Download Button</strong></p>
+
+<ul>
+<li>Icon: download/import (class = &ldquo;fa fa-download&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Upload Button</strong></p>
+
+<ul>
+<li>Icon: upload/export (class = &ldquo;fa fa-upload&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Export Button</strong></p>
+
+<ul>
+<li>Icon: download/import (class = &ldquo;fa fa-download&rdquo;)</li>
+</ul></li>
+
+<li><p><strong>Import Button</strong></p>
+
+<ul>
+<li>Icon: upload/export (class = &ldquo;fa fa-upload&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Stop Button</strong></p>
+
+<ul>
+<li>Icon: square in circle (class = &ldquo;fa fa-stop-circle&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Previous/Next Buttons</strong></p>
+
+<ul>
+<li>Icon: left/right arrows (class = &ldquo;fa fa-arrow-right&rdquo;, class = &ldquo;fa fa-arrow-left&rdquo;)</li>
+</ul></li>
+
+<li><p><strong>Home Button</strong></p>
+
+<ul>
+<li>Icon: home (class = &ldquo;fa fa-home&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Cleanup</strong></p>
+
+<ul>
+<li>Icon: eraser (class = &ldquo;fa fa-eraser&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Copy</strong></p>
+
+<ul>
+<li>Icon: two copies (class = &ldquo;fa fa-clone&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>Merge</strong></p>
+
+<ul>
+<li>Icon: two arrows merging (class = &ldquo;fa fa-compress&rdquo;)<br /></li>
+</ul></li>
+
+<li><p><strong>References</strong></p>
+
+<ul>
+<li>Icon: chain links (class = &ldquo;fa fa-link&rdquo;)</li>
+</ul></li>
+</ol>
+
+<h3 id="icon-sizes">Icon Sizes</h3>
+
+<ul>
+<li>For large buttons, icons are given Font Awesome size of&nbsp; <em>fa-2x</em>.<br /></li>
+<li>For all other buttons, icons are given Font Awesome size of&nbsp; <em>fa-lg</em>.<br /></li>
+</ul>
+
+<h3 id="available-icon-alignments">Available Icon Alignments</h3>
+
+<p><strong>Available alignment corrections for Font Awesome icons of size <em>fa-2x</em>:</strong></p>
+
+<ol>
+<li><p><em>icon-vertical-correction</em></p>
+
+<ul>
+<li>Shifts icon up 5 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-vertical-correction-send</em></p>
+
+<ul>
+<li>Shifts icon left 10 pixels and up 3 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-vertical-correction-view</em></p>
+
+<ul>
+<li>Shifts icon left 5 pixels and up 2 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-vertical-correction-edit</em></p>
+
+<ul>
+<li>Shifts icon left 4 pixels and up 1 pixel.</li>
+</ul></li>
+
+<li><p><em>icon-horizontal-correction</em></p>
+
+<ul>
+<li>Shifts icon left 3 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-vertical-correction-search-tools</em></p>
+
+<ul>
+<li>Shifts icon left 4 pixels and up 6 pixels.</li>
+</ul></li>
+</ol>
+
+<p><strong>Available alignment corrections for Font Awesome icons of size <em>fa-lg</em>:</strong></p>
+
+<ol>
+<li><p><em>icon-small-vertical-correction</em></p>
+
+<ul>
+<li>Shifts icon down 5 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-small-vertical-correction-media-table</em></p>
+
+<ul>
+<li>Shifts icon down 2 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-small-vertical-correction-book</em></p>
+
+<ul>
+<li>Shifts icon down 3 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-small-horizontal-correction-left</em></p>
+
+<ul>
+<li>Shifts icon left 8 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-small-horizontal-correction-right</em></p>
+
+<ul>
+<li>Shifts icon right 5 pixels.</li>
+</ul></li>
+
+<li><p><em>icon-vertical-correction-eraser</em></p>
+
+<ul>
+<li>Shifts icon left 5 pixels and up 2 pixels.</li>
+</ul></li>
+</ol>
+
+<p><strong>Available alignment corrections for text/icon spacing for windows:</strong></p>
+
+<ol>
+<li><p><em>shift-window-text-right</em></p>
+
+<ul>
+<li>Shifts text to the right 8 pixels.<br />
+
+<br /></li>
+</ul></li>
+</ol>
+
+
+    
+    
+          <footer class=" footline" >
+	
+</footer>
+  </div>
+</div>
+
+<div id="navigation">
+<a class="nav nav-prev" href="/dev/developersguide/" title=""> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/dev/front-end-code-standard/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+
+</section>
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+  <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>    
+
+<script src="/js/clipboard.min.js"></script>
+<script src="/js/featherlight.min.js"></script>
+<script src="/js/html5shiv-printshiv.min.js"></script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/js/modernizr.custom.71422.js"></script>
+<script src="/js/docdock.js"></script>
+<script src="/theme-original/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>
