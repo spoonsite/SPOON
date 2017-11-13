@@ -142,7 +142,6 @@ public interface EvaluationService
 	 *
 	 * @param evaluationId
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void publishEvaluation(String evaluationId);
 
 	/**
