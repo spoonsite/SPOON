@@ -92,7 +92,7 @@ in which sections will appear on the evaluation by dragging and dropping.  Once 
 *Go to Evaluation Management &rarr; Evaluation*
 
 To add an evaluation, the librarian will fill out the **Create Evaluation** form.  An evaluation requires there to 
-be an entry.  The librarian will select an evalution template and give the version number of the evaluation.  It is 
+be an entry.  The librarian will select an evaluation template and give the version number of the evaluation.  It is 
 recommended that the version number match the entry's version number.  A status is applied to the evaluation and the
 types of statuses are controlled in the Lookup section of the application.
 
