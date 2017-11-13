@@ -177,8 +177,7 @@ Ext.define('OSF.form.Media', {
 					itemId: 'upload',
 					resourceLabel: 'Upload Media',
 					name: 'file',
-					width: '100%',
-					allowBlank: false
+					width: '100%'
 				},
 				{
 					xtype: 'textfield',

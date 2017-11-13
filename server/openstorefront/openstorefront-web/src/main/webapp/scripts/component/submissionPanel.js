@@ -1431,7 +1431,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								allowBlank: false
+								hidden: true
 							},
 							Ext.create('OSF.component.SecurityComboBox', {
 								itemId: 'securityMarkings',
@@ -1650,8 +1650,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								resourceLabel: 'Upload Media',
-								allowBlank: false
+								resourceLabel: 'Upload Media'
 							},
 							{
 								xtype: 'textfield',
