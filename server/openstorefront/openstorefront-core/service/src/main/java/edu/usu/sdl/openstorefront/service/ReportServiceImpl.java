@@ -265,8 +265,11 @@ public class ReportServiceImpl
 	@Override
 	public void runScheduledReportNow(ScheduledReport scheduledReport)
 	{
+		Objects.requireNonNull(scheduledReport);
+
 		Report reportHistory = new Report();
 		reportHistory.setScheduled(true);
+		reportHistory.setScheduledId(scheduledReport.getScheduleReportId());
 		reportHistory.setReportFormat(scheduledReport.getReportFormat());
 		reportHistory.setReportType(scheduledReport.getReportType());
 		reportHistory.setReportOption(scheduledReport.getReportOption());
@@ -277,9 +280,16 @@ public class ReportServiceImpl
 
 		Report reportProcessed = generateReport(reportHistory);
 
-		scheduledReport.setLastRanDts(TimeUtil.currentDate());
-		scheduledReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-		saveScheduledReport(scheduledReport);
+		//repull as the report may be inactive or delete while this was running
+		ScheduledReport existingReport = persistenceService.findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
+
+		if (existingReport != null) {
+			scheduledReport.setLastRanDts(TimeUtil.currentDate());
+			scheduledReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+			saveScheduledReport(scheduledReport);
+		} else {
+			LOG.log(Level.FINE, "Scheduled report was removed.  Old Id: " + scheduledReport.getScheduleReportId());
+		}
 
 		if (RunStatus.ERROR.equals(reportProcessed.getRunStatus())) {
 			LOG.log(Level.SEVERE, MessageFormat.format("A scheduled report failed to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, scheduledReport.getReportType()), scheduledReport.getScheduleReportId()}));

@@ -83,6 +83,7 @@ public class Report
 	private ReportOption reportOption;
 
 	private Boolean scheduled;
+	private String scheduledId;
 
 	@ConsumeField
 	@Embedded
@@ -213,6 +214,16 @@ public class Report
 	public void setReportOutputs(List<ReportOutput> reportOutputs)
 	{
 		this.reportOutputs = reportOutputs;
+	}
+
+	public String getScheduledId()
+	{
+		return scheduledId;
+	}
+
+	public void setScheduledId(String scheduledId)
+	{
+		this.scheduledId = scheduledId;
 	}
 
 }

@@ -98,7 +98,7 @@ public class EmailOutput
 			}
 
 			email.addRecipient("", emailAddress.getEmail(), Message.RecipientType.TO);
-			MailManager.send(email);
+			MailManager.send(email, true);
 		}
 
 	}
