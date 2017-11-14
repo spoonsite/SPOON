@@ -16,7 +16,7 @@
 /* global Ext, CoreService, CoreUtil */
 
 Ext.define('OSF.component.EvaluationPanel', {
-	extend: 'Ext.form.Panel',
+	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.EvaluationPanel',
 	requires: [
 		'OSF.form.EvaluationInfo',
