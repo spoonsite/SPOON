@@ -1,5 +1,8 @@
-
-# Setup Guide
++++
+title = "Setup"
+description = ""
+weight = 1
++++
 
 # 1.  Installation
  -----

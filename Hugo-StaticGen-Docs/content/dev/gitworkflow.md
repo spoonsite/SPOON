@@ -1,4 +1,8 @@
-# Git Workflow
++++
+title = "Git Workflow"
+description = ""
+weight = 3
++++
 
 We are following the Git Flow style of branching.
 

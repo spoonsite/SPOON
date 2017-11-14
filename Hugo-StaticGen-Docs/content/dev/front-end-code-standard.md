@@ -1,5 +1,8 @@
-# Front-end Code Standards
-----
++++
+title = "Front-end Code Standards"
+description = ""
+weight = 3
++++
 
 1. Use the Ext.js docs.  Look at them first for utility functions  (format, string manipulation, etc...).  
 2. When making reusable components don't use "ID"s properties. Ids are OK on individual pages; must be unique; "ID" properties are Global.  

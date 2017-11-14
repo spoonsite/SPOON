@@ -1,3 +1,9 @@
++++
+title = "Submitting a New Component"
+description = ""
+weight = 2
++++
+
 # Quick Overview of Submitting a New Component
 
 To get to the User Tools section, click on your user name in the upper right corner of the page and then select User Tools from the drop down menu. Once at the User Tools sections, click on the Submissions button and then click the New Submission button.

@@ -1,3 +1,9 @@
++++
+title = "Evaluators Guide"
+description = ""
+weight = 10
++++
+
 # Storefront Guide for Evaluators
 
 ## TL;DR

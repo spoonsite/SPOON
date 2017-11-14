@@ -1,4 +1,8 @@
-# Version Migration Guide
++++
+title = "Version Migration"
+description = ""
+weight = 6
++++
 
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
 

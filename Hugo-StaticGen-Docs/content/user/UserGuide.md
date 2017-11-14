@@ -1,3 +1,9 @@
++++
+title = "User Guide"
+description = ""
+weight = 1
++++
+
 [See User Guide](../server/openstorefront/openstorefront-web/src/main/resources/userhelp.md)
 
 Note: The user guide is machine read so changes to content needs to following guidelines:

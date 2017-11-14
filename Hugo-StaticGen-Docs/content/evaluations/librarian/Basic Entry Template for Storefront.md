@@ -1,6 +1,8 @@
-# Basic Entry Template for Storefront
-
----
++++
+title = "Basic Entry Template for Storefront"
+description = ""
+weight = 11
++++
 
 **Entry Type**
 * Type Code: REPO

@@ -1,4 +1,8 @@
-# User Interface Guide
++++
+title = "User Interface Guide"
+description = ""
+weight = 6
++++
 
 ## General Items
 1. Remember this is a guide there can be variations as appropriate to the feature.  Focus on the usability and having a clear workflow.

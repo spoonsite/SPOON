@@ -1,6 +1,9 @@
 
-# Developer Guide
--------
++++
+title = "Developer Guide"
+description = ""
+weight = 1
++++
 
 # 1. Internal Development
 

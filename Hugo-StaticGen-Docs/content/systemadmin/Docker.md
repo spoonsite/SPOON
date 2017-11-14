@@ -1,4 +1,8 @@
-## Using Docker ##
++++
+title = "Using Docker"
+description = ""
+weight = 3
++++
 
 The Open Storefront application contains a Dockerfile in order to build Docker images.
 
