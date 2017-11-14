@@ -93,7 +93,7 @@ Ext.define('OSF.form.Tags', {
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'text',	
-									id: 'tagField',																				
+									itemId: 'tagField',
 									flex: 1,
 									fieldLabel: 'Add Tag',
 									forceSelection: false,
@@ -120,7 +120,7 @@ Ext.define('OSF.form.Tags', {
 									margin: '30 0 0 0',
 									minWidth: 75,
 									handler: function(){
-										var tagField = Ext.getCmp('tagField');
+										var tagField = this.findParentByType('form').query('[name="text"]')[0];
 										if (tagField.isValid()) {
 											actionAddTag(this.up('form'));
 										}
