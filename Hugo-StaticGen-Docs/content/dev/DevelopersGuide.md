@@ -134,7 +134,6 @@ the version of the application.
 The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
 
 ## 1.11 Security
------------------
 
 Openstorefront support several environments each have different security needs.
 It also support a built in user management.  Regardless of the authentication mechanism the security is based on dynamic role made up of permissions.
@@ -152,9 +151,9 @@ The granularity of the permissions is mostly feature/tool based.
 
 Two place where permission need to be applied:
 
-_ Server API
+- Server API
 
-_ UI (typically to restrict a page however, it may be used to restrict a piece of functionality)
+- UI (typically to restrict a page however, it may be used to restrict a piece of functionality)
 
 Use caution in marking APIs as there may be other features that rely a shared API to work correctly. Should be a rare case.
 Also, keep in mind there may be special handling for "owners" of the data beyond a permission.
@@ -173,7 +172,7 @@ All Data-based API need to handling filtering data.
 
 This guide is targeted at external developers who want to extend the application.
 
-##2.1 REST API
+## 2.1 REST API
 
 The API document is directly reflected from the live code so it is always current for the running version of the application.
 The API documentation can be accessed by logging in as an admin and following the link from the admin tools see application management.
@@ -190,20 +189,25 @@ In some cases, both a custom parser and data mapping may be required.
 
 3 - In the Activator.java, register your new parser
    (More than one parser can be added to a plugin)
->In start bundle:
->
-    FileFormat customFormat = new FileFormat();
-	customFormat.setCode("CUSTOMFORMATCODE");
-	customFormat.setFileType(FileType.COMPONENT);
-	customFormat.setDescription("Custom format");
-	customFormat.setSupportsDataMap(true);  //Set to true to allow data mapping
-	customFormat.setParserClass(CustomParser.class.getName());
 
->	service.getImportService().registerFormat(customFormat, CustomParser.class);
+In start bundle:
 
->   In stop bundle:
+```java
+FileFormat customFormat = new FileFormat();
+customFormat.setCode("CUSTOMFORMATCODE");
+customFormat.setFileType(FileType.COMPONENT);
+customFormat.setDescription("Custom format");
+customFormat.setSupportsDataMap(true);  //Set to true to allow data mapping
+customFormat.setParserClass(CustomParser.class.getName());
 
->   service.getImportService().unregisterFormat(customFormat.class.getName());
+service.getImportService().registerFormat(customFormat, CustomParser.class);
+```
+
+In stop bundle:
+
+```java
+service.getImportService().unregisterFormat(customFormat.class.getName());
+```
 
 4 - Upload build JAR using the Admin->Application Management->System->Plugins
 or copy jar to /var/openstorefront/perm/plugins and the application will auto-deploy
@@ -214,42 +218,40 @@ All other third-party libraries must be included with your JAR.
 ### 2.2.2 Parser Workflow
 
 (Default flow but it can be overridden)
-1 - Check Format (On Web Upload)
 
-2 - Process Data
+1. Check Format (On Web Upload)
 
-> a) Get the parser Reader (CSV, Text, XML...etc)
+2. Process Data
 
-> b) Read Record
+    1. Get the parser Reader (CSV, Text, XML...etc)
 
-> c) Validate Record
+    2. Read Record
 
-> d) Add record to storage batch (flushes batch if full)
+    3. Validate Record
 
-> e) Loop through remaining records
+    4. Add record to storage batch (flushes batch if full)
 
-> f) Flush any records not stored
+    5. Loop through remaining records
 
-> g) Finish Processing (Override for special handling; Eg Media and Relationships)
+    6. Flush any records not stored
+
+    7. Finish Processing (Override for special handling; Eg Media and Relationships)
 
 
 ### 2.2.3 Parser Class
 
-1 - Extend Either the Component or Attribute Base Parser
-
-2 - Implement Check format and parse record
-
-Override other method such as getReader as needed.
-The parse record method receive a model according to the reader.
-Then it should return a record such as ComponentAll to be stored.
-If the method return null it will skip the record.
+1. Extend Either the Component or Attribute Base Parser
+2. Implement Check format and parse record
+    - Override other method such as getReader as needed.
+    - The parse record method receive a model according to the reader.
+    - Then it should return a record such as ComponentAll to be stored.
+    - If the method return null it will skip the record.
 
 **Note:** The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
 
 # 3. Database Management
------
 
 The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.  
@@ -258,7 +260,6 @@ See the following for information on outside control (should rarely be
 needed/used).
 
 ## 3.1 Refreshing the Database
------------------------
 
 **CAUTION:** This will wipe out all data in the application. Data, such
 as User profiles, cannot be recovered. Component user data can be
@@ -268,10 +269,7 @@ Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:
 
 1.  Stop the Tomcat server  (e.g. service tomcat stop)
-
-2.  Remove the folder /var/openstorefront/db
-    (rm -rf /var/openstorefront/db)
-
+2.  Remove the folder /var/openstorefront/db (rm -rf /var/openstorefront/db)
 3.  Start the tomcat server
 
 When the application loads it will create a new database and populate
@@ -283,7 +281,6 @@ import directories are empty, the application will load default lookup
 files that are packaged with the application.
 
 ## 3.2 Installing Database Console
-----------------------------
 
 **CAUTION:** Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
@@ -312,7 +309,6 @@ functionality on top.
     export and imports.
 
 ## 3.3 Installing Database Studio
-----------------------------
 
 **NOTE** Orient DB includes a web application for viewing the database
 visually, instead of viewing everything from the console. Once installed,
