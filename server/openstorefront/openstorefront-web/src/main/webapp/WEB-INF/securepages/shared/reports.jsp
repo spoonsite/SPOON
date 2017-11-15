@@ -56,12 +56,13 @@
 					return '';
 				};
 				
-				var outputOptionRender = function(value, meta, record) {
+				var outputOptionRender = function(v, meta, record) {
 					var outputs = '';
 								
 					if (record.data.reportOutputs) {
 						var outputOpts = [];
-						Ext.Array.each(record.data.reportOutputs, function(item){																				
+						Ext.Array.each(record.data.reportOutputs, function(item){	
+							outputOpts.push('<b>' + item.reportTransmissionType + '</b>');
 							Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
 								if (key !== 'storageVersion') {
 									if (key === 'emailAddresses') {										
@@ -75,9 +76,10 @@
 										outputOpts.push('<b>' + key + '</b>: ' + value);
 									}
 								}
-							});											
+							});
+							outputOpts.push('<br>');
 						});
-						outputs = outputOpts.join('<br> ');
+						outputs += outputOpts.join('<br> ');
 					}
 					return outputs;
 				};
@@ -96,6 +98,7 @@
 				var scheduleReportsGridStore = Ext.create('Ext.data.Store', {
 					id: 'scheduleReportsGridStore',
 					autoLoad: true,
+					pageSize: 100,
 					sorters: [
 						new Ext.util.Sorter({
 							property: 'createDts',
@@ -144,7 +147,16 @@
 							rootProperty: '',
 							totalProperty: ''
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								activeStatus: Ext.getCmp('scheduleReportFilter-ActiveStatus').getValue(),
+								reportType: Ext.getCmp('scheduleReportFilter-reportType').getValue() ? Ext.getCmp('scheduleReportFilter-reportType').getValue() : null,								
+								showAllUsers: Ext.getCmp('scheduleReportFilter-showAll').getValue() 
+							};
+						}
+					}					
 				});
 
 				var scheduledReportsWin = Ext.create('Ext.window.Window', {
@@ -196,6 +208,8 @@
 											id: 'scheduleReportFilter-ActiveStatus',
 											fieldLabel: 'Active Status',
 											name: 'activeStatus',
+											labelAlign: 'left',
+											width: 250,
 											displayField: 'description',
 											valueField: 'code',
 											value: 'A',
@@ -222,7 +236,46 @@
 													]
 												}
 											}
-										})]
+										}),
+										Ext.create('OSF.component.StandardComboBox', {
+											id: 'scheduleReportFilter-reportType',
+											emptyText: 'All',
+											fieldLabel: 'Report Type',
+											labelAlign: 'left',
+											name: 'reportType',
+											typeAhead: false,
+											editable: false,
+											width: 325,
+											margin: '0 20 0 0',
+											listeners: {
+												change: function(filter, newValue, oldValue, opts){
+													scheduleReportRefreshGrid();
+												}
+											},
+											storeConfig: {
+												url: 'api/v1/resource/lookuptypes/ReportType',
+												addRecords: [
+													{
+														code: null,
+														description: 'All'
+													}
+												]
+											}
+										}),										
+										{
+											xtype: 'checkbox',
+											id: 'scheduleReportFilter-showAll',
+											padding: '0 20 0 0',
+											hidden: true,
+											listeners: {
+												change: function(filter, newValue, oldValue, opts){
+													scheduleReportRefreshGrid();
+												}
+											},
+											boxLabel: 'Show All Users',
+											name: 'showAllUsers'									
+										}	
+									]
 								},
 								{
 									dock: 'top',
@@ -270,6 +323,21 @@
 											xtype: 'tbseparator'
 										},
 										{
+											text: 'Details',
+											id: 'reportDetailButton',
+											scale: 'medium',
+											iconCls: 'fa fa-2x fa-list-alt icon-button-color-default icon-vertical-correction',
+											disabled: true,
+											handler: function () {
+												var record = Ext.getCmp('scheduleReportsGrid').getSelection()[0];
+												reportDetails(record.get('scheduledReportId'), true);
+											},
+											tooltip: 'Report Details'
+										},
+										{
+											xtype: 'tbseparator'
+										},
+										{
 											text: 'Toggle Status',
 											id: 'reportActivateButton',
 											scale: 'medium',
@@ -296,6 +364,12 @@
 											tooltip: 'Delete the record'
 										}
 									]
+								},
+								{
+									xtype: 'pagingtoolbar',
+									dock: 'bottom',
+									store: scheduleReportsGridStore,
+									displayInfo: true
 								}
 							],
 							listeners: {
@@ -316,15 +390,13 @@
 						Ext.getCmp('reportEditButton').setDisabled(false);
 						Ext.getCmp('reportActivateButton').setDisabled(false);
 						Ext.getCmp('reportDeleteButton').setDisabled(false);
+						Ext.getCmp('reportDetailButton').setDisabled(false);
 
-					} else if (cnt > 1) {
+					} else if (cnt > 1 || cnt == 0) {
 						Ext.getCmp('reportEditButton').setDisabled(true);
 						Ext.getCmp('reportActivateButton').setDisabled(true);
 						Ext.getCmp('reportDeleteButton').setDisabled(true);
-					} else {
-						Ext.getCmp('reportEditButton').setDisabled(true);
-						Ext.getCmp('reportActivateButton').setDisabled(true);
-						Ext.getCmp('reportDeleteButton').setDisabled(true);
+						Ext.getCmp('reportDetailButton').setDisabled(true);
 					}
 				};
 
@@ -1798,7 +1870,7 @@
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('historyGrid').getSelection()[0];
-										reportDetails(record);
+										reportDetails(record.get('reportId'), false);
 									},
 									tooltip: 'Report Details'
 								},
@@ -1871,16 +1943,108 @@
 					}
 				};
 
-				var reportDetails = function(record) {
+				var reportDetails = function(recordId, scheduled) {
 					
 					var detailwin = Ext.create('Ext.window.Window', {
-						
+						title: 'Report Details',
+						modal: true,
+						alwaysOnTop: true,
+						width: '50%',
+						height: '50%',
+						maximizable: true,
+						closeAction: 'destroy',
+						scrollable: true,
+						bodyStyle: 'padding: 10px',
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Close',
+										scale: 'medium',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+										handler: function() {
+											detailwin.close();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									}
+								]
+							}
+						],
+						tpl: new Ext.XTemplate(
+							'<h2>Report: {reportTypeDescription}</h2>',
+							'{createUser} - {[Ext.util.Format.date(Ext.Date.parse(values.createDts, "c"), "m/d/Y H:i:s")]}<br>',
+							'<h3 style="background: lightgrey; padding: 5px;">Options:</h3>',
+							'<div style="padding: 10px;">',
+								'{[this.displayOptions(values.options)]}',
+							'</div>',
+							
+							'<h3 style="background: lightgrey; padding: 5px;">Entries Reported On:</h3>',
+							'<div style="padding: 10px;">',
+								'<tpl if="this.hasEntries(idsInReport)">',
+									'<tpl for="idsInReport">',
+									' {description}<br>',
+									'</tpl>',
+								'</tpl>',
+								'<tpl if="!this.hasEntries(idsInReport)"> All Entries (If Appplicable) </tpl>',
+							'</div>',							
+							
+							'<h3 style="background: lightgrey; padding: 5px;">Outputs:</h3>',							
+							'<div style="padding: 10px;">',
+								'{[this.displayOutputs(values.outputs)]}',
+							'</div>',
+							{
+								hasEntries: function(idsInReport) {
+									if (idsInReport && idsInReport.length > 0) {
+										return true;
+									} else {
+										return false;
+									}
+								},
+								displayOutputs: function(outputs) {
+									var record = {
+										data: {
+											reportOutputs: outputs
+										}
+									};									
+									return outputOptionRender(null, null, record);
+								},
+								displayOptions: function(options) {
+									var results = '';
+									Ext.Object.each(options, function(key, value, myself) {
+										if (key !== 'storageVersion') {
+											results += '<b>' + key + ':</b> ' + value + '<br>';
+										}
+									});
+									return results;
+								}
+							}
+							
+						)
 					});
 					detailwin.show();
 					
+					var url = 'api/v1/resource/reports/' + recordId + '/detail';
+					if (scheduled) {
+						url = 'api/v1/resource/scheduledreports/' + recordId + '/detail';
+					}
+					
+					detailwin.setLoading(true);
 					Ext.Ajax.request({
-						url: 'api/v1/resource/reports/' + record.get('reportId') + '/detail',
-						
+						url: url,
+						callback: function() {
+							detailwin.setLoading(false);
+						},
+						success: function(response, opt) {
+							var data = Ext.decode(response.responseText);							
+							detailwin.update(data);
+						}
 					});
 					
 				};
@@ -2113,6 +2277,7 @@
 					}
 					if (CoreService.userservice.userHasPermisson(user, "REPORTS-ALL")) {
 						Ext.getCmp('historyFilter-showAll').setHidden(false);
+						Ext.getCmp('scheduleReportFilter-showAll').setHidden(false);						
 					}
 				});
 

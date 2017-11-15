@@ -15,12 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,10 +38,15 @@ public class ReportDetailView
 
 	private String reportId;
 	private String reportType;
+	private String reportTypeDescription;
 	private String createUser;
 	private Date createDts;
 	private ReportOption options;
+
+	@DataType(LookupModel.class)
 	private List<LookupModel> idsInReport = new ArrayList<>();
+
+	@DataType(ReportOutput.class)
 	private List<ReportOutput> outputs = new ArrayList<>();
 
 	public ReportDetailView()
@@ -50,6 +58,7 @@ public class ReportDetailView
 		ReportDetailView view = new ReportDetailView();
 		view.setReportId(report.getReportId());
 		view.setReportType(report.getReportType());
+		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 		view.setCreateUser(report.getCreateUser());
 		view.setCreateDts(report.getCreateDts());
 		view.setOptions(report.getReportOption());
@@ -76,6 +85,7 @@ public class ReportDetailView
 		ReportDetailView view = new ReportDetailView();
 		view.setReportId(report.getScheduleReportId());
 		view.setReportType(report.getReportType());
+		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 		view.setCreateUser(report.getCreateUser());
 		view.setCreateDts(report.getCreateDts());
 		view.setOptions(report.getReportOption());
@@ -169,6 +179,16 @@ public class ReportDetailView
 	public void setOutputs(List<ReportOutput> outputs)
 	{
 		this.outputs = outputs;
+	}
+
+	public String getReportTypeDescription()
+	{
+		return reportTypeDescription;
+	}
+
+	public void setReportTypeDescription(String reportTypeDescription)
+	{
+		this.reportTypeDescription = reportTypeDescription;
 	}
 
 }
