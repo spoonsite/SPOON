@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
@@ -22,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -48,15 +51,35 @@ public class ReportDetailView
 		view.setReportId(report.getReportId());
 		view.setReportType(report.getReportType());
 		view.setCreateUser(report.getCreateUser());
-		view.setCreateDts(createDts);
-
+		view.setCreateDts(report.getCreateDts());
+		view.setOptions(report.getReportOption());
+		view.setOutputs(report.getReportOutputs());
+		view.setIdsInReport(idsToComponents(report.dataIdSet()));
 		return view;
+	}
+
+	private static List<LookupModel> idsToComponents(Set<String> ids)
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		List<LookupModel> views = new ArrayList<>();
+		for (String id : ids) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(id);
+			lookupModel.setDescription(service.getComponentService().getComponentName(id));
+			views.add(lookupModel);
+		}
+		return views;
 	}
 
 	public static ReportDetailView toView(ScheduledReport report)
 	{
 		ReportDetailView view = new ReportDetailView();
-
+		view.setReportId(report.getScheduleReportId());
+		view.setReportType(report.getReportType());
+		view.setCreateUser(report.getCreateUser());
+		view.setCreateDts(report.getCreateDts());
+		view.setOptions(report.getReportOption());
+		view.setOutputs(report.getReportOutputs());
 		return view;
 	}
 

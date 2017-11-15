@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ReportDetailView;
 import edu.usu.sdl.openstorefront.core.view.ReportFilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ReportGenerateView;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
@@ -184,6 +185,27 @@ public class ReportResource
 		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);
+		}
+		return response;
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.REPORTS)
+	@APIDescription("Gets a report details.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportDetailView.class)
+	@Path("/{id}/detail")
+	public Response getReportDetails(
+			@PathParam("id") String reportId
+	)
+	{
+		Report reportExample = new Report();
+		reportExample.setReportId(reportId);
+		Report report = reportExample.find();
+		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
+		if (response == null) {
+			ReportDetailView reportDetailView = ReportDetailView.toView(report);
+			response = sendSingleEntityResponse(reportDetailView);
 		}
 		return response;
 	}

@@ -64,7 +64,16 @@
 						Ext.Array.each(record.data.reportOutputs, function(item){																				
 							Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
 								if (key !== 'storageVersion') {
-									outputOpts.push('<b>' + key + '</b>: ' + value);
+									if (key === 'emailAddresses') {										
+										var allEmails = [];
+										Ext.Array.each(value, function(email){
+											allEmails.push(email.email);
+										});
+										
+										outputOpts.push('<b>' + key + '</b>: <br>' + allEmails.join('<br>'));
+									} else {
+										outputOpts.push('<b>' + key + '</b>: ' + value);
+									}
 								}
 							});											
 						});
@@ -1779,6 +1788,21 @@
 									tooltip: 'Export report'
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Details',
+									id: 'historyDetailButton',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-list-alt icon-button-color-default icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										var record = Ext.getCmp('historyGrid').getSelection()[0];
+										reportDetails(record);
+									},
+									tooltip: 'Report Details'
+								},
+								{
 									xtype: 'tbfill'
 								},
 								{
@@ -1825,6 +1849,7 @@
 						} else {
 							Ext.getCmp('historyViewButton').setDisabled(false);
 							Ext.getCmp('historyExportButton').setDisabled(false);
+							Ext.getCmp('historyDetailButton').setDisabled(false);
 						}
 
 						if (record.get('runStatus') !== 'W') {
@@ -1837,11 +1862,27 @@
 						Ext.getCmp('historyDeleteButton').setDisabled(false);
 						Ext.getCmp('historyViewButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
+						Ext.getCmp('historyDetailButton').setDisabled(true);
 					} else {
 						Ext.getCmp('historyViewButton').setDisabled(true);
 						Ext.getCmp('historyDeleteButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
+						Ext.getCmp('historyDetailButton').setDisabled(true);
 					}
+				};
+
+				var reportDetails = function(record) {
+					
+					var detailwin = Ext.create('Ext.window.Window', {
+						
+					});
+					detailwin.show();
+					
+					Ext.Ajax.request({
+						url: 'api/v1/resource/reports/' + record.get('reportId') + '/detail',
+						
+					});
+					
 				};
 
 
