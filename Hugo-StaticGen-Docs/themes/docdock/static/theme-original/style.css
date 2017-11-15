@@ -695,8 +695,13 @@ pre code {
   margin: 0;
   font-size: 15px; }
 
+/*hr {
+  border-bottom: 4px solid #F0F2F4; }*/
 hr {
-  border-bottom: 4px solid #F0F2F4; }
+  border-bottom: 1px solid #616161;
+  width: 75%;
+  margin: 2em auto
+  }
 
 .page-title {
   margin-top: -25px;
