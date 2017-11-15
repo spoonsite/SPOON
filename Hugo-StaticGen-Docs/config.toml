@@ -4,6 +4,7 @@ DefaultContentLanguage = "en"
 
 title = "Storefront Docs"
 theme = "docdock"
+publishDir = "../docs"
 
 [params]
 editURL = "https://github.com/di2e/openstorefront/edit/master/"
