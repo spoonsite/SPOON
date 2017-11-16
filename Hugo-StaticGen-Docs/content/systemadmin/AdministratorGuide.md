@@ -6,20 +6,14 @@ weight = 4
 
 Version 2.4
 
+Space Dynamics Laboratory  
+Utah State University Research Foundation  
+1695 North Research Park Way  
+North Logan, Utah 84341  
 
-Space Dynamics Laboratory
-
-Utah State University Research Foundation
-
-1695 North Research Park Way
-
-North Logan, Utah 84341
-
-![logo](../images/sdl.png)
-
+![logo](/images/sdl.png)
 
 # Overview
------
 
 The Open Storefront application is a software cataloging system that is used to catalog components
 of interest to the DI2E community. Components include Government off
@@ -29,22 +23,16 @@ Excellence are displayed in the Storefront and give details on the
 following:
 
 -   Ownership
-
 -   Where/How to access the software
-
 -   Software vitals
-
 -   Conformance
-
 -   Links to documentation, source code and other artifacts
-
 -   Evaluation information
 
 **Open Storefront is developed by Space Dynamics Laboratory and is
 licensed under Apache V2.**
 
 # 1. Other Guides
-----
 
 This guide has been organized into separate documents to make it easier to navigate.
 The focus of this document is for configuration.  See other guides for other topics.
@@ -56,13 +44,10 @@ The focus of this document is for configuration.  See other guides for other top
 [Developer Guide](../dev/DevelopersGuide.md)
 
 # 2.  Configuration
-------
 
 ## 2.1  Security
---------
 
 ### 2.1.1 Supported Realms
-------
 
 Configure in /var/openstorefront/config/shiro.ini
 
@@ -72,18 +57,20 @@ Configure in /var/openstorefront/config/shiro.ini
 
 -   LDAP (Example)
 
-> \[main\]
+```ini
+[main]
 
--   ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
 
--   ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com
+ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com
 
--   ldapRealm.contextFactory.url = ldap://ldapHost:389
+ldapRealm.contextFactory.url = ldap://ldapHost:389
 
--   ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
+ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
 
--   ldapRealm.contextFactory.environment\[some.obscure.jndi.key\] = some
-    value
+ldapRealm.contextFactory.environment[some.obscure.jndi.key] = some
+value
+```
 
 #### 2.1.1.1 Database
 
@@ -91,37 +78,40 @@ See
 [Configure JDBC Realm](http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi)
 for how to configure JDBCRealm to obtain its DataSource from JNDI.
 
-> \[main\]
+```ini
+[main]
 
--  dataSource = org.apache.shiro.jndi.JndiObjectFactory
+dataSource = org.apache.shiro.jndi.JndiObjectFactory
 
--  dataSource.resourceName = java://app/jdbc/myDataSource
+dataSource.resourceName = java://app/jdbc/myDataSource
 
--  jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
+jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 
--  jdbcRealm.permissionsLookupEnabled = true
+jdbcRealm.permissionsLookupEnabled = true
 
--  jdbcRealm.dataSource = \$dataSource
+jdbcRealm.dataSource = $dataSource
 
- \# you can customize the authenticationQuery, userRolesQuery and
-permissionsQuery,  if needed.
+# you can customize the authenticationQuery, userRolesQuery and permissionsQuery,  if needed.
 
-- securityManager.realms = \$realm
+securityManager.realms = $realm
+```
 
 #### 2.1.1.2 OPENAM (Request Header)
 
->\[main\]
+```ini
+[main]
 
-\#Also, remember to comment out the users and roles to remove the INIRealm
+#Also, remember to comment out the users and roles to remove the INIRealm
 
-- headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
+headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
 
-- securityManager.realms = \$headerRealm
+securityManager.realms = $headerRealm
+```
 
 #### 2.1.1.3 Integration with OpenAM
 -----
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -169,7 +159,6 @@ To
 
 
 ### 2.1.2 User Types
------
 
 The user types are:
 
@@ -177,11 +166,12 @@ Are defined as based on the roles they belong to.
 If using the built-in security then the system will create default roles for
 default users, admins and evaluators.  It will create a default admin user: (admin / Secret1@)
 
-**WARNING** You should change the admin password after login in.
+{{% notice warning %}}
+You should change the admin password after login in.
+{{% /notice %}}
 
 
 ## 2.2  Integration External LDAP (User Syncing)
-----------------------------------------
 
 When a user is not located in the external management system then the
 user profile in the application will be deactivated.
@@ -195,7 +185,7 @@ be reactivated. To prevent login, refer to the external user management
 system that the application is connected to and inactive the user from
 there.
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -218,7 +208,6 @@ Also need to set the following properties to activate the feature:
 -   **ldapmanager.attribute.guid** -            Attribute to map to guid                                                            ( **objectGUID** )
 
 ## 2.3 Jira Integration
-----------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
@@ -231,7 +220,6 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **jira.server.url** -                Jira server to connect to                                      ( **https://jira.di2e.net** )
 
 ## 2.4 Confluence Integration
-----------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 

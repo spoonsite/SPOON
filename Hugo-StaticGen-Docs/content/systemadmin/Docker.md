@@ -9,9 +9,9 @@ The Open Storefront application contains a Dockerfile in order to build Docker i
 Open Storefront also automatically builds release versions of the application for consumption by users.  These builds are available on [Docker Hub](http://hub.docker.com).
 
 
-### Using Docker Hub ###
+## Using Docker Hub
 
-#### Command Line ####
+### Command Line
 
 To pull the latest version:
 
@@ -22,7 +22,7 @@ To pull a specific version:
     docker pull flammablefork/openstorefront:v2.2.1
 
 
-#### Kitematic ####
+### Kitematic
 
 When using a GUI application, such as Kitematic, simply search Docker Hub for 'openstorefront' (without quotes). Kitematic will return the matching results, and you can download the latest version (default). The container will start automatically, and you can use the controls in the application to start, stop and delete the container.
 
@@ -30,7 +30,7 @@ Kitematic will automatically assign a random port for you to access the web appl
 
     http://localhost:[Random Port]
 
-##### Upgrading #####
+### Upgrading
 
 The Docker containers have the ability to upgrade to more recent versions.
 
