@@ -263,14 +263,7 @@ public class ContentSectionServiceImpl
 	{
 		ContentSectionMedia existing = persistenceService.findById(ContentSectionMedia.class, contentSectionMediaId);
 		if (existing != null) {
-			Path mediaPath = existing.pathToMedia();
-			if (mediaPath != null) {
-				if (mediaPath.toFile().exists()) {
-					if (mediaPath.toFile().delete()) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local content section media. Path: {0}", mediaPath.toString()));
-					}
-				}
-			}
+			removeLocalMedia(existing);
 			persistenceService.delete(existing);
 			getChangeLogService().removeEntityChange(ContentSectionMedia.class, existing);
 		}
@@ -324,7 +317,12 @@ public class ContentSectionServiceImpl
 
 		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 		contentSectionMedia.setContentSectionId(contentSectionId);
-		persistenceService.deleteByExample(contentSectionMedia);
+		List<ContentSectionMedia> media = persistenceService.queryByExample(contentSectionMedia);
+		if (media != null) {
+			media.forEach(item -> {
+				deleteMedia(item.getContentSectionMediaId());
+			});
+		}
 
 		ContentSubSection contentSubSection = new ContentSubSection();
 		contentSubSection.setContentSectionId(contentSectionId);
@@ -334,6 +332,32 @@ public class ContentSectionServiceImpl
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
 			getChangeLogService().removeEntityChange(ContentSection.class, contentSection);
+		}
+	}
+
+	void removeLocalMedia(ContentSectionMedia componentMedia)
+	{
+		if (componentMedia.getFile() != null) {
+			//Note: this can't be rolled back
+			ContentSectionMedia example = new ContentSectionMedia();
+			example.setFile(new MediaFile());
+			example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
+
+			long count = persistenceService.countByExample(example);
+			if (count == 1) {
+				MediaFile mediaFile = persistenceService.findById(MediaFile.class, componentMedia.getFile().getMediaFileId());
+				if (mediaFile != null) {
+					Path path = mediaFile.path();
+					if (path != null) {
+						if (path.toFile().exists()) {
+							if (path.toFile().delete() == false) {
+								LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
+							}
+						}
+					}
+					persistenceService.delete(mediaFile);
+				}
+			}
 		}
 	}
 
