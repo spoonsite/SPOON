@@ -127,6 +127,12 @@ public abstract class BaseReport
 				case ReportType.ACTION_REPORT:
 					baseReport = new AdminActionReport(report);
 					break;
+				case ReportType.ENTRY_LISTING:
+					baseReport = new EntryListingReport(report);
+					break;
+				case ReportType.ENTRY_STATUS:
+					baseReport = new EntryStatusReport(report);
+					break;
 				default:
 					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type: " + report.getReportType(), ErrorTypeCode.REPORT);
 			}

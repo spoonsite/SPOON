@@ -18,9 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import static edu.usu.sdl.openstorefront.core.entity.LookupEntity.newLookup;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,10 +42,11 @@ public class ReportType
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
 	public static final String EVALUATION_STATUS = "EVALSTAT";
 	public static final String ACTION_REPORT = "ACTION";
+	public static final String ENTRY_LISTING = "ENTRYLIST";
+	public static final String ENTRY_STATUS = "ENTRYSTATUS";
 
 	private String requiredPermission;
 	private boolean componentReport;
-	private List<String> supportedFormats = new ArrayList<>();
 
 	public ReportType()
 	{
@@ -68,6 +67,8 @@ public class ReportType
 		codeMap.put(EVALUATION_STATUS, newLookup(ReportType.class, EVALUATION_STATUS, "Evaluation Status", "Reports on the status of unpublished evaluations."));
 		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action", "Report on items that need administrative attention."));
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
+		codeMap.put(ENTRY_LISTING, newLookup(ReportType.class, ENTRY_LISTING, "Entry Listing", "List approved entries in a summary"));
+		codeMap.put(ENTRY_STATUS, newLookup(ReportType.class, ENTRY_STATUS, "Entry Status", "Gathers information about entry status for a time period."));
 
 		//update metadata
 		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);
@@ -77,24 +78,18 @@ public class ReportType
 		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
 		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
+		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.REPORT_ENTRY_LISTING_REPORT);
+		((ReportType) codeMap.get(ENTRY_STATUS)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
 		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT)).setComponentReport(true);
 		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
+		((ReportType) codeMap.get(ENTRY_LISTING)).setComponentReport(true);
+		((ReportType) codeMap.get(ENTRY_STATUS)).setComponentReport(true);
 
 		return codeMap;
-	}
-
-	public List<String> getSupportedFormats()
-	{
-		return supportedFormats;
-	}
-
-	public void setSupportedFormats(List<String> supportedFormats)
-	{
-		this.supportedFormats = supportedFormats;
 	}
 
 	public boolean getComponentReport()
