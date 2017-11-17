@@ -2,6 +2,7 @@
 title = "Version Migration"
 description = ""
 weight = 6
+markup = "mmark"
 +++
 
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
@@ -30,36 +31,43 @@ a.) Shutdown app server
 
 From Orient
 
-> cd bin
-> ./console.sh (or bin/console.bat under Windows)
+```bash
+$ cd bin
+$ ./console.sh (or bin/console.bat under Windows)
 orientdb> CONNECT plocal:/var/openstorefront/db/openstorefront <DBuser> <db password
 orientdb> EXPORT DATABASE /temp/mydb.json.gz
 orientdb> DISCONNECT
-  (orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
+orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
 orientdb> IMPORT DATABASE /temp/mydb.json.gz
+```
 
 ## Upgrading from 2.4 to 2.5
--------------
 
 Pre-Deployment 
-------------------------------------------------------------------------------------------------------------------------------- 
 
 **Elastic Search**
-Change the value of **elastic.server.port** in /var/openstorefront/config/**openstorefront.properties** from 9300 to **9200**
+
+Change the value of **elastic.server.port** in /var/openstorefront/config/**openstorefront.properties** from **9300** to **9200**
 
 Windows (manually)
+
 1. Install and extract Elasticsearch 5.6.3 on the system
 2. Remove/delete the root directory of Elasticsearch 2.x from the system
 3. Start Elasticsearch 5.6.3 (by running the elasticsearch-5.6.3/elasticsearch-5.6.3/elasticsearch.bat file)
 
 CentOS using Yum
-* Documentation on installation: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html
+
+*Documentation on installation: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html*
+
 1. Download and install the public signing key
-```sh
+
+```bash
 $ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 ```
+
 2. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo
-```
+
+```ini
 [elasticsearch-5.x]
 name=Elasticsearch repository for 5.x packages
 baseurl=https://artifacts.elastic.co/packages/5.x/yum
@@ -69,12 +77,16 @@ enabled=1
 autorefresh=1
 type=rpm-md
 ```
+
 3. Install Elasticsearch
-```sh
+
+```bash
 $ sudo yum install elasticsearch
 ```
-4. Run Elasticsearch (with **SysV init**)
-```sh
+
+4. Run Elasticsearch (with **SysV init**)  
+
+```bash
 # on system boot
 $ sudo chkconfig --add elasticsearch
 
@@ -82,8 +94,10 @@ $ sudo chkconfig --add elasticsearch
 $ sudo -i service elasticsearch start
 $ sudo -i service elasticsearch stop
 ```
-4. Run Elasticsearch (with **systemd**)
-```sh
+
+5. Run Elasticsearch (with **systemd**)
+
+```bash
 # on system boot
 $ sudo /bin/systemctl daemon-reload
 $ sudo /bin/systemctl enable elasticsearch.service
@@ -125,49 +139,39 @@ Getting everything setup in the Open Storefront
 
 
 ## Upgrading from 2.3 to 2.4
--------------
 
-**Note:** As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won't be avaliable until the migration is complete.  
+{{% notice note %}}
+As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won't be avaliable until the migration is complete.  
+{{% /notice %}}
 
-Pre- Deployment 
-------------------------------------------------------------------------------------------------------------------------------- 
-1. Edit /var/openstorefront/config/shiro.ini 
-under [url] section: 
+Pre-Deployment 
 
-Confirm line "/images" is 
-
-/images/* = anon 
-
-If not then update it. 
-
-Then restart server if it's running to apply changes.
-
-
+- Edit /var/openstorefront/config/shiro.ini 
+- under [url] section: 
+  Confirm line "/images" is 
+  `/images/* = anon` 
+- If not then update it. 
+- Then restart server if it's running to apply changes.
 
 ## Upgrading from 2.2 to 2.3
----------
 
 DI2E environments that use open am should follow JIRA ticket STORE-1243.
 
 1. **Update Security**  - If you haven't done any customization then the easiest
 upgrade path is to just remove the the existing shiro.ini.
 
-	a) Delete /var/openstorefront/config/shiro.ini
-	
-	b) On next server restart the application will pull the default
+	a)  Delete /var/openstorefront/config/shiro.ini
+	b)  On next server restart the application will pull the default
 	
 	Keep in mind this is for environments that use the built in user management rather then an external user management.
 	The default shiro config is set for the built in user management.
 
 2. **Update Database** - 2.3 includes a update to the database.  
 
-	a) Make sure tomcat is shutdown
-
-	b) Make a backup of existing db 
-
-			i) Copy /var/openstorefront/db directory to backup location 
-		
-	c) Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)
+	a)  Make sure tomcat is shutdown
+	b)  Make a backup of existing db
+      1. Copy /var/openstorefront/db directory to backup location 
+	d)  Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)
 
 
 

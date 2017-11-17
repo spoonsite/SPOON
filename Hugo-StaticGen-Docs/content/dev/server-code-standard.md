@@ -4,9 +4,6 @@ description = ""
 weight = 7
 +++
 
-# Server code standard
------
-
 1. Business logic, Transactions, rules should be handled in the service code. (core-service)
 2. API Interface should have documentation (javadocs)
 3. SimpleDateFormat is not thread-safe create new instances; don't make static.

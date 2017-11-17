@@ -1,5 +1,5 @@
 +++
-title = "Issue Tracking Workflow"
+title = "Jira Issue Tracking Workflow"
 description = ""
 weight = 4
 +++

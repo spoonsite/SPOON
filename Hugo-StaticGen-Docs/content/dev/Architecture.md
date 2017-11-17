@@ -5,34 +5,30 @@ description = ""
 weight = 2
 +++
 
-## 1.  Client Architecture
-------
+# 1.  Client Architecture
 
 ## 1.1 Client Architecture Diagram
 
-![clientarch](images/client-archtechture-new.png)
+![clientarch](/images/client-archtechture-new.png)
 
 Figure 1. Client Architecture Diagram
 
 ## 1.2 Client Details
------
 
 The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies significantly which in turn reduce maintenance, learning curve and improves quality and consistency.
 
 Added to that is application specific overrides and high-level components created to facilitate re-use.
 The application is composed by stripes layouts with a top-level page and fragment tool pages.
 
-## 2.  Server Architecture
-------
+# 2.  Server Architecture
 
 ## 2.1 Server Architecture Diagram
 
-![serverarch](images/serverarch.png)
+![serverarch](/images/serverarch.png)
 
 Figure 2. Server Architecture Diagram
 
 ## 2.2 Server Details
------
 
 Component definitions are as shown below:
 
@@ -53,9 +49,8 @@ The server build environment relies on the following platforms/tools:
   -  **Maven**   -            Used for the project structure, building and dependency management
 
 ## 2.3 Storage Details
------
 
-![storage](images/storage.png)
+![storage](/images/storage.png)
 
 **File System**  - Holds configuration, resources, media, imports, reports and plugins.  By default under: /var/openstorefront it can be changed by setting the system property -Dapplication.datadir=<directory> on the command line. 
 
@@ -65,16 +60,14 @@ The server build environment relies on the following platforms/tools:
 
 
 # 3. Runtime Environment
------
 
 ## 3.1 Runtime Environment Diagram
 
-![deployarch](images/deployarch.png)
+![deployarch](/images/deployarch.png)
 
 Figure 3 . Runtime Environment diagram
 
 ## 3.2 Runtime Details
------
 
 The runtime environment relies upon the following applications:
 
@@ -86,18 +79,14 @@ The runtime environment relies upon the following applications:
 -  **OpenAM**    -        OpenAM runs externally and a policy agent in Tomcat make sure the site is secure.
 
 ## 3.3 Runtime Component Integration Vectors
-----
 
-![component vectors](images/civarch.png)
+![component vectors](/images/civarch.png)
 
 Figure 4. Runtime Component Integration Vectors
 
 ## 3.4 Component Integration Vectors Details
------
 
 The component integration vectors (CIV) are show below.
-
------
 
  **Source Component**:  openstorefront           
  **Class**:  C  
@@ -149,11 +138,8 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     component that offers data from B).
 
 ## 3.5 Ports
------
 
 The applicable ports are shown below:
-
------
 
 **Port (Defaults):**  8080
 **Description:** Tomcat HTTP
