@@ -37,11 +37,11 @@ licensed under Apache V2.**
 This guide has been organized into separate documents to make it easier to navigate.
 The focus of this document is for configuration.  See other guides for other topics.
 
-[Architecture](../dev/Architecture.md)
+[Architecture]({{< ref "Architecture.md" >}})
 
-[Setup](Setup.md)
+[Setup]({{< ref "Setup.md" >}})
 
-[Developer Guide](../dev/DevelopersGuide.md)
+[Developer Guide]({{< ref "DevelopersGuide.md" >}})
 
 # 2.  Configuration
 
