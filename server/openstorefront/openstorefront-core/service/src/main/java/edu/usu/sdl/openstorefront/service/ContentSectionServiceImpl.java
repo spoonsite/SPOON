@@ -476,30 +476,16 @@ public class ContentSectionServiceImpl
 			ContentSectionMedia sectionMedia = new ContentSectionMedia();
 			sectionMedia.setContentSectionId(newSection.getContentSectionId());
 			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
-			sectionMedia.setPrivateMedia(templateMedia.getPrivateMedia());
-			sectionMedia.setFile(templateMedia.getFile());
+			if (templateMedia.getFile() != null) {
+				MediaFile file = persistenceService.findById(MediaFile.class, templateMedia.getFile().getMediaFileId());
+				sectionMedia.setFile(file);
+			}
 			if (sectionMedia.getPrivateMedia() == null) {
 				sectionMedia.setPrivateMedia(Boolean.FALSE);
-			}
-
-			Path path = templateMedia.pathToMedia();
-			if (path != null) {
-				if (path.toFile().exists()) {
-					try (InputStream in = new FileInputStream(path.toFile())) {
-						getContentSectionService().saveMedia(sectionMedia, in, templateMedia.getFile().getMimeType(), templateMedia.getFile().getOriginalName());
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-							path.toString(), templateMedia.getFile().getOriginalName()
-						}), ex);
-					}
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-						path.toString(), templateMedia.getFile().getOriginalName()
-					}));
-				}
 			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getFile().getOriginalName()));
+				sectionMedia.setPrivateMedia(templateMedia.getPrivateMedia());
 			}
+			sectionMedia.save();
 		}
 	}
 
