@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 <title>Basic Entry Template for Storefront :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -15,6 +15,8 @@
 <link href="/css/featherlight.min.css" rel="stylesheet">
 <link href="/css/auto-complete.css" rel="stylesheet">
 <link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <script src="/js/jquery-2.x.min.js"></script>
@@ -41,7 +43,8 @@
       
 	
   
-    <p>Open Storefront Documentation</p>
+    <p><img src="/images/di2eLogo.png" alt="DI2E Logo" />
+Open Storefront Documentation</p>
 
   
 
@@ -135,7 +138,7 @@
     </li>
       <li data-nav-id="/dev/jira-workflow/" class="dd-item">
         <a href="/dev/jira-workflow/">
-          <span>Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/dev/testing/" class="dd-item">
@@ -213,7 +216,10 @@
     
     </ul>
 
- <section id="footer">
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>Documentation generated on Nov 17, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+</div>
     </section>
   </div>
 </nav>
@@ -230,7 +236,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/evaluations/librarian/Basic%20Entry%20Template%20for%20Storefront.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/evaluations/librarian/Basic%20Entry%20Template%20for%20Storefront.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -268,7 +274,18 @@
     
     <div class="progress">
         <div class="wrapper">
-    
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#entry-type">Entry Type</a></li>
+<li><a href="#section-template">Section Template</a></li>
+<li><a href="#checklist-questions">Checklist Questions</a></li>
+<li><a href="#checklist-templates">Checklist Templates</a></li>
+<li><a href="#evaluation-template">Evaluation Template</a></li>
+</ul></li>
+</ul>
+</nav>
         </div>
     </div>
     
@@ -286,44 +303,65 @@
     
     
     
-    <p><strong>Entry Type</strong>
-* Type Code: REPO
-* Label: Repository
-* Description: Information Entries to describe a collection of software programs or tools
-* Data Entry: Allow on Submission Form, Attributes, Relationships, Resources</p>
+    
 
-<p><strong>Section Template</strong>
-* Template Name: Code Repo
-* Template Description: Information about a Code Repository
-* Section Title: Repo Overview
-* Section Default Content: Describe what kind of programs are stored in the repository.</p>
+<h2 id="entry-type">Entry Type</h2>
 
-<p><strong>Checklist Questions</strong>
-* QID: 1
-* Section: Discoverable
-* Question: How do you expect developers to find your asset? Please list the search terms you would expect a developer to use, and provide links to any associated public descriptions of the asset
-* Objective: Developers will generally leverage a search engine or a well-known registry to find things they are interested in. Typing some terms associated with the asset&rsquo;s functionality into a popular search engine should get &ldquo;hits&rdquo; on the asset within the first few pages of results. The idea here is to think about how a developer would look for an asset if they didn&rsquo;t know the asset existed or the name of the asset.
-* Score Criteria:
-    * Links to the entry repository or homepage show up on page 1-3 of Google search results using key terms (list the key terms used) +1
-    * The entry description is accessible via the Internet +1
-    * Entry description is complete +1
-    * The entry description is current and updated regularly +1
-    * The entry description does NOT require login to access +1</p>
+<ul>
+<li>Type Code: REPO</li>
+<li>Label: Repository</li>
+<li>Description: Information Entries to describe a collection of software programs or tools</li>
+<li>Data Entry: Allow on Submission Form, Attributes, Relationships, Resources</li>
+</ul>
 
-<pre><code>Add the numbers to the right of each item above to get the score. The minimum score is 1.
-</code></pre>
+<h2 id="section-template">Section Template</h2>
 
-<p><strong>Checklist Templates</strong>
-* Name: Repo Checklist
-* Description: Questions relating to code repositories
-* Instructions: We want to know what is in a repository as well as how people are supposed to find it.
-* Questions In Template: QID 1, Discoverable</p>
+<ul>
+<li>Template Name: Code Repo</li>
+<li>Template Description: Information about a Code Repository</li>
+<li>Section Title: Repo Overview</li>
+<li>Section Default Content: Describe what kind of programs are stored in the repository.</li>
+</ul>
 
-<p><strong>Evaluation Template</strong>
-* Name: Repo Eval
-* Description: Evaluation of a code repository
-* Checklist Template: Repo Checklist
-* Sections In Template: Code Repo*</p>
+<h2 id="checklist-questions">Checklist Questions</h2>
+
+<ul>
+<li>QID: 1</li>
+<li>Section: Discoverable</li>
+<li>Question: How do you expect developers to find your asset? Please list the search terms you would expect a developer to use, and provide links to any associated public descriptions of the asset</li>
+<li>Objective: Developers will generally leverage a search engine or a well-known registry to find things they are interested in. Typing some terms associated with the asset&rsquo;s functionality into a popular search engine should get &ldquo;hits&rdquo; on the asset within the first few pages of results. The idea here is to think about how a developer would look for an asset if they didn&rsquo;t know the asset existed or the name of the asset.</li>
+
+<li><p>Score Criteria:</p>
+
+<ul>
+<li>Links to the entry repository or homepage show up on page 1-3 of Google search results using key terms (list the key terms used) +1</li>
+<li>The entry description is accessible via the Internet +1</li>
+<li>Entry description is complete +1</li>
+<li>The entry description is current and updated regularly +1</li>
+<li>The entry description does NOT require login to access +1
+<br /></li>
+</ul>
+
+<p>Add the numbers to the right of each item above to get the score. The minimum score is 1.</p></li>
+</ul>
+
+<h2 id="checklist-templates">Checklist Templates</h2>
+
+<ul>
+<li>Name: Repo Checklist</li>
+<li>Description: Questions relating to code repositories</li>
+<li>Instructions: We want to know what is in a repository as well as how people are supposed to find it.</li>
+<li>Questions In Template: QID 1, Discoverable</li>
+</ul>
+
+<h2 id="evaluation-template">Evaluation Template</h2>
+
+<ul>
+<li>Name: Repo Eval</li>
+<li>Description: Evaluation of a code repository</li>
+<li>Checklist Template: Repo Checklist</li>
+<li>Sections In Template: Code Repo*</li>
+</ul>
 
 
     

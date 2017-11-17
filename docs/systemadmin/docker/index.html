@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 <title>Using Docker :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -15,6 +15,8 @@
 <link href="/css/featherlight.min.css" rel="stylesheet">
 <link href="/css/auto-complete.css" rel="stylesheet">
 <link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <script src="/js/jquery-2.x.min.js"></script>
@@ -41,7 +43,8 @@
       
 	
   
-    <p>Open Storefront Documentation</p>
+    <p><img src="/images/di2eLogo.png" alt="DI2E Logo" />
+Open Storefront Documentation</p>
 
   
 
@@ -133,7 +136,7 @@
     </li>
       <li data-nav-id="/dev/jira-workflow/" class="dd-item">
         <a href="/dev/jira-workflow/">
-          <span>Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/dev/testing/" class="dd-item">
@@ -212,7 +215,10 @@
     
     </ul>
 
- <section id="footer">
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>Documentation generated on Nov 17, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+</div>
     </section>
   </div>
 </nav>
@@ -229,7 +235,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/systemadmin/Docker.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/Docker.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -266,16 +272,11 @@
 <ul>
 <li>
 <ul>
-<li>
-<ul>
 <li><a href="#using-docker-hub">Using Docker Hub</a>
 <ul>
 <li><a href="#command-line">Command Line</a></li>
-<li><a href="#kitematic">Kitematic</a>
-<ul>
+<li><a href="#kitematic">Kitematic</a></li>
 <li><a href="#upgrading">Upgrading</a></li>
-</ul></li>
-</ul></li>
 <li><a href="#using-dockerfile">Using Dockerfile</a>
 <ul>
 <li><a href="#build">Build</a></li>
@@ -311,30 +312,30 @@
 
 <p>Open Storefront also automatically builds release versions of the application for consumption by users.  These builds are available on <a href="http://hub.docker.com">Docker Hub</a>.</p>
 
-<h3 id="using-docker-hub">Using Docker Hub</h3>
+<h2 id="using-docker-hub">Using Docker Hub</h2>
 
-<h4 id="command-line">Command Line</h4>
+<h3 id="command-line">Command Line</h3>
 
 <p>To pull the latest version:</p>
 
-<pre><code>docker pull flammablefork/openstorefront:latest
+<pre><code class="language-bash">docker pull flammablefork/openstorefront:latest
 </code></pre>
 
 <p>To pull a specific version:</p>
 
-<pre><code>docker pull flammablefork/openstorefront:v2.2.1
+<pre><code class="language-bash">docker pull flammablefork/openstorefront:v2.2.1
 </code></pre>
 
-<h4 id="kitematic">Kitematic</h4>
+<h3 id="kitematic">Kitematic</h3>
 
 <p>When using a GUI application, such as Kitematic, simply search Docker Hub for &lsquo;openstorefront&rsquo; (without quotes). Kitematic will return the matching results, and you can download the latest version (default). The container will start automatically, and you can use the controls in the application to start, stop and delete the container.</p>
 
 <p>Kitematic will automatically assign a random port for you to access the web application in your browser. Click on the screen shot to launch a browser to the appropriate port. If the browser is not automatically launched, view the settings for the container and locate the random port (the container will always have the port 8080, so use the other port). Open a browser, and navigate to the appropriate page:</p>
 
-<pre><code>http://localhost:[Random Port]
+<pre><code class="language-bash">http://localhost:[Random Port]
 </code></pre>
 
-<h5 id="upgrading">Upgrading</h5>
+<h3 id="upgrading">Upgrading</h3>
 
 <p>The Docker containers have the ability to upgrade to more recent versions.</p>
 
@@ -342,12 +343,12 @@
 
 <p>In Kitematic, select the option to execute inside the running container. Once the terminal opens up, run the following command:</p>
 
-<pre><code>./upgrade.sh --to-version=[Desired Version]
+<pre><code class="language-bash">./upgrade.sh --to-version=[Desired Version]
 </code></pre>
 
 <p>For example, if I wanted to upgrade to version 2.2.1, execute:</p>
 
-<pre><code>./upgrade.sh --to-version=2.2.1
+<pre><code class="language-bash">./upgrade.sh --to-version=2.2.1
 </code></pre>
 
 <h3 id="using-dockerfile">Using Dockerfile</h3>
@@ -358,24 +359,24 @@
 
 <p>To build the Docker image:</p>
 
-<pre><code>docker build -t [Tag] [Repository Name]/[Application Name] [Path To Dockerfile]
+<pre><code class="language-bash">docker build -t [Tag] [Repository Name]/[Application Name] [Path To Dockerfile]
 </code></pre>
 
 <p>For example, if I had navigated to the folder containing the Dockerfile, and was wanting to build the &lsquo;development&rsquo; version for the repository above, I would use the following example command:</p>
 
-<pre><code>docker build -t development flammablefork/openstorefront .
+<pre><code class="language-bash">docker build -t development flammablefork/openstorefront .
 </code></pre>
 
 <h4 id="run">Run</h4>
 
 <p>To create and run a Docker container:</p>
 
-<pre><code>docker run [Options] [Repository Name]/[Application Name]
+<pre><code class="language-bash">docker run [Options] [Repository Name]/[Application Name]
 </code></pre>
 
 <p>After building, I would need to then create and run a Docker container from the image:</p>
 
-<pre><code>docker run -d -p 8080:8080 flammablefork/openstorefront:development
+<pre><code class="language-bash">docker run -d -p 8080:8080 flammablefork/openstorefront:development
 </code></pre>
 
 <p>(This will create and run a Docker container using the flammablefork/openstorefront image. &lsquo;-d&rsquo; means the container would detach from the terminal, running it in the background. It would also expose port 8080 on my development workstation, which maps to the container&rsquo;s internal port of 8080)</p>
@@ -384,12 +385,12 @@
 
 <p>In order to stop a container, you will need the container ID:</p>
 
-<pre><code>docker ps
+<pre><code class="language-bash">docker ps
 </code></pre>
 
 <p>To stop a running container:</p>
 
-<pre><code>docker stop [Container ID]
+<pre><code class="language-bash">docker stop [Container ID]
 </code></pre>
 
 <h4 id="start">Start</h4>
@@ -398,12 +399,12 @@
 
 <p>In order to start a container, you will need the container ID:</p>
 
-<pre><code>docker ps -a
+<pre><code class="language-bash">docker ps -a
 </code></pre>
 
 <p>To start an existing container:</p>
 
-<pre><code>docker start [Container ID]
+<pre><code class="language-bash">docker start [Container ID]
 </code></pre>
 
 <h4 id="upgrading-1">Upgrading</h4>
@@ -414,17 +415,17 @@
 
 <p>To upgrade the container:</p>
 
-<pre><code>docker exec -d [Container ID] upgrade.sh --to-version=[Desired Version]
+<pre><code class="language-bash">docker exec -d [Container ID] upgrade.sh --to-version=[Desired Version]
 </code></pre>
 
 <p>To get the container ID:</p>
 
-<pre><code>docker ps
+<pre><code class="language-bash">docker ps
 </code></pre>
 
 <p>For example, if I wanted to upgrade to version 2.2.1:</p>
 
-<pre><code>docker exec -d [Container ID] upgrade.sh --to-version=2.2.1
+<pre><code class="language-bash">docker exec -d [Container ID] upgrade.sh --to-version=2.2.1
 </code></pre>
 
 

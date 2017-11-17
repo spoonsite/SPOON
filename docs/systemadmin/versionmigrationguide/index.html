@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 <title>Version Migration :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -15,6 +15,8 @@
 <link href="/css/featherlight.min.css" rel="stylesheet">
 <link href="/css/auto-complete.css" rel="stylesheet">
 <link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <script src="/js/jquery-2.x.min.js"></script>
@@ -41,7 +43,8 @@
       
 	
   
-    <p>Open Storefront Documentation</p>
+    <p><img src="/images/di2eLogo.png" alt="DI2E Logo" />
+Open Storefront Documentation</p>
 
   
 
@@ -133,7 +136,7 @@
     </li>
       <li data-nav-id="/dev/jira-workflow/" class="dd-item">
         <a href="/dev/jira-workflow/">
-          <span>Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/dev/testing/" class="dd-item">
@@ -212,7 +215,10 @@
     
     </ul>
 
- <section id="footer">
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>Documentation generated on Nov 17, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+</div>
     </section>
   </div>
 </nav>
@@ -229,7 +235,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/systemadmin/VersionMigrationGuide.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/VersionMigrationGuide.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -262,24 +268,7 @@
     
     <div class="progress">
         <div class="wrapper">
-    <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#note-2-4-3">Note: 2.4.3</a></li>
-<li><a href="#note-2-4-2">Note: 2.4.2</a></li>
-<li><a href="#upgrading-from-2-4-to-2-5">Upgrading from 2.4 to 2.5</a></li>
-<li><a href="#pre-deployment">Pre-Deployment</a></li>
-</ul></li>
-<li><a href="#on-system-boot">on system boot</a></li>
-<li><a href="#manually">manually</a>
-<ul>
-<li><a href="#upgrading-from-2-3-to-2-4">Upgrading from 2.3 to 2.4</a></li>
-<li><a href="#pre-deployment-1">Pre- Deployment</a></li>
-<li><a href="#upgrading-from-2-2-to-2-3">Upgrading from 2.2 to 2.3</a></li>
-</ul></li>
-</ul>
-</nav>
+    
         </div>
     </div>
     
@@ -297,17 +286,15 @@
     
     
     
-    
+    <p>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.</p>
 
-<p>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.</p>
-
-<h2 id="note-2-4-3">Note: 2.4.3</h2>
+<h2 id="note-243">Note: 2.4.3</h2>
 
 <p>This includes the database upgrade.  Note: rollback to pervious storefront version will require restore from a backup proir to 2.4.3 for existing data to work for that version.</p>
 
 <p><strong>2.4.2</strong> Must be deployed before 2.4.3 if you have existing data.</p>
 
-<h2 id="note-2-4-2">Note: 2.4.2</h2>
+<h2 id="note-242">Note: 2.4.2</h2>
 
 <p>Includes a database export and import in preparation for 2.4.3 upgrade of DB.  If you have an existing database install 2.4.2 before 2.4.3.</p>
 
@@ -329,41 +316,47 @@ a.) Shutdown app server</li>
 
 <p>From Orient</p>
 
-<blockquote>
-<p>cd bin
-./console.sh (or bin/console.bat under Windows)
-orientdb&gt; CONNECT plocal:/var/openstorefront/db/openstorefront <DBuser> <db password
-orientdb> EXPORT DATABASE /temp/mydb.json.gz
+<pre><code class="language-bash">$ cd bin
+$ ./console.sh (or bin/console.bat under Windows)
+orientdb&gt; CONNECT plocal:/var/openstorefront/db/openstorefront &lt;DBuser&gt; &lt;db password
+orientdb&gt; EXPORT DATABASE /temp/mydb.json.gz
 orientdb&gt; DISCONNECT
-  (orientdb&gt; CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
-orientdb&gt; IMPORT DATABASE /temp/mydb.json.gz</p>
-</blockquote>
-
-<h2 id="upgrading-from-2-4-to-2-5">Upgrading from 2.4 to 2.5</h2>
-
-<hr />
-
-<h2 id="pre-deployment">Pre-Deployment</h2>
-
-<p><strong>Elastic Search</strong>
-Change the value of <strong>elastic.server.port</strong> in /var/openstorefront/config/<strong>openstorefront.properties</strong> from 9300 to <strong>9200</strong></p>
-
-<p>Windows (manually)
-1. Install and extract Elasticsearch 5.6.3 on the system
-2. Remove/delete the root directory of Elasticsearch 2.x from the system
-3. Start Elasticsearch 5.6.3 (by running the elasticsearch-5.6.3/elasticsearch-5.6.3/elasticsearch.bat file)</p>
-
-<p>CentOS using Yum
-* Documentation on installation: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html">https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html</a>
-1. Download and install the public signing key</p>
-
-<pre><code class="language-sh">$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+orientdb&gt; CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
+orientdb&gt; IMPORT DATABASE /temp/mydb.json.gz
 </code></pre>
 
+<h2 id="upgrading-from-24-to-25">Upgrading from 2.4 to 2.5</h2>
+
+<p>Pre-Deployment</p>
+
+<p><strong>Elastic Search</strong></p>
+
+<p>Change the value of <strong>elastic.server.port</strong> in /var/openstorefront/config/<strong>openstorefront.properties</strong> from <strong>9300</strong> to <strong>9200</strong></p>
+
+<p>Windows (manually)</p>
+
 <ol>
-<li>Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo
-<code>
-[elasticsearch-5.x]
+<li>Install and extract Elasticsearch 5.6.3 on the system</li>
+<li>Remove/delete the root directory of Elasticsearch 2.x from the system</li>
+<li>Start Elasticsearch 5.6.3 (by running the elasticsearch-5.6.3/elasticsearch-5.6.3/elasticsearch.bat file)</li>
+</ol>
+
+<p>CentOS using Yum</p>
+
+<p><em>Documentation on installation: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html">https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html</a></em></p>
+
+<ol>
+<li>Download and install the public signing key</li>
+</ol>
+
+<pre><code class="language-bash">$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+</code></pre>
+
+<ol start="2">
+<li>Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo</li>
+</ol>
+
+<pre><code class="language-ini">[elasticsearch-5.x]
 name=Elasticsearch repository for 5.x packages
 baseurl=https://artifacts.elastic.co/packages/5.x/yum
 gpgcheck=1
@@ -371,28 +364,32 @@ gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=1
 autorefresh=1
 type=rpm-md
-</code></li>
-<li>Install Elasticsearch
-<code>sh
-$ sudo yum install elasticsearch
-</code></li>
+</code></pre>
 
-<li><p>Run Elasticsearch (with <strong>SysV init</strong>)
-```sh</p>
-
-<h1 id="on-system-boot">on system boot</h1>
-
-<p>$ sudo chkconfig &ndash;add elasticsearch</p></li>
+<ol start="3">
+<li>Install Elasticsearch</li>
 </ol>
 
-<h1 id="manually">manually</h1>
+<pre><code class="language-bash">$ sudo yum install elasticsearch
+</code></pre>
 
-<p>$ sudo -i service elasticsearch start
-$ sudo -i service elasticsearch stop</p>
+<ol start="4">
+<li>Run Elasticsearch (with <strong>SysV init</strong>)<br></li>
+</ol>
 
-<pre><code>4. Run Elasticsearch (with **systemd**)
-```sh
-# on system boot
+<pre><code class="language-bash"># on system boot
+$ sudo chkconfig --add elasticsearch
+
+# manually
+$ sudo -i service elasticsearch start
+$ sudo -i service elasticsearch stop
+</code></pre>
+
+<ol start="5">
+<li>Run Elasticsearch (with <strong>systemd</strong>)</li>
+</ol>
+
+<pre><code class="language-bash"># on system boot
 $ sudo /bin/systemctl daemon-reload
 $ sudo /bin/systemctl enable elasticsearch.service
 
@@ -407,7 +404,7 @@ $ sudo systemctl stop elasticsearch.service
 
 <p><strong>Stop:</strong>  systemctl stop elasticsearch.service</p>
 
-<p><strong>Test:</strong> curl -XGET &lsquo;localhost:9200/?pretty&rsquo;</p>
+<p><strong>Test:</strong> curl -XGET 'localhost:9200/?pretty'</p>
 
 <p>should give you a response something like this:</p>
 
@@ -426,59 +423,59 @@ $ sudo systemctl stop elasticsearch.service
 }
 </code></pre>
 
-<p>Getting everything setup in the Open Storefront
-1. In Openstorefront, navigate to Admin Tools -&gt; Application Management -&gt; System -&gt; Search Control
-2. Click &ldquo;Re-Index Listings&rdquo;
-3. (optional) if you haven&rsquo;t set the elastic.server.port to 9200, you can do so now from <strong>Admin Tools</strong> -&gt; <strong>App Management</strong> -&gt; <strong>System</strong> -&gt; <strong>System Configuration Properties</strong></p>
-
-<h2 id="upgrading-from-2-3-to-2-4">Upgrading from 2.3 to 2.4</h2>
-
-<hr />
-
-<p><strong>Note:</strong> As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won&rsquo;t be avaliable until the migration is complete.</p>
-
-<h2 id="pre-deployment-1">Pre- Deployment</h2>
+<p>Getting everything setup in the Open Storefront</p>
 
 <ol>
-<li>Edit /var/openstorefront/config/shiro.ini
-under [url] section:</li>
+<li>In Openstorefront, navigate to Admin Tools -&gt; Application Management -&gt; System -&gt; Search Control</li>
+<li>Click &quot;Re-Index Listings&quot;</li>
+<li>(optional) if you haven't set the elastic.server.port to 9200, you can do so now from <strong>Admin Tools</strong> -&gt; <strong>App Management</strong> -&gt; <strong>System</strong> -&gt; <strong>System Configuration Properties</strong></li>
 </ol>
 
-<p>Confirm line &ldquo;/images&rdquo; is</p>
+<h2 id="upgrading-from-23-to-24">Upgrading from 2.3 to 2.4</h2>
 
-<p>/images/* = anon</p>
+<div class="notices note" ><p>As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won't be avaliable until the migration is complete.</p>
+</div>
 
-<p>If not then update it.</p>
 
-<p>Then restart server if it&rsquo;s running to apply changes.</p>
+<p>Pre-Deployment</p>
 
-<h2 id="upgrading-from-2-2-to-2-3">Upgrading from 2.2 to 2.3</h2>
+<ul>
+<li>Edit /var/openstorefront/config/shiro.ini</li>
+<li>under [url] section:
+Confirm line &quot;/images&quot; is
+<code>/images/* = anon</code></li>
+<li>If not then update it.</li>
+<li>Then restart server if it's running to apply changes.</li>
+</ul>
 
-<hr />
+<h2 id="upgrading-from-22-to-23">Upgrading from 2.2 to 2.3</h2>
 
 <p>DI2E environments that use open am should follow JIRA ticket STORE-1243.</p>
 
 <ol>
-<li><p><strong>Update Security</strong>  - If you haven&rsquo;t done any customization then the easiest
+<li><p><strong>Update Security</strong>  - If you haven't done any customization then the easiest
 upgrade path is to just remove the the existing shiro.ini.</p>
 
-<p>a) Delete /var/openstorefront/config/shiro.ini</p>
-
-<p>b) On next server restart the application will pull the default</p>
+<ol type="a">
+<li>Delete /var/openstorefront/config/shiro.ini</li>
+<li>On next server restart the application will pull the default
+<br></li>
+</ol>
 
 <p>Keep in mind this is for environments that use the built in user management rather then an external user management.
 The default shiro config is set for the built in user management.</p></li>
 
 <li><p><strong>Update Database</strong> - 2.3 includes a update to the database.</p>
 
-<p>a) Make sure tomcat is shutdown</p>
+<ol type="a">
+<li>Make sure tomcat is shutdown</li>
+<li>Make a backup of existing db
 
-<p>b) Make a backup of existing db</p>
-
-<pre><code>    i) Copy /var/openstorefront/db directory to backup location 
-</code></pre>
-
-<p>c) Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)</p></li>
+<ol>
+<li>Copy /var/openstorefront/db directory to backup location</li>
+</ol></li>
+<li>Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)</li>
+</ol></li>
 </ol>
 
 

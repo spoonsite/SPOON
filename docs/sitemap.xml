@@ -67,10 +67,6 @@
   </url>
   
   <url>
-    <loc>/evaluations/</loc>
-  </url>
-  
-  <url>
     <loc>/evaluations/evaluator/storefront-evaluators-guide/</loc>
   </url>
   
@@ -84,6 +80,10 @@
   
   <url>
     <loc>/evaluations/librarian/publishinganevaluationguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/</loc>
   </url>
   
   <url>

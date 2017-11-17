@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 <title>Testing :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -15,6 +15,8 @@
 <link href="/css/featherlight.min.css" rel="stylesheet">
 <link href="/css/auto-complete.css" rel="stylesheet">
 <link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <script src="/js/jquery-2.x.min.js"></script>
@@ -41,7 +43,8 @@
       
 	
   
-    <p>Open Storefront Documentation</p>
+    <p><img src="/images/di2eLogo.png" alt="DI2E Logo" />
+Open Storefront Documentation</p>
 
   
 
@@ -134,7 +137,7 @@
     </li>
       <li data-nav-id="/dev/jira-workflow/" class="dd-item">
         <a href="/dev/jira-workflow/">
-          <span>Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/dev/testing/" class="dd-item active">
@@ -212,7 +215,10 @@
     
     </ul>
 
- <section id="footer">
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>Documentation generated on Nov 17, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+</div>
     </section>
   </div>
 </nav>
@@ -229,7 +235,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/dev/testing.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/dev/testing.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -328,37 +334,46 @@ Regression tests are captured in a separate document. <a href="https://confluenc
 
 <h2 id="selenium-tests">Selenium Tests</h2>
 
-<p>How to run Selenium tests:
-1. These steps assume you have the latest code for your branch.
-2. Go to your testconfig.properties file found in your var directory (/var/openstorefront/config/testconfig).  Update the email field in the following section:
+<p>How to run Selenium tests:</p>
+
+<ol>
+<li>These steps assume you have the latest code for your branch.</li>
+<li>Go to your testconfig.properties file found in your var directory (/var/openstorefront/config/testconfig).  Update the email field in the following section:
 test.server=<a href="http://localhost:8080/openstorefront/">http://localhost:8080/openstorefront/</a>
 #EDGE, CHROME, IE, FIREFOX, ALL
 test.drivers=CHROME
 test.username=admin
 test.password=Secret1@
 test.newuseremail= <em><em>your email</em></em>
-report.dir=/var/openstorefront/testreports
-3. Storefront and ElasticSearch must be running in order to run a Selenium test.
-4. Right click on <em>selenium-tests</em> found in the Projects tab of NetBeans.
-5. Select <em>Run Selenium Tests</em>.
-6. To run an individual Selenium test: locate the test file, right click on it, and select <em>Test File</em>.
-7. Note: Selenium tests end with <em>IT.java</em>.</p>
+report.dir=/var/openstorefront/testreports</li>
+<li>Storefront and ElasticSearch must be running in order to run a Selenium test.</li>
+<li>Right click on <em>selenium-tests</em> found in the Projects tab of NetBeans.</li>
+<li>Select <em>Run Selenium Tests</em>.</li>
+<li>To run an individual Selenium test: locate the test file, right click on it, and select <em>Test File</em>.</li>
+<li>Note: Selenium tests end with <em>IT.java</em>.</li>
+</ol>
 
 <h2 id="unit-tests">Unit Tests</h2>
 
-<p>How to run Unit Tests:
-1. Note: Unit test filenames end with <em>Test.java</em>.
-2. To run an individual unit test: locate the file, right click and select <em>Test File</em>.
-3. To run a group of unit tests: locate the project, right click and select <em>Test</em>.
-4. All unit tests will be run during a project build.</p>
+<p>How to run Unit Tests:</p>
+
+<ol>
+<li>Note: Unit test filenames end with <em>Test.java</em>.</li>
+<li>To run an individual unit test: locate the file, right click and select <em>Test File</em>.</li>
+<li>To run a group of unit tests: locate the project, right click and select <em>Test</em>.</li>
+<li>All unit tests will be run during a project build.</li>
+</ol>
 
 <h2 id="integration-tests-container-page">Integration Tests/Container Page</h2>
 
-<p>How to run integration tests:
-1. Storefront and ElasticSearch must be running in order to run this group of tests.
-2. Go to <a href="http://localhost:8080/openstorefront/test/ServiceTest.action">http://localhost:8080/openstorefront/test/ServiceTest.action</a>
-3. Login as admin if you haven&rsquo;t already.
-4. Container page allows you to <em>Run All Tests</em>, a group of tests (e.g. Alert Tests), or individual tests (e.g. Find Lookup Test).</p>
+<p>How to run integration tests:</p>
+
+<ol>
+<li>Storefront and ElasticSearch must be running in order to run this group of tests.</li>
+<li>Go to <a href="http://localhost:8080/openstorefront/test/ServiceTest.action">http://localhost:8080/openstorefront/test/ServiceTest.action</a></li>
+<li>Login as admin if you haven&rsquo;t already.</li>
+<li>Container page allows you to <em>Run All Tests</em>, a group of tests (e.g. Alert Tests), or individual tests (e.g. Find Lookup Test).</li>
+</ol>
 
 
     
@@ -370,7 +385,7 @@ report.dir=/var/openstorefront/testreports
 </div>
 
 <div id="navigation">
-<a class="nav nav-prev" href="/dev/jira-workflow/" title="Issue Tracking Workflow"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/dev/jira-workflow/" title="Jira Issue Tracking Workflow"> <i class="fa fa-chevron-left"></i></a>
     <a class="nav nav-next" href="/dev/uiguide/" title="User Interface Guide" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 <title>Clearinghouse Administrator Guide :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -15,6 +15,8 @@
 <link href="/css/featherlight.min.css" rel="stylesheet">
 <link href="/css/auto-complete.css" rel="stylesheet">
 <link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <script src="/js/jquery-2.x.min.js"></script>
@@ -41,7 +43,8 @@
       
 	
   
-    <p>Open Storefront Documentation</p>
+    <p><img src="/images/di2eLogo.png" alt="DI2E Logo" />
+Open Storefront Documentation</p>
 
   
 
@@ -133,7 +136,7 @@
     </li>
       <li data-nav-id="/dev/jira-workflow/" class="dd-item">
         <a href="/dev/jira-workflow/">
-          <span>Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/dev/testing/" class="dd-item">
@@ -212,7 +215,10 @@
     
     </ul>
 
- <section id="footer">
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>Documentation generated on Nov 17, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+</div>
     </section>
   </div>
 </nav>
@@ -229,7 +235,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/systemadmin/AdministratorGuide.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/AdministratorGuide.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -313,19 +319,14 @@
 
 <p>Version 2.4</p>
 
-<p>Space Dynamics Laboratory</p>
+<p>Space Dynamics Laboratory<br />
+Utah State University Research Foundation<br />
+1695 North Research Park Way<br />
+North Logan, Utah 84341</p>
 
-<p>Utah State University Research Foundation</p>
-
-<p>1695 North Research Park Way</p>
-
-<p>North Logan, Utah 84341</p>
-
-<p><img src="../images/sdl.png" alt="logo" /></p>
+<p><img src="/images/sdl.png" alt="logo" /></p>
 
 <h1 id="overview">Overview</h1>
-
-<hr />
 
 <p>The Open Storefront application is a software cataloging system that is used to catalog components
 of interest to the DI2E community. Components include Government off
@@ -335,17 +336,12 @@ Excellence are displayed in the Storefront and give details on the
 following:</p>
 
 <ul>
-<li><p>Ownership</p></li>
-
-<li><p>Where/How to access the software</p></li>
-
-<li><p>Software vitals</p></li>
-
-<li><p>Conformance</p></li>
-
-<li><p>Links to documentation, source code and other artifacts</p></li>
-
-<li><p>Evaluation information</p></li>
+<li>Ownership</li>
+<li>Where/How to access the software</li>
+<li>Software vitals</li>
+<li>Conformance</li>
+<li>Links to documentation, source code and other artifacts</li>
+<li>Evaluation information</li>
 </ul>
 
 <p><strong>Open Storefront is developed by Space Dynamics Laboratory and is
@@ -353,30 +349,22 @@ licensed under Apache V2.</strong></p>
 
 <h1 id="1-other-guides">1. Other Guides</h1>
 
-<hr />
-
 <p>This guide has been organized into separate documents to make it easier to navigate.
 The focus of this document is for configuration.  See other guides for other topics.</p>
 
-<p><a href="../dev/Architecture.md">Architecture</a></p>
+<p><a href="/dev/architecture/">Architecture</a></p>
 
-<p><a href="Setup.md">Setup</a></p>
+<p><a href="/systemadmin/setup/">Setup</a></p>
 
-<p><a href="../dev/DevelopersGuide.md">Developer Guide</a></p>
+<p><a href="/dev/developersguide/">Developer Guide</a></p>
 
 <h1 id="2-configuration">2.  Configuration</h1>
 
-<hr />
-
 <h2 id="2-1-security">2.1  Security</h2>
-
-<hr />
 
 <h3 id="2-1-1-supported-realms">2.1.1 Supported Realms</h3>
 
-<hr />
-
-<p>Configure in /var/openstorefront/config/shiro.ini</p>
+<p>Configure in <code>/var/openstorefront/config/shiro.ini</code></p>
 
 <ul>
 <li><p>INI (Properties File; Default)</p>
@@ -386,22 +374,19 @@ The focus of this document is for configuration.  See other guides for other top
 <li><p>LDAP (Example)</p></li>
 </ul>
 
-<blockquote>
-<p>[main]</p>
-</blockquote>
+<pre><code class="language-ini">[main]
 
-<ul>
-<li><p>ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm</p></li>
+ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
 
-<li><p>ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com</p></li>
+ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com
 
-<li><p>ldapRealm.contextFactory.url = ldap://ldapHost:389</p></li>
+ldapRealm.contextFactory.url = ldap://ldapHost:389
 
-<li><p>ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5</p></li>
+ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
 
-<li><p>ldapRealm.contextFactory.environment[some.obscure.jndi.key] = some
-value</p></li>
-</ul>
+ldapRealm.contextFactory.environment[some.obscure.jndi.key] = some
+value
+</code></pre>
 
 <h4 id="2-1-1-1-database">2.1.1.1 Database</h4>
 
@@ -409,48 +394,37 @@ value</p></li>
 <a href="http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi">Configure JDBC Realm</a>
 for how to configure JDBCRealm to obtain its DataSource from JNDI.</p>
 
-<blockquote>
-<p>[main]</p>
-</blockquote>
+<pre><code class="language-ini">[main]
 
-<ul>
-<li><p>dataSource = org.apache.shiro.jndi.JndiObjectFactory</p></li>
+dataSource = org.apache.shiro.jndi.JndiObjectFactory
 
-<li><p>dataSource.resourceName = java://app/jdbc/myDataSource</p></li>
+dataSource.resourceName = java://app/jdbc/myDataSource
 
-<li><p>jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm</p></li>
+jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 
-<li><p>jdbcRealm.permissionsLookupEnabled = true</p></li>
+jdbcRealm.permissionsLookupEnabled = true
 
-<li><p>jdbcRealm.dataSource = \$dataSource</p></li>
-</ul>
+jdbcRealm.dataSource = $dataSource
 
-<p># you can customize the authenticationQuery, userRolesQuery and
-permissionsQuery,  if needed.</p>
+# you can customize the authenticationQuery, userRolesQuery and permissionsQuery,  if needed.
 
-<ul>
-<li>securityManager.realms = \$realm</li>
-</ul>
+securityManager.realms = $realm
+</code></pre>
 
 <h4 id="2-1-1-2-openam-request-header">2.1.1.2 OPENAM (Request Header)</h4>
 
-<blockquote>
-<p>[main]</p>
-</blockquote>
+<pre><code class="language-ini">[main]
 
-<p>#Also, remember to comment out the users and roles to remove the INIRealm</p>
+#Also, remember to comment out the users and roles to remove the INIRealm
 
-<ul>
-<li><p>headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm</p></li>
+headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
 
-<li><p>securityManager.realms = \$headerRealm</p></li>
-</ul>
+securityManager.realms = $headerRealm
+</code></pre>
 
 <h4 id="2-1-1-3-integration-with-openam">2.1.1.3 Integration with OpenAM</h4>
 
-<hr />
-
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -502,19 +476,17 @@ permissionsQuery,  if needed.</p>
 
 <h3 id="2-1-2-user-types">2.1.2 User Types</h3>
 
-<hr />
-
 <p>The user types are:</p>
 
 <p>Are defined as based on the roles they belong to.<br />
 If using the built-in security then the system will create default roles for
 default users, admins and evaluators.  It will create a default admin user: (admin / Secret1@)</p>
 
-<p><strong>WARNING</strong> You should change the admin password after login in.</p>
+<div class="notices warning" ><p>You should change the admin password after login in.</p>
+</div>
+
 
 <h2 id="2-2-integration-external-ldap-user-syncing">2.2  Integration External LDAP (User Syncing)</h2>
-
-<hr />
 
 <p>When a user is not located in the external management system then the
 user profile in the application will be deactivated.</p>
@@ -528,7 +500,7 @@ be reactivated. To prevent login, refer to the external user management
 system that the application is connected to and inactive the user from
 there.</p>
 
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -553,9 +525,7 @@ there.</p>
 
 <h2 id="2-3-jira-integration">2.3 Jira Integration</h2>
 
-<hr />
-
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -569,9 +539,7 @@ there.</p>
 
 <h2 id="2-4-confluence-integration">2.4 Confluence Integration</h2>
 
-<hr />
-
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -581,9 +549,7 @@ there.</p>
 
 <h2 id="2-5-mail-server">2.5 Mail Server</h2>
 
-<hr />
-
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -604,9 +570,7 @@ there.</p>
 
 <h2 id="2-6-other-application-properties">2.6 Other Application Properties</h2>
 
-<hr />
-
-<p>Configure in: /var/openstorefront/config/openstorefront.properties</p>
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
 <p>( <strong>Property</strong> -description ( <strong>Default</strong> ))</p>
 
@@ -648,8 +612,6 @@ there.</p>
 
 <h1 id="3-database-management">3. Database Management</h1>
 
-<hr />
-
 <p>The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.</p>
 
@@ -658,11 +620,11 @@ needed/used).</p>
 
 <h2 id="3-1-refreshing-the-database">3.1 Refreshing the Database</h2>
 
-<hr />
-
-<p><strong>CAUTION:</strong> This will wipe out all data in the application. Data, such
+<div class="notices warning" ><p>This will wipe out all data in the application. Data, such
 as User profiles, cannot be recovered. Component user data can be
 preserved by performing an export from the component admin tool.</p>
+</div>
+
 
 <p>Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:</p>
@@ -686,11 +648,11 @@ files that are packaged with the application.</p>
 
 <h2 id="3-2-installing-database-console">3.2 Installing Database Console</h2>
 
-<hr />
-
-<p><strong>CAUTION:</strong> Viewing (Querying) information is fine; however, use
+<div class="notices warning" ><p>Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.</p>
+</div>
+
 
 <ol>
 <li><p>Download Orient DB (Currently using the 2.1.x series) at
@@ -720,16 +682,18 @@ export and imports.</p></li>
 
 <h2 id="3-3-installing-database-studio">3.3 Installing Database Studio</h2>
 
-<hr />
-
-<p><strong>NOTE</strong> Orient DB includes a web application for viewing the database
+<div class="notices note" ><p>Orient DB includes a web application for viewing the database
 visually, instead of viewing everything from the console. Once installed,
 Orient DB Studio will run with the database itself once OpenStoreFront
 is running, and will not require anything to be run locally</p>
+</div>
 
-<p><strong>CAUTION:</strong> Viewing (Querying) information is fine; however, use
+
+<div class="notices warning" ><p>Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.</p>
+</div>
+
 
 <ol>
 <li><p>Download Orient DB (Currently using the 2.1.x series) at
