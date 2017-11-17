@@ -49,7 +49,7 @@ The focus of this document is for configuration.  See other guides for other top
 
 ### 2.1.1 Supported Realms
 
-Configure in /var/openstorefront/config/shiro.ini
+Configure in `/var/openstorefront/config/shiro.ini`
 
 -   INI (Properties File; Default)
 
@@ -109,7 +109,6 @@ securityManager.realms = $headerRealm
 ```
 
 #### 2.1.1.3 Integration with OpenAM
------
 
 Configure in: `/var/openstorefront/config/openstorefront.properties`
 
@@ -209,7 +208,7 @@ Also need to set the following properties to activate the feature:
 
 ## 2.3 Jira Integration
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -221,7 +220,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 
 ## 2.4 Confluence Integration
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -229,9 +228,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 
 
 ## 2.5 Mail Server
------------
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -249,9 +247,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **test.email** -           Set for automated testing only; the email to use for testing
 
 ## 2.6 Other Application Properties
-----------------------------
 
-Configure in: /var/openstorefront/config/openstorefront.properties
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 ( **Property** -description ( **Default** ))
 
@@ -290,7 +287,6 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **2000** )
 
 # 3. Database Management
------
 
 The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.  
@@ -299,11 +295,12 @@ See the following for information on outside control (should rarely be
 needed/used).
 
 ## 3.1 Refreshing the Database
------------------------
 
-**CAUTION:** This will wipe out all data in the application. Data, such
+{{% notice warning %}}
+This will wipe out all data in the application. Data, such
 as User profiles, cannot be recovered. Component user data can be
 preserved by performing an export from the component admin tool.
+{{% /notice %}}
 
 Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:
@@ -324,11 +321,12 @@ import directories are empty, the application will load default lookup
 files that are packaged with the application.
 
 ## 3.2 Installing Database Console
-----------------------------
 
-**CAUTION:** Viewing (Querying) information is fine; however, use
+{{% notice warning %}}
+Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.
+{{% /notice %}}
 
 1.  Download Orient DB (Currently using the 2.1.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
@@ -353,16 +351,19 @@ functionality on top.
     export and imports.
 
 ## 3.3 Installing Database Studio
-----------------------------
 
-**NOTE** Orient DB includes a web application for viewing the database
+{{% notice note %}}
+Orient DB includes a web application for viewing the database
 visually, instead of viewing everything from the console. Once installed,
 Orient DB Studio will run with the database itself once OpenStoreFront
 is running, and will not require anything to be run locally
+{{% /notice %}}
 
-**CAUTION:** Viewing (Querying) information is fine; however, use
+{{% notice warning %}}
+Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.
+{{% /notice %}}
 
 1.  Download Orient DB (Currently using the 2.1.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
