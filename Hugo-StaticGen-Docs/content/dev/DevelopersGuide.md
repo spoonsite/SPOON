@@ -68,9 +68,9 @@ The following key libraries were used in the development:
 
 Install Maven if not installed by your IDE - http://maven.apache.org/install.html
 
-run "mvn install" from \$PROJECT\_HOME/server/openstorefront
+run `mvn install` from `$PROJECT\_HOME/server/openstorefront`
 
-(Skip tests) mvn -Dmaven.test.skip=true or -DskipTests=true install
+(Skip tests) `mvn -Dmaven.test.skip=true` or `mvn -DskipTests=true install`
 
 
 ## 1.5 Deploying
@@ -84,8 +84,10 @@ mechanisms.
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
 
-**NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup.
+{{% notice note %}}
+Searching requires an external Elasticsearch/(Solr) instance setup.
 See [Setup](../systemadmin/Setup.md)
+{{% /notice %}}
 
 
 ## 1.7 Testing
@@ -94,8 +96,6 @@ See [Setup](../systemadmin/Setup.md)
   * run as part of the Maven install.
   * NetBeans, Eclipse and IntelliJ Idea have native graphical test runners built in.
   * with the JUnit CLI java org.junit.runner.JUnitCore [class to test] http://junit.org/junit4/faq.html#atests_1
-
-
 -   Container/Integration tests login as admin go to
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
 
@@ -212,8 +212,10 @@ service.getImportService().unregisterFormat(customFormat.class.getName());
 4 - Upload build JAR using the Admin->Application Management->System->Plugins
 or copy jar to /var/openstorefront/perm/plugins and the application will auto-deploy
 
-**Note:**  Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
+{{% notice note %}}
+Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
 All other third-party libraries must be included with your JAR.
+{{% /notice %}}
 
 ### 2.2.2 Parser Workflow
 
@@ -247,9 +249,12 @@ All other third-party libraries must be included with your JAR.
     - Then it should return a record such as ComponentAll to be stored.
     - If the method return null it will skip the record.
 
-**Note:** The developer has access to the filehistory record and the service proxy.
+{{% notice note %}}
+The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
+{{% /notice %}}
+
 
 # 3. Database Management
 
@@ -261,9 +266,11 @@ needed/used).
 
 ## 3.1 Refreshing the Database
 
-**CAUTION:** This will wipe out all data in the application. Data, such
+{{% alert theme="danger" %}}
+**CAUTION** This will wipe out all data in the application. Data, such
 as User profiles, cannot be recovered. Component user data can be
 preserved by performing an export from the component admin tool.
+{{% /alert %}}
 
 Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:
@@ -282,9 +289,11 @@ files that are packaged with the application.
 
 ## 3.2 Installing Database Console
 
-**CAUTION:** Viewing (Querying) information is fine; however, use
+{{% notice warning %}}
+Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.
+{{% /notice %}}
 
 1.  Download Orient DB (Currently using the 2.1.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
@@ -310,14 +319,18 @@ functionality on top.
 
 ## 3.3 Installing Database Studio
 
-**NOTE** Orient DB includes a web application for viewing the database
+{{% notice note %}}
+Orient DB includes a web application for viewing the database
 visually, instead of viewing everything from the console. Once installed,
 Orient DB Studio will run with the database itself once OpenStoreFront 
 is running, and will not require anything to be run locally
+{{% /notice %}}
 
-**CAUTION:** Viewing (Querying) information is fine; however, use
+{{% notice warning %}}
+Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.
+{{% /notice %}}
 
 1.  Download Orient DB (Currently using the 2.1.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
