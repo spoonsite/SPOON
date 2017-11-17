@@ -36,8 +36,35 @@ If the conflict is related to the evaluation, view the evaluation's history by d
 
 1. Go to **Evaluations** under **Evaluation Management**
 2. Select the evaluation and click on the **Edit** button
-3. On the evaluation form, click on the **Change History** button.
+3. On the evaluation form, click on the **Change History** button
 
 Another conflict the librarian may run into is multiple change requests.  To resolve conflicts between change requests use the entry change request tool to edit and approve changes.
 
-1. 
+1. Go to **Entries** under **Data Management**  
+2. Select the entry and click on **Change Requests** under the **Action** drop-down menu  
+3. Use the form to compare the current state of the entry to the proposed changes in the request.
+4. Use the toolbar to approve change requests, delete change requests, edit entries, and sending messages to the submitter of a change request. 
+
+
+## Common Publishing Scenarios Encountered By Librarians  
+
+### Scenario 1
+
+An evaluator has completed an evaluation on an approved entry.  There are no change requests pending for the entry and all
+conflicts have been resolved.
+
+### Scenario 2  
+
+The evaluation is complete for an approved entry, but the librarian or administrator needs tom make a change to the entry.
+
+### Scenario 3  
+
+An approved entry is in the process of being evaluated, but the librarian or administrator has just received a change request from the entry's submitter.
+
+### Scenario 4  
+
+The evaluator has begun the evaluation for an entry but due to lack of information can only fill in the summary section.  There should be open dialog at this point between the librarian and the evaluator.
+
+### Scenario 5  
+
+The evaluator has filled in the majority of the sections but was unable to install software.
