@@ -25,7 +25,8 @@ import java.util.List;
 public class EntryListingReportModel
 		extends BaseReportModel
 {
-
+	private String viewLink;
+	
 	private List<EntryListingReportLineModel> data = new ArrayList<>();
 
 	@Override
@@ -37,6 +38,16 @@ public class EntryListingReportModel
 	public void setData(List<EntryListingReportLineModel> data)
 	{
 		this.data = data;
+	}
+
+	public String getViewLink()
+	{
+		return viewLink;
+	}
+
+	public void setViewLink(String viewLink)
+	{
+		this.viewLink = viewLink;
 	}
 
 }

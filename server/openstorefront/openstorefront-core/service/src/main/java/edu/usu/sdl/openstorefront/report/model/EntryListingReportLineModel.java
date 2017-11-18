@@ -30,6 +30,7 @@ public class EntryListingReportLineModel
 	private String entryType;
 	private Date lastUpdatedDts;
 	private String evaluationStatus;
+	private String viewLink;
 
 	public EntryListingReportLineModel()
 	{
@@ -93,6 +94,16 @@ public class EntryListingReportLineModel
 	public void setEvaluationStatus(String evaluationStatus)
 	{
 		this.evaluationStatus = evaluationStatus;
+	}
+
+	public String getViewLink()
+	{
+		return viewLink;
+	}
+
+	public void setViewLink(String viewLink)
+	{
+		this.viewLink = viewLink;
 	}
 
 }

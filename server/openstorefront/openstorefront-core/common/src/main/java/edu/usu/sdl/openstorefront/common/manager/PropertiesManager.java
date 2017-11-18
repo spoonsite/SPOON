@@ -272,7 +272,7 @@ public class PropertiesManager
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 			defaults.put(KEY_REPORT_LIFETIME, "180");
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
-                        defaults.put(KEY_MAX_POST_SIZE, "2000"); // 2MB
+            defaults.put(KEY_MAX_POST_SIZE, "1000"); // 1GB
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

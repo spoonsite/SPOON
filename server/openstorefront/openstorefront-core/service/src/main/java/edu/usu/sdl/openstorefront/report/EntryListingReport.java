@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -25,10 +27,19 @@ import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
+import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
 import edu.usu.sdl.openstorefront.report.model.EntryListingReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.EntryListingReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
+import edu.usu.sdl.openstorefront.service.manager.ReportManager;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +63,9 @@ public class EntryListingReport
 	protected EntryListingReportModel gatherData()
 	{
 		EntryListingReportModel entryListingReportModel = new EntryListingReportModel();
-
+		entryListingReportModel.setTitle(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront"));
+		String viewLinkBase = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/View.action?id=";
+		
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
@@ -74,6 +87,7 @@ public class EntryListingReport
 			EntryListingReportLineModel lineModel = new EntryListingReportLineModel();
 
 			lineModel.setComponentId(component.getComponentId());
+			lineModel.setViewLink(viewLinkBase + component.getComponentId());			
 			lineModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
 			lineModel.setLastUpdatedDts(component.getLastActivityDts());
 			lineModel.setName(component.getName());
@@ -82,20 +96,37 @@ public class EntryListingReport
 
 			List<Evaluation> evals = evalMap.get(component.getComponentId());
 			if (evals != null) {
-
-				//lineModel.setEvaluationStatus();
+				String status = "";
+				if (evals.size() > 1) {
+					int completeCount = 0;
+					for (Evaluation evaluation : evals) {
+						if (evaluation.getPublished()) {
+							completeCount++;
+						}
+					}
+					if (completeCount == evals.size()) {
+						status = "Multiple Complete";
+					} else if (completeCount > 0) {
+						status = "Complete evaluations and some Inprogress";
+					} else {
+						status = "Multiple evaluations Inprogress";
+					}
+					
+				} else {
+					Evaluation evaluation = evals.get(0);
+					if (evaluation.getPublished()) {
+						status = "Complete";
+					} else {
+						status = "Inprogress";
+					}					
+				}
+				lineModel.setEvaluationStatus(status);
 			}
 
 			entryListingReportModel.getData().add(lineModel);
 		}
 
 		return entryListingReportModel;
-	}
-
-	@Override
-	protected Map<String, ReportWriter> getWriterMap()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
@@ -121,11 +152,13 @@ public class EntryListingReport
 		switch (reportTransmissionType) {
 			case ReportTransmissionType.VIEW:
 				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
 				formats.add(format);
 				break;
 
 			case ReportTransmissionType.EMAIL:
 				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
 				formats.add(format);
 				break;
 
@@ -138,4 +171,57 @@ public class EntryListingReport
 		return formats;
 	}
 
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewFormat = outputKey(ReportTransmissionType.VIEW, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeHtml);
+
+		viewFormat = outputKey(ReportTransmissionType.VIEW, ReportFormat.PDF);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writePdf);
+
+		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeHtml);
+
+		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.PDF);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writePdf);
+		
+		viewFormat = outputKey(ReportTransmissionType.CONFLUENCE, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeHtml);		
+
+		return writerMap;		
+	}	
+	
+	private void writeHtml(BaseGenerator generator, EntryListingReportModel reportModel)
+	{
+		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
+		String renderedTemplate = createHtml(reportModel);
+		htmlGenerator.addLine(renderedTemplate);		
+	}
+	
+	private void writePdf(BaseGenerator generator, EntryListingReportModel reportModel)
+	{
+		HtmlToPdfGenerator pdfGenerator = (HtmlToPdfGenerator) generator;
+		String renderedTemplate = createHtml(reportModel);
+		pdfGenerator.savePdfDocument(renderedTemplate);		
+	}	
+	
+	private String createHtml(EntryListingReportModel reportModel)
+	{
+		String renderedTemplate = null;
+		try {
+			Configuration templateConfig = ReportManager.getTemplateConfig();
+			Template template = templateConfig.getTemplate("entryListing.ftl");
+			Writer writer = new StringWriter();
+			template.process(reportModel, writer);
+			renderedTemplate = writer.toString();
+		} catch (Exception e) {
+			throw new OpenStorefrontRuntimeException(e);
+		}
+
+		return renderedTemplate;		
+	}
+	
 }

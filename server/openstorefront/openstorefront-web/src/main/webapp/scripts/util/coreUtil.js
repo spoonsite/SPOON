@@ -999,6 +999,24 @@ var CoreUtil = {
 				return '<i class="fa fa-close"></i>';
 			}
 		}
+	},
+	split: function(text, split) {
+		var tokens = [];
+		if (text && text.length > 0){
+			var token = '';
+			for (var i=0; i<text.length; i++) {
+				var char = text.charAt(i);
+				if (Ext.Array.contains(split)) {
+					if (token !== '') {
+						tokens.push(token);						
+					}
+					token = '';					
+				} else {
+					token += char;
+				}
+			}
+		}		
+		return tokens;
 	}
 
 };

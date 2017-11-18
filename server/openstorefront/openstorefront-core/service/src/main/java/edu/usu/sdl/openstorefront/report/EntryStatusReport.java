@@ -15,13 +15,29 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
+import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.report.model.EntryStatusDetailModel;
+import edu.usu.sdl.openstorefront.report.model.EntryStatusReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -30,34 +46,334 @@ import java.util.Map;
 public class EntryStatusReport
 		extends BaseReport
 {
-
+	private static final int MAX_DESCRIPTION_SIZE = 200;
+	
+	private Map<String, UserProfile> userMap = new HashMap<>();
+	
 	public EntryStatusReport(Report report)
 	{
 		super(report);
 	}
 
 	@Override
-	protected <T extends BaseReportModel> T gatherData()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	protected EntryStatusReportModel gatherData()
+	{	
+		EntryStatusReportModel reportModel = new EntryStatusReportModel();
+		reportModel.setTitle("Entry Status");		
+		updateReportTimeRange();
+		
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(componentExample.getActiveStatus());
 
-	@Override
-	protected Map<String, ReportWriter> getWriterMap()
+		QueryByExample queryByExample = new QueryByExample(componentExample);
+
+		Component componentStartExample = new Component();
+		componentStartExample.setCreateDts(report.getReportOption().getStartDts());
+		
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(componentStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		Component componentEndExample = new Component();
+		componentEndExample.setCreateDts(report.getReportOption().getEndDts());		
+		
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(componentEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> components = service.getPersistenceService().queryByExample(queryByExample);
+		components = filterEngine.filter(components);
+				
+		for (Component component : components) {
+			EntryStatusDetailModel detailModel = new EntryStatusDetailModel();
+			detailModel.setName(component.getName());
+			detailModel.setCreateUser(component.getCreateUser());
+			detailModel.setCreateDts(component.getCreateDts());
+			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
+			detailModel.setDescription(description);
+			
+			detailModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
+			detailModel.setStatus(TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState()));
+			
+			UserProfile user = findUser(component.getCreateUser());
+			
+			if (user != null) {
+				detailModel.setCreateUserEmail(user.getEmail());
+				detailModel.setCreateUserOrganization(user.getOrganization());				
+			} 
+			
+			if (component.getSubmittedDts() != null) {
+				detailModel.setUserSubmitted(true);
+				detailModel.setSubmissionDate(component.getSubmittedDts());				
+			}
+			
+			reportModel.getCreatedEntries().add(detailModel);		
+		}
+		
+		
+		Evaluation evaluationExample = new Evaluation();
+		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
+
+		queryByExample = new QueryByExample(evaluationExample);
+
+		Evaluation evaluationStartExample = new Evaluation();
+		evaluationStartExample.setCreateDts(report.getReportOption().getStartDts());
+		
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(evaluationStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		Evaluation evaluationEndExample = new Evaluation();
+		evaluationEndExample.setCreateDts(report.getReportOption().getEndDts());		
+		
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(componentEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		evaluations = filterEngine.filter(evaluations);		
+		List<EntryStatusDetailModel> entryStatusDetailModels = toEvalToLineModel(reportModel, evaluations);
+		reportModel.setEvaluationsPublished(entryStatusDetailModels);
+		
+		List<Evaluation> allEvals = evaluationExample.findByExample();
+		allEvals = filterEngine.filter(allEvals);
+		
+		List<Evaluation> publishedEvals = allEvals.stream()
+												.filter(e->{
+													boolean keep = false;
+													if (e.getPublished()) {
+														if (e.getUpdateDts().after(reportModel.getDataStartDate()) &&
+															e.getUpdateDts().before(reportModel.getDataEndDate()))
+														{
+															keep = true;
+														}
+													}
+													return keep;
+												})
+												.collect(Collectors.toList());
+		
+		entryStatusDetailModels = toEvalToLineModel(reportModel, publishedEvals);
+		reportModel.setEvaluationsPublished(entryStatusDetailModels);
+		
+		allEvals.removeIf(e->{
+			return e.getPublished();
+		});
+		entryStatusDetailModels = toEvalToLineModel(reportModel, allEvals);
+		reportModel.setEvaluationsInprogress(entryStatusDetailModels);
+		
+		
+		return reportModel;
+	}
+	
+	private List<EntryStatusDetailModel> toEvalToLineModel(EntryStatusReportModel reportModel, List<Evaluation> evaluations)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<EntryStatusDetailModel> entryStatusDetailModels = new ArrayList<>();
+		for (Evaluation evaluation : evaluations) {
+			
+			Component component = new Component();
+			component.setComponentId(evaluation.getComponentId());
+			component = component.find();
+			if (component == null) {
+				component = new Component();
+				component.setComponentId(evaluation.getComponentId());
+				component = component.find();
+			}
+									
+			EntryStatusDetailModel detailModel = new EntryStatusDetailModel();
+			detailModel.setName(component.getName());
+			detailModel.setCreateUser(evaluation.getCreateUser());
+			detailModel.setCreateDts(evaluation.getCreateDts());
+			detailModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
+			
+			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
+			detailModel.setDescription(description);
+			
+			if (evaluation.getPublished()) {
+				detailModel.setStatus("Published");
+				detailModel.setPublished(true);				
+			} else {
+				detailModel.setStatus("Unpublished: " + evaluation.getWorkflowStatus());
+			}
+			
+			UserProfile user = findUser(evaluation.getCreateUser());
+			
+			if (user != null) {
+				detailModel.setCreateUserEmail(user.getEmail());
+				detailModel.setCreateUserOrganization(user.getOrganization());				
+			} 
+			
+			entryStatusDetailModels.add(detailModel);	
+		}
+		return entryStatusDetailModels;
+	}
+	
+	private UserProfile findUser(String userName)
+	{
+		UserProfile user = userMap.get(userName);
+		if (user == null) {
+			UserProfile profileExample = new UserProfile();
+			profileExample.setUsername(userName);				
+			user = profileExample.find();	
+			if (user != null) {
+				userMap.put(user.getUsername(), user);
+			}
+		}
+		return user;
 	}
 
 	@Override
 	public List<ReportTransmissionType> getSupportedOutputs()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);		
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;	
 	}
 
 	@Override
 	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);				
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);								
+				formats.add(format);
+				break;
+		}
+
+		return formats;		
 	}
 
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewFormat = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewFormat, (ReportWriter<EntryStatusReportModel>) this::writeCSV);
+
+		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(viewFormat, (ReportWriter<EntryStatusReportModel>) this::writeCSV);
+
+		return writerMap;		
+	}	
+
+	@Override
+	public String reportSummmary(BaseReportModel reportModel)
+	{
+		StringBuilder summary = new StringBuilder();
+		
+		EntryStatusReportModel model = (EntryStatusReportModel) reportModel;
+		
+		summary.append("<h2>" + model.getTitle() + " Summary</h2>");
+		summary.append("Generated on ").append(sdf.format(reportModel.getCreateTime())).append("<br>");
+		summary.append("Reporting Period ")
+				.append(sdf.format(reportModel.getDataStartDate()))
+				.append(" - ")
+				.append(sdf.format(reportModel.getDataEndDate()))
+				.append("<br><br>");
+		
+		summary.append("<b>Entries Created in Period:</b> ").append(model.entryCreated()).append("<br>");
+		summary.append("<b>User submissions:</b> ").append(model.userSubmissions()).append("<br>");
+		
+		summary.append("<b>Evaluations Started in Period:</b> ").append(model.getEvaluations().size()).append("<br>");
+		summary.append("<b>Evaluations Currently In Progess:</b> ").append(model.getEvaluationsInprogress().size()).append("<br>");
+		summary.append("<b>Evaluations Published in Period:</b> ").append(model.getEvaluationsPublished()).append("<br>");
+			
+		return summary.toString();
+	}
+	
+	private void writeCSV(BaseGenerator generator, EntryStatusReportModel model)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+		
+		cvsGenerator.addLine(model.getTitle(), sdf.format(model.getCreateTime()));
+		
+		cvsGenerator.addLine("Data Time Range:  ", sdf.format(model.getDataStartDate()) + " - " + sdf.format(model.getDataEndDate()));
+		cvsGenerator.addLine("Summary");
+		cvsGenerator.addLine(
+				"Entries Created in Period",
+				"User submissions",
+				"Evaluations Started in Period",
+				"Evaluations Currently In Progess",
+				"Evaluations Published in Period"
+		);		
+		
+		cvsGenerator.addLine(
+				model.entryCreated(),
+				model.userSubmissions(),
+				model.getEvaluations().size(),
+				model.getEvaluationsInprogress().size(),
+				model.getEvaluationsPublished()
+		);
+		
+		cvsGenerator.addLine("Details");
+		cvsGenerator.addLine("");
+		
+		writeDetails(generator, "Entries Created", model.getCreatedEntries(), false);
+		cvsGenerator.addLine("");	
+		
+		writeDetails(generator, "User Submissions", model.userSubmissionsDetails(), true);
+		cvsGenerator.addLine("");	
+		
+		writeDetails(generator, "Evaluations Started", model.getEvaluations(), true);
+		cvsGenerator.addLine("");	
+
+		writeDetails(generator, "Evaluations Currently In Progess", model.getEvaluationsInprogress(), true);
+		cvsGenerator.addLine("");	
+		
+		writeDetails(generator, "Evaluations Published in Period", model.getEvaluationsPublished(), true);
+			
+		 
+	}
+	
+	private void writeDetails(BaseGenerator generator, String sectionName, List<EntryStatusDetailModel> details, boolean submitted)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+		
+		cvsGenerator.addLine(sectionName);
+		cvsGenerator.addLine(
+				"Name",
+				"Entry Type",
+				"Description",
+				"Status",
+				"Create User",
+				"Create Date",
+				"Create User Email",
+				"Create User Organization",
+				submitted ? "Submission Date" : ""
+		);
+		for (EntryStatusDetailModel detailModel : details) {
+			cvsGenerator.addLine(
+				detailModel.getName(),
+				detailModel.getEntryType(),
+				detailModel.getDescription(),
+				detailModel.getStatus(),
+				detailModel.getCreateUser(),
+				sdf.format(detailModel.getCreateDts()),
+				detailModel.getCreateUserEmail(),
+				detailModel.getCreateUserOrganization(),
+				submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+			);
+		}
+		
+		
+	}
+	
 }
