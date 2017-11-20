@@ -675,7 +675,7 @@ public class ComponentRESTResource
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 			component.getComponent().setApprovalState(ApprovalStatus.APPROVED);
 		}
 
