@@ -6,7 +6,7 @@ To install Hugo follow the directions [here](https://gohugo.io/getting-started/i
 
 The theme used for this documentation is [DocDock](http://docdock.netlify.com). Refer to the DocDock documentation for information on the theme such as shortcodes available, configuration, and site organization.
 
-## How to write documentation
+## How to Write Documentation
 
 The files to edit are found in `openstorefront/Hugo-StaticGen-Docs/content`. Hugo uses this content to generate the website.
 
@@ -16,6 +16,6 @@ You have two flavors of markdown available provided by Hugo: standard github sty
 
 Hugo provides a live development server for viewing changes as you are editing the files. Go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo server -w`. This will run a local dev server at `localhost:1313`, any changes made to the files will trigger a rebuild and refresh your browser.
 
-## How to build the Documenation
+## How to build the Documentation
 
 In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo`. This will build the website in `openstorefront/docs`.
