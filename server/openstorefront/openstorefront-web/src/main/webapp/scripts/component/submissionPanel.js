@@ -1616,6 +1616,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('Local Resource');
 											form.getForm().findField('file').setHidden(false);
 											form.getForm().findField('originalLink').setHidden(true);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(false);
 										}
 									},
 									{
@@ -1626,6 +1628,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('External Link');
 											form.getForm().findField('file').setHidden(true);
 											form.getForm().findField('originalLink').setHidden(false);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(true);
 										}
 									}
 								]
