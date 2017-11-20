@@ -223,6 +223,11 @@
 										store: Ext.create('Ext.data.Store', {
 											data: record.data.codes
 										}),
+										listConfig: {
+											getInnerTpl: function () {
+												return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+											}
+										},
 										listeners: {
 											change: function(fieldLocal, newValue, oldValue, opts) {
 												var recordLocal = fieldLocal.record;

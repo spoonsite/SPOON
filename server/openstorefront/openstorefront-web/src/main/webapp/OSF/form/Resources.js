@@ -183,8 +183,7 @@ Ext.define('OSF.form.Resources', {
 					itemId: 'upload',
 					name: 'file',
 					width: '100%',
-					resourceLabel: 'Upload Resource',
-					allowBlank: false
+					resourceLabel: 'Upload Resource'
 				},
 				Ext.create('OSF.component.SecurityComboBox', {						
 				}),

@@ -270,6 +270,11 @@ Ext.define('OSF.form.Attributes', {
 									labelWidth: 150,
 									labelAlign: 'right',
 									flex: 1,
+									listConfig: {
+										getInnerTpl: function () {
+											return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+										}
+									},
 									store: {
 										autoLoad: false,
 										proxy: {
@@ -455,6 +460,11 @@ Ext.define('OSF.form.Attributes', {
 							valueField: 'code',
 							displayField: 'label',
 							labelWidth: 150,
+							listConfig: {
+								getInnerTpl: function () {
+									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+								}
+							},
 							store: Ext.create('Ext.data.Store', {
 								fields: [
 									"code",

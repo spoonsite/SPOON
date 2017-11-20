@@ -1780,7 +1780,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 			},
 			plugins: 'gridfilters',
 			columns: [
-				{text: 'QID', dataIndex: 'qid', width: 75, align: 'center',
+				{text: 'QID', dataIndex: 'qid', width: 75, align: 'center', flex: 1,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';
@@ -1789,7 +1789,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return link;
 					}
 				},
-				{text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true,
+				{text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true, flex: 3,
 					filter: {
 						type: 'list'
 					},
@@ -1798,13 +1798,13 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return value;
 					}
 				},
-				{text: 'Question', dataIndex: 'question', flex: 2, cellWrap: true,
+				{text: 'Question', dataIndex: 'question', cellWrap: true, flex: 6,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						return value;
 					}
 				},
-				{text: 'Score', dataIndex: 'score', width: 75, align: 'center',
+				{text: 'Score', dataIndex: 'score', width: 75, align: 'center', flex: 2,
 					filter: {
 						type: 'list'
 					},
@@ -1820,7 +1820,7 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return link;
 					}
 				},
-				{text: 'Response', dataIndex: 'response', flex: 1, cellWrap: true,
+				{text: 'Response', dataIndex: 'response', cellWrap: true, flex: 10,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						return value;
@@ -2006,7 +2006,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 			' <table class="details-table" width="100%">',
 			'	<tpl for="checkListAll.recommendations">',
 			'		<tr class="details-table">',
-			'			<td class="details-table" width="150"><b>{recommendationTypeDescription}</b></td>',
+			'			<td class="details-table" width="230"><b>{recommendationTypeDescription}</b></td>',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
 			'				<tpl if="recommendation">{recommendation}</tpl>',
 			'			</td>',

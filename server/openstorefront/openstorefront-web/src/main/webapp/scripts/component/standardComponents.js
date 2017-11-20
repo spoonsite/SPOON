@@ -268,7 +268,7 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 	alias: 'widget.fileFieldMaxLabel',
 	extend: 'Ext.form.field.File',
 
-	resourceLabel: 'Upload Rescource',
+	resourceLabel: 'Upload Resource',
 	checkFileLimit: true,
 	displayFileLimit: true,
 
