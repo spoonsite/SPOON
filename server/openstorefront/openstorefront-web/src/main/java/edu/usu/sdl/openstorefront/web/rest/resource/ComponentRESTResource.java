@@ -675,8 +675,8 @@ public class ComponentRESTResource
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
-			component.getComponent().setApprovalState(ApprovalStatus.APPROVED);
+		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
 		ValidationModel validationModel = new ValidationModel(component);
