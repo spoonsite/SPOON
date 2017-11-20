@@ -104,6 +104,7 @@ public class OpenStorefrontConstant
 		mimeXrefLocal.put("image/png", ".png");
 		mimeXrefLocal.put("image/gif", ".gif");
 		mimeXrefLocal.put("image/bmp", ".bmp");
+		mimeXrefLocal.put("image/svg+xml", ".svg");
 		mimeXrefLocal.put("video/mpg", ".mpg");
 		mimeXrefLocal.put("video/mpeg", ".mpg");
 		mimeXrefLocal.put("video/mp4", ".mp4");

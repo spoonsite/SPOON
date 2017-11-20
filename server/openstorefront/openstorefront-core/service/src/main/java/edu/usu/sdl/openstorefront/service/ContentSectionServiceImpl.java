@@ -26,9 +26,11 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.FileInputStream;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -126,8 +129,6 @@ public class ContentSectionServiceImpl
 						contentSectionMedia.setContentSectionId(sectionId);
 						contentSectionMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 						contentSectionMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-						contentSectionMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
-						contentSectionMedia.setMimeType(existingTemporaryMedia.getMimeType());
 						contentSectionMedia.setPrivateMedia(Boolean.FALSE);
 						if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
 							//stripe generated part of name
@@ -155,9 +156,9 @@ public class ContentSectionServiceImpl
 							InputStream in = new FileInputStream(path.toFile());
 							contentSectionMedia.setContentSectionMediaId(persistenceService.generateId());
 							contentSectionMedia.populateBaseCreateFields();
-							contentSectionMedia.setFileName(contentSectionMedia.getContentSectionMediaId());
-							Files.copy(in, contentSectionMedia.pathToMedia());
+							contentSectionMedia.setFile(saveMediaFile(new MediaFile(), in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName()));
 							persistenceService.persist(contentSectionMedia);
+							//NOTE: (KB) commit so that we can find section media via sql
 							persistenceService.commit();
 							processedConversions.put(tempMediaId, contentSectionMedia.getContentSectionMediaId());
 						} catch (IOException ex) {
@@ -165,7 +166,7 @@ public class ContentSectionServiceImpl
 						}
 					}
 					// Replace converted url
-					String replaceUrl = "SectionMedia&mediaId=".concat(contentSectionMedia.getContentSectionMediaId());
+					String replaceUrl = "SectionMedia&mediaId=".concat(contentSectionMedia.getFile().getMediaFileId());
 					String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
 					LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
 					mediaItem.attr("src", newUrl);
@@ -219,19 +220,16 @@ public class ContentSectionServiceImpl
 	}
 
 	@Override
-	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream in)
+	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		Objects.requireNonNull(contentSectionMedia);
-		Objects.requireNonNull(in);
 
 		ContentSectionMedia savedMedia = contentSectionMedia.save();
 		if (contentSectionMedia.getContentSectionMediaId() == null) {
 			getChangeLogService().addEntityChange(savedMedia);
 		}
-
-		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
-		try (InputStream fileInput = in) {
-			Files.copy(fileInput, savedMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+		try {
+			savedMedia.setFile(saveMediaFile(savedMedia.getFile(), fileInput, mimeType, originalFileName));
 			persistenceService.persist(savedMedia);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
@@ -245,19 +243,27 @@ public class ContentSectionServiceImpl
 		return updatedMedia;
 	}
 
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName) throws IOException
+	{
+		Objects.requireNonNull(fileInput);
+		if (media == null) {
+			media = new MediaFile();
+		}
+		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setMimeType(mimeType);
+		media.setOriginalName(originalFileName);
+		media.setFileType(MediaFileType.MEDIA);
+		Path path = Paths.get(MediaFileType.MEDIA.getPath() + "/" + media.getFileName());
+		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		return media;
+	}
+
 	@Override
 	public void deleteMedia(String contentSectionMediaId)
 	{
 		ContentSectionMedia existing = persistenceService.findById(ContentSectionMedia.class, contentSectionMediaId);
 		if (existing != null) {
-			Path mediaPath = existing.pathToMedia();
-			if (mediaPath != null) {
-				if (mediaPath.toFile().exists()) {
-					if (mediaPath.toFile().delete()) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local content section media. Path: {0}", mediaPath.toString()));
-					}
-				}
-			}
+			removeLocalMedia(existing);
 			persistenceService.delete(existing);
 			getChangeLogService().removeEntityChange(ContentSectionMedia.class, existing);
 		}
@@ -311,7 +317,12 @@ public class ContentSectionServiceImpl
 
 		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 		contentSectionMedia.setContentSectionId(contentSectionId);
-		persistenceService.deleteByExample(contentSectionMedia);
+		List<ContentSectionMedia> media = persistenceService.queryByExample(contentSectionMedia);
+		if (media != null) {
+			media.forEach(item -> {
+				deleteMedia(item.getContentSectionMediaId());
+			});
+		}
 
 		ContentSubSection contentSubSection = new ContentSubSection();
 		contentSubSection.setContentSectionId(contentSectionId);
@@ -321,6 +332,32 @@ public class ContentSectionServiceImpl
 		if (contentSection != null) {
 			persistenceService.delete(contentSection);
 			getChangeLogService().removeEntityChange(ContentSection.class, contentSection);
+		}
+	}
+
+	void removeLocalMedia(ContentSectionMedia componentMedia)
+	{
+		if (componentMedia.getFile() != null) {
+			//Note: this can't be rolled back
+			ContentSectionMedia example = new ContentSectionMedia();
+			example.setFile(new MediaFile());
+			example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
+
+			long count = persistenceService.countByExample(example);
+			if (count == 1) {
+				MediaFile mediaFile = persistenceService.findById(MediaFile.class, componentMedia.getFile().getMediaFileId());
+				if (mediaFile != null) {
+					Path path = mediaFile.path();
+					if (path != null) {
+						if (path.toFile().exists()) {
+							if (path.toFile().delete() == false) {
+								LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
+							}
+						}
+					}
+					persistenceService.delete(mediaFile);
+				}
+			}
 		}
 	}
 
@@ -439,31 +476,16 @@ public class ContentSectionServiceImpl
 			ContentSectionMedia sectionMedia = new ContentSectionMedia();
 			sectionMedia.setContentSectionId(newSection.getContentSectionId());
 			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
-			sectionMedia.setMimeType(templateMedia.getMimeType());
-			sectionMedia.setOriginalName(templateMedia.getOriginalName());
-			sectionMedia.setPrivateMedia(templateMedia.getPrivateMedia());
+			if (templateMedia.getFile() != null) {
+				MediaFile file = persistenceService.findById(MediaFile.class, templateMedia.getFile().getMediaFileId());
+				sectionMedia.setFile(file);
+			}
 			if (sectionMedia.getPrivateMedia() == null) {
 				sectionMedia.setPrivateMedia(Boolean.FALSE);
-			}
-
-			Path path = templateMedia.pathToMedia();
-			if (path != null) {
-				if (path.toFile().exists()) {
-					try (InputStream in = new FileInputStream(path.toFile())) {
-						getContentSectionService().saveMedia(sectionMedia, in);
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-							path.toString(), templateMedia.getOriginalName()
-						}), ex);
-					}
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{
-						path.toString(), templateMedia.getOriginalName()
-					}));
-				}
 			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
+				sectionMedia.setPrivateMedia(templateMedia.getPrivateMedia());
 			}
+			sectionMedia.save();
 		}
 	}
 

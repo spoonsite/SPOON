@@ -148,7 +148,7 @@ public class UploadAction
 			StringBuilder errorsMessages = new StringBuilder();
 			try (CSVReader reader = new CSVReader(new InputStreamReader(uploadFile.getInputStream()))) {
 
-				lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+				lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
 				List<String[]> allData = reader.readAll();
 				for (String data[] : allData) {
 					try {

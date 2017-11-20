@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package edu.usu.sdl.openstorefront.service.testModels;
 
-package edu.usu.sdl.openstorefront.core.api.query;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 
 /**
  *
- * @author dshurtleff
+ * @author kbair
  */
-public enum QueryType
+public class TestClassWithEnum
+		extends BaseEntity<TestClassWithEnum>
 {
-	SELECT,
-	COUNT_DISTINCT,
-	COUNT,
-	DELETE;	
+	private String id;
+
+	private TestEnum myEnum;
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+	
+	public TestEnum getMyEnum()
+	{
+		return myEnum;
+	}
+
+	public void setMyEnum(TestEnum myEnum)
+	{
+		this.myEnum = myEnum;
+	}
 }

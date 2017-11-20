@@ -161,10 +161,12 @@ public interface SystemService
 	 *
 	 * @param generalMedia
 	 * @param fileInput (optional on update)
+	 * @param mimeType (optional on update)
+	 * @param originalFileName (optional on update)
 	 * @return the general media
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput);
+	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Delete the general media
