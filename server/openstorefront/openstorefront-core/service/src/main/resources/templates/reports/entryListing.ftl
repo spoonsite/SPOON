@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<title>${title}</title>
-		<meta charset="${charset}">
+		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
 			body {
@@ -47,7 +47,7 @@
 			} 
 			th { 
 				color: white; 
-				background-color: #414e68; 
+				background-color: #535456; 
 				border: 1px lightgray solid; 
 			} 
 			td { 
@@ -64,7 +64,11 @@
 				.pageBreak {
 					page-break-after: always; 
 				}
-			}		
+			}	
+			.name {
+				font-size: 16px;
+				padding: 20px;
+			}
 		</style>
 	</head>
 	<body>
@@ -84,19 +88,19 @@
 			<tbody>
 				<#list data as listing>
 					<tr>
-						<td>
-							<a href="${viewLink}">${listing.name}</a>
+						<td class="name">
+							<a href="${listing.viewLink}" target="blank">${listing.name}</a>
 						</td>	
 						<td>
 							${listing.shortDescription}
 						</td>
-						<td>
+						<td style="width: 200px; text-align: center;">
 							${listing.entryType}
 						</td>							
-						<td>
-							${listing.lastUpdatedDts?datetime}
+						<td style="width: 200px; text-align: center;">
+							${listing.lastUpdatedDts?date}
 						</td>
-						<td>
+						<td style="width: 200px; text-align: center;">
 							${listing.evaluationStatus}
 						</td>
 					</tr>		

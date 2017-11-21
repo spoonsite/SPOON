@@ -46,10 +46,11 @@ import java.util.stream.Collectors;
 public class EntryStatusReport
 		extends BaseReport
 {
-	private static final int MAX_DESCRIPTION_SIZE = 200;
-	
+
+	private static final int MAX_DESCRIPTION_SIZE = 150;
+
 	private Map<String, UserProfile> userMap = new HashMap<>();
-	
+
 	public EntryStatusReport(Report report)
 	{
 		super(report);
@@ -57,11 +58,13 @@ public class EntryStatusReport
 
 	@Override
 	protected EntryStatusReportModel gatherData()
-	{	
+	{
 		EntryStatusReportModel reportModel = new EntryStatusReportModel();
-		reportModel.setTitle("Entry Status");		
+		reportModel.setTitle("Entry Status");
 		updateReportTimeRange();
-		
+		reportModel.setDataStartDate(report.getReportOption().getStartDts());
+		reportModel.setDataEndDate(report.getReportOption().getEndDts());
+
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(componentExample.getActiveStatus());
 
@@ -69,15 +72,15 @@ public class EntryStatusReport
 
 		Component componentStartExample = new Component();
 		componentStartExample.setCreateDts(report.getReportOption().getStartDts());
-		
+
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		Component componentEndExample = new Component();
-		componentEndExample.setCreateDts(report.getReportOption().getEndDts());		
-		
+		componentEndExample.setCreateDts(report.getReportOption().getEndDts());
+
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
@@ -86,7 +89,10 @@ public class EntryStatusReport
 
 		List<Component> components = service.getPersistenceService().queryByExample(queryByExample);
 		components = filterEngine.filter(components);
-				
+		components.removeIf(c -> {
+			return c.getPendingChangeId() != null;
+		});
+
 		for (Component component : components) {
 			EntryStatusDetailModel detailModel = new EntryStatusDetailModel();
 			detailModel.setName(component.getName());
@@ -94,26 +100,25 @@ public class EntryStatusReport
 			detailModel.setCreateDts(component.getCreateDts());
 			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
 			detailModel.setDescription(description);
-			
+
 			detailModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
 			detailModel.setStatus(TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState()));
-			
+
 			UserProfile user = findUser(component.getCreateUser());
-			
+
 			if (user != null) {
 				detailModel.setCreateUserEmail(user.getEmail());
-				detailModel.setCreateUserOrganization(user.getOrganization());				
-			} 
-			
+				detailModel.setCreateUserOrganization(user.getOrganization());
+			}
+
 			if (component.getSubmittedDts() != null) {
 				detailModel.setUserSubmitted(true);
-				detailModel.setSubmissionDate(component.getSubmittedDts());				
+				detailModel.setSubmissionDate(component.getSubmittedDts());
 			}
-			
-			reportModel.getCreatedEntries().add(detailModel);		
+
+			reportModel.getCreatedEntries().add(detailModel);
 		}
-		
-		
+
 		Evaluation evaluationExample = new Evaluation();
 		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
 
@@ -121,15 +126,15 @@ public class EntryStatusReport
 
 		Evaluation evaluationStartExample = new Evaluation();
 		evaluationStartExample.setCreateDts(report.getReportOption().getStartDts());
-		
+
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(evaluationStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		Evaluation evaluationEndExample = new Evaluation();
-		evaluationEndExample.setCreateDts(report.getReportOption().getEndDts());		
-		
+		evaluationEndExample.setCreateDts(report.getReportOption().getEndDts());
+
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
@@ -137,89 +142,87 @@ public class EntryStatusReport
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
-		evaluations = filterEngine.filter(evaluations);		
+		evaluations = filterEngine.filter(evaluations);
 		List<EntryStatusDetailModel> entryStatusDetailModels = toEvalToLineModel(reportModel, evaluations);
 		reportModel.setEvaluationsPublished(entryStatusDetailModels);
-		
+
 		List<Evaluation> allEvals = evaluationExample.findByExample();
 		allEvals = filterEngine.filter(allEvals);
-		
+
 		List<Evaluation> publishedEvals = allEvals.stream()
-												.filter(e->{
-													boolean keep = false;
-													if (e.getPublished()) {
-														if (e.getUpdateDts().after(reportModel.getDataStartDate()) &&
-															e.getUpdateDts().before(reportModel.getDataEndDate()))
-														{
-															keep = true;
-														}
-													}
-													return keep;
-												})
-												.collect(Collectors.toList());
-		
+				.filter(e -> {
+					boolean keep = false;
+					if (e.getPublished()) {
+						if (e.getUpdateDts().after(reportModel.getDataStartDate())
+								&& e.getUpdateDts().before(reportModel.getDataEndDate())) {
+							keep = true;
+						}
+					}
+					return keep;
+				})
+				.collect(Collectors.toList());
+
 		entryStatusDetailModels = toEvalToLineModel(reportModel, publishedEvals);
 		reportModel.setEvaluationsPublished(entryStatusDetailModels);
-		
-		allEvals.removeIf(e->{
+
+		allEvals.removeIf(e -> {
 			return e.getPublished();
 		});
 		entryStatusDetailModels = toEvalToLineModel(reportModel, allEvals);
 		reportModel.setEvaluationsInprogress(entryStatusDetailModels);
-		
-		
+
 		return reportModel;
 	}
-	
+
 	private List<EntryStatusDetailModel> toEvalToLineModel(EntryStatusReportModel reportModel, List<Evaluation> evaluations)
 	{
 		List<EntryStatusDetailModel> entryStatusDetailModels = new ArrayList<>();
 		for (Evaluation evaluation : evaluations) {
-			
+
 			Component component = new Component();
 			component.setComponentId(evaluation.getComponentId());
 			component = component.find();
 			if (component == null) {
 				component = new Component();
-				component.setComponentId(evaluation.getComponentId());
+				component.setComponentId(evaluation.getOriginComponentId());
 				component = component.find();
 			}
-									
+
 			EntryStatusDetailModel detailModel = new EntryStatusDetailModel();
 			detailModel.setName(component.getName());
 			detailModel.setCreateUser(evaluation.getCreateUser());
 			detailModel.setCreateDts(evaluation.getCreateDts());
 			detailModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
-			
+
 			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
 			detailModel.setDescription(description);
-			
+
 			if (evaluation.getPublished()) {
 				detailModel.setStatus("Published");
-				detailModel.setPublished(true);				
+				detailModel.setPublished(true);
 			} else {
 				detailModel.setStatus("Unpublished: " + evaluation.getWorkflowStatus());
 			}
-			
+
 			UserProfile user = findUser(evaluation.getCreateUser());
-			
+
 			if (user != null) {
 				detailModel.setCreateUserEmail(user.getEmail());
-				detailModel.setCreateUserOrganization(user.getOrganization());				
-			} 
-			
-			entryStatusDetailModels.add(detailModel);	
+				detailModel.setCreateUserOrganization(user.getOrganization());
+			}
+
+			entryStatusDetailModels.add(detailModel);
 		}
 		return entryStatusDetailModels;
 	}
-	
+
 	private UserProfile findUser(String userName)
 	{
 		UserProfile user = userMap.get(userName);
 		if (user == null) {
 			UserProfile profileExample = new UserProfile();
-			profileExample.setUsername(userName);				
-			user = profileExample.find();	
+			profileExample.setUsername(userName);
+			user = profileExample.find();
 			if (user != null) {
 				userMap.put(user.getUsername(), user);
 			}
@@ -233,11 +236,11 @@ public class EntryStatusReport
 		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
 
 		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
-		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);		
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
 		transmissionTypes.add(view);
 		transmissionTypes.add(email);
 
-		return transmissionTypes;	
+		return transmissionTypes;
 	}
 
 	@Override
@@ -247,17 +250,17 @@ public class EntryStatusReport
 
 		switch (reportTransmissionType) {
 			case ReportTransmissionType.VIEW:
-				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);				
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
 				formats.add(format);
 				break;
 
 			case ReportTransmissionType.EMAIL:
-				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);								
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
 				formats.add(format);
 				break;
 		}
 
-		return formats;		
+		return formats;
 	}
 
 	@Override
@@ -271,16 +274,16 @@ public class EntryStatusReport
 		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
 		writerMap.put(viewFormat, (ReportWriter<EntryStatusReportModel>) this::writeCSV);
 
-		return writerMap;		
-	}	
+		return writerMap;
+	}
 
 	@Override
 	public String reportSummmary(BaseReportModel reportModel)
 	{
 		StringBuilder summary = new StringBuilder();
-		
+
 		EntryStatusReportModel model = (EntryStatusReportModel) reportModel;
-		
+
 		summary.append("<h2>" + model.getTitle() + " Summary</h2>");
 		summary.append("Generated on ").append(sdf.format(reportModel.getCreateTime())).append("<br>");
 		summary.append("Reporting Period ")
@@ -288,65 +291,64 @@ public class EntryStatusReport
 				.append(" - ")
 				.append(sdf.format(reportModel.getDataEndDate()))
 				.append("<br><br>");
-		
+
 		summary.append("<b>Entries Created in Period:</b> ").append(model.entryCreated()).append("<br>");
 		summary.append("<b>User submissions:</b> ").append(model.userSubmissions()).append("<br>");
-		
+
 		summary.append("<b>Evaluations Started in Period:</b> ").append(model.getEvaluations().size()).append("<br>");
-		summary.append("<b>Evaluations Currently In Progess:</b> ").append(model.getEvaluationsInprogress().size()).append("<br>");
-		summary.append("<b>Evaluations Published in Period:</b> ").append(model.getEvaluationsPublished()).append("<br>");
-			
+		summary.append("<b>Evaluations Currently In Progress:</b> ").append(model.getEvaluationsInprogress().size()).append("<br>");
+		summary.append("<b>Evaluations Published in Period:</b> ").append(model.getEvaluationsPublished().size()).append("<br>");
+
 		return summary.toString();
 	}
-	
+
 	private void writeCSV(BaseGenerator generator, EntryStatusReportModel model)
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-		
+
 		cvsGenerator.addLine(model.getTitle(), sdf.format(model.getCreateTime()));
-		
+
 		cvsGenerator.addLine("Data Time Range:  ", sdf.format(model.getDataStartDate()) + " - " + sdf.format(model.getDataEndDate()));
 		cvsGenerator.addLine("Summary");
 		cvsGenerator.addLine(
 				"Entries Created in Period",
 				"User submissions",
 				"Evaluations Started in Period",
-				"Evaluations Currently In Progess",
+				"Evaluations Currently In Progress",
 				"Evaluations Published in Period"
-		);		
-		
+		);
+
 		cvsGenerator.addLine(
 				model.entryCreated(),
 				model.userSubmissions(),
 				model.getEvaluations().size(),
 				model.getEvaluationsInprogress().size(),
-				model.getEvaluationsPublished()
+				model.getEvaluationsPublished().size()
 		);
-		
+
 		cvsGenerator.addLine("Details");
 		cvsGenerator.addLine("");
-		
-		writeDetails(generator, "Entries Created", model.getCreatedEntries(), false);
-		cvsGenerator.addLine("");	
-		
-		writeDetails(generator, "User Submissions", model.userSubmissionsDetails(), true);
-		cvsGenerator.addLine("");	
-		
-		writeDetails(generator, "Evaluations Started", model.getEvaluations(), true);
-		cvsGenerator.addLine("");	
 
-		writeDetails(generator, "Evaluations Currently In Progess", model.getEvaluationsInprogress(), true);
-		cvsGenerator.addLine("");	
-		
-		writeDetails(generator, "Evaluations Published in Period", model.getEvaluationsPublished(), true);
-			
-		 
+		writeDetails(generator, "Entries Created", model.getCreatedEntries(), false);
+		cvsGenerator.addLine("");
+
+		writeDetails(generator, "User Submissions", model.userSubmissionsDetails(), true);
+		cvsGenerator.addLine("");
+
+		writeDetails(generator, "Evaluations Started", model.getEvaluations(), false);
+		cvsGenerator.addLine("");
+
+		writeDetails(generator, "Evaluations Currently In Progress", model.getEvaluationsInprogress(), false);
+		cvsGenerator.addLine("");
+
+		writeDetails(generator, "Evaluations Published in Period", model.getEvaluationsPublished(), false);
+
 	}
-	
+
 	private void writeDetails(BaseGenerator generator, String sectionName, List<EntryStatusDetailModel> details, boolean submitted)
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-		
+
 		cvsGenerator.addLine(sectionName);
 		cvsGenerator.addLine(
 				"Name",
@@ -361,19 +363,18 @@ public class EntryStatusReport
 		);
 		for (EntryStatusDetailModel detailModel : details) {
 			cvsGenerator.addLine(
-				detailModel.getName(),
-				detailModel.getEntryType(),
-				detailModel.getDescription(),
-				detailModel.getStatus(),
-				detailModel.getCreateUser(),
-				sdf.format(detailModel.getCreateDts()),
-				detailModel.getCreateUserEmail(),
-				detailModel.getCreateUserOrganization(),
-				submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+					detailModel.getName(),
+					detailModel.getEntryType(),
+					detailModel.getDescription(),
+					detailModel.getStatus(),
+					detailModel.getCreateUser(),
+					sdf.format(detailModel.getCreateDts()),
+					detailModel.getCreateUserEmail(),
+					detailModel.getCreateUserOrganization(),
+					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
 			);
 		}
-		
-		
+
 	}
-	
+
 }

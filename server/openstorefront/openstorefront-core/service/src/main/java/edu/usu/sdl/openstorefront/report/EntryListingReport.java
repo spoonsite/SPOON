@@ -63,9 +63,9 @@ public class EntryListingReport
 	protected EntryListingReportModel gatherData()
 	{
 		EntryListingReportModel entryListingReportModel = new EntryListingReportModel();
-		entryListingReportModel.setTitle(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront"));
+		entryListingReportModel.setTitle(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront") + " Listing Index");
 		String viewLinkBase = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/View.action?id=";
-		
+
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
@@ -87,12 +87,15 @@ public class EntryListingReport
 			EntryListingReportLineModel lineModel = new EntryListingReportLineModel();
 
 			lineModel.setComponentId(component.getComponentId());
-			lineModel.setViewLink(viewLinkBase + component.getComponentId());			
+			lineModel.setViewLink(viewLinkBase + component.getComponentId());
 			lineModel.setEntryType(TranslateUtil.translateComponentType(component.getComponentType()));
 			lineModel.setLastUpdatedDts(component.getLastActivityDts());
 			lineModel.setName(component.getName());
 			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
+			description = StringProcessor.stripeExtendedChars(description);
+
 			lineModel.setShortDescription(description);
+			lineModel.setEvaluationStatus("");
 
 			List<Evaluation> evals = evalMap.get(component.getComponentId());
 			if (evals != null) {
@@ -107,18 +110,18 @@ public class EntryListingReport
 					if (completeCount == evals.size()) {
 						status = "Multiple Complete";
 					} else if (completeCount > 0) {
-						status = "Complete evaluations and some Inprogress";
+						status = "Complete evaluations and some In Progress";
 					} else {
-						status = "Multiple evaluations Inprogress";
+						status = "Multiple evaluations In Progress";
 					}
-					
+
 				} else {
 					Evaluation evaluation = evals.get(0);
 					if (evaluation.getPublished()) {
 						status = "Complete";
 					} else {
-						status = "Inprogress";
-					}					
+						status = "In Progress";
+					}
 				}
 				lineModel.setEvaluationStatus(status);
 			}
@@ -152,12 +155,16 @@ public class EntryListingReport
 		switch (reportTransmissionType) {
 			case ReportTransmissionType.VIEW:
 				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				formats.add(format);
+
 				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
 				formats.add(format);
 				break;
 
 			case ReportTransmissionType.EMAIL:
 				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				formats.add(format);
+
 				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
 				formats.add(format);
 				break;
@@ -187,27 +194,27 @@ public class EntryListingReport
 
 		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.PDF);
 		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writePdf);
-		
-		viewFormat = outputKey(ReportTransmissionType.CONFLUENCE, ReportFormat.HTML);
-		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeHtml);		
 
-		return writerMap;		
-	}	
-	
+		viewFormat = outputKey(ReportTransmissionType.CONFLUENCE, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeHtml);
+
+		return writerMap;
+	}
+
 	private void writeHtml(BaseGenerator generator, EntryListingReportModel reportModel)
 	{
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
 		String renderedTemplate = createHtml(reportModel);
-		htmlGenerator.addLine(renderedTemplate);		
+		htmlGenerator.addLine(renderedTemplate);
 	}
-	
+
 	private void writePdf(BaseGenerator generator, EntryListingReportModel reportModel)
 	{
 		HtmlToPdfGenerator pdfGenerator = (HtmlToPdfGenerator) generator;
 		String renderedTemplate = createHtml(reportModel);
-		pdfGenerator.savePdfDocument(renderedTemplate);		
-	}	
-	
+		pdfGenerator.savePdfDocument(renderedTemplate);
+	}
+
 	private String createHtml(EntryListingReportModel reportModel)
 	{
 		String renderedTemplate = null;
@@ -221,7 +228,7 @@ public class EntryListingReport
 			throw new OpenStorefrontRuntimeException(e);
 		}
 
-		return renderedTemplate;		
+		return renderedTemplate;
 	}
-	
+
 }

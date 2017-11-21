@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
@@ -35,37 +34,46 @@ import net.sourceforge.stripes.validation.Validate;
  * @author dshurtleff
  */
 public class ViewAction
-	extends BaseAction	
+		extends BaseAction
 {
+
 	@Validate(required = true)
 	private String id;
-	
+
 	@DefaultHandler
 	public Resolution viewComponent()
 	{
-		Component component = new Component();		
-		component.setComponentId(id);
+		Component component = new Component();
+		component.setComponentId(getId());
 		component = component.find();
 		component = filterEngine.filter(component);
-		
-		if (component != null) {		
+
+		if (component != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
 			componentTracking.setClientIp(NetworkUtil.getClientIp(getContext().getRequest()));
-			componentTracking.setComponentId(id);
+			componentTracking.setComponentId(getId());
 			componentTracking.setComponentType(component.getComponentType());
 			componentTracking.setEventDts(TimeUtil.currentDate());
 			componentTracking.setTrackEventTypeCode(TrackEventCode.EXTERNAL_VIEW);
-			componentTracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
-			componentTracking.setCreateUser(SecurityUtil.getCurrentUserName());
-			componentTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
+			componentTracking.populateBaseCreateFields();
 			service.getComponentService().saveComponentTracking(componentTracking);
-			
+
 			return new ForwardResolution("view.jsp")
-					.addParameter("id", id)
-					.addParameter("fullscreen", true);
+					.addParameter("id", getId())
+					.addParameter("fullPage", true);
 		} else {
 			return new ErrorResolution(Response.Status.NOT_FOUND.getStatusCode(), "Not found or not accessible");
-		}		
+		}
 	}
-	
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
 }

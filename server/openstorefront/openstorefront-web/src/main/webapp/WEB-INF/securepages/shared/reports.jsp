@@ -693,8 +693,8 @@
 														Ext.Array.each(outputs, function(reportOutput){
 															if (reportOutput.reportTransmissionOption.emailAddressRaw &&
 																reportOutput.reportTransmissionOption.emailAddressRaw !== '') {
-																
-																var emails = Ext.String.splitWords(reportOutput.reportTransmissionOption.emailAddressRaw);
+																																
+																var emails = CoreUtil.split(reportOutput.reportTransmissionOption.emailAddressRaw, [' ', ',', ';', '\n', '\r']);
 																var emailAddresses = [];
 																Ext.Array.each(emails, function(email){
 																	emailAddresses.push({
@@ -897,6 +897,7 @@
 						var optionsToAdd = [];
 						if (reportType === 'COMPONENT' || 
 							reportType === 'CMPORG' || 
+							reportType === 'ENTRYLIST' ||
 							reportType === 'TYPECOMP') {
 
 							//add grid for entries							
@@ -1009,7 +1010,7 @@
 										]
 									});
 									
-									optionsToAdd.push({
+								optionsToAdd.push({
 										xtype: 'fieldcontainer',
 										defaultType: 'radiofield',
 										itemId: 'evaluationTypeField',
@@ -1082,7 +1083,9 @@
 								}									
 							);							
 						}
-						else if (reportType === 'SUBMISSION' || reportType === 'USAGE') {
+						else if (reportType === 'SUBMISSION' || 
+								reportType === 'USAGE' || 
+								reportType === 'ENTRYSTATUS') {
 
 							optionsToAdd.push({
 								xtype: 'datefield',
@@ -1106,7 +1109,8 @@
 								fieldLabel: 'End Date (Blank = Current Day)',
 								width: '100%',
 								value: new Date(),
-								format: 'm/d/Y',																
+								format: 'm/d/Y',
+								submitFormat: 'Y-m-d\\TH:i:s.u',
 								allowBlank: true
 							});
 							
