@@ -1308,7 +1308,7 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses separated by a space <span class="field-required" />',
+												fieldLabel: 'Enter email addresses <span class="field-required" />',
 												width: '100%',
 												maxLength: 300,																	
 												allowBlank: false,
@@ -1406,7 +1406,7 @@
 												xtype: 'textfield',
 												name: 'confluenceSpace',
 												labelAlign: 'top',
-												fieldLabel: 'Space <span class="field-required" />',
+												fieldLabel: 'Space Key<span class="field-required" />',
 												width: '100%',
 												allowBlank: false,
 												maxLength: 255,
@@ -1678,7 +1678,7 @@
 								return record.get('reportTypeDescription');
 							}
 						},
-						{text: 'Format', dataIndex: 'reportFormat', width: 250,
+						{text: 'View Format', dataIndex: 'reportFormat', width: 250,
 							renderer: formatRender
 						},
 						{text: 'Run Status', dataIndex: 'runStatus', width: 150, align: 'center',

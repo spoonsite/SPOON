@@ -50,6 +50,7 @@ public class ConfluenceOutput
 	private static final Logger LOG = Logger.getLogger(ConfluenceOutput.class.getName());
 
 	private ByteArrayOutputStream generatedReport;
+	private ConfluenceManager confluenceManager;
 
 	public ConfluenceOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
@@ -69,7 +70,7 @@ public class ConfluenceOutput
 	@Override
 	protected void finishOutput(BaseReportModel reportModel)
 	{
-		try (ConfluenceClient client = ConfluenceManager.getPoolInstance().getClient()) {
+		try (ConfluenceClient client = getConfluenceManager().getClient()) {
 			ReportTransmissionOption options = reportOutput.getReportTransmissionOption();
 
 			//see if there is an existing page
@@ -83,17 +84,22 @@ public class ConfluenceOutput
 
 			ContentBody contentBody = new ContentBody();
 			RepresentationStorage storage = new RepresentationStorage();
-			storage.setValue(generatedReport.toString());
+			storage.setValue(ConfluenceClient.confluenceSafeText(generatedReport.toString()));
 			contentBody.setStorage(storage);
 			content.setBody(contentBody);
 
 			if (StringUtils.isNotBlank(options.getConfluenceParentPageId())) {
 				List<Ancestor> ancestors = new ArrayList<>();
-				Ancestor ancestor = new Ancestor();
-				ancestor.setId(options.getConfluenceParentPageId());
-				ancestors.add(ancestor);
 
-				content.setAncestors(ancestors);
+				Content parent = client.getPage(options.getConfluenceSpace(), options.getConfluenceParentPageId());
+
+				if (parent != null) {
+					Ancestor ancestor = new Ancestor();
+					ancestor.setId(parent.getId());
+					ancestors.add(ancestor);
+
+					content.setAncestors(ancestors);
+				}
 			}
 
 			if (existing != null) {
@@ -117,6 +123,20 @@ public class ConfluenceOutput
 			}
 
 		}
+	}
+
+	public ConfluenceManager getConfluenceManager()
+	{
+		if (confluenceManager == null) {
+			confluenceManager = ConfluenceManager.getPoolInstance();
+		}
+
+		return confluenceManager;
+	}
+
+	public void setConfluenceManager(ConfluenceManager confluenceManager)
+	{
+		this.confluenceManager = confluenceManager;
 	}
 
 }

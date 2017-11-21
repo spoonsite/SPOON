@@ -1006,7 +1006,7 @@ var CoreUtil = {
 			var token = '';
 			for (var i=0; i<text.length; i++) {
 				var char = text.charAt(i);
-				if (Ext.Array.contains(split)) {
+				if (Ext.Array.contains(split, char)) {
 					if (token !== '') {
 						tokens.push(token);						
 					}
@@ -1014,6 +1014,9 @@ var CoreUtil = {
 				} else {
 					token += char;
 				}
+			}
+			if (token !== '') {
+				tokens.push(token);						
 			}
 		}		
 		return tokens;

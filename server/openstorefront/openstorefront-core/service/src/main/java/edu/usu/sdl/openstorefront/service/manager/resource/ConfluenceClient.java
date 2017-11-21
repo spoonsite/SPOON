@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.resource;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.PooledResourceManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Content;
@@ -33,7 +34,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
  * Client connection to confluence
@@ -94,6 +98,7 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
+			spaceKey = StringProcessor.urlEncode(spaceKey);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "space/" + spaceKey);
 			Space result = target.request().buildGet().invoke(Space.class);
 			return result;
@@ -126,6 +131,7 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
+			spaceKey = StringProcessor.urlEncode(spaceKey);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "space/" + spaceKey);
 			Response response = target.request().buildDelete().invoke();
 			if (response.getStatus() < 500) {
@@ -151,6 +157,8 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
+			spaceKey = StringProcessor.urlEncode(spaceKey);
+			title = StringProcessor.urlEncode(title);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content?spaceKey=" + spaceKey + "&title=" + title);
 
 			ContentSearchResults results = target.request().buildGet().invoke(ContentSearchResults.class);
@@ -189,7 +197,8 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
-			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + content.getId());
+			String contentId = StringProcessor.urlEncode(content.getId());
+			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentId);
 
 			Content result = target.request().buildPut(Entity.json(content)).invoke(Content.class);
 			return result;
@@ -205,6 +214,7 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
+			contentId = StringProcessor.urlEncode(contentId);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentId);
 			Response response = target.request().buildDelete().invoke();
 			if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
@@ -230,6 +240,7 @@ public class ConfluenceClient
 	{
 		Client client = getClientCache();
 		try {
+			contentId = StringProcessor.urlEncode(contentId);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentId + "/label");
 
 			GenericEntity<List<Label>> entity = new GenericEntity<List<Label>>(labels)
@@ -249,6 +260,7 @@ public class ConfluenceClient
 
 		Client client = getClientCache();
 		try {
+			contentId = StringProcessor.urlEncode(contentId);
 			WebTarget target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentId + "/label?name=" + label);
 			Response response = target.request().buildDelete().invoke();
 			if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
@@ -267,6 +279,19 @@ public class ConfluenceClient
 		if (confluenceManager != null) {
 			confluenceManager.releaseClient(this);
 		}
+	}
+
+	public static String confluenceSafeText(String input)
+	{
+		if (StringUtils.isNotBlank(input)) {
+			Whitelist whiteList = Whitelist.basic().addTags(
+					"h1", "h2", "h3", "h4", "h5", "h6",
+					"table", "thead", "tbody", "th", "tr", "td"
+			);
+
+			input = Jsoup.clean(input, whiteList);
+		}
+		return input;
 	}
 
 }

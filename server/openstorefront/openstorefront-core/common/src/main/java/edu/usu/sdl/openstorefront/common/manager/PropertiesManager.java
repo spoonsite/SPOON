@@ -76,7 +76,7 @@ public class PropertiesManager
 	public static final String KEY_REPORT_LIFETIME = "report.lifetime";
 	public static final String KEY_TEST_EMAIL = "test.email";
 	public static final String KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES = "system.archive.maxprocessminutes";
-        public static final String KEY_MAX_POST_SIZE = "max.post.size"; // in MB
+	public static final String KEY_MAX_POST_SIZE = "max.post.size"; // in MB
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
@@ -107,8 +107,8 @@ public class PropertiesManager
 	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
 	public static final String KEY_FEEDBACK_EMAIL = "feedback.email";
 	public static final String KEY_CONFLUENCE_URL = "confluence.server.url";
-	public static final String KEY_CONFLUENCE_POOL_SIZE = "jira.connectionpool.size";
-	public static final String KEY_CONFLUENCE_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
+	public static final String KEY_CONFLUENCE_POOL_SIZE = "confluence.connectionpool.size";
+	public static final String KEY_CONFLUENCE_CONNECTION_WAIT_TIME = "confluence.connection.wait.seconds";
 
 	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
 	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
@@ -272,7 +272,7 @@ public class PropertiesManager
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 			defaults.put(KEY_REPORT_LIFETIME, "180");
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
-            defaults.put(KEY_MAX_POST_SIZE, "1000"); // 1GB
+			defaults.put(KEY_MAX_POST_SIZE, "1000"); // 1GB
 
 			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

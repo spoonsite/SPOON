@@ -91,6 +91,8 @@ public abstract class BaseOutput
 			}
 		} else {
 			LOG.log(Level.FINER, MessageFormat.format("No generator for output...not writing report. Output: {0}", this.getClass().getSimpleName()));
+
+			finishOutput(reportModel);
 		}
 	}
 

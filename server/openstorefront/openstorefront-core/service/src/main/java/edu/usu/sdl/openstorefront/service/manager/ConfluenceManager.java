@@ -61,7 +61,7 @@ public class ConfluenceManager
 	{
 		log.log(Level.FINE, "Initializing Confluence Pool");
 
-		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_JIRA_POOL_SIZE, "20");
+		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_CONFLUENCE_POOL_SIZE, "20");
 		int maxPoolSize = Convert.toInteger(poolSize);
 		BlockingQueue<ConfluenceClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 		poolInstance = new ConfluenceManager(clientPool, maxPoolSize);
@@ -139,11 +139,13 @@ public class ConfluenceManager
 		clientPool.offer(confluenceClient);
 	}
 
+	@Override
 	public int getMaxConnections()
 	{
 		return maxPoolSize;
 	}
 
+	@Override
 	public int getAvailableConnections()
 	{
 		return maxPoolSize - clientPool.remainingCapacity();
