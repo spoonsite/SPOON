@@ -53,13 +53,21 @@ Another conflict the librarian may run into is multiple change requests.  To res
 An evaluator has completed an evaluation on an approved entry.  There are no change requests pending for the entry and all
 conflicts have been resolved.
 
+__Solution:__ Librarian publishes the evaluation.  (Note: When an evaluation is published, the approved entry is replaced with the evaluation entry)
+
 ### Scenario 2  
 
-The evaluation is complete for an approved entry, but the librarian or administrator needs tom make a change to the entry.
+The evaluation is complete for an approved entry, but the librarian or administrator needs to make a change to the entry.
+
+__Solution:__ Librarian or administrator will need to make the desired changes on the evaluation.  After the changes are made and the evaluation has been saved, the evaluation can be published.
 
 ### Scenario 3  
 
 An approved entry is in the process of being evaluated, but the librarian or administrator has just received a change request from the entry's submitter.
+
+__Solution__: The librarian will need to handle two separate change requests: submitters' change request and the evaluation change request.
+If the librarian decides to approve the submitter's change request, the librarian will also need to manually update the evaluation change request to match the approved changes.
+If the evaluation change request is approved, the system will create a new submission based on the current evaluation.
 
 ### Scenario 4  
 
@@ -67,4 +75,7 @@ The evaluator has begun the evaluation for an entry but due to lack of informati
 
 ### Scenario 5  
 
-The evaluator has filled in the majority of the sections but was unable to install software.
+The evaluator has filled in the majority of the sections but was unable to install the software.
+
+### Scenario 6
+
