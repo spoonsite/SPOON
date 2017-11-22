@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -45,7 +46,7 @@ public class ComponentResourceView
 	private String activeStatus;
 	private String originalLink;
 	private String componentId;
-		
+
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
 
@@ -66,27 +67,29 @@ public class ComponentResourceView
 	{
 		ComponentResourceView componentResourceView = new ComponentResourceView();
 		componentResourceView.setResourceId(componentResource.getResourceId());
-		componentResourceView.setLocalResourceName(componentResource.getFileName());
-		componentResourceView.setMimeType(componentResource.getMimeType());
 		componentResourceView.setDescription(componentResource.getDescription());
 		componentResourceView.setResourceType(componentResource.getResourceType());
 		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
 		componentResourceView.setRestricted(componentResource.getRestricted());
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		componentResourceView.setActiveStatus(componentResource.getActiveStatus());
-		componentResourceView.setOriginalFileName(componentResource.getOriginalName());
 		componentResourceView.setComponentId(componentResource.getComponentId());
 		String link = componentResource.getLink();
 		link = StringProcessor.stripHtml(link);
 		componentResourceView.setOriginalLink(link);
-		if (componentResource.getFileName() != null) {
-			link = LOCAL_RESOURCE_URL + componentResource.getResourceId();
+		if (componentResource.getFile() != null) {
+			componentResourceView.setLocalResourceName(componentResource.getFile().getFileName());
+			componentResourceView.setMimeType(componentResource.getFile().getMimeType());
+			componentResourceView.setOriginalFileName(componentResource.getFile().getOriginalName());
+			if (StringUtils.isNotBlank(componentResource.getFile().getFileName())) {
+				link = LOCAL_RESOURCE_URL + componentResource.getFile().getMediaFileId();
+			}
 		}
 		componentResourceView.setLink(link);
 		componentResourceView.setActualLink(ACTUAL_RESOURCE_URL + componentResource.getResourceId());
-		
+
 		componentResourceView.toStandardView(componentResource);
-		
+
 		return componentResourceView;
 	}
 

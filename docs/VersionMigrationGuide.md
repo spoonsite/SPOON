@@ -34,6 +34,90 @@ orientdb> DISCONNECT
   (orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
 orientdb> IMPORT DATABASE /temp/mydb.json.gz
 
+## Upgrading from 2.4 to 2.5
+-------------
+
+Pre-Deployment 
+------------------------------------------------------------------------------------------------------------------------------- 
+
+**Elastic Search**
+Change the value of **elastic.server.port** in /var/openstorefront/config/**openstorefront.properties** from 9300 to **9200**
+
+Windows (manually)
+1. Install and extract Elasticsearch 5.6.3 on the system
+2. Remove/delete the root directory of Elasticsearch 2.x from the system
+3. Start Elasticsearch 5.6.3 (by running the elasticsearch-5.6.3/elasticsearch-5.6.3/elasticsearch.bat file)
+
+CentOS using Yum
+* Documentation on installation: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html
+1. Download and install the public signing key
+```sh
+$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+```
+2. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo
+```
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+3. Install Elasticsearch
+```sh
+$ sudo yum install elasticsearch
+```
+4. Run Elasticsearch (with **SysV init**)
+```sh
+# on system boot
+$ sudo chkconfig --add elasticsearch
+
+# manually
+$ sudo -i service elasticsearch start
+$ sudo -i service elasticsearch stop
+```
+4. Run Elasticsearch (with **systemd**)
+```sh
+# on system boot
+$ sudo /bin/systemctl daemon-reload
+$ sudo /bin/systemctl enable elasticsearch.service
+
+#manually
+$ sudo systemctl start elasticsearch.service
+$ sudo systemctl stop elasticsearch.service
+```
+
+elasticsearch service command reference (elasticsearch should be running at this point):
+
+**Start:** systemctl start elasticsearch.service
+
+**Stop:**  systemctl stop elasticsearch.service
+
+**Test:** curl -XGET 'localhost:9200/?pretty'
+
+should give you a response something like this:
+```
+{
+  "name" : "Cp8oag6",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "AT69_T_DTp-1qgIJlatQqA",
+  "version" : {
+    "number" : "5.4.3",
+    "build_hash" : "f27399d",
+    "build_date" : "2016-03-30T09:51:41.449Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.5.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+Getting everything setup in the Open Storefront
+1. In Openstorefront, navigate to Admin Tools -> Application Management -> System -> Search Control
+2. Click "Re-Index Listings"
+3. (optional) if you haven't set the elastic.server.port to 9200, you can do so now from **Admin Tools** -> **App Management** -> **System** -> **System Configuration Properties**
 
 
 ## Upgrading from 2.3 to 2.4

@@ -31,6 +31,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ *
+ * @author dshurtleff
+ */
 @APIDescription("Temporary media stored by a client before being assigned to an entry")
 public class TemporaryMedia
 		extends StandardEntity<TemporaryMedia>

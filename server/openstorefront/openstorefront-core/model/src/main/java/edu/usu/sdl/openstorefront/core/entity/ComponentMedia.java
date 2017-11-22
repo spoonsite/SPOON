@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -29,11 +28,11 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
@@ -43,24 +42,37 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jlaw
  * @author dshurtleff
+ * @author kbair
  */
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
 		extends BaseComponent<ComponentMedia>
-		implements LoggableModel<ComponentMedia>
+		implements LoggableModel<ComponentMedia>, MediaModel
 {
 
 	@PK(generated = true)
 	@NotNull
 	private String componentMediaId;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored filename")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file uploaded")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalName;
+
+	@ManyToOne(cascade = {CascadeType.ALL})
+	@APIDescription("A local media file")
+	private MediaFile file;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -69,7 +81,12 @@ public class ComponentMedia
 	@FK(MediaType.class)
 	private String mediaTypeCode;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
@@ -109,15 +126,14 @@ public class ComponentMedia
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getCaption()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
-				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ ((getFile() != null) ? getFile().getMimeType() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR : "")
 				+ getHideInDisplay()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getUsedInline()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getIconFlag()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
-				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
+				+ (StringUtils.isNotBlank(getLink()) ? getLink() : (getFile() != null) ? getFile().getOriginalName() : "");
 		return key;
 	}
 
@@ -139,10 +155,12 @@ public class ComponentMedia
 			this.setFileName(null);
 			this.setOriginalName(null);
 			this.setMimeType(null);
+			this.setFile(null);
 		} else {
 			this.setFileName(media.getFileName());
 			this.setOriginalName(media.getOriginalName());
 			this.setMimeType(media.getMimeType());
+			this.setFile(media.getFile());
 		}
 		this.setCaption(media.getCaption());
 		this.setLink(media.getLink());
@@ -155,24 +173,19 @@ public class ComponentMedia
 	@Override
 	public int customCompareTo(ComponentMedia o)
 	{
-		int value = ReflectionUtil.compareObjects(getFileName(), o.getFileName());
+		int value = ReflectionUtil.compareObjects(getFile(), o.getFile());
 		return value;
 	}
 
 	/**
-	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use fields directly
+	 * Get the path to the media on disk. 
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
 	public Path pathToMedia()
 	{
-		Path path = null;
-		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
-		}
-		return path;
+		//Note: this may be ran from a proxy so don't use fields directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	@Override
@@ -188,7 +201,7 @@ public class ComponentMedia
 	@Override
 	public String addRemoveComment()
 	{
-		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getLink() != null ? getLink() : getOriginalName());
+		return TranslateUtil.translate(MediaType.class, getMediaTypeCode()) + " - " + (getLink() != null ? getLink() : (getFile() != null ? getFile().getOriginalName() : ""));
 	}
 
 	public String getComponentMediaId()
@@ -201,11 +214,23 @@ public class ComponentMedia
 		this.componentMediaId = componentMediaId;
 	}
 
+	/**
+	 * @return filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getOriginalName()}
+	 */
+	@Deprecated
 	public String getOriginalName()
 	{
 		return originalName;
 	}
 
+	/**
+	 * @param originalName filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setOriginalName(String originalName)}
+	 */
+	@Deprecated
 	public void setOriginalName(String originalName)
 	{
 		this.originalName = originalName;
@@ -221,11 +246,23 @@ public class ComponentMedia
 		this.mediaTypeCode = mediaTypeCode;
 	}
 
+	/**
+	 * @return the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getMimeType()}
+	 */
+	@Deprecated
 	public String getMimeType()
 	{
 		return mimeType;
 	}
 
+	/**
+	 * @param mimeType the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setMimeType(String mimeType)}
+	 */
+	@Deprecated
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
@@ -251,11 +288,23 @@ public class ComponentMedia
 		this.caption = caption;
 	}
 
+	/**
+	 * @return name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getFileName()}
+	 */
+	@Deprecated
 	public String getFileName()
 	{
 		return fileName;
 	}
 
+	/**
+	 * @param fileName name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setFileName(String fileName)}
+	 */
+	@Deprecated
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
@@ -291,4 +340,13 @@ public class ComponentMedia
 		this.iconFlag = iconFlag;
 	}
 
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
+	}
 }

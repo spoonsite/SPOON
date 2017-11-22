@@ -75,7 +75,7 @@ public class CoreSystem
 			new PropertiesManager(),
 			new OsgiManager(),
 			new FileSystemManager(),
-			new DBManager(),
+			DBManager.getInstance(),
 			new SearchServerManager(),
 			new OSFCacheManager(),
 			new JiraManager(),

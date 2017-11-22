@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -88,6 +89,7 @@ public class MediaAction
 		@Validate(required = true, field = "componentId", on = "UploadMedia")
 	})
 	private ComponentMedia componentMedia;
+	private MediaFile mediaFile;
 
 	@Validate(required = true, on = "DataImage")
 	private String imageData;
@@ -137,30 +139,38 @@ public class MediaAction
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia() throws FileNotFoundException
 	{
-		componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
-		componentMedia = filterEngine.filter(componentMedia, true);
-		if (componentMedia == null) {
-			throw new OpenStorefrontRuntimeException("Media not Found", "Check media Id");
+		mediaFile = service.getPersistenceService().findById(MediaFile.class, mediaId);
+		if (mediaFile == null) {
+			componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
+			componentMedia = filterEngine.filter(componentMedia, true);
+			if (componentMedia == null || componentMedia.getFile() == null) {
+				throw new OpenStorefrontRuntimeException("Media not Found", "Check media Id");
+			}
+			mediaFile = componentMedia.getFile();
 		}
 
 		InputStream in;
 		long length;
-		Path path = componentMedia.pathToMedia();
+		Path path = mediaFile.path();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
-			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{componentMedia.pathToMedia(), mediaId, component.getName(), component.getComponentId()}));
+			if (componentMedia != null) {
+				Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.path(), mediaId, component.getName(), component.getComponentId()}));
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.path(), mediaId}));
+			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 		return new RangeResolutionBuilder()
-				.setContentType(componentMedia.getMimeType())
+				.setContentType(mediaFile.getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(componentMedia.getOriginalName())
+				.setFilename(mediaFile.getOriginalName())
 				.createRangeResolution();
 	}
 
@@ -193,15 +203,13 @@ public class MediaAction
 						componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 						componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-						componentMedia.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
-						componentMedia.setMimeType(file.getContentType());
 
 						ValidationModel validationModel = new ValidationModel(componentMedia);
 						validationModel.setConsumeFieldsOnly(true);
 						ValidationResult validationResult = ValidationUtil.validate(validationModel);
 						if (validationResult.valid()) {
 							try {
-								service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
+								service.getComponentService().saveMediaFile(componentMedia, file.getInputStream(), file.getContentType(), StringProcessor.getJustFileName(file.getFileName()));
 
 								if (SecurityUtil.isEntryAdminUser() == false) {
 									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
@@ -267,11 +275,11 @@ public class MediaAction
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(generalMedia.getMimeType())
+				.setContentType(generalMedia.getFile().getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(generalMedia.getOriginalFileName())
+				.setFilename(generalMedia.getFile().getOriginalName())
 				.createRangeResolution();
 	}
 
@@ -286,15 +294,13 @@ public class MediaAction
 			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 			generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-			generalMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
-			generalMedia.setMimeType(file.getContentType());
 
 			ValidationModel validationModel = new ValidationModel(generalMedia);
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				try {
-					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream(), file.getContentType(), StringProcessor.getJustFileName(file.getFileName()));
 					return streamResults(generalMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
@@ -408,13 +414,10 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		contentSectionMedia.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
-		contentSectionMedia.setMimeType(file.getContentType());
-
 		ValidationResult validationResult = contentSectionMedia.validate();
 		if (validationResult.valid()) {
 			try {
-				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream());
+				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream(), file.getContentType(), StringProcessor.getJustFileName(file.getFileName()));
 				List<ContentSectionMedia> data = new ArrayList<>();
 				data.add(contentSectionMedia);
 				return streamResults(data, MediaType.TEXT_HTML);
@@ -433,36 +436,40 @@ public class MediaAction
 	public Resolution sectionMedia() throws FileNotFoundException
 	{
 		ContentSectionMedia sectionMedia = new ContentSectionMedia();
-		sectionMedia.setContentSectionMediaId(mediaId);
-		sectionMedia = sectionMedia.find();
+		mediaFile = service.getPersistenceService().findById(MediaFile.class, mediaId);
+		if (mediaFile == null) {
+			sectionMedia.setContentSectionMediaId(mediaId);
+			sectionMedia = sectionMedia.find();
 
-		//Check component / or evaluate for access?
-		if (sectionMedia != null) {
-			ContentSection section = new ContentSection();
-			section.setContentSectionId(sectionMedia.getContentSectionId());
-			section = section.find();
-			if (section != null) {
-				if (Component.class.getSimpleName().equals(section.getEntity())) {
-					Component component = new Component();
-					component.setComponentId(section.getEntityId());
-					component = component.find();
-					component = filterEngine.filter(component);
-					if (component == null) {
-						sectionMedia = null;
-					}
-				} else if (Evaluation.class.getSimpleName().equals(section.getEntity())) {
-					Evaluation evaluation = new Evaluation();
-					evaluation.setEvaluationId(section.getEntityId());
-					evaluation = evaluation.find();
-					evaluation = filterEngine.filter(evaluation);
-					if (evaluation == null) {
-						sectionMedia = null;
+			//Check component / or evaluate for access?
+			if (sectionMedia != null) {
+				ContentSection section = new ContentSection();
+				section.setContentSectionId(sectionMedia.getContentSectionId());
+				section = section.find();
+				if (section != null) {
+					if (Component.class.getSimpleName().equals(section.getEntity())) {
+						Component component = new Component();
+						component.setComponentId(section.getEntityId());
+						component = component.find();
+						component = filterEngine.filter(component);
+						if (component == null) {
+							sectionMedia = null;
+						}
+					} else if (Evaluation.class.getSimpleName().equals(section.getEntity())) {
+						Evaluation evaluation = new Evaluation();
+						evaluation.setEvaluationId(section.getEntityId());
+						evaluation = evaluation.find();
+						evaluation = filterEngine.filter(evaluation);
+						if (evaluation == null) {
+							sectionMedia = null;
+						}
 					}
 				}
 			}
+			mediaFile = (sectionMedia != null ? sectionMedia.getFile() : null);
 		}
 
-		if (sectionMedia == null) {
+		if (mediaFile == null) {
 			LOG.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
 			return new StreamingResolution("image/png")
 			{
@@ -478,22 +485,26 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = sectionMedia.pathToMedia();
+		Path path = mediaFile.path();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{sectionMedia.pathToMedia(), sectionMedia.getContentSectionMediaId()}));
+			if (sectionMedia != null) {
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.path(), sectionMedia.getContentSectionMediaId()}));
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
+			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(sectionMedia.getMimeType())
+				.setContentType(mediaFile.getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(sectionMedia.getOriginalName())
+				.setFilename(mediaFile.getOriginalName())
 				.createRangeResolution();
 	}
 
@@ -683,6 +694,16 @@ public class MediaAction
 	public void setOrganizationId(String organizationId)
 	{
 		this.organizationId = organizationId;
+	}
+
+	public MediaFile getMediaFile()
+	{
+		return mediaFile;
+	}
+
+	public void setMediaFile(MediaFile mediaFile)
+	{
+		this.mediaFile = mediaFile;
 	}
 
 }

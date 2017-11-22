@@ -65,6 +65,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -123,9 +124,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -662,8 +661,6 @@ public class CoreComponentServiceImpl
 							componentMedia.setComponentId(component.getComponent().getComponentId());
 							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
-							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(true);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
@@ -692,8 +689,7 @@ public class CoreComponentServiceImpl
 								InputStream in = new FileInputStream(path.toFile());
 								componentMedia.setComponentMediaId(persistenceService.generateId());
 								componentMedia.populateBaseCreateFields();
-								componentMedia.setFileName(componentMedia.getComponentMediaId());
-								Files.copy(in, componentMedia.pathToMedia());
+								componentMedia = componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
@@ -702,7 +698,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 						// Replace converted url
-						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getComponentMediaId());
+						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getFile().getMediaFileId());
 						String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
 						LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
 						mediaItem.attr("src", newUrl);
@@ -771,10 +767,43 @@ public class CoreComponentServiceImpl
 				component.getComponent().setComponentId(existing.getComponentId());
 				snapshotVersion(component.getComponent().getComponentId(), component.getComponent().getFileHistoryId());
 			}
+			if (component.getMedia() != null) {
+				component.getMedia().forEach(componentMedia -> {
+					MediaFile existingFile = getExistingMediaFile(componentMedia.getFile());
+					if (existingFile != null) {
+						componentMedia.setFile(existingFile);
+					}
+				});
+			}
+			if (component.getResources() != null) {
+				component.getResources().forEach(componentResource -> {
+					MediaFile existingFile = getExistingMediaFile(componentResource.getFile());
+					if (existingFile != null) {
+						componentResource.setFile(existingFile);
+					}
+				});
+			}
+
 			saveFullComponent(component, options, false);
 			componentsToIndex.add(component.getComponent());
 		});
 		componentService.getSearchService().indexComponents(componentsToIndex);
+	}
+
+	private MediaFile getExistingMediaFile(MediaFile file)
+	{
+		MediaFile existing = null;
+		if (file != null
+				&& !StringUtils.isBlank(file.getFileName())
+				&& !StringUtils.isBlank(file.getMediaFileId())) {
+			// if it is the same fileName and directory it is the same file
+			// or the file is already overwritten the previous file
+			MediaFile example = new MediaFile();
+			example.setFileName(file.getFileName());
+			example.setFileType(file.getFileType());
+			existing = example.findProxy();
+		}
+		return existing;
 	}
 
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
@@ -1071,7 +1100,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(componentId, "Component Id is required.");
 		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
-		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
@@ -1892,22 +1921,28 @@ public class CoreComponentServiceImpl
 				componentAll.setQuestions(new ArrayList<>());
 
 				//Handle local media seperately
-				List<ComponentMedia> localMedia = new ArrayList<>();
 				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
 					ComponentMedia media = componentAll.getMedia().get(i);
-					if (media.getFileName() != null) {
-						localMedia.add(componentAll.getMedia().remove(i));
+					if (media.getFile() != null && StringUtils.isNotBlank(media.getFile().getFileName())) {
+						media.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						media.setFile(persistenceService.findById(MediaFile.class, media.getFile().getMediaFileId()));
+						media.setComponentMediaId(null);
+						media.populateBaseUpdateFields();
 					} else {
 						media.clearKeys();
 					}
 				}
 
 				//Handle local resource seperately
-				List<ComponentResource> localResources = new ArrayList<>();
 				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
 					ComponentResource resource = componentAll.getResources().get(i);
-					if (resource.getFileName() != null) {
-						localResources.add(componentAll.getResources().remove(i));
+					if (resource.getFile() != null && StringUtils.isNotBlank(resource.getFile().getFileName())) {
+						resource.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						resource.setFile(persistenceService.findById(MediaFile.class, resource.getFile().getMediaFileId()));
+						resource.setResourceId(null);
+						resource.populateBaseUpdateFields();
 					} else {
 						resource.clearKeys();
 					}
@@ -1919,40 +1954,6 @@ public class CoreComponentServiceImpl
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
-				//copy over local resources
-				for (ComponentMedia media : localMedia) {
-					media.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
-						media.setComponentMediaId(persistenceService.generateId());
-						media.setFileName(media.getComponentMediaId());
-						Path newPath = media.pathToMedia();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
-						}
-						media.populateBaseUpdateFields();
-						persistenceService.persist(media);
-					}
-				}
-
-				for (ComponentResource resource : localResources) {
-					resource.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
-						resource.setResourceId(persistenceService.generateId());
-						resource.setFileName(resource.getResourceId());
-						Path newPath = resource.pathToResource();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
-						}
-						resource.populateBaseUpdateFields();
-						persistenceService.persist(resource);
-					}
-				}
 				cleanupCache(orignalComponentId);
 				cleanupCache(componentAll.getComponent().getComponentId());
 
@@ -2334,6 +2335,7 @@ public class CoreComponentServiceImpl
 					persistenceService.persist(userWatch);
 				}
 
+				persistenceService.commit();
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 

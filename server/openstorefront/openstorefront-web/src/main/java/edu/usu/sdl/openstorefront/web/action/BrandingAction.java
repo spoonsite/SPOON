@@ -133,11 +133,11 @@ public class BrandingAction
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(generalMedia.getMimeType())
+				.setContentType(generalMedia.getFile().getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(generalMedia.getOriginalFileName())
+				.setFilename(generalMedia.getFile().getOriginalName())
 				.createRangeResolution();
 
 	}

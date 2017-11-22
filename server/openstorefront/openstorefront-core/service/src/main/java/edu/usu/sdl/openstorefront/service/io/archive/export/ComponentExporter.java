@@ -134,8 +134,8 @@ public class ComponentExporter
 					}
 
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
-					addError("Media not found (Not included in export) filename: " + componentMedia.getFileName());
+					LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
+					addError("Media not found (Not included in export) filename: " + (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName()));
 				}
 			}
 		}
@@ -155,8 +155,8 @@ public class ComponentExporter
 					}
 
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
-					addError("Resource not found (Not included in export) filename: " + componentResource.getFileName());
+					LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
+					addError("Resource not found (Not included in export) filename: " + (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName()));
 				}
 			}
 		}

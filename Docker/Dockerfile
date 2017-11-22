@@ -16,8 +16,8 @@ RUN apk add curl libc6-compat
 
 ENV ES_NAME elasticsearch
 ENV ES_HOME /usr/local/share/$ES_NAME
-ARG ES_VERSION=2.4.3
-ARG ES_TGZ_URL=https://download.elastic.co/$ES_NAME/release/org/$ES_NAME/distribution/tar/$ES_NAME/$ES_VERSION/$ES_NAME-$ES_VERSION.tar.gz
+ARG ES_VERSION=5.6.3
+ARG ES_TGZ_URL=https://artifacts.elastic.co/downloads/$ES_NAME/$ES_NAME-$ES_VERSION.tar.gz
 
 RUN mkdir -p "$ES_HOME" \
 	&& chmod 755 -R "$ES_HOME"

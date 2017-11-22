@@ -17,6 +17,7 @@
  */
 /* global Ext, CoreUtil, CoreService */
 
+Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
@@ -255,7 +256,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						var data = Ext.decode(response.responseText);
 
 						var requiredStore = submissionPanel.requiredAttributeStore;
-
+						
 						var optionalAttributes = [];
 						Ext.Array.each(data, function (attribute) {
 							if (!attribute.hideOnSubmission) {
@@ -405,6 +406,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								data: record.data.codes
 							}),
+							listConfig: {
+								getInnerTpl: function () {
+									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+								}
+							},
 							listeners: {
 								change: function (fieldLocal, newValue, oldValue, opts) {
 									var recordLocal = fieldLocal.record;
@@ -518,6 +524,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 				},
 				Ext.create('OSF.component.StandardComboBox', {
 					name: 'organization',
+					autoEl: {
+						"data-test" : "organizationInput"
+					},
 					allowBlank: false,
 					margin: '0 0 10 0',
 					width: '100%',
@@ -605,6 +614,65 @@ Ext.define('OSF.component.SubmissionPanel', {
 			});
 		};
 
+		var addMultipleAttribute = function () {
+			//	Create multiple attributes form panel
+			var multipleAttributesFP = Ext.create('OSF.form.MultipleAttributes', {
+				componentId: submissionPanel.componentId,
+				componentType: submissionPanel.componentTypeSelected
+			});
+
+			var multipleAttributesWin = Ext.create('Ext.window.Window', {
+				title: 'Add Attributes',
+				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
+				modal: true,
+				width: 700,
+				closeAction: 'destroy',
+				height: '50%',
+				layout: 'fit',
+				items: [
+					multipleAttributesFP
+				],
+				dockedItems: [{
+						xtype: 'toolbar',
+						itemId: 'buttonToolBar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'
+							},
+							{
+								xtype: 'button',
+								text: 'Save',
+								formBind: true,
+								margin: '0 20 0 0',
+								iconCls: 'fa fa-lg fa-save icon-button-color-save',
+								handler: function () {
+									multipleAttributesFP.submit(function (attrForm) {
+										attrForm.up('window').close();
+										submissionPanel.loadComponentAttributes();
+									});
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									multipleAttributesFP.cancel(function (attrForm) {
+										attrForm.up('window').close();
+									});
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}
+						]
+					}
+				]
+			});
+			multipleAttributesWin.show();
+		};
+
 		var addEditAttribute = function (record) {
 			var addWindow = Ext.create('Ext.window.Window', {
 				closeAction: 'destory',
@@ -668,6 +736,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 											],
 											data: submissionPanel.optionalAttributes
 										}),
+										listConfig: {
+											getInnerTpl: function () {
+												return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+											}
+										},
 										listeners: {
 
 											change: function (field, newValue, oldValue, opts) {
@@ -689,7 +762,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 														Ext.Array.each(attributeCodes, function (attributeCode) {
 															lookUpCodes.push({
 																code: attributeCode.attributeCodePk.attributeCode,
-																label: attributeCode.label
+																label: attributeCode.label,
+																description: attributeCode.description
 															});
 														});
 														codeField.getStore().loadData(lookUpCodes);
@@ -841,6 +915,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,
 								valueField: 'code',
 								displayField: 'label',
+								listConfig: {
+									getInnerTpl: function () {
+										return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+									}
+								},
 								store: Ext.create('Ext.data.Store', {
 									sorters: [
 										{
@@ -1350,7 +1429,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								allowBlank: false
+								hidden: true
 							},
 							Ext.create('OSF.component.SecurityComboBox', {
 								itemId: 'securityMarkings',
@@ -1535,6 +1614,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('Local Resource');
 											form.getForm().findField('file').setHidden(false);
 											form.getForm().findField('originalLink').setHidden(true);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(false);
 										}
 									},
 									{
@@ -1545,6 +1626,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('External Link');
 											form.getForm().findField('file').setHidden(true);
 											form.getForm().findField('originalLink').setHidden(false);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(true);
 										}
 									}
 								]
@@ -1569,8 +1652,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								resourceLabel: 'Upload Media',
-								allowBlank: false
+								resourceLabel: 'Upload Media'
 							},
 							{
 								xtype: 'textfield',
@@ -2023,6 +2105,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 											handler: function () {
 												addEditAttribute();
+											}
+										},
+										{
+											text: 'Add Multiple Attributes',
+											itemId: 'multipleAttrBtn',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+											handler: function () {
+												addMultipleAttribute();
 											}
 										},
 										{

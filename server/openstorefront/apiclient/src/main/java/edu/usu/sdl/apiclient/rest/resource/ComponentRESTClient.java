@@ -497,7 +497,7 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public ComponentAdminWrapper getComponentList(FilterQueryParams filterQueryParams)
+	public ComponentAdminWrapper getComponentList(ComponentFilterParams filterQueryParams)
 	{
 		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
 		APIResponse response = client.httpGet(basePath + "/filterable", parameters);

@@ -452,7 +452,7 @@ public class ComponentRESTResource
 									fileNameMediaSet.add(name);
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
 							}
 						}
 					}
@@ -469,7 +469,7 @@ public class ComponentRESTResource
 									fileNameResourceSet.add(name);
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
 							}
 						}
 					}
@@ -666,7 +666,7 @@ public class ComponentRESTResource
 			@RequiredParam RequiredForComponent component)
 	{
 		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
-			component.getComponent().setApprovalState(ApprovalStatus.APPROVED);
+			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
 		ValidationModel validationModel = new ValidationModel(component);

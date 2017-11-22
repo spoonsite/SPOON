@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,7 +68,7 @@ public class ServiceProxy
 
 	private String modificationType = ModificationType.API;
 
-	protected PersistenceService persistenceService = new OrientPersistenceService();
+	protected PersistenceService persistenceService = new OrientPersistenceService(DBManager.getInstance());
 	private LookupService lookupService;
 	private AttributeService attributeService;
 	private AttributeServicePrivate attributeServicePrivate;
@@ -155,7 +156,7 @@ public class ServiceProxy
 	@Override
 	public PersistenceService getNewPersistenceService()
 	{
-		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService();
+		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService(DBManager.getInstance());
 	}
 
 	@Override

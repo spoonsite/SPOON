@@ -377,17 +377,17 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		sub.saveMediaFile(media, fileInput);
+		return sub.saveMediaFile(media, fileInput, mimeType, originalFileName);
 	}
 
 	@Override
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput)
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		sub.saveResourceFile(resource, fileInput);
+		return sub.saveResourceFile(resource, fileInput, mimeType, originalFileName);
 	}
-
+	
 	@Override
 	public Boolean setLastViewDts(String componentId, String userId)
 	{

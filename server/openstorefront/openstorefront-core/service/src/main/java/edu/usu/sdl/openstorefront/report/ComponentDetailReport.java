@@ -32,7 +32,6 @@ import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
-import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
@@ -53,7 +52,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class ComponentDetailReport
-		extends BaseReport
+		extends BaseReport<ComponentDetailReportModel>
 {
 
 	//private static final Logger LOG = Logger.getLogger(ComponentDetailReport.class.getName());
@@ -292,12 +291,19 @@ public class ComponentDetailReport
 	}
 
 	@Override
-	public String reportSummmary(BaseReportModel reportModel)
+	public String reportSummmary(ComponentDetailReportModel reportModel)
 	{
 		StringBuilder summary = new StringBuilder();
+		summary.append(super.reportSummmary(reportModel));
 
-		//summary
-		//list entries in report
+		summary.append("<br>Entries in report: ")
+				.append(reportModel.getData().size())
+				.append("<br><br>");
+
+		reportModel.getData().forEach(line -> {
+			summary.append(line.getComponent().getName()).append("<br>");
+		});
+
 		return summary.toString();
 	}
 

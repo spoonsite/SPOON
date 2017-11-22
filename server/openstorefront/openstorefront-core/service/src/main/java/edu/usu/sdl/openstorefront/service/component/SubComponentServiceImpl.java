@@ -45,10 +45,12 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.LoggableModel;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
@@ -64,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -187,27 +190,47 @@ public class SubComponentServiceImpl
 
 	void removeLocalResource(ComponentResource componentResource)
 	{
-		//Note: this can't be rolled back
-		Path path = componentResource.pathToResource();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete() == false) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
-				}
+		if (componentResource.getFile() != null) {
+			//Note: this can't be rolled back
+			ComponentResource example = new ComponentResource();
+			example.setFile(new MediaFile());
+			example.getFile().setMediaFileId(componentResource.getFile().getMediaFileId());
+
+			long count = persistenceService.countByExample(example);
+			if (count == 1) {
+				removeLocalMedia(componentResource.getFile().getMediaFileId());
 			}
 		}
 	}
 
 	void removeLocalMedia(ComponentMedia componentMedia)
 	{
-		//Note: this can't be rolled back
-		Path path = componentMedia.pathToMedia();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete() == false) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+		if (componentMedia.getFile() != null) {
+			//Note: this can't be rolled back
+			ComponentMedia example = new ComponentMedia();
+			example.setFile(new MediaFile());
+			example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
+
+			long count = persistenceService.countByExample(example);
+			if (count == 1) {
+				removeLocalMedia(componentMedia.getFile().getMediaFileId());
+			}
+		}
+	}
+
+	void removeLocalMedia(String mediaFileId)
+	{
+		MediaFile mediaFile = persistenceService.findById(MediaFile.class, mediaFileId);
+		if (mediaFile != null) {
+			Path path = mediaFile.path();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					if (path.toFile().delete() == false) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
+					}
 				}
 			}
+			persistenceService.delete(mediaFile);
 		}
 	}
 
@@ -600,7 +623,6 @@ public class SubComponentServiceImpl
 					}
 				}
 			}
-
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 			componentService.getChangeLogService().addEntityChange(resource);
@@ -827,46 +849,63 @@ public class SubComponentServiceImpl
 		return reviews;
 	}
 
-	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		return saveMediaFile(media, fileInput, true);
+		return saveMediaFile(media, fileInput, mimeType, originalFileName, true);
 	}
 
-	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, boolean updateLastActivity)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName, boolean updateLastActivity)
 	{
 		Objects.requireNonNull(media);
-		Objects.requireNonNull(fileInput);
+		media.setFile(saveMediaFile(media.getFile(), fileInput, mimeType, originalFileName));
+		media.setUpdateUser(SecurityUtil.getCurrentUserName());
+		media = saveComponentMedia(media, updateLastActivity);
+		return media;
+	}
 
-		if (StringUtils.isBlank(media.getComponentMediaId())) {
-			media = saveComponentMedia(media, updateLastActivity);
-		}
-		media.setFileName(media.getComponentMediaId());
+	public MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
+	{
 		try (InputStream in = fileInput) {
-			Files.copy(in, media.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
-			media.setUpdateUser(SecurityUtil.getCurrentUserName());
-			media = saveComponentMedia(media, updateLastActivity);
+			media = saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.MEDIA);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 		return media;
 	}
 
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput)
+	public MediaFile saveResourceFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName)
 	{
-		Objects.requireNonNull(resource);
-		Objects.requireNonNull(fileInput);
-
-		if (StringUtils.isBlank(resource.getResourceId())) {
-			resource.setResourceId(persistenceService.generateId());
-		}
-		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, resource.pathToResource(), StandardCopyOption.REPLACE_EXISTING);
-			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveComponentResource(resource);
+			media = saveMediaFile(media, in, mimeType, originalFileName, MediaFileType.RESOURCE);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
+		return media;
+	}
+
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName, MediaFileType type) throws IOException
+	{
+		Objects.requireNonNull(fileInput);
+		if (media == null) {
+			media = new MediaFile();
+		}
+		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setMimeType(mimeType);
+		media.setOriginalName(originalFileName);
+		media.setFileType(type);
+
+		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
+		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		return media;
+	}
+
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName)
+	{
+		Objects.requireNonNull(resource);
+		resource.setFile(saveResourceFile(resource.getFile(), fileInput, mimeType, originalFileName));
+		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
+		resource = saveComponentResource(resource);
+		return resource;
 	}
 
 	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons)

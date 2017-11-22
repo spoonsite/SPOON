@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
-public abstract class BaseReport
+public abstract class BaseReport<T extends BaseReportModel>
 {
 
 	private static final Logger LOG = Logger.getLogger(BaseReport.class.getName());
@@ -170,7 +170,7 @@ public abstract class BaseReport
 		return baseReportModel;
 	}
 
-	protected abstract <T extends BaseReportModel> T gatherData();
+	protected abstract T gatherData();
 
 	protected void handleOutputs(BaseReportModel reportModel)
 	{
@@ -208,7 +208,7 @@ public abstract class BaseReport
 	 * @param reportModel
 	 * @return html/text with a summary of the report
 	 */
-	public String reportSummmary(BaseReportModel reportModel)
+	public String reportSummmary(T reportModel)
 	{
 		StringBuilder summary = new StringBuilder();
 		summary.append("<h2>Report: ")
@@ -216,7 +216,7 @@ public abstract class BaseReport
 				.append("</h2>");
 		summary.append("Generated on ");
 		summary.append(sdf.format(reportModel.getCreateTime()));
-		summary.append(" is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>");
+		summary.append(" is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i><br>");
 
 		return summary.toString();
 	}
