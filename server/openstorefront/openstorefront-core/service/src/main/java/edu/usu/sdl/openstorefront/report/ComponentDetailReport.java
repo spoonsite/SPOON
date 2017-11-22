@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -32,6 +33,8 @@ import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
+import edu.usu.sdl.openstorefront.report.generator.LocalMediaPDFHandler;
+import edu.usu.sdl.openstorefront.report.generator.PDFRenderHandler;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
@@ -259,8 +262,15 @@ public class ComponentDetailReport
 	private void writePDF(BaseGenerator generator, ComponentDetailReportModel reportModel)
 	{
 		HtmlToPdfGenerator pdfGenerator = (HtmlToPdfGenerator) generator;
+
 		String renderedTemplate = createHtml(reportModel);
-		pdfGenerator.savePdfDocument(renderedTemplate);
+
+		PDFRenderHandler renderHandler = (renderer) -> {
+			LocalMediaPDFHandler handler = new LocalMediaPDFHandler(renderer.getSharedContext().getUserAgentCallback(), service);
+			renderer.getSharedContext().setUserAgentCallback(handler);
+		};
+
+		pdfGenerator.savePdfDocument(renderedTemplate, renderHandler);
 	}
 
 	private String createHtml(ComponentDetailReportModel reportModel)
@@ -268,6 +278,7 @@ public class ComponentDetailReport
 		String renderedTemplate = null;
 		try {
 			Map<String, Object> root = new HashMap<>();
+			root.put("baseUrl", PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL));
 			root.put("reportOptions", report.getReportOption());
 			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
 			root.put("reportModel", reportModel);

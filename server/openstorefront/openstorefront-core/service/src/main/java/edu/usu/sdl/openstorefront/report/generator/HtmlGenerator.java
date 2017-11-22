@@ -22,7 +22,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -33,7 +40,9 @@ public class HtmlGenerator
 		extends BaseGenerator
 {
 
-	BufferedWriter writer;
+	private static final Logger LOG = Logger.getLogger(HtmlGenerator.class.getName());
+
+	private BufferedWriter writer;
 
 	public HtmlGenerator(GeneratorOptions generatorOption)
 	{
@@ -115,6 +124,23 @@ public class HtmlGenerator
 				throw new OpenStorefrontRuntimeException(ex);
 			}
 		}
+	}
+
+	public String convertImageToDataUrl(String pathToMedia, String mimetype)
+	{
+		Path path = Paths.get(pathToMedia);
+		byte[] data;
+		try {
+			data = Files.readAllBytes(path);
+			byte[] encoded = Base64.getEncoder().encode(data);
+			String imgDataAsBase64 = new String(encoded);
+			String imgAsBase64 = "data:" + mimetype + ";base64," + imgDataAsBase64;
+			return imgAsBase64;
+		} catch (IOException ex) {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find or read media. Path: {0}", pathToMedia));
+			LOG.log(Level.FINER, null, ex);
+		}
+		return "";
 	}
 
 	@Override

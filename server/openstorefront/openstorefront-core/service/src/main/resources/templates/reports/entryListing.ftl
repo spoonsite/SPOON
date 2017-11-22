@@ -88,7 +88,7 @@
 				<#list data as listing>
 					<tr>
 						<td class="name">
-							<a href="${listing.viewLink}" target="blank">${listing.name}</a>
+							<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
 						</td>	
 						<td>
 							${listing.shortDescription}

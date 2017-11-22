@@ -90,6 +90,11 @@ public class HtmlToPdfGenerator
 	 */
 	public void savePdfDocument(String htmlContent)
 	{
+
+	}
+
+	public void savePdfDocument(String htmlContent, PDFRenderHandler renderHandler)
+	{
 		//	Convert HTML to XHTML
 		ITextRenderer renderer = new ITextRenderer();
 		Tidy tidy = new Tidy();
@@ -103,7 +108,9 @@ public class HtmlToPdfGenerator
 			throw new OpenStorefrontRuntimeException("Encoding not supported on the output.", ex);
 		}
 
-		//	Set XHTML as the document string
+		if (renderHandler != null) {
+			renderHandler.configRender(renderer);
+		}
 		renderer.setDocumentFromString(htmlContent);
 		renderer.layout();
 

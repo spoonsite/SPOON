@@ -70,6 +70,11 @@ public abstract class BaseReport<T extends BaseReportModel>
 		initBaseReport(report, service, null);
 	}
 
+	public BaseReport(Report report, Service service, FilterEngine filterEngine)
+	{
+		initBaseReport(report, service, filterEngine);
+	}
+
 	private void initBaseReport(Report report, Service service, FilterEngine filterEngine)
 	{
 		Objects.requireNonNull(report, "Report must set");
