@@ -43,8 +43,10 @@ public class GeneralMediaView
 	{
 		GeneralMediaView generalMediaView = new GeneralMediaView();
 		generalMediaView.setName(generalMedia.getName());
-		generalMediaView.setOriginalFileName(generalMedia.getOriginalFileName());
-		generalMediaView.setMimeType(generalMedia.getMimeType());
+		if (generalMedia.getFile() != null) {
+			generalMediaView.setOriginalFileName(generalMedia.getFile().getOriginalName());
+			generalMediaView.setMimeType(generalMedia.getFile().getMimeType());
+		}
 		generalMediaView.setUpdateDts(generalMedia.getUpdateDts());
 		generalMediaView.setUpdateUser(generalMedia.getUpdateUser());
 		generalMediaView.setMediaLink("Media.action?GeneralMedia&name=" + generalMedia.getName());

@@ -27,7 +27,7 @@ import java.util.Queue;
 import java.util.UUID;
 
 /**
- *
+ * TODO: look into using orient with in memory option depends on startup/teardown time
  * @author kbair
  */
 public class TestPersistenceService implements PersistenceService

@@ -35,10 +35,12 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -396,20 +398,35 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
+	public GeneralMedia saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput, String mimeType, String originalFileName)
 	{
 		Objects.requireNonNull(generalMedia);
 		Objects.requireNonNull(generalMedia.getName(), "Name must be set.");
 
-		generalMedia.setFileName(generalMedia.getName());
-		try (InputStream in = fileInput) {
-			Files.copy(in, generalMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+		try {
+			generalMedia.setFile(saveMediaFile(generalMedia.getFile(), fileInput, mimeType, originalFileName));
 			generalMedia.populateBaseCreateFields();
 			persistenceService.persist(generalMedia);
 			return generalMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
+	}
+
+	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName) throws IOException
+	{
+		Objects.requireNonNull(fileInput);
+		if(media == null)
+		{
+			media = new MediaFile();
+		}
+		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setMimeType(mimeType);
+		media.setOriginalName(originalFileName);
+		media.setFileType(MediaFileType.GENERAL);
+		Path path = Paths.get(MediaFileType.GENERAL.getPath() + "/" + media.getFileName());
+		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		return media;
 	}
 
 	@Override

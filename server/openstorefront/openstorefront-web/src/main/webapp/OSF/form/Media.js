@@ -177,15 +177,25 @@ Ext.define('OSF.form.Media', {
 					itemId: 'upload',
 					resourceLabel: 'Upload Media',
 					name: 'file',
-					width: '100%',
-					allowBlank: false
+					width: '100%'
 				},
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Link',																																	
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/image.png',
-					name: 'originalLink'
+					name: 'originalLink',
+					listeners: {
+						change: function (self, newVal, oldVal) {
+							var iconCheckbox = self.up().query('[name="iconFlag"]')[0];
+							if (newVal === '') {
+								iconCheckbox.setDisabled(false);
+							}
+							else {
+								iconCheckbox.setDisabled(true);
+							}
+						}
+					}
 				},
 				{
 					xtype: 'checkbox',
@@ -199,7 +209,7 @@ Ext.define('OSF.form.Media', {
 				},
 				{
 					xtype: 'checkbox',
-					fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
+					fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time. You <b>cannot</b> use a <b>Link</b> or external media for the icon."></i>',
 					name: 'iconFlag'
 				},				
 				Ext.create('OSF.component.SecurityComboBox', {					

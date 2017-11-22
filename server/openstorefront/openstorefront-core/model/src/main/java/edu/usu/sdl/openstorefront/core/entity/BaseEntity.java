@@ -94,24 +94,24 @@ public abstract class BaseEntity<T>
 		queryByExample.setReturnNonProxied(false);
 		return (List<T>) serviceProxy.getPersistenceService().queryByExample(queryByExample);
 	}
-	
+
 	public ValidationResult validate()
 	{
 		return validate(true);
 	}
-	
-	public ValidationResult validate(boolean consumeFieldsOnly) 
+
+	public ValidationResult validate(boolean consumeFieldsOnly)
 	{
 		ValidationModel validationModel = new ValidationModel(this);
 		validationModel.setConsumeFieldsOnly(consumeFieldsOnly);
 		return ValidationUtil.validate(validationModel);
-	}	
+	}
 
 	@Override
 	public int compareTo(T o)
 	{
 		if (o != null) {
-			return 1;
+			return this.equals(o) ? 0 : 1;
 		} else {
 			return -1;
 		}

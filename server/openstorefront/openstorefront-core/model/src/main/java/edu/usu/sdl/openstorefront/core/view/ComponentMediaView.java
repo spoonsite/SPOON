@@ -53,25 +53,25 @@ public class ComponentMediaView
 	public static ComponentMediaView toView(ComponentMedia media)
 	{
 		ComponentMediaView mediaView = new ComponentMediaView();
-
-		if (StringUtils.isNotBlank(media.getFileName())) {
-			mediaView.setLink("Media.action?LoadMedia&mediaId=" + media.getComponentMediaId());
-		} else {
-			mediaView.setLink(media.getLink());
-		}
 		mediaView.setComponentMediaId(media.getComponentMediaId());
 		mediaView.setActiveStatus(media.getActiveStatus());
-		mediaView.setFileName(media.getFileName());
-		mediaView.setOriginalFileName(media.getOriginalName());
 		mediaView.setOriginalLink(media.getLink());
 		mediaView.setMediaTypeCode(media.getMediaTypeCode());
 		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMediaTypeCode()));
-		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
 		mediaView.setUpdateDts(media.getUpdateDts());
 		mediaView.setHideInDisplay(media.getHideInDisplay());
 		mediaView.setUsedInline(media.getUsedInline());
 		mediaView.setIconFlag(media.getIconFlag());
+		mediaView.setLink(media.getLink());
+		if (media.getFile() != null) {
+			mediaView.setFileName(media.getFile().getFileName());
+			mediaView.setOriginalFileName(media.getFile().getOriginalName());
+			mediaView.setMimeType(media.getFile().getMimeType());
+			if (StringUtils.isNotBlank(media.getFile().getFileName())) {
+				mediaView.setLink("Media.action?LoadMedia&mediaId=" + media.getFile().getMediaFileId());
+			}
+		}
 		mediaView.toStandardView(media);
 
 		return mediaView;

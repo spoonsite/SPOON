@@ -139,12 +139,14 @@ public class EvaluationExporter
 					allMediaRecords.addAll(sectionMedia);
 					for (ContentSectionMedia media : sectionMedia) {
 						Path sourceMedia = media.pathToMedia();
-						File mediaFile = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR + media.getFileName());
-						try (OutputStream out = new TFileOutputStream(mediaFile)) {
-							Files.copy(sourceMedia, out);
-						} catch (IOException ex) {
-							LOG.log(Level.WARNING, "Unable to copy media file: " + media.getFileName(), ex);
-							addError("Unable to copy media file: " + media.getFileName());
+						if (media.getFile() != null) {
+							File mediaFile = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR + media.getFile().getFileName());
+							try (OutputStream out = new TFileOutputStream(mediaFile)) {
+								Files.copy(sourceMedia, out);
+							} catch (IOException ex) {
+								LOG.log(Level.WARNING, "Unable to copy media file: " + media.getFile().getFileName(), ex);
+								addError("Unable to copy media file: " + media.getFile().getFileName());
+							}
 						}
 					}
 				}

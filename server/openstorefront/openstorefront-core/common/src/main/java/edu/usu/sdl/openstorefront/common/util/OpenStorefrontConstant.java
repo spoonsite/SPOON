@@ -87,39 +87,144 @@ public class OpenStorefrontConstant
 	public static final String ERROR_CODE_REPORT = "RPT";
 
 	private static final Map<String, String> mimeXref = loadMimeXref();
+	private static final Map<String, String> mimeTypeMap = loadMimeTypeMap();
+	private static final Map<String, String> extMap = loadExtMap();
 
+	/**
+	 * used to select a standardized extension for mime types that have multiple extensions
+	 * @return 
+	 */
+	private static Map<String, String> loadExtMap()
+	{
+		Map<String, String> extMapLocal = new HashMap<>();
+		extMapLocal.put(".arc", ".bin");	//Archive document (multiple files embedded)
+		extMapLocal.put(".htm", ".html");	//HyperText Markup Language (HTML)
+		extMapLocal.put(".jpeg", ".jpg");	//JPEG images
+		extMapLocal.put(".mid", ".midi");	//Musical Instrument Digital Interface (MIDI)
+		extMapLocal.put(".mpeg", ".mpg");	//OGG audio
+		extMapLocal.put(".ogg", ".oga");	//OGG audio
+		extMapLocal.put(".tiff", ".tif");	//Tagged Image File Format (TIFF)
+		return extMapLocal;
+	}
+	/**
+	 * used to select a standardized mimeType for extensions that have multiple mime types
+	 * https://www.iana.org/assignments/media-types/media-types.xhtml
+	 * @return 
+	 */
+	private static Map<String, String> loadMimeTypeMap()
+	{
+		Map<String, String> mimeTypeMapLocal = new HashMap<>();
+		mimeTypeMapLocal.put("application/doc", "application/msword");	//Microsoft Word
+		mimeTypeMapLocal.put("application/docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");	//Microsoft Word
+		mimeTypeMapLocal.put("application/xls", "application/vnd.ms-excel");	//Microsoft Excel
+		mimeTypeMapLocal.put("application/xml", "text/xml");	//XML
+		mimeTypeMapLocal.put("audio/mp4", "video/mp4");	//MP4 Audio
+		mimeTypeMapLocal.put("audio/mpeg", "video/mpg");	//MPEG Audio
+		mimeTypeMapLocal.put("audio/mpg", "video/mpg");	//MPEG Audio
+		mimeTypeMapLocal.put("image/jpeg", "image/jpg");	//JPEG images
+		mimeTypeMapLocal.put("text/json", "application/json");	//JSON format
+		mimeTypeMapLocal.put("video/mpeg", "video/mpg");	//MPEG Video
+		mimeTypeMapLocal.put("video/mpeg", "video/mpg");	//MPEG Video
+		mimeTypeMapLocal.put("video/x-msvideo", "video/avi");	//AVI: Audio Video Interleave
+
+		return mimeTypeMapLocal;
+	}
+	/**
+	 * list based off https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
+	 * "... table lists some important MIME types for the Web:"
+	 * @return 
+	 */
 	private static Map<String, String> loadMimeXref()
 	{
 		Map<String, String> mimeXrefLocal = new HashMap<>();
-		mimeXrefLocal.put("text/html", ".html");
-		mimeXrefLocal.put("text/plain", ".txt");
-		mimeXrefLocal.put("text/json", ".json");
-		mimeXrefLocal.put("text/csv", ".csv");
-		mimeXrefLocal.put("text/tsv", ".tsv");
-		mimeXrefLocal.put("application/json", ".json");
-		mimeXrefLocal.put("text/xml", ".xml");
-		mimeXrefLocal.put("application/xml", ".xml");
-		mimeXrefLocal.put("image/jpeg", ".jpg");
-		mimeXrefLocal.put("image/jpg", ".jpg");
-		mimeXrefLocal.put("image/png", ".png");
-		mimeXrefLocal.put("image/gif", ".gif");
-		mimeXrefLocal.put("image/bmp", ".bmp");
-		mimeXrefLocal.put("video/mpg", ".mpg");
-		mimeXrefLocal.put("video/mpeg", ".mpg");
-		mimeXrefLocal.put("video/mp4", ".mp4");
-		mimeXrefLocal.put("video/avi", ".avi");
-		mimeXrefLocal.put("audio/mpg", ".mpg");
-		mimeXrefLocal.put("audio/mpeg", ".mpg");
-		mimeXrefLocal.put("audio/ogg", ".ogg");
-		mimeXrefLocal.put("audio/mp4", ".mp4");
-		mimeXrefLocal.put("application/doc", ".doc");
-		mimeXrefLocal.put("application/docx", ".docx");
-		mimeXrefLocal.put("application/xls", ".xls");
-		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");
-		mimeXrefLocal.put("application/vnd.ms-excel", ".xls");
-		mimeXrefLocal.put("application/pdf", ".pdf");
-		mimeXrefLocal.put("application/zip", ".zip");
-		mimeXrefLocal.put("application/gzip", ".gzip");
+		mimeXrefLocal.put("application/epub+zip", ".epub");	//Electronic publication (EPUB)
+		mimeXrefLocal.put("application/gzip", ".gzip");	//GNU Gzip
+		mimeXrefLocal.put("application/java-archive", ".jar");	//Java Archive (JAR)
+		mimeXrefLocal.put("application/javascript", ".js");	//JavaScript (ECMAScript)
+		mimeXrefLocal.put("application/json", ".json");	//JSON format
+		mimeXrefLocal.put("application/msword", ".doc");	//Microsoft Word
+		mimeXrefLocal.put("application/octet-stream", ".bin");	//Any kind of binary data
+		mimeXrefLocal.put("application/ogg", ".ogx");	//OGG
+		mimeXrefLocal.put("application/pdf", ".pdf");	//Adobe Portable Document Format (PDF)
+		mimeXrefLocal.put("application/rtf", ".rtf");	//Rich Text Format (RTF)
+		mimeXrefLocal.put("application/typescript", ".ts");	//Typescript file
+		mimeXrefLocal.put("application/vnd.amazon.ebook", ".azw");	//Amazon Kindle eBook format
+		mimeXrefLocal.put("application/vnd.apple.installer+xml", ".mpkg");	//Apple Installer Package
+		mimeXrefLocal.put("application/vnd.mozilla.xul+xml", ".xul");	//XUL
+		mimeXrefLocal.put("application/vnd.ms-excel", ".xls");	//Microsoft Excel
+		mimeXrefLocal.put("application/vnd.ms-fontobject", ".eot");	//MS Embedded OpenType fonts
+		mimeXrefLocal.put("application/vnd.ms-powerpoint", ".ppt");	//Microsoft PowerPoint
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.chart", ".odc");	//OpenDocument Chart
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.chart-template", ".otc");	//OpenDocument Chart Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.database", ".odb");	//OpenDocument Database
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.formula", ".odf");	//OpenDocument Formula
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.formula-template", ".odft");	//OpenDocument Formula Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.graphics", ".odg");	//OpenDocument Graphics
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.graphics-template", ".otg");	//OpenDocument Graphics Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.image", ".odi");	//OpenDocument Image
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.image-template", ".oti");	//OpenDocument Image Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation", ".odp");	//OpenDocument Presentation
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation", ".odp");	//OpenDocument presentation document
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation-template", ".otp");	//OpenDocument Presentation Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet", ".ods");	//OpenDocument Spreadsheet
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet", ".ods");	//OpenDocument spreadsheet document
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet-template", ".ots");	//OpenDocument Spreadsheet Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.text", ".odt");	//OpenDocument Text
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.text", ".odt");	//OpenDocument text document
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-master", ".odm");	//OpenDocument Text Master
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-template", ".ott");	//OpenDocument Text Template
+		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-web", ".oth");	//Open Document Text Web
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.presentationml.presentation", ".pptx");	//Microsoft Office - OOXML - Presentation
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.presentationml.slide", ".sldx");	//Microsoft Office - OOXML - Presentation (Slide)
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.presentationml.slideshow", ".ppsx");	//Microsoft Office - OOXML - Presentation (Slideshow)
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.presentationml.template", ".potx");	//Microsoft Office - OOXML - Presentation Template
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");	//Microsoft Office - OOXML - Spreadsheet
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.spreadsheetml.template", ".xltx");	//Microsoft Office - OOXML - Spreadsheet Template
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx");	//Microsoft Office - OOXML - Word Document
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.wordprocessingml.template", ".dotx");	//Microsoft Office - OOXML - Word Document Template
+		mimeXrefLocal.put("application/vnd.visio", ".vsd");	//Microsoft Visio
+		mimeXrefLocal.put("application/x-7z-compressed", ".7z");	//7-zip archive
+		mimeXrefLocal.put("application/x-abiword", ".abw");	//AbiWord document
+		mimeXrefLocal.put("application/x-bzip", ".bz");	//BZip archive
+		mimeXrefLocal.put("application/x-bzip2", ".bz2");	//BZip2 archive
+		mimeXrefLocal.put("application/x-csh", ".csh");	//C-Shell script
+		mimeXrefLocal.put("application/xhtml+xml", ".xhtml");	//XHTML
+		mimeXrefLocal.put("application/x-rar-compressed", ".rar");	//RAR archive
+		mimeXrefLocal.put("application/x-sh", ".sh");	//Bourne shell script
+		mimeXrefLocal.put("application/x-shockwave-flash", ".swf");	//Small web format (SWF) or Adobe Flash document
+		mimeXrefLocal.put("application/x-tar", ".tar");	//Tape Archive (TAR)
+		mimeXrefLocal.put("application/zip", ".zip");	//ZIP archive
+		mimeXrefLocal.put("audio/aac", ".aac");	//AAC audio file
+		mimeXrefLocal.put("audio/midi", ".midi");	//Musical Instrument Digital Interface (MIDI)
+		mimeXrefLocal.put("audio/ogg", ".oga");	//OGG audio
+		mimeXrefLocal.put("audio/webm", ".weba");	//WEBM audio
+		mimeXrefLocal.put("audio/x-wav", ".wav");	//Waveform Audio Format
+		mimeXrefLocal.put("font/otf", ".otf");	//OpenType font
+		mimeXrefLocal.put("font/ttf", ".ttf");	//TrueType Font
+		mimeXrefLocal.put("font/woff", ".woff");	//Web Open Font Format (WOFF)
+		mimeXrefLocal.put("font/woff2", ".woff2");	//Web Open Font Format (WOFF)
+		mimeXrefLocal.put("image/bmp", ".bmp");	//Windows Bitmap format
+		mimeXrefLocal.put("image/gif", ".gif");	//Graphics Interchange Format (GIF)
+		mimeXrefLocal.put("image/jpg", ".jpg");	//JPEG images
+		mimeXrefLocal.put("image/png", ".png");	//Portable Network Graphics
+		mimeXrefLocal.put("image/svg+xml", ".svg");	//Scalable Vector Graphics (SVG)
+		mimeXrefLocal.put("image/tiff", ".tif");	//Tagged Image File Format (TIFF)
+		mimeXrefLocal.put("image/webp", ".webp");	//WEBP image
+		mimeXrefLocal.put("image/x-icon", ".ico");	//Icon format
+		mimeXrefLocal.put("text/calendar", ".ics");	//iCalendar format
+		mimeXrefLocal.put("text/css", ".css");	//Cascading Style Sheets (CSS)
+		mimeXrefLocal.put("text/csv", ".csv");	//Comma-separated values (CSV)
+		mimeXrefLocal.put("text/html", ".html");	//HyperText Markup Language (HTML)
+		mimeXrefLocal.put("text/plain", ".txt");	//Plain Text
+		mimeXrefLocal.put("text/tsv", ".tsv");	//Tab Separated Values (TSV)
+		mimeXrefLocal.put("text/xml", ".xml");	//XML
+		mimeXrefLocal.put("video/avi", ".avi");	//AVI: Audio Video Interleave
+		mimeXrefLocal.put("video/mp4", ".mp4");	//MP4 Video
+		mimeXrefLocal.put("video/mpg", ".mpg");	//MPEG Video
+		mimeXrefLocal.put("video/ogg", ".ogv");	//OGG video
+		mimeXrefLocal.put("video/webm", ".webm");	//WEBM video
+		mimeXrefLocal.put("application/CDFV2-corrupt", ".msg");	//Outlook email
+
 		return mimeXrefLocal;
 	}
 
@@ -127,7 +232,10 @@ public class OpenStorefrontConstant
 	{
 		String ext = "NA";
 		if (mimeType != null) {
-			String found = mimeXref.get(mimeType);
+			if(mimeTypeMap.containsKey(mimeType.toLowerCase())) {
+				mimeType = mimeTypeMap.get(mimeType.toLowerCase());
+			}
+			String found = mimeXref.get(mimeType.toLowerCase());
 			if (found != null) {
 				ext = found;
 			}
@@ -142,6 +250,9 @@ public class OpenStorefrontConstant
 			String extensionToCheck = fileExtension;
 			if (extensionToCheck.startsWith(".") == false) {
 				extensionToCheck = "." + fileExtension;
+			}
+			if(extMap.containsKey(extensionToCheck.toLowerCase())) {
+				extensionToCheck = extMap.get(extensionToCheck.toLowerCase());
 			}
 			if (mimeXref.containsValue(extensionToCheck.toLowerCase())) {
 				//get first match

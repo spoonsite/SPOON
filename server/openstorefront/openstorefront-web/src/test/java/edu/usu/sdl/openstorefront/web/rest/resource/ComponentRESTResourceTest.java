@@ -45,7 +45,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 

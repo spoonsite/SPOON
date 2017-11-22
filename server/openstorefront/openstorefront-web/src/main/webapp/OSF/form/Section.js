@@ -885,10 +885,14 @@ Ext.define('OSF.form.Section', {
 				success: function (action, opts) {
 					Ext.toast('Saved Section');
 					var newContentSectionAll = Ext.decode(action.responseText);
-					sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
-					Ext.Array.each(newContentSectionAll.subsections, function(subsection){
-						sectionForm.getComponent('contentPanel').getComponent('subSectionPanel').getComponent('subcontent-'+subsection.subSectionId).setValue(subsection.content);
-					});
+					if (sectionForm.getComponent('contentPanel') !== undefined) {
+						sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
+						Ext.Array.each(newContentSectionAll.subsections, function (subsection) {
+							sectionForm.getComponent('contentPanel').getComponent('subSectionPanel').getComponent('subcontent-' + subsection.subSectionId).setValue(subsection.content);
+						});
+					} else {
+						sectionForm.getComponent('content').setValue(newContentSectionAll.section.content);
+					}
 					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
 					sectionForm.unsavedChanges = false;
 				}

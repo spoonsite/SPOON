@@ -406,6 +406,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								data: record.data.codes
 							}),
+							listConfig: {
+								getInnerTpl: function () {
+									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+								}
+							},
 							listeners: {
 								change: function (fieldLocal, newValue, oldValue, opts) {
 									var recordLocal = fieldLocal.record;
@@ -731,6 +736,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 											],
 											data: submissionPanel.optionalAttributes
 										}),
+										listConfig: {
+											getInnerTpl: function () {
+												return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+											}
+										},
 										listeners: {
 
 											change: function (field, newValue, oldValue, opts) {
@@ -752,7 +762,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 														Ext.Array.each(attributeCodes, function (attributeCode) {
 															lookUpCodes.push({
 																code: attributeCode.attributeCodePk.attributeCode,
-																label: attributeCode.label
+																label: attributeCode.label,
+																description: attributeCode.description
 															});
 														});
 														codeField.getStore().loadData(lookUpCodes);
@@ -904,6 +915,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,
 								valueField: 'code',
 								displayField: 'label',
+								listConfig: {
+									getInnerTpl: function () {
+										return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+									}
+								},
 								store: Ext.create('Ext.data.Store', {
 									sorters: [
 										{
@@ -1415,7 +1431,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								allowBlank: false
+								hidden: true
 							},
 							Ext.create('OSF.component.SecurityComboBox', {
 								itemId: 'securityMarkings',
@@ -1600,6 +1616,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('Local Resource');
 											form.getForm().findField('file').setHidden(false);
 											form.getForm().findField('originalLink').setHidden(true);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(false);
 										}
 									},
 									{
@@ -1610,6 +1628,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											button.setText('External Link');
 											form.getForm().findField('file').setHidden(true);
 											form.getForm().findField('originalLink').setHidden(false);
+											
+											form.query('[name="iconFlag"]')[0].setDisabled(true);
 										}
 									}
 								]
@@ -1634,8 +1654,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								name: 'file',
 								width: '100%',
-								resourceLabel: 'Upload Media',
-								allowBlank: false
+								resourceLabel: 'Upload Media'
 							},
 							{
 								xtype: 'textfield',
