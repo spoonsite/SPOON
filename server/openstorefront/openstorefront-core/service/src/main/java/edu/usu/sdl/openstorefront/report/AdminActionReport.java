@@ -15,7 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
@@ -25,21 +26,28 @@ import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
+import edu.usu.sdl.openstorefront.core.view.EvaluationView;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
+import edu.usu.sdl.openstorefront.report.model.AdminActionReportModel;
+import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -49,53 +57,47 @@ import java.util.logging.Logger;
 public class AdminActionReport
 		extends BaseReport
 {
-	private static final Logger LOG = Logger.getLogger(ExternalLinkValidationReport.class.getName());
-	private static final int MAX_CHAR_COUNT = 800;
-	private HashMap root = new HashMap();
-	private String renderedTemplate;
-	
-	public AdminActionReport (Report report)
+
+	private static final Logger LOG = Logger.getLogger(AdminActionReport.class.getName());
+
+	private static final int MAX_CHAR_COUNT = 300;
+
+	public AdminActionReport(Report report)
 	{
 		super(report);
 	}
-	
+
 	@Override
-	protected void writeReport()
+	protected AdminActionReportModel gatherData()
 	{
-		if (ReportFormat.HTML.equals(report.getReportFormat())) {
-			generateHTML();
-		}
-		else if (ReportFormat.PDF.equals(report.getReportFormat())) {
-			generatePDF();
-		}
-	}
-	
-	@Override
-	protected void gatherData()
-	{
+		AdminActionReportModel actionReportModel = new AdminActionReportModel();
+
 		//	Get report data
 		// Get pending entries
 		Component componentExample = new Component();
 		componentExample.setApprovalState(ApprovalStatus.PENDING);
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		
+
 		// serparate into user submission (submission date is filled in) and admin pending (else)
 		List<Component> pendingAdminEntries = componentExample.findByExample();
 		List<Component> pendingUserEntries = new ArrayList<>();
 		pendingAdminEntries.removeIf((Component item) -> {
-			item.setDescription(truncateHTML(item.getDescription()));
+			item.setDescription(StringProcessor.truncateHTML(item.getDescription(), MAX_CHAR_COUNT));
 			if (item.getSubmittedDts() != null) {
 				pendingUserEntries.add(item);
 				return true;
 			}
 			return false;
 		});
-		
+		actionReportModel.setPendingAdminEntries(pendingAdminEntries);
+		actionReportModel.setPendingUserEntries(pendingUserEntries);
+
 		// Pending change requests (pending approval, and pending change id is not null.)
 		componentExample = new Component();
 		componentExample.setApprovalState(ApprovalStatus.PENDING_STATUS);
 		List<Component> changeRequests = componentExample.findByExample();
 		changeRequests.removeIf(item -> item.getPendingChangeId() == null);
+
 		// if componentId == eval.componentid... omit record
 		changeRequests.removeIf((Component component) -> {
 			Evaluation evaluationExample = new Evaluation();
@@ -103,185 +105,198 @@ public class AdminActionReport
 			Evaluation evaluation = evaluationExample.find();
 			return !(evaluation == null);
 		});
-		
+		actionReportModel.setChangeRequests(changeRequests);
+
 		//	Get pending reviews
 		ComponentReview reviewExample = new ComponentReview();
 		reviewExample.setActiveStatus(StandardEntity.PENDING_STATUS);
 		List<ComponentReview> pendingReviewList = reviewExample.findByExample();
-		List<HashMap> pendingReviews = new ArrayList<>();
-		
-		for (ComponentReview review : pendingReviewList) {
-			Component reviewComponent = new Component();
-			reviewComponent.setComponentId(review.getComponentId());
-			reviewComponent = reviewComponent.find();
-			
-			HashMap reviewHash = new HashMap();
-			reviewHash.put("review", review);
-			reviewHash.put("componentName", reviewComponent.getName());
-			
-			pendingReviews.add(reviewHash);
-		}
-		
+		actionReportModel.setPendingReviews(ComponentReviewView.toViewList(pendingReviewList));
+
 		//	Get pending questions
 		ComponentQuestion questionExample = new ComponentQuestion();
 		questionExample.setActiveStatus(StandardEntity.PENDING_STATUS);
 		List<ComponentQuestion> pendingQuestionList = questionExample.findByExample();
-		List<HashMap> pendingQuestions = new ArrayList<>();
-		for (ComponentQuestion question : pendingQuestionList) {
-			Component questionComponent = new Component();
-			questionComponent.setComponentId(question.getComponentId());
-			questionComponent = questionComponent.find();
-			
-			HashMap reviewHash = new HashMap();
-			reviewHash.put("question", question);
-			reviewHash.put("componentName", questionComponent.getName());
-			
-			pendingQuestions.add(reviewHash);
-		}
-		
+		actionReportModel.setPendingQuestions(ComponentQuestionView.toViewList(pendingQuestionList, new HashMap<>()));
+
 		//	Get pending responses
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setActiveStatus(StandardEntity.PENDING_STATUS);
 		List<ComponentQuestionResponse> pendingResponses = responseExample.findByExample();
-		
-		HashMap<String, List<ComponentQuestionResponse>> questionsWithPendingResponses = new HashMap<>();
-		HashMap<String, String> entriesWithPendingResponses = new HashMap();
-		for (ComponentQuestionResponse response : pendingResponses) {
-			ComponentQuestion question = new ComponentQuestion();
-			question.setQuestionId(response.getQuestionId());
-			question = question.find();
-			
-			Component responseComponent = new Component();
-			responseComponent.setComponentId(response.getComponentId());
-			responseComponent = responseComponent.find();
-			
-			if (!questionsWithPendingResponses.containsKey(question.getQuestion())) {
-				questionsWithPendingResponses.put(question.getQuestion(), new ArrayList<>());
-			}
-			questionsWithPendingResponses.get(question.getQuestion()).add(response);
-			entriesWithPendingResponses.put(question.getQuestion(), responseComponent.getName());
-		}
-		
+		actionReportModel.setPendingResponses(ComponentQuestionResponseView.toViewList(pendingResponses));
+
 		//	Get pending feedback
 		FeedbackTicket feedbackExample = new FeedbackTicket();
 		feedbackExample.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 		List<FeedbackTicket> pendingFeedbackTickets = feedbackExample.findByExample();
-		
+		actionReportModel.setPendingFeedbackTickets(pendingFeedbackTickets);
+
 		//	Get pending users
 		UserSecurity userSecurityExample = new UserSecurity();
 		userSecurityExample.setApprovalStatus(StandardEntity.PENDING_STATUS);
 		List<UserSecurity> pendingUsers = userSecurityExample.findByExample();
-		
+		actionReportModel.setPendingUsers(pendingUsers);
+
 		//	Get evaluation ready to be published
-			//	Consider getting WorkflowStatus?
+		//	Consider getting WorkflowStatus?
 		Evaluation evaluationExample = new Evaluation();
 		evaluationExample.setPublished(Boolean.FALSE);
 		List<Evaluation> pendingEvaluations = evaluationExample.findByExample();
-		
-		HashMap<String, List<Evaluation>> entriesWithPendingEvaluations = new HashMap();
-		for (Evaluation evaluation : pendingEvaluations) {
-			Component evalComponent = new Component();
-			evalComponent.setComponentId(evaluation.getComponentId());
-			evalComponent = evalComponent.find();
-			
-			if (evalComponent == null) {
-				evalComponent = new Component();
-				evalComponent.setComponentId(evaluation.getOriginComponentId());
-				evalComponent = evalComponent.find();
-			
-			}
-			if (!entriesWithPendingEvaluations.containsKey(evalComponent.getName())) {
-				entriesWithPendingEvaluations.put(evalComponent.getName(), new ArrayList<>());
-			}
-			entriesWithPendingEvaluations.get(evalComponent.getName()).add(evaluation);
-		}
-		
-		//	Generate HTML
-		root.put("pendingAdminEntries", pendingAdminEntries);
-		root.put("pendingUserEntries", pendingUserEntries);
-		root.put("changeRequests", changeRequests);
-		root.put("pendingReviews", pendingReviews);
-		root.put("pendingQuestions", pendingQuestions);
-		root.put("questionsWithPendingResponses", questionsWithPendingResponses);
-		root.put("entriesWithPendingResponses", entriesWithPendingResponses);
-		root.put("pendingFeedbackTickets", pendingFeedbackTickets);
-		root.put("pendingUsers", pendingUsers);
-		root.put("entriesWithPendingEvaluations", entriesWithPendingEvaluations);
-		root.put("reportDate", sdf.format(TimeUtil.currentDate()));
-		
-		// if the report is HTML or PDF
-		if (ReportFormat.HTML.equals(report.getReportFormat()) || ReportFormat.PDF.equals(report.getReportFormat())) {
-			try
-			{
-				Configuration templateConfig = ReportManager.getTemplateConfig();
-				Template template = templateConfig.getTemplate("actionReport.ftl");
-				Writer writer = new StringWriter();
-				template.process(root, writer);
-				renderedTemplate = writer.toString();
-			}
-			catch (Exception e)
-			{
-				LOG.log(Level.WARNING, MessageFormat.format("There was a problem when generating an action report: {0}", e));
-			}
-		}
-		
-		// ELSE TODO: render the template for CSV
+		actionReportModel.setPendingEvaluations(EvaluationView.toView(pendingEvaluations));
+
+		return actionReportModel;
 	}
-	
-	// TODO: If needed, add 'generateCSV' method.
-	
-	private void generatePDF()
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
 	{
-		HtmlToPdfGenerator htmlPdfGenerator = (HtmlToPdfGenerator) generator;
-		htmlPdfGenerator.savePdfDocument(renderedTemplate);
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewFormat = outputKey(ReportTransmissionType.VIEW, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<AdminActionReportModel>) this::writeHtml);
+
+		viewFormat = outputKey(ReportTransmissionType.VIEW, ReportFormat.PDF);
+		writerMap.put(viewFormat, (ReportWriter<AdminActionReportModel>) this::writePdf);
+
+		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.HTML);
+		writerMap.put(viewFormat, (ReportWriter<AdminActionReportModel>) this::writeHtml);
+
+		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.PDF);
+		writerMap.put(viewFormat, (ReportWriter<AdminActionReportModel>) this::writePdf);
+
+		return writerMap;
 	}
-	
-	private void generateHTML()
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				formats.add(format);
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
+				formats.add(format);
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	@Override
+	public String reportSummmary(BaseReportModel reportModel)
+	{
+		AdminActionReportModel actionReportModel = (AdminActionReportModel) reportModel;
+
+		StringBuilder summary = new StringBuilder();
+		summary.append("<h2>Action Report Summary</h2>");
+
+		if (actionReportModel.outstandingItems()) {
+			if (!actionReportModel.getPendingUserEntries().isEmpty()) {
+				summary.append("User Submissions waiting for Approval: ")
+						.append(actionReportModel.getPendingAdminEntries().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getChangeRequests().isEmpty()) {
+				summary.append("User change requests waiting for Approval: ")
+						.append(actionReportModel.getChangeRequests().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingAdminEntries().isEmpty()) {
+				summary.append("Librarian entries waiting for Approval: ")
+						.append(actionReportModel.getPendingAdminEntries().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingFeedbackTickets().isEmpty()) {
+				summary.append("Outstanding evaluations(see details for status): ")
+						.append(actionReportModel.getPendingEvaluations().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingReviews().isEmpty()) {
+				summary.append("User reviews waiting for Approval: ")
+						.append(actionReportModel.getPendingReviews().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingQuestions().isEmpty()) {
+				summary.append("User questions waiting for Approval: ")
+						.append(actionReportModel.getPendingQuestions().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingResponses().isEmpty()) {
+				summary.append("User question responses waiting for Approval: ")
+						.append(actionReportModel.getPendingResponses().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingFeedbackTickets().isEmpty()) {
+				summary.append("Outstanding feedback waiting for response: ")
+						.append(actionReportModel.getPendingFeedbackTickets().size())
+						.append("<br>");
+			}
+			if (!actionReportModel.getPendingUsers().isEmpty()) {
+				summary.append("Pending users waiting for approval: ")
+						.append(actionReportModel.getPendingUsers().size())
+						.append("<br>");
+			}
+
+			summary.append("<br>");
+			summary.append("Total Action Items: ")
+					.append(actionReportModel.totalActions());
+		} else {
+			summary.append("There are no administrative tasks that require attention.");
+		}
+
+		return summary.toString();
+	}
+
+	private void writeHtml(BaseGenerator generator, AdminActionReportModel usageReportModel)
 	{
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
+		String renderedTemplate = fillinTemplate(usageReportModel);
 		htmlGenerator.addLine(renderedTemplate);
 	}
-	
-	//	Truncates a string of HTML relative to MAX_CHAR_COUNT
-	//		This roughly respects HTML, as it tries not to remove HTML tags.
-	private String truncateHTML(String html) {
-		List<String> htmlList = new ArrayList<>(Arrays.asList(html.split("")));
-		boolean canDelete = true;
-		boolean hasRemoved = false;
-		for (int ii = htmlList.size() - 1; ii > -1; ii--) {
-			
-			//	Detect if the cursor is within an HTML tag
-			if(htmlList.get(ii).equals(">")) {
-				canDelete = false;
-				continue;
-			}
-			else if (htmlList.get(ii).equals("<")) {
-				canDelete = true;
-				continue;
-			}
-			
-			//	Bail if the cursor is inside the accepted char count
-			if (ii < MAX_CHAR_COUNT) {
-				if (hasRemoved && canDelete) {
-					if (!"<".equals(htmlList.get(ii+1))) {
-						htmlList.set(ii+1, " ... ");
-					}
-					else {
-						htmlList.set(ii, " ... ");
-					}
-				}
-				break;
-			}
-			
-			//	"remove" the current item given that canDelete == true
-			if (canDelete && ii > MAX_CHAR_COUNT) {
-				htmlList.set(ii, "");
-				hasRemoved = true;
-			}
-		}
-		
-		//	Return the truncated result
-		html = String.join("", htmlList);
-		return html;
+
+	private void writePdf(BaseGenerator generator, AdminActionReportModel usageReportModel)
+	{
+		HtmlToPdfGenerator htmlPdfGenerator = (HtmlToPdfGenerator) generator;
+		String renderedTemplate = fillinTemplate(usageReportModel);
+		htmlPdfGenerator.savePdfDocument(renderedTemplate);
 	}
+
+	private String fillinTemplate(AdminActionReportModel adminActionReportModel)
+	{
+		String renderedTemplate = null;
+		try {
+			Configuration templateConfig = ReportManager.getTemplateConfig();
+			Template template = templateConfig.getTemplate("actionReport.ftl");
+			Writer writer = new StringWriter();
+			template.process(adminActionReportModel, writer);
+			renderedTemplate = writer.toString();
+		} catch (Exception e) {
+			throw new OpenStorefrontRuntimeException(e);
+		}
+
+		return renderedTemplate;
+	}
+
 }

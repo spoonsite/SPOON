@@ -26,7 +26,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -64,7 +63,7 @@ public class ResourceAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(ResourceAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(ResourceAction.class.getName());
 
 	@Validate(required = true, on = {"LoadResource", "Redirect"})
 	private String resourceId;
@@ -92,7 +91,7 @@ public class ResourceAction
 		mediaFile = service.getPersistenceService().findById(MediaFile.class, resourceId);
 		if (mediaFile == null) {
 			componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
-			componentResource = FilterEngine.filter(componentResource, true);
+			componentResource = filterEngine.filter(componentResource, true);
 			if (componentResource == null || componentResource.getFile() == null) {
 				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 			}
@@ -142,7 +141,7 @@ public class ResourceAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -199,7 +198,7 @@ public class ResourceAction
 	public Resolution redirect() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
-		componentResource = FilterEngine.filter(componentResource, true);
+		componentResource = filterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
@@ -211,7 +210,7 @@ public class ResourceAction
 		if (component != null) {
 			componentTracking.setComponentType(component.getComponentType());
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Unable to find Component for the resource.  Component Id: {0}.  Check Data.", componentResource.getComponentId()));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find Component for the resource.  Component Id: {0}.  Check Data.", componentResource.getComponentId()));
 		}
 		String link = StringProcessor.stripHtml(componentResource.getLink());
 		if (componentResource.getFile() != null && StringUtils.isNotBlank(componentResource.getFile().getFileName())) {

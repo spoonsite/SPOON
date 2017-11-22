@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class ComponentQuestionResponseView
 	private String response;
 	private String responseId;
 	private String questionId;
+	private String questionText;
 	private String componentId;
 	private String componentName;
 	private String organization;
@@ -57,8 +60,18 @@ public class ComponentQuestionResponseView
 		tempView.setOrganization(response.getOrganization());
 		tempView.setResponse(response.getResponse());
 		tempView.setQuestionId(response.getQuestionId());
+
+		ComponentQuestion question = new ComponentQuestion();
+		question.setQuestionId(response.getQuestionId());
+		question = question.find();
+		if (question != null) {
+			tempView.setQuestionText(question.getQuestion());
+		} else {
+			tempView.setQuestionText(OpenStorefrontConstant.NOT_AVAILABLE);
+		}
+
 		tempView.setComponentId(response.getComponentId());
-		tempView.setComponentName(service.getComponentService().getComponentName(response.getComponentId()));		
+		tempView.setComponentName(service.getComponentService().getComponentName(response.getComponentId()));
 		tempView.setActiveStatus(response.getActiveStatus());
 		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
 		if (typeCode != null) {
@@ -200,6 +213,16 @@ public class ComponentQuestionResponseView
 	public void setComponentName(String componentName)
 	{
 		this.componentName = componentName;
+	}
+
+	public String getQuestionText()
+	{
+		return questionText;
+	}
+
+	public void setQuestionText(String questionText)
+	{
+		this.questionText = questionText;
 	}
 
 }

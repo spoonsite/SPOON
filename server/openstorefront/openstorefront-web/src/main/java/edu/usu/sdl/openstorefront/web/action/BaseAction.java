@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.view.JsonFormLoad;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -68,7 +69,8 @@ public abstract class BaseAction
 	protected String brandingId;
 
 	protected final ServiceProxy service = new ServiceProxy();
-	
+	protected FilterEngine filterEngine = FilterEngine.getInstance();
+
 	public String getApplicationVersion()
 	{
 		return PropertiesManager.getApplicationVersion();
@@ -93,7 +95,7 @@ public abstract class BaseAction
 	protected boolean doesFileExceedLimit(FileBean fileBean)
 	{
 		//	get the number of of max file size we can have in bytes
-		long maxFileSize = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_MAX_POST_SIZE))*OpenStorefrontConstant.FIELD_SIZE_1MB;
+		long maxFileSize = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_MAX_POST_SIZE)) * OpenStorefrontConstant.FIELD_SIZE_1MB;
 		return doesFileExceedLimit(fileBean, maxFileSize);
 	}
 
@@ -349,9 +351,10 @@ public abstract class BaseAction
 	{
 		this.brandingId = brandingId;
 	}
-	
-	public void checkUploadSizeValidation (ValidationErrors errors, FileBean file, String fileField) {
-		
+
+	public void checkUploadSizeValidation(ValidationErrors errors, FileBean file, String fileField)
+	{
+
 		if (doesFileExceedLimit(file)) {
 			errors.add(fileField, new SimpleError("File size exceeds max allowed."));
 			deleteUploadFile(file);

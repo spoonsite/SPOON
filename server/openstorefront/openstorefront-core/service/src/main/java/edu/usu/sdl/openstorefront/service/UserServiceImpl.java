@@ -286,6 +286,8 @@ public class UserServiceImpl
 			userMessageSetExample.setUpdateDts(TimeUtil.currentDate());
 			userMessageSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.updateByExample(UserMessage.class, userMessageSetExample, userMessageExample);
+
+			getReportService().disableAllScheduledReportsForUser(username);
 		}
 	}
 
@@ -308,6 +310,8 @@ public class UserServiceImpl
 			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
 
 			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
+
+			//Inactive Schedules reports for the user will stay inactive; user should activate the ones they want.
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to reactivate profile.  Userprofile not found: " + username, "Check userprofiles and username");
 		}
@@ -494,7 +498,7 @@ public class UserServiceImpl
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
 
 				//make sure the user can still access the component
-				Component accessComponent = FilterEngine.filter(component);
+				Component accessComponent = FilterEngine.getInstance().filter(component);
 				if (accessComponent != null) {
 					if (Convert.toBoolean(userWatch.getNotifyFlg())) {
 						UserMessage userMessage = new UserMessage();

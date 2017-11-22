@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
@@ -26,14 +25,19 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import edu.usu.sdl.openstorefront.report.model.SubmissionReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.SubmissionReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -44,15 +48,13 @@ public class SubmissionsReport
 		extends BaseReport
 {
 
-	private List<Component> componentsSubmited = new ArrayList<>();
-
 	public SubmissionsReport(Report report)
 	{
 		super(report);
 	}
 
 	@Override
-	protected void gatherData()
+	protected SubmissionReportModel gatherData()
 	{
 		updateReportTimeRange();
 
@@ -77,6 +79,9 @@ public class SubmissionsReport
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<Component> found = service.getPersistenceService().queryByExample(queryByExample);
+		found = filterEngine.filter(found);
+
+		List<Component> componentsSubmited = new ArrayList<>();
 		for (Component component : found) {
 			if (component.getSubmittedDts() != null) {
 				componentsSubmited.add(component);
@@ -84,50 +89,16 @@ public class SubmissionsReport
 				componentsSubmited.add(component);
 			}
 		}
-	}
 
-	private void updateReportTimeRange()
-	{
-		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instantEnd = Instant.now();
-			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
-		}
-		if (report.getReportOption().getStartDts() == null) {
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date()));
-		}
-		if (report.getReportOption().getEndDts() == null) {
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date()));
-		}
-	}
+		SubmissionReportModel submissionReportModel = new SubmissionReportModel();
+		submissionReportModel.setTitle("Entry Submission Report");
+		submissionReportModel.setDataStartDate(report.getReportOption().getStartDts());
+		submissionReportModel.setDataEndDate(report.getReportOption().getEndDts());
 
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("Component Submission Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Data Time Range (Update Date):  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
-		cvsGenerator.addLine(
-				"Name",
-				"Create Date",
-				"Update Date",
-				"Submitted Date",
-				"Submitter Name",
-				"Submitter Email",
-				"Submitter Phone",
-				"Organization",
-				"Logged in User",
-				"Current Approval Status",
-				"Active Status"
-		);
-
-		//write data
 		for (Component component : componentsSubmited) {
+
 			ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
-	
+
 			Contact submitter = new Contact();
 			submitter.setFirstName(OpenStorefrontConstant.NOT_AVAILABLE);
 
@@ -148,21 +119,111 @@ public class SubmissionsReport
 				submitterSecurityMarking = " (" + submitter.getSecurityMarkingType() + ")";
 			}
 
-			cvsGenerator.addLine(
-					component.getName() + componentSecurityMarking,
-					sdf.format(component.getCreateDts()),
-					sdf.format(component.getUpdateDts()),
-					component.getSubmittedDts() != null ? sdf.format(component.getSubmittedDts()) : "",
-					submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking,
-					submitter.getEmail(),
-					submitter.getPhone(),
-					submitter.getOrganization(),
-					component.getCreateUser(),
-					TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState()),
-					component.getActiveStatus()
-			);
+			SubmissionReportLineModel lineModel = new SubmissionReportLineModel();
+			lineModel.setName(component.getName() + componentSecurityMarking);
+			lineModel.setCreateDts(component.getCreateDts());
+			lineModel.setUpdateDts(component.getUpdateDts());
+			lineModel.setSubmittedDts(component.getSubmittedDts());
+			lineModel.setSubmitterEmail(submitter.getEmail());
+			lineModel.setSubmitterPhone(submitter.getPhone());
+			lineModel.setSubmitterName(submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking);
+			lineModel.setSubmitterOrganization(submitter.getOrganization());
+			lineModel.setActiveStatus(component.getActiveStatus());
+			lineModel.setCurrentAprovalStatus(TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState()));
+			lineModel.setLoggedInUser(component.getCreateUser());
+
+			submissionReportModel.getData().add(lineModel);
 		}
 
+		return submissionReportModel;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (SubmissionReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (SubmissionReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, SubmissionReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		cvsGenerator.addLine("Data Time Range (Based on Updated Date):  ", sdf.format(reportModel.getDataStartDate()) + " - " + sdf.format(reportModel.getDataEndDate()));
+
+		cvsGenerator.addLine(
+				"Entry Name",
+				"Create Date",
+				"Update Date",
+				"Submitted Date",
+				"Submitter Name",
+				"Submitter Email",
+				"Submitter Phone",
+				"Submitter Organization",
+				"Logged in User",
+				"Current Approval Status",
+				"Active Status"
+		);
+
+		for (SubmissionReportLineModel lineModel : reportModel.getData()) {
+			cvsGenerator.addLine(
+					lineModel.getName(),
+					sdf.format(lineModel.getCreateDts()),
+					sdf.format(lineModel.getUpdateDts()),
+					sdf.format(lineModel.getSubmittedDts()),
+					lineModel.getSubmitterName(),
+					lineModel.getSubmitterEmail(),
+					lineModel.getSubmitterPhone(),
+					lineModel.getSubmitterOrganization(),
+					lineModel.getLoggedInUser(),
+					lineModel.getCurrentAprovalStatus(),
+					lineModel.getActiveStatus()
+			);
+		}
 	}
 
 }

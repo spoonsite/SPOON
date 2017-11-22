@@ -551,7 +551,7 @@
 
 				var pauseJob = function pauseJob(record) {
 					var url = 'api/v1/service/jobs/';
-					url += record.data.jobName + '/pause';
+					url += record.data.jobName + '/' + record.data.groupName + '/pause';
 					var method = 'POST';
 					Ext.Ajax.request({
 						url: url,
@@ -570,7 +570,7 @@
 
 				var resumeJob = function resumeJob(record) {
 					var url = 'api/v1/service/jobs/';
-					url += record.data.jobName + '/resume';
+					url += record.data.jobName + '/' + record.data.groupName + '/resume';
 					var method = 'POST';
 					Ext.Ajax.request({
 						url: url,

@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -25,11 +25,16 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.CategoryComponentReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.CategoryComponentReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,14 +58,10 @@ public class CategoryComponentReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected CategoryComponentReportModel gatherData()
 	{
-	}
-
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+		CategoryComponentReportModel reportModel = new CategoryComponentReportModel();
+		reportModel.setTitle("Category Entry Report");
 
 		String category = NO_CATEGORY;
 		String categoryMessage = "";
@@ -72,23 +73,7 @@ public class CategoryComponentReport
 				categoryMessage = " (Selected category was not found.  Check report options and select another category.)";
 			}
 		}
-
-		//write header
-		cvsGenerator.addLine("Category Entry Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Category: " + category + categoryMessage);
-		cvsGenerator.addLine("");
-		
-		List<String> header = new ArrayList<>();
-		header.add("Category Label");
-		header.add("Category Description");
-		header.add("Entry Name");
-		header.add("Entry Description");
-		header.add("Last Update Date");
-		
-		if (getBranding().getAllowSecurityMarkingsFlg()) {
-			header.add("Security Marking");
-		}		
-		cvsGenerator.addLine(header.toArray());
+		reportModel.setCategory(category + categoryMessage);
 
 		if (NO_CATEGORY.equals(category)) {
 
@@ -97,24 +82,15 @@ public class CategoryComponentReport
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
-			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
-			
+			components = filterEngine.filter(components);
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
 			for (Component component : components) {
-				List<String> data = new ArrayList<>();
-				data.add("");
-				data.add("");
-				data.add(component.getName());
-				data.add(component.getDescription());
-				data.add(sdf.format(component.getLastActivityDts()));
-				if (getBranding().getAllowSecurityMarkingsFlg()) {
-					if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
-						data.add(component.getSecurityMarkingType());
-					} else {
-						data.add("");
-					}
-				}
-				cvsGenerator.addLine(data.toArray());
+				CategoryComponentReportLineModel lineModel = new CategoryComponentReportLineModel();
+				lineModel.setName(component.getName());
+				lineModel.setDecription(component.getDescription());
+				lineModel.setLastActivityDts(component.getLastActivityDts());
+				reportModel.getData().add(lineModel);
 			}
 
 		} else {
@@ -153,9 +129,9 @@ public class CategoryComponentReport
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
-			components = FilterEngine.filter(components);
-			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));	
-			
+			components = filterEngine.filter(components);
+			components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
+
 			if (!report.dataIdSet().isEmpty()) {
 				components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 			}
@@ -171,20 +147,15 @@ public class CategoryComponentReport
 					for (String componentId : codeComponentMap.get(code.getAttributeCodePk().getAttributeCode())) {
 						Component component = componentMap.get(componentId);
 						if (component != null) {
-							List<String> data = new ArrayList<>();
-							data.add(code.getLabel());
-							data.add(code.getDescription());
-							data.add(component.getName());
-							data.add(component.getDescription());
-							data.add(sdf.format(component.getLastActivityDts()));
-							if (getBranding().getAllowSecurityMarkingsFlg()) {
-								if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
-									data.add(component.getSecurityMarkingType());
-								} else {
-									data.add("");
-								}
-							}
-							cvsGenerator.addLine(data.toArray());							
+
+							CategoryComponentReportLineModel lineModel = new CategoryComponentReportLineModel();
+							lineModel.setName(component.getName());
+							lineModel.setDecription(component.getDescription());
+							lineModel.setLastActivityDts(component.getLastActivityDts());
+							lineModel.setCategoryLabel(code.getLabel());
+							lineModel.setCategoryDescription(code.getDescription());
+							reportModel.getData().add(lineModel);
+
 						}
 
 					}
@@ -192,6 +163,88 @@ public class CategoryComponentReport
 			}
 
 		}
+
+		return reportModel;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (CategoryComponentReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (CategoryComponentReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, CategoryComponentReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		cvsGenerator.addLine("Category: " + reportModel.getCategory());
+		cvsGenerator.addLine("");
+
+		cvsGenerator.addLine(
+				"Category Label",
+				"Category Description",
+				"Entry Name",
+				"Entry Description",
+				"Last Update Date"
+		);
+
+		//Note: the details should be grouped by code by default
+		for (CategoryComponentReportLineModel lineModel : reportModel.getData()) {
+			cvsGenerator.addLine(
+					lineModel.getCategoryLabel(),
+					StringProcessor.stripHtml(lineModel.getCategoryDescription()),
+					lineModel.getName(),
+					StringProcessor.ellipseString(StringProcessor.stripHtml(lineModel.getDecription()), 300),
+					sdf.format(lineModel.getLastActivityDts())
+			);
+		}
+
 	}
 
 }

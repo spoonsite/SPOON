@@ -74,7 +74,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
@@ -251,7 +250,7 @@ public class CoreComponentServiceImpl
 
 	public List<ComponentSearchView> getComponents()
 	{
-		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
+		List<ComponentSearchView> componentSearchViews;
 
 		String query = "select componentId from " + Component.class.getSimpleName()
 				+ " where activeStatus='" + Component.ACTIVE_STATUS
@@ -295,7 +294,7 @@ public class CoreComponentServiceImpl
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
-		tempComponent = FilterEngine.filter(tempComponent);
+		tempComponent = filterEngine.filter(tempComponent);
 
 		if (tempComponent == null) {
 			return null;
@@ -308,7 +307,7 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setComponentId(componentId);
 		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
-		directRelationships = FilterEngine.filter(directRelationships, true);
+		directRelationships = filterEngine.filter(directRelationships, true);
 
 		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
 		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
@@ -319,7 +318,7 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample.setRelatedComponentId(componentId);
 
 		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
-		inDirectRelationships = FilterEngine.filter(inDirectRelationships, true);
+		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
 
 		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
 		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
@@ -335,6 +334,7 @@ public class CoreComponentServiceImpl
 		}
 		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
+		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
 
 		result.setComponentId(componentId);
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
@@ -388,7 +388,7 @@ public class CoreComponentServiceImpl
 		}
 		tempReviews.addAll(tempApprovedReviews);
 		List<ComponentReviewView> reviews = new ArrayList();
-		tempReviews = FilterEngine.filter(tempReviews);
+		tempReviews = filterEngine.filter(tempReviews);
 
 		tempReviews.forEach(review
 				-> {
@@ -422,7 +422,7 @@ public class CoreComponentServiceImpl
 				questions.add(question);
 			}
 		}
-		questions = FilterEngine.filter(questions);
+		questions = filterEngine.filter(questions);
 
 		questions.stream().forEach((question)
 				-> {
@@ -431,14 +431,14 @@ public class CoreComponentServiceImpl
 			tempResponse.setQuestionId(question.getQuestionId());
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			List<ComponentQuestionResponse> activeResponses = tempResponse.findByExample();
-			activeResponses = FilterEngine.filter(activeResponses);
+			activeResponses = filterEngine.filter(activeResponses);
 
 			ComponentQuestionResponse tempPendingResponse = new ComponentQuestionResponse();
 			tempPendingResponse.setQuestionId(question.getQuestionId());
 			tempPendingResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
 			tempPendingResponse.setCreateUser(currentUser);
 
-			List<ComponentQuestionResponse> responses = FilterEngine.filter(tempPendingResponse.findByExample());
+			List<ComponentQuestionResponse> responses = filterEngine.filter(tempPendingResponse.findByExample());
 			responses.addAll(activeResponses);
 
 			responseViews = ComponentQuestionResponseView.toViewList(responses);
@@ -544,7 +544,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(component);
 		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
 
-		Component oldComponent = null;
+		Component oldComponent;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
 		} else {
@@ -1195,7 +1195,7 @@ public class CoreComponentServiceImpl
 
 	public List<Component> findRecentlyAdded(int maxResults)
 	{
-		String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+		String dataFilterRestriction = filterEngine.queryComponentRestriction();
 		if (StringUtils.isNotBlank(dataFilterRestriction)) {
 			dataFilterRestriction = " and " + dataFilterRestriction;
 		}
@@ -1217,7 +1217,7 @@ public class CoreComponentServiceImpl
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 		if (componentIds.isEmpty() == false) {
 
-			String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+			String dataFilterRestriction = filterEngine.queryComponentRestriction();
 			if (StringUtils.isNotBlank(dataFilterRestriction)) {
 				dataFilterRestriction += " and ";
 			}
@@ -1407,7 +1407,7 @@ public class CoreComponentServiceImpl
 
 		if (componentAll != null) {
 			Component componentToFilter = componentAll.getComponent();
-			componentToFilter = FilterEngine.filter(componentToFilter);
+			componentToFilter = filterEngine.filter(componentToFilter);
 			if (componentToFilter == null) {
 				componentAll = null;
 			}
@@ -1528,7 +1528,7 @@ public class CoreComponentServiceImpl
 		//TODO: consider moving the filtering work to the DB
 		List<Component> components = persistenceService.queryByExample(queryByExample);
 
-		components = FilterEngine.filter(components);
+		components = filterEngine.filter(components);
 
 		//filter out pending changes
 		components = components.stream().filter(c -> c.getActiveStatus().equals(Component.PENDING_STATUS) == false).collect(Collectors.toList());

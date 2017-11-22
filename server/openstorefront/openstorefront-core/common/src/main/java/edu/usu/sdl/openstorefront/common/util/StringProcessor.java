@@ -291,10 +291,7 @@ public class StringProcessor
 
 	public static Boolean isEmail(String text)
 	{
-		if (text.matches(OpenStorefrontConstant.EMAIL_PATTERN)) {
-			return true;
-		}
-		return false;
+		return text.matches(OpenStorefrontConstant.EMAIL_PATTERN);
 	}
 
 	public static String stripHtml(String text)
@@ -572,6 +569,54 @@ public class StringProcessor
 	public static String uniqueId()
 	{
 		return UUID.randomUUID().toString();
+	}
+
+	/**
+	 * Truncates a string of HTML relative to MAX_CHAR_COUNT This roughly
+	 * respects HTML, as it tries not to remove HTML tags.
+	 *
+	 * @param html
+	 * @param maxCharCount
+	 * @return
+	 */
+	public static String truncateHTML(String html, int maxCharCount)
+	{
+		List<String> htmlList = new ArrayList<>(Arrays.asList(html.split("")));
+		boolean canDelete = true;
+		boolean hasRemoved = false;
+		for (int ii = htmlList.size() - 1; ii > -1; ii--) {
+
+			//	Detect if the cursor is within an HTML tag
+			if (htmlList.get(ii).equals(">")) {
+				canDelete = false;
+				continue;
+			} else if (htmlList.get(ii).equals("<")) {
+				canDelete = true;
+				continue;
+			}
+
+			//	Bail if the cursor is inside the accepted char count
+			if (ii < maxCharCount) {
+				if (hasRemoved && canDelete) {
+					if (!"<".equals(htmlList.get(ii + 1))) {
+						htmlList.set(ii + 1, " ... ");
+					} else {
+						htmlList.set(ii, " ... ");
+					}
+				}
+				break;
+			}
+
+			//	"remove" the current item given that canDelete == true
+			if (canDelete && ii > maxCharCount) {
+				htmlList.set(ii, "");
+				hasRemoved = true;
+			}
+		}
+
+		//	Return the truncated result
+		html = String.join("", htmlList);
+		return html;
 	}
 
 }

@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +51,7 @@ public class ComponentRelationshipResource
 		componentRelationship.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 
 		List<ComponentRelationship> relationships = componentRelationship.findByExample();
-		relationships = FilterEngine.filter(relationships, true);
+		relationships = filterEngine.filter(relationships, true);
 
 		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
 		views = views.stream()

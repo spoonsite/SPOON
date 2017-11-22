@@ -1039,12 +1039,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 															message: 'Attribute Code must be numberic for this attribute type',
 															buttons: Ext.Msg.OK,
 															icon: Ext.Msg.ERROR,
-															fn: function (btn) {
-																if (btn === 'OK') {
-																	form.getForm().markInvalid({
-																		attributeCode: 'Must be a number for this attribute Type'
-																	});
-																}
+															fn: function(btn) {													
+																form.getForm().markInvalid({
+																	attributeCode: 'Must be a number for this attribute Type'
+																});																
 															}
 														});
 													} else {

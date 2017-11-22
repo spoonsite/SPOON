@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -26,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -40,13 +43,14 @@ public class ReportView
 	private String runStatusDescription;
 	private long remainingReportLifetime;
 	private int reportLifetimeMax;
+	private boolean noViewAvailable;
+	private String reportViewFormat;
 
 	public ReportView()
 	{
 		try {
 			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_REPORT_LIFETIME));
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			//	If the configured report lifetime is invalid, fallback to the default value for the max report lifetime
 			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME));
 		}
@@ -61,7 +65,23 @@ public class ReportView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
-		view.setReportFormatDescription(TranslateUtil.translate(ReportFormat.class, report.getReportFormat()));
+
+		String format = report.getReportFormat();
+		if (StringUtils.isBlank(format)) {
+			for (ReportOutput output : report.getReportOutputs()) {
+				if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+					format = output.getReportTransmissionOption().getReportFormat();
+				}
+			}
+		}
+
+		if (StringUtils.isNotBlank(format)) {
+			view.setReportFormatDescription(TranslateUtil.translate(ReportFormat.class, format));
+			view.setReportViewFormat(format);
+		} else {
+			view.setNoViewAvailable(true);
+		}
+
 		view.setRunStatusDescription(TranslateUtil.translate(RunStatus.class, report.getRunStatus()));
 		return view;
 	}
@@ -104,7 +124,7 @@ public class ReportView
 	{
 		this.reportFormatDescription = reportFormatDescription;
 	}
-	
+
 	public long getRemainingReportLifetime()
 	{
 		return remainingReportLifetime;
@@ -114,7 +134,7 @@ public class ReportView
 	{
 		this.remainingReportLifetime = remainingReportLifetime;
 	}
-	
+
 	public int getReportLifetimeMax()
 	{
 		return reportLifetimeMax;
@@ -123,6 +143,26 @@ public class ReportView
 	public void setReportLifetimeMax(int reportLifetimeMax)
 	{
 		this.reportLifetimeMax = reportLifetimeMax;
+	}
+
+	public boolean getNoViewAvailable()
+	{
+		return noViewAvailable;
+	}
+
+	public void setNoViewAvailable(boolean noViewAvailable)
+	{
+		this.noViewAvailable = noViewAvailable;
+	}
+
+	public String getReportViewFormat()
+	{
+		return reportViewFormat;
+	}
+
+	public void setReportViewFormat(String reportViewFormat)
+	{
+		this.reportViewFormat = reportViewFormat;
 	}
 
 }

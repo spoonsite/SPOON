@@ -24,6 +24,7 @@ public class AddJobModel
 {
 
 	public static final String JOB_GROUP_SYSTEM = "SYSTEM";
+	public static final String JOB_GROUP_REPORT = "REPORT";
 
 	private Class jobClass;
 	private String jobName;

@@ -16,14 +16,17 @@
 package edu.usu.sdl.openstorefront.report;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.ComponentOrganizationReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.ComponentOrganizationReportModel;
+import edu.usu.sdl.openstorefront.report.model.EntryOrgDetailModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,28 +47,9 @@ public class ComponentOrganizationReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected ComponentOrganizationReportModel gatherData()
 	{
-	}
-
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("Entry Organization Report", sdf.format(TimeUtil.currentDate()));
-
-		List<String> header = new ArrayList<>();
-		header.add("Organization");
-		header.add("Entry Name");
-		header.add("Last Update Date");
-		header.add("Approve Status");
-
-		if (getBranding().getAllowSecurityMarkingsFlg()) {
-			header.add("Security Marking");
-		}
-		cvsGenerator.addLine(header.toArray());
+		ComponentOrganizationReportModel reportModel = new ComponentOrganizationReportModel();
 
 		Map<String, Object> params = new HashMap<>();
 		String componentFilter = "";
@@ -74,9 +58,9 @@ public class ComponentOrganizationReport
 			params.put("idlistParam", report.dataIdSet());
 			componentFilter = " and componentId in :idlistParam";
 		}
-		
-		String restrictionQuery = FilterEngine.queryComponentRestriction();
-		
+
+		String restrictionQuery = filterEngine.queryComponentRestriction();
+
 		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
 				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
@@ -98,45 +82,114 @@ public class ComponentOrganizationReport
 				records.add(document);
 				orgMap.put(org, records);
 			}
-		}
-		);
-
+		});
 		long totalComponents = 0;
 		List<String> sortedOrganizations = new ArrayList<>(orgMap.keySet());
 
-		sortedOrganizations.sort(
-				null);
+		sortedOrganizations.sort(null);
 
 		for (String organization : sortedOrganizations) {
-			cvsGenerator.addLine(organization);
+			ComponentOrganizationReportLineModel lineModel = new ComponentOrganizationReportLineModel();
+			lineModel.setOrganization(organization);
 			for (ODocument document : orgMap.get(organization)) {
+				EntryOrgDetailModel detailModel = new EntryOrgDetailModel();
+				detailModel.setName(document.field("name"));
+				detailModel.setLastActivityDts(document.field("lastActivityDts"));
+				detailModel.setApprovalState(document.field("approvalState"));
 
-				List<String> data = new ArrayList<>();
-				data.add("");
-				data.add(document.field("name"));		
-				data.add(sdf.format(document.field("lastActivityDts")));
-				data.add(document.field("approvalState"));
-
-				if (getBranding().getAllowSecurityMarkingsFlg()) {
-					String securityMarking = document.field("securityMarkingType");
-					data.add(securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking));
-				}
-				cvsGenerator.addLine(data.toArray());
-
+				lineModel.getEntries().add(detailModel);
 				totalComponents++;
 			}
-			cvsGenerator.addLine("Total", orgMap.get(organization).size());
+			reportModel.getData().add(lineModel);
+		}
+		reportModel.setTotalComponent(totalComponents);
+		reportModel.setTotalOrganizations(orgMap.keySet().size());
+
+		return reportModel;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentOrganizationReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentOrganizationReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, ComponentOrganizationReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+
+		cvsGenerator.addLine(
+				"Organization",
+				"Entry Name",
+				"Last Update Date",
+				"Approve Status"
+		);
+
+		for (ComponentOrganizationReportLineModel lineModel : reportModel.getData()) {
+			cvsGenerator.addLine(lineModel.getOrganization());
+
+			for (EntryOrgDetailModel detailModel : lineModel.getEntries()) {
+				cvsGenerator.addLine("");
+				cvsGenerator.addLine(detailModel.getName());
+				cvsGenerator.addLine(sdf.format(detailModel.getLastActivityDts()));
+				cvsGenerator.addLine(detailModel.getApprovalState());
+			}
+			cvsGenerator.addLine("Total", lineModel.getEntries().size());
 			cvsGenerator.addLine("");
 		}
 
-		cvsGenerator.addLine(
-				"");
-		cvsGenerator.addLine(
-				"Report Totals");
-		cvsGenerator.addLine(
-				"Total Organizations: " + orgMap.keySet().size());
-		cvsGenerator.addLine(
-				"Total Entries: " + totalComponents);
+		cvsGenerator.addLine("");
+		cvsGenerator.addLine("Report Totals");
+		cvsGenerator.addLine("Total Organizations: " + reportModel.getTotalOrganizations());
+		cvsGenerator.addLine("Total Entries: " + reportModel.getTotalComponent());
+
 	}
 
 }

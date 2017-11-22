@@ -16,12 +16,9 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.LOG;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
-import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
-import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
-import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
+import edu.usu.sdl.openstorefront.report.generator.GeneratorOptions;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -43,14 +40,15 @@ import org.junit.Test;
  */
 public class BaseGeneratorTest
 {
+
 	String tempReportId = "TEMP-REPORT-ID";
 	private static String baseDir;
+
 	/**
-	 *	Test of getGenerator method, of class BaseGenerator.
+	 * Test of getGenerator method, of class BaseGenerator.
 	 */
-	
 	@BeforeClass
-	public static void setup ()
+	public static void setup()
 	{
 //		init dir
 		baseDir = System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString();
@@ -58,85 +56,73 @@ public class BaseGeneratorTest
 		file.mkdirs();
 		System.setProperty("application.datadir", baseDir);
 	}
-	
+
 	@AfterClass
-	public static void tearDown ()
+	public static void tearDown()
 	{
 		File file = new File(baseDir);
-			if (file.exists()) {
-				try {
-					FileUtils.deleteDirectory(file);
-				} catch (IOException ex) {
-					LOG.warning("Unable to delete tomcat directory");
-				}
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException ex) {
+				LOG.warning("Unable to delete tomcat directory");
 			}
+		}
 	}
-	
-	@Test
-	public void testGetGenerator ()
-	{
-		//	Setup example reports with CSV, HTML, and PDF formats
-		Report csvReportExample = new Report();
-		csvReportExample.setReportFormat(ReportFormat.CSV);
-		
-		Report htmlRportExample = new Report();
-		htmlRportExample.setReportFormat(ReportFormat.HTML);
-		
-		Report pdfRportExample = new Report();
-		pdfRportExample.setReportFormat(ReportFormat.PDF);
-		
-		//	Generator classes should be the same
-		Assert.assertEquals(BaseGenerator.getGenerator(csvReportExample).getClass().toString(), CSVGenerator.class.toString());
-		Assert.assertEquals(BaseGenerator.getGenerator(htmlRportExample).getClass().toString(), HtmlGenerator.class.toString());
-		Assert.assertEquals(BaseGenerator.getGenerator(pdfRportExample).getClass().toString(), HtmlToPdfGenerator.class.toString());
-	}
-	
+
 	/**
-	 *	Failing test of getGenerator method, of class BaseGenerator.
+	 * Failing test of getGenerator method, of class BaseGenerator.
 	 */
 	@Test
-	public void failTestGetGenerator ()
+	public void failTestGetGenerator()
 	{
 		try {
-			//	Setup example report
-			Report reportExample = new Report();
-			reportExample.setReportFormat("This is a bad ReportFormat value!");
-			
-			BaseGenerator.getGenerator(reportExample);
+
+			GeneratorOptions generatorOptions = new GeneratorOptions();
+
+			BaseGenerator.getGenerator("This is a bad ReportFormat value!", generatorOptions);
 			Assert.fail("Expected UnsupportedOperationException");
-		}
-		catch (UnsupportedOperationException e) {
+		} catch (UnsupportedOperationException e) {
 			Assert.assertEquals("Unsupported report format: This is a bad ReportFormat value!", e.getMessage());
 		}
 	}
-	
+
 	/**
-	 *	Test of finish method (if failed flag == true), of class BaseGenerator.
+	 * Test of finish method (if failed flag == true), of class BaseGenerator.
 	 */
 	@Test
-	public void testFinish ()
+	public void testFinish()
 	{
 		//	Setup example report
 		Report reportExample = new Report();
 		reportExample.setReportId(tempReportId);
-		
-		BaseGenerator generatorExample = new BaseGenerator(reportExample) {
+
+		GeneratorOptions generatorOptions = new GeneratorOptions();
+		generatorOptions.setReport(reportExample);
+
+		BaseGenerator generatorExample = new BaseGenerator(generatorOptions)
+		{
 			@Override
-			public void init(){}
+			public void init()
+			{
+			}
+
 			@Override
-			protected void internalFinish(){this.setFailed(Boolean.TRUE);}
+			protected void internalFinish()
+			{
+				this.setFailed(Boolean.TRUE);
+			}
 		};
-		
+
 		//	Create temp file
 		Path pathToReport = reportExample.pathToReport();
 		try {
 			Files.deleteIfExists(pathToReport);
 			Files.write(pathToReport, new ArrayList<>(), Charset.forName("UTF-8"));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			Logger.getLogger(BaseGeneratorTest.class.getName()).log(Level.SEVERE, null, ex);
 		}
-			
+
 		//	Check both states of the file, before and after finish method is called.
 		//	Check the "Failed" state of the report is toggled to true
 		//		as it was set to "false" in the "internalFinish" method.
