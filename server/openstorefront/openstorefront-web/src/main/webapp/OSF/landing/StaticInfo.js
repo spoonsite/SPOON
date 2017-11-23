@@ -60,6 +60,17 @@ Ext.define('OSF.landing.StaticInfo', {
 					'</div>',
 				'</tpl>'	
 			);	
+	
+			var statsTemplate = new Ext.XTemplate(
+				'<tpl for=".">',
+					'<div class="new-home-highlight-item">',
+					'	<div class="new-home-highlight-item-back">',
+							'<div class="home-highlight-header"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl></div>',							
+							'<div class=""><span class="home-highlight-update" style="font-size: 10px; float: left;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',
+					'	</div>',										
+					'</div>',
+				'</tpl>'	
+			);	
 
 			var highlightPanel = Ext.create('Ext.panel.Panel', {
 				itemId: 'highlightPanel',
@@ -120,33 +131,41 @@ Ext.define('OSF.landing.StaticInfo', {
 					});
 
 					Ext.Ajax.request({
-						url: 'api/v1/service/search/recent?max=3',
-						success: function(response, opts) {
-							var recent = Ext.decode(response.responseText);
+						url: 'api/v1/service/search/recent?max=5',
+						success: function(responseRecent, recentOpts) {
+							var recent = Ext.decode(responseRecent.responseText);
+							
+							Ext.Ajax.request({
+								url: 'api/v1/service/search/topviewed?max=5',
+								success: function(responseTop, topOts) {									
+									var topViewed = Ext.decode(responseTop.responseText);
+									
+									var recentItems = [];
+									Ext.Array.each(recent, function(item){
+										recentItems.push({
+											titleDesc: Ext.util.Format.ellipsis(item.name),
+											link: '',
+											index: dataIndex++,
+											moreText: 'View >>',
+											updateDts: item.addedDts,
+											componentId: item.componentId,
+											displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
+										});
+									});			
 
-							var recentItems = [];
-							Ext.Array.each(recent, function(item){
-								recentItems.push({
-									titleDesc: Ext.util.Format.ellipsis(item.name),
-									link: '',
-									index: dataIndex++,
-									moreText: 'View >>',
-									updateDts: item.addedDts,
-									componentId: item.componentId,
-									displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
-								});
-							});			
-							
-							recentlyAddedPanel.add({								
-								xtype: 'panel',
-								data: recentItems,
-								tpl: template
+									recentlyAddedPanel.add({								
+										xtype: 'panel',
+										data: recentItems,
+										tpl: statsTemplate
+									});
+									infoPanel.infoItems.data = highlightItems.concat(recentItems);
+
+									infoPanel.add(container);
+									infoPanel.updateLayout(true, true);
+									infoPanel.resumeEvent('resize');
+								
+								}
 							});
-							infoPanel.infoItems.data = highlightItems.concat(recentItems);
-							
-							infoPanel.add(container);
-							infoPanel.updateLayout(true, true);
-							infoPanel.resumeEvent('resize');
 			
 						}
 					});

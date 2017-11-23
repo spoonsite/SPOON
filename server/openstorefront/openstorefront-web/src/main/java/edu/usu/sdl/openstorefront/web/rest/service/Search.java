@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -251,6 +252,23 @@ public class Search
 		}
 
 		return recentlyAddedViews;
+	}
+
+	@GET
+	@APIDescription("Get top viewed entries")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRecordStatistic.class)
+	@Path("/topviewed")
+	public Response getTopViewed(
+			@DefaultValue("5")
+			@QueryParam("max") int maxResults)
+	{
+		List<ComponentRecordStatistic> topViewed = service.getComponentService().findTopViewedComponents(maxResults);
+
+		GenericEntity<List<ComponentRecordStatistic>> entity = new GenericEntity<List<ComponentRecordStatistic>>(topViewed)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

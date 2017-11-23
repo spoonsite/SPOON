@@ -295,7 +295,7 @@ limitations under the License.
     /* height: 50px; */
     margin-top: 50px;
     /* background: ${actionBean.branding.quoteColor}; */
-    letter-spacing: 5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     font: 20px "Lato", sans-serif;
     color: #111;	
