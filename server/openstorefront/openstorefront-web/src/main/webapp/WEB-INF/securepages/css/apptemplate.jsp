@@ -275,6 +275,13 @@ limitations under the License.
     color: BLACK;
 }
 
+.home-highlight-update-recent {
+	font-size: 10px;
+    float: left;
+    padding-top: 10px;  
+    color: BLACK;
+}
+
 .new-home-highlight-item-back {	
 	/* background: rgba(0, 0, 0, 0.5); */
 	/* height: 100%; */
@@ -307,6 +314,19 @@ limitations under the License.
 	text-decoration: none;
 }
 
+.home-highlight-header-recent {
+    text-align: left;
+    /* font-size: 24px; */
+    /* height: 50px; */
+    margin-top: 50px;
+    /* background: ${actionBean.branding.quoteColor}; */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font: 20px "Lato", sans-serif;
+    color: #111;	
+	text-overflow: ellipsis;
+}
+
 .home-highlight-footer {
     position: absolute;
     bottom: 10px;
@@ -320,6 +340,20 @@ limitations under the License.
 	padding: 0.5em 2em;
     border: 0.25em solid ${actionBean.branding.quoteColor};
     font-size: 1.2em;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: ${actionBean.branding.quoteColor}!important;
+    color: #fff!important;
+    display: inline-block;
+    color: inherit;
+    box-shadow: none;
+}
+
+.home-readmore-recent {
+	padding: 0.5em 2em;
+    border: 0.25em solid ${actionBean.branding.quoteColor};
+    font-size: .7em;
     font-weight: 700;
     text-transform: uppercase;
     text-decoration: none;
