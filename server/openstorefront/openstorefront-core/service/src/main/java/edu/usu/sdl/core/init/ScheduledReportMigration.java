@@ -19,8 +19,11 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Convert remove in 2.6 This will convert the old scheduled reports to using
@@ -32,6 +35,8 @@ public class ScheduledReportMigration
 		extends ApplyOnceInit
 {
 
+	private static final Logger LOG = Logger.getLogger(ScheduledReportMigration.class.getName());
+
 	public ScheduledReportMigration()
 	{
 		super("SREPORT-Migration-Init");
@@ -40,36 +45,45 @@ public class ScheduledReportMigration
 	@Override
 	protected String internalApply()
 	{
-		//find all
-		ScheduledReport scheduledReport = new ScheduledReport();
+		JobManager.pauseScheduler();
+		StringBuilder result = new StringBuilder();
+		try {
 
-		List<ScheduledReport> reports = scheduledReport.findByExample();
-		for (ScheduledReport report : reports) {
-			List<ReportOutput> reportOutputs = new ArrayList<>();
+			//find all
+			ScheduledReport scheduledReport = new ScheduledReport();
 
-			//move formats
-			ReportOutput viewOutput = new ReportOutput();
-			viewOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
-			ReportTransmissionOption option = new ReportTransmissionOption();
-			option.setReportFormat(report.getReportFormat());
-			viewOutput.setReportTransmissionOption(option);
-			reportOutputs.add(viewOutput);
+			List<ScheduledReport> reports = scheduledReport.findByExample();
+			for (ScheduledReport report : reports) {
+				List<ReportOutput> reportOutputs = new ArrayList<>();
 
-			//emails
-			if (report.getEmailAddresses() != null) {
-				ReportOutput emailOutput = new ReportOutput();
-				emailOutput.setReportTransmissionType(ReportTransmissionType.EMAIL);
-				option = new ReportTransmissionOption();
+				//move formats
+				ReportOutput viewOutput = new ReportOutput();
+				viewOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
+				ReportTransmissionOption option = new ReportTransmissionOption();
 				option.setReportFormat(report.getReportFormat());
-				option.setEmailAddresses(report.getEmailAddresses());
-				emailOutput.setReportTransmissionOption(option);
-			}
+				viewOutput.setReportTransmissionOption(option);
+				reportOutputs.add(viewOutput);
 
-			report.setReportOutputs(reportOutputs);
-			service.getReportService().saveScheduledReport(report);
+				//emails
+				if (report.getEmailAddresses() != null) {
+					ReportOutput emailOutput = new ReportOutput();
+					emailOutput.setReportTransmissionType(ReportTransmissionType.EMAIL);
+					option = new ReportTransmissionOption();
+					option.setReportFormat(report.getReportFormat());
+					option.setEmailAddresses(report.getEmailAddresses());
+					emailOutput.setReportTransmissionOption(option);
+				}
+
+				report.setReportOutputs(reportOutputs);
+				LOG.log(Level.INFO, "Converting Scheduled Report: " + report.getReportType() + " For " + report.getCreateUser());
+				service.getReportService().saveScheduledReport(report);
+			}
+			result.append("Converted: " + reports.size());
+		} finally {
+			JobManager.resumeScheduler();
 		}
 
-		return "Converted: " + reports.size();
+		return result.toString();
 	}
 
 	@Override
