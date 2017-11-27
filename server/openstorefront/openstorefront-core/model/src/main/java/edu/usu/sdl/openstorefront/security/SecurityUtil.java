@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,6 +90,26 @@ public class SecurityUtil
 			LOG.log(Level.FINE, "Determing Username.  No user is logged in.  This is likely an auto process.");
 		}
 		return username;
+	}
+
+	/**
+	 * This will add the user to the callable to run; If the security is not
+	 * initialize then this will pass through. (Expected for System user prior
+	 * to system init)
+	 *
+	 * @param <V>
+	 * @param task
+	 * @return
+	 */
+	public static <V> Callable<V> associateSecurity(Callable<V> task)
+	{
+		try {
+			return SecurityUtils.getSubject().associateWith(task);
+		} catch (Exception e) {
+			//security manager is not active; pass through in this case
+			LOG.log(Level.FINEST, "Security not active?", e);
+			return task;
+		}
 	}
 
 	/**

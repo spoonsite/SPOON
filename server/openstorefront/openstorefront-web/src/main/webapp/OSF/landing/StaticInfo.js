@@ -60,6 +60,26 @@ Ext.define('OSF.landing.StaticInfo', {
 					'</div>',
 				'</tpl>'	
 			);	
+	
+			var statsTemplate = new Ext.XTemplate(
+				'<tpl for="recent">',
+					'<div class="new-home-highlight-item">',
+					'	<div class="new-home-highlight-item-back">',
+							'<div class="home-highlight-header-recent"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore-recent" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',							
+							'<div class=""><span class="home-highlight-update-recent" style="font-size: 10px; float: left;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
+					'	</div>',										
+					'</div>',					
+				'</tpl>',
+				'<br><h1 class="home-info-section-title">Top Viewed</h1><hr class="home-info-section-title-rule">',
+				'<tpl for="top">',
+					'<div class="new-home-highlight-item">',
+					'	<div class="new-home-highlight-item-back">',
+							'<div class="home-highlight-header-recent"><tpl if="link"><a href="{link}" class="home-highlight-header" target="_blank">{titleDesc} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{titleDesc}</tpl><span style="margin-left: 20px;float: right;"><a href="#" class="home-readmore-recent" onclick="CoreUtil.pageActions.readMoreView({index});">{moreText}</a></span></div>',							
+							'<div class=""><span class="home-highlight-update-recent" style="font-size: 10px; float: left;">Views: {views}</span></div>',
+					'	</div>',										
+					'</div>',
+				'</tpl>'						
+			);	
 
 			var highlightPanel = Ext.create('Ext.panel.Panel', {
 				itemId: 'highlightPanel',
@@ -120,33 +140,59 @@ Ext.define('OSF.landing.StaticInfo', {
 					});
 
 					Ext.Ajax.request({
-						url: 'api/v1/service/search/recent?max=3',
-						success: function(response, opts) {
-							var recent = Ext.decode(response.responseText);
+						url: 'api/v1/service/search/recent?max=5',
+						success: function(responseRecent, recentOpts) {
+							var recent = Ext.decode(responseRecent.responseText);
+							
+							Ext.Ajax.request({
+								url: 'api/v1/service/search/topviewed?max=5',
+								success: function(responseTop, topOts) {									
+									var topViewed = Ext.decode(responseTop.responseText);
+									
+									
+									var recentItems = [];
+									Ext.Array.each(recent, function(item){
+										recentItems.push({
+											titleDesc: Ext.util.Format.ellipsis(item.name),
+											link: '',
+											index: dataIndex++,
+											moreText: 'View >>',
+											updateDts: item.addedDts,
+											componentId: item.componentId,
+											displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
+										});
+									});		
+									
+									var topItems = [];
+									Ext.Array.each(topViewed, function(item){
+										topItems.push({
+											titleDesc: Ext.util.Format.ellipsis(item.componentName),
+											link: '',
+											index: dataIndex++,
+											moreText: 'View >>',
+											views: item.views,
+											componentId: item.componentId											
+										});
+									});	
 
-							var recentItems = [];
-							Ext.Array.each(recent, function(item){
-								recentItems.push({
-									titleDesc: Ext.util.Format.ellipsis(item.name),
-									link: '',
-									index: dataIndex++,
-									moreText: 'View >>',
-									updateDts: item.addedDts,
-									componentId: item.componentId,
-									displayDesc: Ext.util.Format.ellipsis(Ext.util.Format.stripTags(item.description), 700)
-								});
-							});			
-							
-							recentlyAddedPanel.add({								
-								xtype: 'panel',
-								data: recentItems,
-								tpl: template
+									var dataSet = {
+										recent: recentItems,
+										top: topItems
+									};
+
+									recentlyAddedPanel.add({								
+										xtype: 'panel',
+										data: dataSet,
+										tpl: statsTemplate
+									});
+									infoPanel.infoItems.data = highlightItems.concat(recentItems);
+
+									infoPanel.add(container);
+									infoPanel.updateLayout(true, true);
+									infoPanel.resumeEvent('resize');
+								
+								}
 							});
-							infoPanel.infoItems.data = highlightItems.concat(recentItems);
-							
-							infoPanel.add(container);
-							infoPanel.updateLayout(true, true);
-							infoPanel.resumeEvent('resize');
 			
 						}
 					});

@@ -51,7 +51,7 @@ public class PluginScanJob
 		extends BaseJob
 {
 
-	private static final Logger log = Logger.getLogger(PluginScanJob.class.getName());
+	private static final Logger LOG = Logger.getLogger(PluginScanJob.class.getName());
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
@@ -68,7 +68,7 @@ public class PluginScanJob
 				{
 				});
 			} catch (IOException e) {
-				log.log(Level.WARNING, "Unable to restore plugin file map.  Starting over; should be able to continue.");
+				LOG.log(Level.WARNING, "Unable to restore plugin file map.  Starting over; should be able to continue.");
 			}
 		} else {
 			fileMapJson = "";
@@ -88,7 +88,7 @@ public class PluginScanJob
 				if (lastModTime != null) {
 					//check for update
 					if (plugin.lastModified() > lastModTime) {
-						log.log(Level.INFO, MessageFormat.format("Plugin: {0} was updated...", plugin.getName()));
+						LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} was updated...", plugin.getName()));
 						loadPlugin = true;
 					}
 				} else {
@@ -97,19 +97,18 @@ public class PluginScanJob
 				}
 
 				if (loadPlugin) {
-					log.log(Level.INFO, MessageFormat.format("Found plugin: {0} attempting to load.", plugin.getName()));
+					LOG.log(Level.INFO, MessageFormat.format("Found plugin: {0} attempting to load.", plugin.getName()));
 					try (InputStream in = new FileInputStream(plugin)) {
 						service.getPluginServicePrivate().installPlugin(plugin.getName(), in, true);
-						log.log(Level.INFO, MessageFormat.format("Loaded plugin: {0} successfully.", plugin.getName()));
+						LOG.log(Level.INFO, MessageFormat.format("Loaded plugin: {0} successfully.", plugin.getName()));
 					} catch (Exception ioe) {
-						log.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} failed to load.", plugin.getName()), ioe);
-                                                try {
-                                                        service.getPluginService().failPlugin(plugin.getPath());
-                                                        log.log(Level.INFO, MessageFormat.format("Failed Plugin: {0} removed. ", plugin.getName()));
-                                                }
-                                                catch (Exception ex) {
-                                                       log.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} could not be removed.  See log.", plugin.getName()), ex); 
-                                                }
+						LOG.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} failed to load.", plugin.getName()), ioe);
+						try {
+							service.getPluginService().failPlugin(plugin.getPath());
+							LOG.log(Level.INFO, MessageFormat.format("Failed Plugin: {0} removed. ", plugin.getName()));
+						} catch (Exception ex) {
+							LOG.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} could not be removed.  See log.", plugin.getName()), ex);
+						}
 					} finally {
 						fileMap.put(plugin.getPath(), plugin.lastModified());
 					}
@@ -122,22 +121,22 @@ public class PluginScanJob
 		for (String path : fileMap.keySet()) {
 			if (newFiles.contains(path) == false) {
 				//file was remove
-				log.log(Level.INFO, MessageFormat.format("Plugin: {0} was removed...", path));
+				LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} was removed...", path));
 
 				String filename = Paths.get(path).getFileName().toString();
 				Plugin pluginExample = new Plugin();
 				pluginExample.setActualFilename(filename);
 				pluginExample = pluginExample.find();
 				if (pluginExample != null) {
-					log.log(Level.INFO, MessageFormat.format("Uninstalling plugin: {0} ", path));
+					LOG.log(Level.INFO, MessageFormat.format("Uninstalling plugin: {0} ", path));
 					try {
 						service.getPluginService().uninstallPlugin(pluginExample.getPluginId());
-						log.log(Level.INFO, MessageFormat.format("Plugin: {0} uninstalled. ", path));
+						LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} uninstalled. ", path));
 					} catch (Exception e) {
-						log.log(Level.INFO, MessageFormat.format("Failed to uninstalled:  {0} See log.  Try to use admin tools to uninstall.", path), e);
+						LOG.log(Level.INFO, MessageFormat.format("Failed to uninstalled:  {0} See log.  Try to use admin tools to uninstall.", path), e);
 					}
 				} else {
-					log.log(Level.INFO, MessageFormat.format("Plugin: {0} wasn't installed", path));
+					LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} wasn't installed", path));
 				}
 				keysToRemove.add(path);
 			}
@@ -153,8 +152,8 @@ public class PluginScanJob
 				service.getSystemService().saveProperty(ApplicationProperty.PLUGIN_LAST_LOAD_MAP, updatedMap);
 			}
 		} catch (JsonProcessingException ex) {
-			log.log(Level.SEVERE, "Unable to save FileMap.  This can cause spinning.  Pausing job.", ex);
-			JobManager.pauseSystemJob(PluginScanJob.class.getSimpleName());
+			LOG.log(Level.SEVERE, "Unable to save FileMap.  This can cause spinning.  Pausing job.", ex);
+			JobManager.pauseJob(PluginScanJob.class.getSimpleName(), JobManager.JOB_GROUP_SYSTEM);
 		}
 
 	}

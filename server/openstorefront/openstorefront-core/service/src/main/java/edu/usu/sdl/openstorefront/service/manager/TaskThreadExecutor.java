@@ -44,7 +44,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.shiro.SecurityUtils;
 
 /**
  * Handles running background jobs
@@ -246,7 +245,7 @@ public class TaskThreadExecutor
 
 		TaskFuture taskFuture = null;
 		if (runJob) {
-			Future future = submit(SecurityUtils.getSubject().associateWith(taskRequest.getTask()));
+			Future future = submit(SecurityUtil.associateSecurity(taskRequest.getTask()));
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
 			taskFuture.setQueueable(taskRequest.isQueueable());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());

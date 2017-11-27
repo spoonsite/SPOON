@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,11 +58,11 @@ public class Report
 	@FK(ReportType.class)
 	private String reportType;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Deprecated
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
-	@ConsumeField
 	@FK(ReportFormat.class)
+	@APIDescription("Use Report Outputs and not this field")
 	private String reportFormat;
 
 	@NotNull
@@ -76,11 +78,18 @@ public class Report
 	private List<ReportDataId> ids;
 
 	@ConsumeField
-	@Embedded	
+	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
 	private Boolean scheduled;
+	private String scheduledId;
+
+	@ConsumeField
+	@Embedded
+	@DataType(ReportOutput.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportOutput> reportOutputs;
 
 	public Report()
 	{
@@ -105,6 +114,24 @@ public class Report
 			}
 		}
 		return dataSet;
+	}
+
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (getReportOutputs() == null || getReportOutputs().isEmpty()) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ReportOutput.class.getSimpleName());
+			ruleResult.setFieldName("reportOutputs");
+			ruleResult.setMessage("Must have at least one output");
+			validationResult.getRuleResults().add(ruleResult);
+		} else {
+			for (ReportOutput output : getReportOutputs()) {
+				validationResult.merge(output.customValidation());
+			}
+		}
+		return validationResult;
 	}
 
 	public String getReportId()
@@ -157,11 +184,13 @@ public class Report
 		this.scheduled = scheduled;
 	}
 
+	@Deprecated
 	public String getReportFormat()
 	{
 		return reportFormat;
 	}
 
+	@Deprecated
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
@@ -175,6 +204,26 @@ public class Report
 	public void setIds(List<ReportDataId> ids)
 	{
 		this.ids = ids;
+	}
+
+	public List<ReportOutput> getReportOutputs()
+	{
+		return reportOutputs;
+	}
+
+	public void setReportOutputs(List<ReportOutput> reportOutputs)
+	{
+		this.reportOutputs = reportOutputs;
+	}
+
+	public String getScheduledId()
+	{
+		return scheduledId;
+	}
+
+	public void setScheduledId(String scheduledId)
+	{
+		this.scheduledId = scheduledId;
 	}
 
 }

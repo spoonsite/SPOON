@@ -63,7 +63,6 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -77,6 +76,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.core.view.ComponentPrintView;
@@ -178,7 +178,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(LookupModel.class)
+	@DataType(ComponentLookupModel.class)
 	@Path("/lookup")
 	public Response getComponentLookupList(
 			@BeanParam ComponentFilterParams filterQueryParams,
@@ -194,7 +194,7 @@ public class ComponentRESTResource
 				return sendSingleEntityResponse(validationResult.toRestError());
 			}
 
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
@@ -223,21 +223,16 @@ public class ComponentRESTResource
 				});
 			}
 
-			components = FilterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
-			}
+			components = filterEngine.filter(components);
+			lookupModels = ComponentLookupModel.toView(components);
 			lookupModels = filterQueryParams.filter(lookupModels);
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
 		} else {
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
@@ -249,15 +244,10 @@ public class ComponentRESTResource
 				});
 			}
 
-			components = FilterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
-			}
+			components = filterEngine.filter(components);
+			lookupModels = ComponentLookupModel.toView(components);
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -275,7 +265,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
-		componentResources = FilterEngine.filter(componentResources, true);
+		componentResources = filterEngine.filter(componentResources, true);
 
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -351,7 +341,7 @@ public class ComponentRESTResource
 		List<Component> componentViews = new ArrayList<>();
 		idList.forEach(componentId -> {
 			Component view = service.getPersistenceService().findById(Component.class, componentId);
-			view = FilterEngine.filter(view);
+			view = filterEngine.filter(view);
 			if (view != null) {
 				componentViews.add(view);
 			}
@@ -371,7 +361,7 @@ public class ComponentRESTResource
 	)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
-		view = FilterEngine.filter(view);
+		view = filterEngine.filter(view);
 		return sendSingleEntityResponse(view);
 	}
 
@@ -557,7 +547,7 @@ public class ComponentRESTResource
 		componentTagExample.setText(tagText);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
-		tags = FilterEngine.filter(tags, true);
+		tags = filterEngine.filter(tags, true);
 
 		if (approvedOnly) {
 			tags = tags.stream()

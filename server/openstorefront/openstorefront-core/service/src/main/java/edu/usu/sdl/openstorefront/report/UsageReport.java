@@ -15,23 +15,25 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import edu.usu.sdl.openstorefront.report.model.UsageReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.UsageReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,17 +46,20 @@ public class UsageReport
 		extends BaseReport
 {
 
-	private List<String> userTrackingUsers = new ArrayList<>();
-
 	public UsageReport(Report report)
 	{
 		super(report);
 	}
 
 	@Override
-	protected void gatherData()
+	protected UsageReportModel gatherData()
 	{
 		updateReportTimeRange();
+
+		UsageReportModel usageReportModel = new UsageReportModel();
+		usageReportModel.setTitle("Usage Report");
+		usageReportModel.setDataStartDate(report.getReportOption().getStartDts());
+		usageReportModel.setDataEndDate(report.getReportOption().getEndDts());
 
 		UserTracking userTrackingExample = new UserTracking();
 		userTrackingExample.setActiveStatus(UserTracking.ACTIVE_STATUS);
@@ -79,45 +84,6 @@ public class UsageReport
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
-		for (UserTracking userTracking : userTrackings) {
-			userTrackingUsers.add(userTracking.getCreateUser());
-		}
-	}
-
-	private void updateReportTimeRange()
-	{
-		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instantEnd = Instant.now();
-			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
-		}
-
-		if (report.getReportOption().getStartDts() == null) {
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(TimeUtil.currentDate()));
-		}
-
-		if (report.getReportOption().getEndDts() == null) {
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(TimeUtil.currentDate()));
-		}
-
-	}
-
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("Usage Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
-		cvsGenerator.addLine("Summary");
-		cvsGenerator.addLine(
-				"# Logins",
-				"Current Active Watches",
-				"Component Views",
-				"Component Resources Clicked"
-		);
 
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setActiveStatus(UserWatch.ACTIVE_STATUS);
@@ -133,8 +99,8 @@ public class UsageReport
 		ComponentTracking componentTrackingEndExample = new ComponentTracking();
 		componentTrackingEndExample.setEventDts(report.getReportOption().getEndDts());
 
-		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		queryByExample = new QueryByExample(componentTrackingExample);
+		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentTrackingStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
@@ -150,25 +116,10 @@ public class UsageReport
 		componentTrackingExample.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 		long componentLinkClicks = service.getPersistenceService().countByExample(queryByExample);
 
-
-		cvsGenerator.addLine(
-				userTrackingUsers.size(),
-				activeWatches,
-				componentViews,
-				componentLinkClicks
-		);
-
-		cvsGenerator.addLine("Details");
-		cvsGenerator.addLine(
-				"Username",
-				"User GUID",
-				"User Organization",
-				"User Type",
-				"User Email",
-				"# Logins",
-				"Component Viewed",
-				"Component Resources Clicked"
-		);
+		usageReportModel.setNumberOfLogins(userTrackings.size());
+		usageReportModel.setCurrentActiveWatches(activeWatches);
+		usageReportModel.setComponentViews(componentViews);
+		usageReportModel.setComponentResourcesClicks(componentLinkClicks);
 
 		UserProfile userProfileExample = new UserProfile();
 		List<UserProfile> allUsers = service.getPersistenceService().queryByExample(userProfileExample);
@@ -178,16 +129,19 @@ public class UsageReport
 		});
 
 		Map<String, Long> trackMap = new HashMap<>();
-		userTrackingUsers.forEach(username -> {
-			if (trackMap.containsKey(username)) {
-				trackMap.put(username, trackMap.get(username) + 1);
+		userTrackings.forEach(userTracting -> {
+			if (trackMap.containsKey(userTracting.getCreateUser())) {
+				trackMap.put(userTracting.getCreateUser(), trackMap.get(userTracting.getCreateUser()) + 1);
 			} else {
-				trackMap.put(username, 1L);
+				trackMap.put(userTracting.getCreateUser(), 1L);
 			}
 		});
 
 		for (String username : trackMap.keySet()) {
+			UsageReportLineModel lineModel = new UsageReportLineModel();
+
 			UserProfile userProfile = userMap.get(username);
+			lineModel.setUsername(username);
 
 			componentTrackingExample = new ComponentTracking();
 			componentTrackingExample.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
@@ -216,15 +170,117 @@ public class UsageReport
 			componentTrackingExample.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 			long userComponentLinkClicks = service.getPersistenceService().countByExample(queryByExample);
 
+			lineModel.setUsername(username);
+			lineModel.setUserType(TranslateUtil.translate(UserTypeCode.class, userProfile.getUserTypeCode()));
+			lineModel.setUserOrganization(userProfile.getOrganization());
+			lineModel.setUserGUID(userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid());
+			lineModel.setUserEmail(userProfile.getEmail());
+			lineModel.setComponentViews(userComponentViews);
+			lineModel.setResourcesClicked(userComponentLinkClicks);
+			lineModel.setNumberOfLogins(trackMap.get(username));
+
+			usageReportModel.getData().add(lineModel);
+		}
+
+		return usageReportModel;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (UsageReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (UsageReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, UsageReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+
+		//write header
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		cvsGenerator.addLine("Data Time Range:  ", sdf.format(reportModel.getDataStartDate()) + " - " + sdf.format(reportModel.getDataEndDate()));
+		cvsGenerator.addLine("Summary");
+		cvsGenerator.addLine(
+				"# Logins",
+				"Current Active Watches",
+				"Component Views",
+				"Component Resources Clicked"
+		);
+
+		cvsGenerator.addLine(
+				reportModel.getNumberOfLogins(),
+				reportModel.getCurrentActiveWatches(),
+				reportModel.getComponentViews(),
+				reportModel.getComponentResourcesClicks()
+		);
+
+		cvsGenerator.addLine("Details");
+		cvsGenerator.addLine(
+				"Username",
+				"User GUID",
+				"User Organization",
+				"User Type",
+				"User Email",
+				"# Logins",
+				"Component Viewed",
+				"Component Resources Clicked"
+		);
+
+		for (UsageReportLineModel reportLineModel : reportModel.getData()) {
+
 			cvsGenerator.addLine(
-					userProfile.getUsername(),
-					userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid(),
-					userProfile.getOrganization(),
-					TranslateUtil.translate(UserTypeCode.class, userProfile.getUserTypeCode()),
-					userProfile.getEmail(),
-					trackMap.get(username),
-					userComponentViews,
-					userComponentLinkClicks
+					reportLineModel.getUsername(),
+					reportLineModel.getUserGUID(),
+					reportLineModel.getUserOrganization(),
+					reportLineModel.getUserType(),
+					reportLineModel.getUserEmail(),
+					reportLineModel.getNumberOfLogins(),
+					reportLineModel.getComponentViews(),
+					reportLineModel.getResourcesClicked()
 			);
 		}
 

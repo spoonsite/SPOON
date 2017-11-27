@@ -629,3 +629,296 @@ Ext.define('OSF.component.ChangeLogWindow', {
 	}
 	
 });
+
+Ext.define('OSF.component.EntrySelect', {
+	extend: 'Ext.panel.Panel',
+	alias: 'widget.entryselect',
+	
+	bodyStyle: 'padding: 10px',
+	tpl: new Ext.XTemplate(
+		'<tpl if="!(values && values.length)">All Entries</tpl>',	
+		'<tpl for=".">',	
+		'	<p>{name}</p>',
+		'</tpl>',	
+		'<tpl if="more">...</tpl>'
+	),	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			style: 'background: transparent;',
+			items: [
+				{
+					xtype: 'button',
+					text: 'Select Entries',
+					iconCls: 'fa fa-lg fa-list',
+					handler: function() {
+						var selectPanel = this.up('panel');
+						
+						var selectWin = Ext.create('Ext.window.Window', {
+							title: 'Select Entries',
+							modal: true,
+							alwaysOnTop: true,
+							closeMode: 'destroy',
+							layout: 'fit',
+							height: '70%',
+							width: '70%',
+							items: [
+								{
+									xtype: 'panel',
+									layout: {
+										type: 'hbox',
+										align: 'stretch'
+									},
+									items: [
+										{
+											xtype: 'grid',
+											itemId: 'poolGrid',
+											title: 'Entry Not Included - <span class="alert-warning"> drag to add <i class="fa fa-lg fa-arrow-right"></i> </span>',
+											columnLines: true,
+											bufferedRenderer: false,
+											width: '50%',
+											margin: '0 5 0 0',
+											store: {												
+												sorters: [
+													new Ext.util.Sorter({
+														property: 'description',
+														direction: 'ASC'
+													})
+												]
+											},
+											selModel: {
+											   selType: 'rowmodel',
+											   mode: 'MULTI'
+											},
+											plugins: 'gridfilters',
+											viewConfig: {
+												plugins: {
+													ptype: 'gridviewdragdrop',
+													dragText: 'Drag and drop to Add to template'
+												}
+											},											
+											columns: [
+												{ text: 'Name', dataIndex: 'description', flex: 1 },
+												{ text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
+													filter: {
+														type: 'list'
+													}
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'textfield',
+													dock: 'top',
+													width: '100%',
+													emptyText: 'Filter entries by name',
+													listeners: {
+														change: function (tb, newVal, oldVal, opts) {
+															var grid = tb.up('grid');
+															grid.getStore().filter([
+																{
+																	property: 'description',
+																	value: tb.value
+																}
+															]);
+														}
+													}
+												}
+											]
+										},
+										{
+											xtype: 'grid',											
+											itemId: 'selectedGrid',
+											title: 'Entries In Report - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
+											columnLines: true,
+											bufferedRenderer: false,
+											width: '50%',
+											selModel: {
+											   selType: 'rowmodel',
+											   mode: 'MULTI'
+											},
+											store: {
+												sorters: [
+													new Ext.util.Sorter({
+														property: 'description',
+														direction: 'ASC'
+													})
+												]
+											},
+											plugins: 'gridfilters',
+											viewConfig: {
+												plugins: {
+													ptype: 'gridviewdragdrop',
+													dragText: 'Drag and drop to delete from template'												
+												}
+											},											
+											columns: [
+												{ text: 'Name', dataIndex: 'description', flex: 1 },
+												{ text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
+													filter: {
+														type: 'list'
+													}
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'textfield',
+													dock: 'top',
+													width: '100%',
+													emptyText: 'Filter entries by name',
+													listeners: {
+														change: function (tb, newVal, oldVal, opts) {
+															var grid = tb.up('grid');
+															grid.getStore().filter([
+																{
+																	property: 'description',
+																	value: tb.value
+																}
+															]);
+														}
+													}
+												}												
+											]											
+										}
+									]
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											xtype: 'button',
+											text: 'Select Entries',
+											scale: 'medium',
+											iconCls: 'fa fa-lg fa-check icon-button-color-save',
+											handler: function() {
+												
+												var selectedGrid = selectWin.queryById('selectedGrid');
+												
+												selectPanel.selectedIds = [];
+												selectedGrid.getStore().each(function(record){
+													selectPanel.selectedIds.push({
+														componentId: record.get('code'),
+														name: record.get('description')
+													});
+												});
+												selectPanel.refreshDisplay();
+												
+												selectWin.close();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											xtype: 'button',
+											text: 'Cancel',
+											scale: 'medium',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												selectWin.close();
+											}											
+										}
+									]
+								}
+							]
+						});
+						selectWin.show();
+						
+						//load current selection
+						selectWin.setLoading(true);
+						Ext.Ajax.request({
+							url: 'api/v1/resource/components/lookup',
+							callback: function() {
+								selectWin.setLoading(false);
+							},
+							success: function(response, opts) {
+								var data = Ext.decode(response.responseText);
+								
+								var pool = [];
+								var selected = [];
+								Ext.Array.each(data, function(item){
+									var selectedRecord = false;
+									
+									Ext.Array.each(selectPanel.selectedIds, function(selectedItem) {
+										if (selectedItem.componentId === item.code) {
+											selectedRecord = true;
+										}
+									});
+									
+									if (selectedRecord) {
+										selected.push(item);
+									} else {
+										pool.push(item);
+									}
+								});							
+								
+								var selectedGrid = selectWin.queryById('selectedGrid');
+								var poolGrid = selectWin.queryById('poolGrid');
+								
+								selectedGrid.getStore().loadData(selected);
+								poolGrid.getStore().loadData(pool);
+								
+							}
+						});
+						
+					}
+				}
+			]
+		}
+	],
+		
+	initComponent: function() {
+		this.callParent();		
+		var selectPanel = this;	
+		
+		selectPanel.selectedIds = [];
+		
+	},
+	
+	refreshDisplay: function() {
+		var selectPanel = this;	
+		selectPanel.update(selectPanel.selectedIds);
+	},
+	
+	getSelected: function() {
+		var selectPanel = this;		
+		return selectPanel.selectedIds;
+	},
+	
+	loadCurrentSelection: function(selectedIds) {
+		var selectPanel = this;		
+		
+		selectPanel.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/components/lookup',
+			callback: function() {
+				selectPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				
+				selectPanel.selectedIds = [];
+				Ext.Array.each(data, function(componentLookup) {
+					
+					Ext.Array.each(selectedIds, function(item){
+						if (componentLookup.code === item) {
+							selectPanel.selectedIds.push({
+								componentId: item,
+								name: componentLookup.description
+							});
+						}
+					});
+					
+				});
+				
+				selectPanel.refreshDisplay();
+			}
+		});		
+		
+	}
+	
+});
+

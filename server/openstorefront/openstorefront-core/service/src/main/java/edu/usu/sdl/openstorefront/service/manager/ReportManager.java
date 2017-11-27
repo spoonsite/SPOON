@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
+import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import freemarker.template.*;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.quartz.SchedulerException;
 
 /**
  * Handles Background Reports
@@ -44,26 +46,29 @@ public class ReportManager
 	private static final Logger LOG = Logger.getLogger(ReportManager.class.getName());
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static final long MAX_WORKING_RETRY_TIME_MILLIS = 1440 * 60 * 1000;
-	
+
 	// configuration for reports templating engine
 	private static Configuration templateConfig = null;
 
 	public static void init()
 	{
 		// Initialize templating engine configurations
-		try
-		{
+		try {
 			templateConfig = new Configuration(Configuration.VERSION_2_3_26);
 			templateConfig.setClassForTemplateLoading(ReportManager.class, "/templates/reports");
 			templateConfig.setDefaultEncoding("UTF-8");
 			templateConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 			templateConfig.setLogTemplateExceptions(false);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "While configuring the report template, the follow error was caught: " + e);
 		}
-		catch (Exception e)
-		{
-			LOG.log(Level.WARNING,"While configuring the report template, the follow error was caught: " + e);
-		}
-		
+
+		restartInprogressReports();
+		createCronSheduledReports();
+	}
+
+	private static void restartInprogressReports()
+	{
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		//Restart any pending or working reports
 		List<Report> allReports = getInprogessReports(serviceProxy);
@@ -76,19 +81,17 @@ public class ReportManager
 				Report duplicateReport = new Report();
 				duplicateReport.setReportId(report.getReportId());
 				List<Report> duplicateReports = duplicateReport.findByExampleProxy();
-				if(duplicateReports.size() > 1)
-				{
-					for(Report duplicate : duplicateReports)
-					{
+				if (duplicateReports.size() > 1) {
+					for (Report duplicate : duplicateReports) {
 						if (!RunStatus.COMPLETE.equals(duplicate.getRunStatus())
 								&& !RunStatus.ERROR.equals(duplicate.getRunStatus())) {
 							duplicate.setRunStatus(RunStatus.ERROR);
 							duplicate.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-							serviceProxy.getPersistenceService().persist(duplicate);	
+							serviceProxy.getPersistenceService().persist(duplicate);
 						}
 					}
 				}
-				
+
 				if (RunStatus.WORKING.equals(report.getRunStatus())) {
 					long runtime = System.currentTimeMillis() - report.getCreateDts().getTime();
 					if (runtime > MAX_WORKING_RETRY_TIME_MILLIS) {
@@ -109,7 +112,7 @@ public class ReportManager
 				}
 
 				if (restartReport) {
-					LOG.log(Level.INFO, "Restarting report: " + report.getReportType() + " for user " + report.getCreateUser());
+					LOG.log(Level.INFO, MessageFormat.format("Restarting report: {0} for user {1}", new Object[]{report.getReportType(), report.getCreateUser()}));
 					TaskRequest taskRequest = new TaskRequest();
 					taskRequest.setAllowMultiple(true);
 					taskRequest.setName(TaskRequest.TASKNAME_REPORT);
@@ -119,7 +122,23 @@ public class ReportManager
 				}
 			}
 		}
+	}
 
+	private static void createCronSheduledReports()
+	{
+		ScheduledReport scheduledReport = new ScheduledReport();
+		scheduledReport.setActiveStatus(ScheduledReport.ACTIVE_STATUS);
+		List<ScheduledReport> scheduledReports = scheduledReport.findByExample();
+		scheduledReports.removeIf(report -> {
+			return StringUtils.isBlank(report.getScheduleIntervalCron());
+		});
+		scheduledReports.forEach(report -> {
+			try {
+				JobManager.addReportJob(report.getScheduleReportId(), report.getReportType(), report.getScheduleIntervalCron());
+			} catch (SchedulerException ex) {
+				LOG.log(Level.WARNING, "Unable to scheduled report: " + report.getScheduleReportId(), ex);
+			}
+		});
 	}
 
 	private static List<Report> getInprogessReports(ServiceProxy serviceProxy)
@@ -139,8 +158,8 @@ public class ReportManager
 
 		return allReports;
 	}
-	
-	public static Configuration getTemplateConfig ()
+
+	public static Configuration getTemplateConfig()
 	{
 		return templateConfig;
 	}

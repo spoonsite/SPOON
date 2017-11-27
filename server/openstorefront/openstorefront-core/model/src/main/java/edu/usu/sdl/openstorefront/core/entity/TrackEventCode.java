@@ -33,6 +33,7 @@ public class TrackEventCode
 
 	public static final String LOGIN = "L";
 	public static final String VIEW = "V";
+	public static final String EXTERNAL_VIEW = "EXTVIEW";
 	public static final String EXTERNAL_LINK_CLICK = "ELC";
 	public static final String COMPONENT_SYNC = "SYNC";
 
@@ -46,6 +47,7 @@ public class TrackEventCode
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(LOGIN, newLookup(TrackEventCode.class, LOGIN, "Login"));
 		codeMap.put(VIEW, newLookup(TrackEventCode.class, VIEW, "View"));
+		codeMap.put(EXTERNAL_VIEW, newLookup(TrackEventCode.class, EXTERNAL_VIEW, "External View"));
 		codeMap.put(EXTERNAL_LINK_CLICK, newLookup(TrackEventCode.class, EXTERNAL_LINK_CLICK, "External Link Click"));
 		codeMap.put(COMPONENT_SYNC, newLookup(TrackEventCode.class, COMPONENT_SYNC, "Component Sync"));
 		return codeMap;

@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ChangeLogServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
@@ -98,11 +99,12 @@ public class ServiceProxy
 	private ChangeLogServicePrivate changeLogServicePrivate;
 	private SystemArchiveService systemArchiveService;
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
-	
+
+	private FilterEngine filterEngine;
+
 	public ServiceProxy()
 	{
-		if(Test.isTestPersistenceService.get())
-		{
+		if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -110,9 +112,8 @@ public class ServiceProxy
 	public ServiceProxy(String modificationType)
 	{
 		this.modificationType = modificationType;
-		
-		if(Test.isTestPersistenceService.get())
-		{
+
+		if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -130,6 +131,20 @@ public class ServiceProxy
 	public static ServiceProxy getProxy(String modificationType)
 	{
 		return new ServiceProxy(modificationType);
+	}
+
+	public FilterEngine getFilterEngine()
+	{
+		//*must be lazy loaded otherwise it would create circular reference
+		if (filterEngine == null) {
+			filterEngine = FilterEngine.getInstance();
+		}
+		return filterEngine;
+	}
+
+	public void setFilterEngine(FilterEngine filterEngine)
+	{
+		this.filterEngine = filterEngine;
 	}
 
 	@Override
@@ -431,10 +446,12 @@ public class ServiceProxy
 		}
 		return systemArchiveServicePrivate;
 	}
-	
+
 	public static class Test
 	{
+
 		private static AtomicBoolean isTestPersistenceService = new AtomicBoolean(false);
+
 		public static void setPersistenceServiceToTest()
 		{
 			isTestPersistenceService.set(true);

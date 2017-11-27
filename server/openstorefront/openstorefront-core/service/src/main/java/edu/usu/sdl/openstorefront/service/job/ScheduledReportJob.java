@@ -15,32 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
-import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
-import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
-import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
-import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
-import edu.usu.sdl.openstorefront.service.manager.MailManager;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.Message;
-import org.codemonkey.simplejavamail.email.Email;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
@@ -53,7 +36,7 @@ public class ScheduledReportJob
 		extends BaseJob
 {
 
-	private static final Logger log = Logger.getLogger(ScheduledReportJob.class.getName());
+	private static final Logger LOG = Logger.getLogger(ScheduledReportJob.class.getName());
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
@@ -65,78 +48,39 @@ public class ScheduledReportJob
 		for (ScheduledReport report : reports) {
 			boolean run = true;
 
-			if (report.getLastRanDts() != null) {
-				Instant instant = Instant.ofEpochMilli(report.getLastRanDts().getTime());
-				instant = instant.plus(report.getScheduleIntervalDays(), ChronoUnit.DAYS);
-				if (Instant.now().isBefore(instant)) {
-					run = false;
-					if (log.isLoggable(Level.FINEST)) {
-						log.log(Level.FINEST, MessageFormat.format("Not time to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, report.getReportType()), report.getScheduleReportId()}));
-					}
-				}
+			if (report.getScheduleIntervalDays() != null) {
+				run = checkReportRunTime(report, ChronoUnit.DAYS);
+			} else if (report.getScheduleIntervalMinutes() != null) {
+				run = checkReportRunTime(report, ChronoUnit.MINUTES);
+			} else {
+				//Filter out cron base reports
+				run = false;
 			}
 
 			if (run) {
+				service.getReportService().runScheduledReportNow(report);
+			}
+		}
+	}
 
-				Report reportHistory = new Report();
-				reportHistory.setScheduled(true);
-				reportHistory.setReportFormat(report.getReportFormat());
-				reportHistory.setReportType(report.getReportType());
-				reportHistory.setReportOption(report.getReportOption());
-				reportHistory.setCreateUser(report.getCreateUser());
-				reportHistory.setIds(report.getComponentIds());
-				reportHistory.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-
-				Report reportProcessed = service.getReportService().generateReport(reportHistory);
-
-				report.setLastRanDts(TimeUtil.currentDate());
-				report.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				service.getReportService().saveScheduledReport(report);
-
-				if (RunStatus.COMPLETE.equals(reportProcessed.getRunStatus())) {
-					//send email
-					String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
-
-					StringBuilder message = new StringBuilder();
-					boolean attachFile = Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_ATTACH_FILE));
-					message.append("Report is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>")
-							.append(attachFile ? " or see the attached file" : "")
-							.append(".<br><br><br>");
-					message.append("To stop receiving this message, please contact an administrator at ").append(replyAddress);
-
-					String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
-
-					byte[] reportData = null;
-					if (attachFile) {
-						Path path = reportProcessed.pathToReport();
-						try {
-							reportData = Files.readAllBytes(path);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Unable to read the report.", "Check disk permissions and disk space. ", ex, ErrorTypeCode.REPORT);
-						}
-					}
-
-					if (report.getEmailAddresses() == null) {
-						report.setEmailAddresses(new ArrayList<>());
-					}
-					for (EmailAddress emailAddress : report.getEmailAddresses()) {
-						Email email = MailManager.newEmail();
-						email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()) + " Report");
-						email.setTextHTML(message.toString());
-
-						if (attachFile && reportData != null) {
-							String extension = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
-							email.addAttachment(TranslateUtil.translate(ReportType.class, report.getReportType()) + extension, reportData, ReportFormat.mimeType(report.getReportFormat()));
-						}
-						
-						email.addRecipient("", emailAddress.getEmail(), Message.RecipientType.TO);
-						MailManager.send(email);
-					}
-				} else {
-					log.log(Level.SEVERE, MessageFormat.format("A scheduled report failed to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, report.getReportType()), report.getScheduleReportId()}));
+	private boolean checkReportRunTime(ScheduledReport scheduledReport, ChronoUnit chronoUnit)
+	{
+		boolean run = true;
+		if (scheduledReport.getLastRanDts() != null) {
+			Instant instant = Instant.ofEpochMilli(scheduledReport.getLastRanDts().getTime());
+			if (ChronoUnit.DAYS.equals(chronoUnit)) {
+				instant = instant.plus(scheduledReport.getScheduleIntervalDays(), chronoUnit);
+			} else {
+				instant = instant.plus(scheduledReport.getScheduleIntervalMinutes(), chronoUnit);
+			}
+			if (Instant.now().isBefore(instant)) {
+				run = false;
+				if (LOG.isLoggable(Level.FINEST)) {
+					LOG.log(Level.FINEST, MessageFormat.format("Not time to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, scheduledReport.getReportType()), scheduledReport.getScheduleReportId()}));
 				}
 			}
 		}
+		return run;
 	}
 
 }
