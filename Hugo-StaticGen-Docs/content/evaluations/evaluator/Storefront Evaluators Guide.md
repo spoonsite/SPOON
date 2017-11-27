@@ -28,7 +28,7 @@ Make sure your administrator has created an evaluation for you to use and that y
 
 For our example below we created templates based on the information [here](../librarian/Basic%20Entry%20Template%20for%20Storefront.md).
 
-## General process
+## General Process  
 For this demo we will be doing an evaluation of a fictional repository called the [Contoso](https://en.wikipedia.org/wiki/Contoso) Repository (name taken from examples from Microsoft). An entry for the repository has been approved and added to Storefront, and an empty evaluation (based on the above template) has been created. As the evaluation has not been published it doesn't show up on Storefront but the entry it is based on does. 
 
 ![Repository Details Pre Evaluation](/images/Screenshots/Repository%20Details%20Pre%20Evaluation.png)
