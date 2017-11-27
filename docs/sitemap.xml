@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/dev/developersguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/evaluator/</loc>
+  </url>
+  
+  <url>
+    <loc>/systemadmin/setup/</loc>
+  </url>
+  
+  <url>
+    <loc>/user/userguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/architecture/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/librarian/</loc>
+  </url>
+  
+  <url>
+    <loc>/user/quick-overview-of-submitting-a-new-component/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/front-end-code-standard/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/gitworkflow/</loc>
+  </url>
+  
+  <url>
+    <loc>/systemadmin/docker/</loc>
+  </url>
+  
+  <url>
+    <loc>/systemadmin/administratorguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/jira-workflow/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/testing/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/uiguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/systemadmin/versionmigrationguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/server-code-standard/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/evaluator/storefront-evaluators-guide/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/librarian/basic-entry-template-for-storefront/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/librarian/createevaluationguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/librarian/publishinganevaluationguide/</loc>
+  </url>
+  
+  <url>
+    <loc>/evaluations/</loc>
+  </url>
+  
+  <url>
+    <loc>/dev/</loc>
+  </url>
+  
+  <url>
+    <loc>/systemadmin/</loc>
+  </url>
+  
+  <url>
+    <loc>/user/</loc>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2017-11-13T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/_header/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

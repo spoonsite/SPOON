@@ -362,37 +362,27 @@ The user tools contain a variety of useful features including:
 
 ----
 
+## 2.3.1 Dashboard
+-------
+
 The User Tools landing or home page is the **Dashboard**. This is accessed by
 clicking on the username in the upper-right corner followed by User Tools in the
 drop-down menu.
 
-The first time the dashboard is accessed widgets will need to be added to view.
-This is done by clicking the **Add Widget** button towards the top-left of the dashboard
-section.
-
-The following widgets can be added to the dashboard by clicking on them from the 
-Add Widget window and then clicking Add Selected Widgets:
-
- * Notifications
- * Questions
- * Reports
- * Saved Search
- * Submission Status
- * Watches
+The first time the dashboard is accessed no widgets will be displayed. The user can add widgets by clicking on the **Add Widget** button.
+The type of widgets available to the user depends on the user's role and permissions.
 
 Once the desired widgets are added they can be refreshed, moved to next and previous 
 display order, maximized, or closed.  In addition, certain settings such as the title
 and title bar color can be set.  This is done by clicking on the buttons in the 
 right of the title bar of each individual widget once added to the dashboard.
-
-NOTE:  Administrators may have additional widgets available to them.  
  
 
-## 2.3.1 User Profile
+## 2.3.2 User Profile
 --------------------
 
 All user information can be set on the main page of **User Tools**. 
-Initially the user profile is populated with information from the user's 
+Initially, the user profile is populated with information from the user's 
 external security account.
 
 **To edit your profile:**
@@ -415,7 +405,7 @@ listings on the application.
 4.  Check the checkbox, **Receive periodic email about recent changes**.
 5.  Click **Save**.
 
-### 2.3.2 Submissions @USER-SUBMISSIONS
+### 2.3.3 Submissions @USER-SUBMISSIONS
 -----------
 
 This page displays all of the submissions you, the current logged in user, have
@@ -424,14 +414,14 @@ the column header.  // Describe process flow
 
 
 
-#### 2.3.2.1 How to Create a Submission/Entry @USER-SUBMISSIONS
+#### 2.3.3.1 How to Create a Submission/Entry @USER-SUBMISSIONS
 -----------
 
 The first tab of a new submission should be pre-filled with your logged in user information.  
 Make any necessary corrections and click on the Next button at the bottom.
 
 
-#### 2.3.2.2 How to Create a Change Request/Edit Entry @USER-SUBMISSIONS
+#### 2.3.3.2 How to Create a Change Request/Edit Entry @USER-SUBMISSIONS
 -----------
 
 Step 1) Click on the entry you wish to edit  
@@ -451,7 +441,7 @@ rather than updating the contact information on step3.  That way the contact inf
 user profile.
 
 
-#### 2.3.2.3 How to Delete an Entry
+#### 2.3.3.3 How to Delete an Entry
 -----------
 
 1.  Click on the entry you wish to remove
@@ -461,14 +451,14 @@ user profile.
 4.  Once request for removal is approved, the entry will no longer appear in user's list of submissions.
 
 
-#### 2.3.2.4 Other Submission Features @USER-SUBMISSIONS
+#### 2.3.3.4 Other Submission Features @USER-SUBMISSIONS
 -----------
 
 A user can copy or preview an entry by selecting an entry and clicking on the "Options" 
 drop-down arrow in the submissions toolbar.  Users can also toggle notify by selecting an entry
  and clicking on the "Options" drop-down arrow in the toolbar.
 
-### 2.3.3 Tools
+### 2.3.4 Tools
 -----------
 
 The Tools drop-down contains five options:
@@ -480,7 +470,7 @@ The Tools drop-down contains five options:
 5.  Searches
 6.  Watches
 
-#### 2.3.3.1 Questions & Answers
+#### 2.3.4.1 Questions & Answers
 --------
 
 Under User Tools->Tools->Questions there are two tabs: one for questions
@@ -504,7 +494,7 @@ question follow the steps below:
 A user can remove an answer or question by clicking on the entry and then clicking
  on the **Delete** button on the right-hand side of the toolbar.
 
-#### 2.3.3.2 Relationships @RELATION-VIEW-TOOL
+#### 2.3.4.2 Relationships @RELATION-VIEW-TOOL
 --------
 
 This screen shows a graphical representation among entries based on organization, attributes,
@@ -514,7 +504,7 @@ A particular view can be saved by pressing the **Download Image** button.  The *
 allows the user to search for an entry in the current view on the page.
 
 
-#### 2.3.3.3 Reports @REPORTS
+#### 2.3.4.3 Reports @REPORTS
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -524,62 +514,71 @@ Selections can be made to run a report one time only or at regular intervals.
 Some reports have the option of HTML or Comma-Separated Values as the report format.  
 If selecting Previous days, the selected number of prior days will be included in the report output.  
 
-Types of reports available include:
-  - Entry
-  - Entry Detail
-  - Entries by Organization
-  - Entries by Category
 
-**How to generate a report:**
+Descriptions of the types of reports:
 
-1. Click on **New Report** in the reports toolbar
-2. Select the report type from the drop-down menu 
-3. Select the report format and how often to run the report
-4. User is able to restrict report to only selected entries under the **Restrict By Entry** field
-5. Click the **Generate** button
+-  **Entry**					- report provides entry's statistics
+-  **Entry Detail**				- report that provides more details (e.g. vitals) of entries
+-  **Entries by Organization**	- report that shows all entries associated with a given organization
+-  **Entries by Category**		- report groups entries by attribute code (category) based on attribute type selected
+-  **Submissions**				- report shows user submissions for a given time period
+-  **Link Validation**			- report checks all entry links and verifies the status of the links to determine potentially bad links
+-  **Organization**				- report shows organization's statistics based on information in user profiles. The report attempts to group users by an organization
+-  **Usage**					- report shows the application's usage statistics for a given time period
+-  **User**						- report shows user statistics (views, logins, etc.)
+-  **User Organization**		- report shows organization usage statistics
 
-Reports can be removed by selecting the report and clicking on **Delete** in the toolbar.  To view
-a report, click on the report and then click **View** in the toolbar.
+A report can be either manually generated on demand or set to auto-generate according to a specific schedule.
 
-**Scheduled Reports**
-Clicking this button opens a window that shows recurring reports, their details and frequency that 
-the report will run, as well as the last run date and time. You can add, activate, or inactivate a 
-scheduled report, edit, or delete it.
+##### 2.3.4.3.1 Manually Generating Reports @REPORTS 
+------
 
+**To generate a report:**
 
-#### 2.3.3.3 Admin Reports @REPORTS-ALL
---------
+1.  Click **New Report**.
 
-This section displays reports that have run as well as scheduled reports that will run in the future.
+2.  Select Report Type, Format, and how often you would like to run the report.
 
-Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
-Selections can be made to run a report one time only or at regular intervals.  
-Some reports have the option of HTML or Comma-Separated Values as the report format.  
-If selecting Previous days, the selected number of prior days will be included in the report output.  
+3.  Set any options.
 
-Types of reports available include:
+4.  Click **Generate**.
+
+The Report is generated in the background and the status of the report
+is shown in the table. Once the report is complete, it can be downloaded
+by clicking on the report and then the **Download** button in the toolbar.
+
+##### 2.3.4.3.2 Scheduling Reports @REPORTS
+------
+
+**To create a scheduled report:**
+
+1.  Click on **Scheduled Reports** button.
+
+2.  Click on **Add**.
+
+3.  Select Report Type and Format.
+
+4.  Set the interval to run the report and enter an email address.
+
+5.  Click **Generate** to save the scheduled report.
+
+**NOTE:** The report will run to begin with and then it will run on the next
+scheduled interval.
+
+**To cancel/inactivate a scheduled report:**
+
+1.  Click on the **Scheduled Reports** button.
+
+2.  Select the report you wish to cancel or inactivate
+
+3.  Click **Toggle Status** to inactivate (or to activate) the scheduled report. This only temporarily
+ pauses the scheduled report.  To remove in permanently, click on the **Delete** button.
+
+**Note:** You can also edit a scheduled report by selecting a report and clicking **Edit** in the toolbar.
+Make any changes to the form and click **Generate**.
+
   
-  - Entry
-  - Entry Detail
-  - Entries by Organization
-  - Entries by Category
-
-Additional reports available to administrators only include:
-
-  - **User**
-  - **User Organization**
-  - **Usage**
-  - **Submissions**
-  - **Link Validation**
-
-
-**Scheduled Reports**
-Clicking this button opens a window that shows recurring reports, their details and frequency that 
-the report will run, as well as the last run date and time. You can add, activate, or inactivate a 
-scheduled report, edit, or delete it.
-
-  
-#### 2.3.3.4 Reviews
+#### 2.3.4.4 Reviews
 ------------
 
 Entry reviews can be found under the **Tools** drop-down menu. Users can edit and delete their entry reviews.
@@ -596,7 +595,7 @@ by clicking on the delete icon next to the title of the review. You can only rem
 **To create a review, see Section 2.4 - Entry Details and Features**
 
 
-#### 2.3.3.5 Searches
+#### 2.3.4.5 Searches
 ------------
 
 This tab displays the list of saved searches from the Advanced Search area.
@@ -605,7 +604,7 @@ It also allows the user to Add, Edit, and Delete advanced searches.
 **For more information, see the Advanced Search Section under Search Tools.**
 
 
-#### 2.3.3.6 Watches
+#### 2.3.4.6 Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -730,24 +729,6 @@ Many areas of the website have a **Go To Print View** icon to facilitate printin
 of the displayed information.  From the entry **Details** page, click on the **Print** button
 in the top right corner.  A window will pop-up where you can either customize the template or
 use the default.
-
-## 2.5 Evaluation Tools @EVALUATIONS 
-
-Evaluations are accessed by going to your user name in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
-
-### 2.5.1 Dashboard @EVALUATIONS 
-
-The dashboard can be customized with various widgets to be displayed.  Individual widgets can be configured to show pertinent information such as assigned user, status, and if the evaluation has been published.
-
-### 2.5.2 Evaluations @EVALUATIONS 
-
-The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
-
-Selecting an evaluation allows you to Assign it to another user or to Edit the evaluation.
-
-When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
-
-The preview button will show what the evaluation will look like when published.  Private information will not be shown.
 
 
 # 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
@@ -1578,14 +1559,50 @@ addresses are leaked to other users.
 
 3.  Save the .json file locally.  The file contains the user information.
 
+## 3.3 Evaluation Management @ADMIN-EVALUATION-MANAGEMENT
+------
 
-## 3.3 Application Management @ADMIN-SYSTEM-MANAGEMENT
+The Evaluation Management menu is used to navigate the tools for managing Storefront evaluations.
+
+### 3.3.1 Evaluations @ADMIN-EVALUATION-MANAGEMENT 
+------
+
+This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
+
+When an evaluation has been flagged with allow question management then this will allow an admin or evaluator to add/remove to the evaluation's checklist from the question pool. 
+
+### 3.3.2 Templates @ADMIN-EVALUATION-TEMPLATE 
+------
+
+The templates section lets you manipulate various templates for evaluation input and display.
+
+#### 3.3.2.1 Evaluation Templates @ADMIN-EVALUATION-TEMPLATE 
+------
+
+This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
+
+#### 3.3.2.2 Checklist Templates @ADMIN-EVALUATION-TEMPLATE-CHECKLIST 
+------
+
+A checklist template lets you add various questions as a checklist.
+
+#### 3.3.2.3 Checklist Questions @ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION   
+------
+
+Here you formulate the questions to be asked on a template.
+
+#### 3.3.2.4 Section Templates @ADMIN-EVALUATION-TEMPLATE-SECTION  
+------
+
+Section templates can be created for further customization.
+
+## 3.4 Application Management @ADMIN-SYSTEM-MANAGEMENT
 --------
 
 The Application Management menu is used to navigate to the Alerts, Branding, Feedback, Jobs, Messages, Reports, System, Tracking, 
 or API Documentations sections.
 
-### 3.3.1 Alerts @ADMIN-ALERT-MANAGEMENT
+### 3.4.1 Alerts @ADMIN-ALERT-MANAGEMENT
 ------
 
 Alerts are triggers set up to watch the data to which an administrator can
@@ -1637,7 +1654,7 @@ Descriptions of Alert Triggers:
 3.  Make desired changes to form and click **Save**.
 
 
-### 3.3.2 Branding @ADMIN-BRANDING
+### 3.4.2 Branding @ADMIN-BRANDING
 ------
 
 This area allows for different graphic design and theme characteristics to be 
@@ -1664,7 +1681,7 @@ To make changes to an existing branding, click on the name of the branding and c
 To remove a branding, first select the branding and then click on the **Delete** button in the toolbar.
 
 
-### 3.3.3 Feedback @ADMIN-FEEDBACK
+### 3.4.3 Feedback @ADMIN-FEEDBACK
 ------
 
 This area displays the user feedback that users give via the application.  
@@ -1678,7 +1695,7 @@ drop-down arrow under **Active Status**.
 To delete a completed or outstanding feedback ticket, select the ticket and click on **Delete** in the toolbar.
  
 
-### 3.3.4 Jobs @ADMIN-JOB-MANAGEMENT
+### 3.4.4 Jobs @ADMIN-JOB-MANAGEMENT
 ------
 
 The Jobs tool allows for viewing and managing of both scheduled background
@@ -1706,7 +1723,7 @@ services.
 **Note:** the administrator can pause or resume the system job scheduler by clicking on the button
  on the **Pause/Resume Scheduler** button on the right-side of the toolbar. 
 
-### 3.3.5 Messages @ADMIN-MESSAGE-MANAGEMENT
+### 3.4.5 Messages @ADMIN-MESSAGE-MANAGEMENT
 ------
 
 There are two tabs that allow you to manage messages.  They are the **User Messages** and **Event Notifications** tabs.
@@ -1716,94 +1733,33 @@ process all queued messages now.  Messages can be viewed/deleted by selecting th
 **Delete** button.
 
 
-### 3.3.6 Reports @REPORTS-ALL 
+### 3.4.6 Reports @REPORTS-ALL 
 ------
 
-Descriptions of the types of reports:
-
--  **Entry**					- report provides entry's statistics
--  **Entry Detail**				- report that provides more details (e.g. vitals) of entries
--  **Entries by Organization**	- report that shows all entries associated with a given organization
--  **Entries by Category**		- report groups entries by attribute code (category) based on attribute type selected
--  **Submissions**				- report shows user submissions for a given time period
--  **Link Validation**			- report checks all entry links and verifies the status of the links to determine potentially bad links
--  **Organization**				- report shows organization's statistics based on information in user profiles. The report attempts to group users by an organization
--  **Usage**					- report shows the application's usage statistics for a given time period
--  **User**						- report shows user statistics (views, logins, etc.)
--  **User Organization**		- report shows organization usage statistics
-
-A report can be either manually generated on demand or set to auto-generate according to a specific schedule.
-
-#### 3.3.6.1 Manually Generating Reports @REPORTS-ALL 
-------
-
-**To generate a report:**
-
-1.  Click **New Report**.
-
-2.  Select Report Type, Format, and how often you would like to run the report.
-
-3.  Set any options.
-
-4.  Click **Generate**.
-
-The Report is generated in the background and the status of the report
-is shown in the table. Once the report is complete, it can be downloaded
-by clicking on the report and then the **Download** button in the toolbar.
-
-#### 3.3.6.2 Scheduling Reports @REPORTS-ALL
-------
-
-**To create a scheduled report:**
-
-1.  Click on **Scheduled Reports** button.
-
-2.  Click on **Add**.
-
-3.  Select Report Type and Format.
-
-4.  Set the interval to run the report and enter an email address.
-
-5.  Click **Generate** to save the scheduled report.
-
-**NOTE:** The report will run to begin with and then it will run on the next
-scheduled interval.
-
-**To cancel/inactivate a scheduled report:**
-
-1.  Click on the **Scheduled Reports** button.
-
-2.  Select the report you wish to cancel or inactivate
-
-3.  Click **Toggle Status** to inactivate (or to activate) the scheduled report. This only temporarily
- pauses the scheduled report.  To remove in permanently, click on the **Delete** button.
-
-**Note:** You can also edit a scheduled report by selecting a report and clicking **Edit** in the toolbar.
-Make any changes to the form and click **Generate**.
+Go to **User Features&rarr;User Tools&rarr;Tools&rarr;Reports** in the Help documentation for information on how to create, edit, and manage reports.
 	
-	
-### 3.3.7 System @ADMIN-SYSTEM-MANAGEMENT
+### 3.4.7 System @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 System Tools are provided to aid in troubleshooting.
 
 System Tools and their Purpose are outlined in the sub-menus.
 
-#### 3.3.7.1 Status @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.1 Status @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Status** - Shows the run status of the application (i.e. memory, load,
 	thread status and system properties). Refer to Java platform 
 	documentation for the interpretation of the information.
 
-#### 3.3.7.2 Error Tickets @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.2 Error Tickets @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Error Tickets** - View error tickets generated by the system and view
 	 their details.  Delete one or more error tickets by selecting the
 	 ticket(s) and clicking on the **Delete** button in the toolbar.
 
-#### 3.3.7.3 Application Properties @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.3 Application Properties @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Application Properties** - Can be used to adjust application run state.
@@ -1812,7 +1768,7 @@ System Tools and their Purpose are outlined in the sub-menus.
 	delete a key/value by selecting a key and clicking either **Edit** 
 	or **Delete**.
 
-#### 3.3.7.4 System Configuration Properties @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.4 System Configuration Properties @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **System Configuration Properties** - Lists the Key/ Value pairs for
@@ -1826,7 +1782,7 @@ pairs that could be optionally added are described below:
 	 before being added to the site.
 
 
-#### 3.3.7.5 Logs and Logging @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.5 Logs and Logging @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Logs and Logging** - Allows for adjusting log levels at run time to
@@ -1838,34 +1794,34 @@ pairs that could be optionally added are described below:
 	specific. A logger will only appear when the software entry is 
 	loaded.
 
-#### 3.3.7.6 Plugins @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.6 Plugins @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Plugins** -				  Allows the administrator to manage plugins.  Add a plugin by clicking on the **+Add Plugin** button in the toolbar.  Select a OSGi jar/war file and click **Upload Plugin**.  Other plugin features are starting, stopping, downloading, or uninstalling a plugin. 
 
-#### 3.3.7.7 Managers @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.7 Managers @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Managers** -				  Allows for updating configuration settings at runtime by restarting affected managers.
 
-#### 3.3.7.8 Cache @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.8 Cache @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Cache** -					  Provides cache statistics and allows administrator to flush cache.
 
-#### 3.3.7.9 Search Control  @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.9 Search Control  @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Search Control** -           Allows for re-indexing listings.
 
-#### 3.3.7.10 Recent Changes E-mail @ADMIN-SYSTEM-MANAGEMENT
+#### 3.4.7.10 Recent Changes E-mail @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 **Recent Changes E-mail** -     Allows for sending/previewing a recent change email.
 
 -----  
 
-### 3.3.8 System Archives @ADMIN-SYSTEM-MANAGEMENT  
+### 3.4.8 System Archives @ADMIN-SYSTEM-MANAGEMENT  
 -----  
 
 Allows administrator to generate either an entire database archive (OrientDB) or a general archive that is specified by the administrator.  
@@ -1902,7 +1858,7 @@ To delete an archive, select the archive you want to delete and click the **Dele
 
 ------
 
-### 3.3.9 Security @ADMIN-SECURITY
+### 3.4.9 Security @ADMIN-SECURITY
 
 The Security Management area consists of the Security Policy and the Shiro Config.
 
@@ -1912,7 +1868,7 @@ Some policies only apply to the built-in security realm.
 Shiro Config is used for troubleshoot security realm configuration as well as making it easier to update URL policies.  The application will need to be restarted to apply the changes.  
 Also, note the application will create a backup file of the current policy so an admin can roll it back, if needed.   Only the previous version is backed up.
 
-### 3.3.10 Security Roles @ADMIN-ROLE-MANAGEMENT
+### 3.4.10 Security Roles @ADMIN-ROLE-MANAGEMENT
 
 This section is used to match up Roles with Users, Permissions, and Data Restrictions.
 
@@ -1927,7 +1883,7 @@ A table is shown of all of the Security Roles which can be edited and managed.
 **NOTE:**  Data Sources and Data Sensitivity values can be managed from the Data Management->Lookups, see section 3.2.9.
 
 
-### 3.3.11 Tracking @ADMIN-TRACKING
+### 3.4.11 Tracking @ADMIN-TRACKING
 
 The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
@@ -1941,14 +1897,14 @@ are accessible via the Reports Admin Tool.
 
 -----  
 
-### 3.3.12 User Management @ADMIN-USER-MANAGEMENT  
+### 3.4.12 User Management @ADMIN-USER-MANAGEMENT  
 -----   
 
 Administrator can add users, send messages to individual users, approve new user accounts, lock/unlock user accounts, delete user accounts, and manage the roles of users.  
 
 -----  
 
-#### 3.3.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
 
 The application offers two ways of approving users: auto approval by system or manual approval by administrator. <br>To have the system automatically approve new user accounts do the following:  
 
@@ -1968,7 +1924,7 @@ To approve a new user account:
 
 -----  
 
-#### 3.3.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT  
 
 Locking a user account only deactivates/disables it.  To lock a user account:  
 
@@ -1985,7 +1941,7 @@ To unlock/reactivate an account:
 
 -----  
 
-#### 3.3.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT  
  
 Administrator can add users to specific groups/roles that have been created in **Security Role Management**.  Each group in **Security Role Management** has a list of permissions and data restrictions.  
 <br>To add a role to a user:
@@ -2003,7 +1959,7 @@ To remove a role from a user:
 
 -----  
 
-#### 3.3.12.4 Adding/Deleting User Accounts - Registrations @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.4 Adding/Deleting User Accounts - Registrations @ADMIN-USER-MANAGEMENT  
 
 Administrator can create a user account by doing the following:  
 
@@ -2026,49 +1982,28 @@ To delete a user account:
 
 -----  
 
-### 3.3.13 API Documentation @API-DOCS
+### 3.4.13 API Documentation @API-DOCS
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @ADMIN-EVALUATION-MANAGEMENT 
+# 4.  Evaluator Tools @EVALUATIONS 
 ------
 
-**NOTE** This section is ONLY available to those with the appropriate permissions of EVALUATOR.  For more details on managing permissions, please see 3.3.9 Security Roles.  
+Allows user with the appropriate permission to create and edit evaluations.
+Evaluations are accessed by going to your username in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
-This section covers Evaluation Management as it exists in Admin Tools.  For evaluator (user) information please see section 2.5.
+## 4.1 Evaluations @EVALUATIONS 
 
-**Evaluation Management within Admin Tools**
-The Evaluation Management menu consists of Evaluations and Templates.
+The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
 
-## 4.1 Evaluations @ADMIN-EVALUATION-MANAGEMENT 
+Selecting an evaluation allows you to Assign it to another user or to Edit the evaluation.
 
-This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
+When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
 
-When an evaluation has been flagged with allow question management then this will allow an admin or evaluator to add/remove to the evaluation's checklist from the question pool. 
-
-## 4.2 Templates @ADMIN-EVALUATION-TEMPLATE 
-
-The templates section lets you manipulate various templates for evaluation input and display.
-
-### 4.2.1 Evaluation Templates @ADMIN-EVALUATION-TEMPLATE 
-
-This section allows you to create, edit, or delete the display template for the evaluation.  Checklists can be assigned and sections added and deleted to the template.
-
-### 4.2.2 Checklist Templates @ADMIN-EVALUATION-TEMPLATE-CHECKLIST 
-
-A checklist template lets you add various questions as a checklist.
-
-### 4.2.3 Checklist Questions @ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION   
-
-Here you formulate the questions to be asked on a template.
-
-### 4.2.4 Section Templates @ADMIN-EVALUATION-TEMPLATE-SECTION  
-
-Section templates can be created for further customization.
-
+The preview button will show what the evaluation will look like when published.  Private information will not be shown.
 
 # 5.  Glossary
 ----------

@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>7</zoom_level>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>0</x>
+      <y>623</y>
+      <w>14</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>70</x>
+      <y>602</y>
+      <w>147</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>*New Request*
+--
+Holding state for new tickets
+awaiting developers initial triage.
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>322</x>
+      <y>581</y>
+      <w>154</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>*Awaiting Approval*
+--
+Business owner or Project 
+Manager approves/rejects an 
+issue. 
+fg=blue
+valign=top</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1036</x>
+      <y>588</y>
+      <w>161</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>*Working*
+--
+Currently in development. Refer to 
+the Git Workflow guide for more 
+information on branching style.
+bg=yellow
+valign=top</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>336</x>
+      <y>371</y>
+      <w>133</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>*Info Needed*
+--
+Back to requester for more
+details on requirements
+and/or screenshots
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>98</x>
+      <y>385</y>
+      <w>252</w>
+      <h>231</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Needs Information</panel_attributes>
+    <additional_attributes>10.0;310.0;10.0;10.0;340.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>189</x>
+      <y>399</y>
+      <w>161</w>
+      <h>217</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Resubmit
+</panel_attributes>
+    <additional_attributes>210.0;20.0;10.0;20.0;10.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>7</x>
+      <y>616</y>
+      <w>77</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Create
+</panel_attributes>
+    <additional_attributes>10.0;20.0;90.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>210</x>
+      <y>616</y>
+      <w>126</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+To PMO</panel_attributes>
+    <additional_attributes>10.0;20.0;160.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>350</x>
+      <y>490</y>
+      <w>126</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>*Pending Review*
+--
+Holding state awaitng
+Developer resources
+bg=white
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>210</x>
+      <y>511</y>
+      <w>154</w>
+      <h>119</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Request Design</panel_attributes>
+    <additional_attributes>10.0;150.0;30.0;150.0;30.0;10.0;200.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>469</x>
+      <y>385</y>
+      <w>112</w>
+      <h>147</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Review</panel_attributes>
+    <additional_attributes>10.0;190.0;60.0;190.0;60.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>567</x>
+      <y>364</y>
+      <w>196</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>*Design Review*
+--
+Ticket reviewed by developer. Developer 
+adds details such as implementation plan,
+time estimate, sub-tasks, and other 
+relevant changes.
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>896</x>
+      <y>441</y>
+      <w>119</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>*Getting Approval*
+--
+Waiting for Peer approval.
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>756</x>
+      <y>378</y>
+      <w>322</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Request Further Review</panel_attributes>
+    <additional_attributes>290.0;90.0;290.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>469</x>
+      <y>462</y>
+      <w>441</w>
+      <h>147</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Approve</panel_attributes>
+    <additional_attributes>610.0;10.0;460.0;10.0;460.0;40.0;120.0;40.0;120.0;190.0;10.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>854</x>
+      <y>602</y>
+      <w>196</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Start Working</panel_attributes>
+    <additional_attributes>10.0;20.0;260.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1316</x>
+      <y>595</y>
+      <w>161</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>*Dev Complete*
+--
+Development work complete
+Unit and Integration tests passing
+Pull request submitted
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1190</x>
+      <y>602</y>
+      <w>140</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Pull request submitted</panel_attributes>
+    <additional_attributes>10.0;20.0;180.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1785</x>
+      <y>595</y>
+      <w>140</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>*Ready for Testing*
+--
+Code pushed to testing server 
+ready for QA to test.
+(testing queue)
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1981</x>
+      <y>602</y>
+      <w>98</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>*In Test*
+--
+Tester is currently 
+testing the ticket.
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>2198</x>
+      <y>581</y>
+      <w>182</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>*Complete*
+--
+Ticket has passed QA and is now ready
+to move to staging. Any new changes 
+require creation of a new ticket.
+-.
+Ticket subject to final review 
+and testing in staging environment 
+before being moved to production.
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>2548</x>
+      <y>602</y>
+      <w>126</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>*Closed*
+--
+Ticket moved to production.
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1470</x>
+      <y>602</y>
+      <w>112</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Merged</panel_attributes>
+    <additional_attributes>10.0;20.0;140.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1918</x>
+      <y>609</y>
+      <w>77</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Test</panel_attributes>
+    <additional_attributes>10.0;20.0;90.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2072</x>
+      <y>609</y>
+      <w>140</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+PASS</panel_attributes>
+    <additional_attributes>10.0;20.0;180.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2373</x>
+      <y>609</y>
+      <w>189</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Release moved to Production</panel_attributes>
+    <additional_attributes>10.0;20.0;250.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1435</x>
+      <y>490</y>
+      <w>616</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+FAIL</panel_attributes>
+    <additional_attributes>830.0;160.0;830.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>854</x>
+      <y>616</y>
+      <w>196</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Back to Backlog</panel_attributes>
+    <additional_attributes>260.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>854</x>
+      <y>637</y>
+      <w>476</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+On Hold</panel_attributes>
+    <additional_attributes>660.0;10.0;510.0;10.0;510.0;60.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1568</x>
+      <y>595</y>
+      <w>161</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>*Jenkins build*
+--
+Pull request reviewed and merged
+but not moved to the Integration 
+environment.
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1722</x>
+      <y>602</y>
+      <w>77</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Deploy</panel_attributes>
+    <additional_attributes>10.0;20.0;90.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>581</x>
+      <y>602</y>
+      <w>280</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>*In Backlog*
+--
+Product Backlog
+An ordered list of everything that might be needed in the 
+product and is the single source of requirements
+-.
+Product backlog items scheduled for the next release
+-.
+set of Product Backlog items selected for the Sprint
+valign=top
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>364</x>
+      <y>532</y>
+      <w>91</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Request Design</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>140</x>
+      <y>644</y>
+      <w>455</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Approve (e.g. Bugs found in testing)</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0;630.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>469</x>
+      <y>616</y>
+      <w>126</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Approve</panel_attributes>
+    <additional_attributes>10.0;20.0;160.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>721</x>
+      <y>427</y>
+      <w>189</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Reviewed</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;250.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>469</x>
+      <y>525</y>
+      <w>210</w>
+      <h>91</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Request Design</panel_attributes>
+    <additional_attributes>180.0;110.0;180.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>119</x>
+      <y>637</y>
+      <w>2506</w>
+      <h>175</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Reject</panel_attributes>
+    <additional_attributes>10.0;20.0;10.0;230.0;3560.0;230.0;3560.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>441</x>
+      <y>637</y>
+      <w>2163</w>
+      <h>161</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Reject</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;210.0;3070.0;210.0;3070.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>658</x>
+      <y>637</y>
+      <w>1925</w>
+      <h>147</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Reject</panel_attributes>
+    <additional_attributes>10.0;130.0;10.0;190.0;2730.0;190.0;2730.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1372</x>
+      <y>504</y>
+      <w>49</w>
+      <h>105</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Reject</panel_attributes>
+    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>630</x>
+      <y>497</y>
+      <w>140</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>*Groom*
+--
+Item has aged in the backlog 
+and needs to be re-evaluated
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>896</x>
+      <y>511</y>
+      <w>147</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>*Under review / Investigation*
+--
+checking if issue still
+needs addressed
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>693</x>
+      <y>539</y>
+      <w>105</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Request Verification</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>763</x>
+      <y>504</y>
+      <w>147</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Check Issue</panel_attributes>
+    <additional_attributes>10.0;20.0;190.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>777</x>
+      <y>546</y>
+      <w>147</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Still Needed</panel_attributes>
+    <additional_attributes>190.0;10.0;190.0;60.0;10.0;60.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1036</x>
+      <y>448</y>
+      <w>1603</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Not Needed
+
+
+
+
+
+
+
+</panel_attributes>
+    <additional_attributes>10.0;120.0;40.0;120.0;40.0;20.0;2270.0;20.0;2270.0;220.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1337</x>
+      <y>476</y>
+      <w>105</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>*Fix*
+--
+Failed Testing/review
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1120</x>
+      <y>476</y>
+      <w>231</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Start Working</panel_attributes>
+    <additional_attributes>310.0;20.0;10.0;20.0;10.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2072</x>
+      <y>623</y>
+      <w>140</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Back to Testing</panel_attributes>
+    <additional_attributes>180.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>637</y>
+      <w>2562</w>
+      <h>189</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+Back to Pending (only used if closed accidentally)</panel_attributes>
+    <additional_attributes>3640.0;10.0;3640.0;250.0;10.0;250.0;10.0;20.0</additional_attributes>
+  </element>
+</diagram>

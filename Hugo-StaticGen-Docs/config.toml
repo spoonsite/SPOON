@@ -1,0 +1,35 @@
+baseURL = "/"
+languageCode = "en-us"
+DefaultContentLanguage = "en"
+
+title = "Storefront Docs"
+theme = "docdock"
+publishDir = "../docs"
+enableGitInfo = "true"
+
+[params]
+StoreFrontVersion = "2.5"
+editURL = "https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/"
+showVisitedLinks = true # default is false
+themeStyle = "original" # "original" or "flex" # default "original"
+themeVariant = "blue" # choose theme variant "green", "gold" , "gray", "blue" (default)
+ordersectionsby = "weight" # ordersectionsby = "title"
+disableHomeIcon = false # default is false
+disableSearch = false # default is false
+disableNavChevron = false # set true to hide next/prev chevron, default is false
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+
+[[menu.shortcuts]]
+pre = "<h3>More</h3>"
+name = "<i class='fa fa-github'></i> Github repo"
+identifier = "ds"
+url = "https://github.com/di2e/openstorefront/tree/master"
+weight = 10
+
+[[menu.shortcuts]]
+name = "<i class='fa fa-download'></i> Releases"
+url = "https://github.com/di2e/openstorefront/releases"
+weight = 11
