@@ -25,6 +25,7 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,9 @@ public class ReportOutput
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ReportTransmissionOption reportTransmissionOption;
+
+	@Version
+	private String storageVersion;
 
 	public ReportOutput()
 	{
@@ -127,6 +131,16 @@ public class ReportOutput
 	public void setReportTransmissionOption(ReportTransmissionOption reportTransmissionOption)
 	{
 		this.reportTransmissionOption = reportTransmissionOption;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

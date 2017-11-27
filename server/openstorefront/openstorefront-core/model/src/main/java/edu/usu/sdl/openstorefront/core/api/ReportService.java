@@ -81,6 +81,7 @@ public interface ReportService
 	 * @param scheduledReport
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ScheduledReport saveScheduledReport(ScheduledReport scheduledReport);
 
 	/**

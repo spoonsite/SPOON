@@ -56,27 +56,33 @@ public class ScheduledReportMigration
 			for (ScheduledReport report : reports) {
 				List<ReportOutput> reportOutputs = new ArrayList<>();
 
-				//move formats
-				ReportOutput viewOutput = new ReportOutput();
-				viewOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
-				ReportTransmissionOption option = new ReportTransmissionOption();
-				option.setReportFormat(report.getReportFormat());
-				viewOutput.setReportTransmissionOption(option);
-				reportOutputs.add(viewOutput);
+				if (report.getReportOutputs() == null
+						|| report.getReportOutputs().isEmpty()) {
 
-				//emails
-				if (report.getEmailAddresses() != null) {
-					ReportOutput emailOutput = new ReportOutput();
-					emailOutput.setReportTransmissionType(ReportTransmissionType.EMAIL);
-					option = new ReportTransmissionOption();
+					//move formats
+					ReportOutput viewOutput = new ReportOutput();
+					viewOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
+					ReportTransmissionOption option = new ReportTransmissionOption();
 					option.setReportFormat(report.getReportFormat());
-					option.setEmailAddresses(report.getEmailAddresses());
-					emailOutput.setReportTransmissionOption(option);
-				}
+					viewOutput.setReportTransmissionOption(option);
+					reportOutputs.add(viewOutput);
 
-				report.setReportOutputs(reportOutputs);
-				LOG.log(Level.INFO, "Converting Scheduled Report: " + report.getReportType() + " For " + report.getCreateUser());
-				service.getReportService().saveScheduledReport(report);
+					//emails
+					if (report.getEmailAddresses() != null) {
+						ReportOutput emailOutput = new ReportOutput();
+						emailOutput.setReportTransmissionType(ReportTransmissionType.EMAIL);
+						option = new ReportTransmissionOption();
+						option.setReportFormat(report.getReportFormat());
+						option.setEmailAddresses(report.getEmailAddresses());
+						emailOutput.setReportTransmissionOption(option);
+					}
+
+					report.setReportOutputs(reportOutputs);
+					LOG.log(Level.INFO, "Converting Scheduled Report: " + report.getReportType() + " For " + report.getCreateUser());
+					service.getReportService().saveScheduledReport(report);
+				} else {
+					LOG.log(Level.INFO, "Scheduled Report already Converted: " + report.getReportType() + " For " + report.getCreateUser());
+				}
 			}
 			result.append("Converted: " + reports.size());
 		} finally {
