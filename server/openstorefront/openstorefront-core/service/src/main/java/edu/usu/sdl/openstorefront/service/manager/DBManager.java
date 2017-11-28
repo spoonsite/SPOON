@@ -84,7 +84,7 @@ public class DBManager
 				try {
 					LOG.info("Starting Orient DB...");
 					server = OServerMain.create();
-					
+
 					String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
 					System.setProperty("ORIENTDB_HOME", home);
 					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
@@ -108,11 +108,12 @@ public class DBManager
 
 	/**
 	 * Must use the Object database pool otherwise the connect will not be set
-	 * correctly, In 3.x there is a new Obect pool : ODatabaseObjectPool.java
+	 * correctly, In 3.x there is a new Object pool : ODatabaseObjectPool.java
 	 * look to switch to that. Also 3.x Object API will exist it just they not
 	 * add features to the api. Unless we need some feature it's not worth
 	 * switching to as the we would need to provide the bindings. We can also
-	 * use the multi-model api in conjuction as needed for additonal features
+	 * use the new multi-model api in conjuction as needed for additional
+	 * features.
 	 */
 	protected synchronized void createPool()
 	{
