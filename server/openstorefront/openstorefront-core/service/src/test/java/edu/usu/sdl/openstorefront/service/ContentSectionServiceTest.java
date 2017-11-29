@@ -39,10 +39,22 @@ public class ContentSectionServiceTest
 	@Test
 	public void saveAllNoImagesInContent()
 	{
-		//Arrange
+		//Mock Service
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		TestPersistenceService persistenceService = (TestPersistenceService)ServiceProxy.getProxy().getPersistenceService();
 		
+		Service mockService = Mockito.mock(Service.class);
+		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
+		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
+		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
+		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
+		
+		BundleContext bundleContext = Mockito.mock(BundleContext.class);
+		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
+		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
+		ServiceProxyFactory.setContext(bundleContext);
+		
+		//Arrange
 		ContentSection section = new ContentSection();
 		section.setContent("This is a test with no images");
 		String contentSectionId = persistenceService.generateId();
@@ -53,19 +65,7 @@ public class ContentSectionServiceTest
 		ContentSubSection subsectionSpy1 = Mockito.spy(subsection1);
 		ContentSubSection subsectionSpy2 = Mockito.spy(subsection1);
 		persistenceService.addQuery(ContentSubSection.class, Arrays.asList(subsectionSpy1));
-		
-		Service mockService = Mockito.mock(Service.class);
 		persistenceService.addObjectWithId(ContentSection.class, contentSectionId, section);
-		
-		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
-		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
-		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
-		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
-		
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
-		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
-		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
-		ServiceProxyFactory.setContext(bundleContext);
 		
 		ContentSection sectionSpy = Mockito.spy(section);
 		
@@ -84,10 +84,22 @@ public class ContentSectionServiceTest
 	@Test
 	public void saveAllNullContent()
 	{
-		//Arrange
+		//Mock Service
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		TestPersistenceService persistenceService = (TestPersistenceService)ServiceProxy.getProxy().getPersistenceService();
 		
+		Service mockService = Mockito.mock(Service.class);
+		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
+		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
+		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
+		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
+		
+		BundleContext bundleContext = Mockito.mock(BundleContext.class);
+		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
+		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
+		ServiceProxyFactory.setContext(bundleContext);
+		
+		//Arrange
 		ContentSection section = new ContentSection();
 		section.setContent(null);
 		String contentSectionId = persistenceService.generateId();
@@ -98,19 +110,7 @@ public class ContentSectionServiceTest
 		ContentSubSection subsectionSpy1 = Mockito.spy(subsection1);
 		ContentSubSection subsectionSpy2 = Mockito.spy(subsection1);
 		persistenceService.addQuery(ContentSubSection.class, Arrays.asList(subsectionSpy1));
-		
-		Service mockService = Mockito.mock(Service.class);
 		persistenceService.addObjectWithId(ContentSection.class, contentSectionId, section);
-		
-		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
-		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
-		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
-		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
-		
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
-		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
-		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
-		ServiceProxyFactory.setContext(bundleContext);
 		
 		ContentSection sectionSpy = Mockito.spy(section);
 		
@@ -130,10 +130,21 @@ public class ContentSectionServiceTest
 	//@Test - this test will fail due to File I/O issues not sure how to get past that yet
 	public void saveAllContentWithImages()
 	{
-		//Arrange
+		//Mock service
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		TestPersistenceService persistenceService = (TestPersistenceService)ServiceProxy.getProxy().getPersistenceService();
+		Service mockService = Mockito.mock(Service.class);
+		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
+		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
+		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
+		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
 		
+		BundleContext bundleContext = Mockito.mock(BundleContext.class);
+		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
+		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
+		ServiceProxyFactory.setContext(bundleContext);
+		
+		//Arrange
 		ContentSection section = new ContentSection();
 		section.setContent("<html>\n <head></head>\n <body>\n  This is a test with images <img src=\"Media.action?TemporaryMedia&name=de8173a33349852f7e2294a611bdfde4d5cf911a\" />\n </body>\n</html>");
 		String contentSectionId = persistenceService.generateId();
@@ -144,19 +155,8 @@ public class ContentSectionServiceTest
 		ContentSubSection subsectionSpy1 = Mockito.spy(subsection1);
 		ContentSubSection subsectionSpy2 = Mockito.spy(subsection1);
 		persistenceService.addQuery(ContentSubSection.class, Arrays.asList(subsectionSpy1));
-		
-		Service mockService = Mockito.mock(Service.class);
 		persistenceService.addObjectWithId(ContentSection.class, contentSectionId, section);
 		
-		Mockito.when(mockService.getPersistenceService()).thenReturn(persistenceService);
-		ChangeLogService changeLogService = Mockito.mock(ChangeLogService.class);
-		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
-		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
-		
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
-		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
-		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
-		ServiceProxyFactory.setContext(bundleContext);
 		
 		ContentSection sectionSpy = Mockito.spy(section);
 		
