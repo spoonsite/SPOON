@@ -35,6 +35,10 @@ public class TextSanitizer
 		} else {
 			String safe = Jsoup.clean(fieldData.toString(), Whitelist.none());
 			safe = safe.replace("&amp;", "&");
+			// this is a hidden white space "Line Seperator" not an empty string
+			// for information on Line Seperator see http://www.fileformat.info/info/unicode/char/2028/index.htm
+			// "line separators basically correspond to HTML <BR>" http://unicode.org/versions/Unicode5.2.0/ch05.pdf pg. 147
+			safe = safe.replace(" ", "\n");
 			return safe;
 		}
 	}
