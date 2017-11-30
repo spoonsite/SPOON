@@ -92,6 +92,17 @@ Ext.define('OSF.form.Media', {
 							} else {
 								//upload
 
+								var progressMsg = Ext.MessageBox.show({
+									title: 'Media Upload',
+									msg: 'Uploading media please wait...',
+									width: 300,
+									height: 150,
+									closable: false,
+									progressText: 'Uploading...',
+									wait: true,
+									waitConfig: {interval: 300}
+								});
+
 								mainForm.submit({
 									url: 'Media.action?UploadMedia',
 									params: {
@@ -105,12 +116,11 @@ Ext.define('OSF.form.Media', {
 									},
 									method: 'POST',
 									submitEmptyText: false,
-									waitMsg: 'Uploading media please wait...',
-									waitTitle: 'Uploading',
 									success: function(formBasic, action, opt){
 										mediaPanel.mediaGrid.getStore().reload();
 										mainForm.reset();
 										mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+										progressMsg.hide();
 									}, 
 									failure: function(formBasic, action, opt) {
 										var errorResponse = Ext.decode(action.response.responseText);
@@ -119,9 +129,9 @@ Ext.define('OSF.form.Media', {
 											errorObj[item.key.replace('componentMedia', '')] = item.value;
 										});
 										mainForm.markInvalid(errorObj);
+										progressMsg.hide();
 									}
 								});
-
 							}
 						}
 					}

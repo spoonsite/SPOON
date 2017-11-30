@@ -86,7 +86,19 @@ Ext.define('OSF.form.Resources', {
 									}
 								});
 							} else {
+								
 								//upload
+								var progressMsg = Ext.MessageBox.show({
+									title: 'Resource Upload',
+									msg: 'Uploading resource please wait...',
+									width: 300,
+									height: 150,
+									closable: false,
+									progressText: 'Uploading...',
+									wait: true,
+									waitConfig: {interval: 300}
+								});
+								
 								form.submit({
 									url: 'Resource.action?UploadResource',
 									params: {
@@ -105,6 +117,7 @@ Ext.define('OSF.form.Resources', {
 										resourcePanel.resourcesGrid.getStore().reload();
 										form.reset();
 										form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+										progressMsg.hide();
 									}, 
 									failure: function(formBasic, action, opt) {
 										var errorResponse = Ext.decode(action.response.responseText);
@@ -113,6 +126,7 @@ Ext.define('OSF.form.Resources', {
 											errorObj[item.key.replace('componentResource', '')] = item.value;
 										});
 										form.markInvalid(errorObj);
+										progressMsg.hide();
 									}
 								});
 
