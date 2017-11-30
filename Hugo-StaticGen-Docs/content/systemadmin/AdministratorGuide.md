@@ -1,5 +1,5 @@
 +++
-title = "Clearinghouse Administrator Guide"
+title = "Administrator Guide"
 description = ""
 weight = 4
 +++

@@ -185,8 +185,8 @@ http://localhost:9200 should return some json with stats.
 ### 1.4.2.1 Yum install of Elasticsearch 
 
 1. Download and install with YUM   
-    https://www.elastic.co/downloads/elasticsearch (5.x)  
-    (see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html for yum install instructions) 
+    https://www.elastic.co/downloads/elasticsearch (6.x)  
+    (see https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html for yum install instructions) 
 
 2. service elasticsearch start 
 
@@ -833,7 +833,7 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
 **Update networking**
 
 2)	nano /usr/share/tomcat/conf/server.xml
-		edit: <Connector port="8080"…     to 
+		edit: <Connector port="8080"     to 
 ```	
 	<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
                connectionTimeout="20000"

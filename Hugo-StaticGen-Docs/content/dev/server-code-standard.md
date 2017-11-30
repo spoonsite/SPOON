@@ -76,7 +76,7 @@ Note: Tomcat's loghandler doesn't seem to handle "{0}" substitution.  Use Messag
 
 **Change History** - Entries and Evaluations are supported. Log field changes, adds, removes...etc
 
-**Alert** - Certain event must be track for administration alerts.
+**Alerts** - Certain event must be track for administration alerts.
 
 Use caution when modifying the code to keep these feature/requirements intact.    
 

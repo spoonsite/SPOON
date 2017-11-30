@@ -290,11 +290,11 @@ public class SubComponentServiceImpl
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity, boolean skipMissingAttribute)
 	{
-		Objects.requireNonNull(attribute, "Requires Component Attrubute");
-		Objects.requireNonNull(attribute.getComponentAttributePk(), "Requires Component Attrubute PK");
-		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeType(), "Requires Component Attrubute PK Attribute Type");
-		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeCode(), "Requires Component Attrubute PK Attribute Code");
-		Objects.requireNonNull(attribute.getComponentAttributePk().getComponentId(), "Requires Component Attrubute PK Component Id");
+		Objects.requireNonNull(attribute, "Requires Component Attribute");
+		Objects.requireNonNull(attribute.getComponentAttributePk(), "Requires Component Attribute PK");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeType(), "Requires Component Attribute PK Attribute Type");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeCode(), "Requires Component Attribute PK Attribute Code");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getComponentId(), "Requires Component Attribute PK Component Id");
 
 		ValidationResult validationResult = checkComponentAttribute(attribute);
 

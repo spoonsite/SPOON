@@ -68,9 +68,9 @@ $ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 2. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo
 
 ```ini
-[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://artifacts.elastic.co/packages/5.x/yum
+[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://artifacts.elastic.co/packages/6.x/yum
 gpgcheck=1
 gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=1
