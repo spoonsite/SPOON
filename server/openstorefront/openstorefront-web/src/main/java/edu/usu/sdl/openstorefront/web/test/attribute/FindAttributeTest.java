@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.attribute;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.List;
 
@@ -69,8 +71,10 @@ public class FindAttributeTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-		service.getAttributeService().saveAttributeCode(attributeCode, false);
-
+		ValidationResult validationResult = service.getAttributeService().saveAttributeCode(attributeCode, false);
+		if (validationResult.valid() == false) {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		}
 		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
 		results.append("<br>Found Codes (New Type)").append("<br>");
 		attributeCodes.forEach(code -> {

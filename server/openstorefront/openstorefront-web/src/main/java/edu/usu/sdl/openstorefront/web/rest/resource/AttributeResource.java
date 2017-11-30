@@ -181,12 +181,12 @@ public class AttributeResource
 				}
 			}
 		});
-		
+
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 
 		return createAttributeTypeViews(attributeCodesAll, optionalAttributes);
 	}
-	
+
 	private List<AttributeTypeView> createAttributeTypeViews(List<AttributeCode> attributeCodesAll, List<AttributeType> attributeTypes)
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
@@ -656,7 +656,7 @@ public class AttributeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates a list of attribute types")
@@ -686,7 +686,7 @@ public class AttributeResource
 	{
 		return doUpdateAttributeType(attributeTypeSave, type);
 	}
-	
+
 	private Response doUpdateAttributeType(AttributeTypeSave attributeTypeSave, String type)
 	{
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);
@@ -937,11 +937,11 @@ public class AttributeResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
+			validationResult = service.getAttributeService().saveAttributeCode(attributeCode, false);
 		}
-		if (post) {
+		if (!validationResult.valid()) {
+			return Response.ok(validationResult.toRestError()).build();
+		} else if (post) {
 			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
 					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeType())

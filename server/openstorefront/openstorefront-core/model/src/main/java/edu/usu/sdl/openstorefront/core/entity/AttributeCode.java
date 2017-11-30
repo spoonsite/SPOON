@@ -165,7 +165,8 @@ public class AttributeCode
 				result.setFieldName(FIELD_LABEL);
 				result.setEntityClassName(getClass().getSimpleName());
 				result.setValidationRule("Attribute Type requires label to number");
-				result.setMessage("Default Code is requried when hide on submission and the attribute is required.");
+				result.setMessage("Could not convert value to number");
+				result.setInvalidData(getLabel());
 				validationResult.getRuleResults().add(result);
 			}
 		}
