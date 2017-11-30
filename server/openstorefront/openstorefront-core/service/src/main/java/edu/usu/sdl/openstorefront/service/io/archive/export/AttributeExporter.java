@@ -134,7 +134,7 @@ public class AttributeExporter
 					ValidationResult validationResult = service.getAttributeService().importAttributes(attributeAlls, options);
 					if(validationResult.valid() == false)
 					{
-						addError(validationResult.toString());
+						addError("Some Attributes Failed to import, all imported entries will be missing those attributes - " + validationResult.toString());
 					}
 					
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);

@@ -703,7 +703,7 @@
 									}
 								}, 								
 								columns: [
-									{ text: 'Message', dataIndex: 'message', flex: 1 }
+									{ text: 'Message', dataIndex: 'message', flex: 1, cellWrap: true }
 								]
 							}
 						],
