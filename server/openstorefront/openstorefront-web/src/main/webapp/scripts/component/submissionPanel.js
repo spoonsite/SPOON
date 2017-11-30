@@ -1489,6 +1489,17 @@ Ext.define('OSF.component.SubmissionPanel', {
 													});
 												} else {
 													//upload
+													var progressMsg = Ext.MessageBox.show({
+														title: 'Media Upload',
+														msg: 'Uploading media please wait...',
+														width: 300,
+														height: 150,
+														closable: false,
+														progressText: 'Uploading...',
+														wait: true,
+														waitConfig: {interval: 300}
+													});
+													
 													form.submit({
 														url: 'Resource.action?UploadResource',
 														params: {
@@ -1501,13 +1512,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 														},
 														method: 'POST',
 														submitEmptyText: false,
-														waitMsg: 'Uploading please wait...',
-														waitTitle: 'Uploading',
 														success: function (form, action, opt) {
 															grid.getStore().load({
 																url: 'api/v1/resource/components/' + submissionPanel.componentId + '/resources/view'
 															});
 															resourceWindow.close();
+															progressMsg.hide();
 														},
 														failure: function (form, action, opt) {
 															var errorResponse = Ext.decode(action.response.responseText);
@@ -1516,6 +1526,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																errorObj[item.key.replace('componentResource', '')] = item.value;
 															});
 															form.markInvalid(errorObj);
+															progressMsg.hide();
 														}
 													});
 
@@ -1720,6 +1731,18 @@ Ext.define('OSF.component.SubmissionPanel', {
 													});
 												} else {
 													//upload
+													
+													var progressMsg = Ext.MessageBox.show({
+														title: 'Media Upload',
+														msg: 'Uploading media please wait...',
+														width: 300,
+														height: 150,
+														closable: false,
+														progressText: 'Uploading...',
+														wait: true,
+														waitConfig: {interval: 300}
+													});
+													
 													form.submit({
 														url: 'Media.action?UploadMedia',
 														params: {
@@ -1733,13 +1756,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 														},
 														method: 'POST',
 														submitEmptyText: false,
-														waitMsg: 'Uploading please wait...',
-														waitTitle: 'Uploading',
 														success: function (form, action, opt) {
 															grid.getStore().load({
 																url: 'api/v1/resource/components/' + submissionPanel.componentId + '/media/view'
 															});
 															mediaWindow.close();
+															progressMsg.hide();
 														},
 														failure: function (form, action, opt) {
 															var errorResponse = Ext.decode(action.response.responseText);
@@ -1748,6 +1770,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																errorObj[item.key.replace('componentMedia', '')] = item.value;
 															});
 															form.markInvalid(errorObj);
+															progressMsg.hide();
 														}
 													});
 
