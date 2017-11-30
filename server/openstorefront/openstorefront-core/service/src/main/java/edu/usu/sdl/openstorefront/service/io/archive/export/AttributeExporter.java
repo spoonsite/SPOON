@@ -132,11 +132,11 @@ public class AttributeExporter
 					attributeAlls.add(attributeAll);
 					FileHistoryOption options = new FileHistoryOption();
 					ValidationResult validationResult = service.getAttributeService().importAttributes(attributeAlls, options);
-					if(validationResult.valid() == false)
-					{
-						addError("Some Attributes Failed to import, all imported entries will be missing those attributes - " + validationResult.toString());
+					if (validationResult.valid() == false) {
+						String message = "Failed to import Attribute: {0}<br><br>All imported entries will be missing this attribute<br>Details:<br>{1}";
+						addError(MessageFormat.format(message, className, validationResult.toHtmlString()));
 					}
-					
+
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();
 

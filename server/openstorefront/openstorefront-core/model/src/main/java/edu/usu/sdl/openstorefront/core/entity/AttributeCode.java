@@ -164,7 +164,7 @@ public class AttributeCode
 				RuleResult result = new RuleResult();
 				result.setFieldName(FIELD_LABEL);
 				result.setEntityClassName(getClass().getSimpleName());
-				result.setValidationRule("Attribute Type requires label to number");
+				result.setValidationRule("Attribute Type " + getAttributeCodePk().getAttributeType() + " requires label to be a number");
 				result.setMessage("Could not convert value to number");
 				result.setInvalidData(getLabel());
 				validationResult.getRuleResults().add(result);
