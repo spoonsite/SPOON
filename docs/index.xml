@@ -114,17 +114,20 @@ docker pull flammablefork/openstorefront:v2.2.1  Kitematic When using a GUI appl
     </item>
     
     <item>
-      <title>Clearinghouse Administrator Guide</title>
+      <title>Administrator Guide</title>
       <link>/systemadmin/administratorguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/systemadmin/administratorguide/</guid>
-      <description>Version 2.4
-Space Dynamics Laboratory
-Utah State University Research Foundation
-1695 North Research Park Way
-North Logan, Utah 84341
-Overview The Open Storefront application is a software cataloging system that is used to catalog components of interest to the DI2E community. Components include Government off the shelf (GOTS), commercial off the shelf (COTS), and Open Source software (OSS). The component evaluations done by DI2E&amp;rsquo;s Centers of Excellence are displayed in the Storefront and give details on the following:</description>
+      <description>1. Other Guides This guide has been organized into separate documents to make it easier to navigate. The focus of this document is for configuration. See other guides for other topics.
+Architecture
+Setup
+Developer Guide
+2. Configuration 2.1 Security 2.1.1 Supported Realms Configure in /var/openstorefront/config/shiro.ini
+ INI (Properties File; Default)
+Users are specified in the users section.
+ LDAP (Example)
+  [main] ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com ldapRealm.</description>
     </item>
     
     <item>
@@ -140,6 +143,17 @@ Overview The Open Storefront application is a software cataloging system that is
  Waiting for information - Back to requestor for more details on requirements and/or screenshots.
  Getting PMO approval - Business owner or Project Manager approves/rejects an issue.
  Awaiting Design Review - Holding state awaiting developer resources.</description>
+    </item>
+    
+    <item>
+      <title>Data Migration Guide</title>
+      <link>/systemadmin/datamigrationguide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/systemadmin/datamigrationguide/</guid>
+      <description>This guide provide help for importing data from external sources as well as moving data from one instance to another instance.
+1. Importing/Export (Third parties) The application provides set of standard format that it accepts to import Attributes/Categories as well as Entries. It also provides a set of custom formats that can have mappings applied. These custom formats allow taking a variety of data with so simple handling.
+See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
     </item>
     
     <item>
@@ -195,6 +209,20 @@ Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious store
       
       <guid>/evaluations/librarian/basic-entry-template-for-storefront/</guid>
       <description>Entry Type  Type Code: REPO Label: Repository Description: Information Entries to describe a collection of software programs or tools Data Entry: Allow on Submission Form, Attributes, Relationships, Resources  Section Template  Template Name: Code Repo Template Description: Information about a Code Repository Section Title: Repo Overview Section Default Content: Describe what kind of programs are stored in the repository.  Checklist Questions  QID: 1 Section: Discoverable Question: How do you expect developers to find your asset?</description>
+    </item>
+    
+    <item>
+      <title>FAQ</title>
+      <link>/evaluations/evaluator/faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/evaluations/evaluator/faq/</guid>
+      <description>Question
+Do sub-sections save independent of other sub-sections?
+Answer
+Section (Eg. Architecture) may be broken in multiple sub-section. Saving save all sub-sections. So if your are edit more than one on multiple browser tabs. Keep in mind you changes will override changes in another tab. It&amp;rsquo;s recommended to only edit in one browser tab and one browser at a time. Use change history to find resolve previous issues.
+Question
+What&amp;rsquo;s the difference between in Entry and Evaluation?</description>
     </item>
     
     <item>

@@ -17,3 +17,4 @@ Evaluation information
 
 **Open Storefront is developed by Space Dynamics Laboratory and is licensed under GPL V3 (See NOTICE.txt).**
 
+See [di2e.github.io/openstorefront](http://di2e.github.io/openstorefront/) for documentation on the latest release.

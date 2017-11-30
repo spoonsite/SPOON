@@ -5,9 +5,9 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
-<title>Clearinghouse Administrator Guide :: Storefront Docs</title>
+<title>Administrator Guide :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/nucleus.css" rel="stylesheet">
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -80,6 +80,11 @@
       <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
         <a href="/evaluations/evaluator/storefront-evaluators-guide/">
           <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
+        <a href="/evaluations/evaluator/faq/">
+          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
         </ul>
@@ -173,7 +178,12 @@
     </li>
       <li data-nav-id="/systemadmin/administratorguide/" class="dd-item active">
         <a href="/systemadmin/administratorguide/">
-          <span>Clearinghouse Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
@@ -216,8 +226,8 @@
 
  <section id="footer"><div style="color: #E0E0DA;">
     <p>OpenStoreFront version 2.5</p>
-    <p>Documentation generated on Nov 29, 2017</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+    <p>Documentation generated on Nov 30, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -255,7 +265,7 @@
 
 
 
- <a href='/'>OpenStoreFront Documentation</a> > <a href='/systemadmin/'>System Admin</a> > Clearinghouse Administrator Guide
+ <a href='/'>OpenStoreFront Documentation</a> > <a href='/systemadmin/'>System Admin</a> > Administrator Guide
 
  
 
@@ -270,7 +280,6 @@
         <div class="wrapper">
     <nav id="TableOfContents">
 <ul>
-<li><a href="#overview">Overview</a></li>
 <li><a href="#1-other-guides">1. Other Guides</a></li>
 <li><a href="#2-configuration">2.  Configuration</a>
 <ul>
@@ -307,7 +316,7 @@
 
 <div id="body-inner">
   
-    <h1>Clearinghouse Administrator Guide</h1>
+    <h1>Administrator Guide</h1>
   
 
 
@@ -316,36 +325,6 @@
     
     
     
-
-<p>Version 2.4</p>
-
-<p>Space Dynamics Laboratory<br />
-Utah State University Research Foundation<br />
-1695 North Research Park Way<br />
-North Logan, Utah 84341</p>
-
-<p><img src="/images/sdl.png" alt="logo" /></p>
-
-<h1 id="overview">Overview</h1>
-
-<p>The Open Storefront application is a software cataloging system that is used to catalog components
-of interest to the DI2E community. Components include Government off
-the shelf (GOTS), commercial off the shelf (COTS), and Open Source
-software (OSS). The component evaluations done by DI2E&rsquo;s Centers of
-Excellence are displayed in the Storefront and give details on the
-following:</p>
-
-<ul>
-<li>Ownership</li>
-<li>Where/How to access the software</li>
-<li>Software vitals</li>
-<li>Conformance</li>
-<li>Links to documentation, source code and other artifacts</li>
-<li>Evaluation information</li>
-</ul>
-
-<p><strong>Open Storefront is developed by Space Dynamics Laboratory and is
-licensed under Apache V2.</strong></p>
 
 <h1 id="1-other-guides">1. Other Guides</h1>
 
@@ -486,6 +465,24 @@ default users, admins and evaluators.  It will create a default admin user: (adm
 </div>
 
 
+<p>Pre-defined groups:</p>
+
+<p><strong>Default</strong> - Allows Searching, tagging, watching, and submitting entries</p>
+
+<p><strong>Guest</strong> -Permissions for guest user. (Only applies if security is setup for that)</p>
+
+<p><strong>Admin</strong> - All administration permissions. There maybe some optional features that the admin doesn&rsquo;t by default have permission.</p>
+
+<p><strong>Librarian</strong> -Data management permissions.</p>
+
+<p><strong>Evaluators</strong> - Allows user to edit unpublished evaluations</p>
+
+<p>An admin can define new groups as needed.</p>
+
+<div class="notices note" ><p>All users are part of the Default group.</p>
+</div>
+
+
 <h2 id="2-2-integration-external-ldap-user-syncing">2.2  Integration External LDAP (User Syncing)</h2>
 
 <p>When a user is not located in the external management system then the
@@ -603,11 +600,11 @@ there.</p>
 <li><strong>ui.idlegraceperiod.minutes</strong> -Set this to configure the grace period for the idle timeout. After the message appears.</li>
 <li><strong>system.archive.maxprocessminutes</strong> -Max time for system archive process without making progress (<strong>60</strong>)</li>
 <li><strong>websockets.enabled</strong> - Enables the use of websockets for server notifications ( <strong>False</strong> )</li>
-<li><strong>userreview.autoapprove</strong> - Allows user reviews, Questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update ( <strong>True</strong> )</li>
+<li><strong>userreview.autoapprove</strong> - Allows user reviews, questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update. (<strong>True</strong>)</li>
 <li><strong>role.admin</strong> -Set this before strarting the application the first time to set the name of the Admin Role</li>
 <li><strong>test.email</strong> -Set to run container tests that require email</li>
 <li><strong>system.archive.maxprocessminutes</strong> -Set the max time for running archive process; this used to clean up stuck working archives ( <strong>60</strong> )</li>
-<li><strong>max.post.size</strong> - Set to configure the maximum file size for files being saved to the system (in MB) ( <strong>2000</strong> )</li>
+<li><strong>max.post.size</strong> - Set to configure the maximum file size for files being saved to the system (in MB) ( <strong>1000</strong> )</li>
 </ul>
 
 <h1 id="3-database-management">3. Database Management</h1>
@@ -651,11 +648,16 @@ files that are packaged with the application.</p>
 <div class="notices warning" ><p>Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.</p>
+
+<p>Also, note longterm uses on external tools and access may have STIG consequences.
+For full audit log support Orient Enterprise edition is needed.  External server
+would need to be set.  The application does not currently have support for that but,
+it could added.</p>
 </div>
 
 
 <ol>
-<li><p>Download Orient DB (Currently using the 2.1.x series) at
+<li><p>Download Orient DB (Currently using the 2.2.x series) at
 <a href="http://www.orientechnologies.com/download/">OrientDB.org</a></p></li>
 
 <li><p>Extract the archive</p></li>
@@ -696,7 +698,7 @@ the application.</p>
 
 
 <ol>
-<li><p>Download Orient DB (Currently using the 2.1.x series) at
+<li><p>Download Orient DB (Currently using the 2.2.x series) at
 <a href="http://www.orientechnologies.com/download/">OrientDB.org</a></p>
 
 <ol>
@@ -735,7 +737,7 @@ is initialized.</li>
 functionality on top.</p>
 
 <ul>
-<li>See <a href="http://orientdb.com/docs/2.1.x/Home-page.html">Orient DB Studio</a> for
+<li>See <a href="http://orientdb.com/docs/2.2.x/Home-page.html">Orient DB Studio</a> for
 more information about Studio</li>
 </ul>
 
@@ -750,7 +752,7 @@ more information about Studio</li>
 
 <div id="navigation">
 <a class="nav nav-prev" href="/systemadmin/docker/" title="Using Docker"> <i class="fa fa-chevron-left"></i></a>
-    <a class="nav nav-next" href="/systemadmin/versionmigrationguide/" title="Version Migration" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/systemadmin/datamigrationguide/" title="Data Migration Guide" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">

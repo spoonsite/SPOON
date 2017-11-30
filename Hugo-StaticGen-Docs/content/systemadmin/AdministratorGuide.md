@@ -1,36 +1,9 @@
 +++
-title = "Clearinghouse Administrator Guide"
+title = "Administrator Guide"
 description = ""
 weight = 4
 +++
 
-Version 2.4
-
-Space Dynamics Laboratory  
-Utah State University Research Foundation  
-1695 North Research Park Way  
-North Logan, Utah 84341  
-
-![logo](/images/sdl.png)
-
-# Overview
-
-The Open Storefront application is a software cataloging system that is used to catalog components
-of interest to the DI2E community. Components include Government off
-the shelf (GOTS), commercial off the shelf (COTS), and Open Source
-software (OSS). The component evaluations done by DI2E's Centers of
-Excellence are displayed in the Storefront and give details on the
-following:
-
--   Ownership
--   Where/How to access the software
--   Software vitals
--   Conformance
--   Links to documentation, source code and other artifacts
--   Evaluation information
-
-**Open Storefront is developed by Space Dynamics Laboratory and is
-licensed under Apache V2.**
 
 # 1. Other Guides
 
@@ -169,6 +142,24 @@ default users, admins and evaluators.  It will create a default admin user: (adm
 You should change the admin password after login in.
 {{% /notice %}}
 
+Pre-defined groups:
+
+**Default** - Allows Searching, tagging, watching, and submitting entries
+
+**Guest** -Permissions for guest user. (Only applies if security is setup for that)
+
+**Admin** - All administration permissions. There maybe some optional features that the admin doesn't by default have permission.
+
+**Librarian** -Data management permissions.
+
+**Evaluators** - Allows user to edit unpublished evaluations
+
+An admin can define new groups as needed.
+
+
+{{% notice note %}}
+All users are part of the Default group. 
+{{% /notice %}}
 
 ## 2.2  Integration External LDAP (User Syncing)
 
@@ -280,11 +271,11 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 -  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the idle timeout. After the message appears.
 -  **system.archive.maxprocessminutes** -Max time for system archive process without making progress (**60**)
 -  **websockets.enabled** - Enables the use of websockets for server notifications ( **False** )
--  **userreview.autoapprove** - Allows user reviews, Questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update ( **True** )
+-  **userreview.autoapprove** - Allows user reviews, questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update. (**True**)
 -  **role.admin** -Set this before strarting the application the first time to set the name of the Admin Role
 -  **test.email** -Set to run container tests that require email
 -  **system.archive.maxprocessminutes** -Set the max time for running archive process; this used to clean up stuck working archives ( **60** )
--  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **2000** )
+-  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **1000** )
 
 # 3. Database Management
 
@@ -326,9 +317,15 @@ files that are packaged with the application.
 Viewing (Querying) information is fine; however, use
 extreme caution when modifying any records as all logic is handled by
 the application.
+
+Also, note longterm uses on external tools and access may have STIG consequences.
+For full audit log support Orient Enterprise edition is needed.  External server
+would need to be set.  The application does not currently have support for that but,
+it could added.
+
 {{% /notice %}}
 
-1.  Download Orient DB (Currently using the 2.1.x series) at
+1.  Download Orient DB (Currently using the 2.2.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
 
 2.  Extract the archive
@@ -365,7 +362,7 @@ extreme caution when modifying any records as all logic is handled by
 the application.
 {{% /notice %}}
 
-1.  Download Orient DB (Currently using the 2.1.x series) at
+1.  Download Orient DB (Currently using the 2.2.x series) at
     [OrientDB.org](http://www.orientechnologies.com/download/)
 
   1. If you already downloaded Orient DB in section 3.2 above,
@@ -394,5 +391,5 @@ the application.
 The database supports an SQL like interface and then adds other
 functionality on top.
 
--   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
+-   See [Orient DB Studio](http://orientdb.com/docs/2.2.x/Home-page.html) for
     more information about Studio

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
 <title>System Admin :: Storefront Docs</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
@@ -80,6 +80,11 @@
       <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
         <a href="/evaluations/evaluator/storefront-evaluators-guide/">
           <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
+        <a href="/evaluations/evaluator/faq/">
+          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
         </ul>
@@ -173,7 +178,12 @@
     </li>
       <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
         <a href="/systemadmin/administratorguide/">
-          <span>Clearinghouse Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
@@ -216,8 +226,8 @@
 
  <section id="footer"><div style="color: #E0E0DA;">
     <p>OpenStoreFront version 2.5</p>
-    <p>Documentation generated on Nov 29, 2017</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.30.2</p>
+    <p>Documentation generated on Nov 30, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -343,15 +353,37 @@ docker pull flammablefork/openstorefront:v2.2.1  Kitematic When using a GUI appl
 
    <article class="post systemadmin">
     <header class="post-header">
-        <h2 class="post-title"><a href="/systemadmin/administratorguide/">Clearinghouse Administrator Guide</a></h2>
+        <h2 class="post-title"><a href="/systemadmin/administratorguide/">Administrator Guide</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Version 2.4
-Space Dynamics Laboratory
-Utah State University Research Foundation
-1695 North Research Park Way
-North Logan, Utah 84341
-Overview The Open Storefront application is a software cataloging system that is used to catalog components of interest to the DI2E community. Components include Government off the shelf (GOTS), commercial off the shelf (COTS), and Open Source software (OSS). The component evaluations done by DI2E&rsquo;s Centers of Excellence are displayed in the Storefront and give details on the following: <a class="read-more" href="/systemadmin/administratorguide/">&raquo;</a></p>
+        <p>1. Other Guides This guide has been organized into separate documents to make it easier to navigate. The focus of this document is for configuration. See other guides for other topics.
+Architecture
+Setup
+Developer Guide
+2. Configuration 2.1 Security 2.1.1 Supported Realms Configure in /var/openstorefront/config/shiro.ini
+ INI (Properties File; Default)
+Users are specified in the users section.
+ LDAP (Example)
+  [main] ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com ldapRealm. <a class="read-more" href="/systemadmin/administratorguide/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post systemadmin">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/systemadmin/datamigrationguide/">Data Migration Guide</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>This guide provide help for importing data from external sources as well as moving data from one instance to another instance.
+1. Importing/Export (Third parties) The application provides set of standard format that it accepts to import Attributes/Categories as well as Entries. It also provides a set of custom formats that can have mappings applied. These custom formats allow taking a variety of data with so simple handling.
+See Admin Tools -&gt; Data Management -&gt; Imports <a class="read-more" href="/systemadmin/datamigrationguide/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
