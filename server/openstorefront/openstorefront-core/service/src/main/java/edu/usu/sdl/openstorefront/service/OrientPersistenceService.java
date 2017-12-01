@@ -43,6 +43,7 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -363,7 +364,7 @@ public class OrientPersistenceService
 		}
 		int deleteCount = 0;
 		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
-		
+
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
@@ -953,8 +954,10 @@ public class OrientPersistenceService
 			if (validationResult.valid()) {
 				t = db.save(entity);
 			} else {
-				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
+				throw new OpenStorefrontValidationException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), validationResult, "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
+		} catch (OpenStorefrontRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new OpenStorefrontRuntimeException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), e);
 		} finally {
