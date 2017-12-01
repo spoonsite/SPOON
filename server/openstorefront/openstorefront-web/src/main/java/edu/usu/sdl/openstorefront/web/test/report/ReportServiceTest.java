@@ -133,7 +133,9 @@ public class ReportServiceTest extends BaseTestCase
 		}
 
 		service.getReportService().deleteScheduledReport(schedule.getScheduleReportId());
-		schedule = schedule.find();
+		ScheduledReport scheduledReportExample = new ScheduledReport();
+		scheduledReportExample.setScheduleReportId(schedule.getScheduleReportId());
+		schedule = scheduledReportExample.find();
 		if (schedule == null) {
 			results.append("Scheduled Report Deleted<br>");
 		} else {

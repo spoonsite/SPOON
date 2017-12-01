@@ -230,7 +230,7 @@ public class ComponentReport
 					lineModel.getActiveStatus(),
 					sdf.format(lineModel.getCreateDts()),
 					lineModel.getCreateUser(),
-					sdf.format(lineModel.getLastViewed()),
+					lineModel.getLastViewed() == null ? "" : sdf.format(lineModel.getLastViewed()),
 					lineModel.getViews(),
 					lineModel.getResourcesClicked(),
 					lineModel.getActiveReviews(),
