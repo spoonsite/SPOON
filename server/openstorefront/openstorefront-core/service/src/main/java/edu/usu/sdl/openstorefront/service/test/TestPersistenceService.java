@@ -27,7 +27,9 @@ import java.util.Queue;
 import java.util.UUID;
 
 /**
- * TODO: look into using orient with in memory option depends on startup/teardown time
+ * TODO: look into using orient with in memory option depends on
+ * startup/teardown time
+ *
  * @author kbair
  */
 public class TestPersistenceService implements PersistenceService
@@ -75,12 +77,12 @@ public class TestPersistenceService implements PersistenceService
 		}
 		singleResultsMap.get(baseEntity.getClass()).add(baseEntity);
 	}
-	
+
 	public void addObjectWithId(Class<?> cls, Object id, BaseEntity baseEntity)
 	{
 		if (!byIdMap.containsKey(cls)) {
 			byIdMap.put(cls, new HashMap<>());
-		}		
+		}
 		if (!byIdMap.get(cls).containsKey(id)) {
 			byIdMap.get(cls).put(id, new LinkedList<>());
 		}
@@ -97,7 +99,7 @@ public class TestPersistenceService implements PersistenceService
 
 	public Queue<BaseEntity> getListExamples(Class<?> cls)
 	{
-		return (listExampleMap.containsKey(cls)	&& (!listExampleMap.get(cls).isEmpty())) ? listExampleMap.get(cls) : null;
+		return (listExampleMap.containsKey(cls) && (!listExampleMap.get(cls).isEmpty())) ? listExampleMap.get(cls) : null;
 	}
 	// </editor-fold>
 
@@ -117,7 +119,7 @@ public class TestPersistenceService implements PersistenceService
 	@Override
 	public <T> T queryOneByExample(BaseEntity baseEntity)
 	{
-		return (singleResultsMap.containsKey(baseEntity.getClass())	&& (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) ? (T)singleResultsMap.get(baseEntity.getClass()).poll() : null;
+		return (singleResultsMap.containsKey(baseEntity.getClass()) && (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) ? (T) singleResultsMap.get(baseEntity.getClass()).poll() : null;
 	}
 
 	@Override
@@ -135,7 +137,7 @@ public class TestPersistenceService implements PersistenceService
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap)
 	{
-		// NOTE: (KB) currently I don't see a difference between wrapped and unwrapped 
+		// NOTE: (KB) currently I don't see a difference between wrapped and unwrapped
 		// objects in testing if that changes then this may need refactored
 		return query(query, parameterMap);
 	}
@@ -143,7 +145,7 @@ public class TestPersistenceService implements PersistenceService
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{
-		return (byIdMap.containsKey(entity) && byIdMap.get(entity).containsKey(id) && !byIdMap.get(entity).get(id).isEmpty()) ? (T)byIdMap.get(entity).get(id).poll() : null;
+		return (byIdMap.containsKey(entity) && byIdMap.get(entity).containsKey(id) && !byIdMap.get(entity).get(id).isEmpty()) ? (T) byIdMap.get(entity).get(id).poll() : null;
 	}
 
 	@Override
@@ -165,7 +167,7 @@ public class TestPersistenceService implements PersistenceService
 	{
 		return UUID.randomUUID().toString();
 	}
-	
+
 	// <editor-fold defaultstate="collapsed" desc="Transactions: Currently no need to support transactions">
 	@Override
 	public void begin()
@@ -184,16 +186,15 @@ public class TestPersistenceService implements PersistenceService
 	{
 		// Do Nothing
 	}
-	
+
 	@Override
 	public void rollback()
 	{
 		// Do Nothing
 	}
 	// </editor-fold>
-	
-	// <editor-fold defaultstate="collapsed" desc="Proxy: No difference between wrapped and unwrapped objects in testing">
 
+	// <editor-fold defaultstate="collapsed" desc="Proxy: No difference between wrapped and unwrapped objects in testing">
 	@Override
 	public <T> List<T> unwrapProxy(List<T> data)
 	{
@@ -212,8 +213,14 @@ public class TestPersistenceService implements PersistenceService
 		return false;
 	}
 	// </editor-fold>
-	
+
 	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
+	@Override
+	public long countByExampleSimple(QueryByExample queryByExample)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	@Override
 	public long countByExample(BaseEntity example)
 	{

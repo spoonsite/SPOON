@@ -100,7 +100,7 @@ public class ErrorTicketResource
 		}
 
 		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExample(queryByExample);
+		long total = service.getPersistenceService().countByExampleSimple(queryByExample);
 		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}
 
@@ -134,16 +134,16 @@ public class ErrorTicketResource
 		}
 		return sendSingleEntityResponse(ticketData);
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Deletes error tickets")
-	@Consumes({MediaType.APPLICATION_JSON})	
+	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(MultipleIds.class)
-	public void deleteErrorTickets(			
+	public void deleteErrorTickets(
 			@RequiredParam MultipleIds multipleIds)
 	{
-		service.getSystemService().deleteErrorTickets(multipleIds.getIds());						
+		service.getSystemService().deleteErrorTickets(multipleIds.getIds());
 	}
 
 }

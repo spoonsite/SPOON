@@ -120,7 +120,7 @@ public class ChecklistQuestionResource
 
 		ChecklistQuestionWrapper checklistQuestionWrapper = new ChecklistQuestionWrapper();
 		checklistQuestionWrapper.getData().addAll(ChecklistQuestionView.toView(questions));
-		checklistQuestionWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		checklistQuestionWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		return sendSingleEntityResponse(checklistQuestionWrapper);
 	}

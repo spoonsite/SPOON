@@ -657,11 +657,14 @@
 													
 													uploadForm.submit({
 														submitEmptyText: false,
-														url: 'Upload.action?ImportArchive',														
+														url: 'Upload.action?ImportArchive',	
 														success: function(form, action) {
 															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
 															actionRefresh();
 															importWin.close();
+															progressMsg.hide();
+														}, 
+														failure: function(form, action) {
 															progressMsg.hide();
 														}
 													});	

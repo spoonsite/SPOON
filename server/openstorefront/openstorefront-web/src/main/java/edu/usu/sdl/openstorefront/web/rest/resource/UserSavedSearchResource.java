@@ -54,9 +54,9 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 @Path("v1/resource/usersavedsearches")
 @APIDescription("Saved searches")
 public class UserSavedSearchResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@APIDescription("Get a list of saved searches")
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
@@ -108,11 +108,11 @@ public class UserSavedSearchResource
 
 		UserSavedSearchWrapper userSavedSearchWrapper = new UserSavedSearchWrapper();
 		userSavedSearchWrapper.getData().addAll(userSavedSearches);
-		userSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		userSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
-		return sendSingleEntityResponse(userSavedSearchWrapper);				
-	}	
-		
+		return sendSingleEntityResponse(userSavedSearchWrapper);
+	}
+
 	@GET
 	@APIDescription("Get saved searches for current user")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -121,11 +121,11 @@ public class UserSavedSearchResource
 	public List<UserSavedSearch> getCurrentUserSearches()
 	{
 		UserSavedSearch userSavedSearch = new UserSavedSearch();
-		userSavedSearch.setActiveStatus(UserSavedSearch.ACTIVE_STATUS);		
-		userSavedSearch.setUsername(SecurityUtil.getCurrentUserName());		
+		userSavedSearch.setActiveStatus(UserSavedSearch.ACTIVE_STATUS);
+		userSavedSearch.setUsername(SecurityUtil.getCurrentUserName());
 		return userSavedSearch.findByExample();
-	}	
-	
+	}
+
 	@GET
 	@APIDescription("Get saved searches for a user")
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
@@ -133,116 +133,114 @@ public class UserSavedSearchResource
 	@DataType(UserSavedSearch.class)
 	@Path("/user/{username}")
 	public List<UserSavedSearch> getUserSearchesForUser(
-		@PathParam("username") String username
+			@PathParam("username") String username
 	)
 	{
 		UserSavedSearch userSavedSearch = new UserSavedSearch();
-		userSavedSearch.setActiveStatus(UserSavedSearch.ACTIVE_STATUS);		
-		userSavedSearch.setUsername(username);		
-		return userSavedSearch.findByExample();		
-	}	
-		
+		userSavedSearch.setActiveStatus(UserSavedSearch.ACTIVE_STATUS);
+		userSavedSearch.setUsername(username);
+		return userSavedSearch.findByExample();
+	}
+
 	@GET
-	@APIDescription("Get saved search by id (must be admin or owner)")	
+	@APIDescription("Get saved search by id (must be admin or owner)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/{searchId}")
 	public Response getUserSearch(
-		@PathParam("searchId") String userSearchId
+			@PathParam("searchId") String userSearchId
 	)
 	{
 		UserSavedSearch userSavedSearch = new UserSavedSearch();
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
-		
+
 		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
-		if (response == null)
-		{
+		if (response == null) {
 			response = sendSingleEntityResponse(userSavedSearch);
-		}		
+		}
 		return response;
-	}	
-	
+	}
+
 	@POST
-	@APIDescription("Saves a search")	
+	@APIDescription("Saves a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	public Response createNewSearch(
-		UserSavedSearch search	
-	) 
+			UserSavedSearch search
+	)
 	{
 		search.setUsername(SecurityUtil.getCurrentUserName());
 		return handleSave(search, true);
 	}
-	
+
 	@PUT
-	@APIDescription("Updates a search")	
+	@APIDescription("Updates a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/{searchId}")
 	public Response updateSearch(
-		@PathParam("searchId") String searchId,	
-		UserSavedSearch search	
-	) 
+			@PathParam("searchId") String searchId,
+			UserSavedSearch search
+	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		
+
 		UserSavedSearch userSavedSearch = new UserSavedSearch();
 		userSavedSearch.setUserSearchId(searchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 		if (userSavedSearch != null) {
 			response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
 			if (response == null) {
-				search.setUserSearchId(searchId);			
-				
+				search.setUserSearchId(searchId);
+
 				//In this case we are not allowing to set the user name
-				search.setUsername(userSavedSearch.getUsername());				
+				search.setUsername(userSavedSearch.getUsername());
 				response = handleSave(search, false);
 			}
 		}
-		
+
 		return response;
 	}
-	
-	private Response handleSave(UserSavedSearch search, boolean post) 
+
+	private Response handleSave(UserSavedSearch search, boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(search);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-						
+
 			search = service.getUserService().saveUserSearch(search);
-			
+
 			if (post) {
 				return Response.created(URI.create("v1/resource/usersavedsearches" + search.getUserSearchId())).entity(search).build();
 			} else {
 				return Response.ok(search).build();
-			}			
+			}
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
+		}
 	}
-	
+
 	@DELETE
 	@APIDescription("Deletes saved search (must be owner or admin).")
 	@Path("/{searchId}")
 	public Response deleteUserSearch(
-		@PathParam("searchId") String userSearchId
+			@PathParam("searchId") String userSearchId
 	)
 	{
 		UserSavedSearch userSavedSearch = new UserSavedSearch();
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
-		
+
 		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
-		if (response == null)
-		{
-			service.getUserService().deleteUserSearch(userSearchId);			
+		if (response == null) {
+			service.getUserService().deleteUserSearch(userSearchId);
 			response = Response.ok().build();
-		}		
+		}
 		return response;
 	}
-	
+
 }

@@ -169,7 +169,7 @@ public class UserProfileResource
 
 		UserProfileWrapper userProfileWrapper = new UserProfileWrapper();
 		userProfileWrapper.getData().addAll(UserProfileView.toViewList(userProfiles));
-		userProfileWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		userProfileWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		return sendSingleEntityResponse(userProfileWrapper);
 	}
@@ -516,7 +516,7 @@ public class UserProfileResource
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
+		long total = service.getPersistenceService().countByExampleSimple(new QueryByExample(QueryType.COUNT, userTrackingExample));
 		return sendSingleEntityResponse(new UserTrackingWrapper(userTrackings, total));
 	}
 

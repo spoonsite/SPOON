@@ -4013,7 +4013,7 @@ public class ComponentRESTResource
 
 		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(queryByExample);
 
-		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
+		long total = service.getPersistenceService().countByExampleSimple(new QueryByExample(QueryType.COUNT, trackingExample));
 		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
 	}
 
@@ -4391,7 +4391,7 @@ public class ComponentRESTResource
 			configQueryExample.getFieldOptions().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, option);
 			configQueryExample.setExample(configExample);
 
-			long count = service.getPersistenceService().countByExample(configQueryExample);
+			long count = service.getPersistenceService().countByExampleSimple(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
 				restErrorModel.getErrors().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, "Issue number needs to be unique per project.");
@@ -4452,7 +4452,7 @@ public class ComponentRESTResource
 				configQueryExample.getFieldOptions().put("issueNumber", issueNumberOption);
 				configQueryExample.setExample(configExample);
 
-				long count = service.getPersistenceService().countByExample(configQueryExample);
+				long count = service.getPersistenceService().countByExampleSimple(configQueryExample);
 				if (count > 0) {
 					RestErrorModel restErrorModel = new RestErrorModel();
 					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");

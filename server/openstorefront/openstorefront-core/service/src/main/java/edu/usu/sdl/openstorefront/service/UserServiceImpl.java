@@ -961,7 +961,7 @@ public class UserServiceImpl
 
 		result.setResult(persistenceService.queryByExample(queryByExample));
 		queryByExample.setQueryType(QueryType.COUNT);
-		result.setCount(persistenceService.countByExample(queryByExample));
+		result.setCount(persistenceService.countByExampleSimple(queryByExample));
 
 		return result;
 	}

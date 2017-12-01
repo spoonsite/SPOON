@@ -102,7 +102,7 @@ public class UserMessageResource
 
 		UserMessageWrapper userMessageWrapper = new UserMessageWrapper();
 		userMessageWrapper.setData(userMessages);
-		userMessageWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		userMessageWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		return sendSingleEntityResponse(userMessageWrapper);
 	}

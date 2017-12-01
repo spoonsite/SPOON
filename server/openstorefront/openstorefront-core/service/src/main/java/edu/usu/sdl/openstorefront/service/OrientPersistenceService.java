@@ -363,7 +363,7 @@ public class OrientPersistenceService
 		}
 		int deleteCount = 0;
 		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
-		
+
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
@@ -447,6 +447,25 @@ public class OrientPersistenceService
 	{
 		QueryByExample queryByExample = new QueryByExample(example);
 		queryByExample.setQueryType(QueryType.COUNT);
+		return countByExample(queryByExample);
+	}
+
+	/**
+	 * Note: this method doesn't support limit/skip and sorting as that was not
+	 * the expected original behavior.
+	 *
+	 * @param queryByExample
+	 * @return
+	 */
+	@Override
+	public long countByExampleSimple(QueryByExample queryByExample)
+	{
+		Objects.requireNonNull(queryByExample);
+
+		queryByExample.setMaxResults(null);
+		queryByExample.setFirstResult(null);
+		queryByExample.setOrderBy(null);
+
 		return countByExample(queryByExample);
 	}
 

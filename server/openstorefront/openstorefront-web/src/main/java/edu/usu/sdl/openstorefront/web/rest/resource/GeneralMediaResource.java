@@ -99,7 +99,7 @@ public class GeneralMediaResource
 		}
 
 		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExample(queryByExample);
+		long total = service.getPersistenceService().countByExampleSimple(queryByExample);
 		GeneralMediaWrapper wrapper = new GeneralMediaWrapper(GeneralMediaView.toViewList(generalMedia), total);
 
 		return sendSingleEntityResponse(wrapper);
