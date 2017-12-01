@@ -643,7 +643,18 @@
 												handler: function() {
 													
 													var uploadForm = this.up('form');
-													//var data = uploadForm.getValues();													
+													//var data = uploadForm.getValues();
+													var progressMsg = Ext.MessageBox.show({
+														title: 'Archive Import',
+														msg: 'Importing archive please wait...',
+														width: 300,
+														height: 150,
+														closable: false,
+														progressText: 'Importing...',
+														wait: true,
+														waitConfig: {interval: 300}
+													});
+													
 													uploadForm.submit({
 														submitEmptyText: false,
 														url: 'Upload.action?ImportArchive',														
@@ -651,6 +662,7 @@
 															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
 															actionRefresh();
 															importWin.close();
+															progressMsg.hide();
 														}
 													});	
 												}
