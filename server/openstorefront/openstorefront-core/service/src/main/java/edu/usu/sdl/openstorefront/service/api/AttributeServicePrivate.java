@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 
 /**
  * Used to jump into a transactions when needed.
@@ -32,7 +33,7 @@ public interface AttributeServicePrivate
 	public void performSaveAttributeType(AttributeType attributeType);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveAttributeCode(AttributeCode attributeCode);
+	public ValidationResult performSaveAttributeCode(AttributeCode attributeCode);
 
 	/**
 	 * This will pre-populate caches in a efficient matter if not already warm

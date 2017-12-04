@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,11 +64,14 @@ public abstract class BaseAttributeParser
 	@Override
 	protected void performStorage()
 	{
+		ValidationResult validationResult;
 		if (fileHistoryAll.getFileHistory().getFileHistoryOption() == null) {
-			service.getAttributeService().importAttributes(attributesAll, new FileHistoryOption());
+			validationResult = service.getAttributeService().importAttributes(attributesAll, new FileHistoryOption());
 		} else {
-			service.getAttributeService().importAttributes(attributesAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
+			validationResult = service.getAttributeService().importAttributes(attributesAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
+		}
+		if (validationResult.valid() == false) {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 	}
-
 }

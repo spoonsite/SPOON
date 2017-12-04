@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -25,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileDataMapField;
 import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +125,10 @@ public abstract class BaseMapper<T>
 		attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 
-		serviceProxy.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+		ValidationResult validationResult = serviceProxy.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+		if (validationResult.valid() == false) {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		}
 		return attributeCodeFound;
 	}
 

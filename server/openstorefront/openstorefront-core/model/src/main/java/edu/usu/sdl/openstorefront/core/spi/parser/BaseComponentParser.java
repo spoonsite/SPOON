@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -288,7 +289,10 @@ public abstract class BaseComponentParser
 			attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 			attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 
-			service.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+			ValidationResult validationResult = service.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+			if (validationResult.valid() == false) {
+				throw new OpenStorefrontRuntimeException(validationResult.toString());
+			}
 		}
 
 		return attributeCodeFound;
@@ -330,7 +334,10 @@ public abstract class BaseComponentParser
 				attributeCode.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 				attributeCode.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 
-				service.getAttributeService().saveAttributeCode(attributeCode, false);
+				ValidationResult validationResult = service.getAttributeService().saveAttributeCode(attributeCode, false);
+				if (validationResult.valid() == false) {
+					throw new OpenStorefrontRuntimeException(validationResult.toString());
+				}
 			}
 		}
 		return attributeCode;

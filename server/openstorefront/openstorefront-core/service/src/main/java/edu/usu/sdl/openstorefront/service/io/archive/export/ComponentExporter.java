@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -171,22 +172,30 @@ public class ComponentExporter
 		if (files != null) {
 			for (File dataFile : files) {
 				if (dataFile.isFile()) {
+					String componentId = dataFile.getName().replace(".json", "");
 					try (InputStream in = new TFileInputStream(dataFile)) {
-						archive.setStatusDetails("Importing: " + dataFile.getName());
+						archive.setStatusDetails("Importing: " + componentId);
 						archive.save();
 
 						ComponentAll componentAll = StringProcessor.defaultObjectMapper().readValue(in, ComponentAll.class);
 
 						FileHistoryOption options = new FileHistoryOption();
 						options.setSkipRequiredAttributes(Boolean.TRUE);
-						service.getComponentService().saveFullComponent(componentAll, options);
-
-						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						try {
+							service.getComponentService().saveFullComponent(componentAll, options);
+							archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						} catch (OpenStorefrontValidationException validationError) {
+							String validationMessage = "";
+							if (validationError.getValidationResult() != null) {
+								validationMessage = validationError.getValidationResult().toHtmlString();
+							}
+							addError(MessageFormat.format("Unable to load component: {0}<br>{1}", componentId, validationMessage));
+						}
 						archive.save();
 
 					} catch (Exception ex) {
 						LOG.log(Level.WARNING, "Failed to Load component", ex);
-						addError("Unable to load component: " + dataFile.getName());
+						addError("Unable to load component: " + componentId);
 					}
 				}
 			}

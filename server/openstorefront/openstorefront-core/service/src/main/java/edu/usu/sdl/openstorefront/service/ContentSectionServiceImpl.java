@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -104,6 +105,10 @@ public class ContentSectionServiceImpl
 	 */
 	private String parseTemporaryMedia(String sectionId, String content)
 	{
+		if(StringUtils.isBlank(content))
+		{
+			return content;
+		}
 		Document descriptionDoc = Jsoup.parse(content);
 
 		Elements media = descriptionDoc.select("[src]");
