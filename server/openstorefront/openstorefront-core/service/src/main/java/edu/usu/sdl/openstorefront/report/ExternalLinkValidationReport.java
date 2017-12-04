@@ -16,15 +16,19 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.LinkCheckModel;
+import edu.usu.sdl.openstorefront.report.model.LinkValidationReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -56,7 +60,7 @@ public class ExternalLinkValidationReport
 		extends BaseReport
 {
 
-	private static final Logger log = Logger.getLogger(ExternalLinkValidationReport.class.getName());
+	private static final Logger LOG = Logger.getLogger(ExternalLinkValidationReport.class.getName());
 
 	private static final String SIPR_LINIK = "smil.mil";
 	private static final String JWICS_LINIK = "ic.gov";
@@ -74,7 +78,7 @@ public class ExternalLinkValidationReport
 	}
 
 	@Override
-	protected void gatherData()
+	protected LinkValidationReportModel gatherData()
 	{
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
@@ -149,18 +153,71 @@ public class ExternalLinkValidationReport
 
 		}
 		checkLinks();
+
+		LinkValidationReportModel linkValidationReportModel = new LinkValidationReportModel();
+		linkValidationReportModel.setTitle("External Link Validation Report");
+		linkValidationReportModel.setData(links);
+
+		return linkValidationReportModel;
 	}
 
 	@Override
-	protected void writeReport()
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (LinkValidationReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (LinkValidationReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, LinkValidationReportModel reportModel)
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("External Link Validation Report", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
 		cvsGenerator.addLine(
 				"Component Name",
-				//"Security Classification",
 				"Resource Type",
 				"Network Of Link",
 				"Link",
@@ -169,20 +226,17 @@ public class ExternalLinkValidationReport
 				"Check Results"
 		);
 
-		//write Body
-		links.stream().forEach((linkCheckModel) -> {
+		for (LinkCheckModel lineModel : reportModel.getData()) {
 			cvsGenerator.addLine(
-					linkCheckModel.getComponentName(),
-					//linkCheckModel.getSecurityMarking() == null ? "" : "(" + linkCheckModel.getSecurityMarking() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, linkCheckModel.getSecurityMarking()),
-					linkCheckModel.getResourceType(),
-					linkCheckModel.getNetworkOfLink(),
-					linkCheckModel.getLink(),
-					linkCheckModel.getStatus(),
-					linkCheckModel.getHttpStatus(),
-					linkCheckModel.getCheckResults()
+					lineModel.getComponentName(),
+					lineModel.getResourceType(),
+					lineModel.getNetworkOfLink(),
+					lineModel.getLink(),
+					lineModel.getStatus(),
+					lineModel.getHttpStatus(),
+					lineModel.getCheckResults()
 			);
-		});
-
+		}
 	}
 
 	private String getNetworkOfLink(String url)
@@ -230,7 +284,7 @@ public class ExternalLinkValidationReport
 						reportModel.setHttpStatus(processed.getHttpStatus());
 					} else {
 						//This shouldn't occur, however if it does at least show a message.
-						log.log(Level.WARNING, MessageFormat.format("A link check task failed to return results.  Status at Completed Abnormally? {0}", task.isCompletedAbnormally()));
+						LOG.log(Level.WARNING, MessageFormat.format("A link check task failed to return results.  Status at Completed Abnormally? {0}", task.isCompletedAbnormally()));
 					}
 				} catch (TimeoutException e) {
 					task.cancel(true);
@@ -238,9 +292,9 @@ public class ExternalLinkValidationReport
 
 				completedCount++;
 			} catch (InterruptedException | ExecutionException ex) {
-				log.log(Level.WARNING, "Check task  was interrupted.  Report results may be not complete.", ex);
+				LOG.log(Level.WARNING, "Check task  was interrupted.  Report results may be not complete.", ex);
 			}
-			log.log(Level.FINE, MessageFormat.format("Complete Checking Link Count: {0} out of {1}", new Object[]{completedCount, links.size()}));
+			LOG.log(Level.FINE, MessageFormat.format("Complete Checking Link Count: {0} out of {1}", new Object[]{completedCount, links.size()}));
 		}
 
 		for (LinkCheckModel checkModel : links) {
@@ -253,7 +307,7 @@ public class ExternalLinkValidationReport
 		try {
 			forkJoinPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException ex) {
-			log.log(Level.WARNING, "Check task shutdown was interrupted.  The application will recover and continue.", ex);
+			LOG.log(Level.WARNING, "Check task shutdown was interrupted.  The application will recover and continue.", ex);
 		}
 	}
 
@@ -277,7 +331,7 @@ public class ExternalLinkValidationReport
 			linkCheckModel.setId(modelToCheck.getId());
 
 			long startTime = System.currentTimeMillis();
-			log.log(Level.FINEST, MessageFormat.format("Checking link: {0}", modelToCheck.getLink()));
+			LOG.log(Level.FINEST, MessageFormat.format("Checking link: {0}", modelToCheck.getLink()));
 
 			if (StringUtils.isNotBlank(modelToCheck.getNetworkOfLink())) {
 				linkCheckModel.setCheckResults("Not checked");
@@ -305,7 +359,7 @@ public class ExternalLinkValidationReport
 						linkCheckModel.setStatus("Certificate Request/Error");
 						linkCheckModel.setCheckResults("Client Certificate Requested (CAC) or Server Certificate Error.  Actual error Message: " + e.getMessage());
 					} catch (Exception e) {
-						log.log(Level.FINER, "Actual connection error: ", e);
+						LOG.log(Level.FINER, "Actual connection error: ", e);
 						linkCheckModel.setStatus("Timeout/Error Connecting");
 						linkCheckModel.setCheckResults("Error occur when trying to connect.  This may be a temporary case or the link may be bad. Actual error Message: " + e.getMessage());
 					}
@@ -314,7 +368,7 @@ public class ExternalLinkValidationReport
 					linkCheckModel.setCheckResults("Check link to make sure it's properly formatted");
 				}
 			}
-			log.log(Level.FINEST, MessageFormat.format("Finish checking link: {0} Check Time: {1} ms", modelToCheck.getLink(), System.currentTimeMillis() - startTime));
+			LOG.log(Level.FINEST, MessageFormat.format("Finish checking link: {0} Check Time: {1} ms", modelToCheck.getLink(), System.currentTimeMillis() - startTime));
 
 			return linkCheckModel;
 		}

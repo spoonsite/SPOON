@@ -446,7 +446,17 @@
 										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
 										handler: function(){     
-											Ext.getCmp('addMediaForm').setLoading(true);
+											var progressMsg = Ext.MessageBox.show({
+												title: 'Media Upload',
+												msg: 'Uploading media please wait...',
+												width: 300,
+												height: 150,
+												closable: false,
+												progressText: 'Uploading...',
+												wait: true,
+												waitConfig: {interval: 300}
+											});
+											
 											var data = Ext.getCmp('addMediaForm').getValues();
 
 											// Check if name is unique
@@ -470,7 +480,8 @@
 												success: function(response, opts) {
 													Ext.toast('Uploaded Successfully', '', 'tr');													
 													Ext.getCmp('addMediaWin').close();													
-													refreshGrid();												
+													refreshGrid();	
+													progressMsg.hide();
 												},
 												failure: function(action, opts){
 													var data = Ext.decode(opts.response.responseText);
@@ -487,6 +498,7 @@
 														Ext.getCmp('addMediaWin').close();													
 														refreshGrid();
 													}
+													progressMsg.hide();
 												}
 											});												
 										}

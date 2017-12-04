@@ -596,7 +596,6 @@ public class AttributeResource
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
-
 	@Path("/attributetypes")
 	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
@@ -663,7 +662,7 @@ public class AttributeResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/types")
 	public Response updateAttributeTypes(
-			List<AttributeTypeSave> attributeTypeSaves
+			@DataType(AttributeTypeSave.class) List<AttributeTypeSave> attributeTypeSaves
 	)
 	{
 		if (attributeTypeSaves != null) {

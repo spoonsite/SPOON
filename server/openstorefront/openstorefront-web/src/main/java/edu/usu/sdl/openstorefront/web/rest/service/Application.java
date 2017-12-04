@@ -101,6 +101,7 @@ import org.apache.commons.lang.StringUtils;
 public class Application
 		extends BaseResource
 {
+
 	@Inject
 	private CoreSystem coreSystem;
 
@@ -482,7 +483,7 @@ public class Application
 		DBLogRecordWrapper logRecordWrapper = new DBLogRecordWrapper();
 		logRecordWrapper.getLogRecords().addAll(logRecords);
 		logRecordWrapper.setResults(logRecords.size());
-		logRecordWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		logRecordWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		return sendSingleEntityResponse(logRecordWrapper);
 	}

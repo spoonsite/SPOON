@@ -51,9 +51,9 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 @Path("v1/resource/systemsearches")
 @APIDescription("Public or system wide saved searches")
 public class SystemSearchResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@APIDescription("Get a list of saved searches")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -104,11 +104,11 @@ public class SystemSearchResource
 
 		SystemSearchWrapper searchWrapper = new SystemSearchWrapper();
 		searchWrapper.getData().addAll(searches);
-		searchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		searchWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
-		return sendSingleEntityResponse(searchWrapper);				
-	}	
-		
+		return sendSingleEntityResponse(searchWrapper);
+	}
+
 	@GET
 	@APIDescription("Get a saved search associated with a searchId")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -122,18 +122,18 @@ public class SystemSearchResource
 		systemSearch.setSearchId(searchId);
 		systemSearch = (SystemSearch) systemSearch.find();
 		return sendSingleEntityResponse(systemSearch);
-	}	
-	
+	}
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
-	@APIDescription("Saves a search")	
+	@APIDescription("Saves a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SystemSearch.class)
 	public Response createNewSearch(
-		SystemSearch search	
-	) 
-	{	
+			SystemSearch search
+	)
+	{
 		return handleSave(search, true);
 	}
 
@@ -145,82 +145,80 @@ public class SystemSearchResource
 	@DataType(SystemSearch.class)
 	@Path("/{searchId}")
 	public Response updateSearch(
-		@PathParam("searchId") String searchId,	
-		SystemSearch search	
-	) 
+			@PathParam("searchId") String searchId,
+			SystemSearch search
+	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		
+
 		SystemSearch systemSearch = new SystemSearch();
 		systemSearch.setSearchId(searchId);
 		systemSearch = (SystemSearch) systemSearch.find();
 		if (systemSearch != null) {
-			search.setSearchId(searchId);			
+			search.setSearchId(searchId);
 			response = handleSave(search, false);
 		}
-		
+
 		return response;
 	}
-	
-	private Response handleSave(SystemSearch search, boolean post) 
+
+	private Response handleSave(SystemSearch search, boolean post)
 	{
 		ValidationResult validationResult = search.validate(true);
 		if (validationResult.valid()) {
-						
+
 			search = service.getSearchService().saveSearch(search);
-			
+
 			if (post) {
 				return Response.created(URI.create("v1/resource/systemsearches" + search.getSearchId())).entity(search).build();
 			} else {
 				return Response.ok(search).build();
-			}			
+			}
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
+		}
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a search")
 	@Path("/{searchId}")
 	public Response deleteSearch(
-		@PathParam("searchId") String searchId
+			@PathParam("searchId") String searchId
 	)
 	{
-		Response response  = Response.status(Response.Status.FORBIDDEN).build();
-		
+		Response response = Response.status(Response.Status.FORBIDDEN).build();
+
 		SystemSearch systemSearch = new SystemSearch();
 		systemSearch.setSearchId(searchId);
 		systemSearch = (SystemSearch) systemSearch.find();
-		if (systemSearch != null)
-		{
+		if (systemSearch != null) {
 			service.getSearchService().inactivateSearch(searchId);
 			response = Response.ok(systemSearch).build();
-		}		
+		}
 		return response;
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a search")
 	@Path("/{searchId}/activate")
 	public Response activateSearch(
-		@PathParam("searchId") String searchId
+			@PathParam("searchId") String searchId
 	)
 	{
-		Response response  = Response.status(Response.Status.FORBIDDEN).build();
-		
+		Response response = Response.status(Response.Status.FORBIDDEN).build();
+
 		SystemSearch systemSearch = new SystemSearch();
 		systemSearch.setSearchId(searchId);
 		systemSearch = (SystemSearch) systemSearch.find();
-		if (systemSearch != null)
-		{
+		if (systemSearch != null) {
 			service.getSearchService().activateSearch(searchId);
 			response = Response.ok(systemSearch).build();
-		}		
+		}
 		return response;
-	}	
-	
+	}
+
 }

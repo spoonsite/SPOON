@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -38,11 +39,13 @@ public abstract class BaseComponentServiceImpl
 	protected CoreComponentServiceImpl core;
 	protected SubComponentServiceImpl sub;
 	protected IntegrationComponentServiceImpl integration;
+	protected FilterEngine filterEngine;
 
 	public BaseComponentServiceImpl(ComponentServiceImpl componentService)
 	{
 		this.componentService = componentService;
 		persistenceService = componentService.getPersistenceService();
+		this.filterEngine = componentService.getFilterEngine();
 	}
 
 	public void init()

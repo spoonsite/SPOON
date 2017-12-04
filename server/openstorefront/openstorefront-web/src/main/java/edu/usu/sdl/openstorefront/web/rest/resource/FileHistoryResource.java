@@ -125,7 +125,7 @@ public class FileHistoryResource
 
 		FileHistoryViewWrapper fileHistoryViewWrapper = new FileHistoryViewWrapper();
 		fileHistoryViewWrapper.getData().addAll(FileHistoryView.toView(fileHistories));
-		fileHistoryViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		fileHistoryViewWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		//gather warnings and errors
 		Map<String, List<FileHistoryError>> errorMap = service.getImportService().fileHistoryErrorMap();
@@ -157,7 +157,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)	
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Download the original file")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{fileHistoryId}/download")
@@ -239,7 +239,7 @@ public class FileHistoryResource
 		List<FileFormat> formats = service.getImportService().findFileFormats(type);
 		return formats;
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets all file formats that support mapping")
@@ -250,7 +250,7 @@ public class FileHistoryResource
 	{
 		List<FileFormat> formats = service.getImportService().getFileFormatsMapping();
 		return formats;
-	}	
+	}
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
@@ -258,34 +258,34 @@ public class FileHistoryResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/formats/{format}/mappings")
-	public List<LookupModel> getMappingsForFormat(			
+	public List<LookupModel> getMappingsForFormat(
 			@PathParam("format") String format
 	)
 	{
 		List<LookupModel> mappings = new ArrayList<>();
 
 		FileDataMap fileDataMapExample = new FileDataMap();
-		fileDataMapExample.setActiveStatus(FileDataMap.ACTIVE_STATUS);		
+		fileDataMapExample.setActiveStatus(FileDataMap.ACTIVE_STATUS);
 		fileDataMapExample.setFileFormat(format);
-		
+
 		List<FileDataMap> fileDataMaps = fileDataMapExample.findByExample();
 		for (FileDataMap fileDataMap : fileDataMaps) {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(fileDataMap.getFileDataMapId());
 			lookupModel.setDescription(fileDataMap.getName());
-						
+
 			mappings.add(lookupModel);
 		}
-		mappings.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));			
-		
+		mappings.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
+
 		return mappings;
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Deletes data mapping(s)")
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
-	public Response removeDataMapping(			
+	public Response removeDataMapping(
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId
 	)
@@ -293,85 +293,85 @@ public class FileHistoryResource
 		FileDataMap fileDataMapExample = new FileDataMap();
 		fileDataMapExample.setFileFormat(format);
 		fileDataMapExample.setFileDataMapId(fileDateMapId);
-		
+
 		fileDataMapExample = fileDataMapExample.find();
 		if (fileDataMapExample != null) {
-			service.getImportService().removeFileDataMap(fileDateMapId);			
+			service.getImportService().removeFileDataMap(fileDateMapId);
 		}
 		return Response.noContent().build();
 	}
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
-	@APIDescription("Creates a new data mapping")	
+	@APIDescription("Creates a new data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/formats/{format}/mappings")
 	public Response createNewMapping(
 			@PathParam("format") String format,
-			DataMapModel dataMapModel		
+			DataMapModel dataMapModel
 	)
 	{
 		return handleMappingSave(dataMapModel, true);
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
-	@APIDescription("Get a full data mapping record")	
+	@APIDescription("Get a full data mapping record")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(DataMapModel.class)	
+	@DataType(DataMapModel.class)
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response getFileMapping(
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId
 	)
 	{
-		DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);		
+		DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);
 		return sendSingleEntityResponse(dataMapModel);
 	}
-	
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
-	@APIDescription("Copies data mapping record")	
+	@APIDescription("Copies data mapping record")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
 	@Path("/formats/{format}/mappings/{fileDataMapId}/copy")
 	public Response copyMapping(
-		@PathParam("format") String format,
-		@PathParam("fileDataMapId") String fileDateMapId
+			@PathParam("format") String format,
+			@PathParam("fileDataMapId") String fileDateMapId
 	)
 	{
 		FileDataMap fileDataMapCreated = null;
-		
+
 		FileDataMap fileDataMapExample = new FileDataMap();
 		fileDataMapExample.setFileFormat(format);
 		fileDataMapExample.setFileDataMapId(fileDateMapId);
-		
+
 		fileDataMapExample = fileDataMapExample.find();
 		if (fileDataMapExample != null) {
 			fileDataMapCreated = service.getImportService().copyDataMap(fileDateMapId);
 		}
 		return sendSingleEntityResponse(fileDataMapCreated);
-	}	
-	
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
-	@APIDescription("Exports data mapping record")	
+	@APIDescription("Exports data mapping record")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
 	@Path("/formats/{format}/mappings/{fileDataMapId}/export")
 	public Response exportMapping(
-		@PathParam("format") String format,
-		@PathParam("fileDataMapId") String fileDateMapId
+			@PathParam("format") String format,
+			@PathParam("fileDataMapId") String fileDateMapId
 	)
-	{		
+	{
 		FileDataMap fileDataMap = new FileDataMap();
 		fileDataMap.setFileFormat(format);
 		fileDataMap.setFileDataMapId(fileDateMapId);
-		
+
 		fileDataMap = fileDataMap.find();
-		if (fileDataMap != null) {			
-			
+		if (fileDataMap != null) {
+
 			DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);
 			String data;
 			try {
@@ -382,25 +382,25 @@ public class FileHistoryResource
 
 			Response.ResponseBuilder response = Response.ok(data);
 			response.header("Content-Type", MediaType.APPLICATION_JSON);
-			response.header("Content-Disposition", "attachment; filename=\"fileImportMap-" +
-					StringProcessor.formatForFilename(fileDataMap.getName()) 
+			response.header("Content-Disposition", "attachment; filename=\"fileImportMap-"
+					+ StringProcessor.formatForFilename(fileDataMap.getName())
 					+ ".json\"");
 			return response.build();
-			
+
 		}
 		return sendSingleEntityResponse(null);
-	}	
-	
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
-	@APIDescription("Updates a data mapping")	
+	@APIDescription("Updates a data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response updateMapping(
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId,
-			DataMapModel dataMapModel		
+			DataMapModel dataMapModel
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
@@ -408,13 +408,13 @@ public class FileHistoryResource
 		FileDataMap fileDataMapExample = new FileDataMap();
 		fileDataMapExample.setFileFormat(format);
 		fileDataMapExample.setFileDataMapId(fileDateMapId);
-		
+
 		fileDataMapExample = fileDataMapExample.find();
 		if (fileDataMapExample != null) {
 			dataMapModel.getFileDataMap().setFileDataMapId(fileDateMapId);
-			dataMapModel.getFileDataMap().setFileFormat(format);			
+			dataMapModel.getFileDataMap().setFileFormat(format);
 			response = handleMappingSave(dataMapModel, false);
-		}		
+		}
 		return response;
 	}
 
@@ -426,18 +426,18 @@ public class FileHistoryResource
 
 		if (validationResult.valid()) {
 			FileDataMap fileDataMap = service.getImportService().saveFileDataMap(dataMapModel);
-			
+
 			if (post) {
 				return Response.created(URI.create(
-						"v1/resource/filehistory/formats/" +
-						fileDataMap.getFileFormat() + 
-						"/mappings/" + fileDataMap.getFileDataMapId()))
-					.entity(fileDataMap).build();
+						"v1/resource/filehistory/formats/"
+						+ fileDataMap.getFileFormat()
+						+ "/mappings/" + fileDataMap.getFileDataMapId()))
+						.entity(fileDataMap).build();
 			} else {
 				return sendSingleEntityResponse(fileDataMap);
 			}
 		}
-		return sendSingleEntityResponse(validationResult.toRestError());			
+		return sendSingleEntityResponse(validationResult.toRestError());
 	}
 
 }

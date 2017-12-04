@@ -968,7 +968,7 @@ public class AttributeServiceImpl
 		result.setData(attributes);
 
 		queryByExample.setQueryType(QueryType.COUNT);
-		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		result.setTotalNumber(persistenceService.countByExampleSimple(queryByExample));
 		return result;
 	}
 
@@ -1026,7 +1026,7 @@ public class AttributeServiceImpl
 		result.setData(views);
 
 		queryByExample.setQueryType(QueryType.COUNT);
-		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		result.setTotalNumber(persistenceService.countByExampleSimple(queryByExample));
 		return result;
 	}
 

@@ -21,7 +21,8 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ReportDetailView;
+import edu.usu.sdl.openstorefront.core.view.ReportFilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ScheduledReportView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -43,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -59,7 +61,7 @@ public class ScheduledReportResource
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReportView.class)
-	public Response getReports(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getReports(@BeanParam ReportFilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -68,8 +70,15 @@ public class ScheduledReportResource
 
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {	
+		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		} else {
+			if (!filterQueryParams.getShowAllUsers()) {
+				reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			}
+		}
+		if (StringUtils.isNotBlank(filterQueryParams.getReportType())) {
+			reportExample.setReportType(filterQueryParams.getReportType());
 		}
 
 		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(reportExample);
@@ -82,7 +91,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -97,6 +106,27 @@ public class ScheduledReportResource
 		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);
+		}
+		return response;
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@APIDescription("Gets a scheduled report details.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportDetailView.class)
+	@Path("/{id}/detail")
+	public Response getReportDetails(
+			@PathParam("id") String scheduleReportId
+	)
+	{
+		ScheduledReport reportExample = new ScheduledReport();
+		reportExample.setScheduleReportId(scheduleReportId);
+		ScheduledReport report = reportExample.find();
+		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
+		if (response == null) {
+			ReportDetailView reportDetailView = ReportDetailView.toView(report);
+			response = sendSingleEntityResponse(reportDetailView);
 		}
 		return response;
 	}
@@ -138,11 +168,14 @@ public class ScheduledReportResource
 		ValidationModel validationModel = new ValidationModel(scheduledReport);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		validationResult.merge(scheduledReport.customValidation());
+
 		if (validationResult.valid()) {
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, scheduledReport.getReportType());
 			boolean run = true;
-			if (!SecurityUtil.hasPermission(reportType.getRequiredPermission())) {						
+			if (!SecurityUtil.hasPermission(reportType.getRequiredPermission())) {
 				run = false;
 			}
 			if (run) {
@@ -175,7 +208,8 @@ public class ScheduledReportResource
 		if (scheduledReport != null) {
 			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
-				scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+				service.getReportService().updateStatusOnScheduledReport(scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+				scheduledReport.setActiveStatus(ScheduledReport.ACTIVE_STATUS);
 				return sendSingleEntityResponse(scheduledReport);
 			} else {
 				return response;
@@ -188,7 +222,7 @@ public class ScheduledReportResource
 	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
-	public void inactiveAlert(
+	public void inactiveScheduledReport(
 			@PathParam("id") String scheduleReportId)
 	{
 		ScheduledReport scheduledReport = new ScheduledReport();
@@ -197,16 +231,16 @@ public class ScheduledReportResource
 		if (scheduledReport != null) {
 			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
-				service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
+				service.getReportService().updateStatusOnScheduledReport(scheduleReportId, ScheduledReport.INACTIVE_STATUS);
 			}
 		}
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
-	public void deleteReport(
+	public void deleteScheduledReport(
 			@PathParam("id") String scheduleReportId)
 	{
 		ScheduledReport scheduledReport = new ScheduledReport();

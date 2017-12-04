@@ -58,7 +58,7 @@ public class ContactResource
 		extends BaseResource
 {
 
-	@GET	
+	@GET
 	@APIDescription("Gets distinct contacts")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Contact.class)
@@ -68,12 +68,12 @@ public class ContactResource
 		Contact contact = new Contact();
 		contact.setActiveStatus(Contact.ACTIVE_STATUS);
 		List<Contact> contacts = contact.findByExample();
-		
+
 		contacts.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Contact.FIELD_FIRSTNAME));
 
 		return contacts;
 	}
-	
+
 	@GET
 	@APIDescription("Gets contact records")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -122,7 +122,7 @@ public class ContactResource
 
 		ContactViewWrapper contactViewWrapper = new ContactViewWrapper();
 		contactViewWrapper.getData().addAll(contacts);
-		contactViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		contactViewWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
 
 		return sendSingleEntityResponse(contactViewWrapper);
 	}
@@ -139,8 +139,8 @@ public class ContactResource
 		Contact contact = new Contact();
 		contact.setContactId(contactId);
 		return sendSingleEntityResponse(contact.find());
-	}	
-	
+	}
+
 	@GET
 	@APIDescription("Gets contact references")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -153,15 +153,15 @@ public class ContactResource
 		Contact contact = new Contact();
 		contact.setContactId(contactId);
 		contact = contact.find();
-		if (contact != null) {		
+		if (contact != null) {
 			List<ContactReference> references = service.getContactService().findReferences(contactId);
 			GenericEntity<List<ContactReference>> entity = new GenericEntity<List<ContactReference>>(references)
 			{
-			};				
+			};
 			return sendSingleEntityResponse(entity);
-		} 
+		}
 		return sendSingleEntityResponse(null);
-	}	
+	}
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
@@ -172,8 +172,8 @@ public class ContactResource
 	public Response createContact(Contact contact)
 	{
 		return handleSaveContact(contact, true);
-	}	
-	
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@APIDescription("Updates a contact")
@@ -193,39 +193,39 @@ public class ContactResource
 		}
 		contact.setContactId(contactId);
 		return handleSaveContact(contact, false);
-	}	
-	
+	}
+
 	private Response handleSaveContact(Contact contact, boolean post)
 	{
 		ValidationResult validationResult = contact.validate(true);
 		if (validationResult.valid()) {
-			
+
 			contact = service.getContactService().saveContact(contact);
-			
+
 			if (post) {
 				return Response.created(URI.create("v1/resource/contacts/" + contact.getContactId())).entity(contact).build();
 			} else {
 				return Response.ok(contact).build();
-			}			
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
-		}		
-	}	
-	
+		}
+	}
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@APIDescription("Deletes a contact")
 	@Path("/{contactId}")
-		public void deleteContact(
+	public void deleteContact(
 			@PathParam("contactId") String contactId
 	)
 	{
-		service.getContactService().deleteContact(contactId);		
+		service.getContactService().deleteContact(contactId);
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
-	@Produces({MediaType.APPLICATION_JSON})		
+	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a contact")
 	@DataType(Contact.class)
 	@Path("/{contactId}/inactivate")
@@ -234,12 +234,12 @@ public class ContactResource
 			@QueryParam("includeReferences") boolean includeReferences
 	)
 	{
-		return handleStatusUpdate(contactId, includeReferences, false);	
-	}		
+		return handleStatusUpdate(contactId, includeReferences, false);
+	}
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
-	@Produces({MediaType.APPLICATION_JSON})		
+	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a contact")
 	@DataType(Contact.class)
 	@Path("/{contactId}/activate")
@@ -249,27 +249,27 @@ public class ContactResource
 	)
 	{
 		return handleStatusUpdate(contactId, includeReferences, true);
-	}		
-	
+	}
+
 	private Response handleStatusUpdate(String contactId, boolean includeReferences, boolean activate)
 	{
 		Contact contact = new Contact();
 		contact.setContactId(contactId);
 		contact = contact.find();
 		if (contact != null) {
-			
+
 			if (activate) {
-				service.getContactService().activeContact(contactId, includeReferences);				
+				service.getContactService().activeContact(contactId, includeReferences);
 			} else {
 				service.getContactService().inactiveContact(contactId, includeReferences);
 			}
 		}
 		return sendSingleEntityResponse(contact);
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
-	@Produces({MediaType.APPLICATION_JSON})		
+	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Merge contacts")
 	@DataType(Contact.class)
 	@Path("/{targetContactId}/merge/{mergeContactId}")
@@ -279,16 +279,16 @@ public class ContactResource
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		
+
 		Contact targetContact = service.getPersistenceService().findById(Contact.class, targetContactId);
 		Contact mergeContact = service.getPersistenceService().findById(Contact.class, mergeContactId);
-		
+
 		if (targetContact != null && mergeContact != null) {
 			service.getContactService().mergeContacts(targetContactId, mergeContactId);
 			response = Response.ok(targetContact).build();
 		}
-		
+
 		return response;
-	}	
+	}
 
 }

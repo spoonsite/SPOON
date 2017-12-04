@@ -30,7 +30,6 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -79,7 +78,7 @@ public class MediaAction
 	public static final String MISSING_IMAGE = "/image/close-red.png";
 	public static final long MISSING_MEDIA_IMAGE_SIZE = 10898;
 
-	private static final Logger log = Logger.getLogger(MediaAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(MediaAction.class.getName());
 
 	@Validate(required = true, on = {"LoadMedia", "SectionMedia"})
 	private String mediaId;
@@ -143,7 +142,7 @@ public class MediaAction
 		mediaFile = service.getPersistenceService().findById(MediaFile.class, mediaId);
 		if (mediaFile == null) {
 			componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
-			componentMedia = FilterEngine.filter(componentMedia, true);
+			componentMedia = filterEngine.filter(componentMedia, true);
 			if (componentMedia == null || componentMedia.getFile() == null) {
 				throw new OpenStorefrontRuntimeException("Media not Found", "Check media Id");
 			}
@@ -159,9 +158,9 @@ public class MediaAction
 		} else {
 			if (componentMedia != null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.path(), mediaId, component.getName(), component.getComponentId()}));
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{mediaFile.path(), mediaId, component.getName(), component.getComponentId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.path(), mediaId}));
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.path(), mediaId}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
@@ -187,7 +186,7 @@ public class MediaAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -248,7 +247,7 @@ public class MediaAction
 		generalMediaExample.setName(name);
 		generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 		if (generalMedia == null) {
-			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found.", name));
+			LOG.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")
 			{
 
@@ -270,7 +269,7 @@ public class MediaAction
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
@@ -290,7 +289,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		if (generalMedia != null) {
 			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -301,7 +300,7 @@ public class MediaAction
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				try {
-					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream(),file.getContentType(),StringProcessor.getJustFileName(file.getFileName()));
+					generalMedia = service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream(), file.getContentType(), StringProcessor.getJustFileName(file.getFileName()));
 					return streamResults(generalMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
@@ -324,7 +323,7 @@ public class MediaAction
 		temporaryMediaExample.setName(name);
 		TemporaryMedia temporaryMediaFound = service.getPersistenceService().queryOneByExample(temporaryMediaExample);
 		if (temporaryMediaFound == null) {
-			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
+			LOG.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")
 			{
 
@@ -346,7 +345,7 @@ public class MediaAction
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMediaFound.pathToMedia(), temporaryMediaFound.getName()}));
+			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMediaFound.pathToMedia(), temporaryMediaFound.getName()}));
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
@@ -452,7 +451,7 @@ public class MediaAction
 						Component component = new Component();
 						component.setComponentId(section.getEntityId());
 						component = component.find();
-						component = FilterEngine.filter(component);
+						component = filterEngine.filter(component);
 						if (component == null) {
 							sectionMedia = null;
 						}
@@ -460,7 +459,7 @@ public class MediaAction
 						Evaluation evaluation = new Evaluation();
 						evaluation.setEvaluationId(section.getEntityId());
 						evaluation = evaluation.find();
-						evaluation = FilterEngine.filter(evaluation);
+						evaluation = filterEngine.filter(evaluation);
 						if (evaluation == null) {
 							sectionMedia = null;
 						}
@@ -471,7 +470,7 @@ public class MediaAction
 		}
 
 		if (mediaFile == null) {
-			log.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
+			LOG.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
 			return new StreamingResolution("image/png")
 			{
 				@Override
@@ -492,9 +491,9 @@ public class MediaAction
 			length = path.toFile().length();
 		} else {
 			if (sectionMedia != null) {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.path(), sectionMedia.getContentSectionMediaId()}));
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.path(), sectionMedia.getContentSectionMediaId()}));
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
+				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
 			}
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
@@ -556,7 +555,7 @@ public class MediaAction
 				in = new FileInputStream(path.toFile());
 				length = path.toFile().length();
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Organization logo not on disk: {0} Check organization media record: {1} ", new Object[]{organization.pathToLogo(), organization.getOrganizationId()}));
+				LOG.log(Level.WARNING, MessageFormat.format("Organization logo not on disk: {0} Check organization media record: {1} ", new Object[]{organization.pathToLogo(), organization.getOrganizationId()}));
 				in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 				length = MISSING_MEDIA_IMAGE_SIZE;
 			}
@@ -569,7 +568,7 @@ public class MediaAction
 					.setFilename(organization.getLogoOriginalFileName())
 					.createRangeResolution();
 		} else {
-			log.log(Level.FINE, MessageFormat.format("Organization with id: {0} is not found.", organizationId));
+			LOG.log(Level.FINE, MessageFormat.format("Organization with id: {0} is not found.", organizationId));
 			return new StreamingResolution("image/png")
 			{
 				@Override

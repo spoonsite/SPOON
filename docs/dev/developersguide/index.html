@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Storefront Docs</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.31.1" />
+
+<title>Developer Guide :: Storefront Docs</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/hybrid.css" rel="stylesheet">
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<link href="/css/auto-complete.css" rel="stylesheet">
+<link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<style type="text/css">
+  :root #header + #content > #left > #rlblock_left {
+    display:none !important;
+  }
+</style>
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/dev/developersguide/">
+    
+      <div id="headermain"></div>
+<nav id="sidebar" class="showVisitedLinks">
+
+
+
+<div class="highlightable">
+  <div id="header-wrapper">
+    <div id="header">
+      
+	
+  
+    <h4 style="color:white;">Open Storefront Documentation</h4>
+
+  
+
+    </div>
+        <div class="searchbox">
+		    <label for="search-by"><i class="fa fa-search"></i></label>
+		    <input data-search-input id="search-by" type="text" placeholder="Search...">
+		    <span data-search-clear=""><i class="fa fa-close"></i></span>
+		</div>
+		<script type="text/javascript" src="/js/lunr.min.js"></script>
+		<script type="text/javascript" src="/js/auto-complete.js"></script>
+		<script type="text/javascript">
+        
+            var baseurl = "\/";
+        
+		</script>
+		<script type="text/javascript" src="/js/search.js"></script>
+  </div>
+
+      <ul class="topics">
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+    <li data-nav-id="/evaluations/" class="dd-item">
+      <a href="/evaluations/">
+        <span>Evaluations</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+        </ul>
+    </li>
+    <li data-nav-id="/dev/" class="dd-item parent">
+      <a href="/dev/">
+        <span>Developer</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/dev/developersguide/" class="dd-item active">
+        <a href="/dev/developersguide/">
+          <span>Developer Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/architecture/" class="dd-item">
+        <a href="/dev/architecture/">
+          <span>Architecture</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/front-end-code-standard/" class="dd-item">
+        <a href="/dev/front-end-code-standard/">
+          <span>Front-end Code Standards</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/gitworkflow/" class="dd-item">
+        <a href="/dev/gitworkflow/">
+          <span>Git Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/jira-workflow/" class="dd-item">
+        <a href="/dev/jira-workflow/">
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/testing/" class="dd-item">
+        <a href="/dev/testing/">
+          <span>Testing</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/uiguide/" class="dd-item">
+        <a href="/dev/uiguide/">
+          <span>User Interface Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/server-code-standard/" class="dd-item">
+        <a href="/dev/server-code-standard/">
+          <span>Server Code Standard</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/systemadmin/" class="dd-item">
+      <a href="/systemadmin/">
+        <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/systemadmin/setup/" class="dd-item">
+        <a href="/systemadmin/setup/">
+          <span>Setup</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/docker/" class="dd-item">
+        <a href="/systemadmin/docker/">
+          <span>Using Docker</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
+        <a href="/systemadmin/administratorguide/">
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
+        <a href="/systemadmin/versionmigrationguide/">
+          <span>Version Migration</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/user/" class="dd-item">
+      <a href="/user/">
+        <span>User</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/user/userguide/" class="dd-item">
+        <a href="/user/userguide/">
+          <span>User Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/user/quick-overview-of-submitting-a-new-component/" class="dd-item">
+        <a href="/user/quick-overview-of-submitting-a-new-component/">
+          <span>Submitting a New Component</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+
+
+
+        <section id="shortcuts">
+                <li class="" role=""><h3>More</h3><a href="https://github.com/di2e/openstorefront/tree/master" target="_blank" rel="noopener"><i class='fa fa-github'></i> Github repo</a></li>
+                <li class="" role=""><a href="https://github.com/di2e/openstorefront/releases" target="_blank" rel="noopener"><i class='fa fa-download'></i> Releases</a></li>
+        </section>
+            <a id="clear-history" class="" href="#" data-clear-history-toggle=""><i class="fa  fa-history"></i> Clear History</a>
+
+    <hr />
+    <li></li>
+    
+    </ul>
+
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>OpenStoreFront version 2.5</p>
+    <p>Documentation generated on Nov 30, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
+</div>
+    </section>
+  </div>
+</nav>
+
+
+
+<section id="body">
+<div id="overlay"></div>
+<div class="padding highlightable">
+
+  <div id="top-bar">
+    
+      
+      
+      
+    <div id="top-github-link">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/dev/DevelopersGuide.md" target="blank">
+        <i class="fa fa-code-fork"></i>
+        Edit page
+      </a>
+    </div><div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <span id="sidebar-toggle-span">
+          <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+            <i class="fa fa-bars"></i>
+          </a>
+        </span>
+        <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+        <span class="links">
+        
+
+
+
+
+
+
+
+ <a href='/'>OpenStoreFront Documentation</a> > <a href='/dev/'>Developer</a> > Developer Guide
+
+ 
+
+ 
+
+   
+        </span>
+    </div>
+    
+    
+    <div class="progress">
+        <div class="wrapper">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#1-internal-development">1. Internal Development</a>
+<ul>
+<li><a href="#1-1-key-components-used">1.1 Key Components Used</a></li>
+<li><a href="#1-2-key-libraries-used">1.2 Key Libraries Used</a></li>
+<li><a href="#1-3-dev-environment-with-netbeans">1.3 Dev Environment with NetBeans</a></li>
+<li><a href="#1-4-building-with-maven-cli">1.4 Building with Maven CLI</a></li>
+<li><a href="#1-5-deploying">1.5 Deploying</a></li>
+<li><a href="#1-6-running">1.6  Running</a></li>
+<li><a href="#1-7-testing">1.7 Testing</a></li>
+<li><a href="#1-8-contributing-patches">1.8  Contributing Patches</a></li>
+<li><a href="#1-9-versioning-strategy">1.9 Versioning Strategy</a></li>
+<li><a href="#1-10-licensing">1.10 Licensing</a></li>
+<li><a href="#1-11-security">1.11 Security</a>
+<ul>
+<li><a href="#1-11-1-adding-permissions">1.11.1 Adding Permissions</a></li>
+<li><a href="#1-11-2-data-restriction">1.11.2 Data Restriction</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#2-external-developers">2. External Developers</a>
+<ul>
+<li><a href="#2-1-rest-api">2.1 REST API</a></li>
+<li><a href="#2-2-adding-custom-parser-plugin">2.2 Adding Custom Parser (Plugin)</a>
+<ul>
+<li><a href="#2-2-2-parser-workflow">2.2.2 Parser Workflow</a></li>
+<li><a href="#2-2-3-parser-class">2.2.3 Parser Class</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#3-database-management">3. Database Management</a>
+<ul>
+<li><a href="#3-1-refreshing-the-database">3.1 Refreshing the Database</a></li>
+<li><a href="#3-2-installing-database-console">3.2 Installing Database Console</a></li>
+<li><a href="#3-3-installing-database-studio">3.3 Installing Database Studio</a></li>
+</ul></li>
+</ul>
+</nav>
+        </div>
+    </div>
+    
+
+  </div>
+
+
+<div id="body-inner">
+  
+    <h1>Developer Guide</h1>
+  
+
+
+
+    
+    
+    
+    
+
+<h1 id="1-internal-development">1. Internal Development</h1>
+
+<p>See documents under /dev for Coding and Style guides.</p>
+
+<h2 id="1-1-key-components-used">1.1 Key Components Used</h2>
+
+<p>The following components were used in the development:</p>
+
+<ul>
+<li><p>JDK 8</p></li>
+
+<li><p>Elasticsearch/Solr</p></li>
+
+<li><p>OpenAM (Configurable, default is property based log in.)</p></li>
+</ul>
+
+<p>The application is a JEE servlet-container webapp, so any JEE 6 servlet-container
+compliant server should work with some server configuration. The current
+deployment target is Tomcat 7.</p>
+
+<h2 id="1-2-key-libraries-used">1.2 Key Libraries Used</h2>
+
+<p>The following key libraries were used in the development:</p>
+
+<ul>
+<li><p>JAX-RS- heavily used for REST API. (Jersey with Moxy for
+data binding)</p></li>
+
+<li><p>Stripes- Action based web framework</p></li>
+
+<li><p>Jackson- JSON Handling/Binding</p></li>
+
+<li><p>Apache Shiro- Security</p></li>
+
+<li><p>Orient DB- No SQL/Multi-Model database</p></li>
+
+<li><p>Ext.js and tinymce</p></li>
+</ul>
+
+<h2 id="1-3-dev-environment-with-netbeans">1.3 Dev Environment with NetBeans</h2>
+
+<ol>
+<li><strong>NetBeans Install/configuration</strong>
+
+<ul>
+<li>Install NetBeans with Java EE and Tomcat - <a href="https://netbeans.org/downloads/">https://netbeans.org/downloads/</a></li>
+<li>Select &ldquo;Customize&rdquo; on the NetBeans installer to switch the server from GlassFish to Tomcat</li>
+<li>If you already have NetBeans installed</li>
+<li>In the Tools -&gt; Plugins window check for &ldquo;Java EE Base&rdquo; install it if not already installed. Restart NetBeans if prompted</li>
+<li>Install Tomcat 7 (if not already installed) - <a href="http://tomcat.apache.org/download-70.cgi">http://tomcat.apache.org/download-70.cgi</a></li>
+</ul></li>
+<li><strong>Clone the openstorefront GitHub repo to the desired directory</strong>
+
+<ul>
+<li><a href="https://help.github.com/articles/cloning-a-repository/">https://help.github.com/articles/cloning-a-repository/</a></li>
+</ul></li>
+<li><strong>Open the openstorefront Project</strong>
+
+<ul>
+<li>Select the Open Project Icon or press CTRL + SHIFT + O</li>
+<li>Open the openstorefront/server directory</li>
+<li>Select the &ldquo;openstorefront&rdquo; option and make sure &ldquo;Open Required Projects&rdquo; is selected</li>
+</ul></li>
+<li><strong>Tomcat Server configuration</strong>
+
+<ul>
+<li>Select Tools -&gt; Servers. Once the servers window opens, select Add Server</li>
+<li>Follow the wizard to select the Tomcat server location and add a user</li>
+<li>Once created, select the &ldquo;Startup&rdquo; tab and ensure the &ldquo;Socket Port&rdquo; option is selected.</li>
+<li>Select the Platform tab and set the VM memory options to -Xmx[memory size].</li>
+<li>We recommend at least 2GB. (-Xmx2g)</li>
+<li>if you want to use the Tomcat manager-gui you will need to configuring manager application access -  <a href="https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access">https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access</a></li>
+<li>make sure you have RW access to $Tomcat_HOME/bin/felix-cache</li>
+</ul></li>
+</ol>
+
+<h2 id="1-4-building-with-maven-cli">1.4 Building with Maven CLI</h2>
+
+<p>Install Maven if not installed by your IDE - <a href="http://maven.apache.org/install.html">http://maven.apache.org/install.html</a></p>
+
+<p>run <code>mvn install</code> from <code>$PROJECT\_HOME/server/openstorefront</code></p>
+
+<p>(Skip tests) <code>mvn -Dmaven.test.skip=true</code> or <code>mvn -DskipTests=true install</code></p>
+
+<h2 id="1-5-deploying">1.5 Deploying</h2>
+
+<p>Copy the war artifact to the webapp directory for Tomcat. Some IDEs can
+handle this for you. See application server documentation for other deployment
+mechanisms.</p>
+
+<h2 id="1-6-running">1.6  Running</h2>
+
+<p>The application is targeted to run in Tomcat 7; however, it may run in
+other compatible containers with little or no changes.</p>
+
+<div class="notices note" ><p>Searching requires an external Elasticsearch/(Solr) instance setup.
+See <a href="../systemadmin/Setup.md">Setup</a></p>
+</div>
+
+
+<h2 id="1-7-testing">1.7 Testing</h2>
+
+<ul>
+<li>Unit tests
+
+<ul>
+<li>run as part of the Maven install.</li>
+<li>NetBeans, Eclipse and IntelliJ Idea have native graphical test runners built in.</li>
+<li>with the JUnit CLI java org.junit.runner.JUnitCore [class to test] <a href="http://junit.org/junit4/faq.html#atests_1">http://junit.org/junit4/faq.html#atests_1</a></li>
+</ul></li>
+<li>Container/Integration tests login as admin go to
+<a href="http://localhost:8080/openstorefront/test/ServiceTest.action">http://localhost:8080/openstorefront/test/ServiceTest.action</a></li>
+</ul>
+
+<h2 id="1-8-contributing-patches">1.8  Contributing Patches</h2>
+
+<p>The code is hosted on the public GitHub
+<a href="https://github.com/di2e/openstorefront">https://github.com/di2e/openstorefront</a>. Create a pull request to the
+current release branch. A pull request will be reviewed prior to merge.
+Please file bugs or enhancement by submitting a ticket to:</p>
+
+<p><a href="https://jira.di2e.net/browse/STORE">https://jira.di2e.net/browse/STORE</a> (Login required)</p>
+
+<p>If you are unable to obtain a login account then submit an issue ticket
+on the GitHub site.</p>
+
+<h2 id="1-9-versioning-strategy">1.9 Versioning Strategy</h2>
+
+<p>The software is versioned based on the following:</p>
+
+<p>Major.Minor.Patch</p>
+
+<p>A major version change is represents a major change in functionality or
+an addition of a major new feature. A minor version change represent
+minor features and improvement along with bug fixes. A patch release is
+done only for bug fixes and needed improvements to existing features.</p>
+
+<p>The REST API versioning follows <a href="http://semver.org/">http://semver.org/</a> where major version
+represents incompatible API changes. The REST endpoints include a
+version number which represents the major version. The version in the
+URL doesn&rsquo;t change with minor versions. However, the API follows with
+the version of the application.</p>
+
+<h2 id="1-10-licensing">1.10 Licensing</h2>
+
+<p>The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.</p>
+
+<h2 id="1-11-security">1.11 Security</h2>
+
+<p>Openstorefront support several environments each have different security needs.
+It also support a built in user management.  Regardless of the authentication mechanism the security is based on dynamic role made up of permissions.</p>
+
+<p>The granularity of the permissions is mostly feature/tool based.</p>
+
+<h3 id="1-11-1-adding-permissions">1.11.1 Adding Permissions</h3>
+
+<ol>
+<li><p>Add Permission to SecurityPermission entity in code.</p></li>
+
+<li><p>Add Permission to auto-generated admin group (See Core-Service-&gt; &hellip;core.init.SecurityInit.java)</p></li>
+
+<li><p>Apply Permission</p></li>
+</ol>
+
+<p>Two place where permission need to be applied:</p>
+
+<ul>
+<li><p>Server API</p></li>
+
+<li><p>UI (typically to restrict a page however, it may be used to restrict a piece of functionality)</p></li>
+</ul>
+
+<p>Use caution in marking APIs as there may be other features that rely a shared API to work correctly. Should be a rare case.
+Also, keep in mind there may be special handling for &ldquo;owners&rdquo; of the data beyond a permission.</p>
+
+<h3 id="1-11-2-data-restriction">1.11.2 Data Restriction</h3>
+
+<p>Data may be restricted by source and/or data sensitivity.  Data sensitivity may
+be marked at a entity-level however, not all entity need to be marked. Marking
+support on the UI may be set according to needs.</p>
+
+<p>All Data-based API need to handling filtering data.</p>
+
+<h1 id="2-external-developers">2. External Developers</h1>
+
+<p>This guide is targeted at external developers who want to extend the application.</p>
+
+<h2 id="2-1-rest-api">2.1 REST API</h2>
+
+<p>The API document is directly reflected from the live code so it is always current for the running version of the application.
+The API documentation can be accessed by logging in as an admin and following the link from the admin tools see application management.
+A print view of the API can be generated form there as well.</p>
+
+<h2 id="2-2-adding-custom-parser-plugin">2.2 Adding Custom Parser (Plugin)</h2>
+
+<p>A custom parser may be needed for handling complex formats that can&rsquo;t be support via data mapping.
+In some cases, both a custom parser and data mapping may be required.</p>
+
+<p>1 - Create an OSGi bundle (you use a maven project)</p>
+
+<p>2 - Add a dependency to openstorefront-core-api</p>
+
+<p>3 - In the Activator.java, register your new parser
+   (More than one parser can be added to a plugin)</p>
+
+<p>In start bundle:</p>
+
+<pre><code class="language-java">FileFormat customFormat = new FileFormat();
+customFormat.setCode(&quot;CUSTOMFORMATCODE&quot;);
+customFormat.setFileType(FileType.COMPONENT);
+customFormat.setDescription(&quot;Custom format&quot;);
+customFormat.setSupportsDataMap(true);  //Set to true to allow data mapping
+customFormat.setParserClass(CustomParser.class.getName());
+
+service.getImportService().registerFormat(customFormat, CustomParser.class);
+</code></pre>
+
+<p>In stop bundle:</p>
+
+<pre><code class="language-java">service.getImportService().unregisterFormat(customFormat.class.getName());
+</code></pre>
+
+<p>4 - Upload build JAR using the Admin-&gt;Application Management-&gt;System-&gt;Plugins
+or copy jar to /var/openstorefront/perm/plugins and the application will auto-deploy</p>
+
+<div class="notices note" ><p>Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
+All other third-party libraries must be included with your JAR.</p>
+</div>
+
+
+<h3 id="2-2-2-parser-workflow">2.2.2 Parser Workflow</h3>
+
+<p>(Default flow but it can be overridden)</p>
+
+<ol>
+<li><p>Check Format (On Web Upload)</p></li>
+
+<li><p>Process Data</p>
+
+<ol>
+<li><p>Get the parser Reader (CSV, Text, XML&hellip;etc)</p></li>
+
+<li><p>Read Record</p></li>
+
+<li><p>Validate Record</p></li>
+
+<li><p>Add record to storage batch (flushes batch if full)</p></li>
+
+<li><p>Loop through remaining records</p></li>
+
+<li><p>Flush any records not stored</p></li>
+
+<li><p>Finish Processing (Override for special handling; Eg Media and Relationships)</p></li>
+</ol></li>
+</ol>
+
+<h3 id="2-2-3-parser-class">2.2.3 Parser Class</h3>
+
+<ol>
+<li>Extend Either the Component or Attribute Base Parser</li>
+<li>Implement Check format and parse record
+
+<ul>
+<li>Override other method such as getReader as needed.</li>
+<li>The parse record method receive a model according to the reader.</li>
+<li>Then it should return a record such as ComponentAll to be stored.</li>
+<li>If the method return null it will skip the record.</li>
+</ul></li>
+</ol>
+
+<div class="notices note" ><p>The developer has access to the filehistory record and the service proxy.</p>
+
+<p><strong>See:</strong> spoon importer plugin as a example.</p>
+</div>
+
+
+<h1 id="3-database-management">3. Database Management</h1>
+
+<p>The application handles all database interaction transparently, so
+direct database access and manipulation is not needed.</p>
+
+<p>See the following for information on outside control (should rarely be
+needed/used).</p>
+
+<h2 id="3-1-refreshing-the-database">3.1 Refreshing the Database</h2>
+
+<div class="alert 
+alert-danger"
+ 
+role="alert"><p><strong>CAUTION</strong> This will wipe out all data in the application. Data, such
+as User profiles, cannot be recovered. Component user data can be
+preserved by performing an export from the component admin tool.</p>
+</div>
+
+
+<p>Make a backup by copying all of the files in the /var/openstorefront/db
+directory or use the following console tools steps:</p>
+
+<ol>
+<li>Stop the Tomcat server  (e.g. service tomcat stop)</li>
+<li>Remove the folder /var/openstorefront/db (rm -rf /var/openstorefront/db)</li>
+<li>Start the tomcat server</li>
+</ol>
+
+<p>When the application loads it will create a new database and populate
+the data from whatever is currently in the import folders (lookups only; attributes, component, articles will need to be manually
+trigger or uploaded via the Admin Tools UI).</p>
+
+<p>The initial load of the application may take a few minutes. If the
+import directories are empty, the application will load default lookup
+files that are packaged with the application.</p>
+
+<h2 id="3-2-installing-database-console">3.2 Installing Database Console</h2>
+
+<div class="notices warning" ><p>Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.</p>
+</div>
+
+
+<ol>
+<li><p>Download Orient DB (Currently using the 2.1.x series) at
+<a href="http://www.orientechnologies.com/download/">OrientDB.org</a></p></li>
+
+<li><p>Extract the archive</p></li>
+
+<li><p>Run the console ./bin/console.sh</p></li>
+
+<li><p>Connect to the DB:</p></li>
+</ol>
+
+<p>connect remote: localhost/openstorefront (user) (password) (see the
+    /var/openstorefront/config/openstorefront.properties for
+    connection information)</p>
+
+<p>The database supports an SQL like interface and then adds other
+functionality on top.</p>
+
+<ul>
+<li><p>See <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html">Orient DB Backup</a> for
+information about backup</p></li>
+
+<li><p>See <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html">Orient DB Export/Import</a> for
+export and imports.</p></li>
+</ul>
+
+<h2 id="3-3-installing-database-studio">3.3 Installing Database Studio</h2>
+
+<div class="notices note" ><p>Orient DB includes a web application for viewing the database
+visually, instead of viewing everything from the console. Once installed,
+Orient DB Studio will run with the database itself once OpenStoreFront
+is running, and will not require anything to be run locally</p>
+</div>
+
+
+<div class="notices warning" ><p>Viewing (Querying) information is fine; however, use
+extreme caution when modifying any records as all logic is handled by
+the application.</p>
+</div>
+
+
+<ol>
+<li><p>Download Orient DB (Currently using the 2.1.x series) at
+<a href="http://www.orientechnologies.com/download/">OrientDB.org</a></p>
+
+<ol>
+<li>If you already downloaded Orient DB in section 3.2 above,
+you may simply reuse that download.</li>
+</ol></li>
+
+<li><p>Extract the archive</p></li>
+
+<li><p>Locate the Studio plugin: ./plugins/studio-2.1.zip</p></li>
+
+<li><p>Copy plugin to OpenStoreFront database on server:
+/var/openstorefront/db/plugins</p>
+
+<ol>
+<li>Copy entire .zip file; do not extract.</li>
+</ol></li>
+
+<li><p>Start or Restart OpenStoreFront</p>
+
+<ol>
+<li>Plugin will automatically be installed when the database service
+is initialized.</li>
+</ol></li>
+
+<li><p>Access Orient DB Studio: <a href="http://localhost:2480/studio/index.html">http://localhost:2480/studio/index.html</a></p>
+
+<ol>
+<li>Change &lsquo;localhost&rsquo; to the appropriate domain name or IP address if OpenStoreFront is not running locally</li>
+<li>Ensure &lsquo;openstorefront&rsquo; is selected as the database in the dropdown.</li>
+<li>Login using the credentials located in the configuration file: /var/openstorefront/config/openstorefront.properties</li>
+</ol></li>
+</ol>
+
+<p>The database supports an SQL like interface and then adds other
+functionality on top.</p>
+
+<ul>
+<li>See <a href="http://orientdb.com/docs/2.1.x/Home-page.html">Orient DB Studio</a> for
+more information about Studio</li>
+</ul>
+
+
+    
+    
+          <footer class=" footline" >
+	
+</footer>
+  </div>
+</div>
+
+<div id="navigation">
+<a class="nav nav-prev" href="/dev/" title="Developer"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/dev/architecture/" title="Architecture" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+
+</section>
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+  <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>    
+
+<script src="/js/clipboard.min.js"></script>
+<script src="/js/featherlight.min.js"></script>
+<script src="/js/html5shiv-printshiv.min.js"></script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/js/modernizr.custom.71422.js"></script>
+<script src="/js/docdock.js"></script>
+<script src="/theme-original/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

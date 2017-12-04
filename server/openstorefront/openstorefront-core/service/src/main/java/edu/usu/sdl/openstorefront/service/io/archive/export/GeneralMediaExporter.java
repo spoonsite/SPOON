@@ -99,15 +99,20 @@ public class GeneralMediaExporter
 
 			File mediaFile = new TFile(archiveBasePath + MEDIA_DIR + media.getName());
 			Path path = media.pathToMedia();
-			try {
-				Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ex) {
-				LOG.log(Level.WARNING, "Unable to copy media file: " + media.getName(), ex);
-				addError("Unable to copy media file: " + media.getName());
+			if (path != null) {
+				try {
+					Files.copy(path, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to copy media file: " + media.getName(), ex);
+					addError("Unable to copy media file: " + media.getName());
+				}
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("No Media found for General Media: {0} (Skipping)", media.getName()));
+				addError("Unable to copy media file (No file found for record): " + media.getName());
 			}
 
 			archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
-			archive.setStatusDetails("Exported " + media.getName());
+			archive.setStatusDetails("Processed " + media.getName());
 			archive.save();
 		}
 	}
@@ -127,7 +132,7 @@ public class GeneralMediaExporter
 			List<GeneralMedia> existingMedia = generalMediaExample.findByExample();
 			Map<String, List<GeneralMedia>> mediaMap = existingMedia.stream()
 					.collect(Collectors.groupingBy(GeneralMedia::getName));
-
+			
 			List<String> errors = new ArrayList<>();
 			for (GeneralMedia generalMediaRecord : generalMedia) {
 				try {
