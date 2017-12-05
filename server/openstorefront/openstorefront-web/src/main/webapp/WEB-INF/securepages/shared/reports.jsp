@@ -1227,7 +1227,7 @@
 						
 									var panel = {
 										xtype: 'panel',
-										title: 'Viewable Output',
+										title: 'Storefront Viewable Output',
 										width: '100%',
 										border: 1,
 										closable: true,
@@ -1314,7 +1314,8 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses <span class="field-required" />',
+												fieldLabel: 'Enter email addresses <i class="fa fa-question-circle" data-qtip="You can separate multiple email addresses by a <b>comma</b>, <b>semicolon</b>, or <b>new line</b><br/><br/><b>Example:</b><br/>example1@domain.com,example2@domain.com;example3@domain.com"></i> <span class="field-required" />',
+												emptyText: 'Enter one or more email addresses separated by a comma (,), semicolon (;), or a new line.',
 												width: '100%',
 												maxLength: 300,																	
 												allowBlank: false,
