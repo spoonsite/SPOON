@@ -90,7 +90,7 @@ public class HtmlToPdfGenerator
 	 */
 	public void savePdfDocument(String htmlContent)
 	{
-
+		savePdfDocument(htmlContent, null);
 	}
 
 	public void savePdfDocument(String htmlContent, PDFRenderHandler renderHandler)
