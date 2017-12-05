@@ -1358,10 +1358,16 @@
 									//check permissions to hide options that require permissions
 									CoreService.userservice.getCurrentUser().then(function(user){
 										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-ATTACH")) {
-											reportOutputPanel.queryById('attachReport').setHidden(false);
+											var allAttached = reportOutputPanel.query('#attachReport');
+											Ext.Array.each(allAttached, function(attached){
+												attached.setHidden(false);
+											});											
 										}
 										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-BODY")) {
-											reportOutputPanel.queryById('postEmailBody').setHidden(false);
+											var allAttached = reportOutputPanel.query('#postEmailBody');
+											Ext.Array.each(allAttached, function(attached){
+												attached.setHidden(false);
+											});												
 										}
 									});						
 
