@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -177,13 +178,22 @@ public class EvaluationExporter
 			int importedCount = 0;
 			for (TFile dataFile : files) {
 				if (dataFile.isFile()) {
+					String evaluationId = dataFile.getName().replace(".json", "");
 					try (InputStream in = new TFileInputStream(dataFile)) {
-						archive.setStatusDetails("Importing: " + dataFile.getName());
+						archive.setStatusDetails("Importing: " + evaluationId);
 						archive.save();
 
 						EvaluationAll evaluationAll = StringProcessor.defaultObjectMapper().readValue(in, EvaluationAll.class);
-						service.getEvaluationService().saveEvaluationAll(evaluationAll);
-						importedCount++;
+						try {
+							service.getEvaluationService().saveEvaluationAll(evaluationAll);
+							importedCount++;
+						} catch (OpenStorefrontValidationException validationError) {
+							String validationMessage = "";
+							if (validationError.getValidationResult() != null) {
+								validationMessage = validationError.getValidationResult().toHtmlString();
+							}
+							addError(MessageFormat.format("Unable to load evaluation: {0}<br>{1}", evaluationId, validationMessage));
+						}
 					} catch (Exception ex) {
 						LOG.log(Level.WARNING, "Failed to Load evaluation", ex);
 						addError("Unable to load evaluation: " + dataFile.getName());

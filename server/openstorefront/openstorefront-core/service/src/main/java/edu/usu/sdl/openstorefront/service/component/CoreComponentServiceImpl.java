@@ -118,6 +118,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -863,7 +864,7 @@ public class CoreComponentServiceImpl
 			lockSwitch.setSwitched(requiredForComponent.isComponentChanged());
 			lockSwitch.setSwitched(requiredForComponent.isAttributeChanged());
 		} else {
-			throw new OpenStorefrontRuntimeException(validationResult.toString());
+			throw new OpenStorefrontValidationException(validationResult);
 		}
 
 		lockSwitch.setSwitched(handleBaseComponentSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
@@ -1012,7 +1013,7 @@ public class CoreComponentServiceImpl
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid() == false) {
-				throw new OpenStorefrontRuntimeException(validationResult.toString());
+				throw new OpenStorefrontValidationException(validationResult);
 			}
 			inputMap.add(EntityUtil.getPKFieldValue(baseComponent));
 

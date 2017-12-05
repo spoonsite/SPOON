@@ -679,7 +679,7 @@ public class ElasticSearchManager
 			StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 			
 			//	Perform a PUT request to update the description mapping
-			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "description?update_all_types", Collections.emptyMap(), entity);
+			lowLevelRestClient.performRequest("PUT", "/" + INDEX + "/_mapping/" + "component?update_all_types", Collections.emptyMap(), entity);
 
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);

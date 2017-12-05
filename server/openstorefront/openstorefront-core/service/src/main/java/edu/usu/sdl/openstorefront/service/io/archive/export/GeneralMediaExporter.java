@@ -16,10 +16,12 @@
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,12 +132,26 @@ public class GeneralMediaExporter
 			List<GeneralMedia> existingMedia = generalMediaExample.findByExample();
 			Map<String, List<GeneralMedia>> mediaMap = existingMedia.stream()
 					.collect(Collectors.groupingBy(GeneralMedia::getName));
-
+			
+			List<String> errors = new ArrayList<>();
 			for (GeneralMedia generalMediaRecord : generalMedia) {
-				if (mediaMap.containsKey(generalMediaRecord.getName())) {
-					service.getSystemService().removeGeneralMedia(generalMediaRecord.getName());
+				try {
+					if (mediaMap.containsKey(generalMediaRecord.getName())) {
+						service.getSystemService().removeGeneralMedia(generalMediaRecord.getName());
+					}
+					ValidationResult vr = generalMediaRecord.validate();
+					if (vr.valid()) {
+						generalMediaRecord.save();
+					} else {
+						errors.add(MessageFormat.format("Failed to save general media: {0}<br>{1}", generalMediaRecord.getName(), vr.toHtmlString()));
+					}
+				} catch (OpenStorefrontRuntimeException ex) {
+					LOG.log(Level.WARNING, MessageFormat.format("Failed to save media: {0}", generalMediaRecord.getName()), ex);
+					errors.add(MessageFormat.format("Failed to save general media: {0}", generalMediaRecord.getName()));
 				}
-				generalMediaRecord.save();
+			}
+			if (errors.size() > 0) {
+				addError(String.join("<br>", errors));
 			}
 
 			TFile mediaDir = new TFile(archiveBasePath + MEDIA_DIR);

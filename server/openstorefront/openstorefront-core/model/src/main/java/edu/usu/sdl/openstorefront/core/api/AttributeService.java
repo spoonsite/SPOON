@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -130,16 +131,18 @@ public interface AttributeService
 	 * Saves code
 	 *
 	 * @param attributeCode
+	 * @return 
 	 */
-	public void saveAttributeCode(AttributeCode attributeCode);
+	public ValidationResult saveAttributeCode(AttributeCode attributeCode);
 
 	/**
 	 * Saves code and Updates Indexes
 	 *
 	 * @param attributeCode
 	 * @param updateIndexes (For Searching)
+	 * @return 
 	 */
-	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
+	public ValidationResult saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
 	/**
 	 * Save user generated code which require special handling
@@ -206,7 +209,7 @@ public interface AttributeService
 	 *
 	 * @param attributeMap
 	 */
-	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
+	public ValidationResult syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
@@ -272,7 +275,7 @@ public interface AttributeService
 	 * @param attributes
 	 * @param options
 	 */
-	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
+	public ValidationResult importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
 
 	/**
 	 * Saves an attachment to an attribute code

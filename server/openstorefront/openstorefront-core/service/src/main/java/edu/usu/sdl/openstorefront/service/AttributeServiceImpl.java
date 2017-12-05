@@ -233,17 +233,17 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode)
+	public ValidationResult saveAttributeCode(AttributeCode attributeCode)
 	{
-		saveAttributeCode(attributeCode, true);
+		return saveAttributeCode(attributeCode, true);
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes)
+	public ValidationResult saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes)
 	{
-		getAttributeServicePrivate().performSaveAttributeCode(attributeCode);
+		ValidationResult validationResult = getAttributeServicePrivate().performSaveAttributeCode(attributeCode);
 
-		if (updateIndexes) {
+		if (updateIndexes && validationResult.valid()) {
 			ComponentAttributePk pk = new ComponentAttributePk();
 			pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
@@ -258,26 +258,26 @@ public class AttributeServiceImpl
 			});
 			getSearchService().indexComponents(components);
 		}
+		return validationResult;
 	}
 
 	@Override
-	public void performSaveAttributeCode(AttributeCode attributeCode)
+	public ValidationResult performSaveAttributeCode(AttributeCode attributeCode)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 
 		ValidationResult validationResult = attributeCode.customValidation(this);
-		if (validationResult.valid() == false) {
-			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		if (validationResult.valid()) {
+			if (existing != null) {
+				existing.updateFields(attributeCode);
+				persistenceService.persist(existing);
+			} else {
+				attributeCode.populateBaseCreateFields();
+				persistenceService.persist(attributeCode);
+			}
+			cleanCaches(attributeCode.getAttributeCodePk().getAttributeType());
 		}
-
-		if (existing != null) {
-			existing.updateFields(attributeCode);
-			persistenceService.persist(existing);
-		} else {
-			attributeCode.populateBaseCreateFields();
-			persistenceService.persist(attributeCode);
-		}
-		cleanCaches(attributeCode.getAttributeCodePk().getAttributeType());
+		return validationResult;
 	}
 
 	@Override
@@ -370,14 +370,17 @@ public class AttributeServiceImpl
 						validationModel.setConsumeFieldsOnly(true);
 						ValidationResult validationResult = ValidationUtil.validate(validationModel);
 						if (validationResult.valid()) {
-							saveAttributeCode(newAttributeCode, false);
+							validationResult = saveAttributeCode(newAttributeCode, false);
 
-							AlertContext alertContext = new AlertContext();
-							alertContext.setAlertType(AlertType.USER_DATA);
-							alertContext.setDataTrigger(newAttributeCode);
-							getAlertService().checkAlert(alertContext);
-							updatedCodes.add(newAttributeCode);
-						} else {
+							if (validationResult.valid()) {
+								AlertContext alertContext = new AlertContext();
+								alertContext.setAlertType(AlertType.USER_DATA);
+								alertContext.setDataTrigger(newAttributeCode);
+								getAlertService().checkAlert(alertContext);
+								updatedCodes.add(newAttributeCode);
+							}
+						}
+						if (!validationResult.valid()) {
 							LOG.log(Level.WARNING, MessageFormat.format("Attribute Code (label) failed: {0} Message: {1}", new Object[]{newAttributeCode.getLabel(), validationResult.toString()}));
 						}
 					} else {
@@ -395,7 +398,8 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void removeAttributeType(String type)
+	public void removeAttributeType(String type
+	)
 	{
 		Objects.requireNonNull(type, "Type is required.");
 
@@ -537,7 +541,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap)
+	public ValidationResult syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap)
 	{
 		AttributeType attributeTypeExample = new AttributeType();
 		List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
@@ -545,15 +549,16 @@ public class AttributeServiceImpl
 		attributeTypes.stream().forEach((attributeType) -> {
 			existingAttributeMap.put(attributeType.getAttributeType(), attributeType);
 		});
-
+		ValidationResult syncResult = new ValidationResult();
 		for (AttributeType attributeType : attributeMap.keySet()) {
 
 			try {
 
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);
-				ValidationResult validationResult = ValidationUtil.validate(validationModel);
-				if (validationResult.valid()) {
+				ValidationResult attributeTypeResult = ValidationUtil.validate(validationModel);
+				syncResult.merge(attributeTypeResult);
+				if (attributeTypeResult.valid()) {
 					attributeType.setAttributeType(attributeType.getAttributeType().replace(ReflectionUtil.COMPOSITE_KEY_SEPERATOR, ReflectionUtil.COMPOSITE_KEY_REPLACER));
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
@@ -609,18 +614,21 @@ public class AttributeServiceImpl
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-										saveAttributeCode(existingCode, false);
+										validationResultCode.merge(saveAttributeCode(existingCode, false));
 									}
 								} else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									saveAttributeCode(attributeCode, false);
+									validationResultCode.merge(saveAttributeCode(attributeCode, false));
 								}
-								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
+								if (validationResultCode.valid()) {
+									newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
+								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResult.toString()}));
+								LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResultCode.toString()}));
 							}
+							syncResult.merge(validationResultCode);
 						} catch (Exception e) {
 							LOG.log(Level.SEVERE, "Unable to save attribute code: " + attributeCode.getAttributeCodePk().toKey(), e);
 						}
@@ -634,7 +642,7 @@ public class AttributeServiceImpl
 						}
 					});
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), validationResult.toString()}));
+					LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), attributeTypeResult.toString()}));
 				}
 			} catch (Exception e) {
 				LOG.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
@@ -646,6 +654,7 @@ public class AttributeServiceImpl
 		OSFCacheManager.getAttributeCodeAllCache().removeAll();
 
 		getSearchService().saveAll();
+		return syncResult;
 	}
 
 	@Override
@@ -1045,7 +1054,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options)
+	public ValidationResult importAttributes(List<AttributeAll> attributes, FileHistoryOption options)
 	{
 		Map<AttributeType, List<AttributeCode>> attributeMap = new HashMap<>();
 
@@ -1056,7 +1065,7 @@ public class AttributeServiceImpl
 				attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
 			}
 		}
-		syncAttribute(attributeMap);
+		return syncAttribute(attributeMap);
 	}
 
 	@Override

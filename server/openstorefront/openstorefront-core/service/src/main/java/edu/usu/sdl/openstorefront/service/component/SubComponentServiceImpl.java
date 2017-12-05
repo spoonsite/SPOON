@@ -761,7 +761,7 @@ public class SubComponentServiceImpl
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setEntityClassName(ComponentAttributePk.class.getSimpleName());
 			ruleResult.setFieldName(AttributeType.FIELD_ATTRIBUTE_TYPE);
-			ruleResult.setMessage("Attribute type not found");
+			ruleResult.setMessage("Attribute type " + pk.getAttributeType() + " not found");
 			validationResult.getRuleResults().add(ruleResult);
 		} else {
 			AttributeCode attributeCode = componentService.getAttributeService().findCodeForType(pk);
@@ -777,7 +777,7 @@ public class SubComponentServiceImpl
 					RuleResult ruleResult = new RuleResult();
 					ruleResult.setEntityClassName(ComponentAttributePk.class.getSimpleName());
 					ruleResult.setFieldName(AttributeCodePk.FIELD_ATTRIBUTE_CODE);
-					ruleResult.setMessage("Attribute code not found");
+					ruleResult.setMessage("Attribute code { " + pk.getAttributeType()+ " : " + pk.getAttributeCode()+ " } not found");
 					validationResult.getRuleResults().add(ruleResult);
 				}
 			}

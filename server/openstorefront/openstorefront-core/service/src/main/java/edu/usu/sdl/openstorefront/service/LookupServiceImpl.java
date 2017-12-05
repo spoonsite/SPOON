@@ -181,6 +181,35 @@ public class LookupServiceImpl
 	}
 
 	@Override
+	public <T extends LookupEntity> void mergeLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues)
+	{
+		List<T> existingLookups = findLookup(lookupClass, null);
+		Map<String, T> lookupMap = new HashMap<>();
+		for (T lookup : existingLookups) {
+			lookupMap.put(lookup.getCode(), lookup);
+		}
+		for (LookupEntity lookupEntity : lookupValues) {
+			if (!lookupMap.containsKey(lookupEntity.getCode())) {
+				try {
+					ValidationModel validationModel = new ValidationModel(lookupEntity);
+					validationModel.setConsumeFieldsOnly(true);
+					ValidationResult validationResult = ValidationUtil.validate(validationModel);
+					if (validationResult.valid()) {
+						lookupEntity.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+						lookupEntity.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+						getLookupService().saveLookupValue(lookupEntity);
+					} else {
+						LOG.log(Level.WARNING, MessageFormat.format("(Data Merge) Unable to Add Code:  {0} Validation Issues:\n{1}", new Object[]{lookupEntity.getCode(), validationResult.toString()}));
+					}
+
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE, "Unable to save value for lookup:" + lookupEntity.toString(), e);
+				}
+			}
+		}
+	}
+
+	@Override
 	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code)
 	{
 		LookupEntity lookupEntity = persistenceService.findById(lookTableClass, code);
@@ -254,10 +283,10 @@ public class LookupServiceImpl
 		if (StringUtils.isNotBlank(description)) {
 			try {
 				SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
-				T example = lookupClass.newInstance();					
+				T example = lookupClass.newInstance();
 				if (systemTable != null) {
-					for (Object lookup : example.systemValues()) {						
-						if (((LookupEntity)lookup).getDescription().equals(description)) {
+					for (Object lookup : example.systemValues()) {
+						if (((LookupEntity) lookup).getDescription().equals(description)) {
 							lookupEntity = (T) lookup;
 						}
 					}
