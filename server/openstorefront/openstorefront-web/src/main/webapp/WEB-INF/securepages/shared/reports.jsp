@@ -174,7 +174,7 @@
 							columnLines: true,
 							bodyCls: 'border_accent',
 							columns: [
-								{text: 'Id', dataIndex: 'scheduledReportId', width: 250, hidden: true },
+								{text: 'Id', dataIndex: 'scheduleReportId', width: 250, hidden: true },
 								{text: 'Report Type', dataIndex: 'reportType', width: 200,
 									renderer: function (value, meta, record) {
 										return record.get('reportTypeDescription');
@@ -330,7 +330,7 @@
 											disabled: true,
 											handler: function () {
 												var record = Ext.getCmp('scheduleReportsGrid').getSelection()[0];
-												reportDetails(record.get('scheduledReportId'), true);
+												reportDetails(record.get('scheduleReportId'), true);
 											},
 											tooltip: 'Report Details'
 										},
