@@ -1414,7 +1414,7 @@
 												xtype: 'textfield',
 												name: 'confluenceSpace',
 												labelAlign: 'top',
-												fieldLabel: 'Space Key<span class="field-required" />',
+												fieldLabel: 'Space Key<span class="field-required" /> <i class="fa fa-lg fa-question-circle"  data-qtip="Confluence Space Key as show Space Tools Overview" ></i>',
 												width: '100%',
 												allowBlank: false,
 												maxLength: 255,
