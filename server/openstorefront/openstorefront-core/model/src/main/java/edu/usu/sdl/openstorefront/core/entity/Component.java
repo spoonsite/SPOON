@@ -52,6 +52,7 @@ public class Component
 {
 
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
 
 	@PK(generated = true)
 	@NotNull

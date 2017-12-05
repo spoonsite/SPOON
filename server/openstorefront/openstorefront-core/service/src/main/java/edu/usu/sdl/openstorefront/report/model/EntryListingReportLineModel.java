@@ -24,6 +24,8 @@ import java.util.Date;
 public class EntryListingReportLineModel
 {
 
+	public static final String FIELD_LAST_UPDATED_DTS = "lastUpdatedDts";
+
 	private String componentId;
 	private String name;
 	private String shortDescription;

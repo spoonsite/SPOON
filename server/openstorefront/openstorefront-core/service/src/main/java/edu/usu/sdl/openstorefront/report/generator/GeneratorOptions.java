@@ -28,6 +28,7 @@ public class GeneratorOptions
 	private Report report;
 	private String overrideOutputPath;
 	private OutputStream outputStream;
+	private boolean addHtmlWrapper;
 
 	public GeneratorOptions()
 	{

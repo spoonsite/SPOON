@@ -224,7 +224,7 @@ public class EvaluationResource
 
 		EvaluationViewWrapper evaluationViewWrapper = new EvaluationViewWrapper();
 		evaluationViewWrapper.getData().addAll(views);
-		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		evaluationViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(evaluationViewWrapper);
 	}

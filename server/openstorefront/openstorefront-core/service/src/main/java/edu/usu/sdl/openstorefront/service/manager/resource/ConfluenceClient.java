@@ -281,6 +281,20 @@ public class ConfluenceClient
 		}
 	}
 
+	/**
+	 * Confluence only support a sub-set of html and has it own markup. It's
+	 * better to create a specific template for it. However, if need you use an
+	 * html template and then use this to filter it. Adjust as needed.
+	 *
+	 * @See
+	 * https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html
+	 * @See
+	 * https://confluence.atlassian.com/conf53/confluence-storage-format-for-macros-411108832.html
+	 * for macros
+	 *
+	 * @param input
+	 * @return
+	 */
 	public static String confluenceSafeText(String input)
 	{
 		if (StringUtils.isNotBlank(input)) {
@@ -290,6 +304,23 @@ public class ConfluenceClient
 			);
 
 			input = Jsoup.clean(input, whiteList);
+		}
+		return input;
+	}
+
+	/**
+	 * This will replace character Apply pre-markup since it would affect the
+	 * markup; Use on data
+	 *
+	 * @param input
+	 * @return
+	 */
+	public static String confluenceEscapeCharater(String input)
+	{
+		if (StringUtils.isNotBlank(input)) {
+			input = input.replace("&", "&amp;");
+			input = input.replace("<", "&lt;");
+			input = input.replace(">", "&gt;");
 		}
 		return input;
 	}

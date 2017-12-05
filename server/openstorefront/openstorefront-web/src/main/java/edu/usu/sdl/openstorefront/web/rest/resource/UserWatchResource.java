@@ -91,7 +91,7 @@ public class UserWatchResource
 		userWatchWrapper.getData().addAll(UserWatchView.toViewList(userWatches));
 		filterQueryParams.filter(userWatchWrapper.getData());
 
-		userWatchWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		userWatchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(userWatchWrapper);
 	}

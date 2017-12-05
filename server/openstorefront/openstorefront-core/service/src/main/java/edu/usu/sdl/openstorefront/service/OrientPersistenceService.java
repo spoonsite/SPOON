@@ -450,25 +450,6 @@ public class OrientPersistenceService
 		return countByExample(queryByExample);
 	}
 
-	/**
-	 * Note: this method doesn't support limit/skip and sorting as that was not
-	 * the expected original behavior.
-	 *
-	 * @param queryByExample
-	 * @return
-	 */
-	@Override
-	public long countByExampleSimple(QueryByExample queryByExample)
-	{
-		Objects.requireNonNull(queryByExample);
-
-		queryByExample.setMaxResults(null);
-		queryByExample.setFirstResult(null);
-		queryByExample.setOrderBy(null);
-
-		return countByExample(queryByExample);
-	}
-
 	@Override
 	public long countByExample(QueryByExample queryByExample)
 	{
@@ -478,6 +459,14 @@ public class OrientPersistenceService
 				&& !QueryType.COUNT_DISTINCT.equals(queryByExample.getQueryType())) {
 			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
 		}
+
+		/**
+		 * Note: this method doesn't support limit/skip and sorting. We
+		 * currently don't have any use case for that.
+		 */
+		queryByExample.setMaxResults(null);
+		queryByExample.setFirstResult(null);
+		queryByExample.setOrderBy(null);
 
 		long count = 0;
 		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);

@@ -116,7 +116,7 @@ public class UserRegistrationResource
 
 		UserRegistrationWrapper userRegistrationWrapper = new UserRegistrationWrapper();
 		userRegistrationWrapper.getData().addAll(UserRegistrationView.toView(userRegistrations));
-		userRegistrationWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		userRegistrationWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(userRegistrationWrapper);
 	}

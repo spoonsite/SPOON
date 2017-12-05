@@ -125,7 +125,7 @@ public class OrganizationResource
 
 		OrganizationWrapper organizationWrapper = new OrganizationWrapper();
 		organizationWrapper.getData().addAll(OrganizationView.toView(organizations));
-		organizationWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		organizationWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		if (componentOnly) {
 			//filter results

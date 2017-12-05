@@ -25,18 +25,8 @@ public interface PersistenceService
 	long countByExample(BaseEntity example);
 
 	/**
-	 * This doesn't support limit/skips and order by. Use this if you are re-use
-	 * an example to find total count for paging. This follow the original
-	 * behavior.
-	 *
-	 * @param queryByExample
-	 * @return
-	 */
-	long countByExampleSimple(QueryByExample queryByExample);
-
-	/**
-	 * This fully supports query by example Keep in mind limit and skip and
-	 * other may cause unexpected results.
+	 * This fully supports query by example. Note: limit, skip and sort are not
+	 * supported.
 	 *
 	 * @param queryByExample
 	 * @return

@@ -285,7 +285,7 @@ public class Search
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
 		queryByExample.setAdditionalWhere(filterEngine.queryComponentRestriction());
-		long numberOfActiveComponents = service.getPersistenceService().countByExampleSimple(queryByExample);
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
 		return Response.ok(listingStats).build();

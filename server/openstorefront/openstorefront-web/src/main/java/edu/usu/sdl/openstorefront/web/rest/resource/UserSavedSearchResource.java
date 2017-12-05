@@ -108,7 +108,7 @@ public class UserSavedSearchResource
 
 		UserSavedSearchWrapper userSavedSearchWrapper = new UserSavedSearchWrapper();
 		userSavedSearchWrapper.getData().addAll(userSavedSearches);
-		userSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		userSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(userSavedSearchWrapper);
 	}

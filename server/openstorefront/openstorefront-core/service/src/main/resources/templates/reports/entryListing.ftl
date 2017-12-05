@@ -72,40 +72,119 @@
 	</head>
 	<body>
 		<h1>${title}</h1>
-		<b>Entries: ${data?size}</b>
-		
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Entry Type</th>
-					<th>Last Updated</th>
-					<th>Evaluation Status</th>
-				</tr>	
-			</thead>
-			<tbody>
-				<#list data as listing>
-					<tr>
-						<td class="name">
-							<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
-						</td>	
-						<td>
-							${listing.shortDescription}
-						</td>
-						<td style="width: 200px; text-align: center;">
-							${listing.entryType}
-						</td>							
-						<td style="width: 200px; text-align: center;">
-							${listing.lastUpdatedDts?date}
-						</td>
-						<td style="width: 200px; text-align: center;">
-							${listing.evaluationStatus}
-						</td>
-					</tr>		
-				</#list>
-			</tbody>	
-		</table>	
+		<b>Entries: ${totalRecords}</b>
+		<br>
 
+		<#if recentlyUpdated.data?has_content>
+			<h2>${recentlyUpdated.title}</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Entry Type</th>
+						<th>Last Updated</th>
+						<th>Evaluation Status</th>
+					</tr>	
+				</thead>
+				<tbody>				
+					<#list recentlyUpdated.data as listing>
+						<tr>
+							<td class="name">
+								<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
+							</td>	
+							<td>
+								${listing.shortDescription}
+							</td>
+							<td style="width: 200px; text-align: center;">
+								${listing.entryType}
+							</td>							
+							<td style="width: 200px; text-align: center;">
+								${listing.lastUpdatedDts?date}
+							</td>
+							<td style="width: 200px; text-align: center;">
+								${listing.evaluationStatus}
+							</td>
+						</tr>		
+					</#list>
+				</tbody>	
+			</table>
+		</#if>
+	
+		<#if recentlyEvaluated.data?has_content>
+			<h2>${recentlyEvaluated.title}</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Entry Type</th>
+						<th>Last Updated</th>
+						<th>Evaluation Status</th>
+					</tr>	
+				</thead>
+				<tbody>
+					<#list recentlyEvaluated.data as listing>
+						<tr>
+							<td class="name">
+								<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
+							</td>	
+							<td>
+								${listing.shortDescription}
+							</td>
+							<td style="width: 200px; text-align: center;">
+								${listing.entryType}
+							</td>							
+							<td style="width: 200px; text-align: center;">
+								${listing.lastUpdatedDts?date}
+							</td>
+							<td style="width: 200px; text-align: center;">
+								${listing.evaluationStatus}
+							</td>
+						</tr>		
+					</#list>
+				</tbody>	
+			</table>		
+		</#if>
+
+		<#if data?has_content>
+			<h2>Full Index</h2>
+			<#list data as dataSet>			
+					<h3>${dataSet.title}</h3>
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+								<th>Entry Type</th>
+								<th>Last Updated</th>
+								<th>Evaluation Status</th>
+							</tr>	
+						</thead>
+						<tbody>
+							<#list dataSet.data as listing>
+								<tr>
+									<td class="name">
+										<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
+									</td>	
+									<td>
+										${listing.shortDescription}
+									</td>
+									<td style="width: 200px; text-align: center;">
+										${listing.entryType}
+									</td>							
+									<td style="width: 200px; text-align: center;">
+										${listing.lastUpdatedDts?date}
+									</td>
+									<td style="width: 200px; text-align: center;">
+										${listing.evaluationStatus}
+									</td>
+								</tr>		
+							</#list>
+						</tbody>	
+					</table>
+					<br>
+			</#list>	
+		</#if>		
 	</body>
 </html>

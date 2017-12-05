@@ -216,12 +216,6 @@ public class TestPersistenceService implements PersistenceService
 
 	// <editor-fold defaultstate="collapsed" desc="PersistenceService Interface methods that are not supported yet.">
 	@Override
-	public long countByExampleSimple(QueryByExample queryByExample)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
 	public long countByExample(BaseEntity example)
 	{
 		throw new UnsupportedOperationException("Not supported yet. countByExample(BaseEntity example)");

@@ -122,7 +122,7 @@ public class ContactResource
 
 		ContactViewWrapper contactViewWrapper = new ContactViewWrapper();
 		contactViewWrapper.getData().addAll(contacts);
-		contactViewWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		contactViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(contactViewWrapper);
 	}
