@@ -703,8 +703,9 @@
 																});
 																reportOutput.reportTransmissionOption.emailAddresses = emailAddresses;
 															}
+
+															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
-														
 
 														var report = {
 															reportType: formData.reportType,															  
@@ -1257,6 +1258,11 @@
 														reportOutput.reportTransmissionOption.reportFormat = newValue;														
 													}
 												}
+											},
+											{
+												xtype: 'checkbox',
+												name: 'reportNotify',
+												boxLabel: '<b>Notify Me</b> <i class="fa fa-question-circle" data-qtip="If checked, sends an email when the report is viewable on the website"></i>'
 											}
 										],
 										listeners: {
@@ -1524,9 +1530,8 @@
 
 										CoreService.userservice.getCurrentUser().then(function (user) {
 
-											var userHasEmailPermission = (CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
-																	&& CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY'))
-																	|| CoreService.userservice.userHasPermisson(user, 'REPORTS-ALL');
+											var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
+																	|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
 
 											// remove the "email" option if it exists
 											if (!canAttachFile || !userHasEmailPermission) {
