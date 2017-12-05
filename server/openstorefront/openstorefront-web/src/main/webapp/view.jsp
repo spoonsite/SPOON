@@ -607,12 +607,21 @@
 							
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
 							
-							if (entry.approvalState !== "A") {
-								var html = 'This entry has not yet been approved for the site and is still under review.';
-								if (entry.approvalState == 'N') {
+							if (entry.approvalState !== "A" || entry.activeStatus !== 'A') {
+								
+								var html = '';								
+								if (entry.approvalState == 'P') {
+									html = 'This entry has not yet been approved for the site and is still under review.';								
+								} else if (entry.approvalState == 'N') {
 									html = 'This entry has not yet been submitted for review. It must be submitted to appear on the Storefront.';
 								}
 
+								if (entry.activeStatus !== 'A') {
+									if (html !== '') {
+										html += '<br>';
+									}
+									html += 'This entry is NOT active and may not be maintained';
+								}
 
 								headerPanel.addDocked({
 									xtype: 'panel',
