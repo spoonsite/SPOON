@@ -903,7 +903,9 @@
 							//add grid for entries							
 							optionsToAdd.push({
 								xtype: 'entryselect',
-								itemId: 'entryselect'
+								itemId: 'entryselect',
+								buttonTooltip: 'Select entries to report on.  Defaults to: All entries',
+								allSelectedMessage: '<p>Report on ALL entries</p>'
 							});
 							
 							if (reportType === 'TYPECOMP') {
