@@ -703,8 +703,9 @@
 																});
 																reportOutput.reportTransmissionOption.emailAddresses = emailAddresses;
 															}
+
+															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
-														
 
 														var report = {
 															reportType: formData.reportType,															  
@@ -1253,7 +1254,7 @@
 						
 									var panel = {
 										xtype: 'panel',
-										title: 'Viewable Output',
+										title: 'Storefront Viewable Output',
 										width: '100%',
 										border: 1,
 										closable: true,
@@ -1284,6 +1285,11 @@
 														reportOutput.reportTransmissionOption.reportFormat = newValue;														
 													}
 												}
+											},
+											{
+												xtype: 'checkbox',
+												name: 'reportNotify',
+												boxLabel: '<b>Notify Me</b> <i class="fa fa-question-circle" data-qtip="If checked, sends an email when the report is viewable on the website"></i>'
 											}
 										],
 										listeners: {
@@ -1335,7 +1341,8 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses <span class="field-required" />',
+												fieldLabel: 'Enter email addresses <i class="fa fa-question-circle" data-qtip="You can separate multiple email addresses by a <b>comma</b>, <b>semicolon</b>, or <b>new line</b><br/><br/><b>Example:</b><br/>example1@domain.com,example2@domain.com;example3@domain.com"></i> <span class="field-required" />',
+												emptyText: 'Enter one or more email addresses separated by a comma (,), semicolon (;), or a new line.',
 												width: '100%',
 												maxLength: 300,																	
 												allowBlank: false,
@@ -1550,21 +1557,36 @@
 										reportOutputPanel.removeDocked(addBtn);
 									}
 
-									if (outputToAdd.length > 0) {
-										addBtn = Ext.create('Ext.button.Button', {
-											dock: 'bottom',
-											text: 'Add',
-											maxWidth: 100,
-											margin: '20 0 0 0',
-											iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
-											menu: outputToAdd
-										});
-										
-										reportOutputPanel.addDocked(addBtn);
-									}
+									// Place the 'Add' email button
+									CoreService.userservice.getCurrentUser().then(function (user) {
+
+										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
+																|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
+
+										// remove the "email" option if it exists
+										if (!userHasEmailPermission) {
+											Ext.Array.forEach(outputToAdd, function (element, index) {
+												if (typeof element.text !== 'undefined' && element.text == "Email") {
+													outputToAdd.splice(index, 1);
+												}
+											});
+										}
+
+										if (outputToAdd.length > 0) {
+											addBtn = Ext.create('Ext.button.Button', {
+												dock: 'bottom',
+												text: 'Add',
+												maxWidth: 100,
+												margin: '20 0 0 0',
+												iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
+												menu: outputToAdd,
+											});
+											
+											reportOutputPanel.addDocked(addBtn);
+										}
+									});
 								};
 								updateDisplay();
-								
 																
 								var removeOutputAction =  function(reportOutput) {
 									var index = 0;

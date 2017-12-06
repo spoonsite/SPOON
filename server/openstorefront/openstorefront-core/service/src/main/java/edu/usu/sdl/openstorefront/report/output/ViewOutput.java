@@ -15,12 +15,19 @@
  */
 package edu.usu.sdl.openstorefront.report.output;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import javax.mail.Message;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Normal view/save report
@@ -30,7 +37,7 @@ import edu.usu.sdl.openstorefront.security.UserContext;
 public class ViewOutput
 		extends BaseOutput
 {
-
+	
 	public ViewOutput(ReportOutput reportOutput, Report report, BaseReport reportGenerator, UserContext userContext)
 	{
 		super(reportOutput, report, reportGenerator, userContext);
@@ -46,7 +53,18 @@ public class ViewOutput
 	@Override
 	protected void finishOutput(BaseReportModel reportModel)
 	{
-		//nothing to do
+		// if the user indicated they wanted to be notified on report completion, send the email.
+		if (Convert.toBoolean(reportOutput.getReportTransmissionOption().getReportNotify())) {
+			String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
+			String message = reportGenerator.reportSummmaryDefault(reportModel);
+
+			Email email = MailManager.newEmail();
+			email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()) + " Report");
+			email.setTextHTML(message);
+
+			email.addRecipient("", userContext.getUserProfile().getEmail(), Message.RecipientType.TO);
+			MailManager.send(email, true);
+		}
 	}
 
 }
