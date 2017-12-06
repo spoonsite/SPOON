@@ -17,24 +17,17 @@ package edu.usu.sdl.openstorefront.report.generator;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextFSImage;
@@ -74,7 +67,7 @@ public class LocalMediaPDFHandler
 		if (uri.contains("Media.action")) {
 
 			String query = uri.substring(uri.indexOf("?") + 1);
-			Map<String, List<String>> queryMap = splitQuery(query);
+			Map<String, List<String>> queryMap = StringProcessor.splitURLQuery(query);
 
 			List<String> mediaIdList = queryMap.get("mediaId");
 			if (mediaIdList != null && !mediaIdList.isEmpty()) {
@@ -109,24 +102,6 @@ public class LocalMediaPDFHandler
 			imageResource = superUserAgent.getImageResource(uri);
 		}
 		return imageResource;
-	}
-
-	private Map<String, List<String>> splitQuery(String query)
-	{
-		if (StringUtils.isBlank(query)) {
-			return Collections.emptyMap();
-		}
-		return Arrays.stream(query.split("&"))
-				.map(this::splitQueryParameter)
-				.collect(Collectors.groupingBy(SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
-	}
-
-	private SimpleImmutableEntry<String, String> splitQueryParameter(String it)
-	{
-		final int idx = it.indexOf("=");
-		final String key = idx > 0 ? it.substring(0, idx) : it;
-		final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
-		return new SimpleImmutableEntry<>(key, value);
 	}
 
 	@Override
