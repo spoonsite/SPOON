@@ -1525,38 +1525,32 @@
 									}
 
 									// Place the 'Add' email button
-									CoreService.systemservice.getConfigProperties('mail.attach.file').then(function (config) {
-										var canAttachFile = config.description;
-										canAttachFile = (typeof canAttachFile !== 'undefined' && (canAttachFile.toString() === '1' || canAttachFile.toString() === 'true'));
+									CoreService.userservice.getCurrentUser().then(function (user) {
 
-										CoreService.userservice.getCurrentUser().then(function (user) {
+										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
+																|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
 
-											var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
-																	|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
+										// remove the "email" option if it exists
+										if (!userHasEmailPermission) {
+											Ext.Array.forEach(outputToAdd, function (element, index) {
+												if (typeof element.text !== 'undefined' && element.text == "Email") {
+													outputToAdd.splice(index, 1);
+												}
+											});
+										}
 
-											// remove the "email" option if it exists
-											if (!canAttachFile || !userHasEmailPermission) {
-												Ext.Array.forEach(outputToAdd, function (element, index) {
-													if (typeof element.text !== 'undefined' && element.text == "Email") {
-														outputToAdd.splice(index, 1);
-													}
-												});
-											}
-
-											if (outputToAdd.length > 0) {
-												addBtn = Ext.create('Ext.button.Button', {
-													dock: 'bottom',
-													text: 'Add',
-													maxWidth: 100,
-													margin: '20 0 0 0',
-													iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
-													menu: outputToAdd,
-												});
-												
-												reportOutputPanel.addDocked(addBtn);
-											}
-										});
-
+										if (outputToAdd.length > 0) {
+											addBtn = Ext.create('Ext.button.Button', {
+												dock: 'bottom',
+												text: 'Add',
+												maxWidth: 100,
+												margin: '20 0 0 0',
+												iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
+												menu: outputToAdd,
+											});
+											
+											reportOutputPanel.addDocked(addBtn);
+										}
 									});
 								};
 								updateDisplay();
