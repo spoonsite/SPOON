@@ -679,7 +679,7 @@
 													var form = this.up('form');
 																
 		
-													if (validateOutputs){										
+													if (validateOutputs()){										
 
 														var formData = form.getValues();
 
@@ -846,7 +846,7 @@
 					var validateOutputs = function() {
 						var valid = true;
 		
-						if (!outputs || outputs.length == 0) {																										
+						if (!outputs || outputs.length === 0) {																										
 							Ext.Msg.show({
 								title: 'Validation',
 								message: 'Please add at least one output.',
@@ -858,9 +858,34 @@
 							valid = false;
 						} else {
 							Ext.Array.each(outputs, function(output){
-								if (output.reportTransmissionType == 'CONFLUENCE') {
-									//May need to check parent									
-								} 	
+								//if (output.reportTransmissionType == 'CONFLUENCE') {
+									//TODO: May need to check parent									
+								//} 
+							
+								if (output.reportTransmissionOption.emailAddressRaw &&
+									output.reportTransmissionOption.emailAddressRaw !== '') {
+
+									var emails = CoreUtil.split(output.reportTransmissionOption.emailAddressRaw, [' ', ',', ';', '\n', '\r']);
+									var badEmailAddresses = [];
+									Ext.Array.each(emails, function(email){											
+										if (CoreUtil.emailValidateStrict(email) === false) {
+											badEmailAddresses.push(email);
+										}
+									});	
+
+									if (badEmailAddresses.length > 0) {
+										Ext.Msg.show({
+											title: 'Validation Error',
+											message: 'Check the following email addresses:<br><br>' + badEmailAddresses.join('<br>'),
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {																
+											}																
+										});
+										valid = false;
+									}
+								}
+							
 							});			
 						} 
 		
