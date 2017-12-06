@@ -71,6 +71,9 @@ public class ReportTransmissionOption
 	@ConsumeField
 	private String confluenceParentPageId;
 
+	@ConsumeField
+	private Boolean reportNotify;
+
 	@Version
 	private String storageVersion;
 
@@ -156,6 +159,16 @@ public class ReportTransmissionOption
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+	
+	public Boolean getReportNotify()
+	{
+		return reportNotify;
+	}
+
+	public void setReportNotify(Boolean reportNotify)
+	{
+		this.reportNotify = reportNotify;
 	}
 
 }
