@@ -2068,7 +2068,7 @@
 										'<ul class="list-group">',
 										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
 										'	{[Ext.Date.format(Ext.Date.parse(values.lastSentDts, "c"), "m/d/y H:i:s A ")]}',
-										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	<li class="stat-list-group-item">Next Automated Email Sent: <span class="stat-badge">',
 										'	{[Ext.Date.format(Ext.Date.parse(values.nextSendDts, "c"), "m/d/y H:i:s A ")]}',
 										'</span></li></ul'
 									]
