@@ -1493,6 +1493,11 @@
 				}),
 				listeners: {
 					beforeLoad: function(store, operation, eOpts){
+						
+						var url = 'api/v1/resource/attributes/attributetypes/';
+						url += manageCodesWin.attributeType;
+						url += '/attributecodeviews';
+						store.getProxy().url = url;						
 						store.getProxy().extraParams = {
 							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
 							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
@@ -2158,7 +2163,6 @@
 				layout: 'fit',
 				items: [
 					codesGrid
-//				]
 				],
 				dockedItems: [
 					{
