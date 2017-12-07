@@ -57,7 +57,7 @@ public class ApplicationInit
 			atmospshereLog.setLevel(Level.OFF);
 		}
 
-		coreSystem.doInit(() -> {
+		coreSystem.startup(() -> {
 			AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
 			AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
 			ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);

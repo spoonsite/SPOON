@@ -251,4 +251,9 @@ public class OSFCacheManager
 		return started.get();
 	}
 
+	public static boolean isActive()
+	{
+		return started.get();
+	}
+
 }
