@@ -59,16 +59,40 @@
 		<style>
 			.x-body{
 				min-width:320px;
+				display:flex;
+				flex-direction:row;
+			}
+			/* by having a parent with flex-direction:row, the min-height bug in IE 10/11 doesn't stick around. */
+			.ie-flex-fix
+			{	
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+				width:100%;
+			}
+			.page-header
+			{
+				flex-shrink:0;
+			}
+			.page-content
+			{
+				flex: 1;
+				min-height:700px;
 			}
 			.footer{
-				text-align: left;
 				padding: 10px;
 				background: ${branding.primaryColor};
 				color: white;
-			}			
+				display: flex;
+				justify-content: center;
+				flex-shrink:0;
+			}
+			.footer .footer-content{
+				width:1000px;
+			}
 			.auth-forms {
 				background: rgba(255,255,255,.7);
-				width: 80%;
+				width: 1100px;
 				border: 1px solid rgb(169, 169, 169);
 				border-image-source: initial;
 				border-image-slice: initial;
@@ -78,7 +102,6 @@
 				border-radius: 10px;
 				padding: 20px;
 				margin: 20px auto 20px;
-				text-align: center;
 			}
 			h1, .h1 {
 				font-size: 36px;
@@ -92,23 +115,24 @@
 				font-weight: 500;
 				line-height: 1.1;
 				color: inherit;
-			}			
+			}
+
 			.auth-content {
+				width:inherit;
 				display: inline-block;
 			}
 			.auth-content h1 {
 				color: white;
 			}
-			.auth-content input {
-				width: 360px;
-				display: inline-block;
-			}	
+
 			.btn-primary {
 				color: white;
 				background-color: rgb(85, 85, 85);
 				border-color: rgb(72, 72, 72);				
 			}
-
+			a.btn-primary {
+				text-decoration:none;
+			}
 			.btn {
 				display: inline-block;
 				margin-bottom: 0px;
@@ -129,10 +153,20 @@
 				line-height: 1.428571429;
 				border-radius: 4px;
 				-webkit-user-select: none;
+				min-width:100px;
 			}
-			.form-control {
+
+			.form-control
+			{
+				padding-bottom:20px;
+			}
+			.form-control span
+			{
 				display: block;
-				width: 100%;
+			}
+			.form-control input {
+				display: block;
+				width: 90%;
 				height: 34px;
 				padding: 6px 12px;
 				font-size: 14px;
@@ -213,21 +247,93 @@
 
 			.logos {
 				margin-bottom: 20px;
+				text-align:center;
+				width: 700px;
 			}
 
-			@media (max-width: 490px){
-				.disclaimer{
+			.right-col, .left-col {
+				margin-left: 15px;
+				margin-right: 15px;
+				display:inline-block;
+				vertical-align: text-top;
+			}
+			.right-col {
+				width:320px;
+			}
+
+			#videos {
+				text-align:center;
+			}
+			#videos video{
+				height:350px;
+			}
+
+			#registration {
+				border-bottom-style: solid;
+				border-bottom-width: 1px;
+				padding-bottom: 10px;
+				margin-bottom:25px;
+				width:100%;
+			}
+			#forgot-password-links{
+				padding-top:10px;
+			}
+
+			@media (max-width: 1160px){
+				#videos video{
+					height:250px;
 				}
 
-				.row {
-					margin-left: 15px;
-					margin-right: 15px;
+				.logos {
+					width: 450px;
 				}
+				.auth-forms {
+					width:850px;
+				}
+				.page-content
+				{
+					min-height:550px;
+				}
+				.footer .footer-content{
+					width:auto;
+				}
+			}
+			@media (max-width: 910px){
+				#videos video{
+					height:200px;
+				}
+
+				.logos {
+					width: 300px;
+				}
+				.auth-forms {
+					width:700px;
+				}
+			}
+			@media (max-width: 767px){
+				.auth-forms {
+					width:420px;
+				}
+
+				.auth-content .left-col {
+					border-bottom-style:solid;
+					border-bottom-width:1px;
+					float:none;
+				}
+				.auth-content .left-col, .auth-content .right-col {
+					width:90%;
+				}
+				.page-content
+				{
+					min-height:950px;
+				}
+			}
+			@media (max-width: 490px){
 				.auth-forms {
 					border:0px;
 					width:100%;
 					padding: 0px;
-				margin: 5px auto 5px;
+					margin: 5px auto 5px;
 				}
 				.login-header {
 					height: 38px;
@@ -242,83 +348,101 @@
 					padding-left: 5px;
 					padding-right: 5px;			
 				}
-				.logos img {
-					width: 100%
-				}
-
 				.auth-content input {
-					width: inherit;
-					display: inherit;
+					width: 280px;
 				}	
-			}
-			@media (max-width: 767px){
-			}
-			@media (max-width: 910px){
-			}
-			@media (max-width: 1160px){
+				.auth-content input[type=button] {
+					width: inherit;
+				}
+				.page-content{
+					min-height:inherit;
+				}
+				.x-body, .ie-flex-fix, .footer{
+					display:block;
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<div id="browserWarning" class="browser-warning" >
-			<p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
-					<a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
-					<a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
-					<a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
-				<i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
-		</div>
-		<div class="login-header">	
-			<h1>${branding.landingPageTitle}</h1>        
-		</div>
+		<div class="ie-flex-fix">
+			<div class="page-header">
+				<div class="login-header">	
+					<h1>${branding.landingPageTitle}</h1>        
+				</div>
 
-		<div class="sub-header">
-			<h2>${branding.landingPageBanner}</h2>
-		</div>		
-		<div class="auth-forms">
-			<div class="auth-content">
-				<div class="row">
-					<div class="logos">
-						${branding.loginLogoBlock}
-					</div>		  		 
-					<div>
+				<div class="sub-header">
+					<h2>${branding.landingPageBanner}</h2>
+				</div>
+			</div>
+			<div class="page-content">
+				<div id="browserWarning" class="browser-warning" >
+					<p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
+							<a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
+							<a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
+							<a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
+						<i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
+				</div>
+				<div class="auth-forms">
+					<div class="auth-content">
 						<p id="serverError" class="clearError" >
 							Unable to connect to server or server failure.  Refresh page and try again.
-						</p>	
+						</p>
+						<div class="left-col">
+							<div class="logos">
+								${branding.loginLogoBlock}
+							</div>
+							<div id="videos">
+								<video controls  poster="https://archive.org/download/WebmVp8Vorbis/webmvp8.gif" >
+									<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">
+								</video>
+								<h2>Video Title</h2>
+							</div>
 
-
-
-						<form id="loginForm" action="Login.action?Login" method="POST">
-							<input type="hidden" id="gotoPageId" name="gotoPage"  />	
-							Username <br>
-							<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false">
-							<p id="usernameError" class="clearError errorText"></p> 				
-							<br>
-							<br>
-							Password <br>
-							<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" onkeypress="if (event.keyCode === 13) {
-										keyPressLogin();
-									}
-								   ">
-							<p id="passwordError" class="clearError errorText"></p>					
-							<br>
-							<br>
-							<input type="button" value="Log in" style="width: 100px;" class="btn btn-primary" onclick="submitForm();" />									
-
-						</form>
-						<br>
-						<br>
-						<br>
-						<br>
-						<span id="registration" class="hidden"><a href="registration.jsp">Sign up</a> |</span> <a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a> 
-
-					</div>
+						</div>
+						<div class="right-col">
+							<div>
+								<div id="registration" class="hidden">
+									<h2>Sign up for an Account.</h2>
+									<ol>
+										<li>Go to the Signup page.</li>
+										<li>Follow the steps on the screen to set up your account.</li>
+										<li>Use the account you created to Sign In.</li>
+									</ol>
+									<a class="btn btn-primary" href="registration.jsp">Sign up</a></div>
+							</div>
+							<div>
+								<h2>Log In</h2>
+								<form id="loginForm" action="Login.action?Login" method="POST">
+									<div class="form-control">
+										<input type="hidden" id="gotoPageId" name="gotoPage"  />	
+										<span>Username</span>
+										<input type="text" name="username" id="username" placeholder="Username" autofocus autocomplete="false">
+										<p id="usernameError" class="clearError errorText"></p>
+									</div>
+									<div class="form-control">
+										<span>Password</span>
+										<input type="password" name="password" id="password" placeholder="Password" autocomplete="false" onkeypress="if (event.keyCode === 13) {
+													keyPressLogin();
+												}
+											   ">
+										<p id="passwordError" class="clearError errorText"></p>
+									</div>
+									<input type="button" value="Log in" class="btn btn-primary" onclick="submitForm();" />
+								</form>
+								<div id="forgot-password-links">
+									<a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a>
+								</div>
+							</div>
+						</div>
+					</div>	
 				</div>
-			</div>	
-		</div>	
-		<div class="footer">
-			<%=branding.getLoginWarning()%>	
+			</div>
+			<div class="footer">
+				<div class="footer-content">
+					<%=branding.getLoginWarning()%>	
+				</div>
+			</div>
 		</div>
-
 		<script type="text/javascript">
 
 			sessionStorage.clear();
@@ -453,7 +577,7 @@
 				});
 			}
 
-		</script>		
+		</script>	
 	</body>
 </html>
 
