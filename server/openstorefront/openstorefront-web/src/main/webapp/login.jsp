@@ -26,7 +26,7 @@
 	request.setAttribute("appVersion", appVersion);
 
 %>
-<html>
+<html class="no-overview no-registration" > <!-- class="no-registration  no-registration-video"> -->
 	<head>
 		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
@@ -205,10 +205,6 @@
 			.errorField {
 				border: red 2px solid;
 			}
-			.hidden {
-				display: none; 
-				visibility: hidden;
-			}
 
 			.login-header {
 				width: 100%;
@@ -299,14 +295,50 @@
 				margin-right: -50%;
 				transform: translate(-50%, -50%);
 			}
+			.no-registration-video #registration-video-link{
+				display: none;
+			}
+			.no-registration #registration{
+				display: none;
+			}
+			.no-overview #left-content {
+				display:none;
+			}
+			.no-overview .auth-content {
+				display:flex;
+				flex-direction:column;
+				flex:1;
+				justify-content: center;
+				flex-shrink:0;
+			}
+			.no-overview .right-col,.no-overview .left-col {
+				width:100%;
+				display:flex;
+				flex-direction:row;
+				justify-content: center;
+			}
+			.no-overview #registration
+			{
+				padding-right:20px;
+				border-bottom:0;
+			}
 
+			.no-overview .auth-content input {
+				width: 280px;
+			}	
+			.no-overview .auth-content input[type=button] {
+				width: inherit;
+			}
 			@media (max-width: 1160px){
 				#left-content video{
-					height:250px;
+					height:225px;
 				}
 
 				.logos {
 					width: 450px;
+				}
+				.no-overview .logos {
+					width: 700px;
 				}
 				.auth-forms {
 					width:850px;
@@ -321,11 +353,15 @@
 			}
 			@media (max-width: 910px){
 				#left-content video{
-					height:200px;
+					height:150px;
 				}
 
 				.logos {
 					width: 300px;
+				}
+
+				.no-overview .logos {
+					width: 450px;
 				}
 				.auth-forms {
 					width:700px;
@@ -341,12 +377,23 @@
 					border-bottom-width:1px;
 					float:none;
 				}
+
+				.no-overview .left-col {
+					border:none;
+					float:none;
+				}
 				.auth-content .left-col, .auth-content .right-col {
 					width:90%;
 				}
-				.page-content
-				{
-					min-height:950px;
+				.page-content{
+					min-height:inherit;
+				}
+				.x-body, .ie-flex-fix, .footer{
+					display:block;
+				}
+
+				.no-overview .right-col,.no-overview .left-col {
+					display:block;
 				}
 			}
 			@media (max-width: 490px){
@@ -414,8 +461,8 @@
 							</div>
 							<div id="left-content">
 								<video controls  >
-									<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">             
-									<p>Fallback code if video isn't supported</p>
+									<source src="Media.action?GeneralMedia&name=SPOON%20Overview" type="video/mp4">             
+									<p>Link is redirecting to login</p>
 								</video>
 								<h2>Video Title</h2>
 							</div>
@@ -423,7 +470,7 @@
 						</div>
 						<div class="right-col">
 							<div>
-								<div id="registration" class="hidden">
+								<div id="registration">
 									<h2>Sign up for an Account.</h2>
 									<ol>
 										<li>Go to the Signup page.</li>
@@ -435,7 +482,7 @@
 								</div>
 								<div id="registration-video">									
 									<video controls >
-										<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">             
+										<source src="Media.action?GeneralMedia&name=SPOON%20Registration" type="video/mp4">             
 										<p>Fallback code if video isn't supported</p>
 									</video>
 								</div>
@@ -477,138 +524,135 @@
 
 			sessionStorage.clear();
 
-			if (Ext.isIE10m) {
-				Ext.get('browserWarning').setStyle({
-					display: 'block'
-				});
 
-				Ext.get('browserWarning').on("click", function () {
-					Ext.get('browserWarning').setStyle({
-						display: 'none'
+			$(function () {
+
+				if (Ext.isIE10m) {
+					$('#browserWarning').show();
+
+					$('#browserWarning').click(function () {
+						$('#browserWarning').hide();
 					});
+				}
+				if (!${allowRegistration}) {
+					$('html').addClass("noRegistration");
+				}
+				$('#registration-video-link').click(function () {
+					$('#registration-video').show();
 				});
-			}
+
+				var keyPressLogin = function () {
+					clearTimeout($.data(this, 'logintimer'));
+					var wait = setTimeout(submitForm, 500);
+					$(this).data('logintimer', wait);
+				};
+
+				var QueryString = function () {
+					var query_string = {};
+					var query = window.location.search.substring(1);
+					var vars = query.split("&");
+					for (var i = 0; i < vars.length; i++) {
+						var pair = vars[i].split("=");
+						// If first entry with this name
+						if (typeof query_string[pair[0]] === "undefined") {
+							query_string[pair[0]] = pair[1];
+							// If second entry with this name
+						} else if (typeof query_string[pair[0]] === "string") {
+							var arr = [query_string[pair[0]], pair[1]];
+							query_string[pair[0]] = arr;
+							// If third or later entry with this name
+						} else {
+							query_string[pair[0]].push(pair[1]);
+						}
+					}
+					return query_string;
+				}();
+				if (QueryString.gotoPage !== undefined)
+				{
+					document.getElementById('gotoPageId').value = QueryString.gotoPage;
+				} else {
+					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
+				}
+
+				function submitForm() {
+					$("#username").removeClass("errorField");
+					$("#password").removeClass("errorField");
+					$("#usernameError").removeClass("showError");
+					$("#passwordError").removeClass("showError");
+					$("#serverError").removeClass("loginError");
+					$("#usernameError").addClass("clearError");
+					$("#passwordError").addClass("clearError");
+					$("#serverError").addClass("clearError");
 
 
-			$(document).ready(function () {
-				if (${allowRegistration}) {
-					$('#registration').removeClass('hidden');
-					$('#registration-video-link').click(function () {
-						$('#registration-video').show();
+					function getCookie(cname) {
+						var name = cname + "=";
+						var decodedCookie = decodeURIComponent(document.cookie);
+						var ca = decodedCookie.split(';');
+						for (var i = 0; i < ca.length; i++) {
+							var c = ca[i];
+							while (c.charAt(0) === ' ') {
+								c = c.substring(1);
+							}
+							if (c.indexOf(name) === 0) {
+								return c.substring(name.length, c.length);
+							}
+						}
+						return "";
+					}
+
+					var token = getCookie('X-Csrf-Token');
+
+					$.ajax({
+						type: "POST",
+						url: 'Login.action?Login',
+						headers: [
+							{
+								'X-Csrf-Token': token
+							}
+						],
+						data: {
+							username: $('#username').val(),
+							password: $('#password').val(),
+							gotoPage: $('#gotoPageId').val()
+						},
+						success: function (data) {
+							if (data.success === false) {
+								if (data.errors.password) {
+									$("#password").addClass("errorField");
+									$("#passwordError").removeClass("clearError");
+									$("#passwordError").addClass("showError");
+									$("#passwordError").html(data.errors.password);
+								}
+								if (data.errors.username) {
+									$("#username").addClass("errorField");
+									$("#usernameError").removeClass("clearError");
+									$("#usernameError").addClass("showError");
+									$("#usernameError").html(data.errors.username);
+								}
+							} else {
+								if (window.location.href.indexOf("login.jsp") > -1) {
+									window.location.href = data.message;
+								} else {
+									if (data.message && data.message !== '') {
+										window.location.href = data.message;
+									} else {
+										window.location.reload();
+									}
+								}
+							}
+						},
+						error: function (xhr, status, errorThrown) {
+							if (xhr.status === 403) {
+								alert('403 - Already logged in on this browser. Logout and try again.');
+							} else {
+								$("#serverError").addClass("loginError");
+							}
+						}
 					});
 				}
 			});
 
-			var keyPressLogin = function () {
-				clearTimeout($.data(this, 'logintimer'));
-				var wait = setTimeout(submitForm, 500);
-				$(this).data('logintimer', wait);
-			};
-
-			var QueryString = function () {
-				var query_string = {};
-				var query = window.location.search.substring(1);
-				var vars = query.split("&");
-				for (var i = 0; i < vars.length; i++) {
-					var pair = vars[i].split("=");
-					// If first entry with this name
-					if (typeof query_string[pair[0]] === "undefined") {
-						query_string[pair[0]] = pair[1];
-						// If second entry with this name
-					} else if (typeof query_string[pair[0]] === "string") {
-						var arr = [query_string[pair[0]], pair[1]];
-						query_string[pair[0]] = arr;
-						// If third or later entry with this name
-					} else {
-						query_string[pair[0]].push(pair[1]);
-					}
-				}
-				return query_string;
-			}();
-			if (QueryString.gotoPage != undefined)
-			{
-				document.getElementById('gotoPageId').value = QueryString.gotoPage;
-			} else {
-				document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
-			}
-
-			function submitForm() {
-				$("#username").removeClass("errorField");
-				$("#password").removeClass("errorField");
-				$("#usernameError").removeClass("showError");
-				$("#passwordError").removeClass("showError");
-				$("#serverError").removeClass("loginError");
-				$("#usernameError").addClass("clearError");
-				$("#passwordError").addClass("clearError");
-				$("#serverError").addClass("clearError");
-
-
-				function getCookie(cname) {
-					var name = cname + "=";
-					var decodedCookie = decodeURIComponent(document.cookie);
-					var ca = decodedCookie.split(';');
-					for (var i = 0; i < ca.length; i++) {
-						var c = ca[i];
-						while (c.charAt(0) === ' ') {
-							c = c.substring(1);
-						}
-						if (c.indexOf(name) === 0) {
-							return c.substring(name.length, c.length);
-						}
-					}
-					return "";
-				}
-
-				var token = getCookie('X-Csrf-Token');
-
-				$.ajax({
-					type: "POST",
-					url: 'Login.action?Login',
-					headers: [
-						{
-							'X-Csrf-Token': token
-						}
-					],
-					data: {
-						username: $('#username').val(),
-						password: $('#password').val(),
-						gotoPage: $('#gotoPageId').val()
-					},
-					success: function (data) {
-						if (data.success === false) {
-							if (data.errors.password) {
-								$("#password").addClass("errorField");
-								$("#passwordError").removeClass("clearError");
-								$("#passwordError").addClass("showError");
-								$("#passwordError").html(data.errors.password);
-							}
-							if (data.errors.username) {
-								$("#username").addClass("errorField");
-								$("#usernameError").removeClass("clearError");
-								$("#usernameError").addClass("showError");
-								$("#usernameError").html(data.errors.username);
-							}
-						} else {
-							if (window.location.href.indexOf("login.jsp") > -1) {
-								window.location.href = data.message;
-							} else {
-								if (data.message && data.message !== '') {
-									window.location.href = data.message;
-								} else {
-									window.location.reload();
-								}
-							}
-						}
-					},
-					error: function (xhr, status, errorThrown) {
-						if (xhr.status === 403) {
-							alert('403 - Already logged in on this browser. Logout and try again.');
-						} else {
-							$("#serverError").addClass("loginError");
-						}
-					}
-				});
-			}
 
 		</script>	
 	</body>
