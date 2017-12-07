@@ -1776,10 +1776,11 @@
 								}
 								if (records[0].get('started')) {
 									tools.getComponent('stop').setDisabled(false);
+									tools.getComponent('restart').setDisabled(false);
 								} else {
 									tools.getComponent('stop').setDisabled(true);
-								}
-								tools.getComponent('restart').setDisabled(false);
+									tools.getComponent('restart').setDisabled(true);
+								}								
 							} else {
 								tools.getComponent('start').setDisabled(true);
 								tools.getComponent('stop').setDisabled(true);
