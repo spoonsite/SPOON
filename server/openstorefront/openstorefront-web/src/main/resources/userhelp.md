@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.4
+Version 2.5
                                                      
 
 # 1. Overview
@@ -28,35 +28,32 @@ Originally developed for DI2E (Defense Intelligence Information Enterprise)
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
-## 1.1 Release Notes for v2.4
+## 1.1 Release Notes for v2.5
 ------
 
-Version 2.4 incorporates:
+Version 2.5 incorporates:
 
-* New Landing Page Design - Search Tools, Quick Launch, Browse by Category
-* Search tools include tag cloud, organization, relationships, etc.
-* Quick Launch includes dashboard, user submissions, saved searches, etc.
-* Ability to print evaluations
-* Side by side comparison of evaluations
-* Entry detail reports will have evaluation results
+* Improvements made to the display of evaluations
+* Reports now have an expiration date (default expiration: 180 days)
+* Other reporting improvements include more scheduling  and report options and  simple entry selection
+* Search results are now sorted by relevance by default
 
-
-### 1.1.1 Administrator Release Notes, v2.4 @ADMIN-SYSTEM-MANAGEMENT
+### 1.1.1 Administrator Release Notes, v2.5 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
-*What's new in v2.4*
+*What's new in v2.5*
 
-* Support for customizing the landing page
-* Support for metadata has been merged with attributes
-
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.4" target="_blank">v2.4</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
-
-
-## 1.2 Known Issues, v2.3 @ADMIN-SYSTEM-MANAGEMENT 
+* New Reports
+	* Entry Listing - an indexed report of entries (includes name, description, type, last updated, and evaluation status)
+	* Entry Status - shows status changes for entries across the system in a given time period
+	* Action - report shows items that need administrator's attention (such as an entries awaiting approval)
+* Report emails allow confluence attachments (requires specific permissions - see admin) 
+* File upload size is now configurable
+* New evaluation guides for librarian/administrator
+* Improved handling of inline media for entries and evaluations
  
- * 
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.5" target="_blank">v2.5</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
  
-
 
 # 2. User Features
 ------
@@ -1450,11 +1447,7 @@ The page has a drop-down at the top to filter or **Show Entries with:**
 
 4.  To move the status of the selected answer select it and use the **Action** drop-down menu to move the answer to the status of
 	*Approved, Pending\*, or Inactive.*
- 
-**\*NOTE:** New to v2.4 is the ability to moderate Questions, Answers, and Reviews.  If this feature has been activated, **Pending** 
-	will show as an option on this page.  In additon any user-submitted questions and answers or reviews will **not** be immediately
-	visible on the website, but will need to be moved from *Pending* to *Active* as described above, before it is visible on the 
-	website.  
+   
 	
 **To turn on moderation of Questions, Answers, and Reviews:** 
 
@@ -1477,11 +1470,6 @@ The Reviews section of User Data in Data Management of the Admin Tools displays 
 2.  With a Review selected/ highlighted the **Action** drop-down menu can be accessed to move the review to
 	*Active, Inactive, or Pending*\* status.
 
-**\*NOTE:** New to v2.4 is the ability to moderate Questions, Answers, and Reviews.  If this feature has been activated, **Pending** 
-	will show as an option on this page.  In additon any user-submitted questions and answers or reviews will **not** be immediately
-	visible on the website, but will need to be moved from *Pending* to *Active* as described above, before it is visible on the 
-	website.  
-	
 **To turn on moderation of Questions, Answers, and Reviews:** 
 
  - Go to Admin Tools -> Application Management -> System Configuration Properties
