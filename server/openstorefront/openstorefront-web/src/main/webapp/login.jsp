@@ -24,9 +24,9 @@
 
 	String appVersion = PropertiesManager.getApplicationVersion();
 	request.setAttribute("appVersion", appVersion);
-
+	// control css classes that may be set on html tag: no-overview no-registration no-registration-video
 %>
-<html class="no-overview no-registration" > <!-- class="no-registration  no-registration-video"> -->
+<html> 
 	<head>
 		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
@@ -52,9 +52,6 @@
 				//top
 			}
 		</script>
-		<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
-		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
-		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
 		<style>
 			.x-body{
@@ -295,6 +292,11 @@
 				margin-right: -50%;
 				transform: translate(-50%, -50%);
 			}
+			#menu{
+				float:right;
+				padding-top: 6px;
+				padding-right: 6px;
+			}
 			.no-registration-video #registration-video-link{
 				display: none;
 			}
@@ -319,7 +321,7 @@
 			}
 			.no-overview #registration
 			{
-				padding-right:20px;
+				padding-right:100px;
 				border-bottom:0;
 			}
 
@@ -366,18 +368,23 @@
 				.auth-forms {
 					width:700px;
 				}
+				.no-overview #registration
+				{
+					padding-right:20px;
+				}
 			}
 			@media (max-width: 767px){
 				.auth-forms {
 					width:420px;
 				}
-
+				.no-overview .logos {
+					width: 300px;
+				}
 				.auth-content .left-col {
 					border-bottom-style:solid;
 					border-bottom-width:1px;
 					float:none;
 				}
-
 				.no-overview .left-col {
 					border:none;
 					float:none;
@@ -428,12 +435,20 @@
 				.x-body, .ie-flex-fix, .footer{
 					display:block;
 				}
+				#menu .x-btn{
+					height:27px;
+					padding: 2px;
+				}
 			}
 		</style>
+		<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
+		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	</head>
 	<body>
 		<div class="ie-flex-fix">
 			<div class="page-header">
+				<div id="menu"><!-- Ext generated Menu --></div>
 				<div class="login-header">	
 					<h1>${branding.landingPageTitle}</h1>        
 				</div>
@@ -522,14 +537,188 @@
 		</div>
 		<script type="text/javascript">
 
+			Ext.define('Login.SupportMenu', {
+				extend: 'Ext.button.Button',
+				scale: 'large',
+				ui: 'default',
+				maxWidth: 250,
+				initCallBack: null,
+				showUserTools: true,
+				showAdminTools: true,
+				showEvaluatorTools: true,
+				showHelp: true,
+				showFeedback: true,
+				text: 'Support',
+				menu: {
+					minWidth: 250
+				},
+				listeners: {
+					menuhide: function (button, menu, opts) {
+						var element = menu.getEl();
+						if (element !== undefined) {
+							element.setLeft(0);
+						}
+					}
+				},
+//				helpWin: Ext.create('OSF.component.HelpWindow', {}),
+//				feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
+				customMenuItems: [],
+				initComponent: function () {
+					this.callParent();
+					var userMenu = this;
+					var menu = userMenu.getMenu();
+					userMenu.loadMenu = function () {
+						menu.removeAll();
+						var menuItems = [];
+						if (userMenu.showHelp) {
+							menuItems.push({
+								text: '<b>Frequently asked Questions</b>',
+								iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+								handler: function () {
+									userMenu.helpWin.show();
+								}
+							});
+						}
+
+						if (userMenu.showHelp) {
+							menuItems.push({
+								text: '<b>Tutorials / Videos</b>',
+								iconCls: 'fa fa-2x fa-lightbulb-o icon-button-color-default',
+								handler: function () {
+									userMenu.helpWin.show();
+								}
+							});
+						}
+
+						if (userMenu.showFeedback) {
+							menuItems.push({
+								text: '<b>Contact Us</b>',
+								iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
+								handler: function () {
+									userMenu.feedbackWin.show();
+								}
+							});
+						}
+						menu.add(menuItems);
+					};
+					userMenu.loadMenu();
+					menu.on('beforerender', function () {
+						this.setWidth(this.up('button').getWidth());
+					});
+//				},
+//				refreshMenu: function (customMenuItems) {
+//					var userMenu = this;
+//					if (customMenuItems) {
+//						userMenu.customMenuItems = customMenuItems;
+//					}
+//					userMenu.loadMenu();
+				}
+
+			});
 			sessionStorage.clear();
+			var QueryString = function () {
+				var query_string = {};
+				var query = window.location.search.substring(1);
+				var vars = query.split("&");
+				for (var i = 0; i < vars.length; i++) {
+					var pair = vars[i].split("=");
+					// If first entry with this name
+					if (typeof query_string[pair[0]] === "undefined") {
+						query_string[pair[0]] = pair[1];
+						// If second entry with this name
+					} else if (typeof query_string[pair[0]] === "string") {
+						var arr = [query_string[pair[0]], pair[1]];
+						query_string[pair[0]] = arr;
+						// If third or later entry with this name
+					} else {
+						query_string[pair[0]].push(pair[1]);
+					}
+				}
+				return query_string;
+			}();
+			var submitForm = function () {
+				$("#username").removeClass("errorField");
+				$("#password").removeClass("errorField");
+				$("#usernameError").removeClass("showError");
+				$("#passwordError").removeClass("showError");
+				$("#serverError").removeClass("loginError");
+				$("#usernameError").addClass("clearError");
+				$("#passwordError").addClass("clearError");
+				$("#serverError").addClass("clearError");
+				function getCookie(cname) {
+					var name = cname + "=";
+					var decodedCookie = decodeURIComponent(document.cookie);
+					var ca = decodedCookie.split(';');
+					for (var i = 0; i < ca.length; i++) {
+						var c = ca[i];
+						while (c.charAt(0) === ' ') {
+							c = c.substring(1);
+						}
+						if (c.indexOf(name) === 0) {
+							return c.substring(name.length, c.length);
+						}
+					}
+					return "";
+				}
 
-
+				var token = getCookie('X-Csrf-Token');
+				$.ajax({
+					type: "POST",
+					url: 'Login.action?Login',
+					headers: [
+						{
+							'X-Csrf-Token': token
+						}
+					],
+					data: {
+						username: $('#username').val(),
+						password: $('#password').val(),
+						gotoPage: $('#gotoPageId').val()
+					},
+					success: function (data) {
+						if (data.success === false) {
+							if (data.errors.password) {
+								$("#password").addClass("errorField");
+								$("#passwordError").removeClass("clearError");
+								$("#passwordError").addClass("showError");
+								$("#passwordError").html(data.errors.password);
+							}
+							if (data.errors.username) {
+								$("#username").addClass("errorField");
+								$("#usernameError").removeClass("clearError");
+								$("#usernameError").addClass("showError");
+								$("#usernameError").html(data.errors.username);
+							}
+						} else {
+							if (window.location.href.indexOf("login.jsp") > -1) {
+								window.location.href = data.message;
+							} else {
+								if (data.message && data.message !== '') {
+									window.location.href = data.message;
+								} else {
+									window.location.reload();
+								}
+							}
+						}
+					},
+					error: function (xhr, status, errorThrown) {
+						if (xhr.status === 403) {
+							alert('403 - Already logged in on this browser. Logout and try again.');
+						} else {
+							$("#serverError").addClass("loginError");
+						}
+					}
+				});
+			};
+			var keyPressLogin = function () {
+				clearTimeout($.data(this, 'logintimer'));
+				var wait = setTimeout(submitForm, 500);
+				$(this).data('logintimer', wait);
+			};
 			$(function () {
 
 				if (Ext.isIE10m) {
 					$('#browserWarning').show();
-
 					$('#browserWarning').click(function () {
 						$('#browserWarning').hide();
 					});
@@ -540,117 +729,14 @@
 				$('#registration-video-link').click(function () {
 					$('#registration-video').show();
 				});
-
-				var keyPressLogin = function () {
-					clearTimeout($.data(this, 'logintimer'));
-					var wait = setTimeout(submitForm, 500);
-					$(this).data('logintimer', wait);
-				};
-
-				var QueryString = function () {
-					var query_string = {};
-					var query = window.location.search.substring(1);
-					var vars = query.split("&");
-					for (var i = 0; i < vars.length; i++) {
-						var pair = vars[i].split("=");
-						// If first entry with this name
-						if (typeof query_string[pair[0]] === "undefined") {
-							query_string[pair[0]] = pair[1];
-							// If second entry with this name
-						} else if (typeof query_string[pair[0]] === "string") {
-							var arr = [query_string[pair[0]], pair[1]];
-							query_string[pair[0]] = arr;
-							// If third or later entry with this name
-						} else {
-							query_string[pair[0]].push(pair[1]);
-						}
-					}
-					return query_string;
-				}();
 				if (QueryString.gotoPage !== undefined)
 				{
 					document.getElementById('gotoPageId').value = QueryString.gotoPage;
 				} else {
 					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
 				}
-
-				function submitForm() {
-					$("#username").removeClass("errorField");
-					$("#password").removeClass("errorField");
-					$("#usernameError").removeClass("showError");
-					$("#passwordError").removeClass("showError");
-					$("#serverError").removeClass("loginError");
-					$("#usernameError").addClass("clearError");
-					$("#passwordError").addClass("clearError");
-					$("#serverError").addClass("clearError");
-
-
-					function getCookie(cname) {
-						var name = cname + "=";
-						var decodedCookie = decodeURIComponent(document.cookie);
-						var ca = decodedCookie.split(';');
-						for (var i = 0; i < ca.length; i++) {
-							var c = ca[i];
-							while (c.charAt(0) === ' ') {
-								c = c.substring(1);
-							}
-							if (c.indexOf(name) === 0) {
-								return c.substring(name.length, c.length);
-							}
-						}
-						return "";
-					}
-
-					var token = getCookie('X-Csrf-Token');
-
-					$.ajax({
-						type: "POST",
-						url: 'Login.action?Login',
-						headers: [
-							{
-								'X-Csrf-Token': token
-							}
-						],
-						data: {
-							username: $('#username').val(),
-							password: $('#password').val(),
-							gotoPage: $('#gotoPageId').val()
-						},
-						success: function (data) {
-							if (data.success === false) {
-								if (data.errors.password) {
-									$("#password").addClass("errorField");
-									$("#passwordError").removeClass("clearError");
-									$("#passwordError").addClass("showError");
-									$("#passwordError").html(data.errors.password);
-								}
-								if (data.errors.username) {
-									$("#username").addClass("errorField");
-									$("#usernameError").removeClass("clearError");
-									$("#usernameError").addClass("showError");
-									$("#usernameError").html(data.errors.username);
-								}
-							} else {
-								if (window.location.href.indexOf("login.jsp") > -1) {
-									window.location.href = data.message;
-								} else {
-									if (data.message && data.message !== '') {
-										window.location.href = data.message;
-									} else {
-										window.location.reload();
-									}
-								}
-							}
-						},
-						error: function (xhr, status, errorThrown) {
-							if (xhr.status === 403) {
-								alert('403 - Already logged in on this browser. Logout and try again.');
-							} else {
-								$("#serverError").addClass("loginError");
-							}
-						}
-					});
-				}
+				// commenting out this line uncomment when working on FAQ ticket (STORE-2211)
+				//Ext.create('Login.SupportMenu', {renderTo: "menu"});
 			});
 
 

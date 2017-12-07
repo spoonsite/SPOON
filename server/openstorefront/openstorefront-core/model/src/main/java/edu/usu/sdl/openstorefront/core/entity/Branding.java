@@ -203,6 +203,15 @@ public class Branding
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
 
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private MediaFile overviewVideo;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private MediaFile registartionVideo;
+	
 	public Branding()
 	{
 	}
@@ -625,4 +634,23 @@ public class Branding
 		this.loginLogoBlock = loginLogoBlock;
 	}
 
+	public MediaFile getOverviewVideo()
+	{
+		return overviewVideo;
+	}
+
+	public void setOverviewVideo(MediaFile overviewVideo)
+	{
+		this.overviewVideo = overviewVideo;
+	}
+
+	public MediaFile getRegistartionVideo()
+	{
+		return registartionVideo;
+	}
+
+	public void setRegistartionVideo(MediaFile registartionVideo)
+	{
+		this.registartionVideo = registartionVideo;
+	}
 }
