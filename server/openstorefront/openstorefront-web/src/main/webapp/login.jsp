@@ -35,7 +35,7 @@
 		<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 		<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 		<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="apidoc/script/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
 
 		<script src="webjars/extjs/6.2.0/ext-bootstrap.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
@@ -261,10 +261,10 @@
 				width:320px;
 			}
 
-			#videos {
+			#left-content {
 				text-align:center;
 			}
-			#videos video{
+			#left-content video{
 				height:350px;
 			}
 
@@ -278,9 +278,30 @@
 			#forgot-password-links{
 				padding-top:10px;
 			}
+			#registration-video{
+				position: fixed; /* Sit on top of the page content */
+				display: none; /* Hidden by default */
+				width: 100%; /* Full width (cover the whole page) */
+				height: 100%; /* Full height (cover the whole page) */
+				top: 0; 
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+				z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+			}
+			#registration-video video{
+				width:500px;
+				margin: 0;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-right: -50%;
+				transform: translate(-50%, -50%);
+			}
 
 			@media (max-width: 1160px){
-				#videos video{
+				#left-content video{
 					height:250px;
 				}
 
@@ -299,7 +320,7 @@
 				}
 			}
 			@media (max-width: 910px){
-				#videos video{
+				#left-content video{
 					height:200px;
 				}
 
@@ -391,9 +412,10 @@
 							<div class="logos">
 								${branding.loginLogoBlock}
 							</div>
-							<div id="videos">
-								<video controls  poster="https://archive.org/download/WebmVp8Vorbis/webmvp8.gif" >
-									<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">
+							<div id="left-content">
+								<video controls  >
+									<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">             
+									<p>Fallback code if video isn't supported</p>
 								</video>
 								<h2>Video Title</h2>
 							</div>
@@ -408,7 +430,15 @@
 										<li>Follow the steps on the screen to set up your account.</li>
 										<li>Use the account you created to Sign In.</li>
 									</ol>
-									<a class="btn btn-primary" href="registration.jsp">Sign up</a></div>
+									<a class="btn btn-primary" href="registration.jsp">Sign up</a>
+									<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
+								</div>
+								<div id="registration-video">									
+									<video controls >
+										<source src="https://archive.org/download/WebmVp8Vorbis/webmvp8_512kb.mp4" type="video/mp4">             
+										<p>Fallback code if video isn't supported</p>
+									</video>
+								</div>
 							</div>
 							<div>
 								<h2>Log In</h2>
@@ -463,6 +493,9 @@
 			$(document).ready(function () {
 				if (${allowRegistration}) {
 					$('#registration').removeClass('hidden');
+					$('#registration-video-link').click(function () {
+						$('#registration-video').show();
+					});
 				}
 			});
 
