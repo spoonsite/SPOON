@@ -72,6 +72,14 @@ public class Branding
 	@ConsumeField
 	private String loginLogoBlock;
 
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginOverviewVideoUrl;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginRegistrationVideoUrl;
+	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -203,14 +211,6 @@ public class Branding
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
 
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private MediaFile overviewVideo;
-	
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private MediaFile registartionVideo;
 	
 	public Branding()
 	{
@@ -234,6 +234,8 @@ public class Branding
 		setLandingStatsText(branding.getLandingStatsText());
 		setLoginWarning(branding.getLoginWarning());
 		setLoginLogoBlock(branding.getLoginLogoBlock());
+		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
+		setLoginRegistrationVideoUrl(branding.getLoginRegistrationVideoUrl());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
@@ -634,23 +636,23 @@ public class Branding
 		this.loginLogoBlock = loginLogoBlock;
 	}
 
-	public MediaFile getOverviewVideo()
+	public String getLoginOverviewVideoUrl()
 	{
-		return overviewVideo;
+		return loginOverviewVideoUrl;
 	}
 
-	public void setOverviewVideo(MediaFile overviewVideo)
+	public void setLoginOverviewVideoUrl(String loginOverviewVideoUrl)
 	{
-		this.overviewVideo = overviewVideo;
+		this.loginOverviewVideoUrl = loginOverviewVideoUrl;
 	}
 
-	public MediaFile getRegistartionVideo()
+	public String getLoginRegistrationVideoUrl()
 	{
-		return registartionVideo;
+		return loginRegistrationVideoUrl;
 	}
 
-	public void setRegistartionVideo(MediaFile registartionVideo)
+	public void setLoginRegistrationVideoUrl(String loginRegistrationVideoUrl)
 	{
-		this.registartionVideo = registartionVideo;
+		this.loginRegistrationVideoUrl = loginRegistrationVideoUrl;
 	}
 }

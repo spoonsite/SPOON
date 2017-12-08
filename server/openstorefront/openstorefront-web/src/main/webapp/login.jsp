@@ -475,13 +475,7 @@
 								${branding.loginLogoBlock}
 							</div>
 							<div id="left-content">
-								<video controls  >
-									<source src="Media.action?GeneralMedia&name=SPOON%20Overview" type="video/mp4">             
-									<p>Link is redirecting to login</p>
-								</video>
-								<h2>Video Title</h2>
 							</div>
-
 						</div>
 						<div class="right-col">
 							<div>
@@ -495,11 +489,7 @@
 									<a class="btn btn-primary" href="registration.jsp">Sign up</a>
 									<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
 								</div>
-								<div id="registration-video">									
-									<video controls >
-										<source src="Media.action?GeneralMedia&name=SPOON%20Registration" type="video/mp4">             
-										<p>Fallback code if video isn't supported</p>
-									</video>
+								<div id="registration-video">
 								</div>
 							</div>
 							<div>
@@ -536,6 +526,8 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+
+			sessionStorage.clear();
 
 			Ext.define('Login.SupportMenu', {
 				extend: 'Ext.button.Button',
@@ -605,17 +597,10 @@
 					menu.on('beforerender', function () {
 						this.setWidth(this.up('button').getWidth());
 					});
-//				},
-//				refreshMenu: function (customMenuItems) {
-//					var userMenu = this;
-//					if (customMenuItems) {
-//						userMenu.customMenuItems = customMenuItems;
-//					}
-//					userMenu.loadMenu();
 				}
 
 			});
-			sessionStorage.clear();
+
 			var QueryString = function () {
 				var query_string = {};
 				var query = window.location.search.substring(1);
@@ -723,9 +708,21 @@
 						$('#browserWarning').hide();
 					});
 				}
+
 				if (!${allowRegistration}) {
-					$('html').addClass("noRegistration");
+					$('html').addClass("no-registration");
 				}
+				if ("${branding.getLoginOverviewVideoUrl()}") {
+					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' />");					
+				} else {
+					$('html').addClass("no-overview");
+				}
+				if ("${branding.getLoginRegistrationVideoUrl()}") {
+					$("#registration-video").html("<video controls src='${branding.getLoginRegistrationVideoUrl()}' />");
+				} else {
+					$('html').addClass("no-registration-video");
+				}
+
 				$('#registration-video-link').click(function () {
 					$('#registration-video').show();
 				});

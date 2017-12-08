@@ -163,7 +163,7 @@
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use image map" ></i>',
+														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use an image map, we reccommend the use of an svg for a responsive image map" ></i>',
 														name: 'loginLogoBlock',
 														resizable: {
 															handles: 's'
@@ -171,7 +171,81 @@
 														width: '100%',											
 														allowBlank: true,
 														maxLength: 16000
-													},														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginOverviewVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Overview Vidoe URL <i class="fa fa-question-circle"  data-qtip="Site overview video under the logo" ></i>',
+																name: 'loginOverviewVideoUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Media',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginOverviewVideoUrl = this.up('panel').queryById('loginOverviewVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			loginOverviewVideoUrl.setValue(encodeURI(link));
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginRegistrationVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Registration Video URL <i class="fa fa-question-circle"  data-qtip="Displayed as a &quot;How to Video&quot; link" ></i>',
+																name: 'loginRegistrationVideoUrl',
+																allowBlank: true,											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Media',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginRegistrationVideoUrl = this.up('panel').queryById('loginRegistrationVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			loginRegistrationVideoUrl.setValue(encodeURI(link));
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},	
 													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
