@@ -79,7 +79,7 @@
 			.footer{
 				padding: 10px;
 				background: ${branding.primaryColor};
-				color: white;
+				color: ${branding.primaryTextColor};
 				display: flex;
 				justify-content: center;
 				flex-shrink:0;
@@ -207,12 +207,12 @@
 				width: 100%;
 				height: 56px;
 				background-color: ${branding.primaryColor};
+				color: ${branding.primaryTextColor};
 			}
 
 			.login-header h1 {
 				margin: auto;
 				text-align: center;
-				color: ${branding.primaryTextColor};
 				padding-top: 10px;
 				font-size: 32px;
 				font-style: normal;
@@ -283,19 +283,43 @@
 				background-color: rgba(0,0,0,0.5); /* Black background with opacity */
 				z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
 			}
-			#registration-video video{
-				width:500px;
+			#menu{
+				float:right;
+				padding-top: 6px;
+				padding-right: 6px;
+			}
+			.dialog {
+				width:600px;
 				margin: 0;
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				margin-right: -50%;
 				transform: translate(-50%, -50%);
+				border-color:black;
+				border-style:solid;
+				border-width:1px;
 			}
-			#menu{
-				float:right;
-				padding-top: 6px;
-				padding-right: 6px;
+			.dialog .header{
+				background: ${branding.primaryColor};
+				color: ${branding.primaryTextColor};
+				height: 32px;
+			}
+			.dialog .header h2
+			{
+				margin-top:0px;
+				padding-top:5px;
+				padding-left:15px;
+
+			}
+			.dialog .content, .dialog .content video{
+				width:100%;
+				background:black;
+			}
+			.dialog .buttons{
+				background:white;
+				padding:5px;
+				text-align:center;
 			}
 			.no-registration-video #registration-video-link{
 				display: none;
@@ -402,8 +426,18 @@
 				.no-overview .right-col,.no-overview .left-col {
 					display:block;
 				}
+				.dialog {
+					width:450px;
+				}
 			}
 			@media (max-width: 490px){
+				.dialog { 
+					min-width: 300px;
+					width: 100%;
+					left:0px;
+					right:auto;
+					transform: translate(0%, -50%);
+				}
 				.auth-forms {
 					border:0px;
 					width:100%;
@@ -490,6 +524,12 @@
 									<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
 								</div>
 								<div id="registration-video">
+									<!-- built my own dialog box because Ext.window.Window does not have good responsive support -->
+									<div class="dialog">
+										<div class="header"></div>
+										<div class="content"></div>
+										<div class="buttons"><input class="btn btn-primary" type="button" value="Close" /></div>
+									</div>
 								</div>
 							</div>
 							<div>
@@ -713,12 +753,17 @@
 					$('html').addClass("no-registration");
 				}
 				if ("${branding.getLoginOverviewVideoUrl()}") {
-					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' />");					
+					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' />");
 				} else {
 					$('html').addClass("no-overview");
 				}
 				if ("${branding.getLoginRegistrationVideoUrl()}") {
-					$("#registration-video").html("<video controls src='${branding.getLoginRegistrationVideoUrl()}' />");
+					var dialog = $("#registration-video .dialog");
+					$(".header", dialog).html("<h2>How to Register</h2>");
+					$(".content", dialog).html("<video autoplay='autoplay' controls src='${branding.getLoginRegistrationVideoUrl()}' />");
+					$(".buttons .btn", dialog).click(function () {
+						$('#registration-video').hide();
+					});
 				} else {
 					$('html').addClass("no-registration-video");
 				}
