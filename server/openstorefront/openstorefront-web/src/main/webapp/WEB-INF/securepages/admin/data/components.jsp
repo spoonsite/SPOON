@@ -1585,7 +1585,7 @@
 
 				var mergeComponentWin = Ext.create('Ext.window.Window', {
 					id: 'mergeComponentWin',
-					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges entry to target. <br> Meaning target will contain merged entry\'s information and merged entry will be deleted." ></i>',
+					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
 					width: '40%',
 					height: 260,
 					modal: true,
@@ -1648,29 +1648,29 @@
 								}
 							],
 							items: [
-								{
-									xtype: 'combobox',
-									name: 'mergeComponentId',
-									fieldLabel: 'Merge Entry',
-									store: maingridStore,
-									queryLocal: true,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								},
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'targetComponentId',
 									itemId: 'targetComponent',
 									allowBlank: false,
 									width: '100%',
 									margin: '0 0 0 0',
-									fieldLabel: 'Target Entry',
+									fieldLabel: 'Duplicate Entry',
 									storeConfig: {
 										url: 'api/v1/resource/components/lookup?all=true',
 										autoLoad: false
 									}
-								})
+								}),
+								{
+									xtype: 'combobox',
+									name: 'mergeComponentId',
+									fieldLabel: 'Target Entry',
+									store: maingridStore,
+									queryLocal: true,
+									valueField: 'componentId',
+									width: '100%',
+									displayField: 'name',
+									readOnly: true
+								}								
 							]
 						}
 					]
