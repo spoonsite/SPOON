@@ -1698,9 +1698,8 @@ table.confluenceTable td.numberingColumn {
 	}
 }
 
-.options-cell {
+.expandable-grid-cell {
 	height: 100%;
-	/*color: green;*/
     -moz-transition: height 0.25s;
     -ms-transition: height 0.25s;
     -o-transition: height 0.25s;
@@ -1708,8 +1707,7 @@ table.confluenceTable td.numberingColumn {
     transition: height 0.25s;
 }
 
-/*.grid-panel-height-transition:before {*/
-.options-cell-collapsed:before {
+.expandable-grid-cell-collapsed:before {
     content: "\f065";
     font-family: FontAwesome;
     font-style: normal;
@@ -1717,13 +1715,25 @@ table.confluenceTable td.numberingColumn {
     text-decoration: inherit;
     color: #606060;
     font-size: 14px;
-    /*padding-right: 0.5em;*/
     position: absolute;
     top: 1em;
     right: 1em;
 }
 
-.options-cell-collapsed {
+.expandable-grid-cell-expanded:before {
+    content: "\f066";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #606060;
+    font-size: 14px;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.expandable-grid-cell-collapsed {
 
 	height: 2.8em;
 }

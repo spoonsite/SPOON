@@ -61,17 +61,19 @@
 						if (record.data.reportType === 'TYPECOMP') {
 							var options = record.data.reportOption;
 							for (var key in options) {
-								details += key + ': ' + options[key] + '<br />';
-								recordDataNum += 1;
+								if (key !== 'storageVersion') {
+									details += key + ': ' + options[key] + '<br />';
+									recordDataNum += 1;
+								}
 							}
 						}
 						
 						var classList = '';
 
 						if (recordDataNum > 2) {
-							classList = 'options-cell-collapsed';
+							classList = 'expandable-grid-cell-collapsed';
 						}
-						classList += ' options-cell';
+						classList += ' expandable-grid-cell';
 						return '<div class="' + classList + '" data-num="' + recordDataNum + '">' + details + '</div>';
 					}
 					return '';
@@ -1744,7 +1746,7 @@
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 270, flex: 1, sortable: false, renderer: optionsRender },
-						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150,
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
 								
@@ -1934,8 +1936,24 @@
 						},
 						rowclick: function ( self, record, tr ) {
 
-							var optionsCell = tr.querySelector('.options-cell');
-							var dataNumAttr = parseInt(optionsCell.getAttribute('data-num'));
+							// get all row cells that are expandable
+							var expandableCells = tr.querySelectorAll('.expandable-grid-cell');
+
+							// find the largest expandable cell (this will determine the max height of the row)
+							var largetExpandableCell = null;
+							Ext.Array.each(expandableCells, function (cell, index) {
+								if (largetExpandableCell === null) {
+									largetExpandableCell = cell;
+								}
+								else {
+									if (parseInt(cell.getAttribute('data-num')) > parseInt(largetExpandableCell.getAttribute('data-num'))) {
+										largetExpandableCell = cell;
+									}
+								}
+							});
+
+							// set the style and height of the cells that are expandable
+							var dataNumAttr = parseInt(largetExpandableCell.getAttribute('data-num'));
 							if (dataNumAttr || dataNumAttr === 0) {
 								var switchedRecord = false;
 
@@ -1943,7 +1961,10 @@
 								if (!!self.previousSelection) {
 
 									switchedRecord = self.previousSelection != tr;
-									self.previousSelection.querySelector('.options-cell').style.height = '2.8em';
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = '2.8em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-expanded' + '(?:\\s|$)'), ' expandable-grid-cell-collapsed ');
+									});
 									self.previousSelection = tr;
 								}
 
@@ -1953,8 +1974,12 @@
 									self.previousSelection = tr;
 								}
 
+								// if the data in the cell has more than 2 sets of data, make it expandable
 								if (switchedRecord && dataNumAttr > 2) {
-									optionsCell.style.height = '21em';
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = (dataNumAttr * 1.5) + 'em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-collapsed' + '(?:\\s|$)'), ' expandable-grid-cell-expanded ');
+									});
 								}
 								else {
 									self.previousSelection = null;
