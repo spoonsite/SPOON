@@ -563,10 +563,8 @@ Ext.define('OSF.component.ChangeLogWindow', {
 			]
 		}
 	],
-	listeners:
-	{
-		show: function()   
-		{        
+	listeners:	{
+		show: function() {        
 			this.removeCls("x-unselectable");    
 		}
 	},	

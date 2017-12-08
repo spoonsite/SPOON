@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.OrgReferenceWrapper;
 import edu.usu.sdl.openstorefront.core.view.OrganizationRelationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
@@ -109,6 +110,17 @@ public class OrganizationResource
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		if (StringUtils.isNotBlank(filterQueryParams.getName())) {
+			Organization organizationLikeExample = new Organization();
+			organizationLikeExample.setName("%" + filterQueryParams.getName().toLowerCase() + "%");
+
+			specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(organizationLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
@@ -225,28 +237,51 @@ public class OrganizationResource
 	@GET
 	@APIDescription("Gets references attached to an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrgReference.class)
+	@DataType(OrgReferenceWrapper.class)
 	@Path("/{id}/references")
-	public List<OrgReference> getReferences(
+	public Response getReferences(
 			@PathParam("id") String organizationId,
 			@QueryParam("activeOnly") boolean activeOnly,
-			@QueryParam("approvedOnly") boolean approvedOnly
+			@QueryParam("approvedOnly") boolean approvedOnly,
+			@BeanParam FilterQueryParams filterQueryParams
 	)
 	{
-		return service.getOrganizationService().findReferences(organizationId, activeOnly, approvedOnly);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+		OrgReferenceWrapper wrapper = new OrgReferenceWrapper();
+		List<OrgReference> reference = service.getOrganizationService().findReferences(organizationId, activeOnly, approvedOnly);
+		wrapper.setTotalNumber(reference.size());
+		reference = filterQueryParams.filter(reference);
+		wrapper.setData(reference);
+		wrapper.setResults(reference.size());
+		return sendSingleEntityResponse(wrapper);
 	}
 
 	@GET
 	@APIDescription("Gets references that do not have an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrgReference.class)
+	@DataType(OrgReferenceWrapper.class)
 	@Path("/references")
-	public List<OrgReference> getReferencesNoOrg(
+	public Response getReferencesNoOrg(
 			@QueryParam("activeOnly") boolean activeOnly,
-			@QueryParam("approvedOnly") boolean approvedOnly
+			@QueryParam("approvedOnly") boolean approvedOnly,
+			@BeanParam FilterQueryParams filterQueryParams
 	)
 	{
-		return service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		OrgReferenceWrapper wrapper = new OrgReferenceWrapper();
+		List<OrgReference> reference = service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+		wrapper.setTotalNumber(reference.size());
+		reference = filterQueryParams.filter(reference);
+		wrapper.setData(reference);
+		wrapper.setResults(reference.size());
+		return sendSingleEntityResponse(wrapper);
 	}
 
 	@GET
