@@ -552,6 +552,21 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					}
 					//normalize records
 					var showRecords = [];
+					//unwrap if needed
+					if (records.length == 1) {		
+						if (records[0].data.data) {
+							
+							var newRecords = [];
+							Ext.Array.each(records[0].data.data, function(data){
+								var newRecord = Ext.create('Ext.data.Record', {									
+								});
+								newRecord.set(data);
+								newRecords.push(newRecord);
+							});
+							
+							records = newRecords;
+						}
+					}
 					Ext.Array.each(records, function(media) {
 						if (!media.get('link')) {
 							media.set('link', media.get('mediaLink'));
@@ -684,25 +699,46 @@ Ext.define('OSF.component.MediaInsertWindow', {
 													
 													// In this case, to not up-end the
 													// server side things, technically a 
-													// failure is a potentially a sucess
+													// failure is a potentially a success
+													
+													//normalize record as they can be different 													
+													var newMediafile = {														
+													};
+													
 													if (action.result && action.result.fileName) {
+														newMediafile.name = action.result.name;
+														newMediafile.valid = true;
+														newMediafile.mimeType = action.result.mimeType;
+													}
+													
+													if (action.result && 
+														action.result.file && 
+														action.result.file.fileName) {
+													
+														newMediafile.name = action.result.name;
+														newMediafile.valid = true;
+														newMediafile.mimeType = action.result.file.mimeType;
+													}
+													
+													if (newMediafile.valid) {
+													
 														// True success
 														uploadForm.setLoading(false);
 														var link = 'Media.action?' + apiMediaType + '&name=';
-														link += encodeURIComponent(action.result.name);
+														link += encodeURIComponent(newMediafile.name);
 														
 														var mediaTypeCode = mediaInsertWindow.mediaToShow;
-														if (action.result.mimeType) {
-															if (action.result.mimeType.indexOf('image') !== -1) {
+														if (newMediafile.mimeType) {
+															if (newMediafile.mimeType.indexOf('image') !== -1) {
 																mediaTypeCode = 'IMG';
-															} else if (action.result.mimeType.indexOf('video') !== -1) {
+															} else if (newMediafile.mimeType.indexOf('video') !== -1) {
 																mediaTypeCode = 'VID';
-															} else if (action.result.mimeType.indexOf('audio') !== -1) {
+															} else if (newMediafile.mimeType.indexOf('audio') !== -1) {
 																mediaTypeCode = 'AUD';
 															} 
 														}
 														
-														mediaInsertWindow.mediaHandler(link, action.result.name, mediaTypeCode, action.result.mimeType);
+														mediaInsertWindow.mediaHandler(link, newMediafile.name, mediaTypeCode, newMediafile.mimeType, action.result, newMediafile);
 														uploadForm.up('window').close();
 													} else {
 														// True failure
@@ -755,7 +791,16 @@ MediaUtil = {
 			},
 			success: function(response, opts) {
 				if (response.responseText === 'true') {
-					uploadForm.setLoading("Uploading Media...");																					
+					uploadForm.setLoading("Uploading Media...");	
+					
+					var successHandler = function() {
+						var link = "Media.action?GeneralMedia&name=";
+							link += encodeURIComponent(name);
+
+						mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');													
+						mediaInsertWindow.close();
+					};
+					
 					uploadForm.submit({
 						url: 'Media.action?UploadGeneralMedia',
 						method: 'POST',
@@ -766,19 +811,30 @@ MediaUtil = {
 							uploadForm.setLoading(false);
 						},
 						success: function(form, action) {
-							var link = "Media.action?GeneralMedia&name=";
-								link += encodeURIComponent(name);
-
-							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');													
-							mediaInsertWindow.close();
+							successHandler();
 						},
 						failure: function(form, action){
-							Ext.Msg.show({
-								title: 'Upload Failed',
-								msg: 'The file upload was not successful.',
-								icon: Ext.Msg.ERROR,
-								buttons: Ext.Msg.OK
-							});	
+							
+							//it's sends back a record with out a success indicator which trips the fail
+							var success = false;							
+							try {
+								var results = Ext.decode(action.response.responseText);
+								if (results.file) {
+									successHandler();
+									success = true;
+								}								
+							} catch (e) {
+								console.log(e);
+							}
+							
+							if (!success) {
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was not successful.',
+									icon: Ext.Msg.ERROR,
+									buttons: Ext.Msg.OK
+								});	
+							}
 						}
 					});	
 				} else {

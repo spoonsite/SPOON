@@ -1776,16 +1776,6 @@
 				]
 			});
 			
-			var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
-				
-				isEditor: false,
-				mediaSelectionUrl: 'api/v1/resource/generalmedia',
-				closeAction: 'hide',
-				mediaHandler: function(link) {
-
-					Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
-				}
-			});
 
 			var editCodeWin = Ext.create('Ext.window.Window', {
 				id: 'editCodeWin',
@@ -1897,6 +1887,14 @@
 										text: 'Insert Media',
 										flex: 1,
 										handler: function() {
+											
+											var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
+												isEditor: false,
+												mediaSelectionUrl: 'api/v1/resource/generalmedia',			
+												mediaHandler: function(link) {
+													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
+												}
+											});
 											
 											mediaWindow.show();
 										}

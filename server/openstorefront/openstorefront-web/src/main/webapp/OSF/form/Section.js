@@ -886,9 +886,16 @@ Ext.define('OSF.form.Section', {
 					Ext.toast('Saved Section');
 					var newContentSectionAll = Ext.decode(action.responseText);
 					if (sectionForm.getComponent('contentPanel') !== undefined) {
-						sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
+						if (sectionForm.getComponent('contentPanel').getComponent('content')){						
+							sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
+						}
 						Ext.Array.each(newContentSectionAll.subsections, function (subsection) {
-							sectionForm.getComponent('contentPanel').getComponent('subSectionPanel').getComponent('subcontent-' + subsection.subSectionId).setValue(subsection.content);
+							if (sectionForm.getComponent('contentPanel').getComponent('subSectionPanel')) {
+								var subSectionPanel =sectionForm.getComponent('contentPanel').getComponent('subSectionPanel');
+								if (subSectionPanel.getComponent('subcontent-' + subsection.subSectionId)) {
+									subSectionPanel.getComponent('subcontent-' + subsection.subSectionId).setValue(subsection.content);
+								}
+							}
 						});
 					} else {
 						sectionForm.getComponent('content').setValue(newContentSectionAll.section.content);
