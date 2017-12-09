@@ -30,28 +30,51 @@
 
 			Ext.onReady(function () {
 
-				var optionsRender = function(v, meta) {
+				var optionsRender = function(v, meta, record) {
+					var recordDataNum = 0;
+					var details = '';
+
 					if (v) {
 						if (v.category) {
-							return 'Category: ' + v.category;
+							details += 'Category: ' + v.category + '<br />';
+							recordDataNum += 1;
 						}
-						else if (v.startDts) {
-							var details = '';
+						if (v.startDts) {
 							if (v.startDts) {
 								details = details + 'Start Date: ' + Ext.util.Format.date(v.startDts, 'm/d/y H:i:s') + '<br>';
+								recordDataNum += 1;
 							}
 							if (v.endDts) {
 								details = details + 'End Date: ' + Ext.util.Format.date(v.endDts, 'm/d/y H:i:s') + '<br>';
+								recordDataNum += 1;
 							}
-							return details;
+							// return details;
 						}
-						else if (v.previousDays) {
-							return 'Previous Days: ' + v.previousDays;
+						if (v.previousDays) {
+							details += 'Previous Days: ' + v.previousDays + '<br />';
+							recordDataNum += 1;
 						}
-						else if (v.maxWaitSeconds) {
-							return 'Max Wait Seconds: ' + v.maxWaitSeconds;
+						if (v.maxWaitSeconds) {
+							details += 'Max Wait Seconds: ' + v.maxWaitSeconds + '<br />';
+							recordDataNum += 1;
 						}
-						return '';
+						if (record.data.reportType === 'TYPECOMP') {
+							var options = record.data.reportOption;
+							for (var key in options) {
+								if (key !== 'storageVersion') {
+									details += key + ': ' + options[key] + '<br />';
+									recordDataNum += 1;
+								}
+							}
+						}
+						
+						var classList = '';
+
+						if (recordDataNum > 2) {
+							classList = 'expandable-grid-cell-collapsed';
+						}
+						classList += ' expandable-grid-cell';
+						return '<div class="' + classList + '" data-num="' + recordDataNum + '">' + details + '</div>';
 					}
 					return '';
 				};
@@ -1722,6 +1745,7 @@
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
+					previousSelection: null,
 					selModel: {
 						selType: 'checkboxmodel'
 					},
@@ -1776,8 +1800,8 @@
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
-						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender },
-						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150,
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 270, flex: 1, sortable: false, renderer: optionsRender },
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
 								
@@ -1956,9 +1980,67 @@
 							displayInfo: true
 						}
 					],
+					viewConfig: {
+						getRowClass: function (record) {
+							return 'grid-panel-height-transition';
+						}
+					},
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
 							viewHistory();
+						},
+						rowclick: function ( self, record, tr ) {
+
+							// get all row cells that are expandable
+							var expandableCells = tr.querySelectorAll('.expandable-grid-cell');
+
+							// find the largest expandable cell (this will determine the max height of the row)
+							var largetExpandableCell = null;
+							Ext.Array.each(expandableCells, function (cell, index) {
+								if (largetExpandableCell === null) {
+									largetExpandableCell = cell;
+								}
+								else {
+									if (parseInt(cell.getAttribute('data-num')) > parseInt(largetExpandableCell.getAttribute('data-num'))) {
+										largetExpandableCell = cell;
+									}
+								}
+							});
+
+							// set the style and height of the cells that are expandable
+							var dataNumAttr = parseInt(largetExpandableCell.getAttribute('data-num'));
+							if (dataNumAttr || dataNumAttr === 0) {
+								var switchedRecord = false;
+
+								// if we have already selected an item
+								if (!!self.previousSelection) {
+
+									switchedRecord = self.previousSelection != tr;
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = '2.8em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-expanded' + '(?:\\s|$)'), ' expandable-grid-cell-collapsed ');
+									});
+									self.previousSelection = tr;
+								}
+
+								// if we haven't selected an item
+								else {
+									switchedRecord = true;
+									self.previousSelection = tr;
+								}
+
+								// if the data in the cell has more than 2 sets of data, make it expandable
+								if (switchedRecord && dataNumAttr > 2) {
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = (dataNumAttr * 1.5) + 'em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-collapsed' + '(?:\\s|$)'), ' expandable-grid-cell-expanded ');
+									});
+								}
+								else {
+									self.previousSelection = null;
+								}
+							}
+
 						},
 						selectionchange: function (grid, record, index, opts) {
 							historyCheckNavButtons();
