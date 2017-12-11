@@ -60,7 +60,7 @@
 				
 				var mediaGrid = Ext.create('Ext.grid.Panel', {
 					id: 'mediaGrid',
-					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
+					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles,badges, and branding." ></i>',
 					store: mediaStore,
 					columnLines: true,
 					columns: [						
@@ -476,9 +476,12 @@
 												Ext.getCmp('addMediaForm').setLoading(false);
 												return;
 											}
-
+											var postUrl = 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name;
+											if(data.allowInBranding === "true") {
+												postUrl += '&generalMedia.allowInBranding=true'
+											}
 											Ext.getCmp('addMediaForm').submit({
-												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
+												url: postUrl,
 												method: 'POST',
 												callback: function() {
 													Ext.getCmp('addMediaForm').setLoading(false);

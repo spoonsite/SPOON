@@ -95,11 +95,8 @@ public class BrandingAction
 		generalMediaExample.setName(name);
 		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 
-		branding = loadBranding();
 		//restrict to media part of the branding
-		if (!branding.getPrimaryLogoUrl().contains("name=" + name)
-				&& !branding.getSecondaryLogoUrl().contains("name=" + name)
-				&& !branding.getHomebackSplashUrl().contains("name=" + name)) {
+		if (!generalMedia.getAllowInBranding()) {
 			generalMedia = null;
 			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is restricted.", name));
 		}

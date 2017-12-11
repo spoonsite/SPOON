@@ -761,7 +761,7 @@
 				if ("${branding.getLoginRegistrationVideoUrl()}") {
 					var dialog = $("#registration-video .dialog");
 					$(".header", dialog).html("<h2>How to Register</h2>");
-					$(".content", dialog).html("<video autoplay='autoplay' controls src='${branding.getLoginRegistrationVideoUrl()}' />");
+					$(".content", dialog).html("<video controls src='${branding.getLoginRegistrationVideoUrl()}' />");
 					$(".buttons .btn", dialog).click(function () {
 						$('#registration-video').hide();
 					});
