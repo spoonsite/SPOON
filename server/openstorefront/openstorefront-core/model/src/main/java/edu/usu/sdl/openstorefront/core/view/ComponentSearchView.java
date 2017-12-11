@@ -39,10 +39,13 @@ import org.apache.commons.lang3.StringUtils;
 public class ComponentSearchView
 		extends StandardEntityView
 {
+
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_DESCRIPTION = "description";
+
 	public static final String FIELD_ORGANIZATION = "organization";
 	public static final String FIELD_SEARCH_SCORE = "searchScore";
-	
+
 	private String listingType;
 	private String componentId;
 	private String name;
@@ -58,7 +61,7 @@ public class ComponentSearchView
 	private String componentType;
 	private String componentTypeDescription;
 	private String componentIconId;
-	private String componentTypeIconUrl;	
+	private String componentTypeIconUrl;
 	private Integer averageRating;
 	private Date releaseDate;
 	private Date approvedDts;
@@ -70,7 +73,7 @@ public class ComponentSearchView
 	private float searchScore;
 	private String dataSource;
 	private String dataSensitivity;
-	
+
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
@@ -96,7 +99,7 @@ public class ComponentSearchView
 		example.setComponentAttributePk(pk);
 		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
-		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());		
+		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
 		return toView(component, attributes, reviews, tags);
 	}
 
@@ -119,12 +122,11 @@ public class ComponentSearchView
 		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
 		view.setDataSource(component.getDataSource());
 		view.setDataSensitivity(component.getDataSensitivity());
-		
+
 		Service service = ServiceProxyFactory.getServiceProxy();
 		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
-		
-		
+
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
 
@@ -158,7 +160,7 @@ public class ComponentSearchView
 
 		view.setListingSecurityMarkingType(component.getSecurityMarkingType());
 
-		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {			
+		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
 			SecurityMarkingType securityMarkingType = service.getLookupService().getLookupEnity(SecurityMarkingType.class, component.getSecurityMarkingType());
 
 			if (securityMarkingType != null) {
@@ -170,7 +172,7 @@ public class ComponentSearchView
 
 		return view;
 	}
-	
+
 	public String getName()
 	{
 		return name;

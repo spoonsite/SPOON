@@ -61,8 +61,12 @@ public class PropertiesManager
 	public static final String KEY_SEARCH_SERVER = "search.server";
 	public static final String KEY_SOLR_URL = "solr.server.url";
 	public static final String KEY_SOLR_USE_XML = "solr.server.usexml";
+
 	public static final String KEY_ELASTIC_HOST = "elastic.server.host";
 	public static final String KEY_ELASTIC_PORT = "elastic.server.port";
+	public static final String KEY_ELASTIC_SEARCH_POOL = "elastic.connectionpool.size";
+	public static final String KEY_ELASTIC_CONNECTION_WAIT_TIME = "elastic.connection.wait.seconds";
+
 	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
 	public static final String KEY_EXTERNAL_USER_MANAGER = "external.usermanager";
 	public static final String KEY_EXTERNAL_SYNC_ACTIVATE = "external.sync.activate";
