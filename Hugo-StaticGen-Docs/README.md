@@ -18,4 +18,8 @@ Hugo provides a live development server for viewing changes as you are editing t
 
 ## How to build the Documentation
 
-In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo`. This will build the website in `openstorefront/docs`.
+This should only be done once per release.  For Development use `hugo server -w` which will build to the build folder which is ignored.
+
+1. Delete docs folder
+
+2. In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo -d ../docs`. This will build the website in `openstorefront/docs`.
