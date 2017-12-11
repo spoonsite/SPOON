@@ -432,6 +432,12 @@
 											name: 'file',
 											width: '100%',
 											allowBlank: false
+										},
+										{
+											xtype: 'checkboxfield',
+											boxLabel: 'Allow Media to be used in Branding',
+											id: 'allowInBranding',
+											name: 'allowInBranding'
 										}
 									]
 								}

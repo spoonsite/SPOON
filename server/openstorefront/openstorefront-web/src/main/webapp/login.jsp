@@ -426,6 +426,7 @@
 				.no-overview .right-col,.no-overview .left-col {
 					display:block;
 				}
+				
 				.dialog {
 					width:450px;
 				}
