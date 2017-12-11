@@ -100,13 +100,13 @@ public class CoreSystem
 	 * state.
 	 */
 	@PostConstruct
-	public void startup()
+	public void construnct()
 	{
 		//Call init to separately to control timing.
 		LOG.log(Level.FINER, "Core Service constructed");
 	}
 
-	public void doInit(StartupHandler startupHandler)
+	public void startup(StartupHandler startupHandler)
 	{
 		//start async to provide better feedback
 		//Need to make sure this excutes in the correct class loader.
@@ -329,7 +329,7 @@ public class CoreSystem
 		if (isStarted()) {
 			shutdown();
 		}
-		startup();
+		startup(null);
 	}
 
 	public static void standby(String message)

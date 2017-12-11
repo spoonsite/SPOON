@@ -206,6 +206,23 @@ public abstract class BaseReport<T extends BaseReportModel>
 		String key = transmissionType + "-" + reportFormat;
 		return key;
 	}
+	
+	/**
+	 * @param reportModel
+	 * @return html/text with a summary of the report
+	 */
+	public final String reportSummmaryDefault(T reportModel)
+	{
+		StringBuilder summary = new StringBuilder();
+		summary.append("<h2>Report: ")
+				.append(reportModel.getTitle())
+				.append("</h2>");
+		summary.append("Generated on ");
+		summary.append(sdf.format(reportModel.getCreateTime()));
+		summary.append(" is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i><br>");
+
+		return summary.toString();
+	}
 
 	/**
 	 * Override to create summary; some outputs may use this. Example: EMAIL

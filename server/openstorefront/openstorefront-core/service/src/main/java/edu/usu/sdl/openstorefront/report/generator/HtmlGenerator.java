@@ -70,8 +70,21 @@ public class HtmlGenerator
 				throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
 			}
 		}
+	}
+
+	public void addDefaultStartBlock()
+	{
 		try {
 			writer.append("<html><body style='padding: 20px'>");
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable write to report.", "System error or bad outputstream", ex);
+		}
+	}
+
+	public void addDefaultEndBlock()
+	{
+		try {
+			writer.append("</body></html>");
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable write to report.", "System error or bad outputstream", ex);
 		}
@@ -109,7 +122,7 @@ public class HtmlGenerator
 		addLine("<hr>");
 	}
 
-	public void addSpace()
+	public void addBreak()
 	{
 		addLine("<br>");
 	}
@@ -148,7 +161,6 @@ public class HtmlGenerator
 	{
 		if (writer != null) {
 			try {
-				writer.append("</body></html>");
 				writer.close();
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Failed to close report output.", ex);

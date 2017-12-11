@@ -100,7 +100,7 @@ public class ErrorTicketResource
 		}
 
 		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExampleSimple(queryByExample);
+		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}
 

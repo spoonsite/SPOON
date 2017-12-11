@@ -27,15 +27,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -617,6 +623,24 @@ public class StringProcessor
 		//	Return the truncated result
 		html = String.join("", htmlList);
 		return html;
+	}
+
+	public static Map<String, List<String>> splitURLQuery(String query)
+	{
+		if (StringUtils.isBlank(query)) {
+			return Collections.emptyMap();
+		}
+		return Arrays.stream(query.split("&"))
+				.map(StringProcessor::splitQueryParameter)
+				.collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
+	}
+
+	private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String it)
+	{
+		final int idx = it.indexOf("=");
+		final String key = idx > 0 ? it.substring(0, idx) : it;
+		final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
+		return new AbstractMap.SimpleImmutableEntry<>(key, value);
 	}
 
 }

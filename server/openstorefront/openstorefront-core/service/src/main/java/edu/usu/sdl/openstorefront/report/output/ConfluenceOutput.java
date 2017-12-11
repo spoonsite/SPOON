@@ -84,7 +84,7 @@ public class ConfluenceOutput
 
 			ContentBody contentBody = new ContentBody();
 			RepresentationStorage storage = new RepresentationStorage();
-			storage.setValue(ConfluenceClient.confluenceSafeText(generatedReport.toString()));
+			storage.setValue(generatedReport.toString());
 			contentBody.setStorage(storage);
 			content.setBody(contentBody);
 

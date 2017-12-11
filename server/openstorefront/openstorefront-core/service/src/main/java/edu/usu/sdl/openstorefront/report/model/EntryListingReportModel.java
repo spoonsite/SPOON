@@ -25,17 +25,32 @@ import java.util.List;
 public class EntryListingReportModel
 		extends BaseReportModel
 {
+
 	private String viewLink;
-	
-	private List<EntryListingReportLineModel> data = new ArrayList<>();
+	private int totalRecords;
+
+	private EntryListingDataSet recentlyUpdated;
+	private EntryListingDataSet recentlyEvaluated;
+
+	private List<EntryListingDataSet> data = new ArrayList<>();
+
+	public EntryListingReportModel()
+	{
+		recentlyUpdated = new EntryListingDataSet();
+		recentlyUpdated.setTitle("Recently Updated");
+
+		recentlyEvaluated = new EntryListingDataSet();
+		recentlyEvaluated.setTitle("Recently Completed Evaluations");
+
+	}
 
 	@Override
-	public List<EntryListingReportLineModel> getData()
+	public List<EntryListingDataSet> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<EntryListingReportLineModel> data)
+	public void setData(List<EntryListingDataSet> data)
 	{
 		this.data = data;
 	}
@@ -48,6 +63,36 @@ public class EntryListingReportModel
 	public void setViewLink(String viewLink)
 	{
 		this.viewLink = viewLink;
+	}
+
+	public EntryListingDataSet getRecentlyUpdated()
+	{
+		return recentlyUpdated;
+	}
+
+	public void setRecentlyUpdated(EntryListingDataSet recentlyUpdated)
+	{
+		this.recentlyUpdated = recentlyUpdated;
+	}
+
+	public EntryListingDataSet getRecentlyEvaluated()
+	{
+		return recentlyEvaluated;
+	}
+
+	public void setRecentlyEvaluated(EntryListingDataSet recentlyEvaluated)
+	{
+		this.recentlyEvaluated = recentlyEvaluated;
+	}
+
+	public int getTotalRecords()
+	{
+		return totalRecords;
+	}
+
+	public void setTotalRecords(int totalRecords)
+	{
+		this.totalRecords = totalRecords;
 	}
 
 }

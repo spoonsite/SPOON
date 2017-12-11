@@ -1776,10 +1776,11 @@
 								}
 								if (records[0].get('started')) {
 									tools.getComponent('stop').setDisabled(false);
+									tools.getComponent('restart').setDisabled(false);
 								} else {
 									tools.getComponent('stop').setDisabled(true);
-								}
-								tools.getComponent('restart').setDisabled(false);
+									tools.getComponent('restart').setDisabled(true);
+								}								
 							} else {
 								tools.getComponent('start').setDisabled(true);
 								tools.getComponent('stop').setDisabled(true);
@@ -2067,7 +2068,7 @@
 										'<ul class="list-group">',
 										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
 										'	{[Ext.Date.format(Ext.Date.parse(values.lastSentDts, "c"), "m/d/y H:i:s A ")]}',
-										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	<li class="stat-list-group-item">Next Automated Email Sent: <span class="stat-badge">',
 										'	{[Ext.Date.format(Ext.Date.parse(values.nextSendDts, "c"), "m/d/y H:i:s A ")]}',
 										'</span></li></ul'
 									]

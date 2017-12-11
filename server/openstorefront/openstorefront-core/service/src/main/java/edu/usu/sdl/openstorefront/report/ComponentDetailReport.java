@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.generator.EmbeddedImagePreProcessor;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
 import edu.usu.sdl.openstorefront.report.generator.LocalMediaPDFHandler;
@@ -264,6 +265,8 @@ public class ComponentDetailReport
 		HtmlToPdfGenerator pdfGenerator = (HtmlToPdfGenerator) generator;
 
 		String renderedTemplate = createHtml(reportModel);
+		EmbeddedImagePreProcessor embeddedImagePreProcessor = new EmbeddedImagePreProcessor(service);
+		renderedTemplate = embeddedImagePreProcessor.processHtml(renderedTemplate);
 
 		PDFRenderHandler renderHandler = (renderer) -> {
 			LocalMediaPDFHandler handler = new LocalMediaPDFHandler(renderer.getSharedContext().getUserAgentCallback(), service);

@@ -1685,7 +1685,6 @@ table.confluenceTable td.numberingColumn {
 	margin: 5px 0px;
 }
 
-
 @media (max-width: 520px) {
 	.review-section .details,
 	.review-section .pros,
@@ -1697,4 +1696,44 @@ table.confluenceTable td.numberingColumn {
 		display: block;
 		width: 100%;
 	}
+}
+
+.expandable-grid-cell {
+	height: 100%;
+    -moz-transition: height 0.25s;
+    -ms-transition: height 0.25s;
+    -o-transition: height 0.25s;
+    -webkit-transition: height 0.25s;
+    transition: height 0.25s;
+}
+
+.expandable-grid-cell-collapsed:before {
+    content: "\f065";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #606060;
+    font-size: 14px;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.expandable-grid-cell-expanded:before {
+    content: "\f066";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #606060;
+    font-size: 14px;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.expandable-grid-cell-collapsed {
+
+	height: 2.8em;
 }

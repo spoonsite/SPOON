@@ -102,34 +102,47 @@ public class SecurityServiceImpl
 	public SecurityPolicy getSecurityPolicy()
 	{
 		SecurityPolicy securityPolicy = null;
-		Element element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
-		if (element != null) {
-			securityPolicy = (SecurityPolicy) element.getObjectValue();
-		}
 
-		if (securityPolicy == null) {
-			securityPolicy = new SecurityPolicy();
-			securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
-			securityPolicy = securityPolicy.find();
+		Element element;
 
-			if (securityPolicy == null) {
-				//default
-				securityPolicy = new SecurityPolicy();
-				securityPolicy.setAllowRegistration(Boolean.TRUE);
-				securityPolicy.setAutoApproveUsers(Boolean.FALSE);
-				securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
-				securityPolicy.setCsrfSupport(Boolean.TRUE);
-				securityPolicy.setLoginLockoutMaxAttempts(5);
-				securityPolicy.setMinPasswordLength(8);
-				securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
-				securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
-				securityPolicy.setResetLockoutTimeMinutes(15);
-				securityPolicy = updateSecurityPolicy(securityPolicy);
+		//Note: this is used in filter that may be running when system is not completely started.
+		if (OSFCacheManager.isActive()) {
+			element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
+			if (element != null) {
+				securityPolicy = (SecurityPolicy) element.getObjectValue();
 			}
 
-			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-			OSFCacheManager.getApplicationCache().put(element);
+			if (securityPolicy == null) {
+				securityPolicy = new SecurityPolicy();
+				securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
+				securityPolicy = securityPolicy.find();
+
+				if (securityPolicy == null) {
+					securityPolicy = getDefaultPolicy();
+					securityPolicy = updateSecurityPolicy(securityPolicy);
+				}
+
+				element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
+				OSFCacheManager.getApplicationCache().put(element);
+			}
+		} else {
+			securityPolicy = getDefaultPolicy();
 		}
+		return securityPolicy;
+	}
+
+	private SecurityPolicy getDefaultPolicy()
+	{
+		SecurityPolicy securityPolicy = new SecurityPolicy();
+		securityPolicy.setAllowRegistration(Boolean.TRUE);
+		securityPolicy.setAutoApproveUsers(Boolean.FALSE);
+		securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
+		securityPolicy.setCsrfSupport(Boolean.TRUE);
+		securityPolicy.setLoginLockoutMaxAttempts(5);
+		securityPolicy.setMinPasswordLength(8);
+		securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
+		securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
+		securityPolicy.setResetLockoutTimeMinutes(15);
 		return securityPolicy;
 	}
 

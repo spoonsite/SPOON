@@ -483,7 +483,7 @@ public class Application
 		DBLogRecordWrapper logRecordWrapper = new DBLogRecordWrapper();
 		logRecordWrapper.getLogRecords().addAll(logRecords);
 		logRecordWrapper.setResults(logRecords.size());
-		logRecordWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		logRecordWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(logRecordWrapper);
 	}

@@ -125,7 +125,7 @@ public class FileHistoryResource
 
 		FileHistoryViewWrapper fileHistoryViewWrapper = new FileHistoryViewWrapper();
 		fileHistoryViewWrapper.getData().addAll(FileHistoryView.toView(fileHistories));
-		fileHistoryViewWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		fileHistoryViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		//gather warnings and errors
 		Map<String, List<FileHistoryError>> errorMap = service.getImportService().fileHistoryErrorMap();

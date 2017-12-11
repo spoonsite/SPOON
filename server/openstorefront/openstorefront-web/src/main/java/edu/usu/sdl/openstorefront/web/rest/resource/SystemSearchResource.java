@@ -104,7 +104,7 @@ public class SystemSearchResource
 
 		SystemSearchWrapper searchWrapper = new SystemSearchWrapper();
 		searchWrapper.getData().addAll(searches);
-		searchWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		searchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(searchWrapper);
 	}

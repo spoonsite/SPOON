@@ -1493,6 +1493,11 @@
 				}),
 				listeners: {
 					beforeLoad: function(store, operation, eOpts){
+						
+						var url = 'api/v1/resource/attributes/attributetypes/';
+						url += manageCodesWin.attributeType;
+						url += '/attributecodeviews';
+						store.getProxy().url = url;						
 						store.getProxy().extraParams = {
 							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
 							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
@@ -1771,16 +1776,6 @@
 				]
 			});
 			
-			var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
-				
-				isEditor: false,
-				mediaSelectionUrl: 'api/v1/resource/generalmedia',
-				closeAction: 'hide',
-				mediaHandler: function(link) {
-
-					Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
-				}
-			});
 
 			var editCodeWin = Ext.create('Ext.window.Window', {
 				id: 'editCodeWin',
@@ -1892,6 +1887,14 @@
 										text: 'Insert Media',
 										flex: 1,
 										handler: function() {
+											
+											var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
+												isEditor: false,
+												mediaSelectionUrl: 'api/v1/resource/generalmedia',			
+												mediaHandler: function(link) {
+													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
+												}
+											});
 											
 											mediaWindow.show();
 										}
@@ -2158,7 +2161,6 @@
 				layout: 'fit',
 				items: [
 					codesGrid
-//				]
 				],
 				dockedItems: [
 					{

@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.manager.model.confluence.Representatio
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.Space;
 import edu.usu.sdl.openstorefront.service.manager.model.confluence.SpaceResults;
 import edu.usu.sdl.openstorefront.service.manager.resource.ConfluenceClient;
+import java.io.IOException;
 import org.junit.Test;
 
 /**
@@ -51,7 +52,7 @@ public class ConfluenceUseCase
 	}
 
 	@Test
-	public void confluenceCreatePage()
+	public void confluenceCreatePage() throws IOException
 	{
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl("https://confluence.di2e.net");
@@ -62,18 +63,35 @@ public class ConfluenceUseCase
 			Content content = new Content();
 			content.setTitle("New Test Page");
 			Space space = new Space();
+
+			//change to personal space (make sure to allow permission for the integration user
 			space.setKey("STORE");
 			content.setSpace(space);
 
 			ContentBody contentBody = new ContentBody();
 			RepresentationStorage storage = new RepresentationStorage();
-			storage.setValue("<h1>New Page from API</h1>");
+
+//			List<String> lines = Files.readAllLines(Paths.get("/test/conf.txt"));
+//
+//			StringJoiner sj = new StringJoiner("\n");
+//			lines.forEach(line -> {
+//				sj.add(line);
+//			});
+			storage.setValue(
+					"<ac:structured-macro ac:name=\"ui-expand\">"
+					+ "<ac:parameter ac:name=\"title\">My Title</ac:parameter>"
+					+ "<ac:parameter ac:name=\"expanded\">false</ac:parameter>"
+					+ "<ac:rich-text-body><b>Hello</b> World! </ac:rich-text-body>"
+					+ "</ac:structured-macro>"
+			//sj.toString()
+			);
+
 			contentBody.setStorage(storage);
 			content.setBody(contentBody);
 
 			Content savedContent = client.createPage(content);
 			System.out.println(StringProcessor.printObject(savedContent));
-
+//
 			ContentVersion version = new ContentVersion();
 			version.setNumber(2);
 			content.setVersion(version);
@@ -83,7 +101,6 @@ public class ConfluenceUseCase
 
 			//update
 			client.deletePage(savedContent.getId());
-
 		}
 
 	}

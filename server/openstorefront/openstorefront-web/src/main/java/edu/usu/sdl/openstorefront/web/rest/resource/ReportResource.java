@@ -155,7 +155,7 @@ public class ReportResource
 
 		ReportWrapper reportWrapper = new ReportWrapper();
 		reportWrapper.getData().addAll(ReportView.toReportView(reports));
-		reportWrapper.setTotalNumber(service.getPersistenceService().countByExampleSimple(queryByExample));
+		reportWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		//	Calculate the remaining lifetime for each report being displayed
 		reportWrapper.getData().stream().forEach(report -> {

@@ -107,3 +107,9 @@ from the question pool to the evaluation and/or to remove questions currently as
 
 When the **Create Evaluation** form is complete, save the evaluation.
 
+## Copying an Evaluation
+
+Librarians have the ability to make copies of both published and unpublished evaluations. 
+
+**NOTE:** Copying an unpublished evaluation will NOT copy the entry changes.  The copy only points back to the entry in its original state. 
+

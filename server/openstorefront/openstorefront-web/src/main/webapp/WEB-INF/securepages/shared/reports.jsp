@@ -30,28 +30,51 @@
 
 			Ext.onReady(function () {
 
-				var optionsRender = function(v, meta) {
+				var optionsRender = function(v, meta, record) {
+					var recordDataNum = 0;
+					var details = '';
+
 					if (v) {
 						if (v.category) {
-							return 'Category: ' + v.category;
+							details += 'Category: ' + v.category + '<br />';
+							recordDataNum += 1;
 						}
-						else if (v.startDts) {
-							var details = '';
+						if (v.startDts) {
 							if (v.startDts) {
 								details = details + 'Start Date: ' + Ext.util.Format.date(v.startDts, 'm/d/y H:i:s') + '<br>';
+								recordDataNum += 1;
 							}
 							if (v.endDts) {
 								details = details + 'End Date: ' + Ext.util.Format.date(v.endDts, 'm/d/y H:i:s') + '<br>';
+								recordDataNum += 1;
 							}
-							return details;
+							// return details;
 						}
-						else if (v.previousDays) {
-							return 'Previous Days: ' + v.previousDays;
+						if (v.previousDays) {
+							details += 'Previous Days: ' + v.previousDays + '<br />';
+							recordDataNum += 1;
 						}
-						else if (v.maxWaitSeconds) {
-							return 'Max Wait Seconds: ' + v.maxWaitSeconds;
+						if (v.maxWaitSeconds) {
+							details += 'Max Wait Seconds: ' + v.maxWaitSeconds + '<br />';
+							recordDataNum += 1;
 						}
-						return '';
+						if (record.data.reportType === 'TYPECOMP') {
+							var options = record.data.reportOption;
+							for (var key in options) {
+								if (key !== 'storageVersion') {
+									details += key + ': ' + options[key] + '<br />';
+									recordDataNum += 1;
+								}
+							}
+						}
+						
+						var classList = '';
+
+						if (recordDataNum > 2) {
+							classList = 'expandable-grid-cell-collapsed';
+						}
+						classList += ' expandable-grid-cell';
+						return '<div class="' + classList + '" data-num="' + recordDataNum + '">' + details + '</div>';
 					}
 					return '';
 				};
@@ -174,7 +197,7 @@
 							columnLines: true,
 							bodyCls: 'border_accent',
 							columns: [
-								{text: 'Id', dataIndex: 'scheduledReportId', width: 250, hidden: true },
+								{text: 'Id', dataIndex: 'scheduleReportId', width: 250, hidden: true },
 								{text: 'Report Type', dataIndex: 'reportType', width: 200,
 									renderer: function (value, meta, record) {
 										return record.get('reportTypeDescription');
@@ -330,7 +353,7 @@
 											disabled: true,
 											handler: function () {
 												var record = Ext.getCmp('scheduleReportsGrid').getSelection()[0];
-												reportDetails(record.get('scheduledReportId'), true);
+												reportDetails(record.get('scheduleReportId'), true);
 											},
 											tooltip: 'Report Details'
 										},
@@ -679,7 +702,7 @@
 													var form = this.up('form');
 																
 		
-													if (validateOutputs){										
+													if (validateOutputs()){										
 
 														var formData = form.getValues();
 
@@ -703,8 +726,9 @@
 																});
 																reportOutput.reportTransmissionOption.emailAddresses = emailAddresses;
 															}
+
+															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
-														
 
 														var report = {
 															reportType: formData.reportType,															  
@@ -846,7 +870,7 @@
 					var validateOutputs = function() {
 						var valid = true;
 		
-						if (!outputs || outputs.length == 0) {																										
+						if (!outputs || outputs.length === 0) {																										
 							Ext.Msg.show({
 								title: 'Validation',
 								message: 'Please add at least one output.',
@@ -858,9 +882,34 @@
 							valid = false;
 						} else {
 							Ext.Array.each(outputs, function(output){
-								if (output.reportTransmissionType == 'CONFLUENCE') {
-									//May need to check parent									
-								} 	
+								//if (output.reportTransmissionType == 'CONFLUENCE') {
+									//TODO: May need to check parent									
+								//} 
+							
+								if (output.reportTransmissionOption.emailAddressRaw &&
+									output.reportTransmissionOption.emailAddressRaw !== '') {
+
+									var emails = CoreUtil.split(output.reportTransmissionOption.emailAddressRaw, [' ', ',', ';', '\n', '\r']);
+									var badEmailAddresses = [];
+									Ext.Array.each(emails, function(email){											
+										if (CoreUtil.emailValidateStrict(email) === false) {
+											badEmailAddresses.push(email);
+										}
+									});	
+
+									if (badEmailAddresses.length > 0) {
+										Ext.Msg.show({
+											title: 'Validation Error',
+											message: 'Check the following email addresses:<br><br>' + badEmailAddresses.join('<br>'),
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {																
+											}																
+										});
+										valid = false;
+									}
+								}
+							
 							});			
 						} 
 		
@@ -903,7 +952,9 @@
 							//add grid for entries							
 							optionsToAdd.push({
 								xtype: 'entryselect',
-								itemId: 'entryselect'
+								itemId: 'entryselect',
+								buttonTooltip: 'Select entries to report on.  Defaults to: All entries',
+								allSelectedMessage: '<p>Report on ALL entries</p>'
 							});
 							
 							if (reportType === 'TYPECOMP') {
@@ -1226,7 +1277,7 @@
 						
 									var panel = {
 										xtype: 'panel',
-										title: 'Viewable Output',
+										title: 'Storefront Viewable Output',
 										width: '100%',
 										border: 1,
 										closable: true,
@@ -1257,6 +1308,11 @@
 														reportOutput.reportTransmissionOption.reportFormat = newValue;														
 													}
 												}
+											},
+											{
+												xtype: 'checkbox',
+												name: 'reportNotify',
+												boxLabel: '<b>Notify Me</b> <i class="fa fa-question-circle" data-qtip="If checked, sends an email when the report is viewable on the website"></i>'
 											}
 										],
 										listeners: {
@@ -1308,7 +1364,8 @@
 												xtype: 'textarea',
 												name: 'emailAddresses',
 												labelAlign: 'top',
-												fieldLabel: 'Enter email addresses <span class="field-required" />',
+												fieldLabel: 'Enter email addresses <i class="fa fa-question-circle" data-qtip="You can separate multiple email addresses by a <b>comma</b>, <b>semicolon</b>, or <b>new line</b><br/><br/><b>Example:</b><br/>example1@domain.com,example2@domain.com;example3@domain.com"></i> <span class="field-required" />',
+												emptyText: 'Enter one or more email addresses separated by a comma (,), semicolon (;), or a new line.',
 												width: '100%',
 												maxLength: 300,																	
 												allowBlank: false,
@@ -1356,10 +1413,16 @@
 									//check permissions to hide options that require permissions
 									CoreService.userservice.getCurrentUser().then(function(user){
 										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-ATTACH")) {
-											reportOutputPanel.queryById('attachReport').setHidden(false);
+											var allAttached = reportOutputPanel.query('#attachReport');
+											Ext.Array.each(allAttached, function(attached){
+												attached.setHidden(false);
+											});											
 										}
 										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-BODY")) {
-											reportOutputPanel.queryById('postEmailBody').setHidden(false);
+											var allAttached = reportOutputPanel.query('#postEmailBody');
+											Ext.Array.each(allAttached, function(attached){
+												attached.setHidden(false);
+											});												
 										}
 									});						
 
@@ -1406,7 +1469,7 @@
 												xtype: 'textfield',
 												name: 'confluenceSpace',
 												labelAlign: 'top',
-												fieldLabel: 'Space Key<span class="field-required" />',
+												fieldLabel: 'Space Key<span class="field-required" /> <i class="fa fa-lg fa-question-circle"  data-qtip="Confluence Space Key as show Space Tools Overview" ></i>',
 												width: '100%',
 												allowBlank: false,
 												maxLength: 255,
@@ -1517,21 +1580,36 @@
 										reportOutputPanel.removeDocked(addBtn);
 									}
 
-									if (outputToAdd.length > 0) {
-										addBtn = Ext.create('Ext.button.Button', {
-											dock: 'bottom',
-											text: 'Add',
-											maxWidth: 100,
-											margin: '20 0 0 0',
-											iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
-											menu: outputToAdd
-										});
-										
-										reportOutputPanel.addDocked(addBtn);
-									}
+									// Place the 'Add' email button
+									CoreService.userservice.getCurrentUser().then(function (user) {
+
+										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
+																|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
+
+										// remove the "email" option if it exists
+										if (!userHasEmailPermission) {
+											Ext.Array.forEach(outputToAdd, function (element, index) {
+												if (typeof element.text !== 'undefined' && element.text == "Email") {
+													outputToAdd.splice(index, 1);
+												}
+											});
+										}
+
+										if (outputToAdd.length > 0) {
+											addBtn = Ext.create('Ext.button.Button', {
+												dock: 'bottom',
+												text: 'Add',
+												maxWidth: 100,
+												margin: '20 0 0 0',
+												iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
+												menu: outputToAdd,
+											});
+											
+											reportOutputPanel.addDocked(addBtn);
+										}
+									});
 								};
 								updateDisplay();
-								
 																
 								var removeOutputAction =  function(reportOutput) {
 									var index = 0;
@@ -1667,6 +1745,7 @@
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
+					previousSelection: null,
 					selModel: {
 						selType: 'checkboxmodel'
 					},
@@ -1721,8 +1800,8 @@
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
-						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender },
-						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150,
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 270, flex: 1, sortable: false, renderer: optionsRender },
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
 								
@@ -1901,9 +1980,67 @@
 							displayInfo: true
 						}
 					],
+					viewConfig: {
+						getRowClass: function (record) {
+							return 'grid-panel-height-transition';
+						}
+					},
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
 							viewHistory();
+						},
+						rowclick: function ( self, record, tr ) {
+
+							// get all row cells that are expandable
+							var expandableCells = tr.querySelectorAll('.expandable-grid-cell');
+
+							// find the largest expandable cell (this will determine the max height of the row)
+							var largetExpandableCell = null;
+							Ext.Array.each(expandableCells, function (cell, index) {
+								if (largetExpandableCell === null) {
+									largetExpandableCell = cell;
+								}
+								else {
+									if (parseInt(cell.getAttribute('data-num')) > parseInt(largetExpandableCell.getAttribute('data-num'))) {
+										largetExpandableCell = cell;
+									}
+								}
+							});
+
+							// set the style and height of the cells that are expandable
+							var dataNumAttr = parseInt(largetExpandableCell.getAttribute('data-num'));
+							if (dataNumAttr || dataNumAttr === 0) {
+								var switchedRecord = false;
+
+								// if we have already selected an item
+								if (!!self.previousSelection) {
+
+									switchedRecord = self.previousSelection != tr;
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = '2.8em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-expanded' + '(?:\\s|$)'), ' expandable-grid-cell-collapsed ');
+									});
+									self.previousSelection = tr;
+								}
+
+								// if we haven't selected an item
+								else {
+									switchedRecord = true;
+									self.previousSelection = tr;
+								}
+
+								// if the data in the cell has more than 2 sets of data, make it expandable
+								if (switchedRecord && dataNumAttr > 2) {
+									Ext.Array.each(self.previousSelection.querySelectorAll('.expandable-grid-cell'), function (cell, index) {
+										cell.style.height = (dataNumAttr * 1.5) + 'em';
+										cell.className = cell.className.replace(new RegExp('(?:^|\\s)'+ 'expandable-grid-cell-collapsed' + '(?:\\s|$)'), ' expandable-grid-cell-expanded ');
+									});
+								}
+								else {
+									self.previousSelection = null;
+								}
+							}
+
 						},
 						selectionchange: function (grid, record, index, opts) {
 							historyCheckNavButtons();

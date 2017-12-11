@@ -563,10 +563,8 @@ Ext.define('OSF.component.ChangeLogWindow', {
 			]
 		}
 	],
-	listeners:
-	{
-		show: function()   
-		{        
+	listeners:	{
+		show: function() {        
 			this.removeCls("x-unselectable");    
 		}
 	},	
@@ -635,13 +633,15 @@ Ext.define('OSF.component.EntrySelect', {
 	alias: 'widget.entryselect',
 	
 	bodyStyle: 'padding: 10px',
-	tpl: new Ext.XTemplate(
-		'<tpl if="!(values && values.length)">All Entries</tpl>',	
-		'<tpl for=".">',	
+	tpl: new Ext.XTemplate(			
+		'<tpl if="allSelected">{allSelectedMessage}</tpl>',	
+		'<tpl for="data">',	
 		'	<p>{name}</p>',
 		'</tpl>',	
-		'<tpl if="more">...</tpl>'
+		'<tpl if="more"><p>... (<b>{count}</b> selected)</p></tpl>'
 	),	
+	buttonTooltip: null,
+	allSelectedMessage: '<p>All Entries</p>',
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -650,6 +650,7 @@ Ext.define('OSF.component.EntrySelect', {
 			items: [
 				{
 					xtype: 'button',
+					itemId: 'selectBtn',
 					text: 'Select Entries',
 					iconCls: 'fa fa-lg fa-list',
 					handler: function() {
@@ -875,12 +876,36 @@ Ext.define('OSF.component.EntrySelect', {
 		var selectPanel = this;	
 		
 		selectPanel.selectedIds = [];
-		
+		selectPanel.refreshDisplay();
+		if (selectPanel.buttonTooltip) {
+			selectPanel.queryById('selectBtn').setTooltip(selectPanel.buttonTooltip);
+		}
 	},
 	
 	refreshDisplay: function() {
 		var selectPanel = this;	
-		selectPanel.update(selectPanel.selectedIds);
+		
+		var display = [];
+		var more = false;
+		if (selectPanel.selectedIds.length > 10) {
+			more = true;
+		}
+		for (var i=0; i<selectPanel.selectedIds.length && i<10; i++) {
+			display.push(selectPanel.selectedIds[i]);
+		}
+		var allSelected = true;
+		if (selectPanel.selectedIds.length > 0) {
+			allSelected = false;
+		}
+
+		selectPanel.update({
+			count: selectPanel.selectedIds.length,
+			data: display,
+			more: more,
+			allSelected: allSelected,
+			allSelectedMessage: selectPanel.allSelectedMessage 
+		});
+		selectPanel.updateLayout(true, true);
 	},
 	
 	getSelected: function() {
