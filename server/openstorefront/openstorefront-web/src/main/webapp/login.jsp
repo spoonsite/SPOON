@@ -763,6 +763,7 @@
 					$(".header", dialog).html("<h2>How to Register</h2>");
 					$(".content", dialog).html("<video controls src='${branding.getLoginRegistrationVideoUrl()}' />");
 					$(".buttons .btn", dialog).click(function () {
+						$("#registration-video .dialog video")[0].pause();
 						$('#registration-video').hide();
 					});
 				} else {
@@ -771,6 +772,7 @@
 
 				$('#registration-video-link').click(function () {
 					$('#registration-video').show();
+					$("#registration-video .dialog video")[0].play();
 				});
 				if (QueryString.gotoPage !== undefined)
 				{
