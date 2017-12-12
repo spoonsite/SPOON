@@ -75,6 +75,10 @@ public class Branding
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String loginOverviewVideoUrl;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginOverviewVideoPosterUrl;
 	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -235,6 +239,7 @@ public class Branding
 		setLoginWarning(branding.getLoginWarning());
 		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
+		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
 		setLoginRegistrationVideoUrl(branding.getLoginRegistrationVideoUrl());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
@@ -654,5 +659,15 @@ public class Branding
 	public void setLoginRegistrationVideoUrl(String loginRegistrationVideoUrl)
 	{
 		this.loginRegistrationVideoUrl = loginRegistrationVideoUrl;
+	}
+
+	public String getLoginOverviewVideoPosterUrl()
+	{
+		return loginOverviewVideoPosterUrl;
+	}
+
+	public void setLoginOverviewVideoPosterUrl(String loginOverviewVideoPosterUrl)
+	{
+		this.loginOverviewVideoPosterUrl = loginOverviewVideoPosterUrl;
 	}
 }

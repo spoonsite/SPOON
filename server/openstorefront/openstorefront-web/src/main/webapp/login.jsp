@@ -754,7 +754,7 @@
 					$('html').addClass("no-registration");
 				}
 				if ("${branding.getLoginOverviewVideoUrl()}") {
-					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' />");
+					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' poster='${branding.getLoginOverviewVideoPosterUrl()}' />");
 				} else {
 					$('html').addClass("no-overview");
 				}

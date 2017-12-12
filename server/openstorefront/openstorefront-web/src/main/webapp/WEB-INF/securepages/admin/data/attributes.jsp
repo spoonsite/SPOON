@@ -1892,7 +1892,7 @@
 												isEditor: false,
 												mediaSelectionUrl: 'api/v1/resource/generalmedia',			
 												mediaHandler: function(link) {
-													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
+													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: link });
 												}
 											});
 											

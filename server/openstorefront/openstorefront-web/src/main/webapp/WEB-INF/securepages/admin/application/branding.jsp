@@ -79,6 +79,10 @@
 					]
 				});
 				
+				var updateMediaUrl = function(link, textBox) {
+					textBox.setValue(link.replace("Media.action","Branding.action"));
+				};
+				
 				var addEditBranding = function(record) {
 
 					var addEditBrandingWin = Ext.create('Ext.window.Window', {
@@ -149,102 +153,6 @@
 														width: '100%',
 														allowBlank: true,
 														maxLength: 255
-													},
-													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Login Warning <i class="fa fa-question-circle"  data-qtip="Warning on login page (if applicable)" ></i>',
-														name: 'loginWarning',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
-														allowBlank: true,
-														maxLength: 16000
-													},
-													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use an image map, we reccommend the use of an svg for a responsive image map" ></i>',
-														name: 'loginLogoBlock',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
-														allowBlank: true,
-														maxLength: 16000
-													},
-													{
-														layout: 'hbox',
-														width: '100%',
-														margin: '5px 0 0 0',
-														items: [
-															{
-																xtype: 'textfield',
-																itemId: 'loginOverviewVideoUrl',
-																labelAlign: 'top',
-																labelSeparator: '',
-																fieldLabel: 'Login Overview Vidoe URL <i class="fa fa-question-circle"  data-qtip="Site overview video under the logo" ></i>',
-																name: 'loginOverviewVideoUrl',
-																allowBlank: true,									
-																maxLength: 255,																
-																flex: 4
-															},
-															{
-																xtype: 'button',
-																text: 'Insert Media',
-																flex: 1,
-																margin: '30 0 0 0',
-																handler: function() {
-																	var loginOverviewVideoUrl = this.up('panel').queryById('loginOverviewVideoUrl');																	
-																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
-																		isEditor: false,
-																		mediaName:'Video',
-																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
-																		closeAction: 'destroy',
-																		mediaHandler: function(link) {
-																			loginOverviewVideoUrl.setValue(encodeURI(link));
-																		}
-																	});	
-																	mediaWindow.show();
-																}
-															}
-														]														
-													},
-													{
-														layout: 'hbox',
-														width: '100%',
-														margin: '5px 0 0 0',
-														items: [
-															{
-																xtype: 'textfield',
-																itemId: 'loginRegistrationVideoUrl',
-																labelAlign: 'top',
-																labelSeparator: '',
-																fieldLabel: 'Login Registration Video URL <i class="fa fa-question-circle"  data-qtip="Displayed as a &quot;How to Video&quot; link" ></i>',
-																name: 'loginRegistrationVideoUrl',
-																allowBlank: true,											
-																maxLength: 255,																
-																flex: 4
-															},
-															{
-																xtype: 'button',
-																text: 'Insert Media',
-																flex: 1,
-																margin: '30 0 0 0',
-																handler: function() {
-																	var loginRegistrationVideoUrl = this.up('panel').queryById('loginRegistrationVideoUrl');																	
-																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
-																		isEditor: false,
-																		mediaName:'Video',
-																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
-																		closeAction: 'destroy',
-																		mediaHandler: function(link) {
-																			loginRegistrationVideoUrl.setValue(encodeURI(link));
-																		}
-																	});	
-																	mediaWindow.show();
-																}
-															}
-														]														
 													},	
 													{
 														xtype: 'htmleditor',
@@ -339,6 +247,159 @@
 														}
 													}
 
+												]
+											},
+											{
+												xtype: 'panel',
+												title: 'Login Page',
+												width: '100%',
+												collapsible: true,
+												titleCollapse: true,
+												margin: '0 0 20 0',
+												bodyStyle: 'padding: 10px;',
+												layout: 'anchor',									
+												defaults: {
+													labelAlign: 'top',
+													labelSeparator: ''
+												},
+												items: [{
+														xtype: 'htmleditor',
+														fieldLabel: 'Login Warning <i class="fa fa-question-circle"  data-qtip="Warning on login page (if applicable)" ></i>',
+														name: 'loginWarning',
+														resizable: {
+															handles: 's'
+														},
+														width: '100%',											
+														allowBlank: true,
+														maxLength: 16000
+													},
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use an image map, we reccommend the use of an svg for a responsive image map" ></i>',
+														name: 'loginLogoBlock',
+														resizable: {
+															handles: 's'
+														},
+														width: '100%',											
+														allowBlank: true,
+														maxLength: 16000
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginOverviewVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Overview Vidoe URL <i class="fa fa-question-circle"  data-qtip="Site overview video under the logo" ></i>',
+																name: 'loginOverviewVideoUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Video',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginOverviewVideoUrl = this.up('panel').queryById('loginOverviewVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaToShow: 'VID',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginOverviewVideoUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginOverviewVideoPosterUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Overview Vidoe Poster URL <i class="fa fa-question-circle"  data-qtip="Initial image to display for the video" ></i>',
+																name: 'loginOverviewVideoPosterUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Image',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginOverviewVideoPosterUrl = this.up('panel').queryById('loginOverviewVideoPosterUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Image',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginOverviewVideoPosterUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginRegistrationVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Registration Video URL <i class="fa fa-question-circle"  data-qtip="Displayed as a &quot;How to Video&quot; link" ></i>',
+																name: 'loginRegistrationVideoUrl',
+																allowBlank: true,											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Video',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginRegistrationVideoUrl = this.up('panel').queryById('loginRegistrationVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaToShow: 'VID',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginRegistrationVideoUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													}
 												]
 											},
 											{
@@ -503,10 +564,11 @@
 																	var primaryLogoUrl = this.up('panel').queryById('primaryLogoUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			primaryLogoUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,primaryLogoUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -540,10 +602,11 @@
 																	var secondaryLogoUrl = this.up('panel').queryById('secondaryLogoUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			secondaryLogoUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,secondaryLogoUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -577,10 +640,11 @@
 																	var homebackSplashUrl = this.up('panel').queryById('homebackSplashUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			homebackSplashUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,homebackSplashUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -814,7 +878,7 @@
 							landingTab.setDisabled(false);
 							landingTab.initializeCallback = function() {
 								landingTab.loadData(record.data);
-							}
+							};
 						}
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(landingTab);
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
@@ -852,7 +916,6 @@
 						brandingWin.close();
 					}
 				}
-				
 				
 				var actionSaveBranding = function(form, successHandler, template) {
 					var data = form.getValues();
@@ -908,7 +971,6 @@
 					});
 				};
 				
-
 				var brandingGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage Branding &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
 					id: 'brandingGrid',
