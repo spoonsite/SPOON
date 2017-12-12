@@ -209,7 +209,7 @@
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
 								{text: 'Scheduled Interval', dataIndex: 'schedule', width: 200 },
 								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1,
+								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1, sortable: false,
 									renderer: outputOptionRender
 								},
 								{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false,
@@ -1801,7 +1801,7 @@
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 270, flex: 1, sortable: false, renderer: optionsRender },
-						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1,
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1, sortable: false,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
 								
@@ -1815,7 +1815,7 @@
 								return outputs;
 							}
 						},
-						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true,
+						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true, sortable: false,
 							renderer: outputOptionRender
 						}						
 						
