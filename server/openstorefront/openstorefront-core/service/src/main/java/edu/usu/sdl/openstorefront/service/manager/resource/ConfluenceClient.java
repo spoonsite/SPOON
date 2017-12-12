@@ -166,7 +166,7 @@ public class ConfluenceClient
 			if (!results.getResults().isEmpty()) {
 				//get first result
 				ContentSearchResult contentSearchResult = results.getResults().get(0);
-				target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentSearchResult.getId() + "?expand=body.view");
+				target = client.target(connectionModel.getUrl() + BASE_API_URL + "content/" + contentSearchResult.getId() + "?expand=body.view,version");
 				content = target.request().buildGet().invoke(Content.class);
 			}
 
