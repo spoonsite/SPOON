@@ -65,9 +65,9 @@
 					columnLines: true,
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200},
-						{ text: 'Resource URL', dataIndex: 'mediaLink', flex: 1, minWidth: 200, sortable: false },
+						{ text: 'Resource URL', dataIndex: 'mediaLink', flex: 1, minWidth: 200 },
 						{ text: 'Original Filename', dataIndex: 'originalFileName', width: 300 },
-						{ text: 'Mime Type', dataIndex: 'mimeType', width: 150},
+						{ text: 'Mime Type', dataIndex: 'mimeType', width: 150 },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 150},
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
