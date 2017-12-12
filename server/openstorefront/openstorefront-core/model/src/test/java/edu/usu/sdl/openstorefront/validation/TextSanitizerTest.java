@@ -29,6 +29,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class TextSanitizerTest
 {
+
 	private final String input;
 	private final String expectedOutput;
 
@@ -45,11 +46,12 @@ public class TextSanitizerTest
 		// arrays.  Each array has two elements: { input, expectedOutput }.
 		// These data are hard-coded into the class, but they could be
 		// generated or loaded in any way you like.
+		String lineSeparator = Character.toString((char) 0x2028);
 		return Arrays.asList(new Object[][]{
 			{null, null},
 			{"<html><body><div><a href=\"/click\">click ME</a><div>Hello World</div></div></body></html>", "click MEHello World"},
 			{"<html><body><div>Hello  World</div></body></html>", "Hello\n World"},// hidden whitespace Line Seperator
-			{"Hello  World", "Hello\n World"},// hidden whitespace Line Seperator
+			{"Hello " + lineSeparator + "World", "Hello\n\nWorld"},// hidden whitespace Line Seperator
 		});
 	}
 
