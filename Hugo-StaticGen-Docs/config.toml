@@ -4,7 +4,7 @@ DefaultContentLanguage = "en"
 
 title = "Storefront Docs"
 theme = "docdock"
-publishDir = "../docs"
+publishDir = "/build"
 enableGitInfo = "true"
 
 [params]

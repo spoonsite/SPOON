@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -83,7 +84,21 @@ public class JobManager
 	public static void init()
 	{
 		try {
-			StdSchedulerFactory factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
+			StdSchedulerFactory factory;
+			try {
+				factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
+			} catch (Exception ex) {
+				LOG.log(Level.CONFIG, "Unable to load quartz.properties...using defaults");
+				LOG.log(Level.FINER, null, ex);
+
+				//If it can't load the properties ...fall back to default
+				Properties defaultProperties = new Properties();
+				defaultProperties.setProperty("org.quartz.scheduler.instanceName", "JobScheduler");
+				defaultProperties.setProperty("org.quartz.threadPool.threadCount", "10");
+				defaultProperties.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+				factory = new StdSchedulerFactory(defaultProperties);
+			}
+
 			scheduler = factory.getScheduler();
 			initSystemJobs();
 			scheduler.start();

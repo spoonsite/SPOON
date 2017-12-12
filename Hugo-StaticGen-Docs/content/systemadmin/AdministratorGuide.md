@@ -276,6 +276,8 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 -  **test.email** -Set to run container tests that require email
 -  **system.archive.maxprocessminutes** -Set the max time for running archive process; this used to clean up stuck working archives ( **60** )
 -  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **1000** )
+-  **elastic.connectionpool.size** - Set the connection pool size ( **30**)
+-  **elastic.connection.wait.seconds** - Max time to wait for an open connection. ( **60**)
 
 # 3. Database Management
 

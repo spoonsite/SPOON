@@ -45,8 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,32 +106,24 @@ public class CoreSystem
 
 	public void startup(StartupHandler startupHandler)
 	{
-		//start async to provide better feedback
-		//Need to make sure this excutes in the correct class loader.
-		ExecutorService pool = Executors.newSingleThreadExecutor();
+		started.set(false);
+		systemStatus = "Starting application...";
+		SecurityUtil.initSystemUser();
+		boolean startedAllManagers = loadAllManagers();
+		boolean allInitsApplied = true;
+		if (startedAllManagers) {
+			allInitsApplied = appyInits();
+		}
+		if (startedAllManagers
+				&& allInitsApplied) {
+			systemStatus = "Application is Ready";
+			detailedStatus = "Application started successfully";
+			started.set(true);
 
-		pool.submit(() -> {
-			started.set(false);
-			systemStatus = "Starting application...";
-			SecurityUtil.initSystemUser();
-			boolean startedAllManagers = loadAllManagers();
-			boolean allInitsApplied = true;
-			if (startedAllManagers) {
-				allInitsApplied = appyInits();
+			if (startupHandler != null) {
+				startupHandler.postStartupHandler();
 			}
-			if (startedAllManagers
-					&& allInitsApplied) {
-				systemStatus = "Application is Ready";
-				detailedStatus = "Application started successfully";
-				started.set(true);
-
-				if (startupHandler != null) {
-					startupHandler.postStartupHandler();
-				}
-			}
-		});
-		//only need to fire once
-		pool.shutdown();
+		}
 	}
 
 	private static boolean loadAllManagers()
