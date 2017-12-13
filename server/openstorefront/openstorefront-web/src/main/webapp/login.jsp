@@ -15,10 +15,6 @@
 	Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 	request.setAttribute("branding", branding);
 
-	//Media needs to blocked; Branding is open...restrict to branding media;
-	String loginLogo = branding.getPrimaryLogoUrl().replace("Media.action", "Branding.action");
-	request.setAttribute("loginLogo", loginLogo);
-
 	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 
@@ -54,28 +50,39 @@
 		</script>
 
 		<style>
-			.x-body{
+			.x-body {
 				min-width:320px;
-				display:flex;
-				flex-direction:row;
-			}
-			/* by having a parent with flex-direction:row, the min-height bug in IE 10/11 doesn't stick around. */
-			.ie-flex-fix
-			{	
 				display: flex;
 				flex-direction: column;
+				width: 100%;
+				padding: 0;
+				margin: 0;
 				height: 100vh;
+			}
+
+			.page-header,.footer {
+				flex-shrink: 0;
+			}
+
+			.page-header .header-top,.page-header .header-bottom{
+				display:flex;
+			}
+			.page-header .login-header, .page-header .sub-header{
+				flex-grow:1;
+			}
+			.page-header .logo, .page-header .logo img {
 				width:100%;
 			}
-			.page-header
-			{
-				flex-shrink:0;
+			.page-header .spacer {
+				flex-shrink: 0;
+				width:300px;
 			}
-			.page-content
-			{
-				flex: 1;
-				min-height:700px;
+
+			.page-content {
+				flex-grow: 1;
+				flex-shrink: 0;
 			}
+
 			.footer{
 				padding: 10px;
 				background: ${branding.primaryColor};
@@ -85,6 +92,8 @@
 				flex-shrink:0;
 			}
 			.footer .footer-content{
+				flex-direction: row;
+				display: flex;
 				width:1000px;
 			}
 			.auth-forms {
@@ -203,14 +212,14 @@
 				border: red 2px solid;
 			}
 
-			.login-header {
+			.page-header .header-top {
 				width: 100%;
 				height: 56px;
 				background-color: ${branding.primaryColor};
 				color: ${branding.primaryTextColor};
 			}
 
-			.login-header h1 {
+			.page-header .header-top h1 {
 				margin: auto;
 				text-align: center;
 				padding-top: 10px;
@@ -219,18 +228,19 @@
 				letter-spacing: 1px;
 				font-weight: 400;
 			}
-
+			.page-header .header-bottom{
+				background-color: ${branding.quoteColor};
+				border-top: solid 3px ${branding.accentColor};
+				color: ${branding.primaryTextColor};
+			}
 			.sub-header {
 				width: 100%;
 				height: 59px;
-				background-color: ${branding.quoteColor};
-				border-top: solid 3px ${branding.accentColor};
 			}
 
 			.sub-header h2 {
 				margin: auto;
 				text-align: center;
-				color: ${branding.primaryTextColor};
 				padding-top: 15px;
 				font-size: 18px;
 				font-style: italic;
@@ -238,7 +248,7 @@
 				font-weight: 100;
 			}	
 
-			.logos {
+			.left-content-top {
 				margin-bottom: 20px;
 				text-align:center;
 				width: 700px;
@@ -254,10 +264,10 @@
 				width:320px;
 			}
 
-			#left-content {
+			#left-content-bottom {
 				text-align:center;
 			}
-			#left-content video{
+			#left-content-bottom video{
 				height:350px;
 			}
 
@@ -327,7 +337,7 @@
 			.no-registration #registration{
 				display: none;
 			}
-			.no-overview #left-content {
+			.no-overview #left-content-bottom {
 				display:none;
 			}
 			.no-overview .auth-content {
@@ -355,15 +365,29 @@
 			.no-overview .auth-content input[type=button] {
 				width: inherit;
 			}
+
+			.no-content .left-content-top {
+				display:none;
+			}
+			.no-logo .page-header .logo img, .no-logo .header-bottom .spacer {
+				display:none;
+			}
+
 			@media (max-width: 1160px){
-				#left-content video{
+				.page-header .spacer{
+					width:150px;
+				}
+				.page-header .header-bottom .spacer{
+					display:none;
+				}
+				#left-content-bottom video{
 					height:225px;
 				}
 
-				.logos {
+				.left-content-top {
 					width: 450px;
 				}
-				.no-overview .logos {
+				.no-overview .left-content-top {
 					width: 700px;
 				}
 				.auth-forms {
@@ -378,15 +402,15 @@
 				}
 			}
 			@media (max-width: 910px){
-				#left-content video{
+				#left-content-bottom video{
 					height:150px;
 				}
 
-				.logos {
+				.left-content-top {
 					width: 300px;
 				}
 
-				.no-overview .logos {
+				.no-overview .left-content-top {
 					width: 450px;
 				}
 				.auth-forms {
@@ -398,10 +422,13 @@
 				}
 			}
 			@media (max-width: 767px){
+				.left-content-top {
+					width: 400px;
+				}
 				.auth-forms {
 					width:420px;
 				}
-				.no-overview .logos {
+				.no-overview .left-content-top {
 					width: 300px;
 				}
 				.auth-content .left-col {
@@ -419,19 +446,19 @@
 				.page-content{
 					min-height:inherit;
 				}
-				.x-body, .ie-flex-fix, .footer{
-					display:block;
-				}
 
 				.no-overview .right-col,.no-overview .left-col {
 					display:block;
 				}
-				
+
 				.dialog {
 					width:450px;
 				}
 			}
 			@media (max-width: 490px){
+				.page-header .spacer{
+					width:100px;
+				}
 				.dialog { 
 					min-width: 300px;
 					width: 100%;
@@ -445,7 +472,7 @@
 					padding: 0px;
 					margin: 5px auto 5px;
 				}
-				.login-header {
+				.page-header .header-top, .login-header {
 					height: 38px;
 
 				}
@@ -467,9 +494,6 @@
 				.page-content{
 					min-height:inherit;
 				}
-				.x-body, .ie-flex-fix, .footer{
-					display:block;
-				}
 				#menu .x-btn{
 					height:27px;
 					padding: 2px;
@@ -481,89 +505,97 @@
 		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	</head>
 	<body>
-		<div class="ie-flex-fix">
-			<div class="page-header">
-				<div id="menu"><!-- Ext generated Menu --></div>
+		<div class="page-header">
+			<div class="header-top">
+				<div class="spacer logo">
+					<img src="${branding.loginLogoUrl}" alt="logo"/>
+				</div>
 				<div class="login-header">	
 					<h1>${branding.landingPageTitle}</h1>        
 				</div>
-
+				<div class="spacer">
+					<div id="menu"> <!-- Ext generated Menu --> </div>
+				</div>
+			</div>
+			<div class="header-bottom">
+				<div class="spacer">&nbsp;</div>
 				<div class="sub-header">
 					<h2>${branding.landingPageBanner}</h2>
 				</div>
+				<div class="spacer">&nbsp;</div>
 			</div>
-			<div class="page-content">
-				<div id="browserWarning" class="browser-warning" >
-					<p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
-							<a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
-							<a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
-							<a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
-						<i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
-				</div>
-				<div class="auth-forms">
-					<div class="auth-content">
-						<p id="serverError" class="clearError" >
-							Unable to connect to server or server failure.  Refresh page and try again.
-						</p>
-						<div class="left-col">
-							<div class="logos">
-								${branding.loginLogoBlock}
-							</div>
-							<div id="left-content">
-							</div>
+		</div>
+		<div class="page-content">
+			<div id="browserWarning" class="browser-warning" >
+				<p>You are using an <strong>unsupported</strong> browser. The website may not work as intended.  Please switch to <strong>
+						<a class="browser-warning-link" href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong>
+						<a class="browser-warning-link" href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong>
+						<a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
+					<i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
+			</div>
+			<div class="auth-forms">
+				<div class="auth-content">
+					<p id="serverError" class="clearError" >
+						Unable to connect to server or server failure.  Refresh page and try again.
+					</p>
+					<div class="left-col">
+						<div class="left-content-top">
+							${branding.loginContentBlock}
 						</div>
-						<div class="right-col">
-							<div>
-								<div id="registration">
-									<h2>Sign up for an Account.</h2>
-									<ol>
-										<li>Go to the Signup page.</li>
-										<li>Follow the steps on the screen to set up your account.</li>
-										<li>Use the account you created to Sign In.</li>
-									</ol>
-									<a class="btn btn-primary" href="registration.jsp">Sign up</a>
-									<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
-								</div>
-								<div id="registration-video">
-									<!-- built my own dialog box because Ext.window.Window does not have good responsive support -->
-									<div class="dialog">
-										<div class="header"></div>
-										<div class="content"></div>
-										<div class="buttons"><input class="btn btn-primary" type="button" value="Close" /></div>
-									</div>
-								</div>
+						<div id="left-content-bottom">
+						</div>
+					</div>
+					<div class="right-col">
+						<div>
+							<div id="registration">
+								<h2>Sign up for an Account.</h2>
+								<ol>
+									<li>Go to the Sign-Up page.</li>
+									<li>Follow the steps on the screen to set up your account.</li>
+									<li>Use the account you created to Sign In.</li>
+								</ol>
+								<a class="btn btn-primary" href="registration.jsp">Sign up</a>
+								<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
 							</div>
-							<div>
-								<h2>Log In</h2>
-								<form id="loginForm" action="Login.action?Login" method="POST">
-									<div class="form-control">
-										<input type="hidden" id="gotoPageId" name="gotoPage"  />	
-										<span>Username</span>
-										<input type="text" name="username" id="username" placeholder="Username" autofocus autocomplete="false">
-										<p id="usernameError" class="clearError errorText"></p>
-									</div>
-									<div class="form-control">
-										<span>Password</span>
-										<input type="password" name="password" id="password" placeholder="Password" autocomplete="false" onkeypress="if (event.keyCode === 13) {
-													keyPressLogin();
-												}
-											   ">
-										<p id="passwordError" class="clearError errorText"></p>
-									</div>
-									<input type="button" value="Log in" class="btn btn-primary" onclick="submitForm();" />
-								</form>
-								<div id="forgot-password-links">
-									<a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a>
+							<div id="registration-video">
+								built my own dialog box because Ext.window.Window does not have good responsive support 
+								<div class="dialog">
+									<div class="header"></div>
+									<div class="content"></div>
+									<div class="buttons"><input class="btn btn-primary" type="button" value="Close" /></div>
 								</div>
 							</div>
 						</div>
-					</div>	
-				</div>
+						<div>
+							<h2>Log In</h2>
+							<form id="loginForm" action="Login.action?Login" method="POST">
+								<div class="form-control">
+									<input type="hidden" id="gotoPageId" name="gotoPage"  />	
+									<span>Username</span>
+									<input type="text" name="username" id="username" placeholder="Username" autofocus autocomplete="false">
+									<p id="usernameError" class="clearError errorText"></p>
+								</div>
+								<div class="form-control">
+									<span>Password</span>
+									<input type="password" name="password" id="password" placeholder="Password" autocomplete="false" onkeypress="if (event.keyCode === 13) {
+												keyPressLogin();
+											}
+										   ">
+									<p id="passwordError" class="clearError errorText"></p>
+								</div>
+								<input type="button" value="Log in" class="btn btn-primary" onclick="submitForm();" />
+							</form>
+							<div id="forgot-password-links">
+								<a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a>
+							</div>
+						</div>
+					</div>
+				</div>	
 			</div>
-			<div class="footer">
-				<div class="footer-content">
-					<%=branding.getLoginWarning()%>	
-				</div>
+		</div>
+		<div class="footer">
+			<div class="footer-content">
+				${branding.loginFooter}
 			</div>
 		</div>
 		<script type="text/javascript">
@@ -750,24 +782,34 @@
 					});
 				}
 
-				if (!${allowRegistration}) {
+				if (${(branding.loginLogoUrl == null || branding.loginLogoUrl.length() == 0)}) {
+					$('html').addClass("no-logo");
+				}
+
+				if (${(branding.loginContentBlock == null || branding.loginContentBlock.length() == 0)}) {
+					$('html').addClass("no-content");
+				}
+
+				if (${!allowRegistration}) {
 					$('html').addClass("no-registration");
 				}
-				if ("${branding.getLoginOverviewVideoUrl()}") {
-					$("#left-content").html("<video controls src='${branding.getLoginOverviewVideoUrl()}' poster='${branding.getLoginOverviewVideoPosterUrl()}' />");
-				} else {
+
+				if (${(branding.loginOverviewVideoUrl == null || branding.loginOverviewVideoUrl.length() == 0)}) {
 					$('html').addClass("no-overview");
+				} else {
+					$("#left-content-bottom").html("<video controls src='${branding.loginOverviewVideoUrl}' poster='${branding.loginOverviewVideoPosterUrl}' />");
 				}
-				if ("${branding.getLoginRegistrationVideoUrl()}") {
+
+				if (${(branding.loginRegistrationVideoUrl == null || branding.loginRegistrationVideoUrl.length() == 0)}) {
+					$('html').addClass("no-registration-video");
+				} else {
 					var dialog = $("#registration-video .dialog");
 					$(".header", dialog).html("<h2>How to Register</h2>");
-					$(".content", dialog).html("<video controls src='${branding.getLoginRegistrationVideoUrl()}' />");
+					$(".content", dialog).html("<video controls src='${branding.loginRegistrationVideoUrl}' />");
 					$(".buttons .btn", dialog).click(function () {
 						$("#registration-video .dialog video")[0].pause();
 						$('#registration-video').hide();
 					});
-				} else {
-					$('html').addClass("no-registration-video");
 				}
 
 				$('#registration-video-link').click(function () {
@@ -781,14 +823,10 @@
 					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
 				}
 				// commenting out this line uncomment when working on FAQ ticket (STORE-2211)
-				//Ext.create('Login.SupportMenu', {renderTo: "menu"});
+				// Ext.create('Login.SupportMenu', {renderTo: "menu"});
 			});
 
 
-		</script>	
+		</script>
 	</body>
 </html>
-
-
-
-
