@@ -28,6 +28,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -93,8 +95,29 @@ public class HtmlToPdfGenerator
 		savePdfDocument(htmlContent, null);
 	}
 
+	private String cleanInput(String htmlContent)
+	{
+		if (StringUtils.isNotBlank(htmlContent)) {
+			//stripe out html 5 tags
+			Whitelist whiteList = Whitelist.relaxed()
+					.addAttributes(":all", "style")
+					.addAttributes(":all", "class")
+					.addTags(
+							"style", "html", "head", "meta", "body"
+					);
+			htmlContent = Jsoup.clean(htmlContent, whiteList);
+
+			//Note right: only line separator seems to cause issues.
+			String lineSeparator = Character.toString((char) 0x2028);
+			htmlContent = htmlContent.replace(lineSeparator, "<br>");
+		}
+		return htmlContent;
+	}
+
 	public void savePdfDocument(String htmlContent, PDFRenderHandler renderHandler)
 	{
+		htmlContent = cleanInput(htmlContent);
+
 		//	Convert HTML to XHTML
 		ITextRenderer renderer = new ITextRenderer();
 		Tidy tidy = new Tidy();

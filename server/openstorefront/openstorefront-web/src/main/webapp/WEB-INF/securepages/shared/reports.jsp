@@ -2017,7 +2017,9 @@
 					},
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
-							viewHistory();
+							if (!record.get('noViewAvailable')){
+								viewHistory();
+							}
 						},
 						rowclick: function ( self, record, tr ) {
 
@@ -2086,12 +2088,18 @@
 					var cnt = historyGrid.getSelectionModel().getCount();
 					if (cnt === 1) {
 						var record = historyGrid.getSelectionModel().getSelection()[0];
-						if (record.get('runStatus') !== 'C' || record.get('noViewAvaliable')) {
+						if (record.get('runStatus') !== 'C' || record.get('noViewAvailable')) {
 							Ext.getCmp('historyViewButton').setDisabled(true);
 							Ext.getCmp('historyExportButton').setDisabled(true);
+							Ext.getCmp('historyDetailButton').setDisabled(false);
 						} else {
-							Ext.getCmp('historyViewButton').setDisabled(false);
-							Ext.getCmp('historyExportButton').setDisabled(false);
+							if (record.get('noViewAvailable')){
+								Ext.getCmp('historyViewButton').setDisabled(true);							
+								Ext.getCmp('historyExportButton').setDisabled(true);
+							} else {
+								Ext.getCmp('historyViewButton').setDisabled(false);							
+								Ext.getCmp('historyExportButton').setDisabled(false);
+							}							
 							Ext.getCmp('historyDetailButton').setDisabled(false);
 						}
 
@@ -2102,7 +2110,7 @@
 						}
 
 					} else if (cnt > 1) {
-						Ext.getCmp('historyDeleteButton').setDisabled(false);
+						Ext.getCmp('historyDeleteButton').setDisabled(false);						
 						Ext.getCmp('historyViewButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
 						Ext.getCmp('historyDetailButton').setDisabled(true);
