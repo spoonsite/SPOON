@@ -489,7 +489,7 @@ var CoreUtil = {
 				"emoticons template paste textcolor placeholder"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen | preview",
 
 			content_css: "contents.css",
 
