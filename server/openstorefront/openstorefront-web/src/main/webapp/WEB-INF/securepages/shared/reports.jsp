@@ -1274,7 +1274,7 @@
 																
 								
 								var constructViewOutput = function(reportOutput) {
-						
+
 									var panel = {
 										xtype: 'panel',
 										title: 'Storefront Viewable Output',
@@ -1312,6 +1312,12 @@
 											{
 												xtype: 'checkbox',
 												name: 'reportNotify',
+												value: reportOutput.reportTransmissionOption.reportNotify,
+												listeners: {
+													change: function (self, newVal, oldVal) {
+														reportOutput.reportTransmissionOption.reportNotify = newVal;
+													}
+												},
 												boxLabel: '<b>Notify Me</b> <i class="fa fa-question-circle" data-qtip="If checked, sends an email when the report is viewable on the website"></i>'
 											}
 										],
@@ -1523,7 +1529,8 @@
 								var addBtn;								
 								var updateDisplay = function() {
 									reportOutputPanel.removeAll();
-									
+
+									var hasEmailTransmissionType = false;
 									var outputComponents = [];						
 									Ext.Array.each(outputs, function(output){
 										switch (output.reportTransmissionType) {
@@ -1532,6 +1539,7 @@
 												break;
 											case 'EMAIL':
 												outputComponents.push(constructEmailOutput(output));
+												hasEmailTransmissionType = true;
 												break;
 											case 'CONFLUENCE':
 												outputComponents.push(constructConfluenceOutput(output));
@@ -1540,6 +1548,14 @@
 									});
 									
 									reportOutputPanel.add(outputComponents);
+
+									// 	if the an email transmission type has been specified, don't allow the user
+									//		to request a notification on report completion (as they will be already recieving an email.)
+									if (hasEmailTransmissionType) {
+										var reportNotifyField = Ext.ComponentQuery.query('[name="reportNotify"]')[0];
+										reportNotifyField.setDisabled(true);
+										reportNotifyField.setValue(false);
+									}
 									
 									//timing issue on format field reload
 									Ext.defer(function(){
@@ -1563,7 +1579,7 @@
 											outputToAdd.push({
 												text: avaliable.description,											
 												transmissionType: avaliable.code,
-												handler: function() {																								
+												handler: function() {	
 													outputs.push({
 														outputId: Ext.id(),
 														reportTransmissionType: avaliable.code,
@@ -1611,14 +1627,28 @@
 								};
 								updateDisplay();
 																
-								var removeOutputAction =  function(reportOutput) {
+								var removeOutputAction = function(reportOutput) {
 									var index = 0;
+									var emailOutputTypes = 0;
+									var notifyMeField = Ext.ComponentQuery.query('[name="reportNotify"]')[0];
+
 									Ext.Array.each(outputs, function(item) {
 										if (item.outputId === reportOutput.outputId) {
 											return false;
 										}
+
+										if (item.reportTransmissionType === 'EMAIL') {
+											emailOutputTypes += 1;
+										}
+
 										index++;
 									});
+
+									// if there are no email transmission types, ensure 'Notify Me' checkbox is enabled.
+									if (emailOutputTypes === 0 && notifyMeField.length) {
+										notifyMeField.setDisabled(false);
+									}
+
 									Ext.Array.removeAt(outputs, index);
 									updateDisplay();
 								};														
