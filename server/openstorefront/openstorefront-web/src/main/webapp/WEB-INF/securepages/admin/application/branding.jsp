@@ -440,6 +440,12 @@
 														]														
 													},
 													{
+														xtype: 'checkbox',
+														width: '100%',
+														boxLabel: 'Show Support Menu <i class="fa fa-exclamation-circle" data-qtip="When checked, will enable the support menu on the login page."></i>',
+														name: 'showSupportMenuOnLogin'
+													},
+													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
 														name: 'loginFooter',

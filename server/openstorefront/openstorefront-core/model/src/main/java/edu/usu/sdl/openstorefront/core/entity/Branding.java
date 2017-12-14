@@ -232,7 +232,10 @@ public class Branding
 
 	@ConsumeField
 	private Boolean useDefaultLandingPage;
-
+	
+	@ConsumeField
+	private Boolean showSupportMenuOnLogin;
+	
 	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
@@ -272,6 +275,7 @@ public class Branding
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
 		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
 		setLoginRegistrationVideoUrl(branding.getLoginRegistrationVideoUrl());
+		setShowSupportMenuOnLogin(branding.getShowSupportMenuOnLogin());
 		setLoginFooter(branding.getLoginFooter());
 
 		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
@@ -750,5 +754,15 @@ public class Branding
 	public void setLoginOverviewVideoPosterUrl(String loginOverviewVideoPosterUrl)
 	{
 		this.loginOverviewVideoPosterUrl = loginOverviewVideoPosterUrl;
+	}
+
+	public Boolean getShowSupportMenuOnLogin()
+	{
+		return showSupportMenuOnLogin;
+	}
+
+	public void setShowSupportMenuOnLogin(Boolean showSupportMenuOnLogin)
+	{
+		this.showSupportMenuOnLogin = showSupportMenuOnLogin;
 	}
 }

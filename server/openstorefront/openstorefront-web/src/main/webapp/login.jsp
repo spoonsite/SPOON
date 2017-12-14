@@ -3,6 +3,8 @@
     Document   : login
     Created on : Apr 25, 2014, 3:18:20 PM
     Author     : dshurtleff
+	Updated on : Dec 13, 2017, 5:38:00 PM
+    Author     : kbair
 --%>
 
 <%@page import="edu.usu.sdl.openstorefront.core.entity.SecurityPolicy"%>
@@ -794,6 +796,12 @@
 					$('html').addClass("no-registration");
 				}
 
+				if (${branding.showSupportMenuOnLogin != null && branding.showSupportMenuOnLogin}) {
+					Ext.create('Login.SupportMenu', {renderTo: "menu"});
+				} else {
+					$('html').addClass("no-menu");
+				}
+
 				if (${(branding.loginOverviewVideoUrl == null || branding.loginOverviewVideoUrl.length() == 0)}) {
 					$('html').addClass("no-overview");
 				} else {
@@ -822,11 +830,7 @@
 				} else {
 					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
 				}
-				// commenting out this line uncomment when working on FAQ ticket (STORE-2211)
-				// Ext.create('Login.SupportMenu', {renderTo: "menu"});
 			});
-
-
 		</script>
 	</body>
 </html>
