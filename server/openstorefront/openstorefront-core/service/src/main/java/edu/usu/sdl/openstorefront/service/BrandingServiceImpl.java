@@ -131,7 +131,7 @@ public class BrandingServiceImpl
 				if (branding.getLoginContentBlock() == null) {
 					String loginLogo = branding.getPrimaryLogoUrl().replace("Media.action", "Branding.action");
 					branding.setLoginContentBlock(
-							"<img src='" + loginLogo + "' />"
+							"<img src='" + loginLogo + "' style='width:100%' />"
 					);
 				}
 

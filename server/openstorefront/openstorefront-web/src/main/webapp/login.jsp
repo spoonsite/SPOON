@@ -374,7 +374,10 @@
 			.no-logo .page-header .logo img, .no-logo .header-bottom .spacer {
 				display:none;
 			}
-
+			.no-logo.no-menu .spacer{
+				display:none;
+			}
+			
 			@media (max-width: 1160px){
 				.page-header .spacer{
 					width:150px;
