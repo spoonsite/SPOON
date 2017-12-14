@@ -345,7 +345,7 @@ public class Branding
 	/**
 	 * warning banner in the center of the login page
 	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginWarning()}
+	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
 	 */
 	@Deprecated
 	public String getLoginWarning()
@@ -356,7 +356,7 @@ public class Branding
 	/**
 	 * warning banner in the center of the login page
 	 * @param loginWarning warning text
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginWarning(String)}
+	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
 	 */
 	@Deprecated
 	public void setLoginWarning(String loginWarning)
@@ -707,7 +707,7 @@ public class Branding
 	/**
 	 * Logo section in the main section of the page
 	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginLogoBlock()}
+	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
 	 */
 	@Deprecated
 	public String getLoginLogoBlock()
@@ -718,7 +718,7 @@ public class Branding
 	/**
 	 * Logo section in the main section of the page
 	 * @param loginLogoBlock logo image with optional image map
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginLogoBlock(String)}
+	 * @deprecated As of 2.5-s, replaced by {@link #setLoginContentBlock(String)}
 	 */
 	@Deprecated
 	public void setLoginLogoBlock(String loginLogoBlock)
