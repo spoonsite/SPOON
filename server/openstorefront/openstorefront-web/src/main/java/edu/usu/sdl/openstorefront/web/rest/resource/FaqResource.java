@@ -21,12 +21,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
-import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
-import edu.usu.sdl.openstorefront.core.view.UserProfileView;
-import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
-import java.util.Arrays;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -50,25 +46,31 @@ public class FaqResource
 		extends BaseResource
 {
 	@GET
-	@APIDescription("Gets a list of all FAQs")
+	@APIDescription("Gets a list of all FAQs. If user is admin, will also return inactive FAQs")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
-	public Response faqLookup()
+	public Response faqLookupAll()
 	{
-		Faq faqExample1 = new Faq();
-		Faq faqExample2 = new Faq();
 		
-		faqExample1.setAnswer("This is the answer to the FAQ (Example 1)");
-		faqExample1.setQuestion("This is the question to the FAQ (Example 1)");
-		faqExample1.setActiveStatus("A");
-		faqExample1.setCategory("CAT type for example 1");
+		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
 		
-		faqExample2.setQuestion("This is the question to the FAQ (Example 2)");
-		faqExample2.setAnswer("This is the answer to the FAQ (Example 2)");
-		faqExample2.setActiveStatus("A");
-		faqExample2.setCategory("CAT type for example 2");
+		GenericEntity<List<Faq>> entity = new GenericEntity<List<Faq>>(faqs)
+			{
+			};
+		return sendSingleEntityResponse(entity);
+	}
+	
+	@GET
+	@APIDescription("Gets a single FAQ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Faq.class)
+	@Path("/{id}")
+	public Response faqSingleLookup(@PathParam("id") String faqId)
+	{
 		
-		GenericEntity<List<Faq>> entity = new GenericEntity<List<Faq>>(Arrays.asList(faqExample1,faqExample2))
+		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
+		
+		GenericEntity<Faq> entity = new GenericEntity<Faq>(faq)
 			{
 			};
 		return sendSingleEntityResponse(entity);
@@ -82,9 +84,13 @@ public class FaqResource
 	@DataType(Faq.class)
 	public Response createFaq(Faq faq)
 	{
+		faq.populateBaseCreateFields();
+		Faq createdFaq = service.getFaqService().createFaq(faq);
 		
-		
-		return Response.ok(faq).build();
+		GenericEntity<Faq> entity = new GenericEntity<Faq>(createdFaq)
+			{
+			};
+		return sendSingleEntityResponse(entity);
 	}
 	
 	@PUT
@@ -99,8 +105,12 @@ public class FaqResource
 			Faq faq
 	)
 	{
+		Faq updatedFaq = service.getFaqService().updateFaq(faqId, faq);
 		
-		return Response.ok(faq).build();
+		GenericEntity<Faq> entity = new GenericEntity<Faq>(updatedFaq)
+			{
+			};
+		return sendSingleEntityResponse(entity);
 	}
 	
 	@DELETE
@@ -110,9 +120,8 @@ public class FaqResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
 	@Path("/{id}")
-	public Response deleteFaq(@PathParam("id") String faqId)
+	public void deleteFaq(@PathParam("id") String faqId)
 	{
-		
-		return Response.accepted().build();
+		service.getFaqService().deleteFaq(faqId);
 	}
 }

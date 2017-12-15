@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+
 /**
  *
  * @author cyearsley
  */
+@APIDescription("Category for FAQs")
 public class FaqCategoryType
 		extends LookupEntity<FaqCategoryType>
 {

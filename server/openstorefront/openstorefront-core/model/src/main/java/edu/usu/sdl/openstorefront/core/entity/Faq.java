@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -86,5 +87,16 @@ public class Faq
 	public void setCategory(String category)
 	{
 		this.category = category;
+	}
+	
+	@Override
+	public void updateFields(StandardEntity entity) {
+		Faq faq = (Faq) entity;
+		
+		super.updateFields(faq);
+		
+		this.setAnswer(faq.getAnswer());
+		this.setCategory(faq.getCategory());
+		this.setQuestion(faq.getQuestion());
 	}
 }

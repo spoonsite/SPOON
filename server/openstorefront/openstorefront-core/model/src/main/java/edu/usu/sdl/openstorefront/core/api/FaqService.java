@@ -25,12 +25,13 @@ import java.util.List;
 public interface FaqService
 		extends AsyncService
 {
+	
 	/**
-	 * Gets all active FAQs
+	 * Gets all FAQs
 	 *
 	 * @return List<Faq>
 	 */
-	public List<Faq> getFaqs();
+	public List<Faq> getFaqs(boolean isAdmin);
 	
 	/**
 	 * Get a single Faq
@@ -38,25 +39,15 @@ public interface FaqService
 	 * @param faqId
 	 * @return Faq
 	 */
-	public Faq getFaq(String faqId);
+	public Faq getFaq(String faqId, boolean isAdmin);
 	
 	/**
-	 * Set a Faq question
+	 * Create an Faq
 	 *
-	 * @param faqId
-	 * @param question
+	 * @param faq
 	 * @return
 	 */
-	public void setFaqQuestion(String faqId, String question);
-	
-	/**
-	 * Set a Faq answer
-	 *
-	 * @param evaluationId
-	 * @param publicInformationOnly
-	 * @return
-	 */
-	public void setFaqAnswer(String faqId, String answer);
+	public Faq createFaq(Faq faq);
 	
 	/**
 	 * Updates a Faq
@@ -65,5 +56,13 @@ public interface FaqService
 	 * @param faq
 	 * @return
 	 */
-	public void updateFaq(String fiqId, Faq faq);
+	public Faq updateFaq(String fiqId, Faq faq);
+	
+	/**
+	 * Deletes an Faq
+	 *
+	 * @param fiqId
+	 * @return
+	 */
+	public boolean deleteFaq(String fiqId);
 }
