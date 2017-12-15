@@ -53,7 +53,7 @@
 
 		<style>
 			.x-body {
-				min-width:320px;
+				min-width:300px;
 				display: flex;
 				flex-direction: column;
 				width: 100%;
@@ -66,7 +66,7 @@
 				flex-shrink: 0;
 			}
 
-			.page-header .header-top,.page-header .header-bottom{
+			.page-header .top,.page-header .bottom{
 				display:flex;
 			}
 			.page-header .login-header, .page-header .sub-header{
@@ -111,6 +111,15 @@
 				padding: 20px;
 				margin: 20px auto 20px;
 			}
+
+			.auth-content {
+				display:flex;
+				flex-direction:column;
+				flex-grow:1;
+				justify-content: center;
+				flex-shrink:0;
+			}
+
 			h1, .h1 {
 				font-size: 36px;
 			}
@@ -125,10 +134,6 @@
 				color: inherit;
 			}
 
-			.auth-content {
-				width:inherit;
-				display: inline-block;
-			}
 			.auth-content h1 {
 				color: white;
 			}
@@ -210,18 +215,22 @@
 			.showError {
 				display: block;
 			}
-			.errorField {
+			input.errorField {
 				border: red 2px solid;
 			}
+			.errorText{
+				color:red;
+				font-weight:bold;
+			}
 
-			.page-header .header-top {
+			.page-header .top {
 				width: 100%;
 				height: 56px;
 				background-color: ${branding.primaryColor};
 				color: ${branding.primaryTextColor};
 			}
 
-			.page-header .header-top h1 {
+			.page-header .top h1 {
 				margin: auto;
 				text-align: center;
 				padding-top: 10px;
@@ -230,7 +239,7 @@
 				letter-spacing: 1px;
 				font-weight: 400;
 			}
-			.page-header .header-bottom{
+			.page-header .bottom{
 				background-color: ${branding.quoteColor};
 				border-top: solid 3px ${branding.accentColor};
 				color: ${branding.primaryTextColor};
@@ -249,36 +258,39 @@
 				letter-spacing: 1px;
 				font-weight: 100;
 			}	
+			.col {
+				display:flex;
+				flex-direction:row;
+				justify-content: center;
+			}
 
-			.left-content-top {
-				margin-bottom: 20px;
+			#registration
+			{
+				padding-right:100px;
+				border-bottom:0;
+			}
+
+			.auth-content input {
+				width: 280px;
+			}
+
+			.auth-content input[type=button] {
+				width: inherit;
+			}
+
+			.left.col .bottom {
 				text-align:center;
-				width: 700px;
+			}
+			.left.col .bottom video{
+				/*
+					width or height must be set in px on the video element for IE 11 
+					otherwise the contining div will render at the full raw content heigt
+				*/
+				width:650px; 
 			}
 
-			.right-col, .left-col {
-				margin-left: 15px;
-				margin-right: 15px;
-				display:inline-block;
-				vertical-align: text-top;
-			}
-			.right-col {
-				width:320px;
-			}
-
-			#left-content-bottom {
-				text-align:center;
-			}
-			#left-content-bottom video{
-				height:350px;
-			}
-
-			#registration {
-				border-bottom-style: solid;
-				border-bottom-width: 1px;
-				padding-bottom: 10px;
-				margin-bottom:25px;
-				width:100%;
+			#registration .btn-primary {
+				margin-top:10px;
 			}
 			#forgot-password-links{
 				padding-top:10px;
@@ -295,7 +307,7 @@
 				background-color: rgba(0,0,0,0.5); /* Black background with opacity */
 				z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
 			}
-			#menu{
+			#menu {
 				float:right;
 				padding-top: 6px;
 				padding-right: 6px;
@@ -333,136 +345,120 @@
 				padding:5px;
 				text-align:center;
 			}
+
+			.col2 .left.col .top {
+				margin-bottom: 20px;
+			}
+			.col2 .left {
+				width:100%;
+				flex-grow: 1;
+			}
+
+			.col2 .auth-content {
+				width:inherit;
+				flex-direction: row;
+			}
+
+			.col2 .col {
+				margin-left: 15px;
+				margin-right: 15px; 
+				flex-direction: column;
+				justify-content: flex-start;
+			}
+
+			.col2 .right.col {
+				flex-grow:4;
+			}
+
+			.col2 #registration {
+				border-bottom-style: solid;
+				border-bottom-width: 1px;
+				padding-bottom: 25px;
+				margin-bottom:25px;
+				width:100%;
+				padding-right:0px;
+			}
+
 			.no-registration-video #registration-video-link{
 				display: none;
 			}
 			.no-registration #registration{
 				display: none;
 			}
-			.no-overview #left-content-bottom {
+			.no-overview .left.col .bottom {
 				display:none;
 			}
-			.no-overview .auth-content {
-				display:flex;
-				flex-direction:column;
-				flex:1;
-				justify-content: center;
-				flex-shrink:0;
-			}
-			.no-overview .right-col,.no-overview .left-col {
-				width:100%;
-				display:flex;
-				flex-direction:row;
-				justify-content: center;
-			}
-			.no-overview #registration
-			{
-				padding-right:100px;
-				border-bottom:0;
-			}
 
-			.no-overview .auth-content input {
-				width: 280px;
-			}	
-			.no-overview .auth-content input[type=button] {
-				width: inherit;
-			}
-
-			.no-content .left-content-top {
+			.no-content .left.col .top {
 				display:none;
 			}
-			.no-logo .page-header .logo img, .no-logo .header-bottom .spacer {
+			.no-logo .page-header .logo img, .no-logo .page-header .bottom .spacer {
 				display:none;
 			}
 			.no-logo.no-menu .spacer{
 				display:none;
 			}
-			
+
 			@media (max-width: 1160px){
 				.page-header .spacer{
 					width:150px;
 				}
-				.page-header .header-bottom .spacer{
+				.page-header .bottom .spacer{
 					display:none;
-				}
-				#left-content-bottom video{
-					height:225px;
-				}
-
-				.left-content-top {
-					width: 450px;
-				}
-				.no-overview .left-content-top {
-					width: 700px;
 				}
 				.auth-forms {
 					width:850px;
 				}
-				.page-content
-				{
-					min-height:550px;
-				}
-				.footer .footer-content{
-					width:auto;
-				}
-			}
-			@media (max-width: 910px){
-				#left-content-bottom video{
-					height:150px;
-				}
-
-				.left-content-top {
-					width: 300px;
-				}
-
-				.no-overview .left-content-top {
-					width: 450px;
-				}
-				.auth-forms {
-					width:700px;
-				}
-				.no-overview #registration
-				{
-					padding-right:20px;
-				}
-			}
-			@media (max-width: 767px){
-				.left-content-top {
-					width: 400px;
-				}
-				.auth-forms {
-					width:420px;
-				}
-				.no-overview .left-content-top {
-					width: 300px;
-				}
-				.auth-content .left-col {
-					border-bottom-style:solid;
-					border-bottom-width:1px;
-					float:none;
-				}
-				.no-overview .left-col {
-					border:none;
-					float:none;
-				}
-				.auth-content .left-col, .auth-content .right-col {
-					width:90%;
-				}
-				.page-content{
-					min-height:inherit;
-				}
-
-				.no-overview .right-col,.no-overview .left-col {
-					display:block;
-				}
-
-				.dialog {
+				.left.col .bottom video{
 					width:450px;
 				}
 			}
+			@media (max-width: 910px){
+				.auth-forms {
+					width:700px;
+				}
+				.left.col .bottom video{
+					width:300px;
+				}
+			}
+
+			@media (max-width: 767px){
+				.auth-forms {
+					width:420px;
+				}
+				.auth-content .left.col {
+					border-bottom-style:solid;
+					border-bottom-width:1px;
+				}
+				.col {
+					display:block;
+				}
+				.col2 .auth-content {
+					flex-direction: column;
+				}
+				.col2 .col {
+					width:auto;
+				}
+			}
 			@media (max-width: 490px){
+				.left.col .bottom video{
+					width:250px;
+				}
 				.page-header .spacer{
-					width:100px;
+					width:90px;
+				}
+				.page-header .top, .login-header {
+					height: 38px;
+
+				}
+				.login-header h1 {
+					padding-top: 5px;
+
+				}
+				.sub-header h2 {
+					font-size: 12px;		
+					padding-left: 5px;
+					padding-right: 5px;			
 				}
 				.dialog { 
 					min-width: 300px;
@@ -477,33 +473,18 @@
 					padding: 0px;
 					margin: 5px auto 5px;
 				}
-				.page-header .header-top, .login-header {
-					height: 38px;
-
-				}
-				.login-header h1 {
-					padding-top: 5px;
-
-				}
-				.sub-header h2 {
-					font-size: 12px;		
-					padding-left: 5px;
-					padding-right: 5px;			
-				}
 				.auth-content input {
-					width: 280px;
+					width: 225px;
 				}	
 				.auth-content input[type=button] {
 					width: inherit;
-				}
-				.page-content{
-					min-height:inherit;
 				}
 				#menu .x-btn{
 					height:27px;
 					padding: 2px;
 				}
 			}
+
 		</style>
 		<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
@@ -511,7 +492,7 @@
 	</head>
 	<body>
 		<div class="page-header">
-			<div class="header-top">
+			<div class="top">
 				<div class="spacer logo">
 					<img src="${branding.loginLogoUrl}" alt="logo"/>
 				</div>
@@ -522,7 +503,7 @@
 					<div id="menu"> <!-- Ext generated Menu --> </div>
 				</div>
 			</div>
-			<div class="header-bottom">
+			<div class="bottom">
 				<div class="spacer">&nbsp;</div>
 				<div class="sub-header">
 					<h2>${branding.landingPageBanner}</h2>
@@ -538,19 +519,19 @@
 						<a class="browser-warning-link" href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience
 					<i class="fa fa-window-close-o fa-2x icon" aria-hidden="true"></i></p>	
 			</div>
+			<p id="serverError" class="clearError" >
+				Unable to connect to server or server failure.  Refresh page and try again.
+			</p>
 			<div class="auth-forms">
 				<div class="auth-content">
-					<p id="serverError" class="clearError" >
-						Unable to connect to server or server failure.  Refresh page and try again.
-					</p>
-					<div class="left-col">
-						<div class="left-content-top">
+					<div class="left col">
+						<div class="top">
 							${branding.loginContentBlock}
 						</div>
-						<div id="left-content-bottom">
+						<div class="bottom">
 						</div>
 					</div>
-					<div class="right-col">
+					<div class="right col">
 						<div>
 							<div id="registration">
 								<h2>Sign up for an Account.</h2>
@@ -560,7 +541,7 @@
 									<li>Use the account you created to Sign In.</li>
 								</ol>
 								<a class="btn btn-primary" href="registration.jsp">Sign up</a>
-								<a id="registration-video-link" class="btn btn-primary">How to Video <i class="fa fa-play-circle-o"></i></a>
+								<a id="registration-video-link" class="btn btn-primary">How to Register <i class="fa fa-play-circle-o"></i></a>
 							</div>
 							<div id="registration-video">
 								built my own dialog box because Ext.window.Window does not have good responsive support 
@@ -620,7 +601,28 @@
 				showFeedback: true,
 				text: 'Support',
 				menu: {
-					minWidth: 250
+					minWidth: 250,
+					items: [{
+							text: '<b>Frequently asked Questions</b>',
+							iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+							handler: function () {
+								userMenu.helpWin.show();
+							}
+						}, {
+							hidden:${(branding.loginLogoUrl != null && branding.loginLogoUrl.length() == 0)},
+							text: '<b>How to Register</b>',
+							iconCls: 'fa fa-2x fa-play-circle-o icon-button-color-default',
+							handler: function () {
+								showRegisterVideo();
+							}
+						}, {
+							text: '<b>Contact Us</b>',
+							iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
+							handler: function () {
+								userMenu.feedbackWin.show();
+							}
+						}
+					]
 				},
 				listeners: {
 					menuhide: function (button, menu, opts) {
@@ -637,47 +639,17 @@
 					this.callParent();
 					var userMenu = this;
 					var menu = userMenu.getMenu();
-					userMenu.loadMenu = function () {
-						menu.removeAll();
-						var menuItems = [];
-						if (userMenu.showHelp) {
-							menuItems.push({
-								text: '<b>Frequently asked Questions</b>',
-								iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
-								handler: function () {
-									userMenu.helpWin.show();
-								}
-							});
-						}
-
-						if (userMenu.showHelp) {
-							menuItems.push({
-								text: '<b>Tutorials / Videos</b>',
-								iconCls: 'fa fa-2x fa-lightbulb-o icon-button-color-default',
-								handler: function () {
-									userMenu.helpWin.show();
-								}
-							});
-						}
-
-						if (userMenu.showFeedback) {
-							menuItems.push({
-								text: '<b>Contact Us</b>',
-								iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
-								handler: function () {
-									userMenu.feedbackWin.show();
-								}
-							});
-						}
-						menu.add(menuItems);
-					};
-					userMenu.loadMenu();
 					menu.on('beforerender', function () {
 						this.setWidth(this.up('button').getWidth());
 					});
 				}
 
 			});
+
+			var showRegisterVideo = function () {
+				$('#registration-video').show();
+				$("#registration-video .dialog video")[0].play();
+			};
 
 			var QueryString = function () {
 				var query_string = {};
@@ -740,13 +712,11 @@
 					},
 					success: function (data) {
 						if (data.success === false) {
-							if (data.errors.password) {
+							if (data.errors.password || data.errors.username) {
 								$("#password").addClass("errorField");
 								$("#passwordError").removeClass("clearError");
 								$("#passwordError").addClass("showError");
 								$("#passwordError").html(data.errors.password);
-							}
-							if (data.errors.username) {
 								$("#username").addClass("errorField");
 								$("#usernameError").removeClass("clearError");
 								$("#usernameError").addClass("showError");
@@ -778,6 +748,8 @@
 				var wait = setTimeout(submitForm, 500);
 				$(this).data('logintimer', wait);
 			};
+			var contentLength = ${branding.loginContentBlock == null ? 0 : branding.loginContentBlock.length()};
+			var hasOverviewVideo = ${(branding.loginOverviewVideoUrl != null && branding.loginOverviewVideoUrl.length() > 0)};
 			$(function () {
 
 				if (Ext.isIE10m) {
@@ -791,8 +763,8 @@
 					$('html').addClass("no-logo");
 				}
 
-				if (${(branding.loginContentBlock == null || branding.loginContentBlock.length() == 0)}) {
-					$('html').addClass("no-content");
+				if ((contentLength > 2048) || (contentLength > 0 && hasOverviewVideo)) {
+					$('html').addClass("col2");
 				}
 
 				if (${!allowRegistration}) {
@@ -805,10 +777,8 @@
 					$('html').addClass("no-menu");
 				}
 
-				if (${(branding.loginOverviewVideoUrl == null || branding.loginOverviewVideoUrl.length() == 0)}) {
-					$('html').addClass("no-overview");
-				} else {
-					$("#left-content-bottom").html("<video controls src='${branding.loginOverviewVideoUrl}' poster='${branding.loginOverviewVideoPosterUrl}' />");
+				if (hasOverviewVideo) {
+					$(".left.col .bottom").html("<video controls src='${branding.loginOverviewVideoUrl}' poster='${branding.loginOverviewVideoPosterUrl}' />");
 				}
 
 				if (${(branding.loginRegistrationVideoUrl == null || branding.loginRegistrationVideoUrl.length() == 0)}) {
@@ -823,10 +793,7 @@
 					});
 				}
 
-				$('#registration-video-link').click(function () {
-					$('#registration-video').show();
-					$("#registration-video .dialog video")[0].play();
-				});
+				$('#registration-video-link').click(showRegisterVideo);
 				if (QueryString.gotoPage !== undefined)
 				{
 					document.getElementById('gotoPageId').value = QueryString.gotoPage;
