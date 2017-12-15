@@ -142,6 +142,13 @@
 				}				
 			});			
 			dataMenu.push({
+				text: 'Frequently Asked Questions',
+				permission: 'ADMIN-FAQ',
+				handler: function(){
+					actionLoadContent('FAQ');
+				}				
+			});	
+			dataMenu.push({
 				text: 'Searches',
 				permission: 'ADMIN-SEARCH',
 				handler: function(){

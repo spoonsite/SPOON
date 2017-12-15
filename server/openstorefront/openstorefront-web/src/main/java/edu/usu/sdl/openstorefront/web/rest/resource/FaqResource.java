@@ -67,6 +67,15 @@ public class FaqResource
 	@Path("/{id}")
 	public Response faqSingleLookup(@PathParam("id") String faqId)
 	{
+//		faqExample1.setAnswer("This is the answer to the FAQ (Example 1)");
+//		faqExample1.setQuestion("This is the question to the FAQ (Example 1)");
+//		faqExample1.setActiveStatus("A");
+//		faqExample1.setCategory("CAT1");
+//		
+//		faqExample2.setQuestion("This is the question to the FAQ (Example 2)");
+//		faqExample2.setAnswer("This is the answer to the FAQ (Example 2)");
+//		faqExample2.setActiveStatus("A");
+//		faqExample2.setCategory("CAT2");
 		
 		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
 		
