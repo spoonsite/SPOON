@@ -76,17 +76,20 @@ public class FaqResource
 	
 	@POST
 	@APIDescription("Creates an FAQ")
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
 	public Response createFaq(Faq faq)
 	{
 		
-		return Response.accepted().build();
+		
+		return Response.ok(faq).build();
 	}
 	
 	@PUT
 	@APIDescription("Updates an FAQ")
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
@@ -97,11 +100,12 @@ public class FaqResource
 	)
 	{
 		
-		return Response.ok().build();
+		return Response.ok(faq).build();
 	}
 	
 	@DELETE
 	@APIDescription("Deletes an FAQ")
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
