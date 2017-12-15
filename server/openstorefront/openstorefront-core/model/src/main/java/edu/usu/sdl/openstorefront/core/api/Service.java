@@ -192,4 +192,11 @@ public interface Service
 	 */
 	public SystemArchiveService getSystemArchiveService();
 
+	/**
+	 * Help Support entities
+	 *
+	 * @return
+	 */
+	public HelpSupportService getHelpSupportService();
+
 }
