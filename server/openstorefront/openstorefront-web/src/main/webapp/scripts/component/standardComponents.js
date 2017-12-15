@@ -19,9 +19,9 @@
 /* global Ext, CoreUtil, CoreService */
 
 Ext.define('OSF.component.StandardComboBox', {
-    extend: 'Ext.form.field.ComboBox',
+	extend: 'Ext.form.field.ComboBox',
 	alias: 'osf.widget.StandardComboBox',
-	
+
 	emptyText: 'Select',
 	labelSeparator: '',
 	width: 175,
@@ -29,33 +29,33 @@ Ext.define('OSF.component.StandardComboBox', {
 	valueField: 'code',
 	displayField: 'description',
 	typeAhead: true,
-	forceSelection: true,	
+	forceSelection: true,
 	queryMode: 'local',
-	labelAlign: 'top',	
-	
-	initComponent: function() {
-		var me = this;	
-		
+	labelAlign: 'top',
+
+	initComponent: function () {
+		var me = this;
+
 		if (me.storeConfig)
 		{
 			var cbStore = CoreUtil.lookupStore(me.storeConfig);
 			me.store = cbStore;
 		}
-		
+
 		this.callParent();
-	}	
-	
+	}
+
 });
 
 Ext.define('OSF.component.SecurityComboBox', {
-    extend: 'Ext.form.field.ComboBox',
+	extend: 'Ext.form.field.ComboBox',
 	alias: 'osf.widget.SecurityComboBox',
-	
+
 	emptyText: 'Select',
 	labelSeparator: '',
 	fieldLabel: 'Security Marking',
 	name: 'securityMarkingType',
-	width: '100%',	
+	width: '100%',
 	valueField: 'code',
 	displayField: 'description',
 	typeAhead: false,
@@ -69,45 +69,45 @@ Ext.define('OSF.component.SecurityComboBox', {
 		autoLoad: true,
 		proxy: {
 			type: 'ajax',
-			url: 'api/v1/resource/lookuptypes/SecurityMarkingType'			
+			url: 'api/v1/resource/lookuptypes/SecurityMarkingType'
 		},
 		listeners: {
-			load: function(store, records, opts) {
+			load: function (store, records, opts) {
 				if (store.addSelect) {
 					store.add({
 						code: null,
 						description: 'Select'
 					});
-				}				
+				}
 			}
 		}
-	},	
-	initComponent: function() {
-		var combo = this;	
+	},
+	initComponent: function () {
+		var combo = this;
 		combo.callParent();
 		combo.getStore().addSelect = combo.addSelect;
-		
+
 		//check branding to see it should show
-		
-		CoreService.brandingservice.getCurrentBranding().then(function(branding){
+
+		CoreService.brandingservice.getCurrentBranding().then(function (branding) {
 			if (branding.allowSecurityMarkingsFlg) {
 				combo.setHidden(false);
 			}
 		});
-		
-	}	
-	
+
+	}
+
 });
 
 Ext.define('OSF.component.DataSensitivityComboBox', {
-    extend: 'Ext.form.field.ComboBox',
+	extend: 'Ext.form.field.ComboBox',
 	alias: 'osf.widget.DataSensitivityComboBox',
-	
+
 	emptyText: 'Select',
 	labelSeparator: '',
 	fieldLabel: 'Data Sensitivity',
 	name: 'dataSensitivity',
-	width: '100%',	
+	width: '100%',
 	valueField: 'dataSensitivity',
 	displayField: 'dataSensitivityDesc',
 	typeAhead: false,
@@ -121,35 +121,35 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 		autoLoad: false,
 		proxy: {
 			type: 'ajax',
-			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
+			url: 'api/v1/resource/lookuptypes/DataSensitivity'
 		}
-	},		
-	initComponent: function() {
-		var combo = this;	
+	},
+	initComponent: function () {
+		var combo = this;
 		combo.callParent();
-		
-		CoreService.userservice.getCurrentUser().then(function(user){			
-			var data = [];		
+
+		CoreService.userservice.getCurrentUser().then(function (user) {
+			var data = [];
 			Ext.Ajax.request({
 				url: 'api/v1/resource/lookuptypes/DataSensitivity',
-				success: function(response, opts) {
+				success: function (response, opts) {
 					var lookups = Ext.decode(response.responseText);
-				
-					Ext.Array.each(user.roles, function(securityRole){
-						Ext.Array.each(securityRole.dataSecurity, function(item){
+
+					Ext.Array.each(user.roles, function (securityRole) {
+						Ext.Array.each(securityRole.dataSecurity, function (item) {
 							if (item.dataSensitivity) {
-								var found = Ext.Array.findBy(lookups, function(lookup){
+								var found = Ext.Array.findBy(lookups, function (lookup) {
 									if (item.dataSensitivity === lookup.code) {
 										return true;
 									}
 								});
 								var add = true;
-								Ext.Array.each(data, function(dataItem){
+								Ext.Array.each(data, function (dataItem) {
 									if (dataItem.dataSensitivity === item.dataSensitivity) {
 										add = false;
 									}
 								});
-								
+
 								if (add) {
 									data.push({
 										dataSensitivity: item.dataSensitivity,
@@ -157,13 +157,13 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 									});
 								}
 							}
-						});						
+						});
 					});
-					
+
 					if (data.length > 0) {
 						combo.setHidden(false);
 					}
-					
+
 					if (combo.addSelect) {
 						data.push({
 							dataSensitivity: null,
@@ -174,21 +174,21 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 					combo.getStore().loadData(data);
 					combo.fireEvent('ready', combo);
 				}
-			});						
-		});	
-	}	
-	
+			});
+		});
+	}
+
 });
 
 Ext.define('OSF.component.DataSourceComboBox', {
-    extend: 'Ext.form.field.ComboBox',
+	extend: 'Ext.form.field.ComboBox',
 	alias: 'osf.widget.DataSourceComboBox',
-	
+
 	emptyText: 'Select',
 	labelSeparator: '',
 	fieldLabel: 'Data Source',
 	name: 'dataSource',
-	width: '100%',	
+	width: '100%',
 	valueField: 'dataSource',
 	displayField: 'dataSourceDesc',
 	typeAhead: false,
@@ -203,37 +203,37 @@ Ext.define('OSF.component.DataSourceComboBox', {
 		autoLoad: false,
 		proxy: {
 			type: 'ajax',
-			url: 'api/v1/resource/lookuptypes/DataSource'			
+			url: 'api/v1/resource/lookuptypes/DataSource'
 		}
-	},	
-	initComponent: function() {
-		var combo = this;	
+	},
+	initComponent: function () {
+		var combo = this;
 		combo.callParent();
-		
-		CoreService.userservice.getCurrentUser().then(function(user){			
+
+		CoreService.userservice.getCurrentUser().then(function (user) {
 			var data = [];
-			
+
 			Ext.Ajax.request({
 				url: 'api/v1/resource/lookuptypes/DataSource',
-				success: function(response, opts) {
+				success: function (response, opts) {
 					var lookups = Ext.decode(response.responseText);
-				
-					Ext.Array.each(user.roles, function(securityRole){
-						Ext.Array.each(securityRole.dataSecurity, function(item){
+
+					Ext.Array.each(user.roles, function (securityRole) {
+						Ext.Array.each(securityRole.dataSecurity, function (item) {
 							if (item.dataSource) {
-								var found = Ext.Array.findBy(lookups, function(lookup){
+								var found = Ext.Array.findBy(lookups, function (lookup) {
 									if (item.dataSource === lookup.code) {
 										return true;
 									}
 								});
 
 								var add = true;
-								Ext.Array.each(data, function(dataItem){
+								Ext.Array.each(data, function (dataItem) {
 									if (dataItem.dataSource === item.dataSource) {
 										add = false;
 									}
 								});
-								
+
 								if (add) {
 									data.push({
 										dataSource: item.dataSource,
@@ -245,8 +245,8 @@ Ext.define('OSF.component.DataSourceComboBox', {
 					});
 					if (combo.hideOnNoData && data.length === 0) {
 						combo.setHidden(true);
-					}					
-					
+					}
+
 					if (combo.addSelect) {
 						data.push({
 							dataSource: null,
@@ -257,11 +257,11 @@ Ext.define('OSF.component.DataSourceComboBox', {
 					combo.getStore().loadData(data);
 					combo.fireEvent('ready', combo);
 				}
-			});			
-		});		
-		
-	}	
-	
+			});
+		});
+
+	}
+
 });
 
 Ext.define('OSF.component.fileFieldMaxLabel', {
@@ -277,7 +277,7 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 		fileField.callParent();
 
 		var getFileSizeGB = function (fileSize) {
-			return (fileSize/1000000000).toFixed(2).replace(/\.0+0$/, '');
+			return (fileSize / 1000000000).toFixed(2).replace(/\.0+0$/, '');
 		};
 
 		//	Handles file size limits
@@ -287,9 +287,9 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 			if (file && fileField.checkFileLimit) {
 
 				// 	create error string
-				var errorMessage = '<span class="fileUploadError" style="color: rgb(255,55,55); font-weight: bold"><br />' 
-									+ file.name + ' (' + getFileSizeGB(file.size) + ' GB) exceeded size limit' 
-									+ (!fileField.displayFileLimit ? ' of ' + getFileSizeGB(fileField.getMaxFileSize()) + ' GB' : '') + '</span>';
+				var errorMessage = '<span class="fileUploadError" style="color: rgb(255,55,55); font-weight: bold"><br />'
+						+ file.name + ' (' + getFileSizeGB(file.size) + ' GB) exceeded size limit'
+						+ (!fileField.displayFileLimit ? ' of ' + getFileSizeGB(fileField.getMaxFileSize()) + ' GB' : '') + '</span>';
 
 				field.setFieldLabel(field.getFieldLabel().replace(/<span class="fileUploadError".*<\/span>/, ''));
 
@@ -312,7 +312,9 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 			success: function (response) {
 				var sizeMB = 1048576;
 				var maxFileSize = Number(Ext.decode(response.responseText).description) * sizeMB;
-				fileField.getMaxFileSize = function () {return maxFileSize;};
+				fileField.getMaxFileSize = function () {
+					return maxFileSize;
+				};
 
 				var fileLimitDisplay = fileField.displayFileLimit ? ('<br /> (Limit of ' + getFileSizeGB(maxFileSize) + ' GB)') : '';
 				var requiredDisplay = !fileField.allowBlank ? '<span class="field-required" />' : '';
@@ -327,11 +329,11 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 
 
 Ext.define('OSF.component.UserMenu', {
-    extend: 'Ext.button.Button',
+	extend: 'Ext.button.Button',
 	alias: 'widget.osf-UserMenu',
-		
+
 	scale: 'large',
-	ui: 'default',		
+	ui: 'default',
 	maxWidth: 250,
 	initCallBack: null,
 	showUserTools: true,
@@ -343,26 +345,26 @@ Ext.define('OSF.component.UserMenu', {
 		minWidth: 200
 	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
-	feedbackWin: Ext.create('OSF.component.FeedbackWindow',{}),
-	customMenuItems: [],	
-	initComponent: function() {
+	feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
+	customMenuItems: [],
+	initComponent: function () {
 		this.callParent();
-		
-		var userMenu = this;	
-		
+
+		var userMenu = this;
+
 		var menu = userMenu.getMenu();
-				
-		userMenu.loadMenu = function() {		
+
+		userMenu.loadMenu = function () {
 			menu.removeAll();
-				
+
 			var menuItems = [];
 
 			menuItems.push({
 				text: 'Home',
 				iconCls: 'fa fa-2x fa-home icon-button-color-default',
 				href: 'Landing.action',
-				handler: function(){
-					window.location.href = 'Landing.action';			
+				handler: function () {
+					window.location.href = 'Landing.action';
 				}
 			});
 
@@ -373,22 +375,22 @@ Ext.define('OSF.component.UserMenu', {
 					iconCls: 'fa fa-2x fa-gear icon-button-color-default',
 					hidden: true,
 					href: 'AdminTool.action',
-					handler: function(){
-						window.location.href = 'AdminTool.action';			
-					}					
+					handler: function () {
+						window.location.href = 'AdminTool.action';
+					}
 				});
-			}		
+			}
 
 			if (userMenu.showUserTools) {
 				menuItems.push({
 					text: 'User Tools',
 					iconCls: 'fa fa-2x fa-user icon-button-color-default',
 					href: 'UserTool.action',
-					handler: function(){
-						window.location.href = 'UserTool.action';			
-					}					
+					handler: function () {
+						window.location.href = 'UserTool.action';
+					}
 				});
-			}			
+			}
 
 			if (userMenu.showEvaluatorTools) {
 				menuItems.push({
@@ -397,142 +399,148 @@ Ext.define('OSF.component.UserMenu', {
 					hidden: true,
 					iconCls: 'fa fa-2x fa-th-list icon-button-color-default',
 					href: 'EvaluationTool.action',
-					handler: function(){
-						window.location.href = 'EvaluationTool.action';			
-					}					
+					handler: function () {
+						window.location.href = 'EvaluationTool.action';
+					}
 				});
-			}	
+			}
 			menuItems.push({
-				xtype: 'menuseparator'		
-			});	
+				xtype: 'menuseparator'
+			});
 
 			if (userMenu.customMenuItems && userMenu.customMenuItems.length > 0) {
 				menuItems = menuItems.concat(userMenu.customMenuItems);
 				menuItems.push({
-					xtype: 'menuseparator'		
-				});	
+					xtype: 'menuseparator'
+				});
 			}
 
 			if (userMenu.showHelp) {
 				menuItems.push({
 					text: '<b>Help</b>',
 					iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
-					handler: function() {
+					handler: function () {
 						userMenu.helpWin.show();
-					}			
-				});		
+					}
+				});
 			}
 
 			if (userMenu.showFeedback) {
 				menuItems.push({
-					text: '<b>Feedback / issues</b>',
+					text: '<b>Contact Us</b>',
 					iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
-					handler: function() {
-						userMenu.feedbackWin.show();
-					}		
+					handler: function () {
+						
+						var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
+
+							isLoggedIn: true,
+							fieldType: 'displayfield'
+						});
+						contactWindow.show();
+					}
 				});
 			}
 
 			menuItems.push({
-				xtype: 'menuseparator'		
-			});		
+				xtype: 'menuseparator'
+			});
 
 			menuItems.push({
 				text: 'Logout',
 				iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
 				href: 'Login.action?Logout',
-				handler: function(){
-					window.location.href = 'Login.action?Logout';			
-				}				
+				handler: function () {
+					window.location.href = 'Login.action?Logout';
+				}
 			});
 			menu.add(menuItems);
 		};
 		userMenu.loadMenu();
-		
-		
+
+
 		menu.on('beforerender', function () {
 			this.setWidth(this.up('button').getWidth());
 		});
-		
-		CoreService.userservice.getCurrentUser().then(function(usercontext){
-								
-				var userMenuText = usercontext.username;
-				if (usercontext.firstName && usercontext.lastName)
-				{
-					userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
+
+		CoreService.userservice.getCurrentUser().then(function (usercontext) {
+
+			var userMenuText = usercontext.username;
+			if (usercontext.firstName && usercontext.lastName)
+			{
+				userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
+			}
+			userMenu.setText(userMenuText);
+
+			var permissions = [
+				"ADMIN-USER-MANAGEMENT",
+				"ADMIN-SYSTEM-MANAGEMENT",
+				"ADMIN-ENTRY-MANAGEMENT",
+				"ADMIN-MESSAGE-MANAGEMENT",
+				"ADMIN-JOB-MANAGEMENT",
+				"ADMIN-INTEGRATION",
+				"ADMIN-DATA-IMPORT-EXPORT",
+				"ADMIN-WATCHES",
+				"ADMIN-TRACKING",
+				"ADMIN-SEARCH",
+				"ADMIN-USER-MANAGEMENT-PROFILES",
+				"ADMIN-TEMPMEDIA-MANAGEMENT",
+				"ADMIN-ORGANIZATION",
+				"ADMIN-LOOKUPS",
+				"ADMIN-HIGHLIGHTS",
+				"ADMIN-MEDIA",
+				"ADMIN-FEEDBACK",
+				"ADMIN-EVALUATION-TEMPLATE",
+				"API-DOCS",
+				"ADMIN-BRANDING",
+				"ADMIN-EVALUATION-TEMPLATE-SECTION",
+				"ADMIN-CONTACT-MANAGEMENT",
+				"ADMIN-ENTRY-TEMPLATES",
+				"ADMIN-ENTRY-TYPES",
+				"ADMIN-QUESTIONS",
+				"ADMIN-REVIEW",
+				"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
+				"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
+				"ADMIN-ATTRIBUTE-MANAGEMENT",
+				"ADMIN-ALERT-MANAGEMENT",
+				"REPORTS-ALL",
+				"ADMIN-EVALUATION-MANAGEMENT"
+			];
+
+			if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
+				var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
+				if (adminmenu) {
+					adminmenu.setHidden(false);
 				}
-				userMenu.setText(userMenuText);	
-				
-				var permissions = [
-					"ADMIN-USER-MANAGEMENT",
-					"ADMIN-SYSTEM-MANAGEMENT",
-					"ADMIN-ENTRY-MANAGEMENT",
-					"ADMIN-MESSAGE-MANAGEMENT",
-					"ADMIN-JOB-MANAGEMENT",
-					"ADMIN-INTEGRATION",
-					"ADMIN-DATA-IMPORT-EXPORT",
-					"ADMIN-WATCHES",
-					"ADMIN-TRACKING",
-					"ADMIN-SEARCH",
-					"ADMIN-USER-MANAGEMENT-PROFILES",
-					"ADMIN-TEMPMEDIA-MANAGEMENT",
-					"ADMIN-ORGANIZATION",
-					"ADMIN-LOOKUPS",
-					"ADMIN-HIGHLIGHTS",
-					"ADMIN-MEDIA",
-					"ADMIN-FEEDBACK",
-					"ADMIN-EVALUATION-TEMPLATE",
-					"API-DOCS",
-					"ADMIN-BRANDING",
-					"ADMIN-EVALUATION-TEMPLATE-SECTION",
-					"ADMIN-CONTACT-MANAGEMENT",
-					"ADMIN-ENTRY-TEMPLATES",
-					"ADMIN-ENTRY-TYPES",
-					"ADMIN-QUESTIONS",
-					"ADMIN-REVIEW",
-					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
-					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
-					"ADMIN-ATTRIBUTE-MANAGEMENT",
-					"ADMIN-ALERT-MANAGEMENT",
-					"REPORTS-ALL",
-					"ADMIN-EVALUATION-MANAGEMENT"
-				];
-				
-				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
-					var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
-					if (adminmenu) {
-						adminmenu.setHidden(false);
-					}
-				}				
-				
-				if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
-					var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
-					if (evalmenu) {
-						userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
-					}
-				}					
-				
-				if (userMenu.initCallBack) {
-					userMenu.initCallBack(usercontext);	
+			}
+
+			if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
+				var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
+				if (evalmenu) {
+					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);
 				}
+			}
+
+			if (userMenu.initCallBack) {
+				userMenu.initCallBack(usercontext);
+			}
 		});
 	},
-	refreshMenu: function(customMenuItems) {
+	refreshMenu: function (customMenuItems) {
 		var userMenu = this;
 		if (customMenuItems) {
 			userMenu.customMenuItems = customMenuItems;
 		}
 		userMenu.loadMenu();
 	}
-	
+
 });
 
 Ext.define('OSF.component.ChangeLogWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.ChangeLogWindow',
-	
+
 	title: 'Change History',
-	modal: false,	
+	modal: false,
 	maximizable: true,
 	width: '40%',
 	height: '70%',
@@ -546,7 +554,7 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				{
 					text: 'Refresh',
 					iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
-					handler: function() {
+					handler: function () {
 						this.up('window').refresh();
 					}
 				},
@@ -556,53 +564,53 @@ Ext.define('OSF.component.ChangeLogWindow', {
 				{
 					text: 'Close',
 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-					handler: function() {
+					handler: function () {
 						this.up('window').close();
 					}
 				}
 			]
 		}
 	],
-	listeners:	{
-		show: function() {        
-			this.removeCls("x-unselectable");    
+	listeners: {
+		show: function () {
+			this.removeCls("x-unselectable");
 		}
-	},	
+	},
 	initComponent: function () {
 		this.callParent();
-		
-		var changeWindow = this;		
+
+		var changeWindow = this;
 
 		changeWindow.details = Ext.create('Ext.panel.Panel', {
 			bodyStyle: 'padding: 10px;',
 			scrollable: true,
-			tpl: new Ext.XTemplate(				
-				'<tpl for=".">',
-				'	<tpl if="changeTypeDescription">',
-				'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
-				'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment"><br>{comment}</tpl><br>',									
-				'	<tpl if="newValue"><br><b>New Value: </b><br>',
-				'	<b>{newValue}</b><br><br></tpl>',
-				'	<tpl if="oldValue"><b>Old Value:</b> <br>',
-				'	<span style="color: gray">{oldValue}</span></tpl>',
-				'	<hr></tpl>',				
-				'</tpl>'
-			)			
+			tpl: new Ext.XTemplate(
+					'<tpl for=".">',
+					'	<tpl if="changeTypeDescription">',
+					'	<h3>{changeTypeDescription} by {createUser} on {[Ext.util.Format.date(values.createDts, "m/d/y H:i:s")]} </h3>',
+					'	{entity} <tpl if="field">Field: {field}</tpl> <tpl if="comment"><br>{comment}</tpl><br>',
+					'	<tpl if="newValue"><br><b>New Value: </b><br>',
+					'	<b>{newValue}</b><br><br></tpl>',
+					'	<tpl if="oldValue"><b>Old Value:</b> <br>',
+					'	<span style="color: gray">{oldValue}</span></tpl>',
+					'	<hr></tpl>',
+					'</tpl>'
+					)
 		});
-		changeWindow.add(changeWindow.details);		
+		changeWindow.add(changeWindow.details);
 	},
-	load: function(loadInfo) {
+	load: function (loadInfo) {
 		var changeWindow = this;
 
 		changeWindow.setLoading(true);
-		changeWindow.loadInfo  = loadInfo;
-		
+		changeWindow.loadInfo = loadInfo;
+
 		Ext.Ajax.request({
 			url: 'api/v1/resource/changelogs/' + loadInfo.entity + '/' + loadInfo.entityId + '?includeChildren=' + (loadInfo.includeChildren ? true : false),
-			callback: function() {
+			callback: function () {
 				changeWindow.setLoading(false);
 			},
-			success: function(response, opts) {
+			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
 				if (loadInfo.addtionalLoad) {
 					loadInfo.addtionalLoad(data, changeWindow);
@@ -612,34 +620,34 @@ Ext.define('OSF.component.ChangeLogWindow', {
 			}
 		});
 	},
-	updateData: function(data) {
+	updateData: function (data) {
 		var changeWindow = this;
-		
-		if (data && data.length > 0){
+
+		if (data && data.length > 0) {
 			changeWindow.details.update(data);
 		} else {
 			changeWindow.details.update("No Change History");
-		}					
+		}
 	},
-	refresh: function() {
+	refresh: function () {
 		var changeWindow = this;
 		changeWindow.load(changeWindow.loadInfo);
 	}
-	
+
 });
 
 Ext.define('OSF.component.EntrySelect', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.entryselect',
-	
+
 	bodyStyle: 'padding: 10px',
-	tpl: new Ext.XTemplate(			
-		'<tpl if="allSelected">{allSelectedMessage}</tpl>',	
-		'<tpl for="data">',	
-		'	<p>{name}</p>',
-		'</tpl>',	
-		'<tpl if="more"><p>... (<b>{count}</b> selected)</p></tpl>'
-	),	
+	tpl: new Ext.XTemplate(
+			'<tpl if="allSelected">{allSelectedMessage}</tpl>',
+			'<tpl for="data">',
+			'	<p>{name}</p>',
+			'</tpl>',
+			'<tpl if="more"><p>... (<b>{count}</b> selected)</p></tpl>'
+			),
 	buttonTooltip: null,
 	allSelectedMessage: '<p>All Entries</p>',
 	dockedItems: [
@@ -653,9 +661,9 @@ Ext.define('OSF.component.EntrySelect', {
 					itemId: 'selectBtn',
 					text: 'Select Entries',
 					iconCls: 'fa fa-lg fa-list',
-					handler: function() {
+					handler: function () {
 						var selectPanel = this.up('panel');
-						
+
 						var selectWin = Ext.create('Ext.window.Window', {
 							title: 'Select Entries',
 							modal: true,
@@ -680,7 +688,7 @@ Ext.define('OSF.component.EntrySelect', {
 											bufferedRenderer: false,
 											width: '50%',
 											margin: '0 5 0 0',
-											store: {												
+											store: {
 												sorters: [
 													new Ext.util.Sorter({
 														property: 'description',
@@ -689,8 +697,8 @@ Ext.define('OSF.component.EntrySelect', {
 												]
 											},
 											selModel: {
-											   selType: 'rowmodel',
-											   mode: 'MULTI'
+												selType: 'rowmodel',
+												mode: 'MULTI'
 											},
 											plugins: 'gridfilters',
 											viewConfig: {
@@ -698,10 +706,10 @@ Ext.define('OSF.component.EntrySelect', {
 													ptype: 'gridviewdragdrop',
 													dragText: 'Drag and drop to Add to template'
 												}
-											},											
+											},
 											columns: [
-												{ text: 'Name', dataIndex: 'description', flex: 1 },
-												{ text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
+												{text: 'Name', dataIndex: 'description', flex: 1},
+												{text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
 													filter: {
 														type: 'list'
 													}
@@ -728,15 +736,15 @@ Ext.define('OSF.component.EntrySelect', {
 											]
 										},
 										{
-											xtype: 'grid',											
+											xtype: 'grid',
 											itemId: 'selectedGrid',
 											title: 'Entries In Report - <span class="alert-warning"><i class="fa fa-lg fa-arrow-left"></i> drag to remove </span>',
 											columnLines: true,
 											bufferedRenderer: false,
 											width: '50%',
 											selModel: {
-											   selType: 'rowmodel',
-											   mode: 'MULTI'
+												selType: 'rowmodel',
+												mode: 'MULTI'
 											},
 											store: {
 												sorters: [
@@ -750,12 +758,12 @@ Ext.define('OSF.component.EntrySelect', {
 											viewConfig: {
 												plugins: {
 													ptype: 'gridviewdragdrop',
-													dragText: 'Drag and drop to delete from template'												
+													dragText: 'Drag and drop to delete from template'
 												}
-											},											
+											},
 											columns: [
-												{ text: 'Name', dataIndex: 'description', flex: 1 },
-												{ text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
+												{text: 'Name', dataIndex: 'description', flex: 1},
+												{text: 'Type', dataIndex: 'componentTypeLabel', width: 175,
 													filter: {
 														type: 'list'
 													}
@@ -778,8 +786,8 @@ Ext.define('OSF.component.EntrySelect', {
 															]);
 														}
 													}
-												}												
-											]											
+												}
+											]
 										}
 									]
 								}
@@ -794,19 +802,19 @@ Ext.define('OSF.component.EntrySelect', {
 											text: 'Select Entries',
 											scale: 'medium',
 											iconCls: 'fa fa-lg fa-check icon-button-color-save',
-											handler: function() {
-												
+											handler: function () {
+
 												var selectedGrid = selectWin.queryById('selectedGrid');
-												
+
 												selectPanel.selectedIds = [];
-												selectedGrid.getStore().each(function(record){
+												selectedGrid.getStore().each(function (record) {
 													selectPanel.selectedIds.push({
 														componentId: record.get('code'),
 														name: record.get('description')
 													});
 												});
 												selectPanel.refreshDisplay();
-												
+
 												selectWin.close();
 											}
 										},
@@ -818,79 +826,79 @@ Ext.define('OSF.component.EntrySelect', {
 											text: 'Cancel',
 											scale: 'medium',
 											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
+											handler: function () {
 												selectWin.close();
-											}											
+											}
 										}
 									]
 								}
 							]
 						});
 						selectWin.show();
-						
+
 						//load current selection
 						selectWin.setLoading(true);
 						Ext.Ajax.request({
 							url: 'api/v1/resource/components/lookup',
-							callback: function() {
+							callback: function () {
 								selectWin.setLoading(false);
 							},
-							success: function(response, opts) {
+							success: function (response, opts) {
 								var data = Ext.decode(response.responseText);
-								
+
 								var pool = [];
 								var selected = [];
-								Ext.Array.each(data, function(item){
+								Ext.Array.each(data, function (item) {
 									var selectedRecord = false;
-									
-									Ext.Array.each(selectPanel.selectedIds, function(selectedItem) {
+
+									Ext.Array.each(selectPanel.selectedIds, function (selectedItem) {
 										if (selectedItem.componentId === item.code) {
 											selectedRecord = true;
 										}
 									});
-									
+
 									if (selectedRecord) {
 										selected.push(item);
 									} else {
 										pool.push(item);
 									}
-								});							
-								
+								});
+
 								var selectedGrid = selectWin.queryById('selectedGrid');
 								var poolGrid = selectWin.queryById('poolGrid');
-								
+
 								selectedGrid.getStore().loadData(selected);
 								poolGrid.getStore().loadData(pool);
-								
+
 							}
 						});
-						
+
 					}
 				}
 			]
 		}
 	],
-		
-	initComponent: function() {
-		this.callParent();		
-		var selectPanel = this;	
-		
+
+	initComponent: function () {
+		this.callParent();
+		var selectPanel = this;
+
 		selectPanel.selectedIds = [];
 		selectPanel.refreshDisplay();
 		if (selectPanel.buttonTooltip) {
 			selectPanel.queryById('selectBtn').setTooltip(selectPanel.buttonTooltip);
 		}
 	},
-	
-	refreshDisplay: function() {
-		var selectPanel = this;	
-		
+
+	refreshDisplay: function () {
+		var selectPanel = this;
+
 		var display = [];
 		var more = false;
 		if (selectPanel.selectedIds.length > 10) {
 			more = true;
 		}
-		for (var i=0; i<selectPanel.selectedIds.length && i<10; i++) {
+		for (var i = 0; i < selectPanel.selectedIds.length && i < 10; i++) {
 			display.push(selectPanel.selectedIds[i]);
 		}
 		var allSelected = true;
@@ -903,32 +911,32 @@ Ext.define('OSF.component.EntrySelect', {
 			data: display,
 			more: more,
 			allSelected: allSelected,
-			allSelectedMessage: selectPanel.allSelectedMessage 
+			allSelectedMessage: selectPanel.allSelectedMessage
 		});
 		selectPanel.updateLayout(true, true);
 	},
-	
-	getSelected: function() {
-		var selectPanel = this;		
+
+	getSelected: function () {
+		var selectPanel = this;
 		return selectPanel.selectedIds;
 	},
-	
-	loadCurrentSelection: function(selectedIds) {
-		var selectPanel = this;		
-		
+
+	loadCurrentSelection: function (selectedIds) {
+		var selectPanel = this;
+
 		selectPanel.setLoading(true);
 		Ext.Ajax.request({
 			url: 'api/v1/resource/components/lookup',
-			callback: function() {
+			callback: function () {
 				selectPanel.setLoading(false);
 			},
-			success: function(response, opts) {
+			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
-				
+
 				selectPanel.selectedIds = [];
-				Ext.Array.each(data, function(componentLookup) {
-					
-					Ext.Array.each(selectedIds, function(item){
+				Ext.Array.each(data, function (componentLookup) {
+
+					Ext.Array.each(selectedIds, function (item) {
 						if (componentLookup.code === item) {
 							selectPanel.selectedIds.push({
 								componentId: item,
@@ -936,14 +944,14 @@ Ext.define('OSF.component.EntrySelect', {
 							});
 						}
 					});
-					
+
 				});
-				
+
 				selectPanel.refreshDisplay();
 			}
-		});		
-		
+		});
+
 	}
-	
+
 });
 

@@ -16,38 +16,40 @@
  * See NOTICE.txt for more information.
  */
 /*global Ext, CoreService, CoreUtil*/
+
 Ext.define('OSF.component.FeedbackWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.FeedbackWindow',
-	title: 'Feedback / Issues',
+	title: 'Contact Us',
 	iconCls: 'fa fa-exclamation-triangle',
 	scrollable: true,
-	width: '75%',
+	width: '30%',
 	minWidth: 150,
-	height: '80%',
+	height: '70%',
 	minHeight: 200,
+	fieldType: 'textfield',
+	isLoggedIn: false,
 	y: 40,
 	modal: true,
 	maximizable: false,
-	layout: 'fit',	
+	layout: 'fit',
 	buttonSize: 'small',
 	initComponent: function () {
 		this.callParent();
 
 		var feedbackWin = this;
-				
-		
+
 		//
 		// Selection Combobox feedbackTypes items
 		//
 		var feedbackTypes = Ext.create('Ext.data.Store', {
 			fields: ['name'],
 			data: [
+				{"name": "Report Issue"},
 				{"name": "Help"},
 				{"name": "Improvement"},
-				{"name": "New Feature"},
-				{"name": "Report Issue"}
-			]
+				{"name": "New Feature"}
+			],
 		});
 
 		//
@@ -59,7 +61,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 			iconSize = 'fa-2x';
 		} else if (feedbackWin.buttonSize === 'large') {
 			iconSize = 'fa-2x';
-		}	
+		}
 
 		var formPanel = Ext.create('Ext.form.Panel', {
 			layout: 'vbox',
@@ -74,11 +76,11 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'toolbar',
 					items: [
 						{
-							text: 'Send Feedback',
+							text: 'Submit',
 							formBind: true,
 							iconCls: 'fa ' + iconSize + ' fa-envelope-o icon-button-color-save',
 							scale: feedbackWin.buttonSize,
-							minWidth: 150,							
+							minWidth: 110,
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
@@ -90,18 +92,18 @@ Ext.define('OSF.component.FeedbackWindow', {
 									referrer: document.referrer,
 									screenResolution: window.screen.availWidth + 'x' + window.screen.availHeight
 								};
-								
+
 								if (feedbackWin.extraDescription) {
 									data.description = feedbackWin.extraDescription + '\n\n' + data.description;
 								}
-								
+
 								if (feedbackWin.hideType) {
 									data.ticketType = feedbackWin.hideType;
 								}
-								
-								if (feedbackWin.hideSummary) {	
+
+								if (feedbackWin.hideSummary) {
 									data.summary = feedbackWin.hideSummary;
-								}								
+								}
 
 								//submit ticket
 								CoreUtil.submitForm({
@@ -114,8 +116,8 @@ Ext.define('OSF.component.FeedbackWindow', {
 									success: function (response, opts) {
 										Ext.toast('Sent Successfully', 'Thanks', 'br');
 										feedbackForm.setLoading(false);
-										feedbackForm.reset();	
-										if (feedbackWin.successHandler){
+										feedbackForm.reset();
+										if (feedbackWin.successHandler) {
 											feedbackWin.successHandler(feedbackWin);
 										} else {
 											feedbackWin.close();
@@ -132,7 +134,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 							iconCls: 'fa ' + iconSize + ' fa-close icon-button-color-warning',
 							scale: feedbackWin.buttonSize,
 							handler: function () {
-								if (feedbackWin.closeHandler){
+								if (feedbackWin.closeHandler) {
 									feedbackWin.closeHandler(feedbackWin);
 								} else {
 									feedbackWin.close();
@@ -147,10 +149,10 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'combobox',
 					name: 'ticketType',
 					fieldLabel: 'Choose Type<span class="field-required" />',
-					width: '100%',					
+					width: '100%',
 					hidden: feedbackWin.hideType ? true : false,
 					store: feedbackTypes,
-					value: 'Help',
+					value: 'Report Issue',
 					displayField: 'name',
 					valueField: 'name',
 					editable: false
@@ -159,7 +161,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'textfield',
 					name: 'summary',
 					hidden: feedbackWin.hideSummary ? true : false,
-					fieldLabel: 'Summary<span class="field-required" />',
+					fieldLabel: 'Subject<span class="field-required" />',
 					width: '100%',
 					maxLength: 200,
 					allowBlank: feedbackWin.hideSummary ? true : false
@@ -169,44 +171,40 @@ Ext.define('OSF.component.FeedbackWindow', {
 					name: 'description',
 					fieldLabel: (feedbackWin.labelForDescription ? feedbackWin.labelForDescription : 'Description') + '<span class="field-required" />',
 					width: '100%',
-					height: 200,
+					height: 145,
 					maxLength: 4096,
 					allowBlank: false
 				},
 				{
 					xtype: 'fieldset',
-					title: 'Contact Information',					
-					collapsible: true,
-					margin: '20 0 10 0',
-					padding: 10,
+					title: 'Contact Information',
+					collapsible: false,
+					margin: '10 0 10 0',
+					padding: '10 15 10 15',
 					width: '100%',
 					items: [
 						{
-							xtype: 'displayfield',
-							name: 'firstName',
-							fieldLabel: 'First Name',
-							width: '100%'
+							xtype: this.fieldType,
+							name: 'fullName',
+							fieldLabel: 'Name<span class="field-required" />',
+							width: '100%',
+							allowBlank: false
 						},
 						{
-							xtype: 'displayfield',
-							name: 'lastName',
-							fieldLabel: 'Last Name',
-							width: '100%'
-						},
-						{
-							xtype: 'displayfield',
+							xtype: this.fieldType,
 							name: 'email',
-							fieldLabel: 'Email',
-							width: '100%'
+							fieldLabel: 'Email<span class="field-required" />',
+							width: '100%',
+							allowBlank: false
 						},
 						{
-							xtype: 'displayfield',
+							xtype: this.fieldType,
 							name: 'phone',
 							fieldLabel: 'Phone',
 							width: '100%'
 						},
 						{
-							xtype: 'displayfield',
+							xtype: this.fieldType,
 							name: 'organization',
 							fieldLabel: 'Organization',
 							width: '100%'
@@ -215,12 +213,15 @@ Ext.define('OSF.component.FeedbackWindow', {
 							xtype: 'button',
 							itemId: 'updateProfile',
 							text: 'Update Profile',
+							margin: '10 0 15 0',
+							hidden: feedbackWin.isLoggedIn ? false : true,
 							handler: function () {
 								var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 									closeMethod: 'destroy',
 									width: 650,
 									saveCallback: function (response, opts) {
-										CoreService.userservice.getCurrentUser(true).then(function (usercontext) {											
+										CoreService.userservice.getCurrentUser(true).then(function (usercontext) {
+											usercontext.fullName = usercontext.firstName + " " + usercontext.lastName;
 											formPanel.getForm().setValues(usercontext);
 										});
 									}
@@ -232,29 +233,35 @@ Ext.define('OSF.component.FeedbackWindow', {
 			]
 		});
 
-
-
 		feedbackWin.add(formPanel);
-		
-		
-		feedbackWin.resetForm = function(fbWin, opts){
+
+
+		feedbackWin.resetForm = function (fbWin, opts) {
 			formPanel.reset();
-			CoreService.userservice.getCurrentUser().then(function (usercontext) {				
-				formPanel.getForm().setValues(usercontext);
-			});
+
+			if (fbWin.isLoggedIn) {
+
+				CoreService.userservice.getCurrentUser().then(function (usercontext) {
+					usercontext.fullName = usercontext.firstName + " " + usercontext.lastName;
+
+					formPanel.getForm().setValues(usercontext);
+				});
+			}
+
 			//Correct random scrollbar; bump the layout
 			feedbackWin.setWidth(feedbackWin.getWidth() + 1);
 		};
-		
+
 		feedbackWin.on('show', feedbackWin.resetForm);
-		
-		CoreService.systemservice.getSecurityPolicy().then(function(policy){
-			if (policy.disableUserInfoEdit) {
-				formPanel.queryById('updateProfile').setHidden(true);
-			}
-		});		
-		
-	}	
-	
+
+		if (feedbackWin.isLoggedIn) {
+			CoreService.systemservice.getSecurityPolicy().then(function (policy) {
+				if (policy.disableUserInfoEdit) {
+					formPanel.queryById('updateProfile').setHidden(true);
+				}
+			});
+		}
+	}
+
 });
 

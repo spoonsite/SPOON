@@ -39,6 +39,12 @@
 		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
+
+		<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>
+
 		<title>${branding.getApplicationName()}</title>
 
 		<script type="text/javascript">
@@ -377,7 +383,7 @@
 			.no-logo.no-menu .spacer{
 				display:none;
 			}
-			
+
 			@media (max-width: 1160px){
 				.page-header .spacer{
 					width:150px;
@@ -665,7 +671,13 @@
 								text: '<b>Contact Us</b>',
 								iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 								handler: function () {
-									userMenu.feedbackWin.show();
+
+									var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
+
+										isLoggedIn: false,
+										fieldType: 'textfield'
+									});
+									contactWindow.show();
 								}
 							});
 						}
