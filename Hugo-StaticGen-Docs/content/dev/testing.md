@@ -11,7 +11,7 @@ weight = 5
 3. API Tests - These tests use a client that communicates to the rest api (work in progress)
 4. Acceptance ticket tests -  We write this as part of the JIRA ticket for QA.
 5. Regression tests - These are maintain and exercised by the QA team.
-Regression tests are captured in a separate document. [Regression Docs](https://confluence.di2e.net/display/STORE/Regression+Test+Plans) Each ticket should include basic testing instructions to ensure correctness. These cases will be used as a starting point for the formal Regression test.
+Regression tests are captured in a separate document. [Regression Docs](https://confluence.di2e.net/display/STORE/Test+Plans) Each ticket should include basic testing instructions to ensure correctness. These cases will be used as a starting point for the formal Regression test.
 6. Auto UI tests will be written using Selenium where ever they make sense.
 
 ## Roles

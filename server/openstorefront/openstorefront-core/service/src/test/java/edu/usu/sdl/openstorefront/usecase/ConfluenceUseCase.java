@@ -114,8 +114,11 @@ public class ConfluenceUseCase
 		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		try (ConfluenceClient client = new ConfluenceClient(connectionModel, null)) {
-			Content content = client.getPage("STORE", "AUTO-TEST-PAGE");
+			Content content = client.getPage("~devin.shurtleff", "MTest");
 			System.out.println(StringProcessor.printObject(content));
+			if (content.getVersion() != null) {
+				System.out.println("Version: " + content.getVersion().getNumber());
+			}
 		}
 
 	}

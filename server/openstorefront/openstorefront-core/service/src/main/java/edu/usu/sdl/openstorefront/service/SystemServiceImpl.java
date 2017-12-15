@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -416,8 +417,7 @@ public class SystemServiceImpl
 	private MediaFile saveMediaFile(MediaFile media, InputStream fileInput, String mimeType, String originalFileName) throws IOException
 	{
 		Objects.requireNonNull(fileInput);
-		if(media == null)
-		{
+		if (media == null) {
 			media = new MediaFile();
 		}
 		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
@@ -716,6 +716,13 @@ public class SystemServiceImpl
 			helpSectionRoot.setTitle(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE));
 			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getApplicationVersion() + "</center>");
 			helpSectionAll.setHelpSection(helpSectionRoot);
+
+			//sort in original section order
+			helpSections.sort((section1, section2) -> {
+				BigDecimal sectionNumber1 = StringProcessor.archtecureCodeToDecimal(section1.getSectionNumber());
+				BigDecimal sectionNumber2 = StringProcessor.archtecureCodeToDecimal(section2.getSectionNumber());
+				return sectionNumber1.compareTo(sectionNumber2);
+			});
 
 			for (HelpSection helpSection : helpSections) {
 				String codeTokens[] = helpSection.getSectionNumber().split(Pattern.quote("."));
