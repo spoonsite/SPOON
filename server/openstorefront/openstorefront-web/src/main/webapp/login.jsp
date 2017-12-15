@@ -379,7 +379,7 @@
 				padding-right:0px;
 			}
 
-			.no-registration-video #registration-video-link{
+			.no-registration-video .registration-video-link{
 				display: none;
 			}
 			.no-registration #registration{
@@ -541,7 +541,7 @@
 									<li>Use the account you created to Sign In.</li>
 								</ol>
 								<a class="btn btn-primary" href="registration.jsp">Sign up</a>
-								<a id="registration-video-link" class="btn btn-primary">How to Register <i class="fa fa-play-circle-o"></i></a>
+								<a class="registration-video-link btn btn-primary">How to Register <i class="fa fa-play-circle-o"></i></a>
 							</div>
 							<div id="registration-video">
 								built my own dialog box because Ext.window.Window does not have good responsive support 
@@ -603,26 +603,27 @@
 				menu: {
 					minWidth: 250,
 					items: [{
-							text: '<b>Frequently asked Questions</b>',
+							text: '<b>Frequently Asked Questions (FAQ)</b>',
 							iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
 							handler: function () {
 								userMenu.helpWin.show();
 							}
-						}, {
-							hidden:${(branding.loginLogoUrl != null && branding.loginLogoUrl.length() == 0)},
+						},
+						{
 							text: '<b>How to Register</b>',
+							cls: 'registration-video-link',
 							iconCls: 'fa fa-2x fa-play-circle-o icon-button-color-default',
 							handler: function () {
 								showRegisterVideo();
 							}
-						}, {
+						},
+						{
 							text: '<b>Contact Us</b>',
 							iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 							handler: function () {
 								userMenu.feedbackWin.show();
 							}
-						}
-					]
+						}]
 				},
 				listeners: {
 					menuhide: function (button, menu, opts) {
@@ -793,7 +794,7 @@
 					});
 				}
 
-				$('#registration-video-link').click(showRegisterVideo);
+				$('#registration .registration-video-link').click(showRegisterVideo);
 				if (QueryString.gotoPage !== undefined)
 				{
 					document.getElementById('gotoPageId').value = QueryString.gotoPage;
