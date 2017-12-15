@@ -21,10 +21,6 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
-import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
-import edu.usu.sdl.openstorefront.core.view.UserProfileView;
-import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.util.Arrays;
 import java.util.List;
@@ -61,12 +57,12 @@ public class FaqResource
 		faqExample1.setAnswer("This is the answer to the FAQ (Example 1)");
 		faqExample1.setQuestion("This is the question to the FAQ (Example 1)");
 		faqExample1.setActiveStatus("A");
-		faqExample1.setCategory("CAT type for example 1");
+		faqExample1.setCategory("CAT1");
 		
 		faqExample2.setQuestion("This is the question to the FAQ (Example 2)");
 		faqExample2.setAnswer("This is the answer to the FAQ (Example 2)");
 		faqExample2.setActiveStatus("A");
-		faqExample2.setCategory("CAT type for example 2");
+		faqExample2.setCategory("CAT2");
 		
 		GenericEntity<List<Faq>> entity = new GenericEntity<List<Faq>>(Arrays.asList(faqExample1,faqExample2))
 			{
