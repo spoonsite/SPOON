@@ -739,8 +739,15 @@
 															ids: null,
 															reportOutputs: outputs
 														};
+														if (report.reportOption.evaluationType) {
+															if (report.reportOption.evaluationType === 'summary') {
+																report.reportOption.displayEvalSummary = true;
+															} else if (report.reportOption.evaluationType === 'detail') {
+																report.reportOption.displayEvalDetails = true;
+															}
+														}														
+														
 														reportData.report = report;
-													
 													
 														//read in restriction ids
 														var reportOptionSet = form.queryById('reportOptionSet');
@@ -2134,6 +2141,11 @@
 						closeAction: 'destroy',
 						scrollable: true,
 						bodyStyle: 'padding: 10px',
+						listeners:	{
+							show: function() {        
+								this.removeCls("x-unselectable");    
+							}
+						},							
 						dockedItems: [
 							{
 								xtype: 'toolbar',
