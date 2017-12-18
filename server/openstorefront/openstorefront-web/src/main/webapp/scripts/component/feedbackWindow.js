@@ -185,7 +185,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					items: [
 						{
 							xtype: this.fieldType,
-							name: 'fullName',
+							name: 'fullname',
 							fieldLabel: 'Name<span class="field-required" />',
 							width: '100%',
 							allowBlank: false
@@ -195,13 +195,16 @@ Ext.define('OSF.component.FeedbackWindow', {
 							name: 'email',
 							fieldLabel: 'Email<span class="field-required" />',
 							width: '100%',
-							allowBlank: false
+							allowBlank: false,
+							vtype: 'email',
+							inputType: 'email'
 						},
 						{
 							xtype: this.fieldType,
 							name: 'phone',
 							fieldLabel: 'Phone',
-							width: '100%'
+							width: '100%',
+							inputType: 'phone'
 						},
 						{
 							xtype: this.fieldType,
@@ -221,7 +224,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 									width: 650,
 									saveCallback: function (response, opts) {
 										CoreService.userservice.getCurrentUser(true).then(function (usercontext) {
-											usercontext.fullName = usercontext.firstName + " " + usercontext.lastName;
+											usercontext.fullname = usercontext.firstName + " " + usercontext.lastName;
 											formPanel.getForm().setValues(usercontext);
 										});
 									}
@@ -242,7 +245,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 			if (fbWin.isLoggedIn) {
 
 				CoreService.userservice.getCurrentUser().then(function (usercontext) {
-					usercontext.fullName = usercontext.firstName + " " + usercontext.lastName;
+					usercontext.fullname = usercontext.firstName + " " + usercontext.lastName;
 
 					formPanel.getForm().setValues(usercontext);
 				});
