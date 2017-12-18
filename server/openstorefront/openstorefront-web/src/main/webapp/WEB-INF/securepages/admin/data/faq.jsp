@@ -404,15 +404,13 @@
 		
 				var actionToggleStatus = function(record) {
 					
-//					var newStatus = 'inactivate';
-//					var urlEnding = 'inactivate';
-//					if (record.get('activeStatus') === 'I') {
-//						newStatus = 'activate';
-//						urlEnding = 'activate';
-//					}
+					record.set('activeStatus', record.get('activeStatus') === 'A' ? 'I' : 'A');
+					record.data.type = undefined;
+
 					faqGrid.setLoading('Updating Status...');
 					Ext.Ajax.request({
-						url: 'api/v1/resource/faq/' + record.get('faqId'),
+						url: 'api/v1/resource/faq/' + record.get('faqId') + '?status=all',
+						jsonData: record.data,
 						method: 'PUT',																		
 						callback: function(){
 							faqGrid.setLoading(false);

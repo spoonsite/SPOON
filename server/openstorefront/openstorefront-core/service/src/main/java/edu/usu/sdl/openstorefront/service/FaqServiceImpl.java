@@ -34,13 +34,21 @@ public class FaqServiceImpl
 	
 	private static final Logger LOG = Logger.getLogger(FaqServiceImpl.class.getName());
 	
-	@Override
 	public List<Faq> getFaqs(boolean isAdmin)
+	{
+		return getFaqs(isAdmin, StandardEntity.ACTIVE_STATUS);
+	}
+	
+	@Override
+	public List<Faq> getFaqs(boolean isAdmin, String activeStatus)
 	{
 		Faq faqExample = new Faq();
 		
 		if(!isAdmin) {
 			faqExample.setActiveStatus(StandardEntity.ACTIVE_STATUS);
+		}
+		else {
+			faqExample.setActiveStatus(activeStatus);
 		}
 		
 		List<Faq> faqs = faqExample.findByExample();

@@ -19,8 +19,10 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.FaqView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -28,12 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,13 +52,22 @@ public class FaqResource
 		extends BaseResource
 {
 	@GET
-	@APIDescription("Gets a list of all FAQs. If user is admin, will also return inactive FAQs")
+	@APIDescription("Gets a list of all FAQs. Accepts query parameter 'status' (values: ALL,A,I)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
-	public Response faqLookupAll()
+	public Response faqLookupAll(
+			@QueryParam("status") 
+			@DefaultValue(StandardEntity.ACTIVE_STATUS)
+			String activeStatus
+	)
 	{
 		
-		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
+		activeStatus = activeStatus.toUpperCase();
+		if ("ALL".equals(activeStatus)) {
+			activeStatus = null;
+		}
+		
+		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ), activeStatus);
 		
 		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(FaqView.toView(faqs))
 			{

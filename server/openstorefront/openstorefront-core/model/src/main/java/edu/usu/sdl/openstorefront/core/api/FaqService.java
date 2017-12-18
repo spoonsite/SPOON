@@ -29,14 +29,17 @@ public interface FaqService
 	/**
 	 * Gets all FAQs
 	 *
+	 * @param isAdmin
+	 * @param activeStatus
 	 * @return List<Faq>
 	 */
-	public List<Faq> getFaqs(boolean isAdmin);
+	public List<Faq> getFaqs(boolean isAdmin, String activeStatus);
 	
 	/**
 	 * Get a single Faq
 	 *
 	 * @param faqId
+	 * @param isAdmin
 	 * @return Faq
 	 */
 	public Faq getFaq(String faqId, boolean isAdmin);

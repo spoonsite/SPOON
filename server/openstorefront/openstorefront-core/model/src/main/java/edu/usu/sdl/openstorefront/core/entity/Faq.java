@@ -42,6 +42,10 @@ public class Faq
 	@ConsumeField
 	private String answer;
 	
+//	@NotNull
+//	@ConsumeField
+//	private int sortOrder;
+	
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = FaqCategoryType.class)
