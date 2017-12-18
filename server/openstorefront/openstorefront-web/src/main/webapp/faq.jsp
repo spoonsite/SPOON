@@ -26,8 +26,8 @@
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){
 			
-			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
-			});	
+//			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
+//			});	
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
@@ -67,8 +67,8 @@
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
-										notificationWin.show();
-										notificationWin.refreshData();
+//										notificationWin.show();
+//										notificationWin.refreshData();
 									}
 								},								
 								Ext.create('OSF.component.UserMenu', {									
@@ -96,13 +96,13 @@
 				}]
 			});
 			
-			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
-				if (branding.securityBannerText && branding.securityBannerText !== '') {
-					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
-						securityBannerText: branding.securityBannerText
-					}), 0);
-				}
-			});
+//			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
+//				if (branding.securityBannerText && branding.securityBannerText !== '') {
+//					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+//						securityBannerText: branding.securityBannerText
+//					}), 0);
+//				}
+//			});
 			
 		});	
 	</script>		
