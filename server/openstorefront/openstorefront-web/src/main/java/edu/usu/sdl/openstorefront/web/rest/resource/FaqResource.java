@@ -92,6 +92,7 @@ public class FaqResource
 	public Response createFaq(Faq faq)
 	{
 		faq.populateBaseCreateFields();
+		faq.setFaqId(null);
 		Faq createdFaq = service.getFaqService().createFaq(faq);
 		
 		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(createdFaq))
