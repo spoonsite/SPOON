@@ -140,6 +140,7 @@ public class SecurityInit
 				SecurityPermission.EVALUATIONS,
 				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
 				SecurityPermission.API_DOCS,
+				SecurityPermission.ADMIN_SUPPORT_MEDIA,
 				SecurityPermission.REPORTS_ALL,
 				SecurityPermission.ADMIN_SECURITY,
 				SecurityPermission.ADMIN_ROLE_MANAGEMENT

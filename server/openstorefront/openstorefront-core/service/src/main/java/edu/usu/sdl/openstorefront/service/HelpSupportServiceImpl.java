@@ -15,27 +15,93 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.HelpSupportService;
 import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
  */
 public class HelpSupportServiceImpl
+		extends ServiceProxy
 		implements HelpSupportService
 {
+
+	private static final Logger LOG = Logger.getLogger(HelpSupportServiceImpl.class.getName());
 
 	@Override
 	public SupportMedia saveSupportMedia(SupportMedia supportMedia)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(supportMedia);
+
+		SupportMedia existing = persistenceService.findById(SupportMedia.class, supportMedia.getSupportMediaId());
+		if (existing != null) {
+			existing.updateFields(supportMedia);
+			persistenceService.persist(existing);
+		} else {
+			supportMedia.setSupportMediaId(persistenceService.generateId());
+			supportMedia.populateBaseCreateFields();
+			existing = persistenceService.persist(supportMedia);
+		}
+		existing = persistenceService.unwrapProxyObject(existing);
+		return existing;
+	}
+
+	@Override
+	public SupportMedia saveSupportMedia(SupportMedia supportMedia, InputStream mediaData)
+	{
+		try {
+			Objects.requireNonNull(supportMedia);
+			Objects.requireNonNull(supportMedia.getFile());
+			Objects.requireNonNull(supportMedia.getFile().getMimeType());
+			Objects.requireNonNull(supportMedia.getFile().getOriginalName());
+			Objects.requireNonNull(mediaData);
+
+			supportMedia = saveSupportMedia(supportMedia);
+			SupportMedia existing = persistenceService.findById(SupportMedia.class, supportMedia.getSupportMediaId());
+
+			existing.getFile().setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(existing.getFile().getMimeType()));
+			existing.getFile().setFileType(MediaFileType.SUPPORT);
+			Path path = Paths.get(MediaFileType.SUPPORT.getPath() + "/" + existing.getFile().getFileName());
+			Files.copy(mediaData, path, StandardCopyOption.REPLACE_EXISTING);
+			persistenceService.persist(existing);
+
+			supportMedia = persistenceService.unwrapProxyObject(existing);
+
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to save support file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+		return supportMedia;
 	}
 
 	@Override
 	public void deleteSupportMedia(String supportMediaId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		SupportMedia supportMedia = persistenceService.findById(SupportMedia.class, supportMediaId);
+		if (supportMedia != null) {
+			Path path = supportMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					if (path.toFile().delete() == false) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete support media. Path: {0}", path.toString()));
+					}
+				}
+			}
+			persistenceService.delete(supportMedia);
+		}
 	}
 
 }

@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.nio.file.Path;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
@@ -88,6 +89,17 @@ public class SupportMedia
 		this.setMediaType(supportMedia.getMediaType());
 		this.setOrderNumber(supportMedia.getOrderNumber());
 
+	}
+
+	/**
+	 * Get the path to the media on disk.
+	 *
+	 * @return Path or null if this doesn't represent a disk resource
+	 */
+	public Path pathToMedia()
+	{
+		//Note: this may be ran from a proxy so don't use variable directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	public String getMediaType()

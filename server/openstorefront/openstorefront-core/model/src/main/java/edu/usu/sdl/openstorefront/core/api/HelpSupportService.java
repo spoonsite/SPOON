@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
+import java.io.InputStream;
 
 /**
  *
@@ -24,6 +25,14 @@ import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
 public interface HelpSupportService
 		extends AsyncService
 {
+
+	/**
+	 * Adds/updates a support media record Save the media
+	 *
+	 * @param supportMedia
+	 * @return
+	 */
+	public SupportMedia saveSupportMedia(SupportMedia supportMedia, InputStream mediaData);
 
 	/**
 	 * Adds/updates a support media record

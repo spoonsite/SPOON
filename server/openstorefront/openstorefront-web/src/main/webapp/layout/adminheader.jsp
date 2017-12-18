@@ -100,6 +100,20 @@
 				}
 			});
 			dataMenu.push({
+				text: 'Help',
+				menu: {
+					items: [
+						{
+							text: 'Support Media',
+							permission: 'ADMIN-SUPPORT-MEDIA',
+							handler: function(){
+								actionLoadContent('Support-Media');
+							}							
+						}
+					]
+				}
+			});
+			dataMenu.push({
 				text: 'Integrations',
 				permission: 'ADMIN-INTEGRATION',
 				handler: function(){

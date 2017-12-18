@@ -59,6 +59,7 @@ public class FileSystemManager
 	public static final String ATTACHMENT_DIR = MAIN_PERM_DIR + "/attachment";
 	public static final String ARCHIVE_DIR = MAIN_PERM_DIR + "/archive";
 	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
+	public static final String SUPPORT_MEDIA_DIR = MAIN_PERM_DIR + "/supportmedia";
 	public static final String TEMPORARY_MEDIA_DIR = MAIN_PERM_DIR + "/temporarymedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
