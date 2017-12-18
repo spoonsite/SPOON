@@ -91,14 +91,7 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});			
-			dataMenu.push({
-				text: 'Highlights',
-				permission: 'ADMIN-HIGHLIGHTS',
-				handler: function(){
-					actionLoadContent('Highlights');
-				}
-			});
+			});						
 			dataMenu.push({
 				text: 'Help',
 				menu: {
@@ -113,6 +106,13 @@
 					]
 				}
 			});
+			dataMenu.push({
+				text: 'Highlights',
+				permission: 'ADMIN-HIGHLIGHTS',
+				handler: function(){
+					actionLoadContent('Highlights');
+				}
+			});			
 			dataMenu.push({
 				text: 'Integrations',
 				permission: 'ADMIN-INTEGRATION',
