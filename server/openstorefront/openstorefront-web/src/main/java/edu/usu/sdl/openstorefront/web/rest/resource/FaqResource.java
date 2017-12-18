@@ -21,8 +21,10 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.view.FaqView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -54,7 +56,11 @@ public class FaqResource
 		
 		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
 		
-		GenericEntity<List<Faq>> entity = new GenericEntity<List<Faq>>(faqs)
+		if (faqs.isEmpty()) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		
+		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(FaqView.toView(faqs))
 			{
 			};
 		return sendSingleEntityResponse(entity);
@@ -67,21 +73,17 @@ public class FaqResource
 	@Path("/{id}")
 	public Response faqSingleLookup(@PathParam("id") String faqId)
 	{
-//		faqExample1.setAnswer("This is the answer to the FAQ (Example 1)");
-//		faqExample1.setQuestion("This is the question to the FAQ (Example 1)");
-//		faqExample1.setActiveStatus("A");
-//		faqExample1.setCategory("CAT1");
-//		
-//		faqExample2.setQuestion("This is the question to the FAQ (Example 2)");
-//		faqExample2.setAnswer("This is the answer to the FAQ (Example 2)");
-//		faqExample2.setActiveStatus("A");
-//		faqExample2.setCategory("CAT2");
 		
 		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
 		
-		GenericEntity<Faq> entity = new GenericEntity<Faq>(faq)
+		if (faq == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		
+		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(faq))
 			{
 			};
+		
 		return sendSingleEntityResponse(entity);
 	}
 	
@@ -96,7 +98,7 @@ public class FaqResource
 		faq.populateBaseCreateFields();
 		Faq createdFaq = service.getFaqService().createFaq(faq);
 		
-		GenericEntity<Faq> entity = new GenericEntity<Faq>(createdFaq)
+		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(createdFaq))
 			{
 			};
 		return sendSingleEntityResponse(entity);
@@ -116,7 +118,7 @@ public class FaqResource
 	{
 		Faq updatedFaq = service.getFaqService().updateFaq(faqId, faq);
 		
-		GenericEntity<Faq> entity = new GenericEntity<Faq>(updatedFaq)
+		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(updatedFaq))
 			{
 			};
 		return sendSingleEntityResponse(entity);

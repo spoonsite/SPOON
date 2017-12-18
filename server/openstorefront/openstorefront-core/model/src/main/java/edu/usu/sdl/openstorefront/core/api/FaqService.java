@@ -64,5 +64,5 @@ public interface FaqService
 	 * @param fiqId
 	 * @return
 	 */
-	public boolean deleteFaq(String fiqId);
+	public void deleteFaq(String fiqId);
 }

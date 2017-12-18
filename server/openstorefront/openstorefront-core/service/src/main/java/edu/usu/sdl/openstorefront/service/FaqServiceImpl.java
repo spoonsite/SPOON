@@ -86,17 +86,14 @@ public class FaqServiceImpl
 	}
 	
 	@Override
-	public boolean deleteFaq(String faqId)
+	public void deleteFaq(String faqId)
 	{
 		Faq faqExample = new Faq();
 		faqExample.setFaqId(faqId);
 		Faq faq = faqExample.findProxy();
 		
 		if (faq != null) {
-			return faq.delete();
-		}
-		else {
-			return false;
+			persistenceService.delete(faq);
 		}
 	}
 	
