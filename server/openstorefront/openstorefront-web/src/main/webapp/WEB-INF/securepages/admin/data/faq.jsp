@@ -39,8 +39,8 @@
 					title: 'Add/Edit Frequently Asked Questions',
 					iconCls: 'fa fa-edit icon-button-color-edit',
 					modal: true,
-					width: '65%',
-					height: 470,
+					width: '45%',
+					height: 600,
 					maximizable: true,
 					layout: 'fit',
 					items: [
@@ -119,7 +119,7 @@
 									width: '100%',
 									fieldLabel: 'Category <span class="field-required" />',
 									forceSelection: false,
-									valueField: 'description',
+									valueField: 'code',
 									storeConfig: {
 										url: 'api/v1/resource/lookuptypes/FaqCategoryType',
 										sorters: [
