@@ -27,10 +27,10 @@ Ext.define('OSF.component.FaqPanel', {
 		
 		this.callParent();
 		
-		var helpPanel = this;
-		helpPanel.helpFlat = [];
+		var faqPanel = this;
+		faqPanel.faqFlat = [];
 		
-		helpPanel.navPanel = Ext.create('Ext.panel.Panel', {
+		faqPanel.navPanel = Ext.create('Ext.panel.Panel', {
 			
 			items: [
 				{}]
