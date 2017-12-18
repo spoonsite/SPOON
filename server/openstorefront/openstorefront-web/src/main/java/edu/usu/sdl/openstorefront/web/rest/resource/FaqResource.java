@@ -56,10 +56,6 @@ public class FaqResource
 		
 		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
 		
-		if (faqs.isEmpty()) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		
 		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(FaqView.toView(faqs))
 			{
 			};
