@@ -39,6 +39,7 @@
 		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
+		<script src="scripts/component/faq.js?v=${appVersion}" type="text/javascript"></script>
 		<title>${branding.getApplicationName()}</title>
 
 		<script type="text/javascript">
@@ -610,11 +611,9 @@
 				ui: 'default',
 				maxWidth: 250,
 				initCallBack: null,
-				showUserTools: true,
-				showAdminTools: true,
-				showEvaluatorTools: true,
-				showHelp: true,
-				showFeedback: true,
+				showFaq: true,
+				showContactUs: true,
+				showRegister: true,
 				text: 'Support',
 				menu: {
 					minWidth: 250
@@ -627,8 +626,8 @@
 						}
 					}
 				},
-//				helpWin: Ext.create('OSF.component.HelpWindow', {}),
 //				feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
+				faqWin: Ext.create('OSF.component.FaqWindow',{}),
 				customMenuItems: [],
 				initComponent: function () {
 					this.callParent();
@@ -637,17 +636,17 @@
 					userMenu.loadMenu = function () {
 						menu.removeAll();
 						var menuItems = [];
-						if (userMenu.showHelp) {
+						if (userMenu.showFaq) {
 							menuItems.push({
-								text: '<b>Frequently asked Questions</b>',
-								iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+								text: '<b>Frequently Asked Questions</b>',
+								iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
 								handler: function () {
-									userMenu.helpWin.show();
+									userMenu.faqWin.show();
 								}
 							});
 						}
 
-						if (userMenu.showHelp) {
+						if (userMenu.showRegister) {
 							menuItems.push({
 								text: '<b>Tutorials / Videos</b>',
 								iconCls: 'fa fa-2x fa-lightbulb-o icon-button-color-default',
@@ -657,7 +656,7 @@
 							});
 						}
 
-						if (userMenu.showFeedback) {
+						if (userMenu.showContactUs) {
 							menuItems.push({
 								text: '<b>Contact Us</b>',
 								iconCls: 'fa fa-2x fa-commenting icon-button-color-default',

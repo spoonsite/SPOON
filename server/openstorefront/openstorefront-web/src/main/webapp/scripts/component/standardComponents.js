@@ -339,11 +339,13 @@ Ext.define('OSF.component.UserMenu', {
 	showEvaluatorTools: true,
 	showHelp: true,
 	showFeedback: true,
+	showFAQ: true,
 	menu: {
-		minWidth: 200
+		minWidth: 250
 	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow',{}),
+	faqWin: Ext.create('OSF.component.FaqWindow',{}),
 	customMenuItems: [],	
 	initComponent: function() {
 		this.callParent();
@@ -429,6 +431,16 @@ Ext.define('OSF.component.UserMenu', {
 					iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 					handler: function() {
 						userMenu.feedbackWin.show();
+					}		
+				});
+			}
+
+			if (userMenu.showFAQ) {
+				menuItems.push({
+					text: '<b>Frequently Asked Questions</b>',
+					iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
+					handler: function() {
+						userMenu.faqWin.show();
 					}		
 				});
 			}
