@@ -627,7 +627,12 @@
 							text: '<b>Contact Us</b>',
 							iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 							handler: function () {
-								userMenu.feedbackWin.show();
+								var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
+
+									isLoggedIn: false,
+									fieldType: 'textfield'
+								});
+								contactWindow.show();
 							}
 						}]
 				},
@@ -646,12 +651,12 @@
 					this.callParent();
 					var userMenu = this;
 					var menu = userMenu.getMenu();
-									var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
+					var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
 
-										isLoggedIn: false,
-										fieldType: 'textfield'
-									});
-									contactWindow.show();
+						isLoggedIn: false,
+						fieldType: 'textfield'
+					});
+					contactWindow.show();
 					menu.on('beforerender', function () {
 						this.setWidth(this.up('button').getWidth());
 					});
