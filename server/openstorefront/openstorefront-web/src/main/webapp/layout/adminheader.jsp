@@ -91,14 +91,28 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});			
+			});						
+			dataMenu.push({
+				text: 'Help',
+				menu: {
+					items: [
+						{
+							text: 'Support Media',
+							permission: 'ADMIN-SUPPORT-MEDIA',
+							handler: function(){
+								actionLoadContent('Support-Media');
+							}							
+						}
+					]
+				}
+			});
 			dataMenu.push({
 				text: 'Highlights',
 				permission: 'ADMIN-HIGHLIGHTS',
 				handler: function(){
 					actionLoadContent('Highlights');
 				}
-			});
+			});			
 			dataMenu.push({
 				text: 'Integrations',
 				permission: 'ADMIN-INTEGRATION',
@@ -550,6 +564,10 @@
 				});	
 				
 			});	
+			
+			Ext.defer(function(){
+				Ext.getCmp('topNavPanel').updateLayout(true, true);
+			}, 500);			
 
 			var actionLoadContent = function(key) {
 				window.location.href = 'AdminTool.action?load=' + key;

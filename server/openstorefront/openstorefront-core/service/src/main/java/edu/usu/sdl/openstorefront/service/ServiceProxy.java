@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
+import edu.usu.sdl.openstorefront.core.api.HelpSupportService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.NotificationService;
@@ -99,6 +100,7 @@ public class ServiceProxy
 	private ChangeLogServicePrivate changeLogServicePrivate;
 	private SystemArchiveService systemArchiveService;
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
+	private HelpSupportService helpSupportService;
 
 	private FilterEngine filterEngine;
 
@@ -445,6 +447,14 @@ public class ServiceProxy
 			systemArchiveServicePrivate = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
 		}
 		return systemArchiveServicePrivate;
+	}
+
+	public HelpSupportService getHelpSupportService()
+	{
+		if (helpSupportService == null) {
+			helpSupportService = DynamicProxy.newInstance(new HelpSupportServiceImpl());
+		}
+		return helpSupportService;
 	}
 
 	public static class Test

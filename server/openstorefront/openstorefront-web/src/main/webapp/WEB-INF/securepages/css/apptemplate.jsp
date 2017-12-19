@@ -1734,6 +1734,9 @@ table.confluenceTable td.numberingColumn {
 }
 
 .expandable-grid-cell-collapsed {
-
 	height: 2.8em;
+}
+
+.support-media-description {
+	font-size: 14px;
 }
