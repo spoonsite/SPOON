@@ -25,9 +25,6 @@
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){
-			
-//			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
-//			});	
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
@@ -58,19 +55,7 @@
 								},
 								{
 									xtype: 'tbfill'
-								},
-								{
-									xtype: 'button',
-									scale   : 'large',
-									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope-o icon-top-padding',
-									iconAlign: 'left',
-									text: 'Notifications',
-									handler: function() {
-//										notificationWin.show();
-//										notificationWin.refreshData();
-									}
-								},								
+								},							
 								Ext.create('OSF.component.UserMenu', {									
 									showAdminTools: false,
 									showUserTools: false,
@@ -88,22 +73,14 @@
 					region: 'center',
 					xtype: 'panel',	
 					layout: 'fit',
+					style: 'background-color: white;',
 					items: [
 						Ext.create('OSF.component.FaqPanel', {
 							autoLoad: true
 						})
-					]
+					],
 				}]
-			});
-			
-//			CoreService.brandingservice.getCurrentBranding().then(function(branding){				
-//				if (branding.securityBannerText && branding.securityBannerText !== '') {
-//					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
-//						securityBannerText: branding.securityBannerText
-//					}), 0);
-//				}
-//			});
-			
+			});			
 		});	
 	</script>		
 		

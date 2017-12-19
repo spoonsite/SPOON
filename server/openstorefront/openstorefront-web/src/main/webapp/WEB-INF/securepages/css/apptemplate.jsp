@@ -1745,4 +1745,5 @@ table.confluenceTable td.numberingColumn {
 	font-size:1.53m;
 	font-weight:bold;
 	cursor:pointer;
+	text-decoration:underline;
 }

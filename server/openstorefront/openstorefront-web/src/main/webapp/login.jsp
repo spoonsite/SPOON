@@ -593,14 +593,14 @@
 				extend: 'Ext.button.Button',
 				scale: 'large',
 				ui: 'default',
-				maxWidth: 250,
+				maxWidth: 350,
 				initCallBack: null,
 				showFaq: true,
 				showContactUs: true,
 				showRegister: true,
 				text: 'Support',
 				menu: {
-					minWidth: 250,
+					minWidth: 300,
 					items: [{
 							text: '<b>Frequently Asked Questions (FAQ)</b>',
 							iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',

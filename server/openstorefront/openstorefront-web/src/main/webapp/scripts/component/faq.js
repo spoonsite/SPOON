@@ -22,6 +22,13 @@ Ext.define('OSF.component.FaqPanel', {
 	alias: 'osf.widget.FaqPanel',
 	layout: 'vbox',
 	autoLoad: false,
+	items: [],
+	initComponent: function () {
+		this.callParent();
+		if(this.autoLoad) {
+			this.loadQuestions();
+		}
+	},
 	loadQuestions: function () {
 		var faqPanel = this;
 		var getCategories = function (faqList) {
@@ -60,7 +67,7 @@ Ext.define('OSF.component.FaqPanel', {
 						width: '100%',
 						title: faqItem.question,
 						animCollapse: false,
-						cls:'faq-question',
+						cls: 'faq-question',
 						items: [{
 								type: 'panel',
 								style: 'padding-left: 40px;',
@@ -112,10 +119,8 @@ Ext.define('OSF.component.FaqWindow', {
 	maximizable: true,
 	collapsible: true,
 	alwaysOnTop: true,
-	items: [
-		Ext.create('OSF.component.FaqPanel', {
-			itemId: 'faqPanel'
-		})
+	closeAction: 'destroy',
+	items: [		
 	],
 	tools: [
 		{
@@ -132,12 +137,6 @@ Ext.define('OSF.component.FaqWindow', {
 		}
 	],
 	listeners: {
-		beforeShow: function (faqWin) {
-			if (!faqWin.loaded) {
-				faqWin.getComponent('faqPanel').loadQuestions();
-				faqWin.loaded = true;
-			}
-		},
 		show: function ()
 		{
 			this.removeCls("x-unselectable");
@@ -146,6 +145,16 @@ Ext.define('OSF.component.FaqWindow', {
 
 	initComponent: function () {
 		this.callParent();
+		
+		var faqWin = this;
+		
+		faqWin.faqPanel = Ext.create('OSF.component.FaqPanel', {
+			itemId: 'faqPanel'
+		});
+		faqWin.add(faqWin.faqPanel);
+		faqWin.getComponent('faqPanel').loadQuestions();
+				
+				
 	}
 
 
