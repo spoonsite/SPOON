@@ -346,6 +346,11 @@
 						maximizable: false,
 						closeAction: 'destroy',						
 						autoScroll: true,
+						listeners:	{
+							show: function() {        
+								this.removeCls("x-unselectable");    
+							}
+						},							
 						html: message
 					}).show();
 				};
