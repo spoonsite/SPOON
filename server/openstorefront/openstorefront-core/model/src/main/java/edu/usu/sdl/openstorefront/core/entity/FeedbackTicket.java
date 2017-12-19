@@ -46,13 +46,25 @@ public class FeedbackTicket
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String description;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FULLNAME)
+	private String fullname;
+	
+	@ConsumeField
+	private String email;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	private String organization;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_PHONE)
+	private String phone;
 
 	private String username;
 	private String firstname;
 	private String lastname;
-	private String email;
-	private String phone;
-	private String organization;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
@@ -88,6 +100,7 @@ public class FeedbackTicket
 		sb.append("*Reporter Username*:  ").append(this.getUsername()).append("\t\n");
 		sb.append("*Reporter Firstname*:  ").append(StringProcessor.blankIfNull(this.getFirstname())).append("\t\n");
 		sb.append("*Reporter Lastname*:  ").append(StringProcessor.blankIfNull(this.getLastname())).append("\t\n");
+		sb.append("*Reporter Fullname*:  ").append(StringProcessor.blankIfNull(this.getFullname())).append("\t\n");
 		sb.append("*Reporter Organization*:  ").append(StringProcessor.blankIfNull(this.getOrganization())).append("\t\n");
 		sb.append("*Reporter Email*:  ").append(StringProcessor.blankIfNull(this.getEmail())).append("\t\n");
 		sb.append("*Reporter Phone*:  ").append(StringProcessor.blankIfNull(this.getPhone())).append("\t\n\n");
@@ -159,6 +172,16 @@ public class FeedbackTicket
 	public void setLastname(String lastname)
 	{
 		this.lastname = lastname;
+	}
+	
+	public String getFullname()
+	{
+		return fullname;
+	}
+	
+	public void setFullname(String fullname)
+	{
+		this.fullname = fullname;
 	}
 
 	public String getEmail()

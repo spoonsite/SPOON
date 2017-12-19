@@ -1734,7 +1734,6 @@ table.confluenceTable td.numberingColumn {
 }
 
 .expandable-grid-cell-collapsed {
-
 	height: 2.8em;
 }
 .faq-question .x-panel-header {
@@ -1746,4 +1745,7 @@ table.confluenceTable td.numberingColumn {
 	font-weight:bold;
 	cursor:pointer;
 	text-decoration:underline;
+}
+.support-media-description {
+	font-size: 14px;
 }

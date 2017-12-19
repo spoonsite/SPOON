@@ -70,6 +70,7 @@ public class Branding
 
 	/**
 	 * warning banner in the center of the login page
+	 *
 	 * @deprecated As of 2.5-s, replaced by {@link #loginFooter}
 	 */
 	@Deprecated
@@ -80,6 +81,7 @@ public class Branding
 
 	/**
 	 * Logo section in the main section of the page
+	 *
 	 * @deprecated As of 2.5-s, replaced by {@link #loginContentBlock}
 	 */
 	@Deprecated
@@ -90,7 +92,7 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String loginContentBlock;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String loginLogoUrl;
@@ -102,11 +104,11 @@ public class Branding
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String loginOverviewVideoPosterUrl;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String loginRegistrationVideoUrl;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -187,6 +189,9 @@ public class Branding
 	private String feedbackHandler;
 
 	@ConsumeField
+	private Boolean showSupportMedia;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String primaryColor;
 
@@ -232,16 +237,15 @@ public class Branding
 
 	@ConsumeField
 	private Boolean useDefaultLandingPage;
-	
+
 	@ConsumeField
 	private Boolean showSupportMenuOnLogin;
-	
+
 	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
 
-	
 	public Branding()
 	{
 	}
@@ -267,7 +271,7 @@ public class Branding
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
-		
+
 		setLoginWarning(branding.getLoginWarning());
 		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setLoginLogoUrl(branding.getLoginLogoUrl());
@@ -285,6 +289,7 @@ public class Branding
 		setSubmissionFormWarning(branding.getSubmissionFormWarning());
 		setChangeRequestWarning(branding.getChangeRequestWarning());
 		setFeedbackHandler(branding.getFeedbackHandler());
+		setShowSupportMedia(branding.getShowSupportMedia());
 
 		setPrimaryColor(branding.getPrimaryColor());
 		setPrimaryTextColor(branding.getPrimaryTextColor());
@@ -344,6 +349,7 @@ public class Branding
 
 	/**
 	 * warning banner in the center of the login page
+	 *
 	 * @return logo image with image map
 	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
 	 */
@@ -355,6 +361,7 @@ public class Branding
 
 	/**
 	 * warning banner in the center of the login page
+	 *
 	 * @param loginWarning warning text
 	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
 	 */
@@ -706,6 +713,7 @@ public class Branding
 
 	/**
 	 * Logo section in the main section of the page
+	 *
 	 * @return logo image with image map
 	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
 	 */
@@ -717,13 +725,25 @@ public class Branding
 
 	/**
 	 * Logo section in the main section of the page
+	 *
 	 * @param loginLogoBlock logo image with optional image map
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginContentBlock(String)}
+	 * @deprecated As of 2.5-s, replaced by
+	 * {@link #setLoginContentBlock(String)}
 	 */
 	@Deprecated
 	public void setLoginLogoBlock(String loginLogoBlock)
 	{
 		this.loginLogoBlock = loginLogoBlock;
+	}
+
+	public Boolean getShowSupportMedia()
+	{
+		return showSupportMedia;
+	}
+
+	public void setShowSupportMedia(Boolean showSupportMedia)
+	{
+		this.showSupportMedia = showSupportMedia;
 	}
 
 	public String getLoginOverviewVideoUrl()

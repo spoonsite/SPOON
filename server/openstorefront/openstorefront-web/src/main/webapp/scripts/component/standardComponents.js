@@ -341,6 +341,7 @@ Ext.define('OSF.component.UserMenu', {
 	showEvaluatorTools: true,
 	showHelp: true,
 	showFeedback: true,
+	showSupportMedia: true,
 	showFAQ: true,
 	menu: {
 		minWidth: 300
@@ -426,13 +427,33 @@ Ext.define('OSF.component.UserMenu', {
 					}
 				});
 			}
+			
+			if (userMenu.showSupportMedia) {
+				menuItems.push({
+					text: 'Tutorials',
+					itemId: 'menuTutorials',
+					iconCls: 'fa fa-2x fa-tv icon-button-color-default',
+					hidden: true,
+					handler: function() {
+						var supportWin = Ext.create('OSF.component.SupportMediaWindow', {							
+						});
+						supportWin.show();
+					}		
+				});
+			}			
 
 			if (userMenu.showFeedback) {
 				menuItems.push({
-					text: '<b>Feedback / issues</b>',
+					text: '<b>Contact Us</b>',
 					iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 					handler: function () {
-						userMenu.feedbackWin.show();
+						
+						var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
+
+							isLoggedIn: true,
+							fieldType: 'displayfield'
+						});
+						contactWindow.show();
 					}
 				});
 			}
@@ -470,6 +491,17 @@ Ext.define('OSF.component.UserMenu', {
 			this.setWidth(this.up('button').getWidth());
 		});
 
+		
+		//check to for support media
+		if (userMenu.showSupportMedia) {		
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){
+				if (branding.showSupportMedia) {
+					var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
+					menuTutorials.setHidden(false);
+				}
+			});
+		}
+		
 		CoreService.userservice.getCurrentUser().then(function (usercontext) {
 
 			var userMenuText = usercontext.username;

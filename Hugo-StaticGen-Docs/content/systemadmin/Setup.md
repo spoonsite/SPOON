@@ -721,15 +721,15 @@ should give you a response something like this:
                 <p class="lead">This page is used to test the proper operation of the <a href="http://apache.org">Apache HTTP server</a> after it has been installed. If you can read this page it means that this site is working properly. This server is powered by <a href="http://centos.org">CentOS</a>.</p>
 ```
 
-### Install elasticsearch 5.x:
+### Install elasticsearch 6.x:
 1)	rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, 
 for example /etc/yum.repos.d/elasticsearch.repo
 
 ```
-[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://packages.elastic.co/elasticsearch/5.x/centos
+[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://packages.elastic.co/elasticsearch/6.x/centos
 gpgcheck=1
 gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
@@ -856,3 +856,17 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
 4)  `chown tomcat:tomcat openstorefront.war`
 5)  `mv openstorefront.war /usr/share/tomcat/webapps` 
 6) 	`systemctl restart tomcat`
+
+# 3. Optional Features
+
+## 3.1 Tutorials 
+
+To enable: 
+
+1) Add Admin Support Media Role. Re-login to apply.
+2) Add Support/Training material using Admin->Data Management->Help->Support Media
+3) Edit current branding (copy the current if needed) 
+and check Allow Support Media to show the menu item for Tutorials
+
+
+

@@ -68,6 +68,8 @@ public class AdminToolAction
 		pageMap.put("Feedback", new PageModel("/WEB-INF/securepages/admin/application/feedback.jsp", new String[]{SecurityPermission.ADMIN_FEEDBACK}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
+		pageMap.put("Support-Media", new PageModel("/WEB-INF/securepages/admin/data/help/supportMedia.jsp", new String[]{SecurityPermission.ADMIN_SUPPORT_MEDIA}));
+
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY}));
 		pageMap.put("Security-Roles", new PageModel("/WEB-INF/securepages/admin/application/roleManagement.jsp", new String[]{SecurityPermission.ADMIN_ROLE_MANAGEMENT}));

@@ -24,15 +24,18 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
  */
 public enum MediaFileType
 {
-	GENERAL(FileSystemManager.GENERAL_MEDIA_DIR), 
+	GENERAL(FileSystemManager.GENERAL_MEDIA_DIR),
+	SUPPORT(FileSystemManager.SUPPORT_MEDIA_DIR),
 	RESOURCE(FileSystemManager.RESOURCE_DIR),
 	MEDIA(FileSystemManager.MEDIA_DIR);
 
 	private final String directory;
-	private MediaFileType(String dir){
+
+	private MediaFileType(String dir)
+	{
 		this.directory = dir;
 	}
-	
+
 	public String getPath()
 	{
 		return FileSystemManager.getDir(this.directory).getPath();
