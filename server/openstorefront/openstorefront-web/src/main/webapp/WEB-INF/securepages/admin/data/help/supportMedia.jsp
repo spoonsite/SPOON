@@ -249,7 +249,7 @@
 						autoLoad: true,
 						sorters: [
 							new Ext.util.Sorter({
-								property: 'title',
+								property: 'orderNumber',
 								direction: 'ASC'
 							})
 						],
@@ -357,7 +357,7 @@
 									scale: 'medium',
 									width: '180px',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									iconCls: 'fa fa-2x fa-download icon-button-color-view icon-vertical-correction-view',
 									handler: function () {
 										actionDownload(Ext.getCmp('supportGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -424,7 +424,11 @@
 				var actionView = function(record) {
 					
 					//open the view component 
-					
+					var supportWin = Ext.create('OSF.component.SupportMediaWindow', {		
+						selectedMediaId: record.get('supportMediaId'),
+						collapseSelect: true
+					});
+					supportWin.show();
 				};
 				
 				var actionDownload = function(record) {

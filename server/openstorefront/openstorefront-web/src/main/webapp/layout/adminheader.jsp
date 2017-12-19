@@ -564,6 +564,10 @@
 				});	
 				
 			});	
+			
+			Ext.defer(function(){
+				Ext.getCmp('topNavPanel').updateLayout(true, true);
+			}, 500);			
 
 			var actionLoadContent = function(key) {
 				window.location.href = 'AdminTool.action?load=' + key;

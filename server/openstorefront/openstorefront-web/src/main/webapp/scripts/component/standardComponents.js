@@ -339,6 +339,7 @@ Ext.define('OSF.component.UserMenu', {
 	showEvaluatorTools: true,
 	showHelp: true,
 	showFeedback: true,
+	showSupportMedia: true,
 	menu: {
 		minWidth: 200
 	},
@@ -422,6 +423,20 @@ Ext.define('OSF.component.UserMenu', {
 					}			
 				});		
 			}
+			
+			if (userMenu.showSupportMedia) {
+				menuItems.push({
+					text: 'Tutorials',
+					itemId: 'menuTutorials',
+					iconCls: 'fa fa-2x fa-tv icon-button-color-default',
+					hidden: true,
+					handler: function() {
+						var supportWin = Ext.create('OSF.component.SupportMediaWindow', {							
+						});
+						supportWin.show();
+					}		
+				});
+			}			
 
 			if (userMenu.showFeedback) {
 				menuItems.push({
@@ -453,6 +468,20 @@ Ext.define('OSF.component.UserMenu', {
 		menu.on('beforerender', function () {
 			this.setWidth(this.up('button').getWidth());
 		});
+		
+		//check to for support media
+		if (userMenu.showSupportMedia) {		
+			Ext.Ajax.request({
+				url: 'api/v1/resource/supportmedia',			
+				success: function(response, opt) {
+					var data = Ext.decode(response.responseText);
+					if (data && data.length > 0) {					
+						var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
+						menuTutorials.setHidden(false);
+					}
+				}
+			});
+		}
 		
 		CoreService.userservice.getCurrentUser().then(function(usercontext){
 								
