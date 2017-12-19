@@ -1405,7 +1405,7 @@
 				title: 'Add Attachment',
 				iconCls: 'fa fa-lg fa-paperclip',
 				width: '40%',
-				height: 175,
+				height: 200,
 				y: 60,
 				modal: true,
 				maximizable: false,
