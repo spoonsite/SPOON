@@ -202,7 +202,7 @@
 						{text: 'Category', dataIndex: 'faqCategoryTypeDescription', width: 200},
 						{text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200},
 						{text: 'Answer', dataIndex: 'answer', flex: 2, minWidth: 200},
-						{text: 'Sort Order', dataIndex: 'sortOrder', width: 125},
+						{text: 'Sort Order', dataIndex: 'faqSortOrder', width: 125},
 						{text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150},
 						{text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true},
 						{text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
