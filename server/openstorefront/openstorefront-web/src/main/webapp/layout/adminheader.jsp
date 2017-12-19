@@ -91,7 +91,14 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});						
+			});				
+			dataMenu.push({
+				text: 'Frequently Asked Questions',
+				permission: 'ADMIN-FAQ',
+				handler: function(){
+					actionLoadContent('FAQ');
+				}				
+			});
 			dataMenu.push({
 				text: 'Help',
 				menu: {

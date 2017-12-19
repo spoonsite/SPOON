@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.api.FaqService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
 import edu.usu.sdl.openstorefront.core.api.HelpSupportService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
@@ -101,12 +102,16 @@ public class ServiceProxy
 	private SystemArchiveService systemArchiveService;
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 	private HelpSupportService helpSupportService;
+	private FaqService faqService;
 
 	private FilterEngine filterEngine;
 
 	public ServiceProxy()
 	{
-		if (Test.isTestPersistenceService.get()) {
+		if (Test.isMockPersistenceService.get()) {
+			this.persistenceService = Test.mockPersistanceService;
+		}
+		else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -115,7 +120,10 @@ public class ServiceProxy
 	{
 		this.modificationType = modificationType;
 
-		if (Test.isTestPersistenceService.get()) {
+		if (Test.isMockPersistenceService.get()) {
+			this.persistenceService = Test.mockPersistanceService;
+		}
+		else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -456,15 +464,40 @@ public class ServiceProxy
 		}
 		return helpSupportService;
 	}
+	
+	public FaqService getFaqService()
+	{
+		if (faqService == null) {
+			faqService = DynamicProxy.newInstance(new FaqServiceImpl());
+		}
+		return faqService;
+	}
 
 	public static class Test
 	{
 
 		private static AtomicBoolean isTestPersistenceService = new AtomicBoolean(false);
-
+		private static AtomicBoolean isMockPersistenceService = new AtomicBoolean(false);
+		private static PersistenceService mockPersistanceService = null;
+		
 		public static void setPersistenceServiceToTest()
 		{
 			isTestPersistenceService.set(true);
+		}
+		
+		public static void setPersistenceServiceToMock(PersistenceService persistanceService)
+		{
+			isMockPersistenceService.set(true);
+			mockPersistanceService = persistanceService;
+		}
+		
+		public static void clearPersistenceMock() {
+			isMockPersistenceService.set(false);
+			mockPersistanceService = null;
+		}
+		
+		public static void clearTest() {
+			isTestPersistenceService.set(false);
 		}
 	}
 

@@ -39,7 +39,7 @@
 		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
-
+		<script src="scripts/component/faq.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
@@ -598,21 +598,19 @@
 				extend: 'Ext.button.Button',
 				scale: 'large',
 				ui: 'default',
-				maxWidth: 250,
+				maxWidth: 350,
 				initCallBack: null,
-				showUserTools: true,
-				showAdminTools: true,
-				showEvaluatorTools: true,
-				showHelp: true,
-				showFeedback: true,
+				showFaq: true,
+				showContactUs: true,
+				showRegister: true,
 				text: 'Support',
 				menu: {
-					minWidth: 250,
+					minWidth: 300,
 					items: [{
 							text: '<b>Frequently Asked Questions (FAQ)</b>',
-							iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+							iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
 							handler: function () {
-								userMenu.helpWin.show();
+								Ext.create('OSF.component.FaqWindow',{}).show();
 							}
 						},
 						{
@@ -644,8 +642,6 @@
 						}
 					}
 				},
-//				helpWin: Ext.create('OSF.component.HelpWindow', {}),
-//				feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
 				customMenuItems: [],
 				initComponent: function () {
 					this.callParent();
