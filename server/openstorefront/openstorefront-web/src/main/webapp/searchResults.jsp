@@ -897,7 +897,7 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: false }
+				{ text: 'Index Relevance', section: 'searchscore', display: true }
 			];			
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){

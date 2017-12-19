@@ -209,7 +209,7 @@
 								{text: 'Create User', dataIndex: 'createUser', width: 150},
 								{text: 'Scheduled Interval', dataIndex: 'schedule', width: 200 },
 								{text: 'Last Run Date', dataIndex: 'lastRanDts', width: 170, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1,
+								{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 1, sortable: false,
 									renderer: outputOptionRender
 								},
 								{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false,
@@ -1274,7 +1274,7 @@
 																
 								
 								var constructViewOutput = function(reportOutput) {
-						
+
 									var panel = {
 										xtype: 'panel',
 										title: 'Storefront Viewable Output',
@@ -1312,6 +1312,12 @@
 											{
 												xtype: 'checkbox',
 												name: 'reportNotify',
+												value: reportOutput.reportTransmissionOption.reportNotify,
+												listeners: {
+													change: function (self, newVal, oldVal) {
+														reportOutput.reportTransmissionOption.reportNotify = newVal;
+													}
+												},
 												boxLabel: '<b>Notify Me</b> <i class="fa fa-question-circle" data-qtip="If checked, sends an email when the report is viewable on the website"></i>'
 											}
 										],
@@ -1523,7 +1529,8 @@
 								var addBtn;								
 								var updateDisplay = function() {
 									reportOutputPanel.removeAll();
-									
+
+									var hasEmailTransmissionType = false;
 									var outputComponents = [];						
 									Ext.Array.each(outputs, function(output){
 										switch (output.reportTransmissionType) {
@@ -1532,6 +1539,7 @@
 												break;
 											case 'EMAIL':
 												outputComponents.push(constructEmailOutput(output));
+												hasEmailTransmissionType = true;
 												break;
 											case 'CONFLUENCE':
 												outputComponents.push(constructConfluenceOutput(output));
@@ -1540,6 +1548,14 @@
 									});
 									
 									reportOutputPanel.add(outputComponents);
+
+									// 	if the an email transmission type has been specified, don't allow the user
+									//		to request a notification on report completion (as they will be already recieving an email.)
+									if (hasEmailTransmissionType) {
+										var reportNotifyField = Ext.ComponentQuery.query('[name="reportNotify"]')[0];
+										reportNotifyField.setDisabled(true);
+										reportNotifyField.setValue(false);
+									}
 									
 									//timing issue on format field reload
 									Ext.defer(function(){
@@ -1563,7 +1579,7 @@
 											outputToAdd.push({
 												text: avaliable.description,											
 												transmissionType: avaliable.code,
-												handler: function() {																								
+												handler: function() {	
 													outputs.push({
 														outputId: Ext.id(),
 														reportTransmissionType: avaliable.code,
@@ -1611,14 +1627,28 @@
 								};
 								updateDisplay();
 																
-								var removeOutputAction =  function(reportOutput) {
+								var removeOutputAction = function(reportOutput) {
 									var index = 0;
+									var emailOutputTypes = 0;
+									var notifyMeField = Ext.ComponentQuery.query('[name="reportNotify"]')[0];
+
 									Ext.Array.each(outputs, function(item) {
 										if (item.outputId === reportOutput.outputId) {
 											return false;
 										}
+
+										if (item.reportTransmissionType === 'EMAIL') {
+											emailOutputTypes += 1;
+										}
+
 										index++;
 									});
+
+									// if there are no email transmission types, ensure 'Notify Me' checkbox is enabled.
+									if (emailOutputTypes === 0 && notifyMeField.length) {
+										notifyMeField.setDisabled(false);
+									}
+
 									Ext.Array.removeAt(outputs, index);
 									updateDisplay();
 								};														
@@ -1801,7 +1831,7 @@
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
 						{text: 'Options', dataIndex: 'reportOption', minWidth: 270, flex: 1, sortable: false, renderer: optionsRender },
-						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1,
+						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1, sortable: false,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
 								
@@ -1815,7 +1845,7 @@
 								return outputs;
 							}
 						},
-						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true,
+						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true, sortable: false,
 							renderer: outputOptionRender
 						}						
 						
@@ -1987,7 +2017,9 @@
 					},
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
-							viewHistory();
+							if (!record.get('noViewAvailable')){
+								viewHistory();
+							}
 						},
 						rowclick: function ( self, record, tr ) {
 
@@ -2056,12 +2088,18 @@
 					var cnt = historyGrid.getSelectionModel().getCount();
 					if (cnt === 1) {
 						var record = historyGrid.getSelectionModel().getSelection()[0];
-						if (record.get('runStatus') !== 'C' || record.get('noViewAvaliable')) {
+						if (record.get('runStatus') !== 'C' || record.get('noViewAvailable')) {
 							Ext.getCmp('historyViewButton').setDisabled(true);
 							Ext.getCmp('historyExportButton').setDisabled(true);
+							Ext.getCmp('historyDetailButton').setDisabled(false);
 						} else {
-							Ext.getCmp('historyViewButton').setDisabled(false);
-							Ext.getCmp('historyExportButton').setDisabled(false);
+							if (record.get('noViewAvailable')){
+								Ext.getCmp('historyViewButton').setDisabled(true);							
+								Ext.getCmp('historyExportButton').setDisabled(true);
+							} else {
+								Ext.getCmp('historyViewButton').setDisabled(false);							
+								Ext.getCmp('historyExportButton').setDisabled(false);
+							}							
 							Ext.getCmp('historyDetailButton').setDisabled(false);
 						}
 
@@ -2072,7 +2110,7 @@
 						}
 
 					} else if (cnt > 1) {
-						Ext.getCmp('historyDeleteButton').setDisabled(false);
+						Ext.getCmp('historyDeleteButton').setDisabled(false);						
 						Ext.getCmp('historyViewButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
 						Ext.getCmp('historyDetailButton').setDisabled(true);

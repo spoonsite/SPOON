@@ -359,7 +359,7 @@ The user tools contain a variety of useful features including:
 
 ----
 
-## 2.3.1 Dashboard
+### 2.3.1 Dashboard
 -------
 
 The User Tools landing or home page is the **Dashboard**. This is accessed by
@@ -375,7 +375,7 @@ and title bar color can be set.  This is done by clicking on the buttons in the
 right of the title bar of each individual widget once added to the dashboard.
  
 
-## 2.3.2 User Profile
+### 2.3.2 User Profile
 --------------------
 
 All user information can be set on the main page of **User Tools**. 
@@ -1998,7 +1998,7 @@ The preview button will show what the evaluation will look like when published. 
 
 Contains definitions of terms used in the application and in the help documentation (see the sub-sections). 
 
-##  5.1  User Terminology
+## 5.1  User Terminology
 ----------------
 
 -  **Article (Topic Landing Page)** -   An article is a central information page that contains information on a specific topic relating to an attribute.
@@ -2015,10 +2015,10 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
 
-# 6. Guides
+# 6. Guides @ADMIN-ENTRY-MANAGEMENT
 ------
 
-##6.1 Admin Guides @ADMIN-ENTRY-MANAGEMENT
+## 6.1 Admin Guides @ADMIN-ENTRY-MANAGEMENT
 -----------------
 
 ### 6.1.1 How to Create an Entry Template @ADMIN-ENTRY-MANAGEMENT

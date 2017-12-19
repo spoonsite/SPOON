@@ -726,6 +726,7 @@ public class ComponentRESTResource
 				}
 			}
 
+			//if attribute do
 			service.getComponentService().saveComponent(component);
 			Component updatedComponent = new Component();
 			updatedComponent.setComponentId(componentId);

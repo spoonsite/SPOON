@@ -702,7 +702,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			relationshipLoad(relationshipId, componentName, level);
 		} else {
 			//prompt for type to display
-			var prompt = Ext.create('Ext.window.Window', {
+			
+			visPanel.promptForEntry = function() {			
+				var prompt = Ext.create('Ext.window.Window', {
 				title: 'Select Entry to View',
 				modal: true,
 				closeMode: 'destory',
@@ -777,11 +779,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				]
 			});
-
+				prompt.show();
+			};
 		
 			if (visPanel.promptForType && 
 				!visPanel.viewType) {
-				prompt.show();
+				visPanel.promptForEntry();
 			}
 		}
 	},
@@ -927,13 +930,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}
 	},
 
-	loadOrganizations: function (organizationId, corganizationName) {
+	loadOrganizations: function (organizationId, organizationName) {
 		var visPanel = this;
 
-		var organizationLoad = function (organizationId, corganizationName) {
+		var organizationLoad = function (organizationId, organizationName) {
 			visPanel.setLoading("Loading Organizations...");
 			Ext.Ajax.request({
-				url: 'api/v1/resource/organizations/componentrelationships?organizationId=' + organizationId,
+				url: 'api/v1/resource/organizations/componentrelationships?organizationId=' + encodeURIComponent(organizationId),
 				callback: function () {
 					visPanel.setLoading(false);
 				},
@@ -949,7 +952,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							type: 'organization',
 							nodeId: organizationId,
 							key: organizationId,
-							label: corganizationName,
+							label: organizationName,
 							isHub: true
 						});
 					}
@@ -975,7 +978,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		};
 
 		if (organizationId) {
-			organizationLoad(organizationId, corganizationName);
+			organizationLoad(organizationId, organizationName);
 		} else {
 			//prompt for type to display
 			var prompt = Ext.create('Ext.window.Window', {
@@ -2030,6 +2033,12 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						containerPanel.getComponent('tools').getComponent('find').reset();
 
 						containerPanel.visualPanel.reset();
+						
+						var initView = containerPanel.queryById('initialView').getValue();
+						if (initView === 'RELATION') {
+							containerPanel.visualPanel.promptForEntry();
+						}
+						
 					}
 				},				
 				{
