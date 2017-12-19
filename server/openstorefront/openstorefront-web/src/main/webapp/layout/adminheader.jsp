@@ -91,7 +91,14 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});			
+			});				
+			dataMenu.push({
+				text: 'Frequently Asked Questions',
+				permission: 'ADMIN-FAQ',
+				handler: function(){
+					actionLoadContent('FAQ');
+				}				
+			});
 			dataMenu.push({
 				text: 'Highlights',
 				permission: 'ADMIN-HIGHLIGHTS',
@@ -141,13 +148,6 @@
 					actionLoadContent('Relationships');
 				}				
 			});			
-			dataMenu.push({
-				text: 'Frequently Asked Questions',
-				permission: 'ADMIN-FAQ',
-				handler: function(){
-					actionLoadContent('FAQ');
-				}				
-			});	
 			dataMenu.push({
 				text: 'Searches',
 				permission: 'ADMIN-SEARCH',

@@ -26,14 +26,14 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-	
-	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-	</stripes:layout-render>		
-		
-	<script type="text/javascript">
-		/* global Ext, CoreUtil */
-		Ext.onReady(function(){
-						
+
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+
+		<script type="text/javascript">
+			/* global Ext, CoreUtil */
+			Ext.onReady(function () {
+
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
 					title: 'Add/Edit Frequently Asked Questions',
@@ -49,7 +49,7 @@
 							itemId: 'faqForm',
 							layout: 'anchor',
 							scrollable: 'true',
-							bodyStyle: 'padding: 10px;',						
+							bodyStyle: 'padding: 10px;',
 							defaults: {
 								labelAlign: 'top',
 								labelSeparator: '',
@@ -60,14 +60,14 @@
 									xtype: 'toolbar',
 									dock: 'bottom',
 									items: [
-										{											
+										{
 											text: 'Save',
 											formBind: true,
 											autoEl: {
 												'data-test': 'saveBtnAddFAQ'
 											},
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
-											handler: function(){	
+											handler: function () {
 												var win = this.up('window');
 												var form = this.up('form');
 												var data = form.getValues();
@@ -84,7 +84,7 @@
 													method: method,
 													data: data,
 													form: form,
-													success: function(){
+													success: function () {
 														actionRefresh();
 														form.reset();
 														win.close();
@@ -97,13 +97,13 @@
 										},
 										{
 											xtype: 'button',
-											text: 'Cancel',										
+											text: 'Cancel',
 											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function(){
+											handler: function () {
 												this.up('form').reset();
 												this.up('window').close();
-											}									
-										}											
+											}
+										}
 									]
 								}
 							],
@@ -113,8 +113,8 @@
 									name: 'faqId'
 								},
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'category',									
-									allowBlank: false,									
+									name: 'category',
+									allowBlank: false,
 									margin: '0 0 10 0',
 									width: '100%',
 									fieldLabel: 'Category <span class="field-required" />',
@@ -129,38 +129,40 @@
 											})
 										]
 									}
-								}),								
+								}),
+								{
+									xtype: 'numberfield',
+									name: 'faqSortOrder',
+									width: '100%',
+									fieldLabel: 'Sort Order',
+									enforceMaxLength: true,
+									allowBlank: true,
+									maxLength: 4,
+									maxValue: 9999,
+									minValue: 0
+								},
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Question <span class="field-required" />',									
-									allowBlank: false,								
+									fieldLabel: 'Question <span class="field-required" />',
+									allowBlank: false,
 									maxLength: '80',
 									name: 'question'
-								},		
+								},
 								{
 									xtype: 'tinymce_textarea',
 									fieldStyle: 'font-family: Courier New; font-size: 12px;',
-									style: { border: '0' },
+									style: {border: '0'},
 									name: 'answer',
 									width: '100%',
 									height: 300,
 									maxLength: 65536,
-									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
-										mediaSelectionUrl: function(){
-//											if (generalForm.componentRecord) {
-//												var componentId = generalForm.componentRecord.get('componentId');
-//												return 'api/v1/resource/faq/' + componentId + '/media/view';
-//											} else {
-//												return 'api/v1/resource/components/NEW/media/view';
-//											}
-										}
-									})
-								}							
+									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {})
+								}
 							]
 						}
-					]					
+					]
 				});
-					
+
 				var faqGrid = Ext.create('Ext.grid.Panel', {
 					id: 'faqGrid',
 					title: 'FAQ Management <i class="fa fa-question-circle" data-qtip="Allows for managing Frequently Asked Questions." ></i>',
@@ -174,16 +176,16 @@
 								property: 'question',
 								direction: 'ASC'
 							})
-						],	
+						],
 						fields: [
-							{ name: 'createDts', 
+							{name: 'createDts',
 								type: 'date',
-								dateFormat: 'c'							
+								dateFormat: 'c'
 							},
-							{ name: 'updateDts',
+							{name: 'updateDts',
 								type: 'date',
-								dateFormat: 'c'				
-							}							
+								dateFormat: 'c'
+							}
 						],
 						proxy: {
 							type: 'ajax',
@@ -195,32 +197,33 @@
 							}
 						},
 						listeners: {
-							beforeLoad: function(store, operation, eOpts){
+							beforeLoad: function (store, operation, eOpts) {
 								store.getProxy().extraParams = {
-									status: Ext.getCmp('filterActiveStatus').getValue()									
+									status: Ext.getCmp('filterActiveStatus').getValue()
 								};
 							}
-						}							
+						}
 					},
-					columns: [					
-						{ text: 'Category', dataIndex: 'category', width: 200 },
-						{ text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200 },
-						{ text: 'Answer', dataIndex: 'answer', flex: 2, minWidth: 200 },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-						{ text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true },
-						{ text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'  },
-						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'  }
+					columns: [
+						{text: 'Category', dataIndex: 'category', width: 200},
+						{text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200},
+						{text: 'Answer', dataIndex: 'answer', flex: 2, minWidth: 200},
+						{text: 'Sort Order', dataIndex: 'sortOrder', width: 125},
+						{text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150},
+						{text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true},
+						{text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+						{text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true},
+						{text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
 					listeners: {
-						itemdblclick: function(grid, record, item, index, e, opts){
+						itemdblclick: function (grid, record, item, index, e, opts) {
 							actionEdit(record);
-						},						
-						selectionchange: function(selModel, selected, opts) {
+						},
+						selectionchange: function (selModel, selected, opts) {
 							var tools = Ext.getCmp('faqGrid').getComponent('tools');
-							
-							if (selected.length > 0) {	
-								tools.getComponent('edit').setDisabled(false);							
+
+							if (selected.length > 0) {
+								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('togglestatus').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
 							} else {
@@ -229,23 +232,23 @@
 								tools.getComponent('delete').setDisabled(true);
 							}
 						}
-					},					
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
 							dock: 'top',
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
-									id: 'filterActiveStatus',									
+									id: 'filterActiveStatus',
 									emptyText: 'Active',
 									value: 'A',
 									fieldLabel: 'Active Status',
-									name: 'activeStatus',									
+									name: 'activeStatus',
 									typeAhead: false,
 									editable: false,
-									width: 200,							
+									width: 200,
 									listeners: {
-										change: function(filter, newValue, oldValue, opts){
+										change: function (filter, newValue, oldValue, opts) {
 											actionRefresh();
 										}
 									},
@@ -255,7 +258,7 @@
 												'code',
 												'description'
 											],
-											data: [												
+											data: [
 												{
 													code: 'A',
 													description: 'Active'
@@ -277,13 +280,12 @@
 									displayField: 'description',
 									typeAhead: false,
 									editable: false,
-									width: 200,			
+									width: 200,
 									listeners: {
-										change: function(filter, newValue, oldValue, opts){
-											if(newValue) {
-												Ext.getCmp('faqGrid').getStore().filter('category',newValue);
-											}
-											else {
+										change: function (filter, newValue, oldValue, opts) {
+											if (newValue) {
+												Ext.getCmp('faqGrid').getStore().filter('category', newValue);
+											} else {
 												Ext.getCmp('faqGrid').getStore().clearFilter()
 											}
 										}
@@ -330,9 +332,9 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									handler: function () {
-										actionAdd();										
-									}									
-								},								
+										actionAdd();
+									}
+								},
 								{
 									text: 'Edit',
 									id: 'faqMngEditBtn',
@@ -342,8 +344,8 @@
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
-										actionEdit(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);										
-									}									
+										actionEdit(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
+									}
 								},
 								{
 									xtype: 'tbseparator'
@@ -355,15 +357,15 @@
 										'data-test': 'toggleStatusFAQBtn'
 									},
 									disabled: true,
-									scale: 'medium',									
+									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									handler: function() {
-										actionToggleStatus(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);	
+									handler: function () {
+										actionToggleStatus(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}
-								},						
+								},
 								{
 									xtype: 'tbfill'
-								},									
+								},
 								{
 									text: 'Delete',
 									itemId: 'delete',
@@ -371,39 +373,39 @@
 										'data-test': 'faqsDeleteBtn'
 									},
 									disabled: true,
-									scale: 'medium',									
+									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
-									handler: function() {
-										actionDelete(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);	
+									handler: function () {
+										actionDelete(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}
-								}								
+								}
 							]
-						}					
-					]					
+						}
+					]
 				});
-				
-				
-				var actionRefresh = function() {
+
+
+				var actionRefresh = function () {
 					Ext.getCmp('faqGrid').getStore().load({
 						url: 'api/v1/resource/faq'
 					});
-//					Ext.getCmp('faqGrid').getStore().filter('category',newValue);
-				};		
-				
-				var actionAdd = function() {
-					addEditWindow.show();
-					addEditWindow.getComponent('faqForm').reset();
-					
+					//					Ext.getCmp('faqGrid').getStore().filter('category',newValue);
 				};
 
-				var actionEdit = function(record) {
+				var actionAdd = function () {
+					addEditWindow.show();
+					addEditWindow.getComponent('faqForm').reset();
+
+				};
+
+				var actionEdit = function (record) {
 					addEditWindow.show();
 					addEditWindow.getComponent('faqForm').reset();
 					addEditWindow.getComponent('faqForm').loadRecord(record);
 				};
-		
-				var actionToggleStatus = function(record) {
-					
+
+				var actionToggleStatus = function (record) {
+
 					record.set('activeStatus', record.get('activeStatus') === 'A' ? 'I' : 'A');
 					record.data.type = undefined;
 
@@ -411,34 +413,34 @@
 					Ext.Ajax.request({
 						url: 'api/v1/resource/faq/' + record.get('faqId') + '?status=all',
 						jsonData: record.data,
-						method: 'PUT',																		
-						callback: function(){
+						method: 'PUT',
+						callback: function () {
 							faqGrid.setLoading(false);
 						},
-						success: function(response, opts){
+						success: function (response, opts) {
 							actionRefresh();
 						}
 					});
 				};
-		
-				var actionDelete = function(record) {					
+
+				var actionDelete = function (record) {
 					faqGrid.setLoading('Deleting FAQ...');
 					Ext.Ajax.request({
 						url: 'api/v1/resource/faq/' + record.get('faqId'),
 						method: 'DELETE',
-						callback: function(){
+						callback: function () {
 							faqGrid.setLoading(false);
 						},
-						success: function(response, opts){
+						success: function (response, opts) {
 							actionRefresh();
 						}
 					});
 				};
-				
+
 				addComponentToMainViewPort(faqGrid);
-				
+
 			});
-		
-	</script>
+
+		</script>
     </stripes:layout-component>
 </stripes:layout-render>
