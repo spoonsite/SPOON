@@ -17,26 +17,87 @@
  */
 /* global Ext */
 
-
 Ext.define('OSF.component.FaqPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.FaqPanel',
-	layout: 'border',
+	layout: 'vbox',
 	autoLoad: false,
-	initComponent: function () {
-		
-		this.callParent();
-		
+	loadQuestions: function () {
 		var faqPanel = this;
-		faqPanel.faqFlat = [];
-		
-		faqPanel.navPanel = Ext.create('Ext.panel.Panel', {
-			
-			items: [
-				{}]
+		var getCategories = function (faqList) {
+			var categories = Ext.Array.unique(Ext.Array.map(faqList, function (elem) {
+				return elem.category;
+			}));
+			return categories;
+		};
+		var getFaqMap = function (faqList) {
+			var categories = getCategories(faqList);
+			var faqMap = [];
+			Ext.Array.each(categories, function (category) {
+				faqMap.push({
+					category: category,
+					description: Ext.Array.findBy(faqList, function (elem) {
+						return elem.category === category;
+					}).faqCategoryTypeDescription,
+					questions: Ext.Array.filter(faqList, function (elem) {
+						return elem.category === category;
+					})
+				});
+			});
+			return faqMap;
+		};
+
+		var createSection = function (sectionData) {
+			var getFaqItems = function () {
+				var items = [];
+				Ext.Array.each(sectionData.questions, function (faqItem) {
+					items.push({
+						type: 'panel',
+						collapsible: true,
+						collapseFirst: true,
+						collapsed: true,
+						titleCollapse: true,
+						width: '100%',
+						title: faqItem.question,
+						animCollapse: false,
+						cls:'faq-question',
+						items: [{
+								type: 'panel',
+								style: 'padding-left: 40px;',
+								html: faqItem.answer
+							}]
+					});
+				});
+				return items;
+			};
+			var sectionPanel = Ext.create('Ext.panel.Panel', {
+				type: 'panel',
+				itemId: 'faqSectionPanel-' + sectionData.category,
+				width: '100%',
+				layout: 'vbox',
+				collapsible: true,
+				titleCollapse: true,
+				animCollapse: false,
+				title: sectionData.description
+			});
+			sectionPanel.add(getFaqItems());
+			return sectionPanel;
+		};
+		Ext.Ajax.request({
+			url: 'api/v1/resource/faq',
+			method: 'GET',
+			success: function (response, opts) {
+				var faqList = Ext.decode(response.responseText);
+				var faqMap = getFaqMap(faqList);
+				var items = [];
+				Ext.Array.each(faqMap, function (faqItem) {
+					items.push(createSection(faqItem));
+				});
+				faqPanel.add(items);
+			}
 		});
-	},
-	loadQuestions: function () {}
+	}
+
 });
 
 Ext.define('OSF.component.FaqWindow', {
@@ -52,7 +113,7 @@ Ext.define('OSF.component.FaqWindow', {
 	collapsible: true,
 	alwaysOnTop: true,
 	items: [
-		Ext.create('OSF.component.FaqPanel', {	
+		Ext.create('OSF.component.FaqPanel', {
 			itemId: 'faqPanel'
 		})
 	],
@@ -60,7 +121,7 @@ Ext.define('OSF.component.FaqWindow', {
 		{
 			type: 'toggle',
 			tooltip: 'Open in new window',
-			callback: function(panel, tool, event){
+			callback: function (panel, tool, event) {
 				var faqWin = window.open('faq.jsp', 'faqwin');
 				if (!faqWin) {
 					Ext.toast('Unable to open Frequently Asked Questions. Check popup blocker.');
@@ -71,21 +132,21 @@ Ext.define('OSF.component.FaqWindow', {
 		}
 	],
 	listeners: {
-		beforeShow: function(faqWin){
+		beforeShow: function (faqWin) {
 			if (!faqWin.loaded) {
 				faqWin.getComponent('faqPanel').loadQuestions();
 				faqWin.loaded = true;
 			}
 		},
-		show: function()   
-		{        
-			this.removeCls("x-unselectable");    
-		}		
+		show: function ()
+		{
+			this.removeCls("x-unselectable");
+		}
 	},
-	
+
 	initComponent: function () {
 		this.callParent();
 	}
-		
-	
+
+
 });

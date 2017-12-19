@@ -1737,3 +1737,12 @@ table.confluenceTable td.numberingColumn {
 
 	height: 2.8em;
 }
+.faq-question .x-panel-header {
+	background-color:#FFFFFF;
+}
+.faq-question .x-panel-header-title {
+	color:#000000;
+	font-size:1.53m;
+	font-weight:bold;
+	cursor:pointer;
+}
