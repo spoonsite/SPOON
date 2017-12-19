@@ -603,9 +603,9 @@
 					minWidth: 250,
 					items: [{
 							text: '<b>Frequently Asked Questions (FAQ)</b>',
-							iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
+							iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
 							handler: function () {
-								userMenu.helpWin.show();
+								Ext.create('OSF.component.FaqWindow',{}).show();
 							}
 						},
 						{
@@ -632,8 +632,6 @@
 						}
 					}
 				},
-//				feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
-				faqWin: Ext.create('OSF.component.FaqWindow',{}),
 				customMenuItems: [],
 				initComponent: function () {
 					this.callParent();
