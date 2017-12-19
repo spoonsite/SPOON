@@ -91,18 +91,18 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});				
-			dataMenu.push({
-				text: 'Frequently Asked Questions',
-				permission: 'ADMIN-FAQ',
-				handler: function(){
-					actionLoadContent('FAQ');
-				}				
-			});
+			});	
 			dataMenu.push({
 				text: 'Help',
 				menu: {
 					items: [
+						{
+							text: 'Frequently Asked Questions',
+							permission: 'ADMIN-FAQ',
+							handler: function(){
+								actionLoadContent('FAQ');
+							}										
+						},
 						{
 							text: 'Support Media',
 							permission: 'ADMIN-SUPPORT-MEDIA',

@@ -348,7 +348,6 @@ Ext.define('OSF.component.UserMenu', {
 	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
-	faqWin: Ext.create('OSF.component.FaqWindow', {}),
 	customMenuItems: [],
 	initComponent: function () {
 		this.callParent();
@@ -440,6 +439,21 @@ Ext.define('OSF.component.UserMenu', {
 						supportWin.show();
 					}		
 				});
+			}
+			
+			if (userMenu.showFAQ) {
+				menuItems.push({
+					text: 'FAQ',
+					itemId: 'menuFAQ',
+					tooltip: 'Frequently Asked Questions',
+					iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
+					hidden: true,
+					handler: function () {
+						var faqWin = Ext.create('OSF.component.FaqWindow', {							
+						});
+						faqWin.show();
+					}
+				});
 			}			
 
 			if (userMenu.showFeedback) {
@@ -454,16 +468,6 @@ Ext.define('OSF.component.UserMenu', {
 							fieldType: 'displayfield'
 						});
 						contactWindow.show();
-					}
-				});
-			}
-
-			if (userMenu.showFAQ) {
-				menuItems.push({
-					text: '<b>Frequently Asked Questions (FAQ)</b>',
-					iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
-					handler: function () {
-						userMenu.faqWin.show();
 					}
 				});
 			}
@@ -499,6 +503,10 @@ Ext.define('OSF.component.UserMenu', {
 					var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
 					menuTutorials.setHidden(false);
 				}
+				if (branding.showFAQ) {
+					var menuFAQ = userMenu.getMenu().queryById('menuFAQ');
+					menuFAQ.setHidden(false);
+				}				
 			});
 		}
 		

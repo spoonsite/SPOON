@@ -80,6 +80,7 @@ Ext.define('OSF.component.SupportMediaPanel', {
 		supportPanel.contents = Ext.create('Ext.panel.Panel', {
 			region: 'center',
 			layout: 'fit',
+			bodyStyle: 'background: white;',
 			items: [				
 			],
 			dockedItems: [
@@ -87,7 +88,7 @@ Ext.define('OSF.component.SupportMediaPanel', {
 					xtype: 'panel',
 					itemId: 'title',
 					dock: 'top',
-					bodyStyle: 'padding-top: 10px; padding-bottom: 10px;',
+					bodyStyle: 'padding-top: 10px; padding-bottom: 10px; background: white;',
 					data: { title: null},
 					tpl: new Ext.XTemplate(
 						'<h1 style="text-align: center"><tpl if="!title">Select a tutorial to View</tpl><tpl if="title">{title}</tpl></h1>'	
@@ -97,7 +98,7 @@ Ext.define('OSF.component.SupportMediaPanel', {
 					xtype: 'panel',
 					itemId: 'description',
 					dock: 'bottom',
-					bodyStyle: 'padding-top: 20px; padding-bottom: 20px;',
+					bodyStyle: 'padding: 20px;background: white;',
 					tpl: new Ext.XTemplate(
 						'<div class="support-media-description">{description}</div>'	
 					)

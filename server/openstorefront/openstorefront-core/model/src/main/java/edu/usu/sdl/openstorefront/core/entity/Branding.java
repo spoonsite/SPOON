@@ -192,6 +192,9 @@ public class Branding
 	private Boolean showSupportMedia;
 
 	@ConsumeField
+	private Boolean showFAQ;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String primaryColor;
 
@@ -290,6 +293,7 @@ public class Branding
 		setChangeRequestWarning(branding.getChangeRequestWarning());
 		setFeedbackHandler(branding.getFeedbackHandler());
 		setShowSupportMedia(branding.getShowSupportMedia());
+		setShowFAQ(branding.getShowFAQ());
 
 		setPrimaryColor(branding.getPrimaryColor());
 		setPrimaryTextColor(branding.getPrimaryTextColor());
@@ -784,5 +788,15 @@ public class Branding
 	public void setShowSupportMenuOnLogin(Boolean showSupportMenuOnLogin)
 	{
 		this.showSupportMenuOnLogin = showSupportMenuOnLogin;
+	}
+
+	public Boolean getShowFAQ()
+	{
+		return showFAQ;
+	}
+
+	public void setShowFAQ(Boolean showFAQ)
+	{
+		this.showFAQ = showFAQ;
 	}
 }

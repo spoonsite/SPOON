@@ -444,7 +444,7 @@
 														width: '100%',
 														boxLabel: 'Show Support Menu <i class="fa fa-exclamation-circle" data-qtip="When checked, will enable the support menu on the login page."></i>',
 														name: 'showSupportMenuOnLogin'
-													},
+													},												
 													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
@@ -493,8 +493,13 @@
 													{
 														xtype: 'checkbox',
 														name: 'showSupportMedia',
-														boxLabel: 'Show Tutorials Link'
+														boxLabel: 'Show Tutorials Menu <i class="fa fa-question-circle" data-qtip="Shows Tutorials link in the menu" ></i>'
 													},
+													{
+														xtype: 'checkbox',													
+														boxLabel: 'Show Frequently Asked Question Menu <i class="fa fa-question-circle" data-qtip="Shows the FAQ in the menu" ></i>',
+														name: 'showFAQ'
+													},													
 													{
 														xtype: 'textarea',
 														fieldLabel: 'Analytics Tracking Code <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',

@@ -41,9 +41,19 @@
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',									
-									height: 53,									
-									src: '${branding.secondaryLogoUrl}'
+									xtype: 'image',
+									height: 53,
+									alt: 'logo',
+									cls: 'linkItem',
+									title: 'Go back to Home Page',
+									src: '${branding.secondaryLogoUrl}',
+									listeners: {
+										el: {
+											click: function() {
+												window.location.replace('Landing.action');
+											}
+										}
+									}
 								},
 								{
 									xtype: 'tbfill'
@@ -57,9 +67,10 @@
 									xtype: 'tbfill'
 								},							
 								Ext.create('OSF.component.UserMenu', {									
-									showAdminTools: false,
-									showUserTools: false,
-									showHelp: false,
+									showAdminTools: true,
+									showUserTools: true,
+									showHelp: true,
+									showFAQ: false,
 									ui: 'default',
 									initCallBack: function(usercontext) {
 										setupServerNotifications(usercontext);	

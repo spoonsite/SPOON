@@ -29,28 +29,46 @@ import javax.validation.constraints.NotNull;
 public class Faq
 		extends StandardEntity<Faq>
 {
+
 	@PK(generated = true)
 	@NotNull
 	private String faqId;
-	
+
 	@NotNull
 	@ConsumeField
 	private String question;
-	
+
 	@NotNull
 	@ConsumeField
 	private String answer;
-	
+
 	@NotNull
 	@ConsumeField
 	private Integer faqSortOrder;
-	
+
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = FaqCategoryType.class)
 	@FK(FaqCategoryType.class)
 	@APIDescription("Category of the FAQ")
 	private String category;
+
+	public Faq()
+	{
+	}
+
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		Faq faq = (Faq) entity;
+
+		super.updateFields(faq);
+
+		this.setAnswer(faq.getAnswer());
+		this.setCategory(faq.getCategory());
+		this.setQuestion(faq.getQuestion());
+		this.setFaqSortOrder(faq.getFaqSortOrder());
+	}
 
 	public String getFaqId()
 	{
@@ -81,7 +99,7 @@ public class Faq
 	{
 		this.answer = answer;
 	}
-	
+
 	public String getCategory()
 	{
 		return category;
@@ -91,7 +109,7 @@ public class Faq
 	{
 		this.category = category;
 	}
-	
+
 	public Integer getFaqSortOrder()
 	{
 		return faqSortOrder;
@@ -101,16 +119,5 @@ public class Faq
 	{
 		this.faqSortOrder = faqSortOrder;
 	}
-	
-	@Override
-	public void updateFields(StandardEntity entity) {
-		Faq faq = (Faq) entity;
-		
-		super.updateFields(faq);
-		
-		this.setAnswer(faq.getAnswer());
-		this.setCategory(faq.getCategory());
-		this.setQuestion(faq.getQuestion());
-		this.setFaqSortOrder(faq.getFaqSortOrder());
-	}
+
 }
