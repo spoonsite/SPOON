@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,50 +64,42 @@ public class RequiredForComponent
 		ValidationResult validationResult = new ValidationResult();
 
 		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().getRequiredAttributes();
+
+		requireds.removeIf(attributeType -> checkAttributeAssociation(attributeType, component.getComponentType()));
+
 		Map<String, AttributeType> requiredTypeMap = new HashMap<>();
-		for (AttributeType attributeType : requireds)
-		{
+		for (AttributeType attributeType : requireds) {
 			boolean add = true;
 			if (attributeType.getRequiredRestrictions() != null
-					&& !attributeType.getRequiredRestrictions().isEmpty())
-			{
-				if (component.getComponentType() != null)
-				{
+					&& !attributeType.getRequiredRestrictions().isEmpty()) {
+				if (component.getComponentType() != null) {
 					boolean found = false;
-					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions())
-					{
-						if (component.getComponentType().equals(componentTypeRestriction.getComponentType()))
-						{
+					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions()) {
+						if (component.getComponentType().equals(componentTypeRestriction.getComponentType())) {
 							found = true;
 						}
 					}
-					if (!found)
-					{
+					if (!found) {
 						add = false;
 					}
 				}
 			}
-			if (add)
-			{
+			if (add) {
 				requiredTypeMap.put(attributeType.getAttributeType(), attributeType);
 			}
 		}
 
 		Set<String> inSetAttributeType = new HashSet<>();
-		for (ComponentAttribute attribute : attributes)
-		{
+		for (ComponentAttribute attribute : attributes) {
 			inSetAttributeType.add(attribute.getComponentAttributePk().getAttributeType());
 		}
 
 		//set defaults if missing
-		for (String type : requiredTypeMap.keySet())
-		{
+		for (String type : requiredTypeMap.keySet()) {
 			AttributeType attributeType = requiredTypeMap.get(type);
 
-			if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode()))
-			{
-				if (!inSetAttributeType.contains(type))
-				{
+			if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode())) {
+				if (!inSetAttributeType.contains(type)) {
 					ComponentAttribute componentAttribute = new ComponentAttribute();
 					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 					componentAttributePk.setAttributeType(type);
@@ -118,24 +111,51 @@ public class RequiredForComponent
 		}
 
 		Set<String> matchedAttributes = new HashSet<>();
-		for (ComponentAttribute attribute : attributes)
-		{
+		Set<String> missingAttributes = new HashSet<>();
+		for (ComponentAttribute attribute : attributes) {
 			String type = attribute.getComponentAttributePk().getAttributeType();
-			if (requiredTypeMap.containsKey(type))
-			{
+			if (requiredTypeMap.containsKey(type)) {
 				matchedAttributes.add(type);
+			} else {
+				missingAttributes.add(type);
 			}
 		}
-		if (matchedAttributes.size() < requiredTypeMap.size())
-		{
+		if (matchedAttributes.size() < requiredTypeMap.size()) {
+			StringJoiner joiner = new StringJoiner(", ");
+			for (String type : matchedAttributes) {
+				joiner.add(type);
+			}
+
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setMessage("Missing Required Attributes");
 			ruleResult.setEntityClassName(ComponentAttribute.class.getSimpleName());
 			ruleResult.setFieldName("componentAttributes");
-			ruleResult.setValidationRule("Must have required attributes");
+			ruleResult.setValidationRule("Must have required attributes. Missing: " + joiner.toString());
 			validationResult.getRuleResults().add(ruleResult);
 		}
 		return validationResult;
+	}
+
+	private boolean checkAttributeAssociation(AttributeType attributeType, String componentType)
+	{
+		boolean remove = false;
+
+		if (attributeType.getAssociatedComponentTypes() != null
+				&& !attributeType.getAssociatedComponentTypes().isEmpty()) {
+			if (component.getComponentType() != null) {
+				boolean found = false;
+				for (ComponentTypeRestriction componentTypeRestriction : attributeType.getAssociatedComponentTypes()) {
+					if (component.getComponentType().equals(componentTypeRestriction.getComponentType())) {
+						found = true;
+					}
+				}
+				if (!found) {
+					remove = true;
+				}
+			}
+		}
+
+		return remove;
 	}
 
 	public Component getComponent()

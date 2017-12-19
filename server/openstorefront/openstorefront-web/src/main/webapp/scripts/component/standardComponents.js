@@ -153,7 +153,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 								if (add) {
 									data.push({
 										dataSensitivity: item.dataSensitivity,
-										dataSensitivityDesc: found.description
+										dataSensitivityDesc: found ? found.description : item.dataSensitivity
 									});
 								}
 							}
@@ -237,7 +237,7 @@ Ext.define('OSF.component.DataSourceComboBox', {
 								if (add) {
 									data.push({
 										dataSource: item.dataSource,
-										dataSourceDesc: found.description
+										dataSourceDesc: found ? found.description : item.dataSource
 									});
 								}
 							}

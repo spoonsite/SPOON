@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -29,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.view.GeneralMediaWrapper;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -41,7 +39,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  *
@@ -85,22 +82,11 @@ public class GeneralMediaResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setMaxResults(filterQueryParams.getMax());
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
-
-		GeneralMedia generalMediaSortExample = new GeneralMedia();
-		Field sortField = ReflectionUtil.getField(generalMediaSortExample, filterQueryParams.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), generalMediaSortExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(generalMediaSortExample);
-		}
-
 		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExample(queryByExample);
-		GeneralMediaWrapper wrapper = new GeneralMediaWrapper(GeneralMediaView.toViewList(generalMedia), total);
+		long total = generalMedia.size();
+		List<GeneralMediaView> views = GeneralMediaView.toViewList(generalMedia);
+		views = filterQueryParams.filter(views);
+		GeneralMediaWrapper wrapper = new GeneralMediaWrapper(views, total);
 
 		return sendSingleEntityResponse(wrapper);
 	}

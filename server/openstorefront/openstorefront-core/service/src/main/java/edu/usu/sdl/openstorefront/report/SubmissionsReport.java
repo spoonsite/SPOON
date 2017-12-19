@@ -214,7 +214,7 @@ public class SubmissionsReport
 					lineModel.getName(),
 					sdf.format(lineModel.getCreateDts()),
 					sdf.format(lineModel.getUpdateDts()),
-					sdf.format(lineModel.getSubmittedDts()),
+					lineModel.getSubmittedDts() != null ? sdf.format(lineModel.getSubmittedDts()) : "",
 					lineModel.getSubmitterName(),
 					lineModel.getSubmitterEmail(),
 					lineModel.getSubmitterPhone(),

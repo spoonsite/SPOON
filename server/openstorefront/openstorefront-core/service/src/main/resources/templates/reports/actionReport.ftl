@@ -147,11 +147,11 @@
 						<div class="section-indent section-indent-border">
 							<h2>${review.getTitle()}</h2>
 							<div class="section-user-data">
-								${review.getCreateUser()} - ${review.getCreateDts()?date}
+								${review.username} - ${review.updateDate?date}
 							</div>
 							<div class="review-score-section">
-								<p>Entry: ${review.componentName}</p>
-								<p>Recommended: <b>${review.getRecommend()?string('Yes', 'No')}</b></p>
+								<p>Entry: ${review.name}</p>
+								<p>Recommended: <b><#if review.recommend??>Yes<#else>No</#if></b></p>
 								<p>Score: <#list 1..review.getRating() as ii> &#9733; </#list> (${review.getRating()})</p>
 							</div>
 							<p>${review.getComment()}</p>
@@ -165,12 +165,12 @@
 					<#list pendingQuestions as question>
 						<div class="section-indent section-indent-border">
 							<div class="section-user-data">
-								${question.getCreateUser()} - ${question.getCreateDts()?date}
+								${question.username} - ${question.createDts?date}
 							</div>
 							<div class="review-score-section">
 								<p>Entry: <b>${question.componentName}</b></p>
 							</div>
-							<p>${question.getQuestion()}</p>
+							<p>${question.question}</p>
 						</div>
 					</#list>
 				</#if>
@@ -185,8 +185,8 @@
 								<p><b>In response to the question:</b> "${response.questionText}"</p>
 							</div>
 							<div class="section-indent">
-								<h4 style="color: #848484;">${response.getCreateUser()} - ${response.getCreateDts()?date}</h4>
-								<p>${response.getResponse()}</p>
+								<h4 style="color: #848484;">${response.username} - ${response.updateDts?date}</h4>
+								<p>${response.response}</p>
 							</div>						
 						</div>
 					</#list>

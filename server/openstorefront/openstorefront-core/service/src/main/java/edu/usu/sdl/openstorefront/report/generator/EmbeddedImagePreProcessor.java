@@ -91,7 +91,11 @@ public class EmbeddedImagePreProcessor
 						ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 
 						//NOTE: Filtering doesn't apply as this is inline media and as such already filtered.
-						mediaFile = componentMedia.getFile();
+						if (componentMedia != null) {
+							mediaFile = componentMedia.getFile();
+						} else {
+							LOG.log(Level.WARNING, "Unable to find media for Media Id: " + mediaId);
+						}
 					}
 
 					if (mediaFile != null) {

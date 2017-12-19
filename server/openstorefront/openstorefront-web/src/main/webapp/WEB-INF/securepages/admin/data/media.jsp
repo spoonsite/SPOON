@@ -65,7 +65,7 @@
 					columnLines: true,
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200},
-						{ text: 'Resource URL', dataIndex: 'mediaLink', flex: 1, minWidth: 200, sortable: false },
+						{ text: 'Resource URL', dataIndex: 'mediaLink', flex: 1, minWidth: 200 },
 						{ text: 'Original Filename', dataIndex: 'originalFileName', width: 300 },
 						{ text: 'Mime Type', dataIndex: 'mimeType', width: 150},
 						{ text: 'Used In Branding', dataIndex: 'allowInBranding', width: 150},
