@@ -1736,7 +1736,16 @@ table.confluenceTable td.numberingColumn {
 .expandable-grid-cell-collapsed {
 	height: 2.8em;
 }
-
+.faq-question .x-panel-header {
+	background-color:#FFFFFF;
+}
+.faq-question .x-panel-header-title {
+	color:#000000;
+	font-size:1.53m;
+	font-weight:bold;
+	cursor:pointer;
+	text-decoration:underline;
+}
 .support-media-description {
 	font-size: 14px;
 }

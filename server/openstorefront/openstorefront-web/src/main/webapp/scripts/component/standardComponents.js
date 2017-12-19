@@ -334,7 +334,7 @@ Ext.define('OSF.component.UserMenu', {
 
 	scale: 'large',
 	ui: 'default',
-	maxWidth: 250,
+	maxWidth: 300,
 	initCallBack: null,
 	showUserTools: true,
 	showAdminTools: true,
@@ -342,11 +342,13 @@ Ext.define('OSF.component.UserMenu', {
 	showHelp: true,
 	showFeedback: true,
 	showSupportMedia: true,
+	showFAQ: true,
 	menu: {
-		minWidth: 200
+		minWidth: 300
 	},
 	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
+	faqWin: Ext.create('OSF.component.FaqWindow', {}),
 	customMenuItems: [],
 	initComponent: function () {
 		this.callParent();
@@ -456,12 +458,24 @@ Ext.define('OSF.component.UserMenu', {
 				});
 			}
 
+			if (userMenu.showFAQ) {
+				menuItems.push({
+					text: '<b>Frequently Asked Questions (FAQ)</b>',
+					iconCls: 'fa fa-2x fa-info-circle icon-button-color-default',
+					handler: function () {
+						userMenu.faqWin.show();
+					}
+				});
+			}
+
 			menuItems.push({
-				xtype: 'menuseparator'
+				xtype: 'menuseparator',
+				itemId: 'LogoutMenuItemSeparator'
 			});
 
 			menuItems.push({
 				text: 'Logout',
+				itemId: 'LogoutMenuItem',
 				iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
 				href: 'Login.action?Logout',
 				handler: function () {
@@ -496,6 +510,11 @@ Ext.define('OSF.component.UserMenu', {
 				userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
 			}
 			userMenu.setText(userMenuText);
+			if (usercontext.username === "ANONYMOUS") {
+				userMenu.getMenu().getComponent('LogoutMenuItem').setHidden(true);
+				userMenu.getMenu().getComponent('LogoutMenuItemSeparator').setHidden(true);
+				userMenu.setText("Menu");
+			}
 
 			var permissions = [
 				"ADMIN-USER-MANAGEMENT",
