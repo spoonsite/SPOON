@@ -43,7 +43,7 @@ public class Faq
 	
 	@NotNull
 	@ConsumeField
-	private int faqSortOrder;
+	private Integer faqSortOrder;
 	
 	@NotNull
 	@ConsumeField
@@ -92,12 +92,12 @@ public class Faq
 		this.category = category;
 	}
 	
-	public int getFaqSortOrder()
+	public Integer getFaqSortOrder()
 	{
 		return faqSortOrder;
 	}
 
-	public void setFaqSortOrder(int faqSortOrder)
+	public void setFaqSortOrder(Integer faqSortOrder)
 	{
 		this.faqSortOrder = faqSortOrder;
 	}
@@ -111,5 +111,6 @@ public class Faq
 		this.setAnswer(faq.getAnswer());
 		this.setCategory(faq.getCategory());
 		this.setQuestion(faq.getQuestion());
+		this.setFaqSortOrder(faq.getFaqSortOrder());
 	}
 }

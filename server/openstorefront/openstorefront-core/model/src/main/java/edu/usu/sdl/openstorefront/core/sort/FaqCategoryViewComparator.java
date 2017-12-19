@@ -31,19 +31,31 @@ public class FaqCategoryViewComparator<T extends FaqView>
 	public int compare(T o1, T o2)
 	{
 		Integer o1CategorySortOrder = ((FaqView) o1).getCategorySortOrder();
-			Integer o2CategorySortOrder = ((FaqView) o2).getCategorySortOrder();
+		Integer o2CategorySortOrder = ((FaqView) o2).getCategorySortOrder();
+
+		int categoryCompare = o1CategorySortOrder.compareTo(o2CategorySortOrder);
+		
+		if (categoryCompare != 0) {
+			return categoryCompare;
+		} else {
+			int faqCompare = 0;
+			Integer o1SortOrder = ((FaqView) o1).getFaqSortOrder();
+			Integer o2SortOrder = ((FaqView) o2).getFaqSortOrder();
 			
-			int categoryCompare = o1CategorySortOrder.compareTo(o2CategorySortOrder);
-			
-			if (categoryCompare != 0) {
-				return categoryCompare;
+			if (o1SortOrder == null && o2SortOrder == null) {
+				faqCompare = 0;
+			}
+			else if (o1SortOrder != null && o2SortOrder != null) {
+				faqCompare = o1SortOrder.compareTo(o2SortOrder);
+			}
+			else if(o1SortOrder != null) {
+				faqCompare = -1;
 			}
 			else {
-				Integer o1SortOrder = ((FaqView) o1).getFaqSortOrder();
-				Integer o2SortOrder = ((FaqView) o2).getFaqSortOrder();
-				
-				return o1SortOrder.compareTo(o2SortOrder);
+				faqCompare = 1;
 			}
+			return faqCompare;
+		}
 	}
-	
+
 }

@@ -171,12 +171,6 @@
 						autoLoad: true,
 						id: 'faqGridStore',
 						remoteSort: false,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'question',
-								direction: 'ASC'
-							})
-						],
 						fields: [
 							{name: 'createDts',
 								type: 'date',
@@ -205,7 +199,7 @@
 						}
 					},
 					columns: [
-						{text: 'Category', dataIndex: 'category', width: 200},
+						{text: 'Category', dataIndex: 'faqCategoryTypeDescription', width: 200},
 						{text: 'Question', dataIndex: 'question', flex: 1, minWidth: 200},
 						{text: 'Answer', dataIndex: 'answer', flex: 2, minWidth: 200},
 						{text: 'Sort Order', dataIndex: 'sortOrder', width: 125},
