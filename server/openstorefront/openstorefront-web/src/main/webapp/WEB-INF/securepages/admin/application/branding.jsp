@@ -300,6 +300,11 @@
 														}
 													},
 													{
+														xtype: 'checkbox',
+														name: 'showSupportMedia',
+														boxLabel: 'Show Tutorials Link'
+													},
+													{
 														xtype: 'textarea',
 														fieldLabel: 'Analytics Tracking Code <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 														name: 'analyticsTrackingCode',

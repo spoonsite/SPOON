@@ -471,14 +471,10 @@ Ext.define('OSF.component.UserMenu', {
 		
 		//check to for support media
 		if (userMenu.showSupportMedia) {		
-			Ext.Ajax.request({
-				url: 'api/v1/resource/supportmedia',			
-				success: function(response, opt) {
-					var data = Ext.decode(response.responseText);
-					if (data && data.length > 0) {					
-						var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
-						menuTutorials.setHidden(false);
-					}
+			CoreService.brandingservice.getCurrentBranding().then(function(branding){
+				if (branding.showSupportMedia) {
+					var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
+					menuTutorials.setHidden(false);
 				}
 			});
 		}

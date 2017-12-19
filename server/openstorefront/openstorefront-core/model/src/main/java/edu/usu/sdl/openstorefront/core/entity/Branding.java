@@ -152,6 +152,9 @@ public class Branding
 	private String feedbackHandler;
 
 	@ConsumeField
+	private Boolean showSupportMedia;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String primaryColor;
 
@@ -238,6 +241,7 @@ public class Branding
 		setSubmissionFormWarning(branding.getSubmissionFormWarning());
 		setChangeRequestWarning(branding.getChangeRequestWarning());
 		setFeedbackHandler(branding.getFeedbackHandler());
+		setShowSupportMedia(branding.getShowSupportMedia());
 
 		setPrimaryColor(branding.getPrimaryColor());
 		setPrimaryTextColor(branding.getPrimaryTextColor());
@@ -623,6 +627,16 @@ public class Branding
 	public void setLoginLogoBlock(String loginLogoBlock)
 	{
 		this.loginLogoBlock = loginLogoBlock;
+	}
+
+	public Boolean getShowSupportMedia()
+	{
+		return showSupportMedia;
+	}
+
+	public void setShowSupportMedia(Boolean showSupportMedia)
+	{
+		this.showSupportMedia = showSupportMedia;
 	}
 
 }
