@@ -134,13 +134,13 @@
 				pageSize: 100,
 				remoteSort: true,
 				fields: [
-					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
+					{ name: 'defaultAttributeCode', mapping: function(data) {
 						if (data.defaultAttributeCode) {
 							return data.defaultAttributeCode;
 						}
 						return '';	
 					}},
-					{ name: 'allowUserGeneratedCodesDisplay', mapping: function(data) {
+					{ name: 'allowUserGeneratedCodes', mapping: function(data) {
 						if (data.allowUserGeneratedCodes) {
 							return data.allowUserGeneratedCodes;
 						}
@@ -424,7 +424,7 @@
 					},
 					{
 						text: 'Allow User Codes',
-						dataIndex: 'allowUserGeneratedCodesDisplay',
+						dataIndex: 'allowUserGeneratedCodes',
 						flex: 1,
 						tooltip: 'Should users be able to generate codes for this attribute?',
 						align: 'center',
@@ -440,7 +440,7 @@
 					},
 					{
 						text: 'Default Code',
-						dataIndex: 'defaultAttributeCodeDisplay',
+						dataIndex: 'defaultAttributeCode',
 						flex: 1
 					},
 					{
