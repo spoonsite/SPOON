@@ -214,7 +214,9 @@ Ext.define('OSF.form.Resources', {
 					"resourceId",
 					"resourceType",
 					"resourceTypeDesc",
-					"description",
+					{ name: "description", mapping: function(data){
+						return data.description ? data.description : '';
+					}},
 					"link",
 					"localResourceName",
 					"mimeType",
@@ -237,7 +239,7 @@ Ext.define('OSF.form.Resources', {
 			}),					
 			columns: [
 				{ text: 'Resource Type', dataIndex: 'resourceTypeDesc',  width: 200 },
-				{ text: 'Description',  dataIndex: 'description', width: 150 },
+				{ text: 'Description', dataIndex: 'description', width: 150 },
 				{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 				{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
