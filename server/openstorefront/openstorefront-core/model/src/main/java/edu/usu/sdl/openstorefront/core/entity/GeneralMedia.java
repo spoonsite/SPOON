@@ -52,6 +52,9 @@ public class GeneralMedia
 	@OneToOne(cascade = {CascadeType.ALL}, optional = false, orphanRemoval = true)
 	@APIDescription("Stored file information")
 	private MediaFile file;
+	
+	@ConsumeField
+	private Boolean allowInBranding;
 
 	/**
 	 * @deprecated As of release 2.5, replaced by {@link #file}
@@ -99,14 +102,26 @@ public class GeneralMedia
 		this.name = name;
 	}
 
+	@Override
 	public MediaFile getFile()
 	{
 		return file;
 	}
 
+	@Override
 	public void setFile(MediaFile file)
 	{
 		this.file = file;
+	}
+
+	public Boolean getAllowInBranding()
+	{
+		return allowInBranding;
+	}
+
+	public void setAllowInBranding(Boolean allowInBranding)
+	{
+		this.allowInBranding = allowInBranding;
 	}
 
 	/**
