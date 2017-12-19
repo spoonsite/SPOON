@@ -246,7 +246,6 @@ Ext.define('OSF.component.FeedbackWindow', {
 
 				CoreService.userservice.getCurrentUser().then(function (usercontext) {
 					usercontext.fullname = usercontext.firstName + " " + usercontext.lastName;
-
 					formPanel.getForm().setValues(usercontext);
 				});
 			}

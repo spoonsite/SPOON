@@ -651,12 +651,6 @@
 					this.callParent();
 					var userMenu = this;
 					var menu = userMenu.getMenu();
-					var contactWindow = Ext.create('OSF.component.FeedbackWindow', {
-
-						isLoggedIn: false,
-						fieldType: 'textfield'
-					});
-					contactWindow.show();
 					menu.on('beforerender', function () {
 						this.setWidth(this.up('button').getWidth());
 					});
