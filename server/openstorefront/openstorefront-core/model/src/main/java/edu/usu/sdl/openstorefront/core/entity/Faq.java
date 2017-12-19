@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -42,9 +41,9 @@ public class Faq
 	@ConsumeField
 	private String answer;
 	
-//	@NotNull
-//	@ConsumeField
-//	private int sortOrder;
+	@NotNull
+	@ConsumeField
+	private int faqSortOrder;
 	
 	@NotNull
 	@ConsumeField
@@ -91,6 +90,16 @@ public class Faq
 	public void setCategory(String category)
 	{
 		this.category = category;
+	}
+	
+	public int getFaqSortOrder()
+	{
+		return faqSortOrder;
+	}
+
+	public void setFaqSortOrder(int faqSortOrder)
+	{
+		this.faqSortOrder = faqSortOrder;
 	}
 	
 	@Override

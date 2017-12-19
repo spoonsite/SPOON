@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.FaqCategoryType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -33,6 +34,7 @@ public class FaqView
 {
 	
 	private String faqCategoryTypeDescription;
+	private int categorySortOrder;
 	
 	public FaqView()
 	{
@@ -48,6 +50,12 @@ public class FaqView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setFaqCategoryTypeDescription(TranslateUtil.translate(FaqCategoryType.class, faq.getCategory()));
+		
+		FaqCategoryType categoryType = ServiceProxyFactory.getServiceProxy().getLookupService().getLookupEnity(FaqCategoryType.class, faq.getCategory());
+		int categorySortOrder = categoryType.getSortOrder() != null ? categoryType.getSortOrder() : Integer.MAX_VALUE;
+		
+		view.setCategorySortOrder(categorySortOrder);
+		
 		return view;
 	}
 
@@ -68,5 +76,15 @@ public class FaqView
 	public void setFaqCategoryTypeDescription(String faqCategoryTypeDescription)
 	{
 		this.faqCategoryTypeDescription = faqCategoryTypeDescription;
+	}
+	
+	public int getCategorySortOrder()
+	{
+		return categorySortOrder;
+	}
+
+	public void setCategorySortOrder(int categorySortOrder)
+	{
+		this.categorySortOrder = categorySortOrder;
 	}
 }

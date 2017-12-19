@@ -21,12 +21,16 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
+import edu.usu.sdl.openstorefront.core.entity.FaqCategoryType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.sort.FaqCategoryViewComparator;
 import edu.usu.sdl.openstorefront.core.view.FaqView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -69,7 +73,11 @@ public class FaqResource
 		
 		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ), activeStatus);
 		
-		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(FaqView.toView(faqs))
+		List<FaqView> faqViews = FaqView.toView(faqs);
+
+		Collections.sort(faqViews, new FaqCategoryViewComparator<>());
+		
+		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(faqViews)
 			{
 			};
 		return sendSingleEntityResponse(entity);
