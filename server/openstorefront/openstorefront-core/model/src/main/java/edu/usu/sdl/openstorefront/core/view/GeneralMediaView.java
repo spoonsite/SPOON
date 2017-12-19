@@ -34,6 +34,7 @@ public class GeneralMediaView
 	private String mediaLink;
 	private Date updateDts;
 	private String updateUser;
+	private Boolean allowInBranding;
 
 	public GeneralMediaView()
 	{
@@ -49,6 +50,7 @@ public class GeneralMediaView
 		}
 		generalMediaView.setUpdateDts(generalMedia.getUpdateDts());
 		generalMediaView.setUpdateUser(generalMedia.getUpdateUser());
+		generalMediaView.setAllowInBranding(generalMedia.getAllowInBranding());
 		generalMediaView.setMediaLink("Media.action?GeneralMedia&name=" + generalMedia.getName());
 		generalMediaView.toStandardView(generalMedia);
 		return generalMediaView;
@@ -123,4 +125,13 @@ public class GeneralMediaView
 		this.updateUser = updateUser;
 	}
 
+	public Boolean getAllowInBranding()
+	{
+		return allowInBranding;
+	}
+
+	public void setAllowInBranding(Boolean allowInBranding)
+	{
+		this.allowInBranding = allowInBranding;
+	}
 }

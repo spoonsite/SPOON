@@ -66,11 +66,48 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
+	private String loginFooter;
+
+	/**
+	 * warning banner in the center of the login page
+	 *
+	 * @deprecated As of 2.5-s, replaced by {@link #loginFooter}
+	 */
+	@Deprecated
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
 	private String loginWarning;
 
+	/**
+	 * Logo section in the main section of the page
+	 *
+	 * @deprecated As of 2.5-s, replaced by {@link #loginContentBlock}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String loginLogoBlock;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@ConsumeField
+	private String loginContentBlock;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginLogoUrl;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginOverviewVideoUrl;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginOverviewVideoPosterUrl;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String loginRegistrationVideoUrl;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
@@ -202,6 +239,9 @@ public class Branding
 	private Boolean useDefaultLandingPage;
 
 	@ConsumeField
+	private Boolean showSupportMenuOnLogin;
+
+	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
@@ -226,13 +266,21 @@ public class Branding
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
 		setLandingStatsText(branding.getLandingStatsText());
-		setLoginWarning(branding.getLoginWarning());
-		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
+
+		setLoginWarning(branding.getLoginWarning());
+		setLoginLogoBlock(branding.getLoginLogoBlock());
+		setLoginLogoUrl(branding.getLoginLogoUrl());
+		setLoginContentBlock(branding.getLoginContentBlock());
+		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
+		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
+		setLoginRegistrationVideoUrl(branding.getLoginRegistrationVideoUrl());
+		setShowSupportMenuOnLogin(branding.getShowSupportMenuOnLogin());
+		setLoginFooter(branding.getLoginFooter());
 
 		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
 		setSecurityBannerText(branding.getSecurityBannerText());
@@ -299,11 +347,25 @@ public class Branding
 		this.secondaryLogoUrl = secondaryLogoUrl;
 	}
 
+	/**
+	 * warning banner in the center of the login page
+	 *
+	 * @return logo image with image map
+	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
+	 */
+	@Deprecated
 	public String getLoginWarning()
 	{
 		return loginWarning;
 	}
 
+	/**
+	 * warning banner in the center of the login page
+	 *
+	 * @param loginWarning warning text
+	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
+	 */
+	@Deprecated
 	public void setLoginWarning(String loginWarning)
 	{
 		this.loginWarning = loginWarning;
@@ -619,11 +681,56 @@ public class Branding
 		this.useDefaultLandingPage = useDefaultLandingPage;
 	}
 
+	public String getLoginContentBlock()
+	{
+		return loginContentBlock;
+	}
+
+	public void setLoginContentBlock(String loginContentBlock)
+	{
+		this.loginContentBlock = loginContentBlock;
+	}
+
+	public String getLoginLogoUrl()
+	{
+		return loginLogoUrl;
+	}
+
+	public void setLoginLogoUrl(String loginLogoUrl)
+	{
+		this.loginLogoUrl = loginLogoUrl;
+	}
+
+	public String getLoginFooter()
+	{
+		return loginFooter;
+	}
+
+	public void setLoginFooter(String loginFooter)
+	{
+		this.loginFooter = loginFooter;
+	}
+
+	/**
+	 * Logo section in the main section of the page
+	 *
+	 * @return logo image with image map
+	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
+	 */
+	@Deprecated
 	public String getLoginLogoBlock()
 	{
 		return loginLogoBlock;
 	}
 
+	/**
+	 * Logo section in the main section of the page
+	 *
+	 * @param loginLogoBlock logo image with optional image map
+	 * @deprecated As of 2.5-s, replaced by
+	 * {@link #setLoginContentBlock(String)}
+	 */
+	@Deprecated
 	public void setLoginLogoBlock(String loginLogoBlock)
 	{
 		this.loginLogoBlock = loginLogoBlock;
@@ -639,4 +746,43 @@ public class Branding
 		this.showSupportMedia = showSupportMedia;
 	}
 
+	public String getLoginOverviewVideoUrl()
+	{
+		return loginOverviewVideoUrl;
+	}
+
+	public void setLoginOverviewVideoUrl(String loginOverviewVideoUrl)
+	{
+		this.loginOverviewVideoUrl = loginOverviewVideoUrl;
+	}
+
+	public String getLoginRegistrationVideoUrl()
+	{
+		return loginRegistrationVideoUrl;
+	}
+
+	public void setLoginRegistrationVideoUrl(String loginRegistrationVideoUrl)
+	{
+		this.loginRegistrationVideoUrl = loginRegistrationVideoUrl;
+	}
+
+	public String getLoginOverviewVideoPosterUrl()
+	{
+		return loginOverviewVideoPosterUrl;
+	}
+
+	public void setLoginOverviewVideoPosterUrl(String loginOverviewVideoPosterUrl)
+	{
+		this.loginOverviewVideoPosterUrl = loginOverviewVideoPosterUrl;
+	}
+
+	public Boolean getShowSupportMenuOnLogin()
+	{
+		return showSupportMenuOnLogin;
+	}
+
+	public void setShowSupportMenuOnLogin(Boolean showSupportMenuOnLogin)
+	{
+		this.showSupportMenuOnLogin = showSupportMenuOnLogin;
+	}
 }

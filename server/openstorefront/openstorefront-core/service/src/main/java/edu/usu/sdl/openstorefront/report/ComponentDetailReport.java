@@ -38,9 +38,9 @@ import edu.usu.sdl.openstorefront.report.generator.LocalMediaPDFHandler;
 import edu.usu.sdl.openstorefront.report.generator.PDFRenderHandler;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.ComponentDetailReportModel;
+import edu.usu.sdl.openstorefront.report.model.EntryDetailsOptions;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
-import freemarker.core.ParseException;
 import freemarker.template.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -282,7 +282,10 @@ public class ComponentDetailReport
 		try {
 			Map<String, Object> root = new HashMap<>();
 			root.put("baseUrl", PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL));
-			root.put("reportOptions", report.getReportOption());
+
+			EntryDetailsOptions options = new EntryDetailsOptions(report.getReportOption());
+			root.put("reportOptions", options);
+
 			root.put("allowSecurityMargkingsFlg", getBranding().getAllowSecurityMarkingsFlg());
 			root.put("reportModel", reportModel);
 
@@ -296,9 +299,9 @@ public class ComponentDetailReport
 
 		} catch (MalformedTemplateNameException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
-		} catch (ParseException | TemplateException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
 		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		} catch (TemplateException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		return renderedTemplate;
