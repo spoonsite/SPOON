@@ -71,10 +71,7 @@
 									showUserTools: true,
 									showHelp: true,
 									showFAQ: false,
-									ui: 'default',
-									initCallBack: function(usercontext) {
-										setupServerNotifications(usercontext);	
-									}
+									ui: 'default'
 								})
 							]
 						}						

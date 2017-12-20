@@ -20,9 +20,12 @@
 Ext.define('OSF.component.FaqPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.FaqPanel',
-	layout: 'vbox',
-	autoLoad: false,
+	
+	autoLoad: false,	
 	items: [],
+	scrollable: true,
+	layout: 'anchor',
+	
 	initComponent: function () {
 		this.callParent();
 		if(this.autoLoad) {
@@ -84,7 +87,7 @@ Ext.define('OSF.component.FaqPanel', {
 				layout: 'vbox',
 				collapsible: true,
 				titleCollapse: true,
-				animCollapse: false,
+				animCollapse: false,				
 				title: sectionData.description
 			});
 			sectionPanel.add(getFaqItems());
