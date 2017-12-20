@@ -98,7 +98,7 @@ public class StringProcessorTest
 		expResult = "null";
 		result = StringProcessor.getResourceNameFromUrl(url);
 		assertEquals(expResult, result);
-                
+
 		url = "http:/google.com/test";
 		expResult = "test";
 		result = StringProcessor.getResourceNameFromUrl(url);
@@ -127,7 +127,7 @@ public class StringProcessorTest
 		if (result.size() > 0) {
 			fail("Unexpected size from results. " + result.size());
 		}
-                
+
 		text = "null";
 		result = StringProcessor.extractUrls(text);
 		System.out.println(Arrays.toString(result.toArray(new String[0])));
@@ -247,7 +247,7 @@ public class StringProcessorTest
 		String expResult = "";
 		String result = StringProcessor.blankIfNull(text);
 		assertEquals(expResult, result);
-		
+
 		Object text2 = "not_null";
 		result = StringProcessor.blankIfNull(text2);
 		expResult = "not_null";
@@ -310,9 +310,9 @@ public class StringProcessorTest
 	}
 
 	@Test
-	public void testExtactFileName() 
+	public void testExtactFileName()
 	{
-		System.out.println(StringProcessor.getJustFileName(".../akfjaklf/askjdkl/Test.png"));	
+		System.out.println(StringProcessor.getJustFileName(".../akfjaklf/askjdkl/Test.png"));
 		System.out.println(StringProcessor.getJustFileName("Test.png"));
 		System.out.println(StringProcessor.getJustFileName("\\hera\\aaa\\akfjaklf\\Test.png"));
 		System.out.println(StringProcessor.getJustFileName("\\hera/aaa\\akfjaklf/Test.png"));
@@ -473,27 +473,27 @@ public class StringProcessorTest
 		expHashUrl = "1b53f7dd4d03adae30fcad1fc19e7301fafad174";
 		assertEquals(hashUrl, expHashUrl);
 	}
-        
+
 	@Test
-	public void testEmail() 
+	public void testEmail()
 	{
-            List<String> emails = Arrays.asList(
-                    "test.me@sld.xgh.eud",
-                    "d.t@v-a.com",
-                    "d.t+1@v-a.com",
-                    "d.t?@v-a.com",
-                    "r@localhost",
-                    "d.t@v-a.com",
-                    "a",
-                    "@"
-            );
-            
-            for (String email : emails) {
-                System.out.print(email);
-                System.out.print(" - ");
-                System.out.print(StringProcessor.isEmail(email));
-                System.out.print("\n");
-            }
-        }   
-                
+		List<String> emails = Arrays.asList(
+				"test.me@sld.xgh.eud",
+				"d.t@v-a.com",
+				"d.t+1@v-a.com",
+				"d.t?@v-a.com",
+				"r@localhost",
+				"d.t@v-a.com",
+				"a",
+				"@"
+		);
+
+		for (String email : emails) {
+			System.out.print(email);
+			System.out.print(" - ");
+			System.out.print(StringProcessor.isEmail(email));
+			System.out.print("\n");
+		}
+	}
+
 }

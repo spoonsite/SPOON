@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import static edu.usu.sdl.openstorefront.web.action.MediaAction.MISSING_IMAGE;
@@ -96,7 +97,7 @@ public class BrandingAction
 		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 
 		//restrict to media part of the branding
-		if (!generalMedia.getAllowInBranding()) {
+		if (!Convert.toBoolean(generalMedia.getAllowInBranding())) {
 			generalMedia = null;
 			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is restricted.", name));
 		}

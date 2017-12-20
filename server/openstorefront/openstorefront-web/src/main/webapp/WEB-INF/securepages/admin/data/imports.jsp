@@ -1879,6 +1879,11 @@
 				width: '60%',
 				height: '40%',
 				maximizable: true,
+				listeners: {
+					show: function (){
+						this.removeCls("x-unselectable");
+					}
+				},				
 				items: [
 					{
 						xtype: 'grid',
@@ -1898,6 +1903,9 @@
 								url: 'api/v1/resource/filehistory/'
 							}
 						}, 
+						viewConfig: {
+							enableTextSelection: true
+						},	
 						plugins: [
 							{
 								ptype: 'rowexpander',
