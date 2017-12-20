@@ -67,9 +67,12 @@
 									xtype: 'tbfill'
 								},							
 								Ext.create('OSF.component.UserMenu', {									
-									showAdminTools: true,
-									showUserTools: true,
-									showHelp: true,
+									showAdminTools: false,
+									showUserTools: false,
+									showHelp: false,
+									showSupportMedia: false,
+									showEvaluatorTools: false,
+									showLogout: false,
 									showFAQ: false,
 									ui: 'default'
 								})

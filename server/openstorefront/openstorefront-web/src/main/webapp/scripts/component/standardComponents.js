@@ -343,6 +343,7 @@ Ext.define('OSF.component.UserMenu', {
 	showFeedback: true,
 	showSupportMedia: true,
 	showFAQ: true,
+	showLogout: true,
 	menu: {
 		minWidth: 300
 	},
@@ -472,20 +473,23 @@ Ext.define('OSF.component.UserMenu', {
 				});
 			}
 
-			menuItems.push({
-				xtype: 'menuseparator',
-				itemId: 'LogoutMenuItemSeparator'
-			});
+			if (userMenu.showLogout){
+				menuItems.push({
+					xtype: 'menuseparator',
+					itemId: 'LogoutMenuItemSeparator'
+				});
 
-			menuItems.push({
-				text: 'Logout',
-				itemId: 'LogoutMenuItem',
-				iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
-				href: 'Login.action?Logout',
-				handler: function () {
-					window.location.href = 'Login.action?Logout';
-				}
-			});
+				menuItems.push({
+					text: 'Logout',
+					itemId: 'LogoutMenuItem',
+					iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
+					href: 'Login.action?Logout',
+					handler: function () {
+						window.location.href = 'Login.action?Logout';
+					}
+				});
+			}
+		
 			menu.add(menuItems);
 		};
 		userMenu.loadMenu();
@@ -497,15 +501,19 @@ Ext.define('OSF.component.UserMenu', {
 
 		
 		//check to for support media
-		if (userMenu.showSupportMedia) {		
+		if (userMenu.showSupportMedia || userMenu.showFAQ) {		
 			CoreService.brandingservice.getCurrentBranding().then(function(branding){
 				if (branding.showSupportMedia) {
 					var menuTutorials = userMenu.getMenu().queryById('menuTutorials');
-					menuTutorials.setHidden(false);
+					if (menuTutorials) {
+						menuTutorials.setHidden(false);
+					}
 				}
 				if (branding.showFAQ) {
 					var menuFAQ = userMenu.getMenu().queryById('menuFAQ');
-					menuFAQ.setHidden(false);
+					if (menuFAQ) {
+						menuFAQ.setHidden(false);
+					}
 				}				
 			});
 		}
