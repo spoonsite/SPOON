@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.MediaModel;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,16 +70,16 @@ public class MediaMigration extends ApplyOnceInit
 		//		Don't forget to rename the old filenames (in the file system), to the newly generated MediaFile filename
 		/**
 		 * **********************************
-		 */
-		//	Migrate data from General Media
-		/**
+		 *
+		 * Migrate data from General Media
+		 * 
 		 * **********************************
 		 */
 		List<GeneralMedia> generalMedias = new GeneralMedia().findByExampleProxy();
 		for (GeneralMedia generalMedia : generalMedias) {
 
 			if (generalMedia.getFileName() != null) { // this media needs to be migrated
-				Path originalFilePath = Paths.get(MediaFileType.GENERAL.getPath() + "\\" + generalMedia.getFileName());
+				Path originalFilePath = Paths.get(MediaFileType.GENERAL.getPath() + File.separator + generalMedia.getFileName());
 
 				GeneralMedia newGeneralMedia = new GeneralMedia();
 
@@ -102,16 +103,16 @@ public class MediaMigration extends ApplyOnceInit
 
 		/**
 		 * ************************************
-		 */
-		//	Migrate data from Component Media
-		/**
+		 *
+		 * Migrate data from Component Media
+		 * 
 		 * ************************************
 		 */
 		List<ComponentMedia> componentMedias = new ComponentMedia().findByExampleProxy();
 		for (ComponentMedia componentMedia : componentMedias) {
 
 			if (componentMedia.getFileName() != null) { // this media needs to be migrated
-				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + "\\" + componentMedia.getFileName());
+				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + File.separator + componentMedia.getFileName());
 
 				saveMediaFile(null, originalFilePath, componentMedia.getMimeType(), componentMedia.getFileName(), MediaFileType.MEDIA, componentMedia);
 				successfulMigrations += 1;
@@ -125,16 +126,16 @@ public class MediaMigration extends ApplyOnceInit
 
 		/**
 		 * ************************************
-		 */
-		//	Migrate data from Component Resource
-		/**
+		 *
+		 * Migrate data from Component Resource
+		 * 
 		 * ************************************
 		 */
 		List<ComponentResource> componentResources = new ComponentResource().findByExampleProxy();
 		for (ComponentResource componentResource : componentResources) {
 
 			if (componentResource.getFileName() != null) { // this resource needs to be migrated
-				Path originalFilePath = Paths.get(MediaFileType.RESOURCE.getPath() + "\\" + componentResource.getFileName());
+				Path originalFilePath = Paths.get(MediaFileType.RESOURCE.getPath() + File.separator + componentResource.getFileName());
 
 				saveMediaFile(null, originalFilePath, componentResource.getMimeType(), componentResource.getFileName(), MediaFileType.RESOURCE, componentResource);
 				successfulMigrations += 1;
@@ -148,16 +149,16 @@ public class MediaMigration extends ApplyOnceInit
 
 		/**
 		 * ***************************************
-		 */
-		//	Migrate data from Content Section Media
-		/**
+		 *
+		 * Migrate data from Content Section Media
+		 * 
 		 * ***************************************
 		 */
 		List<ContentSectionMedia> contentSectionMedias = new ContentSectionMedia().findByExampleProxy();
 		for (ContentSectionMedia sectionMedia : contentSectionMedias) {
 
 			if (sectionMedia.getFileName() != null) { // this media needs to be migrated
-				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + "\\" + sectionMedia.getFileName());
+				Path originalFilePath = Paths.get(MediaFileType.MEDIA.getPath() + File.separator + sectionMedia.getFileName());
 
 				saveMediaFile(null, originalFilePath, sectionMedia.getMimeType(), sectionMedia.getFileName(), MediaFileType.MEDIA, sectionMedia);
 				successfulMigrations += 1;
@@ -196,7 +197,7 @@ public class MediaMigration extends ApplyOnceInit
 		mediaToPersist.setMimeType(null);
 		mediaToPersist.setOriginalName(null);
 		String newFileName = persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType);
-		Path targetPath = Paths.get(type.getPath() + "/" + newFileName);
+		Path targetPath = Paths.get(type.getPath() + File.separator + newFileName);
 
 		try {
 			if (!movedFilesCache.containsKey(sourcePath.toString())) {
