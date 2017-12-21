@@ -86,7 +86,7 @@ other compatible containers with little or no changes.
 
 {{% notice note %}}
 Searching requires an external Elasticsearch/(Solr) instance setup.
-See [Setup](../systemadmin/Setup.md)
+See [Setup](/openstorefront/systemadmin/setup/)
 {{% /notice %}}
 
 
