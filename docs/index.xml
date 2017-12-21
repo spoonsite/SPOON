@@ -199,7 +199,7 @@ Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious store
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/evaluations/evaluator/storefront-evaluators-guide/</guid>
-      <description>Storefront Guide for Evaluators TL;DR  Administrators create and publish evaluations. Evaluators fill out evaluations. While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab. Storefront assumes you know what all of the various questions mean, what the asset types available to you mean, and how your implementation of Storefront works.</description>
+      <description>TL;DR  Administrators create and publish evaluations. Evaluators fill out evaluations. While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab. Storefront assumes you know what all of the various questions mean, what the asset types available to you mean, and how your implementation of Storefront works.</description>
     </item>
     
     <item>

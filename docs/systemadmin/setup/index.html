@@ -226,7 +226,7 @@
 
  <section id="footer"><div style="color: #E0E0DA;">
     <p>OpenStoreFront version 2.5</p>
-    <p>Documentation generated on Nov 30, 2017</p>
+    <p>Documentation generated on Dec 21, 2017</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -1106,7 +1106,7 @@ Agent</li>
                 &lt;p class=&quot;lead&quot;&gt;This page is used to test the proper operation of the &lt;a href=&quot;http://apache.org&quot;&gt;Apache HTTP server&lt;/a&gt; after it has been installed. If you can read this page it means that this site is working properly. This server is powered by &lt;a href=&quot;http://centos.org&quot;&gt;CentOS&lt;/a&gt;.&lt;/p&gt;
 </code></pre>
 
-<h3 id="install-elasticsearch-5x">Install elasticsearch 5.x:</h3>
+<h3 id="install-elasticsearch-6x">Install elasticsearch 6.x:</h3>
 
 <ol>
 <li>rpm --import <a href="https://packages.elastic.co/GPG-KEY-elasticsearch">https://packages.elastic.co/GPG-KEY-elasticsearch</a></li>
@@ -1114,9 +1114,9 @@ Agent</li>
 for example /etc/yum.repos.d/elasticsearch.repo</li>
 </ol>
 
-<pre><code>[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://packages.elastic.co/elasticsearch/5.x/centos
+<pre><code>[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://packages.elastic.co/elasticsearch/6.x/centos
 gpgcheck=1
 gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
@@ -1268,6 +1268,19 @@ Add the following to the existing file
 <li><p><code>mv openstorefront.war /usr/share/tomcat/webapps</code></p></li>
 
 <li><p><code>systemctl restart tomcat</code></p></li>
+</ol>
+
+<h1 id="3-optional-features">3. Optional Features</h1>
+
+<h2 id="31-tutorials">3.1 Tutorials</h2>
+
+<p>To enable:</p>
+
+<ol>
+<li>Add Admin Support Media Role. Re-login to apply.</li>
+<li>Add Support/Training material using Admin-&gt;Data Management-&gt;Help-&gt;Support Media</li>
+<li>Edit current branding (copy the current if needed)
+and check Allow Support Media to show the menu item for Tutorials</li>
 </ol>
 
 
