@@ -57,7 +57,7 @@ Ext.define('OSF.component.SupportMediaPanel', {
 						'				<p class="detail-media-caption">{title}</p>',
 						'			</tpl>',
 						'			<tpl if="mediaType == \'VID\'">',
-						'				<video height="150" controls><source src="{link}#t=10" onloadedmetadata="this.currentTime=10;" type="{mimeType}" ><i class="fa fa-5x fa-file-video-o"></i></video>',
+						'				<video height="150"><source src="{link}#t=10" onloadedmetadata="this.currentTime=10;" type="{mimeType}" ><i class="fa fa-5x fa-file-video-o"></i></video>',
 						'				<p class="detail-media-caption" style="opacity: 1;">{title}</p>',
 						'			</tpl>',
 						'		</div>',				
@@ -161,7 +161,10 @@ Ext.define('OSF.component.SupportMediaPanel', {
 			supportPanel.contents.removeAll();
 			supportPanel.contents.add({
 				xtype: 'video',
-				src: record.get('link') 
+				src: [{
+					src: record.get('link'),
+					type: record.get('mimeType')
+				}]  
 			});
 					
 		};
