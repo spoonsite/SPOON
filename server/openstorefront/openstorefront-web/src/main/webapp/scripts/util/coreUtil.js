@@ -489,7 +489,7 @@ var CoreUtil = {
 				"emoticons template paste textcolor placeholder"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen | preview",
 
 			content_css: "contents.css",
 
@@ -534,7 +534,8 @@ var CoreUtil = {
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: {border: 'solid 1px #ddd'}
+			table_default_styles: {border: 'solid 1px #ddd'},
+			paste_data_images: true
 		};
 
 		if (additionalPlugins) {
@@ -557,7 +558,7 @@ var CoreUtil = {
 				"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen | preview",
 
 			content_css: "contents.css",
 
@@ -567,7 +568,8 @@ var CoreUtil = {
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: {border: 'solid 1px #ddd'}
+			table_default_styles: {border: 'solid 1px #ddd'},
+			paste_data_images: true
 
 		};
 
@@ -886,25 +888,6 @@ var CoreUtil = {
 		}
 		return null;
 	},
-	maxFileSize: 1048576000,
-	handleMaxFileLimit: function (field, value, opts) {
-		var el = field.fileInputEl.dom;
-
-		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';
-		field.setFieldLabel(field.getFieldLabel().replace(errorMessage, ''));
-
-		if (el.files && el.files.length > 0) {
-			var file = el.files[0];
-			if (file.size > CoreUtil.maxFileSize) {
-				Ext.defer(function () {
-					field.reset();
-					field.markInvalid('File exceeds size limit.');
-					field.setFieldLabel(field.getFieldLabel() + errorMessage);
-				}, 250);
-			}
-		}
-
-	},
 	descriptionOfAdvancedSearch: function (searchElements) {
 		if (searchElements) {
 			var desc = '';
@@ -1016,6 +999,33 @@ var CoreUtil = {
 				return '<i class="fa fa-close"></i>';
 			}
 		}
-	}
+	},
+	split: function(text, split) {
+		var tokens = [];
+		if (text && text.length > 0){
+			var token = '';
+			for (var i=0; i<text.length; i++) {
+				var char = text.charAt(i);
+				if (Ext.Array.contains(split, char)) {
+					if (token !== '') {
+						tokens.push(token);						
+					}
+					token = '';					
+				} else {
+					token += char;
+				}
+			}
+			if (token !== '') {
+				tokens.push(token);						
+			}
+		}		
+		return tokens;
+	},
+	emailValidateStrict: function(email) {
+		if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {  
+			return true;
+		}      
+		return false;		
+	} 
 
 };

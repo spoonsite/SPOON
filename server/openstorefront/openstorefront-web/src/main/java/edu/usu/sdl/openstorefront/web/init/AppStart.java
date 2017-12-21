@@ -22,7 +22,7 @@ import javax.inject.Inject;
 /**
  *
  * bootstrap class for missing @Imidiate support in jersey
- * jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is reolcved for the version we are using
+ * Jersey 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is resolved for the version we are using
  * replace register(new AppStart()); with ServiceLocatorUtilities.enableImmediateScope(locator); in RestConfiguration.java
  * then delete this file
  * 

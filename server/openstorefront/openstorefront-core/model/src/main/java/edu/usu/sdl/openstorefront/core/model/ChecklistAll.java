@@ -19,8 +19,14 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -39,6 +45,30 @@ public class ChecklistAll
 
 	public ChecklistAll()
 	{
+	}
+
+	public Map<String, BigDecimal> scores()
+	{
+		Map<String, BigDecimal> scoreMap = new HashMap<>();
+
+		Map<String, List<ChecklistResponseView>> scoreSections = getResponses()
+				.stream()
+				.collect(Collectors.groupingBy(
+						p -> p.getQuestion().getEvaluationSectionDescription()
+				));
+
+		Set<String> scoreKeyset = new HashSet<>(scoreSections.keySet());
+		for (String key : scoreKeyset) {
+			Double averageScore = scoreSections.get(key)
+					.stream()
+					.filter(p -> p.getScore() != null)
+					.collect(Collectors.averagingDouble(
+							p -> p.getScore().doubleValue()
+					));
+
+			scoreMap.put(key, BigDecimal.valueOf(averageScore));
+		}
+		return scoreMap;
 	}
 
 	public EvaluationChecklist getEvaluationChecklist()

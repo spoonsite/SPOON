@@ -51,9 +51,9 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 @Path("v1/resource/feedbacktickets")
 @APIDescription("Handles user feedback")
 public class FeedbackResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
@@ -119,7 +119,7 @@ public class FeedbackResource
 	{
 		FeedbackTicket ticket = service.getPersistenceService().findById(FeedbackTicket.class, id);
 		return sendSingleEntityResponse(ticket);
-	}	
+	}
 
 	@POST
 	@APIDescription("Submit Feedback Ticket")
@@ -133,37 +133,37 @@ public class FeedbackResource
 		ValidationResult validationResult = feedbackTicket.validate(true);
 		if (validationResult.valid()) {
 			feedbackTicket = service.getFeedbackService().submitFeedback(feedbackTicket);
-			return Response.created(URI.create("v1/resource/feedbacktickets/" + feedbackTicket.getFeedbackId())).entity(feedbackTicket).build(); 
+			return Response.created(URI.create("v1/resource/feedbacktickets/" + feedbackTicket.getFeedbackId())).entity(feedbackTicket).build();
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
+		}
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket complete")
 	@Path("/{feedbackId}/markcomplete")
-	public Response markComplete(			
+	public Response markComplete(
 			@PathParam("feedbackId")
-			@RequiredParam String id			
+			@RequiredParam String id
 	)
-	{		
+	{
 		return markTicket(id, true);
-	}		
-	
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket outstanding")
 	@Path("/{feedbackId}/markoutstanding")
-	public Response markOutstanding(			
+	public Response markOutstanding(
 			@PathParam("feedbackId")
-			@RequiredParam String id			
+			@RequiredParam String id
 	)
-	{		
+	{
 		return markTicket(id, false);
-	}	
-	
-	private Response markTicket(String id, boolean complete) 
+	}
+
+	private Response markTicket(String id, boolean complete)
 	{
 		FeedbackTicket feedbackTicket = new FeedbackTicket();
 		feedbackTicket.setFeedbackId(id);
@@ -175,20 +175,20 @@ public class FeedbackResource
 				feedbackTicket = service.getFeedbackService().markAsOutstanding(id);
 			}
 		}
-		return sendSingleEntityResponse(feedbackTicket);		
+		return sendSingleEntityResponse(feedbackTicket);
 	}
-	
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Deletes a feedback ticket")
 	@Path("/{feedbackId}")
-	public Response deleteFeedbackTicket(			
+	public Response deleteFeedbackTicket(
 			@PathParam("feedbackId")
-			@RequiredParam String id			
+			@RequiredParam String id
 	)
 	{
-		service.getFeedbackService().deleteFeedback(id);		
+		service.getFeedbackService().deleteFeedback(id);
 		return Response.ok().build();
-	}	
-	
+	}
+
 }

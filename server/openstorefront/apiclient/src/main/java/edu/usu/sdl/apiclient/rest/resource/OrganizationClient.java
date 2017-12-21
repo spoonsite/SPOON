@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import edu.usu.sdl.apiclient.APIResponse;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
@@ -27,16 +30,24 @@ import javax.ws.rs.core.Response;
  * @author ccummings
  */
 public class OrganizationClient
+		extends AbstractService
 {
+	String basePath = "api/v1/resource/organizations";
 
-	public Response createOrganization(Organization organization)
+	public OrganizationClient(ClientAPI client)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		super(client);
 	}
 
-	public void deleteReport(String organizationid) throws AttachedReferencesException
+	public Organization createOrganization(Organization organization)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath, organization, null);
+		return response.getResponse(Organization.class);
+	}
+
+	public void deleteOrganization(String organizationid) throws AttachedReferencesException
+	{
+		client.httpDelete(basePath + "/" + organizationid, null);
 	}
 
 	public Response extractFromData()
@@ -54,14 +65,18 @@ public class OrganizationClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getOrganization(String organizationId)
+	public Organization getOrganization(String organizationId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpGet(basePath + "/" + organizationId, null);
+		Organization organization = response.getResponse(Organization.class);
+		return organization;
 	}
 
-	public Response getOrganizationByName(String name)
+	public Organization getOrganizationByName(String name)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpGet(basePath + "/name/" + name, null);
+		Organization organization = response.getResponse(Organization.class);
+		return organization;
 	}
 
 	public Response getOrganizations(FilterQueryParams filterQueryParams)
@@ -84,9 +99,10 @@ public class OrganizationClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response merge(String targetId, String mergeId)
+	public Organization merge(String targetId, String mergeId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + targetId + "/merge/" + mergeId, null, null);
+		return response.getResponse(Organization.class);
 	}
 
 	public Response updateOrganization(String organizationId, Organization organization)

@@ -27,12 +27,12 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.OrgReferenceWrapper;
 import edu.usu.sdl.openstorefront.core.view.OrganizationRelationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
@@ -111,6 +111,17 @@ public class OrganizationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
+		if (StringUtils.isNotBlank(filterQueryParams.getName())) {
+			Organization organizationLikeExample = new Organization();
+			organizationLikeExample.setName("%" + filterQueryParams.getName().toLowerCase() + "%");
+
+			specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(organizationLikeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
+
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
 		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
@@ -174,7 +185,7 @@ public class OrganizationResource
 		}
 
 		List<Component> components = componentExample.findByExample();
-		components = FilterEngine.filter(components);
+		components = filterEngine.filter(components);
 
 		List<OrganizationRelationView> views = new ArrayList<>();
 		for (Component component : components) {
@@ -226,28 +237,51 @@ public class OrganizationResource
 	@GET
 	@APIDescription("Gets references attached to an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrgReference.class)
+	@DataType(OrgReferenceWrapper.class)
 	@Path("/{id}/references")
-	public List<OrgReference> getReferences(
+	public Response getReferences(
 			@PathParam("id") String organizationId,
 			@QueryParam("activeOnly") boolean activeOnly,
-			@QueryParam("approvedOnly") boolean approvedOnly
+			@QueryParam("approvedOnly") boolean approvedOnly,
+			@BeanParam FilterQueryParams filterQueryParams
 	)
 	{
-		return service.getOrganizationService().findReferences(organizationId, activeOnly, approvedOnly);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+		OrgReferenceWrapper wrapper = new OrgReferenceWrapper();
+		List<OrgReference> reference = service.getOrganizationService().findReferences(organizationId, activeOnly, approvedOnly);
+		wrapper.setTotalNumber(reference.size());
+		reference = filterQueryParams.filter(reference);
+		wrapper.setData(reference);
+		wrapper.setResults(reference.size());
+		return sendSingleEntityResponse(wrapper);
 	}
 
 	@GET
 	@APIDescription("Gets references that do not have an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrgReference.class)
+	@DataType(OrgReferenceWrapper.class)
 	@Path("/references")
-	public List<OrgReference> getReferencesNoOrg(
+	public Response getReferencesNoOrg(
 			@QueryParam("activeOnly") boolean activeOnly,
-			@QueryParam("approvedOnly") boolean approvedOnly
+			@QueryParam("approvedOnly") boolean approvedOnly,
+			@BeanParam FilterQueryParams filterQueryParams
 	)
 	{
-		return service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		OrgReferenceWrapper wrapper = new OrgReferenceWrapper();
+		List<OrgReference> reference = service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+		wrapper.setTotalNumber(reference.size());
+		reference = filterQueryParams.filter(reference);
+		wrapper.setData(reference);
+		wrapper.setResults(reference.size());
+		return sendSingleEntityResponse(wrapper);
 	}
 
 	@GET
@@ -277,7 +311,7 @@ public class OrganizationResource
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
-			components = FilterEngine.filter(components);
+			components = filterEngine.filter(components);
 
 			Set<String> uniqueOrganization = new HashSet<>();
 			for (Component component : components) {

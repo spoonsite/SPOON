@@ -148,7 +148,7 @@ public class UploadAction
 			StringBuilder errorsMessages = new StringBuilder();
 			try (CSVReader reader = new CSVReader(new InputStreamReader(uploadFile.getInputStream()))) {
 
-				lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+				lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
 				List<String[]> allData = reader.readAll();
 				for (String data[] : allData) {
 					try {
@@ -219,7 +219,10 @@ public class UploadAction
 				taskRequest.setAllowMultiple(false);
 				taskRequest.setName("Uploading Attribute(s)");
 				taskRequest.setDetails("File name: " + uploadFile.getFileName());
-				service.getAsyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+				ValidationResult validationResult = service.getAsyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+				if (validationResult.valid() == false) {
+					throw new OpenStorefrontRuntimeException(validationResult.toString());
+				}
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
 			} finally {

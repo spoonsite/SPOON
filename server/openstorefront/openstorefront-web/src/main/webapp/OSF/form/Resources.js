@@ -86,7 +86,19 @@ Ext.define('OSF.form.Resources', {
 									}
 								});
 							} else {
+								
 								//upload
+								var progressMsg = Ext.MessageBox.show({
+									title: 'Resource Upload',
+									msg: 'Uploading resource please wait...',
+									width: 300,
+									height: 150,
+									closable: false,
+									progressText: 'Uploading...',
+									wait: true,
+									waitConfig: {interval: 300}
+								});
+								
 								form.submit({
 									url: 'Resource.action?UploadResource',
 									params: {
@@ -105,6 +117,7 @@ Ext.define('OSF.form.Resources', {
 										resourcePanel.resourcesGrid.getStore().reload();
 										form.reset();
 										form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+										progressMsg.hide();
 									}, 
 									failure: function(formBasic, action, opt) {
 										var errorResponse = Ext.decode(action.response.responseText);
@@ -113,6 +126,7 @@ Ext.define('OSF.form.Resources', {
 											errorObj[item.key.replace('componentResource', '')] = item.value;
 										});
 										form.markInvalid(errorObj);
+										progressMsg.hide();
 									}
 								});
 
@@ -179,13 +193,11 @@ Ext.define('OSF.form.Resources', {
 					name: 'originalLink'
 				},
 				{
-					xtype: 'filefield',
+					xtype: 'fileFieldMaxLabel',
 					itemId: 'upload',
-					fieldLabel: 'Upload Resource (Limit of 1GB)',																											
 					name: 'file',
-					listeners: {
-						change: CoreUtil.handleMaxFileLimit
-					}
+					width: '100%',
+					resourceLabel: 'Upload Resource'
 				},
 				Ext.create('OSF.component.SecurityComboBox', {						
 				}),
@@ -202,7 +214,9 @@ Ext.define('OSF.form.Resources', {
 					"resourceId",
 					"resourceType",
 					"resourceTypeDesc",
-					"description",
+					{ name: "description", mapping: function(data){
+						return data.description ? data.description : '';
+					}},
 					"link",
 					"localResourceName",
 					"mimeType",
@@ -225,7 +239,7 @@ Ext.define('OSF.form.Resources', {
 			}),					
 			columns: [
 				{ text: 'Resource Type', dataIndex: 'resourceTypeDesc',  width: 200 },
-				{ text: 'Description',  dataIndex: 'description', width: 150 },
+				{ text: 'Description', dataIndex: 'description', width: 150 },
 				{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 				{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },

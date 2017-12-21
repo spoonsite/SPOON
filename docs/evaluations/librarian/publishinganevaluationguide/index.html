@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Storefront Docs</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.31.1" />
+
+<title>Publish an Evaluation :: Storefront Docs</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/hybrid.css" rel="stylesheet">
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<link href="/css/auto-complete.css" rel="stylesheet">
+<link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<style type="text/css">
+  :root #header + #content > #left > #rlblock_left {
+    display:none !important;
+  }
+</style>
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/evaluations/librarian/publishinganevaluationguide/">
+    
+      <div id="headermain"></div>
+<nav id="sidebar" class="showVisitedLinks">
+
+
+
+<div class="highlightable">
+  <div id="header-wrapper">
+    <div id="header">
+      
+	
+  
+    <h4 style="color:white;">Open Storefront Documentation</h4>
+
+  
+
+    </div>
+        <div class="searchbox">
+		    <label for="search-by"><i class="fa fa-search"></i></label>
+		    <input data-search-input id="search-by" type="text" placeholder="Search...">
+		    <span data-search-clear=""><i class="fa fa-close"></i></span>
+		</div>
+		<script type="text/javascript" src="/js/lunr.min.js"></script>
+		<script type="text/javascript" src="/js/auto-complete.js"></script>
+		<script type="text/javascript">
+        
+            var baseurl = "\/";
+        
+		</script>
+		<script type="text/javascript" src="/js/search.js"></script>
+  </div>
+
+      <ul class="topics">
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+    <li data-nav-id="/evaluations/" class="dd-item parent">
+      <a href="/evaluations/">
+        <span>Evaluations</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+    <li data-nav-id="/evaluations/evaluator/" class="dd-item">
+      <a href="/evaluations/evaluator/">
+        <span>Evaluator</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
+        <a href="/evaluations/evaluator/storefront-evaluators-guide/">
+          <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
+        <a href="/evaluations/evaluator/faq/">
+          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/evaluations/librarian/" class="dd-item parent">
+      <a href="/evaluations/librarian/">
+        <span>Librarian</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/librarian/basic-entry-template-for-storefront/" class="dd-item">
+        <a href="/evaluations/librarian/basic-entry-template-for-storefront/">
+          <span>Basic Entry Template for Storefront</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/createevaluationguide/" class="dd-item">
+        <a href="/evaluations/librarian/createevaluationguide/">
+          <span>Create an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/publishinganevaluationguide/" class="dd-item active">
+        <a href="/evaluations/librarian/publishinganevaluationguide/">
+          <span>Publish an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/dev/" class="dd-item">
+      <a href="/dev/">
+        <span>Developer</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/dev/developersguide/" class="dd-item">
+        <a href="/dev/developersguide/">
+          <span>Developer Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/architecture/" class="dd-item">
+        <a href="/dev/architecture/">
+          <span>Architecture</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/front-end-code-standard/" class="dd-item">
+        <a href="/dev/front-end-code-standard/">
+          <span>Front-end Code Standards</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/gitworkflow/" class="dd-item">
+        <a href="/dev/gitworkflow/">
+          <span>Git Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/jira-workflow/" class="dd-item">
+        <a href="/dev/jira-workflow/">
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/testing/" class="dd-item">
+        <a href="/dev/testing/">
+          <span>Testing</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/uiguide/" class="dd-item">
+        <a href="/dev/uiguide/">
+          <span>User Interface Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/server-code-standard/" class="dd-item">
+        <a href="/dev/server-code-standard/">
+          <span>Server Code Standard</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/systemadmin/" class="dd-item">
+      <a href="/systemadmin/">
+        <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/systemadmin/setup/" class="dd-item">
+        <a href="/systemadmin/setup/">
+          <span>Setup</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/docker/" class="dd-item">
+        <a href="/systemadmin/docker/">
+          <span>Using Docker</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
+        <a href="/systemadmin/administratorguide/">
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
+        <a href="/systemadmin/versionmigrationguide/">
+          <span>Version Migration</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/user/" class="dd-item">
+      <a href="/user/">
+        <span>User</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/user/userguide/" class="dd-item">
+        <a href="/user/userguide/">
+          <span>User Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/user/quick-overview-of-submitting-a-new-component/" class="dd-item">
+        <a href="/user/quick-overview-of-submitting-a-new-component/">
+          <span>Submitting a New Component</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+
+
+
+        <section id="shortcuts">
+                <li class="" role=""><h3>More</h3><a href="https://github.com/di2e/openstorefront/tree/master" target="_blank" rel="noopener"><i class='fa fa-github'></i> Github repo</a></li>
+                <li class="" role=""><a href="https://github.com/di2e/openstorefront/releases" target="_blank" rel="noopener"><i class='fa fa-download'></i> Releases</a></li>
+        </section>
+            <a id="clear-history" class="" href="#" data-clear-history-toggle=""><i class="fa  fa-history"></i> Clear History</a>
+
+    <hr />
+    <li></li>
+    
+    </ul>
+
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>OpenStoreFront version 2.5</p>
+    <p>Documentation generated on Dec 21, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
+</div>
+    </section>
+  </div>
+</nav>
+
+
+
+<section id="body">
+<div id="overlay"></div>
+<div class="padding highlightable">
+
+  <div id="top-bar">
+    
+      
+      
+      
+    <div id="top-github-link">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/evaluations/librarian/PublishingAnEvaluationGuide.md" target="blank">
+        <i class="fa fa-code-fork"></i>
+        Edit page
+      </a>
+    </div><div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <span id="sidebar-toggle-span">
+          <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+            <i class="fa fa-bars"></i>
+          </a>
+        </span>
+        <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+        <span class="links">
+        
+
+
+
+
+
+
+
+
+
+
+ <a href='/'>OpenStoreFront Documentation</a> > <a href='/evaluations/'>Evaluations</a> > <a href='/evaluations/librarian/'>Librarian</a> > Publish an Evaluation
+
+ 
+
+ 
+
+ 
+
+   
+        </span>
+    </div>
+    
+    
+    <div class="progress">
+        <div class="wrapper">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#who-is-this-for">Who is this for?</a></li>
+<li><a href="#resolving-conflicts">Resolving Conflicts</a></li>
+<li><a href="#common-publishing-scenarios-encountered-by-librarians">Common Publishing Scenarios Encountered By Librarians</a>
+<ul>
+<li><a href="#scenario-1">Scenario 1</a></li>
+<li><a href="#scenario-2">Scenario 2</a></li>
+<li><a href="#scenario-3">Scenario 3</a></li>
+<li><a href="#scenario-4">Scenario 4</a></li>
+<li><a href="#scenario-5">Scenario 5</a></li>
+<li><a href="#scenario-6">Scenario 6</a></li>
+<li><a href="#scenario-7">Scenario 7</a></li>
+<li><a href="#scenario-8">Scenario 8</a></li>
+<li><a href="#scenario-9">Scenario 9</a></li>
+<li><a href="#scenario-10">Scenario 10</a></li>
+<li><a href="#scenario-11">Scenario 11</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+        </div>
+    </div>
+    
+
+  </div>
+
+
+<div id="body-inner">
+  
+    <h1>Publish an Evaluation</h1>
+  
+
+
+
+    
+    
+    
+    
+
+<h2 id="overview">Overview</h2>
+
+<p>This guide goes over the different types of publishing and the various scenarios a librarian may run into when publishing an entry/evaluation.</p>
+
+<p>Different types of publishing:</p>
+
+<ol>
+<li>Entry publishing - publishes the entry summary only</li>
+<li>Partial publishing - publishes all default public fields except for those that have been marked as private.</li>
+<li>Full publishing - publishes all default public fields.</li>
+</ol>
+
+<p><strong>Reminder:</strong> an entry is a single entity that can have one to many evaluations. &nbsp; An evaluation
+can include multiple sections, a checklist summary, recommendations, and questions. &nbsp; An entry can have a description, contacts, media, resources, tags,
+relationships, and dependencies</p>
+
+<h2 id="who-is-this-for">Who is this for?</h2>
+
+<p>This guide is for anyone with the role of librarian or administrator. &nbsp; If unsure of current role(s), contact an administrator.</p>
+
+<h2 id="resolving-conflicts">Resolving Conflicts</h2>
+
+<p>A librarian may run into a conflict between multiple evaluators evaluating the same entry. &nbsp; To resolve this type of conflict use the change history tool to help determine the desired content.</p>
+
+<p>If the conflict is related to the entry, view the entry&rsquo;s history by doing the following:</p>
+
+<ol>
+<li>Go to <strong>Entries</strong> under <strong>Data Management</strong></li>
+<li>Select the entry and click on the <strong>Edit</strong> button</li>
+<li>On the entry form, click on the <strong>Change History</strong> button</li>
+</ol>
+
+<p>If the conflict is related to the evaluation, view the evaluation&rsquo;s history by doing the following:</p>
+
+<ol>
+<li>Go to <strong>Evaluations</strong> under <strong>Evaluation Management</strong></li>
+<li>Select the evaluation and click on the <strong>Edit</strong> button</li>
+<li>On the evaluation form, click on the <strong>Change History</strong> button</li>
+</ol>
+
+<p>Another conflict the librarian may run into is multiple change requests. &nbsp; To resolve conflicts between change requests use the entry change request tool to edit and approve changes.</p>
+
+<ol>
+<li>Go to <strong>Entries</strong> under <strong>Data Management</strong><br /></li>
+<li>Select the entry and click on <strong>Change Requests</strong> under the <strong>Action</strong> drop-down menu<br /></li>
+<li>Use the form to compare the current state of the entry to the proposed changes in the request.</li>
+<li>Use the toolbar to approve change requests, delete change requests, edit entries, and sending messages to the submitter of a change request.</li>
+</ol>
+
+<h2 id="common-publishing-scenarios-encountered-by-librarians">Common Publishing Scenarios Encountered By Librarians</h2>
+
+<h3 id="scenario-1">Scenario 1</h3>
+
+<p>An evaluator has completed an evaluation on an approved entry. &nbsp; There are no change requests pending for the entry and all
+conflicts have been resolved.</p>
+
+<p><strong>Solution:</strong> &nbsp;Librarian publishes the evaluation. &nbsp; (Note: When an evaluation is published, the approved entry is replaced with the evaluation entry)</p>
+
+<h3 id="scenario-2">Scenario 2</h3>
+
+<p>The evaluation is complete for an approved entry, but the librarian or administrator needs to make a change to the entry.</p>
+
+<p><strong>Solution:</strong> &nbsp;Librarian or administrator will need to make the desired changes on the evaluation. &nbsp; After the changes are made and the evaluation has been saved, the evaluation can be published.</p>
+
+<h3 id="scenario-3">Scenario 3</h3>
+
+<p>An approved entry is in the process of being evaluated, but the librarian or administrator has just received a change request from the entry&rsquo;s submitter.</p>
+
+<p><strong>Solution:</strong> &nbsp;The librarian will need to handle two separate change requests: submitters&rsquo; change request and the evaluation change request.
+If the librarian decides to approve the submitter&rsquo;s change request, the librarian will also need to manually update the evaluation change request to match the approved changes.
+If the evaluation change request is approved, the system will create a new submission based on the current evaluation.</p>
+
+<h3 id="scenario-4">Scenario 4</h3>
+
+<p>The evaluator has begun the evaluation for an entry but due to lack of information can only fill in the summary section. &nbsp; There should be open dialog at this point between the librarian and the evaluator.</p>
+
+<p><strong>Solution 1:</strong> &nbsp;the librarian can publish the evaluation summary only and leave the evaluation in an unpublished state. &nbsp; If there is partial information worth hanging on to, change the evaluation&rsquo;s workflow status to <strong>On Hold</strong> (Note: <strong>DO NOT</strong> delete the evaluation).</p>
+
+<p><strong>Solution 2:</strong> &nbsp;the librarian can publish the evaluation and then delete the evaluation if the partial information is not worth saving.</p>
+
+<h3 id="scenario-5">Scenario 5</h3>
+
+<p>The evaluator has filled in the majority of the sections but was unable to install the software.</p>
+
+<p><strong>Solution:</strong> &nbsp;the librarian should mark the install section as private and then publish the evaluation.</p>
+
+<h3 id="scenario-6">Scenario 6</h3>
+
+<p>The evaluator has completed an evaluation on a pending entry.</p>
+
+<p><strong>Solution:</strong> &nbsp;the librarian should publish the evaluation. &nbsp; By publishing the evaluation, the entry is updated with the evaluation&rsquo;s information and the entry&rsquo;s status is changed from <em>Pending</em> to <em>Approved</em>.</p>
+
+<h3 id="scenario-7">Scenario 7</h3>
+
+<p>The librarian has published an evaluation for an approved entry, but the owner of an entry has submitted a change request.</p>
+
+<p><strong>Solution:</strong> &nbsp;the librarian should approve the change request and the entry will be updated.</p>
+
+<h3 id="scenario-8">Scenario 8</h3>
+
+<p>An evaluation is in progress on a pending entry, but the librarian needs to make a change to the entry.</p>
+
+<p><strong>Solution:</strong> &nbsp;the librarian should make changes to the evaluation <strong><em>NOT</em></strong> the entry.</p>
+
+<h3 id="scenario-9">Scenario 9</h3>
+
+<p>The librarian has published an evaluation for an approved entry, but the asset or component has changed and it affects the evaluation.</p>
+
+<p><strong>Solution 1:</strong> &nbsp;librarian should unpublish the the evaluation, make desired changes, and then republish.</p>
+
+<p><strong>Solution 2:</strong> &nbsp;if the changes made to the entry warrant a new evaluation, the librarian should either copy the published evaluation and edit it or create a new evaluation for the entry.</p>
+
+<h3 id="scenario-10">Scenario 10</h3>
+
+<p>An evaluation has been published for a pending entry, but the librarian needs to make changes to the entry.</p>
+
+<p><strong>Solution:</strong> &nbsp;the librarian should update the entry in under <strong><em>Data Management &rarr; Entries</em></strong> and leave the evaluation published. &nbsp;After making changes, approve the entry. &nbsp;<strong>Note:</strong> the published evaluation will not be searchable by users until the entry is approved after changes made.</p>
+
+<h3 id="scenario-11">Scenario 11</h3>
+
+<p>The librarian needs to make changes to an approved entry with an unpublished evaluation but cannot publish the evaluation because it is not ready for a full or summary publication.</p>
+
+<p><strong>Solution 1:</strong> &nbsp;the librarian should manually apply changes to both the <em>approved</em> entry and the <em>unpublished</em> evaluation.</p>
+
+<p><strong>Solution 2:</strong> &nbsp;if the evaluation&rsquo;s entry can be published, publish the summary first and then update the actual entry under <strong><em>Data Management &rarr; Entries</em></strong>.  <strong><em>Note:</em></strong>&nbsp; The next time the evaluation is edited, it will create a new change request based on the current entry.</p>
+
+
+    
+    
+          <footer class=" footline" >
+	
+</footer>
+  </div>
+</div>
+
+<div id="navigation">
+<a class="nav nav-prev" href="/evaluations/librarian/createevaluationguide/" title="Create an Evaluation"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/dev/" title="Developer" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+
+</section>
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+  <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>    
+
+<script src="/js/clipboard.min.js"></script>
+<script src="/js/featherlight.min.js"></script>
+<script src="/js/html5shiv-printshiv.min.js"></script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/js/modernizr.custom.71422.js"></script>
+<script src="/js/docdock.js"></script>
+<script src="/theme-original/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

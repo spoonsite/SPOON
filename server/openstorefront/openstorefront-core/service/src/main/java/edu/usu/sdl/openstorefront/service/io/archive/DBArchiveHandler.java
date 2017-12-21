@@ -66,7 +66,7 @@ public class DBArchiveHandler
 	public void performExport(File exportFile)
 	{
 		try {
-			DBManager.exportDB(new TFileOutputStream(exportFile));
+			DBManager.getInstance().exportDB(new TFileOutputStream(exportFile));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
@@ -101,7 +101,7 @@ public class DBArchiveHandler
 				//ignore and continue
 			}
 
-			DBManager.importDB(new TFileInputStream(importFile));
+			DBManager.getInstance().importDB(new TFileInputStream(importFile));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "DB Import failed", ex);
 			addError("Failed to import database. See log for more details.");

@@ -49,9 +49,9 @@ public class ReportFormat
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(CSV, newLookup(ReportFormat.class, CSV, "Comma-Separated Values"));
+		codeMap.put(CSV, newLookup(ReportFormat.class, CSV, "Comma-Separated Values (CSV)"));
 		codeMap.put(XLSX, newLookup(ReportFormat.class, XLSX, "Excel"));
-		codeMap.put(PDF, newLookup(ReportFormat.class, PDF, "Portable Document Format"));
+		codeMap.put(PDF, newLookup(ReportFormat.class, PDF, "Portable Document Format (PDF)"));
 		codeMap.put(HTML, newLookup(ReportFormat.class, HTML, "HTML"));
 		return codeMap;
 	}

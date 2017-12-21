@@ -223,6 +223,11 @@
 										store: Ext.create('Ext.data.Store', {
 											data: record.data.codes
 										}),
+										listConfig: {
+											getInnerTpl: function () {
+												return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+											}
+										},
 										listeners: {
 											change: function(fieldLocal, newValue, oldValue, opts) {
 												var recordLocal = fieldLocal.record;
@@ -1580,7 +1585,7 @@
 
 				var mergeComponentWin = Ext.create('Ext.window.Window', {
 					id: 'mergeComponentWin',
-					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges entry to target. <br> Meaning target will contain merged entry\'s information and merged entry will be deleted." ></i>',
+					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
 					width: '40%',
 					height: 260,
 					modal: true,
@@ -1643,29 +1648,29 @@
 								}
 							],
 							items: [
-								{
-									xtype: 'combobox',
-									name: 'mergeComponentId',
-									fieldLabel: 'Merge Entry',
-									store: maingridStore,
-									queryLocal: true,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								},
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'targetComponentId',
 									itemId: 'targetComponent',
 									allowBlank: false,
 									width: '100%',
 									margin: '0 0 0 0',
-									fieldLabel: 'Target Entry',
+									fieldLabel: 'Duplicate Entry',
 									storeConfig: {
 										url: 'api/v1/resource/components/lookup?all=true',
 										autoLoad: false
 									}
-								})
+								}),
+								{
+									xtype: 'combobox',
+									name: 'mergeComponentId',
+									fieldLabel: 'Target Entry',
+									store: maingridStore,
+									queryLocal: true,
+									valueField: 'componentId',
+									width: '100%',
+									displayField: 'name',
+									readOnly: true
+								}								
 							]
 						}
 					]

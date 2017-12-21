@@ -35,10 +35,12 @@ public interface ContentSectionService
 	 * Save media for a section This doesn't support transactions
 	 *
 	 * @param contentSectionMedia
-	 * @param in
+	 * @param fileInput
+	 * @param mimeType
+	 * @param originalFileName
 	 * @return
 	 */
-	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream in);
+	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Hard deletes the media and removes existing file.

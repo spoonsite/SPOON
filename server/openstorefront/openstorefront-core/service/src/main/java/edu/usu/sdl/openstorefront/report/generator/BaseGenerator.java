@@ -34,29 +34,37 @@ public abstract class BaseGenerator
 
 	protected Report report;
 	private boolean failed;
+	protected GeneratorOptions generatorOptions;
 
-	public BaseGenerator(Report report)
+	public BaseGenerator(GeneratorOptions generatorOptions)
 	{
-		this.report = report;
+		this.report = generatorOptions.getReport();
+		this.generatorOptions = generatorOptions;
 	}
 
-	public static BaseGenerator getGenerator(Report report)
+	public static BaseGenerator getGenerator(String reportFormat, GeneratorOptions generatorOptions)
 	{
 		BaseGenerator generator = null;
-		switch (report.getReportFormat()) {
+		switch (reportFormat) {
 			case ReportFormat.CSV:
-				generator = new CSVGenerator(report);
+				generator = new CSVGenerator(generatorOptions);
 				break;
 			case ReportFormat.HTML:
-				generator = new HtmlGenerator(report);
+				generator = new HtmlGenerator(generatorOptions);
+				break;
+			case ReportFormat.PDF:
+				generator = new HtmlToPdfGenerator(generatorOptions);
 				break;
 			default:
-				throw new UnsupportedOperationException("Unsupported report format: " + report.getReportFormat());
+				throw new UnsupportedOperationException("Unsupported report format: " + reportFormat);
+		}
+		if (generator != null) {
+			generator.init();
 		}
 		return generator;
 	}
 
-	public abstract void init();
+	protected abstract void init();
 
 	public void finish()
 	{

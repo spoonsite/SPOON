@@ -28,12 +28,12 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	modal: true,
 	width: '40%',
 	height: '50%',
-	
+
 	initComponent: function () {
 		this.callParent();
 
 		var savedSearchLinkInsertWindow = this;
-		
+
 		savedSearchLinkInsertWindow.store = Ext.create('Ext.data.Store', {
 			autoLoad: true,
 			proxy: {
@@ -46,13 +46,13 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 				}
 			}
 		});
-		
+
 		savedSearchLinkInsertWindow.grid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			columns: [
 				{text: 'Name', dataIndex: 'searchName', flex: 2},
 				{
-					text: 'Last Updated', 
+					text: 'Last Updated',
 					dataIndex: 'updateDts',
 					flex: 1,
 					xtype: 'datecolumn',
@@ -64,7 +64,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 				selectionchange: function (grid, record, eOpts) {
 					if (savedSearchLinkInsertWindow.grid.getSelectionModel().hasSelection()) {
 						var tools = savedSearchLinkInsertWindow.grid.getComponent('tools');
-						tools.getComponent('insert').enable();						
+						tools.getComponent('insert').enable();
 					}
 				}
 			},
@@ -80,13 +80,13 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 							id: 'insertLinkBtn',
 							iconCls: 'fa fa-lg fa-link icon-button-color-default',
 							disabled: true,
-							handler: function(button) {
+							handler: function (button) {
 								var window = button.up('window');
 								var editor = window.editor;
 								var record = savedSearchLinkInsertWindow.grid.getSelection()[0];
 								var link = '<a href="/openstorefront/searchResults.jsp?savedSearchId=';
 								link += record.getData().searchId;
-								link +=	'">';
+								link += '">';
 								link += record.getData().searchName;
 								link += '</a>';
 								editor.execCommand('mceInsertContent', false, link);
@@ -99,20 +99,20 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						{
 							text: 'Cancel',
 							iconCls: 'fa fa-lg fa-times icon-button-color-warning',
-							handler: function(button) {
+							handler: function (button) {
 								var window = button.up('window');
 								window.close();
 							}
 						}
 					]
 				}
-			]			
-		});		
+			]
+		});
 		savedSearchLinkInsertWindow.add(savedSearchLinkInsertWindow.grid);
 	}
-		
 
-	
+
+
 });
 
 Ext.define('OSF.component.SearchPopupResultsWindow', {
@@ -127,11 +127,11 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 	height: '50%',
 	maximizable: true,
 	layout: 'fit',
-	
+
 	initComponent: function () {
 		this.callParent();
 		var resultsWindow = this;
-		
+
 		resultsWindow.searchResultsStore = Ext.create('Ext.data.Store', {
 			pageSize: 50,
 			autoLoad: false,
@@ -149,9 +149,9 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					rootProperty: 'data',
 					totalProperty: 'totalNumber'
 				}
-			})			
+			})
 		});
-		
+
 		resultsWindow.searchResultsGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: resultsWindow.searchResultsStore,
@@ -205,7 +205,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 							text: 'View Full Results Page',
 							iconCls: 'fa fa-2x fa-search',
 							scale: 'medium',
-							handler: function() {
+							handler: function () {
 								var url = "/openstorefront/searchResults.jsp?savedSearchId=";
 								url += this.up('window').searchId;
 								if (top) {
@@ -218,15 +218,15 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					]
 				}
 			]
-		});		
+		});
 		resultsWindow.add(resultsWindow.searchResultsGrid);
-		
 
-		resultsWindow.showResults = function(savedSearchId) {
+
+		resultsWindow.showResults = function (savedSearchId) {
 			this.searchId = savedSearchId;
-			
+
 			resultsWindow.show();
-			
+
 			var url = 'api/v1/resource/systemsearches/';
 			url += savedSearchId;
 			Ext.Ajax.request({
@@ -247,7 +247,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 							offset: operation.getStart(),
 							max: operation.getLimit()
 						}, operation.getParams());
-						params = Ext.applyIf(initialParams, resultsWindow.searchResultsGrid .getStore().getProxy().getExtraParams() || {});
+						params = Ext.applyIf(initialParams, resultsWindow.searchResultsGrid.getStore().getProxy().getExtraParams() || {});
 
 						var request = new Ext.data.Request({
 							url: 'api/v1/service/search/advance',
@@ -263,7 +263,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					resultsWindow.searchResultsGrid.getStore().loadPage(1);
 				},
 				failure: function (response, opts) {
-					Ext.MessageBox.alert("Not found", "The saved search you requested was not found.", function() { });
+					Ext.MessageBox.alert("Not found", "The saved search you requested was not found.", function () { });
 				}
 			});
 
@@ -271,7 +271,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 
 		};
 	}
-		
+
 });
 
 Ext.define('OSF.component.InlineMediaRetrieverWindow', {
@@ -290,17 +290,17 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 	initComponent: function () {
 		this.callParent();
 		var inlineMediaRetrieverWindow = this;
-		
-		
-		inlineMediaRetrieverWindow.grid = Ext.create('Ext.grid.Panel', {	
+
+
+		inlineMediaRetrieverWindow.grid = Ext.create('Ext.grid.Panel', {
 			columns: [
 				{text: 'URL', dataIndex: 'url', flex: 4},
 				{
-					text: 'Status', 
+					text: 'Status',
 					dataIndex: 'result',
 					flex: 1,
 					renderer: function (value, metadata, record) {
-						if (value === 'SUCCESS') 
+						if (value === 'SUCCESS')
 							metadata.tdCls = 'alert-success';
 						else if (value === 'FAILED')
 							metadata.tdCls = 'alert-danger';
@@ -308,7 +308,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					}
 				}
 			],
-			store: {},			
+			store: {},
 			dockedItems: [
 				{
 					xtype: 'panel',
@@ -328,7 +328,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 							itemId: 'close',
 							text: 'Close',
 							disabled: true,
-							handler: function() {
+							handler: function () {
 								inlineMediaRetrieverWindow.grid.getStore().removeAll();
 								this.up('window').close();
 							}
@@ -338,71 +338,72 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 						}
 					]
 				}
-			]			
-		});		
+			]
+		});
 		inlineMediaRetrieverWindow.add(inlineMediaRetrieverWindow.grid);
 
 	},
-	
-	processMedia: function(editor) {
+
+	processMedia: function (editor) {
 		var mediaWindow = this;
-		
+
 		var store = mediaWindow.grid.getStore();
-		
+
 		// Set up some helper functions
 
-		var setIgnoreLinks = function(originalURL) {
+		var setIgnoreLinks = function (originalURL) {
 			// Add an html attribute to ignore these links.
 			var elem = document.createElement('html');
 			elem.innerHTML = editor.getContent();
 			// For now, we are only grabbing media from img tags.
 			var images = elem.getElementsByTagName('img');
-			Ext.Array.each(images, function(image) {
+			Ext.Array.each(images, function (image) {
 				if (image.src === originalURL) {
 					image.setAttribute('data-storefront-ignore', true);
 				}
 			});
 			mediaWindow.programmaticUpdate = true;
 			editor.setContent(elem.innerHTML);
-			mediaWindow.programmaticUpdate = false;			
+			mediaWindow.programmaticUpdate = false;
 		};
 
-		var checkIfDone = function() {		
+		var checkIfDone = function () {
 			var total_count = store.getCount();
 			var success_count = 0;
 			var failure_count = 0;
-			store.each(function(record, id) {
+			store.each(function (record, id) {
 				if (record) {
-					if (record.get('status') === 'OK') success_count++;
-					else if (record.get('status') === 'FAIL') failure_count++;
-				}
-				else failure_count++;
+					if (record.get('status') === 'OK')
+						success_count++;
+					else if (record.get('status') === 'FAIL')
+						failure_count++;
+				} else
+					failure_count++;
 			});
 
 			if (success_count === total_count) {
-				setTimeout(function() { 
+				setTimeout(function () {
 					store.removeAll();
 					mediaWindow.close();
 					Ext.toast("Successfully retrieved external media");
 				}, 1000);
-			}
-			else if (success_count + failure_count === total_count) {
+			} else if (success_count + failure_count === total_count) {
 				// Some failures. We must notify the user and ignore the links from now on.
-				store.each(function(record, id) {
+				store.each(function (record, id) {
 					if (record) {
 						if (record.get('status') === 'FAIL') {
 							setIgnoreLinks(record.get('url'));
 						}
 					}
 				});
-				setTimeout(function() { 
+				setTimeout(function () {
 					var msg = "Some of the external media you inserted was not able to be saved ";
 					msg += "to the Storefront. This could be because whatever media link was inserted ";
 					msg += "is not available publicly or the media was not in an expected format. <br /><br />";
 					msg += "To ensure that this media displays properly in the Storefront, you should ";
 					msg += "take note of which media failed and upload the media using the 'Media' tab on your entry.";
 
-					Ext.Msg.alert('External media failure', msg, function() {
+					Ext.Msg.alert('External media failure', msg, function () {
 						var tools = mediaWindow.grid.getComponent('tools');
 						tools.getComponent('close').enable();
 					});
@@ -410,21 +411,21 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			}
 		};
 
-		var replaceLinks = function(originalUrl, temporaryId) {
+		var replaceLinks = function (originalUrl, temporaryId) {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
 			// Because TinyMCE sends back HTML encoded entities, we need to decode to replace.
-		
+
 			var temp = document.createElement('textarea');
 			temp.innerHTML = content;
 			content = temp.value;
 			content = content.split(originalUrl).join(replacement); //replacement without regex
 			mediaWindow.programmaticUpdate = true;
 			editor.setContent(content);
-			mediaWindow.programmaticUpdate = false;			
+			mediaWindow.programmaticUpdate = false;
 		};
 
-		
+
 
 		// Now begin processing media
 
@@ -432,15 +433,16 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		// Also don't send back src urls that are blank.
 
 
-		store.each(function(record, id){
+		store.each(function (record, id) {
 			if (record) {
 				var url = record.get('url');
-				if (url.indexOf('Media.action?') > -1) { store.remove(record); }
-				if (!url) { 
-					store.remove(record); 
+				if (url.indexOf('Media.action?') > -1) {
+					store.remove(record);
 				}
-			}
-			else {
+				if (!url) {
+					store.remove(record);
+				}
+			} else {
 				store.remove(record);
 			}
 
@@ -455,11 +457,11 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		mediaWindow.show();
 
 
-		
+
 		// Send API requests, get back temporaryIDs.
-		store.each(function(record, id){
+		store.each(function (record, id) {
 			if (record) {
-				var data = { URL: record.get('url') };
+				var data = {URL: record.get('url')};
 				var url = 'api/v1/service/application/retrievemedia';
 				var method = 'POST';
 				Ext.Ajax.request({
@@ -468,7 +470,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					jsonData: data,
 					success: function (response, opts) {
 						var result = Ext.decode(response.responseText);
-						replaceLinks(data.URL, result.fileName); 
+						replaceLinks(data.URL, result.fileName);
 						record.set('status', 'OK');
 						record.set('result', 'SUCCESS');
 						store.commitChanges();
@@ -486,7 +488,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		});
 	}
 
-	
+
 });
 
 
@@ -504,38 +506,37 @@ Ext.define('OSF.component.MediaInsertWindow', {
 	height: 700,
 	mediaToShow: 'IMG',
 	mediaName: 'Image',
-	
+	isBrandingMedia: false,
 	isEditor: true,
-	
-	mediaHandler: function(link, alt, mediaType, mimeType) {
+
+	mediaHandler: function (link, alt, mediaType, mimeType) {
 
 		this.insertInlineMedia(link, alt, mediaType, mimeType);
 	},
-	
+
 	initComponent: function () {
 		this.callParent();
 
 		var mediaInsertWindow = this;
-		
+
 		if (!mediaInsertWindow.isEditor) {
-			
+
 			if (!mediaInsertWindow.mediaSelectionUrl) {
-					
+
 				mediaInsertWindow.mediaSelectionUrl = '';
 			}
-			
+
 			var apiMediaType = 'GeneralMedia';
 			var requestFieldName = 'generalMedia';
-		}
-		else {
-			
+		} else {
+
 			mediaInsertWindow.mediaSelectionUrl = mediaInsertWindow.editor.settings.mediaSelectionUrl();
-			
+
 			var apiMediaType = 'TemporaryMedia';
 			var requestFieldName = 'temporaryMedia';
 		}
-		
-		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {			
+
+		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {
 		});
 
 		mediaInsertWindow.mediaSelectionStorePreLoad = Ext.create('Ext.data.Store', {
@@ -545,16 +546,33 @@ Ext.define('OSF.component.MediaInsertWindow', {
 				url: mediaInsertWindow.mediaSelectionUrl
 			},
 			listeners: {
-				load: function(store, records, success, eOpts) {
+				load: function (store, records, success, eOpts) {
 					if (!store.getCount()) {
 						mediaInsertWindow.mediaSelection.up('panel').hide();
-						mediaInsertWindow.setHeight(220);
+						mediaInsertWindow.setHeight(270);
 					}
 					//normalize records
 					var showRecords = [];
-					Ext.Array.each(records, function(media) {
+					//unwrap if needed
+					if (records.length == 1) {
+						if (records[0].data.data) {
+
+							var newRecords = [];
+							Ext.Array.each(records[0].data.data, function (data) {
+								if (!mediaInsertWindow.isBrandingMedia || data.allowInBranding) {
+									var newRecord = Ext.create('Ext.data.Record', {
+									});
+									newRecord.set(data);
+									newRecords.push(newRecord);
+								}
+							});
+
+							records = newRecords;
+						}
+					}
+					Ext.Array.each(records, function (media) {
 						if (!media.get('link')) {
-							media.set('link', media.get('mediaLink'));
+							media.set('link', encodeURI(media.get('mediaLink')));
 						}
 						if (!media.get('caption')) {
 							media.set('caption', media.get('name'));
@@ -568,55 +586,55 @@ Ext.define('OSF.component.MediaInsertWindow', {
 								media.set('mediaTypeCode', 'AUD');
 							} else {
 								media.set('mediaTypeCode', 'OTH');
-							} 
+							}
 						}
-						
+
 						//keep based on mediatype
 						if (media.get('mediaTypeCode') === mediaInsertWindow.mediaToShow) {
 							showRecords.push(media);
 						}
-						
+
 					});
 					mediaInsertWindow.mediaSelectionStore.loadRecords(showRecords);
 				}
 			}
 		});
 
-		mediaInsertWindow.insertInlineMedia = function(link, alt, mediaType, mimeType) {
-			var content = '<img src="' + link +'" alt="' + alt + '" />';
-			
+		mediaInsertWindow.insertInlineMedia = function (link, alt, mediaType, mimeType) {
+			var content = '<img src="' + link + '" alt="' + alt + '" />';
+
 			if (mediaType && mediaType === 'VID') {
-				content = '<video width="340" height="240" controls><source src="' +link + '" type="' + (mimeType ? mimeType : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
-			} 			
+				content = '<video width="340" height="240" controls><source src="' + link + '" type="' + (mimeType ? mimeType : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
+			}
 			mediaInsertWindow.editor.execCommand('mceInsertContent', false, content);
 		};
 
-		mediaInsertWindow.mediaSelection = Ext.create('Ext.view.View', {					
+		mediaInsertWindow.mediaSelection = Ext.create('Ext.view.View', {
 			itemSelector: 'div.media-item',
 			tpl: new Ext.XTemplate(
-				'	<tpl for=".">',
-				'		<div class="detail-media-block media-item">',
-				'			<tpl if="mediaTypeCode == \'IMG\'">',
-				'				<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
-				'				<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
-				'			</tpl>',
-				'			<tpl if="mediaTypeCode == \'VID\'">',
-				'				<video height="150" controls><source src="{link}#t=10" onloadedmetadata="this.currentTime=10;" type="{mimeType}" ><i class="fa fa-5x fa-file-video-o"></i></video>',
-				'			</tpl>',
-				'		</div>',				
-				'	</tpl>'
-			),			
+					'	<tpl for=".">',
+					'		<div class="detail-media-block media-item">',
+					'			<tpl if="mediaTypeCode == \'IMG\'">',
+					'				<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
+					'				<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+					'			</tpl>',
+					'			<tpl if="mediaTypeCode == \'VID\'">',
+					'				<video height="150" controls><source src="{link}#t=10" onloadedmetadata="this.currentTime=10;" type="{mimeType}" ><i class="fa fa-5x fa-file-video-o"></i></video>',
+					'			</tpl>',
+					'		</div>',
+					'	</tpl>'
+					),
 			store: mediaInsertWindow.mediaSelectionStore,
 			listeners: {
-				itemclick: function(dataView, offRecord, item, index, e, eOpts) {	
+				itemclick: function (dataView, offRecord, item, index, e, eOpts) {
 					var record = dataView.getStore().getAt(index);
 					if (!record) {
 						record = offRecord;
 					}
-					mediaInsertWindow.mediaHandler(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'), record.get('mediaTypeCode'), record.get('mimeType'));
-					Ext.defer(function(){
+					mediaInsertWindow.mediaHandler(record.get('link'), record.get('caption') ? record.get('caption') : record.get('filename'), record.get('mediaTypeCode'), record.get('mimeType'));
+					Ext.defer(function () {
 						mediaInsertWindow.close();
-					}, 250);					
+					}, 250);
 				}
 			}
 		});
@@ -625,7 +643,6 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			region: 'north',
 			layout: 'fit',
 			width: '100%',
-			height: 150,
 			bodyStyle: 'padding: 10px;',
 			title: "Upload New " + mediaInsertWindow.mediaName,
 			items: [
@@ -637,12 +654,13 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					},
 					items: [
 						{
-							xtype: 'filefield',
+							xtype: 'fileFieldMaxLabel',
 							title: 'Upload New ' + mediaInsertWindow.mediaName,
+							resourceLabel: 'Upload Media',
 							name: 'file',
+							width: '100%',
 							allowBlank: false,
-							flex: 1,
-							fieldLabel: 'Upload an ' + mediaInsertWindow.mediaName + ' <span class="field-required" />',
+							labelAlign: 'top',
 							labelWidth: 175,
 							buttonText: 'Select ' + mediaInsertWindow.mediaName + ' File...'
 						},
@@ -651,13 +669,19 @@ Ext.define('OSF.component.MediaInsertWindow', {
 							layout: 'hbox',
 							items: [
 								{
-									xtype: 'textfield',									
+									xtype: 'textfield',
 									name: requestFieldName + '.name',
 									allowBlank: false,
 									flex: 9,
 									labelWidth: 175,
 									fieldLabel: 'Caption / Name <span class="field-required" />',
-									style: 'padding-right: 3px;'
+									labelAlign: 'top',
+									style: 'padding-right: 3px; margin-top: 30px + 1em;'
+								},
+								{
+									xtype: 'hiddenfield',
+									name: requestFieldName + '.allowInBranding',
+									value: this.isBrandingMedia
 								},
 								{
 									xtype: 'button',
@@ -666,41 +690,63 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									iconCls: 'fa fa-lg fa-upload',
 									formBind: true,
 									text: 'Upload',
-									handler: function() {
+									style: 'margin-top: 30px;',
+									handler: function () {
 										var uploadForm = this.up('form');
-																				
+
 										if (mediaInsertWindow.isEditor && mediaInsertWindow.editor.settings.mediaUploadHandler) {
 											mediaInsertWindow.editor.settings.mediaUploadHandler(uploadForm, mediaInsertWindow);
 										} else {
 											uploadForm.setLoading("Uploading...");
-										
+
 											uploadForm.submit({
 												url: 'Media.action?Upload' + apiMediaType,
 												method: 'POST',
-												success: function(form, action) { },
-												failure: function(form, action) {
-													
+												success: function (form, action) { },
+												failure: function (form, action) {
+
 													// In this case, to not up-end the
 													// server side things, technically a 
-													// failure is a potentially a sucess
+													// failure is a potentially a success
+
+													//normalize record as they can be different 													
+													var newMediafile = {
+													};
+
 													if (action.result && action.result.fileName) {
+														newMediafile.name = action.result.name;
+														newMediafile.valid = true;
+														newMediafile.mimeType = action.result.mimeType;
+													}
+
+													if (action.result &&
+															action.result.file &&
+															action.result.file.fileName) {
+
+														newMediafile.name = action.result.name;
+														newMediafile.valid = true;
+														newMediafile.mimeType = action.result.file.mimeType;
+													}
+
+													if (newMediafile.valid) {
+
 														// True success
 														uploadForm.setLoading(false);
 														var link = 'Media.action?' + apiMediaType + '&name=';
-														link += encodeURIComponent(action.result.name);
-														
+														link += encodeURIComponent(newMediafile.name);
+
 														var mediaTypeCode = mediaInsertWindow.mediaToShow;
-														if (action.result.mimeType) {
-															if (action.result.mimeType.indexOf('image') !== -1) {
+														if (newMediafile.mimeType) {
+															if (newMediafile.mimeType.indexOf('image') !== -1) {
 																mediaTypeCode = 'IMG';
-															} else if (action.result.mimeType.indexOf('video') !== -1) {
+															} else if (newMediafile.mimeType.indexOf('video') !== -1) {
 																mediaTypeCode = 'VID';
-															} else if (action.result.mimeType.indexOf('audio') !== -1) {
+															} else if (newMediafile.mimeType.indexOf('audio') !== -1) {
 																mediaTypeCode = 'AUD';
-															} 
+															}
 														}
-														
-														mediaInsertWindow.mediaHandler(link, action.result.name, mediaTypeCode, action.result.mimeType);
+
+														mediaInsertWindow.mediaHandler(link, newMediafile.name, mediaTypeCode, newMediafile.mimeType, action.result, newMediafile);
 														uploadForm.up('window').close();
 													} else {
 														// True failure
@@ -709,7 +755,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 															title: 'Upload Failed',
 															msg: 'The file upload was unsuccessful.',
 															buttons: Ext.Msg.OK
-														});		
+														});
 													}
 												}
 											});
@@ -720,79 +766,99 @@ Ext.define('OSF.component.MediaInsertWindow', {
 						}
 					]
 				}
-			] 
+			]
 		});
-		
+
 		mediaInsertWindow.add(mediaInsertWindow.uploadImagePanel);
 		mediaInsertWindow.add(Ext.create('Ext.panel.Panel', {
 			title: 'Pick an Existing ' + mediaInsertWindow.mediaName,
 			region: 'center',
 			autoScroll: true,
-			bodyStyle: 'padding: 10px;',			
+			bodyStyle: 'padding: 10px;',
 			items: mediaInsertWindow.mediaSelection
 		}));
 	}
-		
 
-	
+
+
 });
 
 MediaUtil = {
-	
-	generalMediaUrl: function(){
+
+	generalMediaUrl: function () {
 		return 'api/v1/resource/generalmedia';
 	},
-	generalMediaUnloadHandler: function(uploadForm, mediaInsertWindow){
+	generalMediaUnloadHandler: function (uploadForm, mediaInsertWindow) {
 		//check name 
 		var name = uploadForm.getValues()['temporaryMedia.name'];
-		uploadForm.setLoading("Checking Name...");	
+		uploadForm.setLoading("Checking Name...");
 		Ext.Ajax.request({
 			url: 'api/v1/resource/generalmedia/' + encodeURIComponent(name) + '/available',
-			callback: function(){
+			callback: function () {
 				uploadForm.setLoading(false);
 			},
-			success: function(response, opts) {
+			success: function (response, opts) {
 				if (response.responseText === 'true') {
-					uploadForm.setLoading("Uploading Media...");																					
+					uploadForm.setLoading("Uploading Media...");
+
+					var successHandler = function () {
+						var link = "Media.action?GeneralMedia&name=";
+						link += encodeURIComponent(name);
+
+						mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');
+						mediaInsertWindow.close();
+					};
+
 					uploadForm.submit({
 						url: 'Media.action?UploadGeneralMedia',
 						method: 'POST',
 						params: {
-							'generalMedia.name': name 
+							'generalMedia.name': name
 						},
-						callback: function() {
+						callback: function () {
 							uploadForm.setLoading(false);
 						},
-						success: function(form, action) {
-							var link = "Media.action?GeneralMedia&name=";
-								link += encodeURIComponent(name);
-
-							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');													
-							mediaInsertWindow.close();
+						success: function (form, action) {
+							successHandler();
 						},
-						failure: function(form, action){
-							Ext.Msg.show({
-								title: 'Upload Failed',
-								msg: 'The file upload was not successful.',
-								icon: Ext.Msg.ERROR,
-								buttons: Ext.Msg.OK
-							});	
+						failure: function (form, action) {
+
+							//it's sends back a record with out a success indicator which trips the fail
+							var success = false;
+							try {
+								var results = Ext.decode(action.response.responseText);
+								if (results.file) {
+									successHandler();
+									success = true;
+								}
+							} catch (e) {
+								console.log(e);
+							}
+
+							if (!success) {
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was not successful.',
+									icon: Ext.Msg.ERROR,
+									buttons: Ext.Msg.OK
+								});
+							}
 						}
-					});	
+					});
 				} else {
 					Ext.Msg.show({
-						title:'Check Name',
+						title: 'Check Name',
 						message: 'Name must be unique to the general Media<br>See Data Management->Media',
 						buttons: Ext.Msg.OK,
 						icon: Ext.Msg.ERROR,
-						fn: function(btn) {															
+						fn: function (btn) {
 						}
 					});
 				}
 			}
 		});
 	}
-	
+
 };
 
 Ext.define('OSF.component.FullScreenEditor', {
@@ -800,7 +866,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 	alias: 'osf.widget.FullScreenEditor',
 	layout: 'fit',
 	closeAction: 'destroy',
-	maximizable: true, 
+	maximizable: true,
 	maximized: true,
 	alwaysOnTop: true,
 	modal: true,
@@ -818,34 +884,34 @@ Ext.define('OSF.component.FullScreenEditor', {
 					text: 'Close',
 					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 					scale: 'medium',
-					handler: function() {
+					handler: function () {
 						this.up('window').close();
 					}
 				},
 				{
 					xtype: 'tbfill'
-				}				
+				}
 			]
 		}
 	],
 	initComponent: function () {
 		this.callParent();
-		
+
 		var fswin = this;
-		
+
 		var plugins = '';
 		if (fswin.editor.settings.plugins) {
 			var pluginGroup = fswin.editor.settings.plugins.split(' ');
 			var restOfPlugins = [];
-			Ext.Array.each(pluginGroup, function(plugin){
+			Ext.Array.each(pluginGroup, function (plugin) {
 				if (plugin !== 'osffullscreen') {
 					restOfPlugins.push(plugin);
 				}
 			});
-			
+
 			plugins = restOfPlugins.join(' ');
 		}
-		
+
 		fswin.fsEditor = Ext.create('Ext.ux.form.TinyMCETextArea', {
 			value: fswin.editor.getContent(),
 			tinyMCEConfig: {
@@ -858,19 +924,20 @@ Ext.define('OSF.component.FullScreenEditor', {
 				extended_valid_elements: fswin.editor.settings.extended_valid_elements,
 				table_default_styles: fswin.editor.settings.table_default_styles,
 				mediaSelectionUrl: fswin.editor.settings.mediaSelectionUrl,
-				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler
+				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler,
+				paste_data_images: true
 			}
 		});
-		
-		fswin.on('beforeclose', function(panel, eOts) {
+
+		fswin.on('beforeclose', function (panel, eOts) {
 			fswin.editor.setContent(fswin.fsEditor.getValue());
 		});
-		
-		fswin.fsEditor.on('change', function(panel, newValue, oldValue) {
+
+		fswin.fsEditor.on('change', function (panel, newValue, oldValue) {
 			fswin.editor.setContent(fswin.fsEditor.getValue());
-		});		
-		
+		});
+
 		fswin.add(fswin.fsEditor);
 	}
-	
+
 });

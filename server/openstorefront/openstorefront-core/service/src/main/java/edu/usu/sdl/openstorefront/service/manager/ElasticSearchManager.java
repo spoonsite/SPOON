@@ -29,43 +29,53 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.SearchServer;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -74,7 +84,7 @@ import org.elasticsearch.search.sort.SortOrder;
  * @author dshurtleff
  */
 public class ElasticSearchManager
-		implements Initializable, SearchServer
+		implements Initializable, SearchServer, PooledResourceManager<ElasticSearchClient>
 {
 
 	private static final Logger LOG = Logger.getLogger(ElasticSearchManager.class.getName());
@@ -84,54 +94,140 @@ public class ElasticSearchManager
 	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
-	private static Client client;
-	private static AtomicBoolean checkIndex = new AtomicBoolean(true);
+	private static AtomicBoolean indexCreated = new AtomicBoolean(false);
+
+	private BlockingQueue<ElasticSearchClient> clientPool;
+	private int maxPoolSize;
+	private static ElasticSearchManager poolInstance;
+
+	public ElasticSearchManager()
+	{
+	}
+
+	public ElasticSearchManager(BlockingQueue<ElasticSearchClient> clientPool, int maxPoolSize)
+	{
+		this.clientPool = clientPool;
+		this.maxPoolSize = maxPoolSize;
+	}
+
+	public static ElasticSearchManager getPoolInstance()
+	{
+		return poolInstance;
+	}
 
 	public static void init()
 	{
 		String host = PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
-		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9300"));
+		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
+		LOG.log(Level.CONFIG, MessageFormat.format("Setup to Connect to ElasticSearch at {0}", host + ":" + port));
 
-		try {
-			LOG.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
+		LOG.log(Level.FINE, "Initializing Elasticsearch Pool");
 
-			client = TransportClient.builder().build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, "40");
+		int maxPoolSize = Convert.toInteger(poolSize);
+		BlockingQueue<ElasticSearchClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
+		poolInstance = new ElasticSearchManager(clientPool, maxPoolSize);
 
-		} catch (UnknownHostException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
+		LOG.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
+
+		for (int i = 0; i < maxPoolSize; i++) {
+			ElasticSearchClient client = new ElasticSearchClient(host, port, poolInstance);
+			clientPool.offer(client);
 		}
 
 	}
 
-	public static Client getClient()
+	/**
+	 * Close client when done. This will create a new client for each call.
+	 *
+	 * @return a new client
+	 */
+	public ElasticSearchClient getClient()
 	{
-		if (checkIndex.get() && client != null) {
-			IndicesExistsResponse response = client.admin().indices()
-					.exists(new IndicesExistsRequest(INDEX))
-					.actionGet();
-
-			if (response.isExists() == false) {
-				CreateIndexResponse createIndexResponse = client.admin().indices()
-						.create(new CreateIndexRequest(INDEX))
-						.actionGet();
-				if (createIndexResponse.isAcknowledged()) {
-					LOG.log(Level.INFO, "Search index: " + INDEX + " was created.");
-				} else {
-					LOG.log(Level.WARNING, "Search index: " + INDEX + " FAILED to create. Add a record to create");
-				}
-			}
-
-			checkIndex.set(true);
-		}
-
+		checkSearchIndexCreation();
+		ElasticSearchClient client = justGetClient();
 		return client;
+	}
+
+	private ElasticSearchClient justGetClient()
+	{
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
+		try {
+			ElasticSearchClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
+			if (client == null) {
+				throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection in time.  No resource available.", "Adjust confluence pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
+			}
+			return client;
+		} catch (InterruptedException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
+		}
+	}
+
+	private void checkSearchIndexCreation()
+	{
+		//	Check if index already exists...
+		//	As of now (Elasticsearch 5.6.3), the best way to check if an index exists is to try and create it!
+		//	... then catch the error if thrown... High/Low-level REST client doesn't support checking the existence indices.
+		//		per: https://discuss.elastic.co/t/high-level-rest-client-admin-api/100461
+		if (!indexCreated.get()) {
+			try (ElasticSearchClient client = justGetClient();) {
+
+				XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
+				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
+
+				//	Perform a request attempting to create an index
+				Response response = client
+						.getInstance()
+						.getLowLevelClient()
+						.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
+
+				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
+				indexCreated.set(true);
+
+			} catch (ResponseException e) {
+				//	Index was already created...
+				indexCreated.set(true);
+			} catch (IOException e) {
+				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			}
+		}
+	}
+
+	@Override
+	public void releaseClient(ElasticSearchClient client)
+	{
+		clientPool.offer(client);
+	}
+
+	@Override
+	public int getMaxConnections()
+	{
+		return maxPoolSize;
+	}
+
+	@Override
+	public int getAvailableConnections()
+	{
+		return maxPoolSize - clientPool.remainingCapacity();
+	}
+
+	@Override
+	public void shutdownPool()
+	{
+		for (ElasticSearchClient client : clientPool) {
+			client.close();
+		}
+		clientPool.clear();
 	}
 
 	public static void cleanup()
 	{
-		if (client != null) {
-			client.close();
+		if (poolInstance != null) {
+			if (poolInstance.getAvailableConnections() != poolInstance.getMaxConnections()) {
+				LOG.log(Level.WARNING, MessageFormat.format("{0} elasticsearch connections were in process. ", poolInstance.getAvailableConnections()));
+			}
+			LOG.log(Level.FINE, "Stopping pool.");
+			poolInstance.shutdownPool();
 		}
 	}
 
@@ -253,10 +349,10 @@ public class ElasticSearchManager
 		// Check For Remaining Query Items
 		if (queryString.length() > 0) {
 
-			String actualQuery = "";
-			String allUpperQuery = "";
-			String allLowerQuery = "";
-			String properCaseQuery = "";
+			String actualQuery;
+			String allUpperQuery;
+			String allLowerQuery;
+			String properCaseQuery;
 
 			if (isHyphenatedWithoutSpaces(queryString.toString())) {
 				// Create custom queries
@@ -305,16 +401,45 @@ public class ElasticSearchManager
 			esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
+				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
-		SearchResponse response = ElasticSearchManager.getClient()
-				.prepareSearch(INDEX)
-				.setQuery(esQuery)
-				.setFrom(filter.getOffset())
-				.setSize(maxSearchResults)
-				.addSort(sort)
-				.execute()
-				.actionGet();
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+				.query(esQuery)
+				.from(filter.getOffset())
+				.size(maxSearchResults)
+				.sort(sort);
+		SearchRequest searchRequest = new SearchRequest(INDEX)
+				.source(searchSourceBuilder);
+
+		try {
+			performIndexSearch(searchRequest, indexSearchResult);
+		} catch (IOException ex) {
+			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ElasticsearchStatusException e) {
+
+			//	if a status exception occurs, it is likely the fielddata == false for description.
+			//		Thus, update the mapping.
+			updateMapping();
+
+			//	try to perform the index search one more time...
+			try {
+				performIndexSearch(searchRequest, indexSearchResult);
+			} catch (IOException | ElasticsearchStatusException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
+			}
+		}
+
+		return indexSearchResult;
+	}
+
+	private void performIndexSearch(SearchRequest searchRequest, IndexSearchResult indexSearchResult) throws IOException, ElasticsearchStatusException
+	{
+		// perform search
+		SearchResponse response;
+		try (ElasticSearchClient client = poolInstance.getClient()) {
+			response = client.getInstance().search(searchRequest);
+		}
 
 		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
@@ -330,7 +455,7 @@ public class ElasticSearchManager
 					indexSearchResult.getSearchViews().add(view);
 					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
 				} else {
-					LOG.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));
+					LOG.log(Level.FINER, MessageFormat.format("Component is no longer approved and active.  Removing index.  {0}", view.getComponentId()));
 					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults() - 1);
 					deleteById(view.getComponentId());
 				}
@@ -339,8 +464,6 @@ public class ElasticSearchManager
 			}
 		}
 		indexSearchResult.applyDataFilter();
-
-		return indexSearchResult;
 	}
 
 	protected String toProperCase(String query)
@@ -358,7 +481,7 @@ public class ElasticSearchManager
 				capNext = (DELIMITERS.indexOf((int) c) >= 0);
 			} else {
 				searchQuery.append(c);
-				capNext = (DELIMITERS.indexOf((int) c) >= 0);;
+				capNext = (DELIMITERS.indexOf((int) c) >= 0);
 			}
 		}
 		return searchQuery.toString();
@@ -392,6 +515,7 @@ public class ElasticSearchManager
 		List<SearchSuggestion> searchSuggestions = new ArrayList<>();
 
 		FilterQueryParams filter = FilterQueryParams.defaultFilter();
+		filter.setSortField(ComponentSearchView.FIELD_NAME);
 
 		//ignore case
 		query = "*" + query.toLowerCase() + "*";
@@ -473,7 +597,7 @@ public class ElasticSearchManager
 
 		if (!components.isEmpty()) {
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-			BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
+			BulkRequest bulkRequest = new BulkRequest();
 
 			//pull attribute and map
 			ComponentAttribute componentAttribute = new ComponentAttribute();
@@ -501,24 +625,29 @@ public class ElasticSearchManager
 				componentTags = tagMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
-
 				try {
-					bulkRequest.add(ElasticSearchManager.getClient().prepareIndex(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
-							.setSource(objectMapper.writeValueAsBytes(componentSearchView)));
+					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
 				} catch (JsonProcessingException ex) {
-					LOG.log(Level.SEVERE, MessageFormat.format("Unable to index component: {0}  Component will be missing from search.", componentSearchView.getName()));
+					LOG.log(Level.SEVERE, null, ex);
 				}
 			}
 
-			BulkResponse bulkResponse = bulkRequest.get();
-			if (bulkResponse.hasFailures()) {
-				bulkResponse.forEach(response -> {
-					if (StringUtils.isNotBlank(response.getFailureMessage())) {
-						LOG.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
-					}
-				});
-			} else {
-				LOG.log(Level.FINE, "Index components successfully");
+			BulkResponse bulkResponse;
+			try (ElasticSearchClient client = poolInstance.getClient()) {
+				bulkResponse = client.getInstance().bulk(bulkRequest);
+
+				if (bulkResponse.hasFailures()) {
+					bulkResponse.forEach(response -> {
+						if (StringUtils.isNotBlank(response.getFailureMessage())) {
+							LOG.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
+						}
+					});
+				} else {
+					LOG.log(Level.FINE, "Index components successfully");
+				}
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, null, ex);
 			}
 		}
 	}
@@ -526,8 +655,14 @@ public class ElasticSearchManager
 	@Override
 	public void deleteById(String id)
 	{
-		DeleteResponse response = client.prepareDelete(INDEX, INDEX_TYPE, id).get();
-		LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.isFound()));
+		DeleteRequest deleteRequest = new DeleteRequest(INDEX, INDEX_TYPE, id);
+		DeleteResponse response;
+		try (ElasticSearchClient client = poolInstance.getClient()) {
+			response = client.getInstance().delete(deleteRequest);
+			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
 	}
 
 	@Override
@@ -538,34 +673,57 @@ public class ElasticSearchManager
 		int max = 1000;
 		long total = max;
 
+		int maxRetries = 5;
+		int retries = 0;
+
 		while (start < total) {
-			SearchResponse response = ElasticSearchManager.getClient()
-					.prepareSearch()
-					.setQuery(QueryBuilders.matchAllQuery())
-					.setFrom(start)
-					.setSize(max)
-					.execute()
-					.actionGet();
 
-			SearchHits searchHits = response.getHits();
-			if (searchHits.getTotalHits() > 0) {
-				//bulk delete results
-				BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
-				searchHits.forEach(hit -> {
-					bulkRequest.add(ElasticSearchManager.getClient().prepareDelete(INDEX, INDEX_TYPE, hit.getId()));
-				});
+			//	Create the search request
+			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
+					.query(QueryBuilders.matchAllQuery())
+					.from(start)
+					.size(max);
+			SearchRequest searchRequest = new SearchRequest(INDEX)
+					.types(INDEX_TYPE)
+					.source(sourceBuilder);
 
-				BulkResponse bulkResponse = bulkRequest.get();
-				if (bulkResponse.hasFailures()) {
-					bulkResponse.forEach(br -> {
-						if (StringUtils.isNotBlank(br.getFailureMessage())) {
-							LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-						}
+			SearchResponse response;
+			try (ElasticSearchClient client = poolInstance.getClient()) {
+				response = client.getInstance().search(searchRequest);
+
+				SearchHits searchHits = response.getHits();
+				BulkRequest bulkRequest = new BulkRequest();
+				if (searchHits.getTotalHits() > 0) {
+					//bulk delete results
+					searchHits.forEach(hit -> {
+						bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, hit.getId()).source(XContentType.JSON, "componentId", hit.getId()));
+						deleteById(hit.getId());
 					});
+
+					//	Process the bulk request (ensure there were no failures)
+					BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest);
+					if (bulkResponse.hasFailures()) {
+						bulkResponse.forEach(br -> {
+							if (StringUtils.isNotBlank(br.getFailureMessage())) {
+								LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
+							}
+						});
+					}
 				}
+				start += searchHits.getHits().length;
+				total = searchHits.getTotalHits();
+			} catch (ElasticsearchStatusException ex) {
+				LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
+				LOG.log(Level.FINER, null, ex);
+				indexCreated.set(false);
+
+				retries++;
+				if (retries == maxRetries) {
+					throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
+				}
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, null, ex);
 			}
-			start += searchHits.getHits().length;
-			total = searchHits.getTotalHits();
 		}
 	}
 
@@ -585,12 +743,56 @@ public class ElasticSearchManager
 	{
 		deleteAll();
 		saveAll();
+		updateMapping();
 	}
 
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
+	}
+
+	private static void updateMapping()
+	{
+		// Update description field to use fielddata=true
+		//	Here, we must update all types
+		try (ElasticSearchClient client = poolInstance.getClient()) {
+
+			List<String> fieldsToUpdate = Arrays.asList(
+					ComponentSearchView.FIELD_NAME,
+					ComponentSearchView.FIELD_DESCRIPTION
+			);
+
+			for (String field : fieldsToUpdate) {
+
+				XContentBuilder source = JsonXContent
+						.contentBuilder()
+						.startObject()
+						.startObject("properties")
+						.startObject(field)
+						.field("type", "text")
+						.startObject("fields")
+						.startObject("keyword")
+						.field("type", "keyword")
+						.endObject()
+						.endObject()
+						.field("fielddata", true)
+						.endObject()
+						.endObject()
+						.endObject();
+
+				//	Use low-level REST client to perform re-mapping
+				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
+
+				//	Perform a PUT request to update the description mapping
+				client.getInstance()
+						.getLowLevelClient()
+						.performRequest("PUT", "/" + INDEX + "/_mapping/" + INDEX_TYPE + "?update_all_types", Collections.emptyMap(), entity);
+			}
+
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
 	}
 
 }

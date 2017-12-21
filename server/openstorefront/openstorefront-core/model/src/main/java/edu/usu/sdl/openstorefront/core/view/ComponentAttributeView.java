@@ -36,6 +36,8 @@ public class ComponentAttributeView
 		extends StandardEntityView
 {
 
+	public static final String TYPE_DESCRIPTION_FIELD = "typeDescription";
+
 	private String type;
 	private String code;
 	private String typeDescription;

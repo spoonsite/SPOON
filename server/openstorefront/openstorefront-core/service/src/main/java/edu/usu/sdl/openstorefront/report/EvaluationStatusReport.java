@@ -16,18 +16,23 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.EvaluationStatusReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.EvaluationStatusReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,43 +43,127 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class EvaluationStatusReport
-	extends BaseReport
+		extends BaseReport
 {
+
 	private List<Evaluation> evaluations = new ArrayList<>();
 
 	public EvaluationStatusReport(Report report)
 	{
 		super(report);
 	}
-	
+
 	@Override
-	protected void gatherData()
+	protected EvaluationStatusReportModel gatherData()
 	{
 		Evaluation evaluationExample = new Evaluation();
 		evaluationExample.setActiveStatus(Evaluation.ACTIVE_STATUS);
 		evaluationExample.setPublished(Boolean.FALSE);
-		
+
 		if (StringUtils.isNotBlank(report.getReportOption().getAssignedUser())) {
 			evaluationExample.setAssignedUser(report.getReportOption().getAssignedUser());
 		}
-		
+
 		if (StringUtils.isNotBlank(report.getReportOption().getAssignedGroup())) {
 			evaluationExample.setAssignedGroup(report.getReportOption().getAssignedGroup());
-		}		
+		}
 		evaluations = evaluationExample.findByExample();
-		evaluations = FilterEngine.filter(evaluations);
-		
+		evaluations = filterEngine.filter(evaluations);
+
+		EvaluationStatusReportModel reportModel = new EvaluationStatusReportModel();
+		reportModel.setTitle("Evaluation Status Report");
+
+		EvaluationTemplate evaluationTemplateExample = new EvaluationTemplate();
+		List<EvaluationTemplate> evaluationTemplates = evaluationTemplateExample.findByExample();
+		Map<String, List<EvaluationTemplate>> templateMap = evaluationTemplates.stream()
+				.collect(Collectors.groupingBy(EvaluationTemplate::getTemplateId));
+
+		List<EvaluationView> views = EvaluationView.toView(evaluations);
+		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, EvaluationView.FIELD_COMPONENT_NAME));
+
+		for (EvaluationView view : views) {
+			EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(view.getEvaluationId());
+
+			String templateName = OpenStorefrontConstant.NOT_AVAILABLE;
+			if (templateMap.containsKey(evaluationAll.getEvaluation().getTemplateId())) {
+				templateName = templateMap.get(evaluationAll.getEvaluation().getTemplateId()).get(0).getName();
+			}
+
+			EvaluationStatusReportLineModel lineModel = new EvaluationStatusReportLineModel();
+
+			lineModel.setEntryName(view.getComponentName());
+			lineModel.setAssignedGroup(evaluationAll.getEvaluation().getAssignedGroup());
+			lineModel.setAssignedUser(evaluationAll.getEvaluation().getAssignedUser());
+			lineModel.setEvaluationTemplate(templateName);
+			lineModel.setEvaluationVersion(evaluationAll.getEvaluation().getVersion());
+			lineModel.setPercentageComplete(evaluationAll.calcProgress());
+			lineModel.setWorkflowStatus(TranslateUtil.translate(WorkflowStatus.class, evaluationAll.getEvaluation().getWorkflowStatus()));
+
+			reportModel.getData().add(lineModel);
+		}
+
+		return reportModel;
 	}
 
 	@Override
-	protected void writeReport()
-	{		
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (EvaluationStatusReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (EvaluationStatusReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, EvaluationStatusReportModel reportModel)
+	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-		
-		cvsGenerator.addLine("Evaluation Status Report", sdf.format(TimeUtil.currentDate()));
+
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
 		cvsGenerator.addLine("");
 		cvsGenerator.addLine(
-				"Entry Name",				
+				"Entry Name",
 				"Evaluation Version",
 				"Evaluation Template",
 				"Assigned Group",
@@ -82,34 +171,21 @@ public class EvaluationStatusReport
 				"Workflow Status",
 				"Percentage Complete"
 		);
-		
-		EvaluationTemplate evaluationTemplateExample = new EvaluationTemplate();
-		List<EvaluationTemplate> evaluationTemplates = evaluationTemplateExample.findByExample();
-		Map<String, List<EvaluationTemplate>> templateMap = evaluationTemplates.stream()
-																		.collect(Collectors.groupingBy(EvaluationTemplate::getTemplateId));
-		
-		List<EvaluationView> views = EvaluationView.toView(evaluations);
-		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, EvaluationView.FIELD_COMPONENT_NAME));
-		
-		for (EvaluationView view : views) {
-			EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(view.getEvaluationId());
-						
-			String templateName = OpenStorefrontConstant.NOT_AVAILABLE;
-			if (templateMap.containsKey(evaluationAll.getEvaluation().getTemplateId())) {
-				templateName = templateMap.get(evaluationAll.getEvaluation().getTemplateId()).get(0).getName();
-			}
-						
+
+		for (EvaluationStatusReportLineModel lineModel : reportModel.getData()) {
+
 			cvsGenerator.addLine(
-					view.getComponentName(),
-					evaluationAll.getEvaluation().getVersion(),
-					templateName,
-					evaluationAll.getEvaluation().getAssignedGroup(),
-					evaluationAll.getEvaluation().getAssignedUser(),
-					TranslateUtil.translate(WorkflowStatus.class, evaluationAll.getEvaluation().getWorkflowStatus()),
-					evaluationAll.calcProgress().toPlainString() + "%"
+					lineModel.getEntryName(),
+					lineModel.getEvaluationVersion(),
+					lineModel.getEvaluationTemplate(),
+					lineModel.getAssignedGroup(),
+					lineModel.getAssignedUser(),
+					lineModel.getWorkflowStatus(),
+					lineModel.getPercentageComplete().toPlainString() + "%"
 			);
+
 		}
-	
+
 	}
-	
+
 }

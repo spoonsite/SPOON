@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -31,6 +32,8 @@ public abstract class BaseResource
 {
 
 	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
+
+	protected final FilterEngine filterEngine = new FilterEngine();
 
 	protected Response sendSingleEntityResponse(Object entity)
 	{

@@ -41,8 +41,7 @@ public class HTMLSanitizer
 			return fieldData;
 		} else {
 			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)
-					.addTags(
-							"a", "base", "b", "blockquote", "br", "caption", "cite", "code", "col",
+					.addTags("a", "base", "b", "blockquote", "br", "caption", "cite", "code", "col",
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
@@ -64,9 +63,7 @@ public class HTMLSanitizer
 					.addAttributes("q", "cite")
 					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor", "class")
 					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width", "class")
-					.addAttributes(
-							"th", "abbr", "axis", "colspan", "rowspan", "scope",
-							"width", "class")
+					.addAttributes("th", "abbr", "axis", "colspan", "rowspan", "scope", "width", "class")
 					.addAttributes("tr", "class")
 					.addAttributes("ul", "type")
 					//.addProtocols("a", "href", "ftp", "http", "https", "mailto")
@@ -80,7 +77,14 @@ public class HTMLSanitizer
 					.addAttributes(":all", "style")
 					.addEnforcedAttribute("a", "rel", "nofollow")
 			);
-			return removeBadStyles(safe);
+			safe = removeBadStyles(safe);
+			// this is a hidden white space "Line Seperator" not an empty string
+			// for information on Line Seperator see http://www.fileformat.info/info/unicode/char/2028/index.htm
+			// "line separators basically correspond to HTML <BR>" http://unicode.org/versions/Unicode5.2.0/ch05.pdf pg. 147
+
+			String lineSeparator = Character.toString((char) 0x2028);
+			safe = safe.replace(lineSeparator, "<br>");
+			return safe;
 		}
 	}
 

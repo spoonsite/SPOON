@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Storefront Docs</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.31.1" />
+
+<title>Setup :: Storefront Docs</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/hybrid.css" rel="stylesheet">
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<link href="/css/auto-complete.css" rel="stylesheet">
+<link href="/theme-original/style.css" rel="stylesheet">
+
+  <link href="/theme-original/variant-blue.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<style type="text/css">
+  :root #header + #content > #left > #rlblock_left {
+    display:none !important;
+  }
+</style>
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/systemadmin/setup/">
+    
+      <div id="headermain"></div>
+<nav id="sidebar" class="showVisitedLinks">
+
+
+
+<div class="highlightable">
+  <div id="header-wrapper">
+    <div id="header">
+      
+	
+  
+    <h4 style="color:white;">Open Storefront Documentation</h4>
+
+  
+
+    </div>
+        <div class="searchbox">
+		    <label for="search-by"><i class="fa fa-search"></i></label>
+		    <input data-search-input id="search-by" type="text" placeholder="Search...">
+		    <span data-search-clear=""><i class="fa fa-close"></i></span>
+		</div>
+		<script type="text/javascript" src="/js/lunr.min.js"></script>
+		<script type="text/javascript" src="/js/auto-complete.js"></script>
+		<script type="text/javascript">
+        
+            var baseurl = "\/";
+        
+		</script>
+		<script type="text/javascript" src="/js/search.js"></script>
+  </div>
+
+      <ul class="topics">
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+    <li data-nav-id="/evaluations/" class="dd-item">
+      <a href="/evaluations/">
+        <span>Evaluations</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+    <li data-nav-id="/evaluations/evaluator/" class="dd-item">
+      <a href="/evaluations/evaluator/">
+        <span>Evaluator</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
+        <a href="/evaluations/evaluator/storefront-evaluators-guide/">
+          <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
+        <a href="/evaluations/evaluator/faq/">
+          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/evaluations/librarian/" class="dd-item">
+      <a href="/evaluations/librarian/">
+        <span>Librarian</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/librarian/basic-entry-template-for-storefront/" class="dd-item">
+        <a href="/evaluations/librarian/basic-entry-template-for-storefront/">
+          <span>Basic Entry Template for Storefront</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/createevaluationguide/" class="dd-item">
+        <a href="/evaluations/librarian/createevaluationguide/">
+          <span>Create an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/publishinganevaluationguide/" class="dd-item">
+        <a href="/evaluations/librarian/publishinganevaluationguide/">
+          <span>Publish an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/dev/" class="dd-item">
+      <a href="/dev/">
+        <span>Developer</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/dev/developersguide/" class="dd-item">
+        <a href="/dev/developersguide/">
+          <span>Developer Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/architecture/" class="dd-item">
+        <a href="/dev/architecture/">
+          <span>Architecture</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/front-end-code-standard/" class="dd-item">
+        <a href="/dev/front-end-code-standard/">
+          <span>Front-end Code Standards</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/gitworkflow/" class="dd-item">
+        <a href="/dev/gitworkflow/">
+          <span>Git Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/jira-workflow/" class="dd-item">
+        <a href="/dev/jira-workflow/">
+          <span>Jira Issue Tracking Workflow</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/testing/" class="dd-item">
+        <a href="/dev/testing/">
+          <span>Testing</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/uiguide/" class="dd-item">
+        <a href="/dev/uiguide/">
+          <span>User Interface Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/server-code-standard/" class="dd-item">
+        <a href="/dev/server-code-standard/">
+          <span>Server Code Standard</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/systemadmin/" class="dd-item parent">
+      <a href="/systemadmin/">
+        <span>System Admin</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/systemadmin/setup/" class="dd-item active">
+        <a href="/systemadmin/setup/">
+          <span>Setup</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/docker/" class="dd-item">
+        <a href="/systemadmin/docker/">
+          <span>Using Docker</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
+        <a href="/systemadmin/administratorguide/">
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
+        <a href="/systemadmin/versionmigrationguide/">
+          <span>Version Migration</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/user/" class="dd-item">
+      <a href="/user/">
+        <span>User</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/user/userguide/" class="dd-item">
+        <a href="/user/userguide/">
+          <span>User Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/user/quick-overview-of-submitting-a-new-component/" class="dd-item">
+        <a href="/user/quick-overview-of-submitting-a-new-component/">
+          <span>Submitting a New Component</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+
+
+
+        <section id="shortcuts">
+                <li class="" role=""><h3>More</h3><a href="https://github.com/di2e/openstorefront/tree/master" target="_blank" rel="noopener"><i class='fa fa-github'></i> Github repo</a></li>
+                <li class="" role=""><a href="https://github.com/di2e/openstorefront/releases" target="_blank" rel="noopener"><i class='fa fa-download'></i> Releases</a></li>
+        </section>
+            <a id="clear-history" class="" href="#" data-clear-history-toggle=""><i class="fa  fa-history"></i> Clear History</a>
+
+    <hr />
+    <li></li>
+    
+    </ul>
+
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>OpenStoreFront version 2.5</p>
+    <p>Documentation generated on Dec 21, 2017</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
+</div>
+    </section>
+  </div>
+</nav>
+
+
+
+<section id="body">
+<div id="overlay"></div>
+<div class="padding highlightable">
+
+  <div id="top-bar">
+    
+      
+      
+      
+    <div id="top-github-link">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/Setup.md" target="blank">
+        <i class="fa fa-code-fork"></i>
+        Edit page
+      </a>
+    </div><div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <span id="sidebar-toggle-span">
+          <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+            <i class="fa fa-bars"></i>
+          </a>
+        </span>
+        <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+        <span class="links">
+        
+
+
+
+
+
+
+
+ <a href='/'>OpenStoreFront Documentation</a> > <a href='/systemadmin/'>System Admin</a> > Setup
+
+ 
+
+ 
+
+   
+        </span>
+    </div>
+    
+    
+    <div class="progress">
+        <div class="wrapper">
+    
+        </div>
+    </div>
+    
+
+  </div>
+
+
+<div id="body-inner">
+  
+    <h1>Setup</h1>
+  
+
+
+
+    
+    
+    
+    <h1 id="1--installation">1.  Installation</h1>
+
+<h2 id="11--high-level-instructions-for-a-fresh-install">1.1  High level instructions for a fresh install</h2>
+
+<p>Prior to the install, setup an Elasticsearch <em>OR</em> Solr instance and make sure it's
+running. Then, perform the following steps:</p>
+
+<ol>
+<li><p>Setup VM</p></li>
+
+<li><p>Install Java JDK 1.8</p></li>
+
+<li><p>Install Tomcat 7</p></li>
+
+<li><p>Integrate OpenAM Agent</p></li>
+
+<li><p>Deploy Application</p></li>
+
+<li><p>Configure Application</p></li>
+
+<li><p>Restart Tomcat (To pick up configuration changes)</p></li>
+
+<li><p>Import data</p></li>
+</ol>
+
+<h2 id="12--suggested-vm-configuration">1.2  Suggested VM Configuration</h2>
+
+<p>The following is the recommended VM configuration:</p>
+
+<ul>
+<li>CentOS</li>
+<li>CPUs: 4</li>
+<li>RAM: 8GB</li>
+<li>DISK: 40GB (Increase, if storing a lot of media and resources locally)</li>
+<li>Minimum:
+
+<ul>
+<li>CPUs: 1</li>
+<li>RAM: 2GB (Application should be set to use 1GB)</li>
+<li>DISK: 20GB</li>
+</ul></li>
+</ul>
+
+<h2 id="13--platform-dependencies">1.3  Platform Dependencies</h2>
+
+<p>The Storefront is dependent upon:</p>
+
+<ul>
+<li>Java 8</li>
+<li>Tomcat 7 v50+</li>
+</ul>
+
+<h2 id="14--external-dependencies">1.4  External Dependencies</h2>
+
+<p>The Storefront relies upon the following external dependencies:</p>
+
+<ul>
+<li>OpenAM (Optional)</li>
+<li>Index Search Server (Pick one)
+
+<ul>
+<li>Solr 6.x + <em>Recommended for greater control</em></li>
+<li><strong>Elasticsearch 5.6.x <em>Recommended for simple install</em>  Recommended search server</strong>
+<br></li>
+</ul></li>
+</ul>
+
+<p><em>Support for ESA 1.0 and Solr 4.3.1 has been dropped</em></p>
+
+<h3 id="141-to-use-solr-optional">1.4.1 To Use Solr (Optional)</h3>
+
+<p>(The following assumes the application is stop prior to the change. To change on a running application you need to restart the SearchServerManager after making changes.)</p>
+
+<p>Download Version 6.x
+from <a href="http://lucene.apache.org/solr/">solr home</a>, and then perform the
+following steps:</p>
+
+<ol>
+<li><p>Unpackage  (setup according to solr instructions if setting up OS integration)</p></li>
+
+<li><p>Add core</p>
+
+<p>copy server /doc/solr/openstorefront (From source code) to .../solr-6.1.0/server/solr</p></li>
+
+<li><p>Start server <code>bin/solr start -p 8983</code></p>
+
+<p><a href="http://localhost:8983">http://localhost:8983</a> should bring up the admin consol if it's working.</p></li>
+
+<li><p>Configure OpenStorefront to point to Solr by going to:
+/var/openstorefront/config/openstorefront.properties</p></li>
+
+<li><p>Edit</p>
+
+<pre><code class="language-ini">search.server=solr
+
+solr.server.url=http://localhost:8983/solr/openstorefront
+
+solr.server.usexml=true
+</code></pre></li>
+
+<li><p>Resync data</p>
+
+<ol type="a">
+<li>Nav-&gt;Admin-&gt;System-&gt;Search Control</li>
+<li>Click Re-Index Listings</li>
+</ol></li>
+</ol>
+
+<h3 id="1411-installing-as-service-linux">1.4.1.1 Installing as service linux</h3>
+
+<p>run as sudo</p>
+
+<ol>
+<li><p>ln -s /usr/local/solr/solr-6.1.0 latest</p></li>
+
+<li><p>cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d</p></li>
+
+<li><p>nano /etc/init.d/solr</p>
+
+<p>Edit:</p>
+
+<pre><code class="language-ini">SOLR_INSTALL_DIR=&quot;/usr/local/solr/latest&quot;
+
+SOLR_ENV=&quot;/usr/local/solr/latest/bin/solr.in.sh&quot;
+
+SOLR_INCLUDE=&quot;$SOLR_ENV&quot; &quot;$SOLR_INSTALL_DIR/bin/solr&quot; &quot;$SOLR_CMD&quot; &quot;$2&quot;
+</code></pre>
+
+<p>Save and exit</p></li>
+
+<li><p>Add User</p>
+
+<pre><code class="language-bash">chmod 755 /etc/init.d/solr
+
+chown root:root /etc/init.d/solr
+</code></pre>
+
+<p>(debian/ubuntu)</p>
+
+<pre><code class="language-bash">update-rc.d solr defaults
+
+update-rc.d solr enable
+</code></pre>
+
+<p>(centos/redhat)</p>
+
+<pre><code class="language-bash">chkconfig solr on
+
+groupadd solr
+
+useradd -g solr solr
+
+chown -R solr:solr /usr/local/solr/solr-6.1.0
+
+chown solr:solr latest
+</code></pre></li>
+
+<li><p>(If lsof is not installed)</p>
+
+<pre><code class="language-bash">yum install lsof
+</code></pre></li>
+
+<li><p>(This will start at port 8983)</p>
+
+<pre><code class="language-bash">service solr start|stop  
+</code></pre></li>
+</ol>
+
+<h3 id="142-to-use-elasticsearch-optional">1.4.2 To Use Elasticsearch (Optional)</h3>
+
+<ol>
+<li><p>Download
+[elasticsearch home]<a href="https://www.elastic.co/">https://www.elastic.co/</a> (Apache v2 licensed)</p></li>
+
+<li><p>Start
+<elasticsearch>/bin/elasticsearch</p></li>
+</ol>
+
+<p><a href="http://localhost:9200">http://localhost:9200</a> should return some json with stats.</p>
+
+<ol start="3">
+<li><p>Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen</p>
+
+<pre><code>Add/Set: (adjust as needed to match url and ports)
+
+search.server=elasticsearch
+
+elastic.server.host=localhost
+
+elastic.server.port=9200
+</code></pre></li>
+
+<li><p>Resync data</p>
+
+<ol type="a">
+<li>Nav-&gt;Admin-&gt;System-&gt;Search Control</li>
+<li>Click Re-Index Listings
+<br></li>
+</ol></li>
+</ol>
+
+<h3 id="1421-yum-install-of-elasticsearch">1.4.2.1 Yum install of Elasticsearch</h3>
+
+<ol>
+<li><p>Download and install with YUM<br>
+<a href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a> (6.x)<br>
+(see <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html</a> for yum install instructions)</p></li>
+
+<li><p>service elasticsearch start</p>
+
+<p><a href="http://localhost:9200">http://localhost:9200</a> should return some json with stats.</p></li>
+
+<li><p>Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen-&gt;system properties</p></li>
+
+<li><p>Add/Set: (adjust as needed to match url and ports)</p>
+
+<pre><code class="language-ini">search.server=elasticsearch 
+elastic.server.host=localhost 
+elastic.server.port=9200 
+</code></pre></li>
+
+<li><p>Resync data</p>
+
+<ol type="a">
+<li><p>Nav-&gt;Admin-&gt;Application Data-&gt;System-&gt;Search Control</p></li>
+
+<li><p>Click Re-Index Listings</p></li>
+</ol></li>
+</ol>
+
+<h3 id="143-updated-search-server-at-runtime">1.4.3 Updated Search Server at Runtime</h3>
+
+<ol>
+<li><p>Use Admin-&gt;Application Management-&gt;System to set the system config properties</p></li>
+
+<li><p>On Managers tab -&gt; Restart Search Server Managers</p></li>
+</ol>
+
+<h2 id="15--system-setup">1.5  System Setup</h2>
+
+<p>Unless otherwise noted, run as sudo.</p>
+
+<div class="notices note" ><p>You can use Nano or another text editor.</p>
+</div>
+
+
+<h3 id="151-install-java">1.5.1 Install Java</h3>
+
+<p>Use the following steps to install Java.</p>
+
+<ol>
+<li><p>Download JDK from Oracle</p></li>
+
+<li><p>Move the downloads to the server home directory</p></li>
+
+<li><p>Run Sudo su as root</p></li>
+
+<li><p>Extract and move following folders:</p>
+
+<pre><code class="language-bash">mkdir /usr/java
+tar -xvf jdk-8u25-linux-x64.tar.gz
+mv jdk1.8.0\_25 /usr/java/
+chmod 755 -R /usr/java
+</code></pre></li>
+
+<li><p>Create the following links:</p>
+
+<pre><code class="language-bash">ln -s /usr/java/jdk1.8.0\_25 /usr/java/jdk8
+ln -s /usr/java/jdk1.8.0\_25 /usr/java/latest
+</code></pre></li>
+
+<li><p>Setup Environment Vars using the instructions at
+<a href="http://www.cyberciti.biz/faq/linux-unix-set-java_home-path-variable/">http://www.cyberciti.biz/faq/linux-unix-set-java_home-path-variable/</a>,
+and then perform the following:</p>
+
+<ol type="a">
+<li><p><code>nano /etc/profile</code></p></li>
+
+<li><p>Add to the bottom:</p>
+
+<pre><code class="language-bash">#Java Path
+export PATH=\$PATH:/usr/java/latest/bin
+export JAVA\_HOME=/usr/java/latest
+</code></pre></li>
+
+<li><p>Save/Exit then <code>source /etc/profile</code></p></li>
+
+<li><p><code>nano /etc/bash.bashrc</code></p></li>
+
+<li><p>Add to the bottom:</p>
+
+<pre><code class="language-bash">#Java Path
+export PATH=\$PATH:/usr/java/latest/bin
+export JAVA\_HOME=/usr/java/latest
+</code></pre></li>
+</ol></li>
+
+<li><p>Save/Exit then source /etc/bash.bashrc</p></li>
+
+<li><p>Confirm that java -version runs</p></li>
+</ol>
+
+<h3 id="152-install-tomcat-public-package">1.5.2 Install Tomcat Public Package</h3>
+
+<p>Use the following steps to install the Tomcat public package.</p>
+
+<ol>
+<li><p>Download and copy to home directory</p></li>
+
+<li><p><code>tar -xvf apache-tomcat-7.0.55.tar.gz</code></p></li>
+
+<li><p><code>mv apache-tomcat-7.0.55 /usr/local/tomcat</code></p></li>
+
+<li><p>(Use ln -nsf (target) (link) to repoint)</p>
+
+<pre><code class="language-bash">ln -s /usr/local/tomcat/apache-tomcat-7.0.55
+/usr/local/tomcat/latest
+</code></pre></li>
+
+<li><p><code>nano /usr/local/tomcat/latest/bin/setenv.sh</code></p>
+
+<p>Add line: <code>CATALINA\_OPTS=-Xmx1024m</code></p>
+
+<div class="notices note" ><p>Memory settings depend on server config. Minimum recommended
+memory is 1GB; however, it may be able to run on less. The amount of
+memory affects the amount of concurrent users the server can support.</p>
+</div>
+
+
+<p>VM RAM:</p>
+
+<ul>
+<li>2GB -&gt; -Xmx1024m</li>
+<li>4GB -&gt; -Xmx2048m</li>
+<li>8GB -&gt; -Xmx6144m (Make sure to use a 64bit VM)</li>
+</ul>
+
+<p><strong>OPTIONAL:</strong> In the conf/server.xml (In Connector section)</p>
+
+<ul>
+<li><p>Add http compression on.
+Compression=&quot;on&quot;
+compressableMimeType=&quot;text/html,text/xml,text/plain,application/json,text/css,application/javascript&quot;</p></li>
+
+<li><p>Set to use NIO Protocal
+protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;
+maxThreads=&quot;1000&quot;</p></li>
+</ul>
+
+<div class="notices info" ><p>Also, you may consider setting more aggressive connection settings
+than the default depending on your expected load. See Tomcat
+documentation: <a href="http://tomcat.apache.org/tomcat-7.0-doc/index.html">http://tomcat.apache.org/tomcat-7.0-doc/index.html</a>.
+The default settings will suffice for most deployments.</p>
+</div>
+</li>
+
+<li><p>Setup Tomcat as a service using the following:</p>
+
+<p><a href="http://www.davidghedini.com/pg/entry/install_tomcat_7_on_centos">See Installing tomcat 7 on CentOS</a></p>
+
+<ol type="a">
+<li><code>nano /etc/init.d/tomcat</code></li>
+</ol>
+
+<pre><code class="language-bash">#!/bin/bash
+
+# description: Tomcat Start Stop Restart
+
+# processname: tomcat
+
+# chkconfig: 234 20 80
+
+#JAVA_HOME=/usr/java/jdk8
+
+#export JAVA_HOME
+
+#PATH=$JAVA_HOME/bin:\$PATH
+
+#export PATH
+
+CATALINA_HOME=/usr/local/tomcat/latest
+
+case $1 in
+
+start)
+
+sh $CATALINA_HOME/bin/startup.sh
+
+;;
+
+stop)
+
+sh $CATALINA_HOME/bin/shutdown.sh
+
+;;
+
+restart)
+
+sh $CATALINA_HOME/bin/shutdown.sh
+
+sh $CATALINA_HOME/bin/startup.sh
+
+;;
+
+esac
+
+exit 0
+</code></pre>
+
+<ol type="a">
+<li><p><code>chmod 755 /etc/init.d/tomcat</code></p></li>
+
+<li><p><code>chkconfig --add tomcat</code></p></li>
+
+<li><p><code>chkconfig --level 234 tomcat on</code></p></li>
+</ol></li>
+
+<li><p>Open port <code>iptables -I INPUT -p tcp --dport 8080 -j ACCEPT</code></p></li>
+</ol>
+
+<h3 id="153-install-tomcat-using-jpackage">1.5.3 Install Tomcat Using JPackage</h3>
+
+<p>Use the following steps to install Tomcat using JPackage
+<a href="http://www.jpackage.org/">See jpackage.org</a></p>
+
+<ol>
+<li><p>At www.jpackage.org, follow the installation instructions to setup
+the repository for your system install (e.g. yum, apt, and urpmi)</p></li>
+
+<li><p>After you have set up the repository, pull down Tomcat7-7.0.54-2
+from the version 6 repo.</p></li>
+</ol>
+
+<div class="notices note" ><p>JPackage version has a mistake in the package. The ecj jar
+library is old and doesn't work with JDK1.8 ; however, this is easily
+corrected. Download 7.0.54 from apache.org and replace ecj-xxx.jar in
+tomcat/lib directory with ecj-xxx.jar from the 7.0.54 version.</p>
+</div>
+
+
+<h3 id="154-server-control">1.5.4 Server Control</h3>
+
+<p>Use the following commands to control the server.</p>
+
+<ul>
+<li><p>service tomcat start</p></li>
+
+<li><p>service tomcat stop</p>
+
+<div class="notices note" ><p>It can take a minute for the application to shut down.
+Please wait before restarting.</p>
+</div>
+</li>
+
+<li><p>service tomcat restart</p>
+
+<div class="notices note" ><p>Using this is not recommended as it not always successful
+due the script not waiting for shutdown.</p>
+</div>
+</li>
+</ul>
+
+<h2 id="16-deploying-application">1.6 Deploying application</h2>
+
+<p>To deploy the application, copy openstorefront.war to
+/usr/local/tomcat/latest/webapps</p>
+
+<h2 id="17-application-configuration">1.7 Application Configuration</h2>
+
+<p>The application configuration and data are stored in
+/var/openstorefront/. Make sure the user running the application has r/w
+permission for that directory.  All directories are created upon
+application startup. The high level directory map is stored under
+/var/openstorefront/.</p>
+
+<ul>
+<li><p>config - holds all configurations files. Defaults are created on
+initial startup.</p></li>
+
+<li><p>db - holds database files
+<div class="notices note" ><p>When upgrading to version 2.3+ from 2.2 and earlier, there is
+an additional step when existing data needs to persist. Navigate
+to the database directory: /var/openstorefront/db/databases/openstorefront
+and delete the openstorefront .wal file (openstorefront*.wal).
+First creating a complete backup of the database files would be prudent.
+Deleting this file allows the database to be upgraded to a newer version
+which is used starting with version 2.3.</p>
+</div>
+</p></li>
+
+<li><p>import -directory for placing files to be imported.</p></li>
+
+<li><p>perm - permanent storage location</p></li>
+
+<li><p>temp - temporary storage that application controls.
+<div class="notices note" ><p>Most application temp storage defaults to the system temp storage
+location. The temp directory here holds information that needs to be
+persisted for a longer time period. The main configuration file is:
+/var/openstorefront/config/openstorefront.properties</p>
+</div>
+</p></li>
+</ul>
+
+<p>On initial setup modify the following:</p>
+
+<ol>
+<li><p>change the url to point to esa/solr</p>
+
+<p>&quot;solr.server.url=<a href="http://localhost:15000/solr/esa&quot;">http://localhost:15000/solr/esa&quot;</a></p></li>
+
+<li><p>For OpenAM Integration:</p>
+
+<ol type="a">
+<li>#Security Header</li>
+</ol>
+
+<pre><code class="language-ini">openam.url=&lt;Url to open am something like http:/idam.server.com/openam&gt;
+
+#http:/.../openam/UI/Logout (Full URL)
+
+logout.url=&lt;Full url to the logout&gt;
+
+#Change any header as needed. The defaults likely will work out of the box.
+
+openam.header.username=sAMAccountName
+
+openam.header.firstname=givenname
+
+openam.header.lastname=sn
+
+openam.header.email=mail
+
+openam.header.phone=telephonenumber
+
+openam.header.group=memberOf
+
+openam.header.ldapguid=memberid
+
+openam.header.organization=
+
+openam.header.admingroupname=STORE-Admin
+</code></pre>
+
+<ol type="a">
+<li>Edit shiro.ini under the config directory</li>
+</ol>
+
+<pre><code>under [main]
+
+uncomment (remove \#)
+
+headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
+
+securityManager.realms = \$headerRealm
+
+under [users]
+
+### comment out ###
+
+#admin = secret, administrator
+
+#user = user
+
+under [roles]
+
+comment out
+
+#admin = administrator
+</code></pre></li>
+</ol>
+
+<h3 id="171-open-am-notes">1.7.1 Open AM Notes:</h3>
+
+<p>If when setting Open AM up with certificates you may need to use a truststore on openstorefront tomcat.  If so, remember to update the certificates in the truststore when the certificate changes.  Open AM, Openstorefront, and proxy if used will all need to have valid matching certificates.</p>
+
+<h2 id="18-importing-data">1.8 Importing Data</h2>
+
+<p>Import data using the following steps.</p>
+
+<ol>
+<li><p>Export (or import) data from an existing system using application</p>
+
+<ul>
+<li>admin tools. (Requires an Admin Login)</li>
+</ul></li>
+
+<li><p>When the application is first started, it will load a default set of
+&quot;lookup&quot; types. These can be later changed using the admin tools. On
+a new install, no attributes, articles or components are loaded.
+They can be entered or imported using the application admin tools.</p></li>
+</ol>
+
+<h2 id="19--logging-notes">1.9  Logging Notes</h2>
+
+<p>You can view the logs messages in the Catalina log file:
+<code>/usr/local/tomcat/latest/logs</code></p>
+
+<p>Also, an admin can turn on DB logging from the System admin screen by default DB logging is off.  It’s on recommended to turn on DB logging for specific troubleshooting and turn off when done.</p>
+
+<h3 id="191-log-level-definitions">1.9.1 Log Level Definitions</h3>
+
+<p>See the following table for the log definitions.</p>
+
+<ul>
+<li><strong>SEVERE</strong>    -  Something didn't run correctly or as expected</li>
+<li><strong>WARN</strong>      -  Behavior may not be desired but, the system was able to continue</li>
+<li><strong>INFO</strong>      -  System admin message</li>
+<li><strong>FINE</strong>      -  Developer message</li>
+<li><strong>FINER</strong>     -  Detailed developer messages</li>
+<li><strong>FINEST</strong>    -  Trace information</li>
+</ul>
+
+<h3 id="110-setup-openam">1.10 Setup OpenAM</h3>
+
+<p>See the example below for OpenAM setup. Your configuration may be
+different.</p>
+
+<p>(See <a href="https://bugster.forgerock.org/jira/browse/OPENAM-211:">https://bugster.forgerock.org/jira/browse/OPENAM-211:</a> J2EE agents
+are unable and will not work, if the container was started prior to OpenAM).</p>
+
+<div class="notices note" ><p>When the OpenAM policy agent is installed on Tomcat, the
+application server will not start unless the OpenAM server is available.
+This is a known issue with the OpenAM Policy agent.</p>
+</div>
+
+
+<h3 id="1101-versions-used">1.10.1 Versions Used</h3>
+
+<p>The following versions were used:</p>
+
+<ul>
+<li><p><a href="http://mirrors.sonic.net/apache/tomcat/tomcat-7/v7.0.55/bin/apache-tomcat-7.0.55-windows-x64.zip">Tomcat 7.0.55 64-bit Windows
+zip</a></p></li>
+
+<li><p><a href="https://backstage.forgerock.com/downloads/enterprise/openam/openam11/11.0.0/OpenAM-11.0.0.zip">OpenAM
+11.0.0.0</a>:</p>
+
+<ul>
+<li><a href="http://docs.forgerock.org/en/openam/11.0.0/release-notes/index/index.html">http://docs.forgerock.org/en/openam/11.0.0/release-notes/index/index.html</a></li>
+</ul></li>
+
+<li><p><a href="https://backstage.forgerock.com/downloads/enterprise/openam/j2eeagents/stable/3.3.0/Tomcat-v6-7-Agent-3.3.0.zip">J2EE Policy Agent 3.3.0 Apache Tomcat 6 and
+7</a>:</p>
+
+<ul>
+<li><a href="http://docs.forgerock.org/en/openam-pa/3.3.0/jee-release-notes/index/index.html">http://docs.forgerock.org/en/openam-pa/3.3.0/jee-release-notes/index/index.html</a></li>
+</ul></li>
+
+<li><p>64 bit JRE 1.7.0_67-b01</p></li>
+</ul>
+
+<h3 id="1102-installation-of-openam-java-ee-policy-agent-into-tomcat-7055">1.10.2 Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55</h3>
+
+<p>Use the following steps to install OpenAM Java EE Policy Agent on
+Tomcat.</p>
+
+<ol>
+<li><p>Make sure the Agent Profile has already been created in OpenAM</p></li>
+
+<li><p>Create a <em>pwd.txt</em> file at C:\Temp\pwd.txt and add your Agent
+Profile password to it</p></li>
+
+<li><p>Shutdown the Tomcat server that is going to run your web application</p></li>
+
+<li><p>Make sure the Tomcat server that is running OpenAM is still running</p></li>
+
+<li><p>Extract Tomcat-v6-7-Agent-3.3.0.zip to a known directory</p></li>
+
+<li><p>CD into the j2ee_agents/tomcat_v6_agent/bin directory</p></li>
+
+<li><p>Execute agentadmin --install to install the agent</p></li>
+</ol>
+
+<h3 id="1103-references">1.10.3 References</h3>
+
+<ul>
+<li><p><a href="http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/index/chap-apache-tomcat.html">http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/index/chap-apache-tomcat.html</a></p></li>
+
+<li><p><a href="http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/#chap-apache-tomcat">http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/#chap-apache-tomcat</a></p></li>
+</ul>
+
+<h3 id="1104-configuration-of-openam">1.10.4 Configuration of OpenAM</h3>
+
+<p>See
+<a href="http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-started/">Open AM Getting Started</a>
+for OpenAM configuration information.</p>
+
+<h3 id="1105-configure-the-policy-in-openam">1.10.5 Configure the Policy in OpenAM</h3>
+
+<p>Use the following steps to configure the OpenAM policy.</p>
+
+<ol>
+<li>Open up OpenAM in a web
+browser http://(host):8080/openam</li>
+<li>Log into OpenAM using amadmin</li>
+<li>Click on Access Control -&gt; /(Top Level Realm) -&gt; Policies</li>
+<li>Click on New Policy
+
+<ol type="a">
+<li>Give the Policy a name of Storefront Policy</li>
+<li>In the Rules table click New
+
+<ol>
+<li>Select URL Policy Agent and click <strong>Next</strong></li>
+<li>Enter the following in Step 2 of 2: New Rule
+
+<ul>
+<li>Name: Allow Storefront Access</li>
+<li>Resource Name: http://(host):8081/agentsample/</li>
+<li>Check the boxes for GET and POST</li>
+</ul></li>
+</ol></li>
+<li>In the Subjects table click <strong>New</strong>
+
+<ol>
+<li>Select Authenticated Users and click Next</li>
+<li>Name the rule All Authenticated Users</li>
+<li>Click <strong>Finish</strong></li>
+</ol></li>
+<li>Create a new response provider
+
+<ol>
+<li>In the Dynamic Attribute make sure uid and isMemberOf is
+selected (ctrl-click)</li>
+<li>Click on <strong>Finish</strong></li>
+</ol></li>
+</ol></li>
+</ol>
+
+<h3 id="1106-creating-the-agent-profile">1.10.6 Creating the Agent Profile</h3>
+
+<p>Use the following steps to create the agent profile.</p>
+
+<ol>
+<li>Open up OpenAM in a web
+browser http://(host):8080/openam</li>
+<li>Log into OpenAM using amadmin</li>
+<li>Click on <strong>Access Control</strong> &gt; <strong>Top Level Realm</strong> &gt;
+<strong>Agents</strong> &gt; <strong>J2EE</strong></li>
+<li>Create a new J2EE agent by clicking on the <strong>New...</strong> button under
+Agent</li>
+<li>Create the agent with the following parameters:
+
+<ul>
+<li>Name: myagent</li>
+<li>Password: password</li>
+<li>Configuration: Centralized</li>
+<li>Server URL: http://(host):8080/openam</li>
+<li>Agent URL: http://(host):8081/agentsample</li>
+</ul></li>
+</ol>
+
+<h1 id="2-centos-7-install-with-apache-proxy-example">2 CentOS 7 Install with Apache proxy Example</h1>
+
+<hr>
+
+<p>Run the following as sudo:</p>
+
+<h3 id="optionally-install-nano">Optionally install nano:</h3>
+
+<ol>
+<li>yum install nano</li>
+</ol>
+
+<h3 id="install-java-18">Install Java 1.8:</h3>
+
+<ol>
+<li>yum install java-1.8.0-openjdk</li>
+</ol>
+
+<h3 id="install-apache-24">Install apache 2.4:</h3>
+
+<ol>
+<li>yum clean all</li>
+<li>yum -y update</li>
+<li>yum -y install httpd</li>
+<li>firewall-cmd --permanent --add-port=80/tcp</li>
+<li>firewall-cmd --permanent --add-port=443/tcp</li>
+
+<li><p>firewall-cmd --reload</p>
+
+<p>NOTE)   If firewall-cmd doesn't exist then run</p>
+
+<p>a) yum install firewalld -y</p>
+
+<p>b) systemctl start firewalld</p>
+
+<p>c) systemctl enable firewalld</p></li>
+
+<li><p>systemctl start httpd</p></li>
+
+<li><p>systemctl enable httpd</p></li>
+</ol>
+
+<p>apache service command reference (apache should be running at this point):</p>
+
+<p><strong>Start:</strong> systemctl start httpd</p>
+
+<p><strong>Stop:</strong> systemctl stop httpd</p>
+
+<p><strong>Test:</strong> curl localhost | grep 'Apache HTTP server'</p>
+
+<p>should give you a response something like this:</p>
+
+<pre><code>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  4897  100  4897    0     0   928k      0 --:--:-- --:--:-- --:--:--  956k
+                &lt;p class=&quot;lead&quot;&gt;This page is used to test the proper operation of the &lt;a href=&quot;http://apache.org&quot;&gt;Apache HTTP server&lt;/a&gt; after it has been installed. If you can read this page it means that this site is working properly. This server is powered by &lt;a href=&quot;http://centos.org&quot;&gt;CentOS&lt;/a&gt;.&lt;/p&gt;
+</code></pre>
+
+<h3 id="install-elasticsearch-6x">Install elasticsearch 6.x:</h3>
+
+<ol>
+<li>rpm --import <a href="https://packages.elastic.co/GPG-KEY-elasticsearch">https://packages.elastic.co/GPG-KEY-elasticsearch</a></li>
+<li>Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix,
+for example /etc/yum.repos.d/elasticsearch.repo</li>
+</ol>
+
+<pre><code>[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://packages.elastic.co/elasticsearch/6.x/centos
+gpgcheck=1
+gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+</code></pre>
+
+<ol start="3">
+<li>yum install elasticsearch</li>
+<li>systemctl daemon-reload</li>
+<li>systemctl enable elasticsearch.service</li>
+<li>systemctl start elasticsearch.service</li>
+</ol>
+
+<p>elasticsearch service command reference (elasticsearch should be running at this point):</p>
+
+<p><strong>Start:</strong> systemctl start elasticsearch.service</p>
+
+<p><strong>Stop:</strong>  systemctl stop elasticsearch.service</p>
+
+<p><strong>Test:</strong> curl -XGET 'localhost:9200/?pretty'</p>
+
+<p>should give you a response something like this:</p>
+
+<pre><code>{
+  &quot;name&quot; : &quot;Cp8oag6&quot;,
+  &quot;cluster_name&quot; : &quot;elasticsearch&quot;,
+  &quot;cluster_uuid&quot; : &quot;AT69_T_DTp-1qgIJlatQqA&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;5.4.3&quot;,
+    &quot;build_hash&quot; : &quot;f27399d&quot;,
+    &quot;build_date&quot; : &quot;2016-03-30T09:51:41.449Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;6.5.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+</code></pre>
+
+<h3 id="install-tomcat-7">Install tomcat 7:</h3>
+
+<p>(<a href="https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum">https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum</a>)</p>
+
+<ol>
+<li>yum install tomcat</li>
+<li>yum install tomcat-webapps tomcat-admin-webapps</li>
+<li>systemctl enable tomcat</li>
+<li>systemctl start tomcat</li>
+</ol>
+
+<p>tomcat service command reference (tomcat should be running at this point):</p>
+
+<p><strong>Start:</strong> systemctl start tomcat</p>
+
+<p><strong>Stop:</strong>  systemctl stop tomcat</p>
+
+<p><strong>Install dir:</strong>  /usr/share/tomcat/</p>
+
+<p><strong>Test:</strong> curl localhost:8080 | grep 'successfully installed Tomcat'</p>
+
+<p>should give you a response something like this:</p>
+
+<pre><code>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 11197    0 11197    0     0   850k      0 --:--:-- --:--:-- --:--:--  911k
+                    &lt;h2&gt;If you're seeing this, you've successfully installed Tomcat. Congratulations!&lt;/h2&gt;
+</code></pre>
+
+<h3 id="configure-apache-proxy">Configure Apache proxy:</h3>
+
+<p>(<a href="https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-centos-7</a>)</p>
+
+<ol>
+<li>Install mod-proxy : already installed<br></li>
+<li>Install web socket support: already installed</li>
+<li>nano /etc/httpd/conf.d/default-site.conf</li>
+</ol>
+
+<p><strong>Add:</strong></p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+   ProxyPreserveHost On     
+   RewriteEngine on
+
+   # Openstorefront reverse proxy
+   ProxyPass &quot;/openstorefront/&quot; &quot;http://localhost:8080/openstorefront/&quot;
+   ProxyPassReverse &quot;/openstorefront/&quot; &quot;http://localhost:8080/openstorefront/&quot;
+   
+   # Openstorefront web socket reverse proxy
+   ProxyPass &quot;/openstorefront/&quot; &quot;ws://localhost:8080/openstorefront/&quot;
+   ProxyPassReverse &quot;/openstorefront/&quot; &quot;ws://localhost:8080/openstorefront/&quot;
+   
+   # changes &lt;hostname&gt;/ to &lt;hostname&gt;/openstorefront/
+   RedirectMatch ^/$ /openstorefront/
+&lt;/VirtualHost&gt;
+</code></pre>
+
+<ol start="4">
+<li><p>If you have SELinux running (which is installed by default on CentOS) then we need the instructions from here (<a href="http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/">http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/</a>)</p>
+
+<ol type="a">
+<li>/usr/sbin/setsebool -P httpd_can_network_connect 1
+<br></li>
+</ol></li>
+
+<li><p>systemctl restart httpd</p></li>
+</ol>
+
+<h3 id="configure-tomcat">Configure Tomcat:</h3>
+
+<p><strong>Set memory</strong></p>
+
+<ol>
+<li>nano /usr/share/tomcat/conf/tomcat.conf
+Add the following to the existing file
+<code>JAVA_OPTS=&quot;-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx4g -XX:+UseConcMarkSweepGC&quot;</code></li>
+</ol>
+
+<p><strong>Update networking</strong></p>
+
+<ol start="2">
+<li><p>nano /usr/share/tomcat/conf/server.xml</p>
+
+<pre><code>edit: &lt;Connector port=&quot;8080&quot;     to 
+</code></pre>
+
+<pre><code>&lt;Connector port=&quot;8080&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;
+           connectionTimeout=&quot;20000&quot;
+           maxThreads=&quot;250&quot; minSpareThreads=&quot;25&quot;
+           compression=&quot;on&quot; compressableMimeType=&quot;text/html,text/xml,text/plain,application/json,text/css,application/javascript&quot;
+           enableLookups=&quot;false&quot; disableUploadTimeout=&quot;true&quot;
+           acceptCount=&quot;100&quot;
+           redirectPort=&quot;8443&quot; /&gt;
+</code></pre></li>
+
+<li><p>systemctl restart tomcat</p></li>
+</ol>
+
+<h2 id="deploy-code">Deploy code</h2>
+
+<ol>
+<li><code>mkdir /var/openstorefront</code></li>
+<li><code>chown -R tomcat:tomcat /var/openstorefront</code></li>
+
+<li><p>Download storefront webapp from <code>https://github.com/di2e/openstorefront/releases/download/&lt;version tag&gt;/openstorefront.war</code></p>
+
+<p>example: curl -LO <a href="https://github.com/di2e/openstorefront/releases/download/v2.3/openstorefront.war">https://github.com/di2e/openstorefront/releases/download/v2.3/openstorefront.war</a></p></li>
+
+<li><p><code>chown tomcat:tomcat openstorefront.war</code></p></li>
+
+<li><p><code>mv openstorefront.war /usr/share/tomcat/webapps</code></p></li>
+
+<li><p><code>systemctl restart tomcat</code></p></li>
+</ol>
+
+<h1 id="3-optional-features">3. Optional Features</h1>
+
+<h2 id="31-tutorials">3.1 Tutorials</h2>
+
+<p>To enable:</p>
+
+<ol>
+<li>Add Admin Support Media Role. Re-login to apply.</li>
+<li>Add Support/Training material using Admin-&gt;Data Management-&gt;Help-&gt;Support Media</li>
+<li>Edit current branding (copy the current if needed)
+and check Allow Support Media to show the menu item for Tutorials</li>
+</ol>
+
+
+    
+    
+          <footer class=" footline" >
+	
+</footer>
+  </div>
+</div>
+
+<div id="navigation">
+<a class="nav nav-prev" href="/systemadmin/" title="System Admin"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/systemadmin/docker/" title="Using Docker" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+
+</section>
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+  <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>    
+
+<script src="/js/clipboard.min.js"></script>
+<script src="/js/featherlight.min.js"></script>
+<script src="/js/html5shiv-printshiv.min.js"></script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/js/modernizr.custom.71422.js"></script>
+<script src="/js/docdock.js"></script>
+<script src="/theme-original/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

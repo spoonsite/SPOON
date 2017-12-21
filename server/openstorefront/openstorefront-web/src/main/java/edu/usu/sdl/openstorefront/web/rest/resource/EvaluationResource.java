@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -37,7 +38,6 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -143,7 +143,7 @@ public class EvaluationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
+		queryByExample.setAdditionalWhere(filterEngine.queryStandardRestriction());
 
 		//get component ids
 		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
@@ -242,7 +242,7 @@ public class EvaluationResource
 		Evaluation evaluation = new Evaluation();
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
-		evaluation = FilterEngine.filter(evaluation);
+		evaluation = filterEngine.filter(evaluation);
 		if (evaluation != null) {
 			return sendSingleEntityResponse(EvaluationView.toView(evaluation));
 		} else {
@@ -281,7 +281,6 @@ public class EvaluationResource
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Boolean.class)
 	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
 	@Path("/{evaluationId}/checkTemplateUpdate")
 	public String checkTemplateUpdate(
@@ -737,6 +736,16 @@ public class EvaluationResource
 			contentSectionAll.getSection().setEntityId(evaluationId);
 
 			service.getContentSectionService().saveAll(contentSectionAll);
+
+			//reload sections to get updated changes from DB
+			ContentSection dbSection = new ContentSection();
+			dbSection.setContentSectionId(sectionId);
+
+			ContentSubSection contentSubSectionExample = new ContentSubSection();
+			contentSubSectionExample.setContentSectionId(sectionId);
+
+			contentSectionAll.setSection(dbSection.find());
+			contentSectionAll.setSubsections(contentSubSectionExample.findByExample());
 			return Response.ok(contentSectionAll).build();
 		} else {
 			return sendSingleEntityResponse(contentSection);

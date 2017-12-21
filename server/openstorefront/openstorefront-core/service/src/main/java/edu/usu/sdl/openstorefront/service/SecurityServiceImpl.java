@@ -47,6 +47,7 @@ import edu.usu.sdl.openstorefront.core.view.UserSecurityView;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
@@ -90,7 +91,7 @@ import org.passay.WhitespaceRule;
  */
 public class SecurityServiceImpl
 		extends ServiceProxy
-		implements SecurityService
+		implements SecurityService, SecurityServicePrivate
 {
 
 	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
@@ -101,34 +102,47 @@ public class SecurityServiceImpl
 	public SecurityPolicy getSecurityPolicy()
 	{
 		SecurityPolicy securityPolicy = null;
-		Element element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
-		if (element != null) {
-			securityPolicy = (SecurityPolicy) element.getObjectValue();
-		}
 
-		if (securityPolicy == null) {
-			securityPolicy = new SecurityPolicy();
-			securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
-			securityPolicy = securityPolicy.find();
+		Element element;
 
-			if (securityPolicy == null) {
-				//default
-				securityPolicy = new SecurityPolicy();
-				securityPolicy.setAllowRegistration(Boolean.TRUE);
-				securityPolicy.setAutoApproveUsers(Boolean.FALSE);
-				securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
-				securityPolicy.setCsrfSupport(Boolean.TRUE);
-				securityPolicy.setLoginLockoutMaxAttempts(5);
-				securityPolicy.setMinPasswordLength(8);
-				securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
-				securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
-				securityPolicy.setResetLockoutTimeMinutes(15);
-				securityPolicy = updateSecurityPolicy(securityPolicy);
+		//Note: this is used in filter that may be running when system is not completely started.
+		if (OSFCacheManager.isActive()) {
+			element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
+			if (element != null) {
+				securityPolicy = (SecurityPolicy) element.getObjectValue();
 			}
 
-			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-			OSFCacheManager.getApplicationCache().put(element);
+			if (securityPolicy == null) {
+				securityPolicy = new SecurityPolicy();
+				securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
+				securityPolicy = securityPolicy.find();
+
+				if (securityPolicy == null) {
+					securityPolicy = getDefaultPolicy();
+					securityPolicy = updateSecurityPolicy(securityPolicy);
+				}
+
+				element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
+				OSFCacheManager.getApplicationCache().put(element);
+			}
+		} else {
+			securityPolicy = getDefaultPolicy();
 		}
+		return securityPolicy;
+	}
+
+	private SecurityPolicy getDefaultPolicy()
+	{
+		SecurityPolicy securityPolicy = new SecurityPolicy();
+		securityPolicy.setAllowRegistration(Boolean.TRUE);
+		securityPolicy.setAutoApproveUsers(Boolean.FALSE);
+		securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
+		securityPolicy.setCsrfSupport(Boolean.TRUE);
+		securityPolicy.setLoginLockoutMaxAttempts(5);
+		securityPolicy.setMinPasswordLength(8);
+		securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
+		securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
+		securityPolicy.setResetLockoutTimeMinutes(15);
 		return securityPolicy;
 	}
 
@@ -282,6 +296,12 @@ public class SecurityServiceImpl
 	@Override
 	public ValidationResult processNewUser(UserRegistration userRegistration)
 	{
+		return processNewUser(userRegistration, false);
+	}
+
+	@Override
+	public ValidationResult processNewUser(UserRegistration userRegistration, boolean forceApprove)
+	{
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
@@ -294,7 +314,10 @@ public class SecurityServiceImpl
 				throw new OpenStorefrontRuntimeException("Unable to find user registration", "Check input: " + userRegistration.getUsername());
 			}
 
-			boolean autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+			boolean autoApproveUser = forceApprove;
+			if (!forceApprove) {
+				autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+			}
 
 			UserSecurity userSecurity = new UserSecurity();
 			DefaultPasswordService passwordService = new DefaultPasswordService();

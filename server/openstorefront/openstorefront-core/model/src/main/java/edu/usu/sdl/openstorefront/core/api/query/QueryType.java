@@ -24,6 +24,6 @@ public enum QueryType
 {
 	SELECT,
 	COUNT_DISTINCT,
-	COUNT;
-	
+	COUNT,
+	DELETE;	
 }

@@ -159,17 +159,14 @@ Ext.define('OSF.component.ImportWindow', {
 					width: '100%'
 				}),
 				{
-					xtype: 'filefield',
+					xtype: 'fileFieldMaxLabel',
+					resourceLabel: 'Import',
+					itemId: 'upload',
+					buttonText: 'Select File...',
 					name: 'uploadFile',
 					width: '100%',
 					labelAlign: 'top',
-					labelSeparator: '',
-					allowBlank: false,
-					fieldLabel: 'Import <span class="field-required" />',
-					buttonText: 'Select File...',
-					listeners: {
-						change: CoreUtil.handleMaxFileLimit
-					}
+					allowBlank: false
 				},
 				{
 					xtype: 'fieldset',

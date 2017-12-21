@@ -128,19 +128,19 @@ public class AdminIntegrationsIT
 			action.moveToElement(componentHeader).click().perform();
 			count++;
 		}
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-delete"))).click();
-		
+
 		List<WebElement> confirmBtns = new ArrayList<>();
 		confirmBtns = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small[aria-hidden='false']")));
 		confirmBtns.get(0).click();
-		
+
 		sleep(1000);
-		
-		driverWait(()-> {
+
+		driverWait(() -> {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
 		}, 5);
-		
+
 		Assert.assertFalse(tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1));
 
 	}

@@ -2,6 +2,7 @@
 
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<base href="${baseUrl}/">
 	<style>
 		body {
 			font-family: Helvetica, Verdana, Arial, sans-serif; 
@@ -121,56 +122,54 @@
 </head>
 <body>
 	<div>
-		<p>Component Details Report: ${reportDate}</p>
-		<p>Entries (${reportSize})</p>
+		<p>Component Details Report: ${createTime!}</p>
+		<p>Entries (${reportModel.data?size})</p>
 	</div>
 	<hr />
-	<#list components as component>
+	<#list reportModel.data as line>
 	
 		<!--Organization Description-->
-		<#if reportOptions.getDisplayOrgData() == true>
-			<h1>${component.component.getName()}</h1>
-			<p><b>${component.component.getOrganization()}</b></p>
+		<#if reportOptions.displayOrgData>
+			<h1>${line.component.getName()!}</h1>
+			<p><b>${line.component.getOrganization()!}</b></p>
 			<br>
 			<br>
 		</#if>
-		<div>
-			<#if allowSecurityMargkingsFlg == true>
-				${component.component.getSecurityMarkingType()}
-			</#if>
+		<div>			
+			${line.component.getSecurityMarkingType()!}			
 		</div>
 			
-		<#if component.tags?has_content && reportOptions.getDisplayTags() == true>
+		<#if line.component.tags?has_content && reportOptions.displayTags>
 			<div>
 				<b>Tags: </b>
-				<#list component.tags as tag>
-					<i class="component-tag">${tag.text}</i>
+				<#list line.component.tags as tag>
+					<i class="component-tag">${tag.text!}</i>
 				</#list>
 			</div>
 		</#if>
 		
 		<!--Description-->
-		<#if reportOptions.getDisplayDescription()>
+		<#if reportOptions.displayDescription>
 			<div>
-				${component.component.getDescription()}
+				${line.component.getDescription()!}
 			</div>
 		</#if>
 		
 		<!--Vitals-->
-		<#if component.vitals?has_content && reportOptions.getDisplayVitals() == true>
+		<#if line.component.attributes?has_content && reportOptions.displayVitals>
 			<h2>Vitals</h2>
 			<table>
 				<tr>
 					<th>Vital</th>
 					<th>Value</th>
 				</tr>
-				<#list component.vitals as vitals>
+				<#list line.component.attributes as vital>
 					<tr>
 						<td>
-							<b>${vitals.typeLabel}</b>
+							<b>${vital.typeDescription!}</b>
 						</td>
 						<td>
-							${vitals.attributeLabel}
+							${vital.codeDescription!}
 						</td>
 					</tr>
 				</#list>
@@ -178,7 +177,7 @@
 		</#if>
 			
 		<!--Contacts-->
-		<#if component.contacts?has_content && reportOptions.getDisplayContacts() == true>
+		<#if line.component.contacts?has_content && reportOptions.displayContacts>
 			<h2>Contacts</h2>
 			<table>
 				<tr>
@@ -189,21 +188,21 @@
 					<th>Email</th>
 					<th>Phone</th>
 				</tr>
-				<#list component.contacts as contacts>
+				<#list line.component.contacts as contact>
 					<tr>
-						<td><b>${contacts.type}</b></td>
-						<td><#if contacts.firstName?has_content>${contacts.firstName}</#if></td>
-						<td><#if contacts.lastName?has_content>${contacts.lastName}</#if></td>
-						<td><#if contacts.org?has_content>${contacts.org}</#if></td>
-						<td><#if contacts.email?has_content>${contacts.email}</#if></td>
-						<td><#if contacts.phone?has_content>${contacts.phone}</#if></td>
+						<td><b>${contact.positionDescription!}</b></td>
+						<td><#if contact.firstName?has_content>${contact.firstName}</#if></td>
+						<td><#if contact.lastName?has_content>${contact.lastName}</#if></td>
+						<td><#if contact.organization?has_content>${contact.organization}</#if></td>
+						<td><#if contact.email?has_content>${contact.email}</#if></td>
+						<td><#if contact.phone?has_content>${contact.phone}</#if></td>
 					</tr>
 				</#list>
 			</table>
 		</#if>
 			
 		<!--Resources-->
-		<#if component.resources?has_content && reportOptions.getDisplayResources() == true>
+		<#if line.component.resources?has_content && reportOptions.displayResources>
 			<h2>Resources</h2>
 			<table>
 				<tr>
@@ -212,27 +211,27 @@
 					<th>Link</th>
 					<th>Restricted (requires login/CAC)</th>
 				</tr>
-				<#list component.resources as resource>
+				<#list line.component.resources as resource>
 					<tr>
-						<td><b>${resource.type}</b></td>
-						<td>${resource.description}</td>
-						<td>${resource.link}</td>
-						<td>${resource.restricted}</td>
+						<td><b>${resource.resourceTypeDesc!}</b></td>
+						<td>${resource.description!}</td>
+						<td>${resource.link!}</td>
+						<td>${resource.restricted!}</td>
 					</tr>
 				</#list>
 			</table>
 		</#if>
 			
 		<!--Dependencies-->
-		<#if component.dependencies?has_content && reportOptions.getDisplayDependencies() == true>
+		<#if line.component.dependencies?has_content && reportOptions.displayDependencies>
 			<h2>Dependencies</h2>
 			<table>
-				<#list component.dependencies as dependent>
+				<#list line.component.dependencies as dependent>
 					<tr>
 						<td>
-							<div><b>${dependent.name}</b> - ${dependent.version}</div>
+							<div><b>${dependent.name!}</b> - ${dependent.version!}</div>
 							<#if dependent.link?has_content><div>${dependent.link}</div></#if>
-							<div>${dependent.comment}</div>
+							<div>${dependent.comment!}</div>
 						</td>
 					</tr>
 				</#list>
@@ -240,7 +239,7 @@
 		</#if>
 			
 		<!--Relationships-->
-		<#if component.relationships?has_content && reportOptions.getDisplayRelationships() == true>
+		<#if line.component.relationships?has_content && reportOptions.displayRelationships>
 			<h2>Relationships</h2>
 			<table>
 				<tr>
@@ -249,18 +248,18 @@
 					<th>Related Entry</th>
 				</tr>
 				
-				<#list component.relationships as relationship>
+				<#list line.component.relationships as relationship>
 					<tr>
-						<td>${relationship.componentName}</td>
-						<td><b>${relationship.type}</b></td>
-						<td>${relationship.targetName}</td>
+						<td>${relationship.ownerComponentName!}</td>
+						<td><b>${relationship.relationshipTypeDescription!}</b></td>
+						<td>${relationship.targetComponentName!}</td>
 					</tr>
 				</#list>
 			</table>
 		</#if>
 			
 		<!--Reviews-->
-		<#if component.reviews?has_content && reportOptions.getDisplayReportReviews() == true>
+		<#if line.component.reviews?has_content && reportOptions.displayReportReviews>
 			<h2>Reviews</h2>
 			<table>
 				<tr>
@@ -273,18 +272,18 @@
 					<th>Cons</th>
 					<th>Comment</th>
 				</tr>
-				<#list component.reviews as review>
+				<#list line.component.reviews as review>
 					<tr>
-						<td>${review.username}</td>
-						<td>${review.rating}/5</td>
-						<td>${review.lastUsed?string('MM/yyyy')}</td>
-						<td>${review.recommended?c}</td>
+						<td>${review.username!}</td>
+						<td>${review.rating!}/5</td>
+						<td>${review.lastUsed?string["MM/yyyy"]!}</td>
+						<td>${review.recommend?c!}</td>
 						
 						<!--Pros-->
 						<td>
 							<#if review.pros?has_content>
 								<#list review.pros as pro>
-									<p>- ${pro.pro}</p>
+									<p>- ${pro.text!}</p>
 								</#list>
 							</#if>
 						</td>
@@ -293,29 +292,29 @@
 						<td>
 							<#if review.cons?has_content>
 								<#list review.cons as con>
-									<p>- ${con.con}</p>
+									<p>- ${con.text!}</p>
 								</#list>
 							</#if>
 						</td>
 						
-						<td>${review.comment}</td>
+						<td>${review.comment!}</td>
 					</tr>
 				</#list>
 			</table>
 		</#if>
 			
 		<!--Q/A-->
-		<#if component.QA?has_content && reportOptions.getDisplayQA() == true>
+		<#if line.component.questions?has_content && reportOptions.displayQA>
 			<h2>Questions & Answers</h2>
 			
 			<!--questions-->
-			<#list component.QA as qa>
+			<#list line.component.questions as qa>
 				<div>
 					<div>
-						<h3 class="qa-header">Q. </h3>${qa.question}
+						<h3 class="qa-header">Q. </h3>${qa.question!}
 					</div>
 					<div class="qa-metadata">
-						${qa.username} - ${qa.date?string('MM/DD/yyyy')}
+						${qa.username!} - ${qa.questionUpdateDts?date!}
 					</div>
 					
 					<!--responses-->
@@ -323,10 +322,10 @@
 						<#list qa.responses as response>
 							<div class="section-indent">
 								<div>
-									<h3 class="qa-header">A. </h3>${response.response}
+									<h3 class="qa-header">A. </h3>${response.response!}
 								</div>
 								<div class="qa-metadata">
-									${response.username} - ${response.date?string('MM/dd/yyyy')}
+									${response.username!} - ${response.answeredDate?date!}
 								</div>
 							</div>
 						</#list>
@@ -336,49 +335,49 @@
 		</#if>
 			
 		<!--Evaluation-->
-		<#if component.evaluations?has_content && (reportOptions.getDisplayEvalSummary() == true || reportOptions.getDisplayEvalDetails() == true)>
+		<#if line.component.fullEvaluations?has_content && (reportOptions.displayEvalSummary || reportOptions.displayEvalDetails)>
 			<#assign flag = true>
-			<#list component.evaluations as eval>
+			<#list line.component.fullEvaluations as eval>
 				<#if flag == true>
 			
 					<h2 class="eval-header">Evaluation</h2>
-					<#if eval.version?has_content>
-						<div class="eval-version">Version - ${eval.version}</div>
+					<#if eval.evaluation.version?has_content>
+						<div class="eval-version">Version - ${eval.evaluation.version!}</div>
 					</#if>
 						
 					<!--Evaluation Summary-->
-					<#if reportOptions.getDisplayEvalSummary() == true || reportOptions.getDisplayEvalDetails() == true>
+					<#if reportOptions.displayEvalSummary || reportOptions.displayEvalDetails>
 						<div class="evaluation-section">
 							
 							<!--Reusability Factors-->
-							<#if eval.scores?has_content>
+							<#if eval.checkListAll.scores()?has_content>
 								<h3 class="eval-header">Reusability Factors (5 = best)</h3>
-								<#assign scoreColumns = (eval.scores?size/10.0)?ceiling>
-								<#list eval.scores as scoreItem>
+								<#assign scoreColumns = (eval.checkListAll.scores()?size/10.0)?ceiling>
+								<#list eval.checkListAll.scores()?keys as sectionName>
 									<div class="detail-eval-item">
-										<span class="detail-eval-label">${scoreItem.factor} </span>
-										<span class="detail-eval-score" data-qtip="${scoreItem.averageScore}">
-											<#if scoreItem.score?is_number>
-												<#list 2..scoreItem.score?number + 1 as ii>
-													<i class="score-circle">&#1010${ii};</i>
+										<span class="detail-eval-label">${sectionName!} </span>
+										<span class="detail-eval-score" data-qtip="${eval.checkListAll.scores()[sectionName]!}">
+											<#if eval.checkListAll.scores()[sectionName]?is_number && eval.checkListAll.scores()[sectionName] != 0>
+												<#list 2..eval.checkListAll.scores()[sectionName]?number + 1 as ii>
+													<i class="score-circle">*</i>
 												</#list>
 											<#else>
 												<b>N/A</b>
 											</#if>
 										</span>
-										<div class="score-average">Average: ${scoreItem.averageScore}</div>
+										<div class="score-average">Average: ${eval.checkListAll.scores()[sectionName]!}</div>
 									</div>
 								</#list>
 							</#if>
 							
 							<!--Checklist summary-->
-							<#if eval.checklistSummary?has_content>
+							<#if eval.checkListAll.evaluationChecklist.summary?has_content>
 								<h3 class="eval-header">Checklist Summary</h3>
-								${eval.checklistSummary}
+								${eval.checkListAll.evaluationChecklist.summary!}
 							</#if>
 
 							<!--Checklist recommendations-->
-							<#if eval.recommendations?has_content>
+							<#if eval.checkListAll.recommendations?has_content>
 								<h3 class="eval-header">Evaluation Recommendations</h3>
 								<table>
 									<tr>
@@ -386,11 +385,11 @@
 										<th>Recommendation</th>
 										<th>Reason</th>
 									</tr>
-									<#list eval.recommendations as rec>
+									<#list eval.checkListAll.recommendations as rec>
 										<tr>
-											<td style="width: 15%;">${rec.typeDescription}</td>
-											<td style="width: 39%;">${rec.recommendation}</td>
-											<td style="width: 45%;">${rec.reason}</td>
+											<td style="width: 15%;">${rec.recommendationTypeDescription!}</td>
+											<td style="width: 39%;">${rec.recommendation!}</td>
+											<td style="width: 45%;">${rec.reason!}</td>
 										</tr>
 									</#list>
 								</table>
@@ -399,27 +398,27 @@
 					</#if>
 								
 					<!--Evaluation Details-->
-					<#if reportOptions.getDisplayEvalDetails() == true>
+					<#if reportOptions.displayEvalDetails>
 						<div class="evaluation-section">
 							<!--Evaluation Sections-->
-							<#if eval.evaluationSections?has_content>
-								<#list eval.evaluationSections as section>
-									<#if section.isPrivate == false>
-										<h3 class="eval-header">${section.title}</h3>
-										<#if section.hideContent == false>
-											${section.content}
+							<#if eval.contentSections?has_content>
+								<#list eval.contentSections as sectionAll>
+									<#if sectionAll.section.privateSection! == false>
+										<h3 class="eval-header">${sectionAll.section.title!}</h3>
+										<#if sectionAll.section.noContent! == false>
+											${sectionAll.section.content!}
 										</#if>
 
 										<!--Sub Sections-->
-										<#if section.subSections?has_content>
-											<#list section.subSections as subSection>
-												<#if subSection.isPrivate == false>
+										<#if sectionAll.subSections?has_content>
+											<#list sectionAll.subSections as subSection>
+												<#if subSection.privateSection! == false>
 													<div class="evaluation-section">
 														<#if subSection.hideTitle == false>
-															<h3 class="eval-header">${subSection.title}</h3>
+															<h3 class="eval-header">${subSection.title!}</h3>
 														</#if>
-														<#if subSection.hideContent == false>
-															${subSection.content}
+														<#if subSection.noContent == false>
+															${subSection.content!}
 														</#if>
 													</div>
 												</#if>
@@ -430,7 +429,7 @@
 							</#if>
 							
 							<!--Checklist Details-->
-							<#if eval.checklistDetails?has_content>
+							<#if eval.checkListAll.responses?has_content>
 								<h3 class="eval-header">Evaluation Checklist Details</h3>
 								<table>
 									<tr>
@@ -440,12 +439,12 @@
 										<th style="width: 2.5%;">Score</th>
 										<th style="width: 45%;">Response</th>
 									</tr>
-									<#list eval.checklistDetails as detail>
+									<#list eval.checkListAll.responses as detail>
 										<tr>
-											<td><#if detail.qId?has_content>${detail.qId}</#if></td>
-											<td><#if detail.section?has_content>${detail.section}</#if></td>
-											<td><#if detail.question?has_content>${detail.question}</#if></td>
-											<td><#if detail.score?has_content>${detail.score}</#if></td>
+											<td><#if detail.question.qid?has_content>${detail.question.qid}</#if></td>
+											<td><#if detail.question.evaluationSectionDescription?has_content>${detail.question.evaluationSectionDescription}</#if></td>
+											<td><#if detail.question.question?has_content>${detail.question.question}</#if></td>
+											<td><#if detail.score?has_content && detail.notApplicable?has_content == false>${detail.score}</#if><#if detail.notApplicable?has_content>N/A</#if></td>
 											<td><#if detail.response?has_content>${detail.response}</#if></td>
 										</tr>
 									</#list>
@@ -454,7 +453,7 @@
 						</div>
 					</#if>
 
-					<#if reportOptions.getDisplayEvalVersions() != true>
+					<#if reportOptions.displayEvalVersions>
 						<#assign flag = false>
 					</#if>
 				</#if>

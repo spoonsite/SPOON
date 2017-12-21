@@ -23,9 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -50,6 +50,9 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidateNestedProperties;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Resources Interaction
@@ -60,7 +63,7 @@ public class ResourceAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(ResourceAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(ResourceAction.class.getName());
 
 	@Validate(required = true, on = {"LoadResource", "Redirect"})
 	private String resourceId;
@@ -71,6 +74,7 @@ public class ResourceAction
 		@Validate(required = true, field = "componentId", on = "UploadResource")
 	})
 	private ComponentResource componentResource;
+	private MediaFile mediaFile;
 
 	@Validate(required = true, on = "UploadResource")
 	private FileBean file;
@@ -84,32 +88,45 @@ public class ResourceAction
 	@HandlesEvent("LoadResource")
 	public Resolution loadResource() throws FileNotFoundException
 	{
-		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
-		componentResource = FilterEngine.filter(componentResource, true);
-		if (componentResource == null) {
-			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+		mediaFile = service.getPersistenceService().findById(MediaFile.class, resourceId);
+		if (mediaFile == null) {
+			componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+			componentResource = filterEngine.filter(componentResource, true);
+			if (componentResource == null || componentResource.getFile() == null) {
+				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+			}
+			mediaFile = componentResource.getFile();
 		}
 
 		InputStream in;
 		long length;
-		Path path = getComponentResource().pathToResource();
+		Path path = mediaFile.path();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
+		} else if (componentResource != null) {
+			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
+			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+			throw new OpenStorefrontRuntimeException(message);
 		} else {
-			Component component = service.getPersistenceService().findById(Component.class, getComponentResource().getComponentId());
-			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{getComponentResource().pathToResource(), resourceId, component.getName(), component.getComponentId()});
+			String message = MessageFormat.format("Resource not on disk: {0} Check Media File record: {1} ", new Object[]{componentResource.pathToResource(), resourceId});
 			throw new OpenStorefrontRuntimeException(message);
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(componentResource.getMimeType())
+				.setContentType(mediaFile.getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(componentResource.getOriginalName())
+				.setFilename(mediaFile.getOriginalName())
 				.createRangeResolution();
 
+	}
+
+	@ValidationMethod(on = {"UploadResource"})
+	public void uploadHook(ValidationErrors errors)
+	{
+		checkUploadSizeValidation(errors, file, "file");
 	}
 
 	@HandlesEvent("UploadResource")
@@ -124,7 +141,7 @@ public class ResourceAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -135,22 +152,18 @@ public class ResourceAction
 					}
 				}
 				if (allow) {
-					if (doesFileExceedLimit(file)) {
-						deleteUploadFile(file);
-						errors.put("file", "File size exceeds max allowed.");
-					} else {
+					if (!doesFileExceedLimit(file)) {
+
 						componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 						componentResource.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentResource.setCreateUser(SecurityUtil.getCurrentUserName());
-						componentResource.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
-						componentResource.setMimeType(file.getContentType());
 
 						ValidationModel validationModel = new ValidationModel(componentResource);
 						validationModel.setConsumeFieldsOnly(true);
 						ValidationResult validationResult = ValidationUtil.validate(validationModel);
 						if (validationResult.valid()) {
 							try {
-								service.getComponentService().saveResourceFile(componentResource, file.getInputStream());
+								service.getComponentService().saveResourceFile(componentResource, file.getInputStream(), file.getContentType(), StringProcessor.getJustFileName(file.getFileName()));
 
 								if (SecurityUtil.isEntryAdminUser() == false) {
 									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
@@ -185,7 +198,7 @@ public class ResourceAction
 	public Resolution redirect() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
-		componentResource = FilterEngine.filter(componentResource, true);
+		componentResource = filterEngine.filter(componentResource, true);
 		if (componentResource == null) {
 			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
@@ -197,10 +210,10 @@ public class ResourceAction
 		if (component != null) {
 			componentTracking.setComponentType(component.getComponentType());
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Unable to find Component for the resource.  Component Id: {0}.  Check Data.", componentResource.getComponentId()));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find Component for the resource.  Component Id: {0}.  Check Data.", componentResource.getComponentId()));
 		}
 		String link = StringProcessor.stripHtml(componentResource.getLink());
-		if (componentResource.getFileName() != null) {
+		if (componentResource.getFile() != null && StringUtils.isNotBlank(componentResource.getFile().getFileName())) {
 			componentTracking.setResourceLink(componentResource.pathToResource().toString());
 		} else {
 			componentTracking.setResourceLink(link);
@@ -211,7 +224,7 @@ public class ResourceAction
 		componentTracking.setEventDts(TimeUtil.currentDate());
 		service.getComponentService().saveComponentTracking(componentTracking);
 
-		if (componentResource.getFileName() != null) {
+		if (componentResource.getFile() != null && StringUtils.isNotBlank(componentResource.getFile().getFileName())) {
 			return loadResource();
 		} else {
 			return new RedirectResolution(link, false);
@@ -248,4 +261,13 @@ public class ResourceAction
 		this.file = file;
 	}
 
+	public MediaFile getMediaFile()
+	{
+		return mediaFile;
+	}
+
+	public void setMediaFile(MediaFile mediaFile)
+	{
+		this.mediaFile = mediaFile;
+	}
 }

@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,7 +93,27 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Sets the current thread a running under the system user
+	 * This will add the user to the callable to run; If the security is not
+	 * initialize then this will pass through. (Expected for System user prior
+	 * to system init)
+	 *
+	 * @param <V>
+	 * @param task
+	 * @return
+	 */
+	public static <V> Callable<V> associateSecurity(Callable<V> task)
+	{
+		try {
+			return SecurityUtils.getSubject().associateWith(task);
+		} catch (Exception e) {
+			//security manager is not active; pass through in this case
+			LOG.log(Level.FINEST, "Security not active?", e);
+			return task;
+		}
+	}
+
+	/**
+	 * Sets the current thread to be running under the system user
 	 */
 	public static void initSystemUser()
 	{
@@ -150,7 +171,8 @@ public class SecurityUtil
 	 * the guest user is returned unless the user is the system in which case
 	 * the system user is return
 	 *
-	 * @return context or null if not found
+	 * @return context or null if not found (Only in the case were the there a
+	 * login user with a missing context)
 	 */
 	public static UserContext getUserContext()
 	{
@@ -202,7 +224,7 @@ public class SecurityUtil
 	/**
 	 * Checks the current for permission
 	 *
-	 * @param permission
+	 * @param permissions
 	 * @return true if the user has the permission (All of them)
 	 */
 	public static boolean hasPermission(String... permissions)

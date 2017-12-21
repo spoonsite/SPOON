@@ -24,6 +24,13 @@ public interface PersistenceService
 
 	long countByExample(BaseEntity example);
 
+	/**
+	 * This fully supports query by example. Note: limit, skip and sort are not
+	 * supported.
+	 *
+	 * @param queryByExample
+	 * @return
+	 */
 	long countByExample(QueryByExample queryByExample);
 
 	long countClass(Class entityClass);

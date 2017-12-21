@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>2.4</version>
+		<version>2.5</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-service</artifactId>
-	<version>2.4</version>
+	<version>2.5</version>
 	<packaging>bundle</packaging>
 
 	<name>openstorefront-core-service</name>
@@ -54,7 +54,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<orientdb.version>2.2.27</orientdb.version>
+		<orientdb.version>2.2.29</orientdb.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
@@ -77,12 +77,30 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.26-incubating</version>
 		</dependency>
+
+		<dependency>
+		    <groupId>net.sf.jtidy</groupId>
+		    <artifactId>jtidy</artifactId>
+		    <version>r938</version>
+		</dependency>
+
 		
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>2.3.3</version>
-		</dependency>		
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-core</artifactId>
+            <version>9.1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.1.9</version>
+        </dependency>  
+		
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>6.0.0</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
@@ -113,7 +131,7 @@
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-api</artifactId>
-			<version>3.0.0</version>
+			<version>4.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.jersey</groupId>
@@ -133,7 +151,7 @@
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-core</artifactId>
-			<version>3.0.0</version>
+			<version>4.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.jersey</groupId>
@@ -148,7 +166,13 @@
 					<artifactId>jersey-json</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>			
+		</dependency>	
+		
+		<dependency>
+			<groupId>com.atlassian.fugue</groupId>
+			<artifactId>fugue</artifactId>
+			<version>2.6.1</version>			
+		</dependency>													
 	
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
@@ -269,7 +293,7 @@
 		<dependency>
 			<groupId>net.java.truevfs</groupId>
 			<artifactId>truevfs-profile-default</artifactId>
-			<version>0.10.8</version>
+			<version>0.11.1</version>
 			<exclusions>					
 				<exclusion>
 					<groupId>net.java.truevfs</groupId>
@@ -309,6 +333,12 @@
 			<version>1.0</version>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.main.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+			<version>4.1.2</version>
+			<scope>test</scope>
+		</dependency>	
 	</dependencies>
 
 	<build>

@@ -29,37 +29,8 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 		'OSF.landing.RelationshipSearch'
 	],
 	
-	layout: 'center',		
-	items: [
-		{
-			xtype: 'dataview',
-			itemId: 'dataview',
-			store: {				
-			},
-			itemSelector: 'div.search-tool',
-			tpl: new Ext.XTemplate(
-				'<div class="action-tool-header">Search Tools</div>',	
-				'<tpl for=".">',
-					'<div style="margin: 15px;" class="search-tool-button-outer search-tool" data-qtip="{tip}">',
-					  '<div class="search-tool-button-inner">',	
-						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
-						'<tpl if="icon"><i class="fa fa-4x {icon}"></i></tpl>',
-						'<br/><span>{text}</span>',
-					  '</div>',
-					'</div>',
-				'</tpl>'
-			),
-			listeners: {
-				itemclick: function(dataView, record, item, index, e, eOpts) {	
-					if (!record.tool) {
-						record.tool = Ext.create(record.data.toolType, {							
-						});
-					}
-					record.tool.handler(record, item);
-				}
-			}
-		}
-	],
+	layout: 'center',
+	toolSize: 'large', //small, medium, large
 	searchTools: [
 		{
 			text: 'Tags',
@@ -89,7 +60,51 @@ Ext.define('OSF.landing.DefaultSearchTools', {
 	initComponent: function () {
 		this.callParent();			
 		var searchToolsPanel = this;	
-		searchToolsPanel.queryById('dataview').getStore().loadData(searchToolsPanel.searchTools);
+		
+		var iconSize = 'fa-4x';
+		var toolCSS = 'search-tool-button-outer-large';
+		var toolCSSInner = 'search-tool-button-inner-large';
+		if (searchToolsPanel.toolSize === 'small') {
+			iconSize = 'fa-3x';
+			toolCSS = 'search-tool-button-outer-small';
+			toolCSSInner = 'search-tool-button-inner-small';
+		} else if (searchToolsPanel.toolSize === 'medium') {
+			iconSize = 'fa-4x';
+			toolCSS = 'search-tool-button-outer-medium';
+			toolCSSInner = 'search-tool-button-inner-medium';
+		} 
+		
+		var dataView = 	Ext.create('Ext.DataView', {			
+			itemId: 'dataview',
+			store: {				
+			},
+			itemSelector: 'div.search-tool',
+			tpl: new Ext.XTemplate(
+				'<div class="action-tool-header">Search Tools</div>',	
+				'<tpl for=".">',
+					'<div style="margin: 15px;" class="' + toolCSS + ' search-tool" data-qtip="{tip}">',
+					  '<div class="' + toolCSSInner + '">',	
+						'<tpl if="imageSrc"><img src="{imageSrc}" /></tpl>',	
+						'<tpl if="icon"><i class="fa ' + iconSize + ' {icon}"></i></tpl>',
+						'<br/><span>{text}</span>',
+					  '</div>',
+					'</div>',
+				'</tpl>'
+			),
+			listeners: {
+				itemclick: function(dataView, record, item, index, e, eOpts) {	
+					if (!record.tool) {
+						record.tool = Ext.create(record.data.toolType, {							
+						});
+					}
+					record.tool.handler(record, item);
+				}
+			}
+		});
+		searchToolsPanel.add(dataView);
+		
+		
+		dataView.getStore().loadData(searchToolsPanel.searchTools);
 	},
 	loadData: function(tools) {
 		var searchToolsPanel = this;

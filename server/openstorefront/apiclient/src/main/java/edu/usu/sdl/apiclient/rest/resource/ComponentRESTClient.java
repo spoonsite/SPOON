@@ -164,9 +164,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response addComponentQuestion(String componentId, ComponentQuestion question)
+	public ComponentQuestion addComponentQuestion(String componentId, ComponentQuestion question)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/questions", question, null);
+		return response.getResponse(ComponentQuestion.class);
 	}
 
 	public Response addComponentQuestionResponse(String componentId, String questionId, ComponentQuestionResponse response)
@@ -204,9 +205,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response addComponentTag(String componentId, ComponentTag tag)
+	public ComponentTag addComponentTag(String componentId, ComponentTag tag)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/tags", tag, null);
+		return response.getResponse(ComponentTag.class);
 	}
 
 	public Response addComponentTags(String componentId, List<ComponentTag> tags)
@@ -495,7 +497,7 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public ComponentAdminWrapper getComponentList(FilterQueryParams filterQueryParams)
+	public ComponentAdminWrapper getComponentList(ComponentFilterParams filterQueryParams)
 	{
 		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
 		APIResponse response = client.httpGet(basePath + "/filterable", parameters);

@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -26,14 +25,20 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import edu.usu.sdl.openstorefront.report.model.ComponentReportLineModel;
+import edu.usu.sdl.openstorefront.report.model.ComponentReportModel;
+import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,61 +49,27 @@ public class ComponentReport
 		extends BaseReport
 {
 
-	private List<Component> components;
-
 	public ComponentReport(Report report)
 	{
 		super(report);
 	}
 
 	@Override
-	protected void gatherData()
+	protected ComponentReportModel gatherData()
 	{
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		components = service.getPersistenceService().queryByExample(componentExample);
+		List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 		if (!report.dataIdSet().isEmpty()) {
 			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
-		components = FilterEngine.filter(components);
-
-	}
-
-	@Override
-	protected void writeReport()
-	{
-		CSVGenerator cvsGenerator = (CSVGenerator) generator;
-
-		//write header
-		cvsGenerator.addLine("Entry Report", sdf.format(TimeUtil.currentDate()));
-
-		List<String> header = new ArrayList<>();
-		header.add("Name");
-		header.add("Organization");
-		header.add("Last Activity Date");
-		header.add("Approval Status");
-		header.add("Approval Date");
-		header.add("Approval User");
-		header.add("Active Status");
-		header.add("Create Date");
-		header.add("Create User");
-		header.add("Last Viewed");
-		header.add("Views (For Tracking Period)");
-		header.add("Resources Clicked");
-		header.add("Active Reviews");
-		header.add("Tags");
-		header.add("Active Questions");
-		header.add("Active Question Responses");
-
-		if (getBranding().getAllowSecurityMarkingsFlg()) {
-			header.add("Security Marking");
-		}
-		cvsGenerator.addLine(header.toArray());
-
+		components = filterEngine.filter(components);
 		components.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, Component.FIELD_NAME));
 
-		//write Body
+		ComponentReportModel componentReportModel = new ComponentReportModel();
+		componentReportModel.setTitle("Entry Report");
+
 		for (Component component : components) {
 
 			ComponentTracking componentTrackingExample = new ComponentTracking();
@@ -144,34 +115,129 @@ public class ComponentReport
 			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
 
 			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(queryByExample);
-			String lastViewed = "";
+			Date lastViewed = null;
 			if (componentTracking != null) {
-				lastViewed = sdf.format(componentTracking.getEventDts());
+				lastViewed = componentTracking.getEventDts();
 			}
 
-			List<String> data = new ArrayList<>();
-			data.add(component.getName());
-			data.add(component.getOrganization());
-			data.add(sdf.format(component.getLastActivityDts()));
-			data.add(component.getApprovalState());
-			data.add(component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()));
-			data.add(component.getApprovedUser());
-			data.add(component.getActiveStatus());
-			data.add(sdf.format(component.getCreateDts()));
-			data.add(component.getCreateUser());
-			data.add(lastViewed);
-			data.add(Long.toString(views));
-			data.add(Long.toString(resourcesClicked));
-			data.add(Long.toString(reviews));
-			data.add(Long.toString(tags));
-			data.add(Long.toString(questions));
-			data.add(Long.toString(questionResponse));
+			ComponentReportLineModel lineModel = new ComponentReportLineModel();
 
-			if (getBranding().getAllowSecurityMarkingsFlg()) {
-				data.add(component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
-			}
-			cvsGenerator.addLine(data.toArray());
+			lineModel.setName(component.getName());
+			lineModel.setOrganization(component.getOrganization());
+			lineModel.setActiveStatus(component.getActiveStatus());
+			lineModel.setApprovalDts(component.getApprovedDts());
+			lineModel.setApprovalStatus(component.getApprovalState());
+			lineModel.setApprovalUser(component.getApprovedUser());
+			lineModel.setLastActivityDts(component.getLastActivityDts());
+			lineModel.setCreateDts(component.getCreateDts());
+			lineModel.setCreateUser(component.getCreateUser());
+			lineModel.setLastViewed(lastViewed);
+			lineModel.setActiveQuestionResponses(questionResponse);
+			lineModel.setActiveQuestions(questions);
+			lineModel.setActiveReviews(reviews);
+			lineModel.setResourcesClicked(resourcesClicked);
+			lineModel.setTags(tags);
+			lineModel.setViews(views);
 
+			componentReportModel.getData().add(lineModel);
+		}
+
+		return componentReportModel;
+	}
+
+	@Override
+	protected Map<String, ReportWriter> getWriterMap()
+	{
+		Map<String, ReportWriter> writerMap = new HashMap<>();
+
+		String viewCSV = outputKey(ReportTransmissionType.VIEW, ReportFormat.CSV);
+		writerMap.put(viewCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentReportModel) reportModel);
+		});
+
+		String emailCSV = outputKey(ReportTransmissionType.EMAIL, ReportFormat.CSV);
+		writerMap.put(emailCSV, (generator, reportModel) -> {
+			writeCSV(generator, (ComponentReportModel) reportModel);
+		});
+
+		return writerMap;
+	}
+
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs()
+	{
+		List<ReportTransmissionType> transmissionTypes = new ArrayList<>();
+
+		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
+		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
+		transmissionTypes.add(view);
+		transmissionTypes.add(email);
+
+		return transmissionTypes;
+	}
+
+	@Override
+	public List<ReportFormat> getSupportedFormats(String reportTransmissionType)
+	{
+		List<ReportFormat> formats = new ArrayList<>();
+
+		switch (reportTransmissionType) {
+			case ReportTransmissionType.VIEW:
+				ReportFormat format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+
+			case ReportTransmissionType.EMAIL:
+				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.CSV);
+				formats.add(format);
+				break;
+		}
+
+		return formats;
+	}
+
+	private void writeCSV(BaseGenerator generator, ComponentReportModel reportModel)
+	{
+		CSVGenerator cvsGenerator = (CSVGenerator) generator;
+		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+
+		cvsGenerator.addLine(
+				"Name",
+				"Organization",
+				"Last Activity Date",
+				"Approval Status",
+				"Approval Date",
+				"Approval User",
+				"Active Status",
+				"Create Date",
+				"Create User",
+				"Last Viewed",
+				"Views (For Tracking Period)",
+				"Resources Clicked",
+				"Active Reviews",
+				"Tags",
+				"Active Questions",
+				"Active Question Responses"
+		);
+
+		for (ComponentReportLineModel lineModel : reportModel.getData()) {
+			cvsGenerator.addLine(
+					lineModel.getName(),
+					lineModel.getOrganization(),
+					sdf.format(lineModel.getLastActivityDts()),
+					lineModel.getApprovalStatus(),
+					lineModel.getApprovalDts() == null ? "" : sdf.format(lineModel.getApprovalDts()),
+					lineModel.getActiveStatus(),
+					sdf.format(lineModel.getCreateDts()),
+					lineModel.getCreateUser(),
+					lineModel.getLastViewed() == null ? "" : sdf.format(lineModel.getLastViewed()),
+					lineModel.getViews(),
+					lineModel.getResourcesClicked(),
+					lineModel.getActiveReviews(),
+					lineModel.getTags(),
+					lineModel.getActiveQuestions(),
+					lineModel.getActiveQuestionResponses()
+			);
 		}
 
 	}

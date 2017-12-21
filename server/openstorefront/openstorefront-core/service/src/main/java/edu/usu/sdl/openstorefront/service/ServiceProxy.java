@@ -25,7 +25,9 @@ import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.api.FaqService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
+import edu.usu.sdl.openstorefront.core.api.HelpSupportService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.NotificationService;
@@ -41,15 +43,20 @@ import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ChangeLogServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
@@ -63,7 +70,7 @@ public class ServiceProxy
 
 	private String modificationType = ModificationType.API;
 
-	protected PersistenceService persistenceService = new OrientPersistenceService();
+	protected PersistenceService persistenceService = new OrientPersistenceService(DBManager.getInstance());
 	private LookupService lookupService;
 	private AttributeService attributeService;
 	private AttributeServicePrivate attributeServicePrivate;
@@ -89,18 +96,36 @@ public class ServiceProxy
 	private ChecklistService checklistService;
 	private ContentSectionService contentSectionService;
 	private SecurityService securityService;
+	private SecurityServicePrivate securityServicePrivate;
 	private ChangeLogService changeLogService;
 	private ChangeLogServicePrivate changeLogServicePrivate;
 	private SystemArchiveService systemArchiveService;
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
+	private HelpSupportService helpSupportService;
+	private FaqService faqService;
+
+	private FilterEngine filterEngine;
 
 	public ServiceProxy()
 	{
+		if (Test.isMockPersistenceService.get()) {
+			this.persistenceService = Test.mockPersistanceService;
+		}
+		else if (Test.isTestPersistenceService.get()) {
+			this.persistenceService = new TestPersistenceService();
+		}
 	}
 
 	public ServiceProxy(String modificationType)
 	{
 		this.modificationType = modificationType;
+
+		if (Test.isMockPersistenceService.get()) {
+			this.persistenceService = Test.mockPersistanceService;
+		}
+		else if (Test.isTestPersistenceService.get()) {
+			this.persistenceService = new TestPersistenceService();
+		}
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
@@ -118,6 +143,20 @@ public class ServiceProxy
 		return new ServiceProxy(modificationType);
 	}
 
+	public FilterEngine getFilterEngine()
+	{
+		//*must be lazy loaded otherwise it would create circular reference
+		if (filterEngine == null) {
+			filterEngine = FilterEngine.getInstance();
+		}
+		return filterEngine;
+	}
+
+	public void setFilterEngine(FilterEngine filterEngine)
+	{
+		this.filterEngine = filterEngine;
+	}
+
 	@Override
 	public PersistenceService getPersistenceService()
 	{
@@ -127,7 +166,7 @@ public class ServiceProxy
 	@Override
 	public PersistenceService getNewPersistenceService()
 	{
-		return new OrientPersistenceService();
+		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService(DBManager.getInstance());
 	}
 
 	@Override
@@ -376,6 +415,14 @@ public class ServiceProxy
 		return securityService;
 	}
 
+	public SecurityServicePrivate getSecurityServicePrivate()
+	{
+		if (securityServicePrivate == null) {
+			securityServicePrivate = DynamicProxy.newInstance(new SecurityServiceImpl());
+		}
+		return securityServicePrivate;
+	}
+
 	@Override
 	public ChangeLogService getChangeLogService()
 	{
@@ -408,6 +455,50 @@ public class ServiceProxy
 			systemArchiveServicePrivate = DynamicProxy.newInstance(new SystemArchiveServiceImpl());
 		}
 		return systemArchiveServicePrivate;
+	}
+
+	public HelpSupportService getHelpSupportService()
+	{
+		if (helpSupportService == null) {
+			helpSupportService = DynamicProxy.newInstance(new HelpSupportServiceImpl());
+		}
+		return helpSupportService;
+	}
+	
+	public FaqService getFaqService()
+	{
+		if (faqService == null) {
+			faqService = DynamicProxy.newInstance(new FaqServiceImpl());
+		}
+		return faqService;
+	}
+
+	public static class Test
+	{
+
+		private static AtomicBoolean isTestPersistenceService = new AtomicBoolean(false);
+		private static AtomicBoolean isMockPersistenceService = new AtomicBoolean(false);
+		private static PersistenceService mockPersistanceService = null;
+		
+		public static void setPersistenceServiceToTest()
+		{
+			isTestPersistenceService.set(true);
+		}
+		
+		public static void setPersistenceServiceToMock(PersistenceService persistanceService)
+		{
+			isMockPersistenceService.set(true);
+			mockPersistanceService = persistanceService;
+		}
+		
+		public static void clearPersistenceMock() {
+			isMockPersistenceService.set(false);
+			mockPersistanceService = null;
+		}
+		
+		public static void clearTest() {
+			isTestPersistenceService.set(false);
+		}
 	}
 
 }

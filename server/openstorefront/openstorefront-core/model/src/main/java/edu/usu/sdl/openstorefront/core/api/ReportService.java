@@ -16,9 +16,10 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handles generation of report and tracking them
@@ -60,9 +61,19 @@ public interface ReportService
 	/**
 	 * Gets the supported formats for a report
 	 *
+	 * @param reportType
+	 * @param reportTranmissionType
 	 * @return Report Type, Value list reportFormats keys
 	 */
-	public Map<String, List<String>> getSupportedFormats();
+	public List<ReportFormat> getSupportedFormats(String reportType, String reportTranmissionType);
+
+	/**
+	 * Gets the report output for a given type
+	 *
+	 * @param reportType
+	 * @return
+	 */
+	public List<ReportTransmissionType> getSupportedOutputs(String reportType);
 
 	/**
 	 * Saves a scheduled report
@@ -70,6 +81,7 @@ public interface ReportService
 	 * @param scheduledReport
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ScheduledReport saveScheduledReport(ScheduledReport scheduledReport);
 
 	/**
@@ -78,5 +90,34 @@ public interface ReportService
 	 * @param scheduledReportId
 	 */
 	public void deleteScheduledReport(String scheduledReportId);
+
+	/**
+	 * In-activates all scheduled report for a user
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void disableAllScheduledReportsForUser(String username);
+
+	/**
+	 * Removes all expired report
+	 */
+	public void deleteExpiredReports();
+
+	/**
+	 * Typically this is called from a job
+	 *
+	 * @param scheduledReport
+	 */
+	public void runScheduledReportNow(ScheduledReport scheduledReport);
+
+	/**
+	 * This will set status and add/or remove scheduled report if cron-based;
+	 *
+	 * @param scheduledReportId
+	 * @param activeStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void updateStatusOnScheduledReport(String scheduledReportId, String activeStatus);
 
 }

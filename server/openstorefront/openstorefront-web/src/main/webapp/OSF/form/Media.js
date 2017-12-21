@@ -56,6 +56,7 @@ Ext.define('OSF.form.Media', {
 						var data = mainForm.getValues();
 						var componentId = mediaPanel.mediaGrid.componentId;
 
+						data.caption = data.caption.replace(/\"|\'/g, '');
 						data.fileSelected = mainForm.getComponent('upload').getValue();
 						data.link = data.originalLink;
 						data.originalName = data.originalFileName;
@@ -91,6 +92,17 @@ Ext.define('OSF.form.Media', {
 							} else {
 								//upload
 
+								var progressMsg = Ext.MessageBox.show({
+									title: 'Media Upload',
+									msg: 'Uploading media please wait...',
+									width: 300,
+									height: 150,
+									closable: false,
+									progressText: 'Uploading...',
+									wait: true,
+									waitConfig: {interval: 300}
+								});
+
 								mainForm.submit({
 									url: 'Media.action?UploadMedia',
 									params: {
@@ -104,12 +116,11 @@ Ext.define('OSF.form.Media', {
 									},
 									method: 'POST',
 									submitEmptyText: false,
-									waitMsg: 'Uploading media please wait...',
-									waitTitle: 'Uploading',
 									success: function(formBasic, action, opt){
 										mediaPanel.mediaGrid.getStore().reload();
 										mainForm.reset();
 										mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+										progressMsg.hide();
 									}, 
 									failure: function(formBasic, action, opt) {
 										var errorResponse = Ext.decode(action.response.responseText);
@@ -118,9 +129,9 @@ Ext.define('OSF.form.Media', {
 											errorObj[item.key.replace('componentMedia', '')] = item.value;
 										});
 										mainForm.markInvalid(errorObj);
+										progressMsg.hide();
 									}
 								});
-
 							}
 						}
 					}
@@ -172,20 +183,29 @@ Ext.define('OSF.form.Media', {
 					name: 'caption'
 				},
 				{
-					xtype: 'filefield',
+					xtype: 'fileFieldMaxLabel',
 					itemId: 'upload',
-					fieldLabel: 'Upload Media (Limit of 1GB)',																											
+					resourceLabel: 'Upload Media',
 					name: 'file',
-					listeners: {
-						change: CoreUtil.handleMaxFileLimit
-					}
+					width: '100%'
 				},
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Link',																																	
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/image.png',
-					name: 'originalLink'
+					name: 'originalLink',
+					listeners: {
+						change: function (self, newVal, oldVal) {
+							var iconCheckbox = self.up().query('[name="iconFlag"]')[0];
+							if (newVal === '') {
+								iconCheckbox.setDisabled(false);
+							}
+							else {
+								iconCheckbox.setDisabled(true);
+							}
+						}
+					}
 				},
 				{
 					xtype: 'checkbox',
@@ -199,7 +219,7 @@ Ext.define('OSF.form.Media', {
 				},
 				{
 					xtype: 'checkbox',
-					fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
+					fieldLabel: 'Icon <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time. You <b>cannot</b> use a <b>Link</b> or external media for the icon."></i>',
 					name: 'iconFlag'
 				},				
 				Ext.create('OSF.component.SecurityComboBox', {					

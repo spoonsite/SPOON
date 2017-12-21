@@ -18,8 +18,7 @@ package edu.usu.sdl.openstorefront.selenium.apitestclient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 /**
  *
@@ -28,16 +27,18 @@ import java.util.List;
 public class APIClient
 {
 
-	private List<BaseTestClient> testClients = new ArrayList<>();
+	private Stack<BaseTestClient> testClients = new Stack<BaseTestClient>();
 	private ClientAPI client;
 	private ContactTestClient apiContactClient;
 	private AttributeTestClient apiAttributeClient;
+	private ApplicationTestClient apiApplicationClient;
 	private ComponentTypeTestClient apiComponentTypeClient;
 	private HighlightTestClient apiHighlightClient;
 	private UserSavedSearchTestClient apiUserSavedSearchClient;
 	private SystemSearchTestClient apiSystemSearchClient;
 	private ComponentRESTTestClient apiComponentRESTClient;
 	private UserRegistrationTestClient apiUserRegistrationClient;
+	private OrganizationTestClient apiOrganizationClient;
 
 	public APIClient()
 	{
@@ -48,11 +49,21 @@ public class APIClient
 		client.connect(username, password, server);
 	}
 	
+	public ApplicationTestClient getApplicationTestClient()
+	{
+		if (apiApplicationClient == null) {
+			apiApplicationClient = new ApplicationTestClient(client, this);
+			testClients.push(apiApplicationClient);
+		}
+		
+		return apiApplicationClient;
+	}
+	
 	public ComponentRESTTestClient getComponentRESTTestClient() 
 	{
 		if (apiComponentRESTClient == null) {
 			apiComponentRESTClient = new ComponentRESTTestClient(client, this);
-			testClients.add(apiComponentRESTClient);
+			testClients.push(apiComponentRESTClient);
 		}
 		return apiComponentRESTClient;
 	}
@@ -61,7 +72,7 @@ public class APIClient
 	{
 		if (apiSystemSearchClient == null) {
 			apiSystemSearchClient = new SystemSearchTestClient(client, this);
-			testClients.add(apiSystemSearchClient);
+			testClients.push(apiSystemSearchClient);
 		}
 		return apiSystemSearchClient;
 	}
@@ -70,7 +81,7 @@ public class APIClient
 	{
 		if (apiUserSavedSearchClient == null) {
 			apiUserSavedSearchClient = new UserSavedSearchTestClient(client, this);
-			testClients.add(apiUserSavedSearchClient);
+			testClients.push(apiUserSavedSearchClient);
 		}
 		return apiUserSavedSearchClient;
 	}
@@ -79,7 +90,7 @@ public class APIClient
 	{
 		if (apiHighlightClient == null) {
 			apiHighlightClient = new HighlightTestClient(client, this);
-			testClients.add(apiHighlightClient);
+			testClients.push(apiHighlightClient);
 		}
 		return apiHighlightClient;
 	}
@@ -88,7 +99,7 @@ public class APIClient
 	{
 		if (apiContactClient == null) {
 			apiContactClient = new ContactTestClient(client, this);
-			testClients.add(apiContactClient);
+			testClients.push(apiContactClient);
 		}
 		return apiContactClient;
 	}
@@ -106,18 +117,27 @@ public class APIClient
 	{
 		if (apiComponentTypeClient == null) {
 			apiComponentTypeClient = new ComponentTypeTestClient(client, this);
-			testClients.add(apiComponentTypeClient);
+			testClients.push(apiComponentTypeClient);
 		}
 		return apiComponentTypeClient;
 	}
 	
-	public UserRegistrationTestClient getUserRegistrationClient()
+	public UserRegistrationTestClient getUserRegistrationTestClient()
 	{
 		if (apiUserRegistrationClient == null) {
 			apiUserRegistrationClient = new UserRegistrationTestClient(client, this);
-			testClients.add(apiUserRegistrationClient);
+			testClients.push(apiUserRegistrationClient);
 		}
 		return apiUserRegistrationClient;
+	}
+	
+	public OrganizationTestClient getOrganizationTestClient()
+	{
+		if (apiOrganizationClient == null) {
+			apiOrganizationClient = new OrganizationTestClient(client, this);
+			testClients.push(apiOrganizationClient);
+		}
+		return apiOrganizationClient;
 	}
 	
 	public void cleanup()

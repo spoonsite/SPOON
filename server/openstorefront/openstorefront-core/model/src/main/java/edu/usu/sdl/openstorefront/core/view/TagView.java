@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,9 +65,13 @@ public class TagView
 	public static List<TagView> toView(List<ComponentTag> tags)
 	{
 		List<TagView> views = new ArrayList<>();
-		tags.forEach(tag -> {
-			views.add(toView(tag));
-		});
+		if (tags != null) {
+			FilterEngine filterEngine = FilterEngine.getInstance();
+			tags = filterEngine.filter(tags, true);
+			for (ComponentTag tag : tags) {
+				views.add(toView(tag));
+			}
+		}
 		return views;
 	}
 

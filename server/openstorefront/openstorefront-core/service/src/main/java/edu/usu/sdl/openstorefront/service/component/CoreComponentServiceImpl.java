@@ -65,6 +65,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -73,7 +74,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
@@ -118,15 +118,14 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -252,7 +251,7 @@ public class CoreComponentServiceImpl
 
 	public List<ComponentSearchView> getComponents()
 	{
-		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
+		List<ComponentSearchView> componentSearchViews;
 
 		String query = "select componentId from " + Component.class.getSimpleName()
 				+ " where activeStatus='" + Component.ACTIVE_STATUS
@@ -296,7 +295,7 @@ public class CoreComponentServiceImpl
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
-		tempComponent = FilterEngine.filter(tempComponent);
+		tempComponent = filterEngine.filter(tempComponent);
 
 		if (tempComponent == null) {
 			return null;
@@ -309,7 +308,7 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setComponentId(componentId);
 		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
-		directRelationships = FilterEngine.filter(directRelationships, true);
+		directRelationships = filterEngine.filter(directRelationships, true);
 
 		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
 		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
@@ -320,7 +319,7 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample.setRelatedComponentId(componentId);
 
 		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
-		inDirectRelationships = FilterEngine.filter(inDirectRelationships, true);
+		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
 
 		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
 		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
@@ -336,6 +335,7 @@ public class CoreComponentServiceImpl
 		}
 		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
+		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
 
 		result.setComponentId(componentId);
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
@@ -389,7 +389,7 @@ public class CoreComponentServiceImpl
 		}
 		tempReviews.addAll(tempApprovedReviews);
 		List<ComponentReviewView> reviews = new ArrayList();
-		tempReviews = FilterEngine.filter(tempReviews);
+		tempReviews = filterEngine.filter(tempReviews);
 
 		tempReviews.forEach(review
 				-> {
@@ -423,7 +423,7 @@ public class CoreComponentServiceImpl
 				questions.add(question);
 			}
 		}
-		questions = FilterEngine.filter(questions);
+		questions = filterEngine.filter(questions);
 
 		questions.stream().forEach((question)
 				-> {
@@ -432,14 +432,14 @@ public class CoreComponentServiceImpl
 			tempResponse.setQuestionId(question.getQuestionId());
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			List<ComponentQuestionResponse> activeResponses = tempResponse.findByExample();
-			activeResponses = FilterEngine.filter(activeResponses);
+			activeResponses = filterEngine.filter(activeResponses);
 
 			ComponentQuestionResponse tempPendingResponse = new ComponentQuestionResponse();
 			tempPendingResponse.setQuestionId(question.getQuestionId());
 			tempPendingResponse.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
 			tempPendingResponse.setCreateUser(currentUser);
 
-			List<ComponentQuestionResponse> responses = FilterEngine.filter(tempPendingResponse.findByExample());
+			List<ComponentQuestionResponse> responses = filterEngine.filter(tempPendingResponse.findByExample());
 			responses.addAll(activeResponses);
 
 			responseViews = ComponentQuestionResponseView.toViewList(responses);
@@ -545,7 +545,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(component);
 		Objects.requireNonNull(options, "Options are required; pass new one for defaults");
 
-		Component oldComponent = null;
+		Component oldComponent;
 		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
 			oldComponent = findExistingComponent(component.getComponent());
 		} else {
@@ -662,10 +662,8 @@ public class CoreComponentServiceImpl
 							componentMedia.setComponentId(component.getComponent().getComponentId());
 							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
-							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
-							componentMedia.setHideInDisplay(false);
+							componentMedia.setHideInDisplay(true);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
 								//stripe generated part of name
 								String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);
@@ -692,8 +690,7 @@ public class CoreComponentServiceImpl
 								InputStream in = new FileInputStream(path.toFile());
 								componentMedia.setComponentMediaId(persistenceService.generateId());
 								componentMedia.populateBaseCreateFields();
-								componentMedia.setFileName(componentMedia.getComponentMediaId());
-								Files.copy(in, componentMedia.pathToMedia());
+								componentMedia = componentService.saveMediaFile(componentMedia, in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName());
 								persistenceService.persist(componentMedia);
 								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
@@ -702,7 +699,7 @@ public class CoreComponentServiceImpl
 							}
 						}
 						// Replace converted url
-						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getComponentMediaId());
+						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getFile().getMediaFileId());
 						String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
 						LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
 						mediaItem.attr("src", newUrl);
@@ -771,10 +768,43 @@ public class CoreComponentServiceImpl
 				component.getComponent().setComponentId(existing.getComponentId());
 				snapshotVersion(component.getComponent().getComponentId(), component.getComponent().getFileHistoryId());
 			}
+			if (component.getMedia() != null) {
+				component.getMedia().forEach(componentMedia -> {
+					MediaFile existingFile = getExistingMediaFile(componentMedia.getFile());
+					if (existingFile != null) {
+						componentMedia.setFile(existingFile);
+					}
+				});
+			}
+			if (component.getResources() != null) {
+				component.getResources().forEach(componentResource -> {
+					MediaFile existingFile = getExistingMediaFile(componentResource.getFile());
+					if (existingFile != null) {
+						componentResource.setFile(existingFile);
+					}
+				});
+			}
+
 			saveFullComponent(component, options, false);
 			componentsToIndex.add(component.getComponent());
 		});
 		componentService.getSearchService().indexComponents(componentsToIndex);
+	}
+
+	private MediaFile getExistingMediaFile(MediaFile file)
+	{
+		MediaFile existing = null;
+		if (file != null
+				&& !StringUtils.isBlank(file.getFileName())
+				&& !StringUtils.isBlank(file.getMediaFileId())) {
+			// if it is the same fileName and directory it is the same file
+			// or the file is already overwritten the previous file
+			MediaFile example = new MediaFile();
+			example.setFileName(file.getFileName());
+			example.setFileType(file.getFileType());
+			existing = example.findProxy();
+		}
+		return existing;
 	}
 
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
@@ -834,7 +864,7 @@ public class CoreComponentServiceImpl
 			lockSwitch.setSwitched(requiredForComponent.isComponentChanged());
 			lockSwitch.setSwitched(requiredForComponent.isAttributeChanged());
 		} else {
-			throw new OpenStorefrontRuntimeException(validationResult.toString());
+			throw new OpenStorefrontValidationException(validationResult);
 		}
 
 		lockSwitch.setSwitched(handleBaseComponentSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
@@ -983,7 +1013,7 @@ public class CoreComponentServiceImpl
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid() == false) {
-				throw new OpenStorefrontRuntimeException(validationResult.toString());
+				throw new OpenStorefrontValidationException(validationResult);
 			}
 			inputMap.add(EntityUtil.getPKFieldValue(baseComponent));
 
@@ -1071,7 +1101,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(componentId, "Component Id is required.");
 		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
-		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
@@ -1166,7 +1196,7 @@ public class CoreComponentServiceImpl
 
 	public List<Component> findRecentlyAdded(int maxResults)
 	{
-		String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+		String dataFilterRestriction = filterEngine.queryComponentRestriction();
 		if (StringUtils.isNotBlank(dataFilterRestriction)) {
 			dataFilterRestriction = " and " + dataFilterRestriction;
 		}
@@ -1188,7 +1218,7 @@ public class CoreComponentServiceImpl
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
 		if (componentIds.isEmpty() == false) {
 
-			String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+			String dataFilterRestriction = filterEngine.queryComponentRestriction();
 			if (StringUtils.isNotBlank(dataFilterRestriction)) {
 				dataFilterRestriction += " and ";
 			}
@@ -1378,7 +1408,7 @@ public class CoreComponentServiceImpl
 
 		if (componentAll != null) {
 			Component componentToFilter = componentAll.getComponent();
-			componentToFilter = FilterEngine.filter(componentToFilter);
+			componentToFilter = filterEngine.filter(componentToFilter);
 			if (componentToFilter == null) {
 				componentAll = null;
 			}
@@ -1499,7 +1529,7 @@ public class CoreComponentServiceImpl
 		//TODO: consider moving the filtering work to the DB
 		List<Component> components = persistenceService.queryByExample(queryByExample);
 
-		components = FilterEngine.filter(components);
+		components = filterEngine.filter(components);
 
 		//filter out pending changes
 		components = components.stream().filter(c -> c.getActiveStatus().equals(Component.PENDING_STATUS) == false).collect(Collectors.toList());
@@ -1892,22 +1922,28 @@ public class CoreComponentServiceImpl
 				componentAll.setQuestions(new ArrayList<>());
 
 				//Handle local media seperately
-				List<ComponentMedia> localMedia = new ArrayList<>();
 				for (int i = componentAll.getMedia().size() - 1; i >= 0; i--) {
 					ComponentMedia media = componentAll.getMedia().get(i);
-					if (media.getFileName() != null) {
-						localMedia.add(componentAll.getMedia().remove(i));
+					if (media.getFile() != null && StringUtils.isNotBlank(media.getFile().getFileName())) {
+						media.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						media.setFile(persistenceService.findById(MediaFile.class, media.getFile().getMediaFileId()));
+						media.setComponentMediaId(null);
+						media.populateBaseUpdateFields();
 					} else {
 						media.clearKeys();
 					}
 				}
 
 				//Handle local resource seperately
-				List<ComponentResource> localResources = new ArrayList<>();
 				for (int i = componentAll.getResources().size() - 1; i >= 0; i--) {
 					ComponentResource resource = componentAll.getResources().get(i);
-					if (resource.getFileName() != null) {
-						localResources.add(componentAll.getResources().remove(i));
+					if (resource.getFile() != null && StringUtils.isNotBlank(resource.getFile().getFileName())) {
+						resource.setComponentId(componentAll.getComponent().getComponentId());
+						// we need a proxied version of the mediaFile
+						resource.setFile(persistenceService.findById(MediaFile.class, resource.getFile().getMediaFileId()));
+						resource.setResourceId(null);
+						resource.populateBaseUpdateFields();
 					} else {
 						resource.clearKeys();
 					}
@@ -1919,40 +1955,6 @@ public class CoreComponentServiceImpl
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
-				//copy over local resources
-				for (ComponentMedia media : localMedia) {
-					media.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = media.pathToMedia();
-					if (oldPath != null) {
-						media.setComponentMediaId(persistenceService.generateId());
-						media.setFileName(media.getComponentMediaId());
-						Path newPath = media.pathToMedia();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy media", "check disk permissions and space", ex);
-						}
-						media.populateBaseUpdateFields();
-						persistenceService.persist(media);
-					}
-				}
-
-				for (ComponentResource resource : localResources) {
-					resource.setComponentId(componentAll.getComponent().getComponentId());
-					Path oldPath = resource.pathToResource();
-					if (oldPath != null) {
-						resource.setResourceId(persistenceService.generateId());
-						resource.setFileName(resource.getResourceId());
-						Path newPath = resource.pathToResource();
-						try {
-							Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Failed to copy resource", "check disk permissions and space", ex);
-						}
-						resource.populateBaseUpdateFields();
-						persistenceService.persist(resource);
-					}
-				}
 				cleanupCache(orignalComponentId);
 				cleanupCache(componentAll.getComponent().getComponentId());
 
@@ -2334,6 +2336,7 @@ public class CoreComponentServiceImpl
 					persistenceService.persist(userWatch);
 				}
 
+				persistenceService.commit();
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 

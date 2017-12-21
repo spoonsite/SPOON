@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>2.4</version>
+		<version>2.5</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-web</artifactId>
-	<version>2.4</version>
+	<version>2.5</version>
 	<packaging>war</packaging>
 
 	<name>openstorefront-web</name>
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>com.sencha</groupId>
 			<artifactId>extjs</artifactId>
-			<version>2.4</version>
+			<version>2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -163,8 +163,21 @@
 	  <artifactId>openstorefront-core-service</artifactId>
 	  <version>${project.version}</version>
 	 </dependency>
+	 <dependency>
+	  <groupId>org.glassfish.jersey.test-framework</groupId>
+	  <artifactId>jersey-test-framework-core</artifactId>
+	  <version>2.21</version>
+	  <scope>test</scope>
+	  <type>jar</type>
+	 </dependency>
+	<dependency>
+		<groupId>org.glassfish.jersey.test-framework.providers</groupId>
+		<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+		<version>2.21</version>
+		<scope>test</scope>
+	</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>openstorefront</finalName>
 		
@@ -328,15 +341,15 @@
 											</fileset>
 										</copy>								
 
-									</target>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>					
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
--->
+										</target>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>					
+					</plugins>
+				</build>
+			</profile>
+		</profiles>
+	-->
 
 </project>

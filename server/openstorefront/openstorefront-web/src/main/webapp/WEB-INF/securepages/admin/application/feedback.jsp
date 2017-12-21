@@ -42,6 +42,11 @@
 					maximizable: true,
 					scrollable: 'true',
 					bodyStyle: 'padding: 10px;',
+					listeners:	{
+						show: function() {        
+							this.removeCls("x-unselectable");    
+						}
+					},					
 					tpl:  new Ext.XTemplate(
 						'<h2><b>Summary:</b> {summary}</h2>',
 						'<b>Reported Issue Type:</b> {ticketType} <br>',						
