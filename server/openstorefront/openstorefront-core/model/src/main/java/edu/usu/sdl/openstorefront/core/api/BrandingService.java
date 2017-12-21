@@ -34,7 +34,7 @@ public interface BrandingService
 	 * @return Branding
 	 */
 	public Branding getCurrentBrandingView();
-	
+
 	/**
 	 * Set the branding if found to active and set the other branding configs to
 	 * inactive

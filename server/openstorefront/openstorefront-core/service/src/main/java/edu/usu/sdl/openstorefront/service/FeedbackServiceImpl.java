@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackHandleType;
@@ -54,12 +55,25 @@ public class FeedbackServiceImpl
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
 			UserProfile userProfile = userContext.getUserProfile();
-			ticket.setFirstname(userProfile.getFirstName());
-			ticket.setLastname(userProfile.getLastName());
-			ticket.setOrganization(userProfile.getOrganization());
-			ticket.setEmail(userProfile.getEmail());
-			ticket.setPhone(userProfile.getPhone());
-			ticket.setUsername(userProfile.getUsername());
+			if (userProfile.getUsername().equals(OpenStorefrontConstant.ANONYMOUS_USER)) {
+				// Expecting firstname to be Guest, lastname to be empty string, & username to be ANONYMOUS from userProfile
+				ticket.setFirstname(userProfile.getFirstName());
+				ticket.setLastname(userProfile.getLastName());
+				ticket.setOrganization(ticket.getOrganization());
+				ticket.setEmail(ticket.getEmail());
+				ticket.setPhone(ticket.getPhone());
+				ticket.setUsername(userProfile.getUsername());
+				ticket.setFullname(ticket.getFullname());
+			} else {
+				
+				ticket.setFirstname(userProfile.getFirstName());
+				ticket.setLastname(userProfile.getLastName());
+				ticket.setOrganization(userProfile.getOrganization());
+				ticket.setEmail(userProfile.getEmail());
+				ticket.setPhone(userProfile.getPhone());
+				ticket.setUsername(userProfile.getUsername());
+				ticket.setFullname(userProfile.getFirstName() + " " + userProfile.getLastName());
+			}
 		}
 		ticket.setFeedbackId(persistenceService.generateId());
 		ticket.populateBaseCreateFields();

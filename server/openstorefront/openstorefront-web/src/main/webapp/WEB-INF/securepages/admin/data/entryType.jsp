@@ -35,7 +35,7 @@
 					mediaSelectionUrl: 'api/v1/resource/generalmedia',
 					closeAction: 'hide',
 					mediaHandler: function(link) {
-						Ext.getCmp('iconUrlField').setValue(encodeURI(link));
+						Ext.getCmp('iconUrlField').setValue(link);
 					}
 				});				
 				

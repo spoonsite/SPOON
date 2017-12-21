@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
@@ -248,8 +249,11 @@ public class ImportServiceImpl
 
 		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
 		if (fileHistory != null) {
-			fileHistory.updateFields(fileHistoryAll.getFileHistory());
-			persistenceService.persist(fileHistory);
+			RetryUtil.retryAction(2, () -> {
+				FileHistory fileHistoryLocal = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+				fileHistoryLocal.updateFields(fileHistoryAll.getFileHistory());
+				persistenceService.persist(fileHistoryLocal);
+			});
 		} else {
 			if (StringUtils.isBlank(fileHistoryAll.getFileHistory().getFileHistoryId())) {
 				fileHistoryAll.getFileHistory().setFileHistoryId(persistenceService.generateId());

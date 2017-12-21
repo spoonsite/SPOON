@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -80,7 +81,7 @@ public class MediaAction
 
 	private static final Logger LOG = Logger.getLogger(MediaAction.class.getName());
 
-	@Validate(required = true, on = {"LoadMedia", "SectionMedia"})
+	@Validate(required = true, on = {"LoadMedia", "SectionMedia", "SupportMedia"})
 	private String mediaId;
 
 	@ValidateNestedProperties({
@@ -107,6 +108,13 @@ public class MediaAction
 		@Validate(required = true, field = "name", on = "UploadGeneralMedia")
 	})
 	private GeneralMedia generalMedia;
+
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "title", on = "UploadSupportMedia")
+		,
+		@Validate(required = true, field = "orderNumber", on = "UploadSupportMedia")
+	})
+	private SupportMedia supportMedia;
 
 	@ValidateNestedProperties({
 		@Validate(required = true, field = "name", on = "UploadTemporaryMedia")
@@ -312,6 +320,85 @@ public class MediaAction
 			}
 		} else {
 			errors.put("generalMedia", "Missing general media information");
+		}
+		return streamUploadResponse(errors);
+	}
+
+	@HandlesEvent("SupportMedia")
+	public Resolution supportMedia() throws FileNotFoundException
+	{
+		SupportMedia supportMediaExample = new SupportMedia();
+		supportMediaExample.setSupportMediaId(mediaId);
+
+		supportMedia = supportMediaExample.find();
+		if (supportMedia == null) {
+			LOG.log(Level.FINE, MessageFormat.format("Support Media with name: {0} is not found.", name));
+			return new StreamingResolution("image/png")
+			{
+
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = supportMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check support media record: {1} ", new Object[]{supportMedia.pathToMedia(), supportMedia.getSupportMediaId()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(supportMedia.getFile().getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(supportMedia.getFile().getOriginalName())
+				.createRangeResolution();
+	}
+
+	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA)
+	@HandlesEvent("UploadSupportMedia")
+	public Resolution uploadSupportMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		if (supportMedia != null) {
+
+			ValidationModel validationModel = new ValidationModel(supportMedia);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					MediaFile supportMediaFile = new MediaFile();
+					supportMediaFile.setMimeType(file.getContentType());
+					supportMediaFile.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
+
+					supportMedia.setFile(supportMediaFile);
+					supportMedia = service.getHelpSupportService().saveSupportMedia(supportMedia, file.getInputStream());
+					return streamResults(supportMedia, MediaType.TEXT_HTML);
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteUploadFile(file);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		} else {
+			errors.put("supportMedia", "Missing support media information");
 		}
 		return streamUploadResponse(errors);
 	}
@@ -704,6 +791,16 @@ public class MediaAction
 	public void setMediaFile(MediaFile mediaFile)
 	{
 		this.mediaFile = mediaFile;
+	}
+
+	public SupportMedia getSupportMedia()
+	{
+		return supportMedia;
+	}
+
+	public void setSupportMedia(SupportMedia supportMedia)
+	{
+		this.supportMedia = supportMedia;
 	}
 
 }
