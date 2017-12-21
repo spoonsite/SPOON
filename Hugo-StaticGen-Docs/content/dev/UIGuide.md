@@ -16,7 +16,7 @@ weight = 6
 9. Use the appropriate font-awesome icons for the action. See other pages.
 
 
-![ui-guide](/images/dev/ui-guide.png)  
+![ui-guide](/openstorefront/images/dev/ui-guide.png)  
 
 ---    
 
