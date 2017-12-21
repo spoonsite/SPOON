@@ -1,10 +1,10 @@
-baseURL = "/"
+baseURL = "/openstorefront/"
 languageCode = "en-us"
 DefaultContentLanguage = "en"
 
 title = "Storefront Docs"
 theme = "docdock"
-publishDir = "/build"
+#publishDir = "/build"
 enableGitInfo = "true"
 
 [params]
