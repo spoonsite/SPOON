@@ -26,6 +26,11 @@
 %>
 <html> 
 	<head>
+		<!-- Responsive and mobile friendly stuff -->
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
 		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 
