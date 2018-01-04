@@ -4,6 +4,146 @@ description = ""
 weight = 7
 +++
 
+## Java Style Guide 
+
+For most part applying the IDE Formating and it's default warning are sufficient 
+to follow and keep the code in-line.  However, here is a lists of items to follow.
+Borrows ideas from https://google.github.io/styleguide/javaguide.html
+
+### Special escape sequences
+
+For any character that has a special escape sequence (\b, \t, \n, \f, \r, \", \' and \\), that sequence is used rather than the corresponding octal (e.g. \012) or Unicode (e.g. \u000a) escape.
+
+### Non-ASCII characters
+
+For the remaining non-ASCII characters, either the actual Unicode character (e.g. ?) or the equivalent Unicode escape (e.g. \u221e) is used. The choice depends only on which makes the code easier to read and understand, although Unicode escapes outside string literals and comments are strongly discouraged.
+
+Tip: In the Unicode escape case, and occasionally even when actual Unicode characters are used, an explanatory comment can be very helpful.
+
+### Source file structure
+
+A source file consists of, in order:
+
+1.  License or copyright information  (Use Apache V2 on java side, GPL on front-end...the whole project is GPL)
+2.  Package statement
+3.  Import statements
+4.  Exactly one top-level class
+
+**Exactly one blank line** separates each section that is present.
+
+### Wildcard imports
+
+Avoid (let the IDE handle).
+Let the IDE order.
+
+### Braces
+
+Use IDE Formating.  Change need to be agreed upon and update in the formatter. 
+However, there is need for a change let the team know.
+
+### Naming
+
+Need to be descriptive. Lower-case to start and camelCase.  
+(objectowner)(objectname)  Eg.  componentResource   Meaning: resource is part of or owned by component.
+
+Typically, class are label according to function.  Eg.  ComponentService
+
+#### Package names: 
+
+Package names are all lowercase, with consecutive words simply concatenated together (no underscores). For example, com.example.deepspace, not com.example.deepSpace or com.example.deep_space
+
+#### Class names:
+
+Class names are written in UpperCamelCase.
+
+Class names are typically nouns or noun phrases. For example, Character or ImmutableList. Interface names may also be nouns or noun phrases (for example, List), but may sometimes be adjectives or adjective phrases instead (for example, Readable).
+
+There are no specific rules or even well-established conventions for naming annotation types.
+
+Test classes are named starting with the name of the class they are testing, and ending with Test. For example, HashTest or HashIntegrationTest
+
+#### Method names
+
+Method names are written in lowerCamelCase.
+
+Method names are typically verbs or verb phrases. For example, sendMessage or stop.
+
+Underscores may appear in JUnit test method names to separate logical components of the name, with each component written in lowerCamelCase. One typical pattern is <methodUnderTest>_<state>, for example pop_emptyStack. There is no One Correct Way to name test methods.
+
+#### Constant names
+
+Constant names use CONSTANT_CASE: all uppercase letters, with each word separated from the next by a single underscore. But what is a constant, exactly?
+
+Constants are static final fields whose contents are deeply immutable and whose methods have no detectable side effects. This includes primitives, Strings, immutable types, and immutable collections of immutable types. If any of the instance's observable state can change, it is not a constant. Merely intending to never mutate the object is not enough. 
+
+#### Non-constant field names
+
+Non-constant field names (static or otherwise) are written in lowerCamelCase.
+These names are typically nouns or noun phrases. For example, computedValues or index.
+
+#### Parameter names
+
+Parameter names are written in lowerCamelCase.
+One-character parameter names in public methods should be avoided.
+
+#### Local variable names
+
+Local variable names are written in lowerCamelCase.
+Even when final and immutable, local variables are not considered to be constants, and should not be styled as constants.
+
+#### Type variable names
+
+Each type variable is named in one of two styles:
+
+A single capital letter, optionally followed by a single numeral (such as E, T, X, T2)
+A name in the form used for classes (see Section 5.2.2, Class names), followed by the capital letter T (examples: RequestT, FooBarT).
+
+
+### Caught exceptions: not ignored
+
+Except as noted below, it is very rarely correct to do nothing in response to a caught exception. (Typical responses are to log it, or if it is considered "impossible", rethrow it as an AssertionError.)
+
+When it truly is appropriate to take no action whatsoever in a catch block, the reason this is justified is explained in a comment.
+
+try {
+  int i = Integer.parseInt(response);
+  return handleNumericResponse(i);
+} catch (NumberFormatException ok) {
+  // it's not numeric; that's fine, just continue
+}
+return handleTextResponse(response);
+
+### Static members: qualified using class
+
+When a reference to a static class member must be qualified, it is qualified with that class's name, not with a reference or expression of that class's type.
+
+Foo aFoo = ...;
+Foo.aStaticMethod(); // good
+aFoo.aStaticMethod(); // bad
+somethingThatYieldsAFoo().aStaticMethod(); // very bad
+
+### Finalizers: not used
+
+It is extremely rare to override Object.finalize.
+Tip: Don't do it. If you absolutely must, first read and understand Effective Java Item 7, "Avoid Finalizers," very carefully, and then don't do it.
+
+
+
+### Where Javadoc is used
+
+Public API points.  Also, on protected method.
+No comments on get or setters is needed unless there different behavior than simply 
+wrapping field access.
+
+Exception: overrides - Javadoc is not always present on a method that overrides a supertype method. 
+
+Use Block tags:
+
+Any of the standard "block tags" that are used appear in the order @param, @return, @throws, @deprecated, and these four types never appear with an empty description. When a block tag doesn't fit on a single line, continuation lines are indented four (or more) spaces from the position of the @.
+
+
+##General 
+
 1. Business logic, Transactions, rules should be handled in the service code. (core-service)
 2. API Interface should have documentation (javadocs)
 3. SimpleDateFormat is not thread-safe create new instances; don't make static.
