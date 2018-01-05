@@ -9,7 +9,7 @@ weight = 2
 
 ## 1.1 Client Architecture Diagram
 
-![clientarch](/images/client-archtechture-new.png)
+![clientarch](/openstorefront/images/client-archtechture-new.png)
 
 Figure 1. Client Architecture Diagram
 
@@ -24,7 +24,7 @@ The application is composed by stripes layouts with a top-level page and fragmen
 
 ## 2.1 Server Architecture Diagram
 
-![serverarch](/images/serverarch.png)
+![serverarch](/openstorefront/images/serverarch.png)
 
 Figure 2. Server Architecture Diagram
 
@@ -50,7 +50,7 @@ The server build environment relies on the following platforms/tools:
 
 ## 2.3 Storage Details
 
-![storage](/images/storage.png)
+![storage](/openstorefront/images/storage.png)
 
 **File System**  - Holds configuration, resources, media, imports, reports and plugins.  By default under: /var/openstorefront it can be changed by setting the system property -Dapplication.datadir=<directory> on the command line. 
 
@@ -63,7 +63,7 @@ The server build environment relies on the following platforms/tools:
 
 ## 3.1 Runtime Environment Diagram
 
-![deployarch](/images/deployarch.png)
+![deployarch](/openstorefront/images/deployarch.png)
 
 Figure 3 . Runtime Environment diagram
 
@@ -80,7 +80,7 @@ The runtime environment relies upon the following applications:
 
 ## 3.3 Runtime Component Integration Vectors
 
-![component vectors](/images/civarch.png)
+![component vectors](/openstorefront/images/civarch.png)
 
 Figure 4. Runtime Component Integration Vectors
 

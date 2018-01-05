@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>OpenStoreFront Documentation on Storefront Docs</title>
-    <link>/</link>
+    <link>/openstorefront/</link>
     <description>Recent content in OpenStoreFront Documentation on Storefront Docs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 13 Nov 2017 18:36:24 +0200</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/openstorefront/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Developer Guide</title>
-      <link>/dev/developersguide/</link>
+      <link>/openstorefront/dev/developersguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/developersguide/</guid>
+      <guid>/openstorefront/dev/developersguide/</guid>
       <description>1. Internal Development See documents under /dev for Coding and Style guides.
 1.1 Key Components Used The following components were used in the development:
  JDK 8
@@ -28,10 +28,10 @@
     
     <item>
       <title>Setup</title>
-      <link>/systemadmin/setup/</link>
+      <link>/openstorefront/systemadmin/setup/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/systemadmin/setup/</guid>
+      <guid>/openstorefront/systemadmin/setup/</guid>
       <description>1. Installation 1.1 High level instructions for a fresh install Prior to the install, setup an Elasticsearch OR Solr instance and make sure it&#39;s running. Then, perform the following steps:
  Setup VM
  Install Java JDK 1.8
@@ -46,21 +46,20 @@
     
     <item>
       <title>User Guide</title>
-      <link>/user/userguide/</link>
+      <link>/openstorefront/user/userguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/user/userguide/</guid>
-      <description>See User Guide
-Note: The user guide is machine read so changes to content needs to following guidelines:
- Sections are read from header to header The header level determines the nesting level. (Eg. h1, h2..etc) Image locations are adjusted they should follow what is currently in the document Set the security permission required on the header @ADMIN-SYSTEM-MANAGEMENT  </description>
+      <guid>/openstorefront/user/userguide/</guid>
+      <description>Note: The user guide is the in application help system. The files are machine read so changes to content needs to following guidelines:
+ [src root]/server/openstorefront/openstorefront-web/src/main/resources/userhelp.md Sections are read from header to header The header level determines the nesting level. (Eg. h1, h2..etc) Image locations are adjusted they should follow what is currently in the document Set the security permission required on the header @ADMIN-SYSTEM-MANAGEMENT  </description>
     </item>
     
     <item>
       <title>Architecture</title>
-      <link>/dev/architecture/</link>
+      <link>/openstorefront/dev/architecture/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/architecture/</guid>
+      <guid>/openstorefront/dev/architecture/</guid>
       <description>1. Client Architecture 1.1 Client Architecture Diagram Figure 1. Client Architecture Diagram
 1.2 Client Details The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies significantly which in turn reduce maintenance, learning curve and improves quality and consistency.
 Added to that is application specific overrides and high-level components created to facilitate re-use. The application is composed by stripes layouts with a top-level page and fragment tool pages.</description>
@@ -68,20 +67,20 @@ Added to that is application specific overrides and high-level components create
     
     <item>
       <title>Submitting a New Component</title>
-      <link>/user/quick-overview-of-submitting-a-new-component/</link>
+      <link>/openstorefront/user/quick-overview-of-submitting-a-new-component/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/user/quick-overview-of-submitting-a-new-component/</guid>
+      <guid>/openstorefront/user/quick-overview-of-submitting-a-new-component/</guid>
       <description>To get to the User Tools section, click on your user name in the upper right corner of the page and then select User Tools from the drop down menu. Once at the User Tools sections, click on the Submissions button and then click the New Submission button.
 The first page of the Submission Form asks you to verify your own information. Any changes here will directly update your profile information.</description>
     </item>
     
     <item>
       <title>Front-end Code Standards</title>
-      <link>/dev/front-end-code-standard/</link>
+      <link>/openstorefront/dev/front-end-code-standard/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/front-end-code-standard/</guid>
+      <guid>/openstorefront/dev/front-end-code-standard/</guid>
       <description>Use the Ext.js docs. Look at them first for utility functions (format, string manipulation, etc&amp;hellip;).
  When making reusable components don&amp;rsquo;t use &amp;ldquo;ID&amp;rdquo;s properties. Ids are OK on individual pages; must be unique; &amp;ldquo;ID&amp;rdquo; properties are Global.
  Match validation from server, where possible, to make it easier for the user to get the right values. Also, provide friendly but, direct messages. Pack related components (notification panel, notification) into a single script file.</description>
@@ -89,10 +88,10 @@ The first page of the Submission Form asks you to verify your own information. A
     
     <item>
       <title>Git Workflow</title>
-      <link>/dev/gitworkflow/</link>
+      <link>/openstorefront/dev/gitworkflow/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/gitworkflow/</guid>
+      <guid>/openstorefront/dev/gitworkflow/</guid>
       <description>We are following the Git Flow style of branching.
 Master Follows current release
 Develop Holds the integrated development (CI server is pointed to this)
@@ -102,10 +101,10 @@ They are merged back into develop via a pull request when they are development c
     
     <item>
       <title>Using Docker</title>
-      <link>/systemadmin/docker/</link>
+      <link>/openstorefront/systemadmin/docker/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/systemadmin/docker/</guid>
+      <guid>/openstorefront/systemadmin/docker/</guid>
       <description>The Open Storefront application contains a Dockerfile in order to build Docker images.
 Open Storefront also automatically builds release versions of the application for consumption by users. These builds are available on Docker Hub.
 Using Docker Hub Command Line To pull the latest version:
@@ -115,10 +114,10 @@ docker pull flammablefork/openstorefront:v2.2.1  Kitematic When using a GUI appl
     
     <item>
       <title>Administrator Guide</title>
-      <link>/systemadmin/administratorguide/</link>
+      <link>/openstorefront/systemadmin/administratorguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/systemadmin/administratorguide/</guid>
+      <guid>/openstorefront/systemadmin/administratorguide/</guid>
       <description>1. Other Guides This guide has been organized into separate documents to make it easier to navigate. The focus of this document is for configuration. See other guides for other topics.
 Architecture
 Setup
@@ -132,10 +131,10 @@ Users are specified in the users section.
     
     <item>
       <title>Jira Issue Tracking Workflow</title>
-      <link>/dev/jira-workflow/</link>
+      <link>/openstorefront/dev/jira-workflow/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/jira-workflow/</guid>
+      <guid>/openstorefront/dev/jira-workflow/</guid>
       <description>Ticket Types  New Features, Improvements, Bugs
  Task
  Build
@@ -147,10 +146,10 @@ Users are specified in the users section.
     
     <item>
       <title>Data Migration Guide</title>
-      <link>/systemadmin/datamigrationguide/</link>
+      <link>/openstorefront/systemadmin/datamigrationguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/systemadmin/datamigrationguide/</guid>
+      <guid>/openstorefront/systemadmin/datamigrationguide/</guid>
       <description>This guide provide help for importing data from external sources as well as moving data from one instance to another instance.
 1. Importing/Export (Third parties) The application provides set of standard format that it accepts to import Attributes/Categories as well as Entries. It also provides a set of custom formats that can have mappings applied. These custom formats allow taking a variety of data with so simple handling.
 See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
@@ -158,65 +157,65 @@ See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
     
     <item>
       <title>Testing</title>
-      <link>/dev/testing/</link>
+      <link>/openstorefront/dev/testing/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/testing/</guid>
+      <guid>/openstorefront/dev/testing/</guid>
       <description>Layers  Unit Tests (Server-side) - Unit test should cover Core libraries and utility classes. Test cases should be added for bug fixes and new features whenever possible. Integration/Container Tests (openstorefront/test/ServiceTest.action) - These test the server-side service/business layer. They are run on the Integration server as part of the Jenkins build. Integration tests should be added for each new feature. API Tests - These tests use a client that communicates to the rest api (work in progress) Acceptance ticket tests - We write this as part of the JIRA ticket for QA.</description>
     </item>
     
     <item>
       <title>User Interface Guide</title>
-      <link>/dev/uiguide/</link>
+      <link>/openstorefront/dev/uiguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/uiguide/</guid>
+      <guid>/openstorefront/dev/uiguide/</guid>
       <description>General Items  Remember this is a guide there can be variations as appropriate to the feature. Focus on the usability and having a clear workflow. Dialog bodies should be padded 10px Use toolbars for actions and enable/disable buttons to guide the user to valid actions. Add text to icons on button so it&amp;rsquo;s very clear as to what they are. (Where possible) Form action should be left to right with the Action on right and the anti-action on the left.</description>
     </item>
     
     <item>
       <title>Version Migration</title>
-      <link>/systemadmin/versionmigrationguide/</link>
+      <link>/openstorefront/systemadmin/versionmigrationguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/systemadmin/versionmigrationguide/</guid>
+      <guid>/openstorefront/systemadmin/versionmigrationguide/</guid>
       <description>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way data migrations will occur in the proper order. If you start from the lastest version and have no data then migration is not needed.
 Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious storefront version will require restore from a backup proir to 2.</description>
     </item>
     
     <item>
       <title>Server Code Standard</title>
-      <link>/dev/server-code-standard/</link>
+      <link>/openstorefront/dev/server-code-standard/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/dev/server-code-standard/</guid>
+      <guid>/openstorefront/dev/server-code-standard/</guid>
       <description>Business logic, Transactions, rules should be handled in the service code. (core-service) API Interface should have documentation (javadocs) SimpleDateFormat is not thread-safe create new instances; don&amp;rsquo;t make static. For decimal numbers use BigDecimal and use valueOf to instantiate. Make sure any new code is placed in the appropriate module. Be cautious of dependencies. External resources should be handled by a Manager that in-turn handles the life-cycle. Use example query framework where possible.</description>
     </item>
     
     <item>
       <title>Evaluators Guide</title>
-      <link>/evaluations/evaluator/storefront-evaluators-guide/</link>
+      <link>/openstorefront/evaluations/evaluator/storefront-evaluators-guide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/evaluations/evaluator/storefront-evaluators-guide/</guid>
+      <guid>/openstorefront/evaluations/evaluator/storefront-evaluators-guide/</guid>
       <description>TL;DR  Administrators create and publish evaluations. Evaluators fill out evaluations. While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab. Storefront assumes you know what all of the various questions mean, what the asset types available to you mean, and how your implementation of Storefront works.</description>
     </item>
     
     <item>
       <title>Basic Entry Template for Storefront</title>
-      <link>/evaluations/librarian/basic-entry-template-for-storefront/</link>
+      <link>/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/evaluations/librarian/basic-entry-template-for-storefront/</guid>
+      <guid>/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/</guid>
       <description>Entry Type  Type Code: REPO Label: Repository Description: Information Entries to describe a collection of software programs or tools Data Entry: Allow on Submission Form, Attributes, Relationships, Resources  Section Template  Template Name: Code Repo Template Description: Information about a Code Repository Section Title: Repo Overview Section Default Content: Describe what kind of programs are stored in the repository.  Checklist Questions  QID: 1 Section: Discoverable Question: How do you expect developers to find your asset?</description>
     </item>
     
     <item>
       <title>FAQ</title>
-      <link>/evaluations/evaluator/faq/</link>
+      <link>/openstorefront/evaluations/evaluator/faq/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/evaluations/evaluator/faq/</guid>
+      <guid>/openstorefront/evaluations/evaluator/faq/</guid>
       <description>Question
 Do sub-sections save independent of other sub-sections?
 Answer
@@ -227,20 +226,20 @@ What&amp;rsquo;s the difference between in Entry and Evaluation?</description>
     
     <item>
       <title>Create an Evaluation</title>
-      <link>/evaluations/librarian/createevaluationguide/</link>
+      <link>/openstorefront/evaluations/librarian/createevaluationguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/evaluations/librarian/createevaluationguide/</guid>
+      <guid>/openstorefront/evaluations/librarian/createevaluationguide/</guid>
       <description>Overview This guide goes over creating Section templates, Checklist questions and templates, and Evaluation templates. This guide assumes a librarian has a basic understanding of what an entry is and has an entry that needs to be evaluated. Once the librarian has created checklists and templates, an evaluation can be created.
 Who is this for? This guide is for anyone with the role of librarian or administrator. If unsure of current role(s), contact an administrator.</description>
     </item>
     
     <item>
       <title>Publish an Evaluation</title>
-      <link>/evaluations/librarian/publishinganevaluationguide/</link>
+      <link>/openstorefront/evaluations/librarian/publishinganevaluationguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/evaluations/librarian/publishinganevaluationguide/</guid>
+      <guid>/openstorefront/evaluations/librarian/publishinganevaluationguide/</guid>
       <description>Overview This guide goes over the different types of publishing and the various scenarios a librarian may run into when publishing an entry/evaluation.
 Different types of publishing:
  Entry publishing - publishes the entry summary only Partial publishing - publishes all default public fields except for those that have been marked as private. Full publishing - publishes all default public fields.  Reminder: an entry is a single entity that can have one to many evaluations.</description>
@@ -248,10 +247,10 @@ Different types of publishing:
     
     <item>
       <title>Open Storefront</title>
-      <link>/_header/</link>
+      <link>/openstorefront/_header/</link>
       <pubDate>Mon, 24 Apr 2017 18:36:24 +0200</pubDate>
       
-      <guid>/_header/</guid>
+      <guid>/openstorefront/_header/</guid>
       <description>Open Storefront Documentation </description>
     </item>
     

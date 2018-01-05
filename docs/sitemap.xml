@@ -3,126 +3,152 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/dev/developersguide/</loc>
+    <loc>/openstorefront/dev/developersguide/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/evaluator/</loc>
+    <loc>/openstorefront/evaluations/evaluator/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/setup/</loc>
+    <loc>/openstorefront/systemadmin/setup/</loc>
+    <lastmod>2017-12-19T14:14:37-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/user/userguide/</loc>
+    <loc>/openstorefront/user/userguide/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/architecture/</loc>
+    <loc>/openstorefront/dev/architecture/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/librarian/</loc>
+    <loc>/openstorefront/evaluations/librarian/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/user/quick-overview-of-submitting-a-new-component/</loc>
+    <loc>/openstorefront/user/quick-overview-of-submitting-a-new-component/</loc>
+    <lastmod>2017-11-17T12:01:25-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/front-end-code-standard/</loc>
+    <loc>/openstorefront/dev/front-end-code-standard/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/gitworkflow/</loc>
+    <loc>/openstorefront/dev/gitworkflow/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/docker/</loc>
+    <loc>/openstorefront/systemadmin/docker/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/administratorguide/</loc>
+    <loc>/openstorefront/systemadmin/administratorguide/</loc>
+    <lastmod>2017-12-11T13:10:18-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/jira-workflow/</loc>
+    <loc>/openstorefront/dev/jira-workflow/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/datamigrationguide/</loc>
+    <loc>/openstorefront/systemadmin/datamigrationguide/</loc>
+    <lastmod>2017-11-29T17:02:57-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/testing/</loc>
+    <loc>/openstorefront/dev/testing/</loc>
+    <lastmod>2017-12-12T14:38:29-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/uiguide/</loc>
+    <loc>/openstorefront/dev/uiguide/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/versionmigrationguide/</loc>
+    <loc>/openstorefront/systemadmin/versionmigrationguide/</loc>
+    <lastmod>2017-11-29T17:02:57-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/server-code-standard/</loc>
+    <loc>/openstorefront/dev/server-code-standard/</loc>
+    <lastmod>2017-11-29T17:02:57-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/evaluator/storefront-evaluators-guide/</loc>
+    <loc>/openstorefront/evaluations/evaluator/storefront-evaluators-guide/</loc>
+    <lastmod>2017-11-27T12:51:14-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/librarian/basic-entry-template-for-storefront/</loc>
+    <loc>/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/</loc>
+    <lastmod>2017-11-15T12:50:44-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/evaluator/faq/</loc>
+    <loc>/openstorefront/evaluations/evaluator/faq/</loc>
+    <lastmod>2017-11-30T15:23:05-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/librarian/createevaluationguide/</loc>
+    <loc>/openstorefront/evaluations/librarian/createevaluationguide/</loc>
+    <lastmod>2017-12-07T13:41:44-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/librarian/publishinganevaluationguide/</loc>
+    <loc>/openstorefront/evaluations/librarian/publishinganevaluationguide/</loc>
+    <lastmod>2017-11-22T16:29:00-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/evaluations/</loc>
+    <loc>/openstorefront/evaluations/</loc>
+    <lastmod>2017-11-17T12:31:27-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/dev/</loc>
+    <loc>/openstorefront/dev/</loc>
+    <lastmod>2017-11-17T12:01:25-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/systemadmin/</loc>
+    <loc>/openstorefront/systemadmin/</loc>
+    <lastmod>2017-11-17T12:01:25-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/user/</loc>
+    <loc>/openstorefront/user/</loc>
+    <lastmod>2017-11-17T12:01:25-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2017-11-13T18:36:24+02:00</lastmod>
+    <loc>/openstorefront/</loc>
+    <lastmod>2017-11-17T14:53:33-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/_header/</loc>
-    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+    <loc>/openstorefront/_header/</loc>
+    <lastmod>2017-11-22T13:00:44-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>/openstorefront/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>/openstorefront/tags/</loc>
     <priority>0</priority>
   </url>
   
