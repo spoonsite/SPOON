@@ -775,9 +775,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response saveIntegration(String componentId, ComponentIntegration integration)
+	public ComponentIntegration saveIntegration(String componentId, ComponentIntegration integration)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/integration", integration, null);
+		return response.getResponse(ComponentIntegration.class);
 	}
 
 	public Response saveIntegrationConfig(String componentId, ComponentIntegrationConfig integrationConfig)

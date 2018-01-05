@@ -143,7 +143,6 @@ public class BrowserTestBase
 	{
 		boolean done = false;
 		long startTime = System.currentTimeMillis();
-		System.out.println("********** START TIME: " + startTime);
 
 		while (!done && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			try {
@@ -152,7 +151,6 @@ public class BrowserTestBase
 			} catch (WebDriverException ex) {
 				sleep(500);
 				LOG.log(Level.WARNING, "{0} Retrying...", ex.getMessage());
-				System.out.println("Current TIME ******** " + System.currentTimeMillis());
 			}
 		}
 
@@ -192,15 +190,13 @@ public class BrowserTestBase
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
-					// Iterate through cells
+					
 					if (cell.getText().equals(searchFor)) {
-						LOG.log(Level.INFO, "--- Clicking on the table at: ROW {0}. ---", theRow);
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();
 						sleep(100);
 						builder.click().perform();
 						return true;
-						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
 					}
 				} catch (Exception e) {
 
@@ -213,7 +209,6 @@ public class BrowserTestBase
 		}
 
 		return false;
-		//return new TableItem(fRow, fColumn);
 	}
 
 	/**

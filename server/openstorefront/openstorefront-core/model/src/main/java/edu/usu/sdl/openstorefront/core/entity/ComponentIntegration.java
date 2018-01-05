@@ -51,6 +51,7 @@ public class ComponentIntegration
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
 	private String status;
+	
 	private Date lastStartTime;
 	private Date lastEndTime;
 
