@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -33,13 +34,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *
  * @author ccummings
  */
-public class AdminIntegrationsIT
+public class AdminAddJiraConfigIT
 		extends AdminTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private WebElement componentConfigTab;
-	private WebElement jiraMappingTab;
+	private static List<String> componentIds = new ArrayList<>();
+	private String componentName = "Asset-Test-IntegrationComp";
 
 	@Test
 	public void componentConfigTest() throws InterruptedException
@@ -48,31 +50,19 @@ public class AdminIntegrationsIT
 
 			webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
 			WebDriverWait wait = new WebDriverWait(driver, 10);
+			createIntegrationComponent(componentName);
+			componentIds.add(apiClient.getComponentRESTTestClient().getComponentByName(componentName).getComponent().getComponentId());
+			createJiraMapping();
 			List<WebElement> tabs = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-tab.x-unselectable")));
 			componentConfigTab = tabs.get(0);
 			componentConfigTab.click();
-			createIntegrationComponent("AAA-Test-IntegrationComp");
-			addComponentConfiguration(driver, "AAA-Test-IntegrationComp");
-			deleteJiraIntegrationConfig(driver, "AAA-Test-IntegrationComp", "ASSET-1");
-			deleteJiraIntegrationConfig(driver, "AAA-Test-IntegrationComp", "ASSET-2");
-			deleteComponentConfiguration(driver, "AAA-Test-IntegrationComp");
-
+			addComponentConfiguration(driver, componentName);
 		}
 	}
 
-	@Test
-	public void jiraMappingConfigTest()
+	public void createJiraMapping()
 	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-
-			webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
-			WebDriverWait wait = new WebDriverWait(driver, 10);
-			List<WebElement> tabs = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-tab.x-unselectable")));
-			jiraMappingTab = tabs.get(1);
-			jiraMappingTab.click();
-			sleep(3000);
-
-		}
+		apiClient.getAttributeTestClient().createJiraMapping();
 	}
 
 	public void createIntegrationComponent(String componentName)
@@ -98,52 +88,55 @@ public class AdminIntegrationsIT
 		addJiraIntegrationConfig(driver, "ASSET-2");
 		Assert.assertTrue(tableClickRowCol(".x-panel.x-fit-item.x-window-item.x-panel-default.x-grid .x-grid-view .x-grid-item-container", "ASSET-2", driver, 4));
 
-		// do esc after saving configuration
+		// esc after saving configuration
 		Actions actionEsc = new Actions(driver);
 		actionEsc.sendKeys(Keys.ESCAPE).perform();
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
-	}
-
-	public void deleteComponentConfiguration(WebDriver driver, String componentName) throws InterruptedException
-	{
-		webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
-
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
-
-		List<WebElement> headers = new ArrayList<>();
-		headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
-		WebElement componentHeader = null;
-		for (WebElement header : headers) {
-			if (header.getText().equals("Component")) {
-				componentHeader = header;
-				break;
-			}
-		}
-
-		int count = 0;
-		while (!tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1) && count < 3) {
-			Actions action = new Actions(driver);
-			action.moveToElement(componentHeader).click().perform();
-			count++;
-		}
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-delete"))).click();
-
-		List<WebElement> confirmBtns = new ArrayList<>();
-		confirmBtns = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small[aria-hidden='false']")));
-		confirmBtns.get(0).click();
-
+		
 		sleep(1000);
-
-		driverWait(() -> {
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
-		}, 5);
-
-		Assert.assertFalse(tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1));
-
 	}
+
+	// to be used in separate test
+//	public void deleteComponentConfiguration(WebDriver driver, String componentName) throws InterruptedException
+//	{
+//		webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
+//
+//		WebDriverWait wait = new WebDriverWait(driver, 5);
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
+//
+//		List<WebElement> headers = new ArrayList<>();
+//		headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
+//		WebElement componentHeader = null;
+//		for (WebElement header : headers) {
+//			if (header.getText().equals("Component")) {
+//				componentHeader = header;
+//				break;
+//			}
+//		}
+//
+//		int count = 0;
+//		while (!tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1) && count < 3) {
+//			Actions action = new Actions(driver);
+//			action.moveToElement(componentHeader).click().perform();
+//			count++;
+//		}
+//
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-delete"))).click();
+//
+//		List<WebElement> confirmBtns = new ArrayList<>();
+//		confirmBtns = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small[aria-hidden='false']")));
+//		confirmBtns.get(0).click();
+//
+//		sleep(1000);
+//
+//		driverWait(() -> {
+//			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
+//		}, 5);
+//
+//		Assert.assertFalse(tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1));
+//
+//	}
 
 	protected void addJiraIntegrationConfig(WebDriver driver, String issueNumber)
 	{
@@ -158,6 +151,8 @@ public class AdminIntegrationsIT
 				type.click();
 			}
 		}
+
+		sleep(250);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='projectType']"))).click();
 		List<WebElement> projectTypes = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(".x-list-plain[aria-hidden='false']"), By.cssSelector("li")));
@@ -178,47 +173,58 @@ public class AdminIntegrationsIT
 		driverWait(() -> {
 			waitAddButtonWindow.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='addBtnIntegrationWindow']")));
 		}, 5000);
+		
+		sleep(250);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='refreshBtnIntegrationWindow']"))).click();
 	}
 
-	public void deleteJiraIntegrationConfig(WebDriver driver, String componentName, String jiraIssueNumber)
-			throws InterruptedException
+	// to be used in separate test
+//	public void deleteJiraIntegrationConfig(WebDriver driver, String componentName, String jiraIssueNumber)
+//			throws InterruptedException
+//	{
+//		WebDriverWait wait = new WebDriverWait(driver, 5);
+//		webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
+//		List<WebElement> headers = new ArrayList<>();
+//		headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
+//		WebElement componentHeader = null;
+//		for (WebElement header : headers) {
+//			if (header.getText().equals("Component")) {
+//				componentHeader = header;
+//				break;
+//			}
+//		}
+//
+//		int count = 0;
+//		while (!tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1) && count < 3) {
+//			Actions action = new Actions(driver);
+//			action.moveToElement(componentHeader).click().perform();
+//			count++;
+//		}
+//
+//		WebDriverWait waitEditButton = new WebDriverWait(driver, 1);
+//		driverWait(() -> {
+//			waitEditButton.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-edit"))).click();
+//		}, 5000);
+//
+//		Assert.assertTrue(tableClickRowCol(".x-panel.x-fit-item.x-window-item.x-panel-default.x-grid .x-grid-view .x-grid-item-container", jiraIssueNumber, driver, 4));
+//
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#integrationDeleteBtn"))).click();
+//
+//		List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("[role='alertdialog'] .x-btn[aria-hidden='false']")));
+//		buttons.get(0).click();
+//
+//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-panel.x-fit-item.x-window-item.x-panel-default.x-grid .x-grid-view .x-grid-item-container")));
+//
+//		Actions actionEsc = new Actions(driver);
+//		actionEsc.sendKeys(Keys.ESCAPE).perform();
+//	}
+	
+	@AfterClass
+	public static void cleanupTest()
 	{
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
-		List<WebElement> headers = new ArrayList<>();
-		headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
-		WebElement componentHeader = null;
-		for (WebElement header : headers) {
-			if (header.getText().equals("Component")) {
-				componentHeader = header;
-				break;
-			}
-		}
-
-		int count = 0;
-		while (!tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1) && count < 3) {
-			Actions action = new Actions(driver);
-			action.moveToElement(componentHeader).click().perform();
-			count++;
-		}
-
-		WebDriverWait waitEditButton = new WebDriverWait(driver, 1);
-		driverWait(() -> {
-			waitEditButton.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-edit"))).click();
-		}, 5000);
-
-		Assert.assertTrue(tableClickRowCol(".x-panel.x-fit-item.x-window-item.x-panel-default.x-grid .x-grid-view .x-grid-item-container", jiraIssueNumber, driver, 4));
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#integrationDeleteBtn"))).click();
-
-		List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("[role='alertdialog'] .x-btn[aria-hidden='false']")));
-		buttons.get(0).click();
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-panel.x-fit-item.x-window-item.x-panel-default.x-grid .x-grid-view .x-grid-item-container")));
-
-		Actions actionEsc = new Actions(driver);
-		actionEsc.sendKeys(Keys.ESCAPE).perform();
+		componentIds.forEach((id) -> {
+			apiClient.getComponentRESTTestClient().deleteComponentIntegration(id);
+		});
 	}
 }

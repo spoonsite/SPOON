@@ -575,7 +575,7 @@
 										   ">
 									<p id="passwordError" class="clearError errorText"></p>
 								</div>
-								<input type="button" value="Log in" class="btn btn-primary" onclick="submitForm();" />
+								<input type="button" name="loginBtn" value="Log in" class="btn btn-primary" onclick="submitForm();" />
 							</form>
 							<div id="forgot-password-links">
 								<a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a>

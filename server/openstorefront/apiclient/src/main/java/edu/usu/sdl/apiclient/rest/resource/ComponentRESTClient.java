@@ -272,9 +272,9 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response deleteComponentConfig(String componentId)
+	public void deleteComponentConfig(String componentId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + componentId + "/integration", null);
 	}
 
 	public Response deleteComponentContact(String componentId, String componentContactId)

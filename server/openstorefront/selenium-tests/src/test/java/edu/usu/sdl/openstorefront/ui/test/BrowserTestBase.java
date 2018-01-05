@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -102,11 +101,15 @@ public class BrowserTestBase
 
 			// Enter password and hit ENTER since submit does not seem to work.
 			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-			userPassword.sendKeys(passWord, Keys.ENTER);
+			userPassword.sendKeys(passWord);
+			sleep(1000);
+			
+			WebElement loginBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='loginBtn']")));
+			loginBtn.click();
 
 			// Look for the titleText
 			try {
-				wait.until(ExpectedConditions.stalenessOf(userNameElement)); 
+				wait.until(ExpectedConditions.stalenessOf(userNameElement));
 				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
 				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
 			} catch (Exception e) {

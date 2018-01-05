@@ -166,6 +166,11 @@ public class ComponentRESTTestClient
 	{
 		apiComponentREST.deleteComponent(id);
 	}
+	
+	public void deleteComponentIntegration(String componentId)
+	{
+		apiComponentREST.deleteComponentConfig(componentId);
+	}
 
 	@Override
 	public void cleanup()

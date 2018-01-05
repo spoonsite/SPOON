@@ -20,7 +20,11 @@ import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.IntegrationType;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
+import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,7 @@ public class AttributeTestClient extends BaseTestClient
 
 	private AttributeClient apiAttribute;
 	private static List<String> attributeIDs = new ArrayList<>();
+	private static List<String> attributeXRefTypes = new ArrayList<>();
 	
 	public AttributeTestClient(ClientAPI client, APIClient apiClient)
 	{
@@ -72,7 +77,7 @@ public class AttributeTestClient extends BaseTestClient
 	
 	public AttributeCode addAttributeCode(String attributeType, String codeLabel, String code)
 	{	
-		AttributeType type = apiAttribute.getAttributeTypeById(attributeType, false, false);
+		AttributeType type = apiAttribute.getAttributeTypeById(attributeType, null, null);
 		
 		AttributeCodePk codePk = new AttributeCodePk();
 		codePk.setAttributeCode(code);
@@ -89,12 +94,51 @@ public class AttributeTestClient extends BaseTestClient
 	{
 		return apiAttribute.getAttributeCodes(attrType, params);
 	}
+	
+	public void createJiraMapping()
+	{
+		// Need to create an attribute here with api before mapping
+		//
+		createAPIAttribute("MAPPINGTESTATTR", "MAPATTRTEST", "MAPATTR");
+		
+		AttributeXRefType xRefType = new AttributeXRefType();
+		xRefType.setAttributeType("MAPPINGTESTATTR");
+		xRefType.setIssueType("ASSET-TEST");
+		xRefType.setProjectType("ASSET");
+		xRefType.setFieldId("FieldId");
+		xRefType.setFieldName("DI2E Intent");
+		xRefType.setIntegrationType(IntegrationType.JIRA);
+		
+		attributeXRefTypes.add(xRefType.getAttributeType());
+		
+		AttributeXRefMap xRefMap = new AttributeXRefMap();
+		xRefMap.setAttributeType("MAPPINGTESTATTR");
+		xRefMap.setLocalCode("MAPATTR");
+		xRefMap.setExternalCode("No Evaluation Planned");
+		List<AttributeXRefMap> map = new ArrayList<>();
+		map.add(xRefMap);
+		
+		AttributeXRefView xRefView = new AttributeXRefView();
+		xRefView.setType(xRefType);
+		xRefView.setMap(map);
+		
+		apiAttribute.saveMapping(xRefView);
+	}
+	
+	public void deleteAttrXRefType(String type)
+	{
+		apiAttribute.deleteMappingType(type);
+	}
 
 	@Override
 	public void cleanup()
 	{
 		for (String id : attributeIDs) {
 			deleteAPIAttribute(id);
+		}
+		
+		for (String type : attributeXRefTypes) {
+			deleteAttrXRefType(type);
 		}
 	}	
 }
