@@ -25,10 +25,12 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
@@ -49,6 +51,7 @@ public class ComponentRESTTestClient
 {
 
 	private static Set<String> componentIds = new HashSet<>();
+	private static Set<String> integrationCompIds = new HashSet<>();
 	private ComponentRESTClient apiComponentREST;
 	private AttributeTestClient apiAttributeTestClient = new AttributeTestClient(client, apiClient);
 
@@ -161,10 +164,33 @@ public class ComponentRESTTestClient
 
 		return component;
 	}
+	
+	public ComponentIntegration createAPIComponentIntegration(String componentName)
+	{
+		Component integrationComp = createAPIComponent(componentName, "IntegrationTestType", "IntegrationTest", "IntegrationOrg");
+		
+		ComponentIntegration integration = new ComponentIntegration();
+		integration.setComponentId(integrationComp.getComponentId());
+		integration.setStatus(RunStatus.COMPLETE);
+		
+		integration = apiComponentREST.saveIntegration(integrationComp.getComponentId(), integration);
+		
+		if (integration != null)
+		{
+			integrationCompIds.add(integration.getComponentId());
+		}
+		
+		return integration;
+	}
 
 	public void deleteAPIComponent(String id)
 	{
 		apiComponentREST.deleteComponent(id);
+	}
+	
+	public void deleteAPIComponentIntegration(String componentId)
+	{
+		apiComponentREST.deleteComponentConfig(componentId);
 	}
 
 	@Override

@@ -272,9 +272,9 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response deleteComponentConfig(String componentId)
+	public void deleteComponentConfig(String componentId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + componentId + "/integration", null);
 	}
 
 	public Response deleteComponentContact(String componentId, String componentContactId)
@@ -775,9 +775,10 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response saveIntegration(String componentId, ComponentIntegration integration)
+	public ComponentIntegration saveIntegration(String componentId, ComponentIntegration integration)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/integration", integration, null);
+		return response.getResponse(ComponentIntegration.class);
 	}
 
 	public Response saveIntegrationConfig(String componentId, ComponentIntegrationConfig integrationConfig)
