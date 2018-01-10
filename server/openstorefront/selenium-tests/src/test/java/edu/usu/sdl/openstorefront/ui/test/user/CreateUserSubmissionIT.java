@@ -107,14 +107,14 @@ public class CreateUserSubmissionIT
 		((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('" + entryDesc + "')");
 
 		nextBtn.click();
-		sleep(1000);
+		sleep(2000);
 		nextBtn.click();
-		sleep(1000);
+		sleep(2000);
 		driverWait(() -> {
 			setButtons(buttons);
 			submitReviewBtn.click();
 		}, 5);
-		sleep(1000);
+		sleep(2000);
 		
 		ComponentAdminView compView = apiClient.getComponentRESTTestClient().getComponentByName(entryName);
 		Assert.assertEquals(compView.getComponent().getName(), entryName);

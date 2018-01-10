@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateIT;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -129,13 +128,13 @@ public class BrowserTestBase
 		}
 	}
 
-	// Making Tread.sleep "universal"
+	// Making Thread.sleep "universal"
 	protected static void sleep(int mills)
 	{
 		try {
 			Thread.sleep(mills);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(AccountSignupActivateIT.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BrowserTestBase.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
