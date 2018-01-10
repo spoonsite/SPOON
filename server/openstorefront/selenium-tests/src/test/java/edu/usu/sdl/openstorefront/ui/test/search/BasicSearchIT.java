@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.ui.test.search;
 
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.Assert;
@@ -36,7 +37,7 @@ public class BasicSearchIT
 {
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
-	private static String entryName = "A Selenium Test Entry";
+	private static String entryName = "SeleniumTest";
 
 	@BeforeClass
 	public static void basicSearchComponent()
@@ -50,7 +51,7 @@ public class BasicSearchIT
 
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromLandingPage(driver, "Test");
+			searchFromLandingPage(driver, "SeleniumTest");
 			verifyResults(driver, entryName);
 
 		}
@@ -62,7 +63,7 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromLandingPage(driver, "\"A Selenium Test Entry\"");
+			searchFromLandingPage(driver, "\"SeleniumTest\"");
 			verifyResults(driver, entryName);
 		}
 	}
@@ -72,7 +73,7 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromResultsPage(driver, "\"A Selenium Test Entry\"");
+			searchFromResultsPage(driver, "\"SeleniumTest\"");
 			verifyResults(driver, entryName);
 		}
 	}
@@ -82,7 +83,7 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromResultsPage(driver, "Test");
+			searchFromResultsPage(driver, "SeleniumTest");
 			verifyResults(driver, entryName);
 		}
 	}
@@ -117,8 +118,18 @@ public class BasicSearchIT
 	public void verifyResults(WebDriver driver, String entryName)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		List<WebElement> entryResults = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#resultsDisplayPanel-innerCt h2")));
+		
+		List<WebElement> entryResults = new ArrayList<>();
+		
+		long startTime = System.currentTimeMillis();
 
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 30000) {
+			
+			driver.navigate().refresh();
+			entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
+			
+		}
+		
 		boolean isResult = false;
 
 		for (WebElement entry : entryResults) {

@@ -95,7 +95,7 @@ public class UserProfileResource
 	@APIDescription("Get a list of user profiles")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(UserProfileView.class)
+	@DataType(UserProfileWrapper.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
 			@QueryParam("searchField") String searchField,
 			@QueryParam("searchValue") String searchValue)

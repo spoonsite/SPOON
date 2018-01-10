@@ -48,6 +48,7 @@ public class AddTagSearchResultEntryIT
 		createBasicSearchComponent(entryName1);
 		Component entry2 = createBasicSearchComponent(entryName2);
 		apiClient.getComponentRESTTestClient().addTagToComponent(tagName, entry2);
+		sleep(2500);
 	}
 
 	@Test
