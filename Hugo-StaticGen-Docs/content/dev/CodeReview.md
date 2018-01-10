@@ -17,4 +17,11 @@ Check that those were apply. (Obvious quick scan)
 
 5. Check for know business rule breaks
 
-6. Move ticket as ready for testing or back to fix for adjustments.
+6. Make sure any require documentation changes are made 
+(It may NOT be all require documentation need for final release; just the documentation related to the ticket)
+
+7. Move ticket as ready for testing or back to fix for adjustments.
+
+On Failure:
+
+Note specifically what failed and why.  Also, suggest a correction path where possible.
