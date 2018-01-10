@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.selenium.apitestclient;
 
 import edu.usu.sdl.apiclient.ClientAPI;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,6 +26,7 @@ public abstract class BaseTestClient
 {
 	protected ClientAPI client;
 	protected APIClient apiClient;
+	protected static final Logger LOG = Logger.getLogger(BaseTestClient.class.getName());
 	
 	public BaseTestClient(ClientAPI client, APIClient apiClient)
 	{

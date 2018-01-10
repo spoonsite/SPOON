@@ -16,6 +16,7 @@
 package edu.usu.sdl.apiclient.rest.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.APIResponse;
 import edu.usu.sdl.apiclient.AbstractService;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
@@ -23,8 +24,10 @@ import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserProfileView;
+import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**
@@ -34,6 +37,8 @@ import javax.ws.rs.core.Response;
 public class UserProfileClient extends AbstractService
 {
 
+	String basePath = "api/v1/resource/userprofiles";
+	
 	public UserProfileClient(ClientAPI client)
 	{
 		super(client);
@@ -144,9 +149,13 @@ public class UserProfileClient extends AbstractService
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response userProfiles(FilterQueryParams filterQueryParams, String searchField, String searchValue)
+	public UserProfileWrapper userProfiles(FilterQueryParams filterQueryParams, String searchField, String searchValue)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
+		parameters.put("searchField", searchField);
+		parameters.put("searchValue",searchValue);
+		APIResponse response = client.httpGet(basePath, parameters);
+		return response.getResponse(UserProfileWrapper.class);
 	}
 
 	public Response userProfilesLookup()
