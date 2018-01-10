@@ -4,7 +4,7 @@
     <parent>
         <groupId>edu.usu.sdl</groupId>
         <artifactId>openstorefront</artifactId>
-        <version>2.5</version>
+        <version>2.6</version>
     </parent>
     <groupId>edu.usu.sdl.openstorefront</groupId>
     <artifactId>system-tests</artifactId>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>edu.usu.sdl</groupId>
             <artifactId>openstorefront-web</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
 			<type>war</type>
         </dependency>
 		<dependency>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
         </dependency>
     </dependencies>
 </project>
