@@ -38,7 +38,7 @@ public class ViewSearchResultEntryIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static String entryName = "A Selenium Test Entry";
+	private static String entryName = "SeleniumTest";
 
 	@BeforeClass
 	public static void createTestEntry()
@@ -51,10 +51,10 @@ public class ViewSearchResultEntryIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchForEntry(driver, "Test");
+			searchForEntry(driver, "SeleniumTest");
 			verifyResults(driver, entryName);
 			viewFullPageEntry(driver, entryName);
-			
+
 		}
 	}
 
@@ -71,7 +71,17 @@ public class ViewSearchResultEntryIT
 	protected void verifyResults(WebDriver driver, String entryName)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		List<WebElement> entryResults = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#resultsDisplayPanel-innerCt h2")));
+
+		List<WebElement> entryResults = new ArrayList<>();
+
+		long startTime = System.currentTimeMillis();
+
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 30000) {
+
+			driver.navigate().refresh();
+			entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
+
+		}
 
 		boolean isResult = false;
 
@@ -94,36 +104,36 @@ public class ViewSearchResultEntryIT
 		WebElement detailsFrame = driver.findElement(By.cssSelector("iframe"));
 		driver.switchTo().frame(detailsFrame);
 		sleep(1500);
-		
+
 		WebElement title = driver.findElement(By.cssSelector(".details-title-name"));
 		System.out.println("The title is " + title.getText());
-		
+
 		boolean isTitle = title.getText().contains(entryName);
 		Assert.assertTrue(isTitle);
-		
+
 		String parentWindow = driver.getWindowHandle();
-		
+
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-qtip = 'Full Page']"))).click();
-		
+
 		Set<String> handles = driver.getWindowHandles();
 		List<String> winHandles = new ArrayList<>(handles);
-		
-		driver.switchTo().window(winHandles.get(winHandles.size()-1));
-		
+
+		driver.switchTo().window(winHandles.get(winHandles.size() - 1));
+
 		WebElement entryTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#titlePanel-innerCt .details-title-name")));
 		boolean isEntryTitle = entryTitle.getText().contains(entryName);
-		
+
 		Assert.assertTrue(isEntryTitle);
-		
+
 		driver.close();
-		
+
 		driver.switchTo().window(parentWindow);
-		
+
 		driver.switchTo().frame(detailsFrame);
-		
+
 		WebElement detailsTitle = driver.findElement(By.cssSelector(".details-title-name"));
 		System.out.println("The title is " + title.getText());
-		
+
 		boolean isDetailsTitle = detailsTitle.getText().contains(entryName);
 		Assert.assertTrue(isDetailsTitle);
 	}

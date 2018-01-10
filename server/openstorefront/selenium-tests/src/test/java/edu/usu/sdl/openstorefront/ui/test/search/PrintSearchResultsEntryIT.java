@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.ui.test.admin.AdminTestBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -40,7 +41,7 @@ public class PrintSearchResultsEntryIT
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
-	private static String entryName = "A Selenium Test Entry";
+	private static String entryName = "SeleniumTest";
 
 	@BeforeClass
 	public static void createEntryToPrint()
@@ -61,13 +62,30 @@ public class PrintSearchResultsEntryIT
 	public void searchAndClickEntry(WebDriver driver, String entryName)
 	{
 		webDriverUtil.getPage(driver, "Landing.action");
-		
+
 		WebDriverWait wait = new WebDriverWait(driver, 8);
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("Test");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("SeleniumTest");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
-		List<WebElement> entryResults = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#resultsDisplayPanel-innerCt h2")));
+		driver.navigate().refresh();
+
+		List<WebElement> entryResults = new ArrayList<>();
+
+		long startTime = System.currentTimeMillis();
+
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 30000) {
+
+			driver.navigate().refresh();
+
+			try {
+				entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
+
+			} catch (Exception e) {
+				LOG.log(Level.INFO, "Unable to get search result list");
+			}
+
+		}
 
 		boolean isResult = false;
 
@@ -106,11 +124,10 @@ public class PrintSearchResultsEntryIT
 		driver.switchTo().window(printWindow);
 
 		sleep(1000);
-		
+
 		WebDriverWait wait10 = new WebDriverWait(driver, 10);
 		WebElement element = wait10.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#customTemplateBtn")));
 		element.click();
-		
 
 		List<WebElement> templateItems = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-menu-body.x-menu-body.x-unselectable .x-menu-item-text.x-menu-item-text-default.x-menu-item-indent-no-separator")));
 

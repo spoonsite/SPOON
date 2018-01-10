@@ -165,13 +165,17 @@ public class ComponentRESTTestClient
 		return component;
 	}
 	
-	public ComponentIntegration createAPIComponentIntegration(String componentName)
+	public ComponentIntegration createAPIComponentIntegration(String componentName) throws InterruptedException
 	{
 		Component integrationComp = createAPIComponent(componentName, "IntegrationTestType", "IntegrationTest", "IntegrationOrg");
 		
 		ComponentIntegration integration = new ComponentIntegration();
 		integration.setComponentId(integrationComp.getComponentId());
 		integration.setStatus(RunStatus.COMPLETE);
+		
+//		LOG.log(Level.INFO, "Component: {0}", integration.getComponentId());
+//		
+//		Thread.sleep(1000);
 		
 		integration = apiComponentREST.saveIntegration(integrationComp.getComponentId(), integration);
 		
