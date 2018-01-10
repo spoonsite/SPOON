@@ -15,24 +15,229 @@
  */
 /* global Ext, CoreService, CoreUtil */
 
-Ext.define('OSF.component.EvaluationPanel', {
+// TODO: create an EvaluationEvalPanel
+// TODO: create an EvaluationEntryPanel
+// TODO: create a PublishedEvaluationPanel
+//	* dynamically loads a published evaluation (somehow) => probably by READ ONLY form (for clarity and hidden fields).
+
+Ext.define('OSF.component.EvaluationEvalPanel', {
 	extend: 'Ext.panel.Panel',
-	alias: 'osf.widget.EvaluationPanel',
+	alias: 'osf.widget.EvaluationEvalPanel',
 	requires: [
 		'OSF.form.EvaluationInfo',
+		'OSF.form.ChecklistSummary',
+		'OSF.form.ChecklistQuestion',
+		'OSF.form.ChecklistAll',
+		'OSF.form.Section',
+		'OSF.form.Review',
+		'OSF.form.ManageEvalQuestions'
+	],
+	title: 'Evaluation Information'
+});
+
+Ext.define('OSF.component.EvaluationEntryPanel', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.EvaluationEntryPanel',
+	requires: [
+		'OSF.form.EntrySummary',
 		'OSF.form.Attributes',
 		'OSF.form.Relationships',
 		'OSF.form.Contacts',
 		'OSF.form.Resources',
 		'OSF.form.Media',
 		'OSF.form.Dependencies',
-		'OSF.form.EntrySummary',
+		'OSF.form.Tags'
+	],
+	title: 'Entry Information',
+	initComponent: function () {
+		this.callParent();
+		
+		var evalPanel = this;
+		
+		evalPanel.navigation = Ext.create('Ext.panel.Panel', {
+			title: 'Navigation',
+			iconCls: 'fa fa-navicon',
+			region: 'west',
+			collapsible: true,
+			animCollapse: false,
+			width: 250,
+			minWidth: 250,
+			split: true,
+			scrollable: true,			
+			layout: 'anchor',
+			bodyStyle: 'background: white;',
+			defaults: {
+				width: '100%'
+			},
+			items: [
+				{
+					xype: 'panel',
+					itemId: 'entrymenu',
+					title: 'Entry',	
+					titleCollapse: true,
+					collapsible: true,
+					margin: '0 0 0 0',
+					bodyStyle: 'padding: 10px;',
+					defaultType: 'button',
+					defaults: {
+						width: '100%',
+						cls: 'evaluation-nav-button',							
+						overCls: 'evaluation-nav-button-over',
+						focusCls: 'evaluation-nav-button',
+						margin: '5 0 0 0'
+					},
+					items: [
+						{							
+							text: 'Summary',							
+							handler: function(){
+								evalPanel.loadContentForm({
+									form: 'EntrySummary',
+									title: 'Entry Summary',
+									refreshCallback: evalPanel.externalRefreshCallback
+								});								
+							}							
+						}
+					]
+				}
+			]
+		});
+
+		evalPanel.add(evalPanel.navigation);
+	},
+	loadEval: function(evaluationId, componentId){
+		var evalPanel = this;
+		
+		evalPanel.setLoading(true);
+		evalPanel.evaluationId = evaluationId;
+		evalPanel.componentId = componentId;
+		
+		var entryType = 'COMP';		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/componenttypes/'+ entryType,
+			callback: function() {				
+			},
+			success: function(response, opts) {
+				var entryType = Ext.decode(response.responseText);
+				var menuItems = [];
+				menuItems.push(
+					{							
+						text: 'Summary',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'EntrySummary',
+								title: 'Entry Summary',
+								refreshCallback: evalPanel.externalRefreshCallback
+							});								
+						}							
+					}					
+				);
+				if (entryType.dataEntryAttributes){
+					menuItems.push({						
+						text: 'Attributes',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Attributes',
+								title: 'Entry Attributes'
+							});
+						}
+					});
+				}
+				if (entryType.dataEntryRelationships){
+					menuItems.push({						
+						text: 'Relationships',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Relationships',
+								title: 'Entry Relationships'
+							});
+						}
+					});					
+				}
+				if (entryType.dataEntryContacts){
+					menuItems.push({						
+						text: 'Contacts',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Contacts',
+								title: 'Entry Contacts'
+							});
+						}
+					});					
+				}
+				if (entryType.dataEntryResources){
+					menuItems.push({						
+						text: 'Resources',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Resources',
+								title: 'Entry Resources'
+							});	
+						}
+					});					
+				}
+				if (entryType.dataEntryMedia){
+					menuItems.push({						
+						text: 'Media',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Media',
+								title: 'Entry Media'
+							});
+						}
+					});						
+				}
+				if (entryType.dataEntryDependencies){
+					menuItems.push({						
+						text: 'Dependencies',							
+						handler: function(){
+							evalPanel.loadContentForm({
+								form: 'Dependencies',
+								title: 'Entry Dependencies'
+							});
+						}
+					});					
+				}
+				menuItems.push({						
+					text: 'Tags',							
+					handler: function(){
+						evalPanel.loadContentForm({
+							form: 'Tags',
+							title: 'Tags'
+						});
+					}
+				});					
+				
+				evalPanel.navigation.getComponent('entrymenu').removeAll();
+				evalPanel.navigation.getComponent('entrymenu').add(menuItems);
+			}
+		});
+	}
+});
+
+Ext.define('OSF.component.EvaluationPublishedPanel', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.EvaluationPublishedPanel',
+	title: 'Published Evaluations'
+});
+
+Ext.define('OSF.component.EvaluationPanel', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.EvaluationPanel',
+	requires: [
+		'OSF.form.EvaluationInfo',
+		'OSF.form.Attributes', // entry
+		'OSF.form.Relationships', // entry
+		'OSF.form.Contacts', // entry
+		'OSF.form.Resources', // entry
+		'OSF.form.Media', // entry
+		'OSF.form.Dependencies', // entry
+		'OSF.form.EntrySummary', // entry
 		'OSF.form.ChecklistSummary',
 		'OSF.form.ChecklistQuestion',
 		'OSF.form.ChecklistAll',
 		'OSF.form.Section',
 		'OSF.form.Review',
-		'OSF.form.Tags',
+		'OSF.form.Tags', // entry
 		'OSF.form.ManageEvalQuestions'
 	],
 	
@@ -56,7 +261,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 			bodyStyle: 'background: white;',
 			defaults: {
 				width: '100%'
-			},			
+			},
 			items: [
 				{
 					xype: 'panel',
@@ -1155,17 +1360,49 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	},	
 	initComponent: function () {
 		this.callParent();
-		
+		console.log("THIS: ", this);
 		var evalWin = this;
 		
-		evalWin.evalPanel = Ext.create('OSF.component.EvaluationPanel', {			
+		// TODO: add a TabPanel that contains:
+		//		* EvaluationEvalPanel
+		//		* EvaluationEntryPanel
+		//		* Each published evaluation
+		evalWin.evalPanel = Ext.create('OSF.component.EvaluationPanel', {	
+			itemId: 'origPanel'		
+		});
+
+		evalWin.evalTab = Ext.create('OSF.component.EvaluationEvalPanel', {
+			itemId: 'evalPanel'
+		});
+		evalWin.entryTab = Ext.create('OSF.component.EvaluationEntryPanel', {
+			itemId: 'entryPanel'
+		});
+		evalWin.publishedTab = Ext.create('OSF.component.EvaluationPublishedPanel', {
+			itemId: 'publishedPanel'
+		});
+
+		evalWin.evalTabPanel = Ext.create('Ext.TabPanel', {
+		    fullscreen: true,
+		    tabWidth: 300,
+		    minTabWidth: 300,
+		    items: [
+		        evalWin.evalTab,
+		        evalWin.entryTab,
+		        evalWin.publishedTab,
+		    	evalWin.evalPanel
+		    ]
 		});
 		
-		evalWin.add(evalWin.evalPanel);
-		
+		// evalWin.add(evalWin.evalPanel);
+		evalWin.add(evalWin.evalTabPanel);
+
 	},
 	loadEval: function(evaluationId, componentId, refreshCallback) {
 		var evalWin = this;
+		
+		// setup entry panel
+		var entryPanel = evalWin.query('[itemId=entryPanel]')[0];
+		entryPanel.loadEval(evaluationId, componentId);
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
 		if (refreshCallback) {
