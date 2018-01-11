@@ -20,6 +20,148 @@
 // TODO: create a PublishedEvaluationPanel
 //	* dynamically loads a published evaluation (somehow) => probably by READ ONLY form (for clarity and hidden fields).
 
+Ext.define('OSF.component.RootEvaluationPanel', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.RootEvaluationPanel',
+	initComponent: function () {
+		this.callParent();
+		var self = this;
+
+		var changeHistory = Ext.create('OSF.component.ChangeLogWindow', {									
+		});
+
+		self.contentPanel = Ext.create('Ext.panel.Panel', {
+			region: 'center',			
+			layout: 'fit',
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'top',
+					itemId: 'tools',					
+					cls: 'eval-form-title',
+					items: [
+						{
+							xtype: 'tbfill'
+						},
+						{
+							xtype: 'panel',
+							itemId: 'title',							
+							tpl: '<h1 style="color: white;">{title}</h1>'					
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Change History',
+							itemId: 'changeHistoryBtn',
+							iconCls: 'fa fa-2x fa-history icon-button-color-default icon-vertical-correction',
+							scale: 'medium',
+							handler: function() {									
+								changeHistory.show();
+								
+								changeHistory.load({
+									entity: 'Component',												
+									entityId: self.componentId,
+									includeChildren: true,
+									addtionalLoad: function(data, changeWindow) {
+										changeWindow.setLoading(true);
+										Ext.Ajax.request({
+											url: 'api/v1/resource/changelogs/Evaluation/' + self.evaluationId + '?includeChildren=true',
+											callback: function() {
+												changeWindow.setLoading(false);
+											},
+											success: function(response, opts) {
+												var extraData = Ext.decode(response.responseText);												
+												Ext.Array.push(data, extraData);
+												data.sort(function(a, b){
+													return Ext.Date.parse(b.createDts, 'C') - Ext.Date.parse(a.createDts, 'C');
+												});												
+												changeWindow.updateData(data);
+											}
+										});
+									}
+								});
+							}
+						}
+					]
+				}
+			]			
+		});
+	},
+	loadContentForm: function(page) {
+		var self = this;
+		this.checkFormSaveStatus(null, function () {
+
+			self.pageStatus = page;
+			
+			if (self.currentContentForm && self.currentContentForm.unsavedChanges) {
+				self.currentContentForm.saveData();
+			}
+			
+			//self.commentPanel.setHidden(false);
+			self.contentPanel.removeAll(true);
+			self.contentPanel.getComponent('tools').getComponent('title').update({
+				title: page.title
+			});
+			
+			var hideSecurityMarking = true;
+			if (self.branding) {
+				hideSecurityMarking = !self.branding.allowSecurityMarkingsFlg;
+			}
+			
+			var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
+				hideSecurityMarking: hideSecurityMarking
+			}, page.options)
+			);
+			
+			self.contentPanel.add(contentForm);
+			self.currentContentForm = contentForm;
+
+			if (contentForm.loadData) {
+				if (page.refreshCallback) {
+					self.refreshCallback = page.refreshCallback;
+				}
+				
+				contentForm.loadData(self.evaluationId, self.componentId, page.data, {
+					commentPanel: self.commentPanel,
+					user: self.user,
+					mainForm: self
+				});
+			}
+		});
+	},
+	checkFormSaveStatus: function (evalWin, cb) {
+		self = this;
+		
+		if (self.down('form') !== null && self.down('form').unsavedChanges) {
+			// ask if they would like to save before closing...
+			Ext.Msg.show({
+				title: 'Discard Changes?',
+				message: 'You have unsaved changes.<br />Would you like to continue and <b>discard</b> all changes?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.WARNING,
+				fn: function (btn) {
+					if (btn === 'yes') {
+						if (evalWin) {
+							evalWin.doClose();
+						}
+						else if (cb) {
+							cb();
+						}
+					} else if (btn === 'no') {
+						// don't do anything...
+					}
+				}
+			});
+			return false;
+		}
+		else if (cb) {
+			cb();
+		}
+		return true;
+	}
+});
+
 Ext.define('OSF.component.EvaluationEvalPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.EvaluationEvalPanel',
@@ -32,11 +174,11 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 		'OSF.form.Review',
 		'OSF.form.ManageEvalQuestions'
 	],
-	title: 'Evaluation Information'
+	title: 'Evaluation View'
 });
 
 Ext.define('OSF.component.EvaluationEntryPanel', {
-	extend: 'Ext.panel.Panel',
+	extend: 'OSF.component.RootEvaluationPanel',
 	alias: 'osf.widget.EvaluationEntryPanel',
 	requires: [
 		'OSF.form.EntrySummary',
@@ -48,61 +190,62 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 		'OSF.form.Dependencies',
 		'OSF.form.Tags'
 	],
-	title: 'Entry Information',
+	title: 'Entry View',
+	layout: 'border',
 	initComponent: function () {
 		this.callParent();
 		
 		var evalPanel = this;
-		
+
 		evalPanel.navigation = Ext.create('Ext.panel.Panel', {
-			title: 'Navigation',
-			iconCls: 'fa fa-navicon',
-			region: 'west',
+			itemId: 'entrymenu',
+			title: 'Entry Navigation',	
+			titleCollapse: true,
 			collapsible: true,
+			layout: 'anchor',
 			animCollapse: false,
+			split: true,
 			width: 250,
 			minWidth: 250,
-			split: true,
-			scrollable: true,			
-			layout: 'anchor',
-			bodyStyle: 'background: white;',
+			scrollable: true,
+			iconCls: 'fa fa-navicon',
+			region: 'west',
+			bodyStyle: 'padding: 10px; background: white;',
+			defaultType: 'button',
+			margin: '10 0 0 0',
 			defaults: {
-				width: '100%'
+				width: '100%',
+				cls: 'evaluation-nav-button',							
+				overCls: 'evaluation-nav-button-over',
+				focusCls: 'evaluation-nav-button',
+				margin: '5 0 0 0'
 			},
 			items: [
-				{
-					xype: 'panel',
-					itemId: 'entrymenu',
-					title: 'Entry',	
-					titleCollapse: true,
-					collapsible: true,
-					margin: '0 0 0 0',
-					bodyStyle: 'padding: 10px;',
-					defaultType: 'button',
-					defaults: {
-						width: '100%',
-						cls: 'evaluation-nav-button',							
-						overCls: 'evaluation-nav-button-over',
-						focusCls: 'evaluation-nav-button',
-						margin: '5 0 0 0'
-					},
-					items: [
-						{							
-							text: 'Summary',							
-							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'EntrySummary',
-									title: 'Entry Summary',
-									refreshCallback: evalPanel.externalRefreshCallback
-								});								
-							}							
-						}
-					]
+				{							
+					text: 'Summary',							
+					handler: function(){
+						evalPanel.loadContentForm({
+							form: 'EntrySummary',
+							title: 'Entry Summary',
+							refreshCallback: evalPanel.externalRefreshCallback
+						});								
+					}							
 				}
 			]
 		});
 
 		evalPanel.add(evalPanel.navigation);
+		evalPanel.add(evalPanel.contentPanel);
+
+		CoreService.userservice.getCurrentUser().then(function(user){
+			evalPanel.user = user;	
+			
+			evalPanel.loadContentForm({
+				form: 'EntrySummary',
+				title: 'Entry Summary',
+				refreshCallback: evalPanel.externalRefreshCallback
+			});				
+		});
 	},
 	loadEval: function(evaluationId, componentId){
 		var evalPanel = this;
@@ -205,10 +348,10 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 							title: 'Tags'
 						});
 					}
-				});					
-				
-				evalPanel.navigation.getComponent('entrymenu').removeAll();
-				evalPanel.navigation.getComponent('entrymenu').add(menuItems);
+				});
+
+				evalPanel.navigation.removeAll();
+				evalPanel.navigation.add(menuItems);
 			}
 		});
 	}
