@@ -465,6 +465,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 	},
 	loadContentForm: function(page) {
 		var self = this;
+
 		this.checkFormSaveStatus(null, function () {
 
 			self.pageStatus = page;
@@ -609,7 +610,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 	},
 	loadEval: function(evaluationId, componentId){
 		var evalPanel = this;
-		
+
 		evalPanel.setLoading(true);
 		evalPanel.evaluationId = evaluationId;
 		evalPanel.componentId = componentId;
@@ -712,6 +713,8 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 
 				evalPanel.navigation.removeAll();
 				evalPanel.navigation.add(menuItems);
+
+				evalPanel.setLoading(false);
 			}
 		});
 	}
@@ -841,8 +844,8 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 			evalPanel.user = user;	
 			
 			evalPanel.loadContentForm({
-				form: 'EntrySummary',
-				title: 'Entry Summary',
+				form: 'EvaluationInfo',
+				title: 'Evaluation Info',
 				refreshCallback: evalPanel.externalRefreshCallback
 			});				
 		});
@@ -1995,7 +1998,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	},	
 	initComponent: function () {
 		this.callParent();
-		console.log("THIS: ", this);
 		var evalWin = this;
 		
 		// TODO: add a TabPanel that contains:
@@ -2021,8 +2023,8 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		    tabWidth: 300,
 		    minTabWidth: 300,
 		    items: [
-		        evalWin.evalTab,
 		        evalWin.entryTab,
+		        evalWin.evalTab,
 		        evalWin.publishedTab,
 		    	evalWin.evalPanel
 		    ]
@@ -2034,14 +2036,22 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	},
 	loadEval: function(evaluationId, componentId, refreshCallback) {
 		var evalWin = this;
-		
+
 		// setup entry panel
 		var entryPanel = evalWin.query('[itemId=entryPanel]')[0];
 		entryPanel.loadEval(evaluationId, componentId);
+		entryPanel.evaluationId = evaluationId;
+		entryPanel.componentId = componentId;
+
+		// var newEvalPanel = evalWin.query('[itemId=evalPanel]')[0];
+		// newEvalPanel.loadEval(evaluationId, componentId);
+		// newEvalPanel.evaluationId = evaluationId;
+		// newEvalPanel.componentId = componentId;
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
 		if (refreshCallback) {
 			evalWin.evalPanel.externalRefreshCallback = refreshCallback;
+			entryPanel.externalRefreshCallback = refreshCallback;
 		}		
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;
