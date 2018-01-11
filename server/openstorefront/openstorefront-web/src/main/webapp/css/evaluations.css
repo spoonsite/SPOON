@@ -1,0 +1,15 @@
+.x-tab-default {
+	background: rgb(80, 90, 100);
+	border-radius: 7px 7px 0 0;
+}
+
+.tab-right-align {
+	float: right;
+}
+
+.x-tab-default:focus {
+	outline: none;
+}
+
+.x-tab-default:nth-child(2) {
+}
