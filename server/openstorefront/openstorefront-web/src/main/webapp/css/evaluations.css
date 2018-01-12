@@ -3,13 +3,6 @@
 	border-radius: 7px 7px 0 0;
 }
 
-.tab-right-align {
-	float: right;
-}
-
 .x-tab-default:focus {
 	outline: none;
-}
-
-.x-tab-default:nth-child(2) {
 }

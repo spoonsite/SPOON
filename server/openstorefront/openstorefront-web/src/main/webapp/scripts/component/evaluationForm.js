@@ -23,6 +23,7 @@
 Ext.define('OSF.component.RootEvaluationPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.RootEvaluationPanel',
+	readOnly: false,
 	initComponent: function () {
 		this.callParent();
 		var self = this;
@@ -1188,12 +1189,6 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 	}
 });
 
-Ext.define('OSF.component.EvaluationPublishedPanel', {
-	extend: 'Ext.panel.Panel',
-	alias: 'osf.widget.EvaluationPublishedPanel',
-	title: 'Published Evaluations'
-});
-
 // Ext.define('OSF.component.EvaluationPanel', {
 // 	extend: 'Ext.panel.Panel',
 // 	alias: 'osf.widget.EvaluationPanel',
@@ -2328,7 +2323,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 			this.removeCls("x-unselectable");    
 		},
 		beforeClose: function () {
-			// var evalPanel = this.evalPanel;
 			var entryPanel = this.query('[itemId=entryPanel]')[0];
 			var evalPanel = this.query('[itemId=evalPanel]')[0];
 
@@ -2338,14 +2332,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	initComponent: function () {
 		this.callParent();
 		var evalWin = this;
-		
-		// TODO: add a TabPanel that contains:
-		//		* EvaluationEvalPanel DONE
-		//		* EvaluationEntryPanel DONE
-		//		* Each published evaluation
-		// evalWin.evalPanel = Ext.create('OSF.component.EvaluationPanel', {	
-		// 	itemId: 'origPanel'		
-		// });
 
 		evalWin.entryTab = Ext.create('OSF.component.EvaluationEntryPanel', {
 			itemId: 'entryPanel',
@@ -2361,12 +2347,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 				margin: '0 30 0 3'
 			}
 		});
-		evalWin.publishedTab = Ext.create('OSF.component.EvaluationPublishedPanel', {
-			itemId: 'publishedPanel',
-			tabConfig: {
-				float: 'right'
-			}
-		});
 
 		evalWin.evalTabPanel = Ext.create('Ext.TabPanel', {
 		    fullscreen: true,
@@ -2375,7 +2355,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		    items: [
 		        evalWin.entryTab,
 		        evalWin.evalTab,
-		        evalWin.publishedTab
 		    ]
 		});
 		
@@ -2395,7 +2374,27 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		if (refreshCallback) {
 			entryPanel.externalRefreshCallback = refreshCallback;
 			evalPanel.externalRefreshCallback = refreshCallback;
-		}		
+		}
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/',
+			success: function (response) {
+				response = Ext.decode(response.responseText);
+				console.log("DETAIL RESPONSE: ", response);
+
+				Ext.Array.forEach(response.fullEvaluations, function (el, index) {
+					if (el.evaluation.published) {
+
+						var newEvalPanel = Ext.create('OSF.component.EvaluationEvalPanel', {
+							title: 'Evaluation - ' + el.evaluation.version
+						});
+						newEvalPanel.loadEval(el.evaluation.evaluationId, el.evaluation.originComponentId);
+
+						evalWin.evalTabPanel.add(newEvalPanel);
+					}
+				});
+			}
+		});
 	}
 	 
 });
