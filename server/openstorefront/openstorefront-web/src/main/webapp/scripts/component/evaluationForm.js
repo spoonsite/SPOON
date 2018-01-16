@@ -1297,8 +1297,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 
 		evalWin.evalTabPanel = Ext.create('Ext.TabPanel', {
 		    fullscreen: true,
-		    // tabWidth: 100,
-		    // minTabWidth: 100,
 		    items: [
 		        evalWin.entryTab,
 		        evalWin.evalTab,
