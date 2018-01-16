@@ -505,22 +505,8 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					mainForm: self
 				}, function () {
 
+					// if readOnly, disable/hide the appropriate fields for the content form
 					if (self.readOnly) {
-
-						// minor timing discrepency between the content panel and nav bar...
-						//	push this section of code back on the stack
-						setTimeout(function () {
-
-							Ext.Array.forEach(self.query('splitbutton'), function (button, index) {
-								button.setArrowVisible(false);
-							});
-
-							Ext.Array.forEach(self.query('[itemId=addSectionButton]'), function (button, index) {
-								button.setDisabled(true);
-								button.setVisible(false);
-							});
-							
-						}, 0);
 
 						Ext.Array.forEach(self.contentPanel.query('textfield'), function(field, index) {
 
@@ -535,6 +521,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 						});
 						Ext.Array.forEach(self.contentPanel.query('checkbox'), function (field, index) {
 							field.setDisabled(true);
+							field.setStyle('opacity', '0.6');
 						});
 						Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
 							field.setVisible(false);
@@ -784,6 +771,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 			title: 'Evaluation Navigation',
 			iconCls: 'fa fa-navicon',
 			region: 'west',
+			itemId: 'evalmenu',
 			collapsible: true,
 			animCollapse: false,
 			titleCollapse: true,
@@ -799,7 +787,6 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					itemId: 'evalmenu',
 					title: 'Evaluation',
 					titleCollapse: true,
 					collapsible: true,
@@ -873,7 +860,25 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 					items: [																
 					]
 				}
-			]
+			],
+			listeners: {
+				afterrender: function () {
+
+					// if the evaluation form is read only, disable items on the navigation menu
+					if (evalPanel.readOnly) {
+						var evalMenu = evalPanel.query('[itemId=evalmenu]')[0];
+
+						Ext.Array.forEach(evalMenu.query('splitbutton'), function (button, index) {
+							button.setArrowVisible(false);
+						});
+
+						Ext.Array.forEach(evalMenu.query('[itemId=addSectionButton]'), function (button, index) {
+							button.setDisabled(true);
+							button.setVisible(false);
+						});		
+					}
+				}
+			}
 		});
 
 		evalPanel.add(evalPanel.navigation);
@@ -887,7 +892,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				form: 'EvaluationInfo',
 				title: 'Evaluation Info',
 				refreshCallback: evalPanel.externalRefreshCallback
-			});				
+			});	
 		});
 	},
 	loadEval: function (evaluationId, componentId) {
