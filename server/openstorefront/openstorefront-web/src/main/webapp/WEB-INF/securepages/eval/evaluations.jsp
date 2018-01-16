@@ -29,6 +29,8 @@
 
 		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 		</stripes:layout-render>			
+
+		<link rel="stylesheet" href="css/evaluations.css">	
 		
 		<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
 		

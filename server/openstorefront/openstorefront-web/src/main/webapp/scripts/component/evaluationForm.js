@@ -213,7 +213,27 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 						}
 					]
 				}				
-			]
+			],
+			listeners: {
+				afterrender: function () {
+
+					if (self.readOnly) {
+						var subCommentPanel = self.query('[itemId=comments]')[0];
+						
+						Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
+							el.setStyle('pointer-events', 'none');
+						});
+						Ext.Array.forEach(subCommentPanel.query('htmleditor'), function (el) {
+							el.setDisabled(true);
+							el.setVisible(false);
+						});
+						Ext.Array.forEach(subCommentPanel.query('button'), function (el) {
+							el.setDisabled(true);
+							el.setVisible(false);
+						});
+					}
+				}
+			}
 		});
 		self.commentPanel.loadComments = function(evaluationId, entity, entityId){
 			
