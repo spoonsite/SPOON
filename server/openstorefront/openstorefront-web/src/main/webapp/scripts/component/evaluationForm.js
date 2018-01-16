@@ -476,7 +476,6 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 				self.currentContentForm.saveData();
 			}
 			
-			//self.commentPanel.setHidden(false);
 			self.contentPanel.removeAll(true);
 			self.contentPanel.getComponent('tools').getComponent('title').update({
 				title: page.title
@@ -507,7 +506,21 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 				}, function () {
 
 					if (self.readOnly) {
-						var form = self.query('form')[0];
+
+						// minor timing discrepency between the content panel and nav bar...
+						//	push this section of code back on the stack
+						setTimeout(function () {
+
+							Ext.Array.forEach(self.query('splitbutton'), function (button, index) {
+								button.setArrowVisible(false);
+							});
+
+							Ext.Array.forEach(self.query('[itemId=addSectionButton]'), function (button, index) {
+								button.setDisabled(true);
+								button.setVisible(false);
+							});
+							
+						}, 0);
 
 						Ext.Array.forEach(self.contentPanel.query('textfield'), function(field, index) {
 
@@ -1111,8 +1124,8 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 								{
 									iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 									text: 'Add Section',
+									itemId: 'addSectionButton',
 									handler: function() {
-
 										var sectionWindow = Ext.create('Ext.window.Window', {
 											title: 'Add Section',
 											modal: true,
