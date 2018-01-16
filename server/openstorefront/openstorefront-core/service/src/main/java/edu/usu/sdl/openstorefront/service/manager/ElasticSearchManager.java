@@ -696,8 +696,7 @@ public class ElasticSearchManager
 				if (searchHits.getTotalHits() > 0) {
 					//bulk delete results
 					searchHits.forEach(hit -> {
-						bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, hit.getId()).source(XContentType.JSON, "componentId", hit.getId()));
-						deleteById(hit.getId());
+						bulkRequest.add(new DeleteRequest(INDEX, INDEX_TYPE, hit.getId()));
 					});
 
 					//	Process the bulk request (ensure there were no failures)
