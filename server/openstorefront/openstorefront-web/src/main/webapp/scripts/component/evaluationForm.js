@@ -34,6 +34,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 		self.contentPanel = Ext.create('Ext.panel.Panel', {
 			region: 'center',			
 			layout: 'fit',
+			itemId: 'contentPanel',
 			dockedItems: [
 				{
 					xtype: 'toolbar',
@@ -504,6 +505,47 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					user: self.user,
 					mainForm: self
 				});
+
+				// if the panel/form is read only, disable all fields and buttons.
+				// console.log("DISABLE FORM STUFF IF READ ONLY");
+				// console.log("READ ONLY: ", self.readOnly);
+				// console.log("SELF: ", self);
+
+				if (self.readOnly) {
+					var form = self.query('form')[0];
+					// form.setDisabled(true);
+					// form.setStyle('opacity', 0.6);
+
+					console.log("SELF: ", self);
+
+					setTimeout(function() {
+						Ext.Array.forEach(self.contentPanel.query('textfield'), function(field, index) {
+							// field.setStyle('pointer-events', 'none');
+
+							// field.setDisabled(true);
+							// field.setStyle('pointer-events', 'auto');
+							console.log("FIELD : ", field);
+							if (field.xtype === 'tinymce_textarea') {
+								field.setReadOnly(true);
+							}
+							else {
+								field.setDisabled(true);
+							}
+
+							field.setStyle('opacity', '0.6');
+						});
+						Ext.Array.forEach(self.contentPanel.query('checkbox'), function (field, index) {
+							field.setDisabled(true);
+						});
+						Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
+							field.setVisible(false);
+						});
+						Ext.Array.forEach(self.contentPanel.query('grid'), function (grid, index) {
+							grid.setStyle('opacity', '0.6');
+							grid.events = {};
+						});
+					},100);
+				}
 			}
 		});
 	},
@@ -2363,6 +2405,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	},
 	loadEval: function(evaluationId, componentId, refreshCallback) {
 		var evalWin = this;
+		console.log("this: ", this);
 
 		// setup entry panel
 		var entryPanel = evalWin.query('[itemId=entryPanel]')[0];
@@ -2380,13 +2423,13 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 			url: 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/',
 			success: function (response) {
 				response = Ext.decode(response.responseText);
-				console.log("DETAIL RESPONSE: ", response);
 
 				Ext.Array.forEach(response.fullEvaluations, function (el, index) {
 					if (el.evaluation.published) {
 
 						var newEvalPanel = Ext.create('OSF.component.EvaluationEvalPanel', {
-							title: 'Evaluation - ' + el.evaluation.version
+							title: 'Evaluation - ' + el.evaluation.version,
+							readOnly: true
 						});
 						newEvalPanel.loadEval(el.evaluation.evaluationId, el.evaluation.originComponentId);
 
