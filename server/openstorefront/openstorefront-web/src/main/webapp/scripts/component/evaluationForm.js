@@ -876,25 +876,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 					items: [																
 					]
 				}
-			],
-			listeners: {
-				afterrender: function () {
-
-					// if the evaluation form is read only, disable items on the navigation menu
-					if (evalPanel.readOnly) {
-						var evalMenu = evalPanel.query('[itemId=evalmenu]')[0];
-
-						Ext.Array.forEach(evalMenu.query('splitbutton'), function (button, index) {
-							button.setArrowVisible(false);
-						});
-
-						Ext.Array.forEach(evalMenu.query('[itemId=addSectionButton]'), function (button, index) {
-							button.setDisabled(true);
-							button.setVisible(false);
-						});		
-					}
-				}
-			}
+			]
 		});
 
 		evalPanel.add(evalPanel.navigation);
@@ -1080,7 +1062,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 					
 					var menu = null;
 					var buttonType = 'button';
-					if (evaluationAll.evaluation.allowNewSections) {
+					if (evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
 						
 						buttonType = 'splitbutton';
 						menu = {
@@ -1140,7 +1122,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				evalPanel.navigation.getComponent('sectionmenu').removeAll();
 				evalPanel.navigation.getComponent('sectionmenu').add(sections);
 				
-				if (evaluationAll.evaluation.allowNewSections) {
+				if (evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
 					var dockedTools = evalPanel.navigation.getComponent('sectionmenu').getDockedComponent('tools');
 					if (!dockedTools) {							
 						evalPanel.navigation.getComponent('sectionmenu').addDocked({
@@ -1267,6 +1249,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	modal: true,
 	maximizable: true,
 	layout: 'fit',
+	isPublishedEvaluation: false,
 	listeners: {
 		show: function() {        
 			this.removeCls("x-unselectable");    
@@ -1282,27 +1265,43 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		this.callParent();
 		var evalWin = this;
 
-		evalWin.entryTab = Ext.create('OSF.component.EvaluationEntryPanel', {
-			itemId: 'entryPanel',
-			title: 'Entry View',
-			tabConfig: {
-				margin: '0 3 0 3'
-			}
-		});
-		evalWin.evalTab = Ext.create('OSF.component.EvaluationEvalPanel', {
-			itemId: 'evalPanel',
-			title: 'Current Evaluation View',
-			tabConfig: {
-				margin: '0 30 0 3'
-			}
-		});
+		var initialTabPanels = [];
+		if (!evalWin.isPublishedEvaluation) {
+
+			// evalWin.entryTab = Ext.create('OSF.component.EvaluationEntryPanel', {
+			// 	itemId: 'entryPanel',
+			// 	title: 'Entry View',
+			// 	tabConfig: {
+			// 		margin: '0 3 0 3'
+			// 	}
+			// });
+			// evalWin.evalTab = Ext.create('OSF.component.EvaluationEvalPanel', {
+			// 	itemId: 'evalPanel',
+			// 	title: 'Current Evaluation View',
+			// 	tabConfig: {
+			// 		margin: '0 30 0 3'
+			// 	}
+			// });
+
+			initialTabPanels.push(Ext.create('OSF.component.EvaluationEntryPanel', {
+				itemId: 'entryPanel',
+				title: 'Entry View',
+				tabConfig: {
+					margin: '0 3 0 3'
+				}
+			}));
+			initialTabPanels.push(Ext.create('OSF.component.EvaluationEvalPanel', {
+				itemId: 'evalPanel',
+				title: 'Current Evaluation View',
+				tabConfig: {
+					margin: '0 30 0 3'
+				}
+			}));
+		}
 
 		evalWin.evalTabPanel = Ext.create('Ext.TabPanel', {
 		    fullscreen: true,
-		    items: [
-		        evalWin.entryTab,
-		        evalWin.evalTab,
-		    ]
+		    items: initialTabPanels
 		});
 		
 		evalWin.add(evalWin.evalTabPanel);
