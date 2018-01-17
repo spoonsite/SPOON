@@ -15,11 +15,6 @@
  */
 /* global Ext, CoreService, CoreUtil */
 
-// TODO: create an EvaluationEvalPanel
-// TODO: create an EvaluationEntryPanel
-// TODO: create a PublishedEvaluationPanel
-//	* dynamically loads a published evaluation (somehow) => probably by READ ONLY form (for clarity and hidden fields).
-
 Ext.define('OSF.component.RootEvaluationPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.RootEvaluationPanel',
