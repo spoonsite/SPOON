@@ -219,7 +219,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 
 					if (self.readOnly) {
 						var subCommentPanel = self.query('[itemId=comments]')[0];
-						
+
 						Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
 							el.setStyle('pointer-events', 'none');
 						});
@@ -829,6 +829,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 									title: 'Evaluation Info',
 									refreshCallback: evalPanel.externalRefreshCallback
 								});
+								evalPanel.commentPanel.setHidden(false);
 							}
 						},
 						{						
@@ -913,6 +914,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				title: 'Evaluation Info',
 				refreshCallback: evalPanel.externalRefreshCallback
 			});	
+			evalPanel.commentPanel.setHidden(false);
 		});
 	},
 	loadEval: function (evaluationId, componentId) {
@@ -941,6 +943,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 							title: 'Checklist Summary',
 							data: evaluationAll.checkListAll
 						});
+						evalPanel.commentPanel.setHidden(false);
 					}							
 				});
 				
@@ -992,6 +995,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 							});
 						}									
 					});
+					evalPanel.commentPanel.setHidden(false);
 				};
 				
 				questions.push({		
@@ -1040,6 +1044,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 								});
 							}
 						});
+						evalPanel.commentPanel.setHidden(false);
 					};
 					
 					questions.push({
@@ -1109,6 +1114,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 																form: 'EvaluationInfo',
 																title: 'Evaluation Info'
 															});
+															evalPanel.commentPanel.setHidden(false);
 															evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);																		
 														}
 													});
@@ -1131,6 +1137,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 								title: sectionAll.section.title,
 								data: sectionAll										
 							});
+							evalPanel.commentPanel.setHidden(false);
 						}							
 					});							
 				});
