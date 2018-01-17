@@ -71,15 +71,17 @@
 								store.getProxy().extraParams = {
 									'assignedUser': Ext.getCmp('filterAssignedUser').getValue(),
 									'assignedGroup': Ext.getCmp('filterAssignedGroup').getValue(),
-									'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
-									published: false
+									'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
 								};
 							}
 						}						
 					},
 					columns: [
 						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
-						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },						
+						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },	
+						{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
 						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
@@ -115,14 +117,13 @@
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 							}
 
-							if (selected.length > 0) {									
+							if (selected.length > 0 && !selected[0].data.published) {									
 								tools.getComponent('edit').setDisabled(false);	
 								tools.getComponent('assignUser').setDisabled(false);							
 							} else {															
 								tools.getComponent('edit').setDisabled(true);														
 								tools.getComponent('assignUser').setDisabled(true);
 							}
-
 						}
 					},						
 					dockedItems: [
