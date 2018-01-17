@@ -395,7 +395,7 @@ Ext.define('OSF.form.Media', {
 		
 		mediaPanel.add(mediaPanel.mediaGrid);
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var mediaPanel = this;
 		
 		mediaPanel.componentId = componentId;
@@ -407,6 +407,10 @@ Ext.define('OSF.form.Media', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Media", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}
 	

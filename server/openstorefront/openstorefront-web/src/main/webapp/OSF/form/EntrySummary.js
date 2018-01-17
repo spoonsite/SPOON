@@ -146,7 +146,7 @@ Ext.define('OSF.form.EntrySummary', {
 		});	
 	},
 	
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var entryForm = this;
 		
 		entryForm.setLoading(true);
@@ -185,6 +185,9 @@ Ext.define('OSF.form.EntrySummary', {
 					entryForm.markUnsaved();
 				}, undefined);					
 				
+				if (callback) {
+					callback();
+				}
 			}
 		});	
 		
