@@ -521,27 +521,18 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 
 					// if readOnly, disable/hide the appropriate fields for the content form
 					if (self.readOnly) {
-						Ext.Array.forEach(self.contentPanel.query('textfield'), function(field, index) {
-
-							if (field.xtype === 'tinymce_textarea') {
-								field.setReadOnly(true);
-							}
-							else {
-								field.setDisabled(true);
-							}
-
-							field.setStyle('opacity', '0.6');
-						});
-						Ext.Array.forEach(self.contentPanel.query('checkbox'), function (field, index) {
-							field.setDisabled(true);
-							field.setStyle('opacity', '0.6');
-						});
+						
 						Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
 							field.setVisible(false);
+							field.setDisabled(true);
 						});
 						Ext.Array.forEach(self.contentPanel.query('grid'), function (grid, index) {
 							grid.setStyle('opacity', '0.6');
 							grid.events = {};
+						});
+						Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
+							field.setReadOnly(true);
+							field.setStyle('opacity', '0.6');
 						});
 					}
 				});
@@ -596,7 +587,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 	layout: 'border',
 	initComponent: function () {
 		this.callParent();
-		
+
 		var evalPanel = this;
 
 		evalPanel.navigation = Ext.create('Ext.panel.Panel', {
@@ -1250,16 +1241,19 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	isPublishedEvaluation: false,
 	listeners: {
 		show: function() {        
+
 			this.removeCls("x-unselectable");    
 		},
 		beforeClose: function () {
+
 			var entryPanel = this.query('[itemId=entryPanel]')[0];
 			var evalPanel = this.query('[itemId=evalPanel]')[0];
 
-			return evalPanel.checkFormSaveStatus(this) && entryPanel.checkFormSaveStatus(this);
+			return evalPanel ? evalPanel.checkFormSaveStatus(this) : true && entryPanel.checkFormSaveStatus(this);
 		},
 	},	
 	initComponent: function () {
+
 		this.callParent();
 		var evalWin = this;
 
@@ -1293,13 +1287,14 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		evalWin.add(evalWin.evalTabPanel);
 
 	},
-	loadEval: function(evaluationId, componentId, refreshCallback) {
+	loadEval: function(record, refreshCallback) {
+
 		var evalWin = this;
-		
+
 		// setup entry panel
 		Ext.Array.forEach(evalWin.query('[itemId=entryPanel],[itemId=evalPanel]'), function (el) {
 			var panel = evalWin.query('[itemId=' + el.itemId + ']')[0];
-			panel.loadEval(evaluationId, componentId);
+			panel.loadEval(record.get('evaluationId'), record.get('componentId'));
 
 			if (refreshCallback) {
 				panel.externalRefreshCallback = refreshCallback;
@@ -1308,8 +1303,9 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 
 		// dynamically create published evaluation tabs
 		Ext.Ajax.request({
-			url: 'api/v1/resource/evaluations/' + evaluationId + '/componentdetails/',
+			url: 'api/v1/resource/components/' + record.get('originComponentId') + '/detail/',
 			success: function (response) {
+
 				response = Ext.decode(response.responseText);
 
 				Ext.Array.forEach(response.fullEvaluations, function (el, index) {
@@ -1319,7 +1315,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 							title: 'Evaluation - ' + el.evaluation.version,
 							readOnly: true
 						});
-						newEvalPanel.loadEval(el.evaluation.evaluationId, el.evaluation.originComponentId);
+						newEvalPanel.loadEval(el.evaluation.evaluationId, el.evaluation.componentId);
 
 						evalWin.evalTabPanel.add(newEvalPanel);
 					}

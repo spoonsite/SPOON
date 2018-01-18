@@ -310,7 +310,7 @@
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
-						actionAddEditQuestion(record);
+						addEditEvaluation(record);
 					},						
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('evaluationGrid').getComponent('tools');
@@ -334,13 +334,17 @@
 						
 						if (selected.length > 0 && selected[0].get('published')) {
 							Ext.getCmp('publish').setDisabled(true);
-							tools.getComponent('edit').setDisabled(true);
 							Ext.getCmp('unpublish').setDisabled(false);
+
+							tools.getComponent('edit').setText('Details');
+							tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
 						} else {
 							Ext.getCmp('publish').setDisabled(false);
 							Ext.getCmp('unpublish').setDisabled(true);
+
+							tools.getComponent('edit').setText('Edit');
+							tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
 						}
-						
 					}
 				},				
 				dockedItems: [
@@ -594,7 +598,6 @@
 			var addEditEvaluation = function(record){
 				
 				if (record) {
-					
 					evaluationGrid.setLoading('Checking evaluation entry...');
 					Ext.Ajax.request({
 						url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/checkentry',
@@ -603,13 +606,15 @@
 							evaluationGrid.setLoading(false);
 						},
 						success: function(response, opts) {
+							
 							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
-								title: 'Evaluation Form - ' + record.get('componentName')
+								title: 'Evaluation Form - ' + record.get('componentName'),
+								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
-							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId, function(){
+							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
 							

@@ -113,16 +113,22 @@
 
 							if (evalGrid.getSelectionModel().getCount() === 1) {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+								tools.getComponent('edit').setDisabled(false);	
 							} else {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 							}
 
 							if (selected.length > 0 && !selected[0].data.published) {									
-								tools.getComponent('edit').setDisabled(false);	
 								tools.getComponent('assignUser').setDisabled(false);							
+
+								tools.getComponent('edit').setText('Edit');
+								tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
 							} else {															
-								tools.getComponent('edit').setDisabled(true);														
+								// tools.getComponent('edit').setDisabled(true);														
 								tools.getComponent('assignUser').setDisabled(true);
+
+								tools.getComponent('edit').setText('Details');
+								tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
 							}
 						}
 					},						
@@ -259,6 +265,7 @@
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit',
 									scale: 'medium',
+									width: '100px',
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionEdit(record);
@@ -299,12 +306,13 @@
 						},
 						success: function(response, opts) {
 							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
-								title: 'Evaluation Form - ' + record.get('componentName')
+								title: 'Evaluation Form - ' + record.get('componentName'),
+								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
-							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId, function(){
+							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
 							
