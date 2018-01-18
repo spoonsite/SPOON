@@ -27,6 +27,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 		});
 
 		self.contentPanel = Ext.create('Ext.panel.Panel', {
+
 			region: 'center',			
 			layout: 'fit',
 			itemId: 'contentPanel',
@@ -83,6 +84,23 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					]
 				}
 			]			
+		});
+
+		self.contentPanel.on('add', function () {
+			if (self.readOnly) {
+				Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
+					field.setVisible(false);
+					field.setDisabled(true);
+				});
+				Ext.Array.forEach(self.contentPanel.query('grid'), function (grid, index) {
+					grid.setStyle('opacity', '0.6');
+					grid.events = {};
+				});
+				Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
+					field.setReadOnly(true);
+					field.setStyle('opacity', '0.6');
+				});
+			}
 		});
 
 		self.commentPanel = Ext.create('Ext.panel.Panel', {
@@ -517,24 +535,6 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					commentPanel: self.commentPanel,
 					user: self.user,
 					mainForm: self
-				}, function () {
-
-					// if readOnly, disable/hide the appropriate fields for the content form
-					if (self.readOnly) {
-						
-						Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
-							field.setVisible(false);
-							field.setDisabled(true);
-						});
-						Ext.Array.forEach(self.contentPanel.query('grid'), function (grid, index) {
-							grid.setStyle('opacity', '0.6');
-							grid.events = {};
-						});
-						Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
-							field.setReadOnly(true);
-							field.setStyle('opacity', '0.6');
-						});
-					}
 				});
 			}
 		});
