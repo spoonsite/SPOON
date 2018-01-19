@@ -532,11 +532,11 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 							grid.events = {};
 						});
 						Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
-								if (field.xtype !== 'tinymce_textarea') {
-									field.setReadOnly(true);
-								}
-								field.setStyle('opacity', '0.6');
-							});
+							if (field.xtype !== 'tinymce_textarea') {
+								field.setReadOnly(true);
+							}
+							field.setStyle('opacity', '0.6');
+						});
 
 						// Unfortunately there are some underlying issues with tinymce. In short, there is a
 						//	very brief timing issue. Thus push this back on the stack a bit...
