@@ -531,13 +531,20 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 							grid.setStyle('opacity', '0.6');
 							grid.events = {};
 						});
+						Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
+								if (field.xtype !== 'tinymce_textarea') {
+									field.setReadOnly(true);
+								}
+								field.setStyle('opacity', '0.6');
+							});
 
 						// Unfortunately there are some underlying issues with tinymce. In short, there is a
 						//	very brief timing issue. Thus push this back on the stack a bit...
+						//	NOTE: when attempting to "setReadOnly" before this delay will force the tinymce
+						//		in such a state, where the method "setReadOnly()" does not operate as expected.
 						Ext.Function.createDelayed(function () {
-							Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
+							Ext.Array.forEach(self.contentPanel.query('tinymce_textarea'), function (field) {
 								field.setReadOnly(true);
-								field.setStyle('opacity', '0.6');
 							});
 						}, 100)();
 					}
