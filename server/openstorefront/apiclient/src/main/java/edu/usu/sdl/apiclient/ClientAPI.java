@@ -67,6 +67,11 @@ public class ClientAPI
 		this.objectMapper = objectMapper;
 	}
 
+	public ClientAPI()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	public void connect(String username, String password, String serverURL)
 	{
 
