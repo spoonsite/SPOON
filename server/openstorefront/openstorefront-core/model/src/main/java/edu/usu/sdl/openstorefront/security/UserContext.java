@@ -39,6 +39,8 @@ public class UserContext
 	private UserProfile userProfile;
 	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean admin;
+	private boolean guest;
+	private boolean systemUser;
 	private Set<String> externalGroups = new HashSet<>();
 
 	public UserContext()
@@ -67,45 +69,47 @@ public class UserContext
 	{
 		Set<String> uniquePermissions = new HashSet<>();
 		for (SecurityRole role : roles) {
-			for (SecurityRolePermission securityPermission : role.getPermissions()) {
-				uniquePermissions.add(securityPermission.getPermission());
+			if (role.getPermissions() != null) {
+				for (SecurityRolePermission securityPermission : role.getPermissions()) {
+					uniquePermissions.add(securityPermission.getPermission());
+				}
 			}
 		}
 		return uniquePermissions;
 	}
-	
-	public boolean allowUnspecifiedDataSources() 
+
+	public boolean allowUnspecifiedDataSources()
 	{
 		boolean allow = false;
-		
+
 		for (SecurityRole role : roles) {
 			if (role.getAllowUnspecifiedDataSource()) {
 				allow = true;
 				break;
 			}
-		}		
-		
+		}
+
 		return allow;
 	}
-	
-	public boolean allowUnspecifiedDataSensitivty() 
+
+	public boolean allowUnspecifiedDataSensitivty()
 	{
 		boolean allow = false;
-		
+
 		for (SecurityRole role : roles) {
 			if (role.getAllowUnspecifiedDataSensitivity()) {
 				allow = true;
 				break;
 			}
-		}		
-		
-		return allow;		
-	}	
+		}
+
+		return allow;
+	}
 
 	public Set<String> dataSources()
 	{
 		Set<String> uniqueSources = new HashSet<>();
-		for (SecurityRole role : roles) {			
+		for (SecurityRole role : roles) {
 			if (role.getDataSecurity() != null) {
 				for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
 					if (StringUtils.isNotBlank(securityRoleData.getDataSource())) {
@@ -131,11 +135,11 @@ public class UserContext
 		}
 		return uniqueSensitivity;
 	}
-	
-	public String userLandingPage() 
+
+	public String userLandingPage()
 	{
 		String landingPage = "/";
-		if (userProfile != null ) {
+		if (userProfile != null) {
 			if (StringUtils.isNotBlank(userProfile.getLandingPage())) {
 				landingPage = userProfile.getLandingPage();
 			} else {
@@ -155,7 +159,7 @@ public class UserContext
 
 						return 0;
 					});
-					if (StringUtils.isNotBlank(roles.get(0).getLandingPage()))  {
+					if (StringUtils.isNotBlank(roles.get(0).getLandingPage())) {
 						landingPage = roles.get(0).getLandingPage();
 					}
 				}
@@ -202,6 +206,26 @@ public class UserContext
 	public void setExternalGroups(Set<String> externalGroups)
 	{
 		this.externalGroups = externalGroups;
+	}
+
+	public boolean isGuest()
+	{
+		return guest;
+	}
+
+	public void setGuest(boolean guest)
+	{
+		this.guest = guest;
+	}
+
+	public boolean isSystemUser()
+	{
+		return systemUser;
+	}
+
+	public void setSystemUser(boolean systemUser)
+	{
+		this.systemUser = systemUser;
 	}
 
 }

@@ -22,14 +22,7 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.ofs-liveDesigner',
 	requires: [
-		'OSF.landing.DefaultHeader',
-		'OSF.landing.DefaultFooter',
-		'OSF.landing.DefaultSearch',
-		'OSF.landing.DefaultVersion',
-		'OSF.landing.DefaultSearchTools',
-		'OSF.landing.DefaultActions',
-		'OSF.landing.DefaultCategory',
-		'OSF.landing.DefaultInfo'
+		'OSF.landing.*'
 	],
 	
 	layout: 'border',
@@ -478,6 +471,10 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 									{ text: 'Image', dataIndex: 'imageSrc', minWidth: 150, flex: 1,
 										editor: 'textfield'
 									},
+									{
+										text: 'Background Css', dataIndex: 'toolBackground', minWidth: 150, flex: 1,
+										editor: 'textfield'										
+									},
 									{ text: 'Link', dataIndex: 'link', minWidth: 150, flex: 1,
 										editor: 'textfield'
 									}
@@ -794,9 +791,32 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 			},			
 			{
 				name: 'Info',
-				description: 'Displays highlight and new approved items',
+				description: 'Displays highlight and new approved items (Carousel)',
 				className: 'OSF.landing.DefaultInfo',
 				designerClassName: 'OSF.landing.DefaultInfo',
+				config: {},
+				items: [],
+				designerRender: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});
+					return commonDesignerRender(this, config);					
+				},
+				acceptCheck: function(info) {
+					return false;
+				},
+				renderCode: function(config){
+					config = config ? config : {};
+					config = Ext.apply(config, {						
+					});					
+					return commonCodeRender(this, config);					
+				}				
+			},
+			{
+				name: 'Static Info',
+				description: 'Displays highlight and new approved items (Static view)',
+				className: 'OSF.landing.StaticInfo',
+				designerClassName: 'OSF.landing.StaticInfo',
 				config: {},
 				items: [],
 				designerRender: function(config){

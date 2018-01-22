@@ -20,8 +20,10 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
@@ -63,6 +65,7 @@ public class CoreSystem
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static String systemStatus = "Starting application...";
+	private static String detailedStatus;
 
 	public CoreSystem()
 	{
@@ -73,7 +76,7 @@ public class CoreSystem
 			new PropertiesManager(),
 			new OsgiManager(),
 			new FileSystemManager(),
-			new DBManager(),
+			DBManager.getInstance(),
 			new SearchServerManager(),
 			new OSFCacheManager(),
 			new JiraManager(),
@@ -90,33 +93,100 @@ public class CoreSystem
 			new PluginManager()
 	);
 
+	/**
+	 * Don't throw errors in post Constructs as that put the app server in a bad
+	 * state.
+	 */
 	@PostConstruct
-	public void startup()
+	public void construnct()
+	{
+		//Call init to separately to control timing.
+		LOG.log(Level.FINER, "Core Service constructed");
+	}
+
+	public void startup(StartupHandler startupHandler)
 	{
 		started.set(false);
 		systemStatus = "Starting application...";
+		SecurityUtil.initSystemUser();
+		boolean startedAllManagers = loadAllManagers();
+		boolean allInitsApplied = true;
+		if (startedAllManagers) {
+			allInitsApplied = appyInits();
+		}
+		if (startedAllManagers
+				&& allInitsApplied) {
+			systemStatus = "Application is Ready";
+			detailedStatus = "Application started successfully";
+			started.set(true);
 
-		managers.forEach(manager -> {
-			startupManager(manager);
-		});
+			if (startupHandler != null) {
+				startupHandler.postStartupHandler();
+			}
+		}
+	}
 
-		//Apply any Inits
+	private static boolean loadAllManagers()
+	{
+		boolean startedAllManagers = true;
+		for (Initializable manager : managers) {
+			try {
+				startupManager(manager);
+			} catch (Exception e) {
+				LOG.log(Level.SEVERE, "Application Failed to Initailize.  Check config and see trace.", e);
+				systemStatus = "Failed Starting : " + manager.getClass().getSimpleName();
+				detailedStatus = "Failure Trace: <br>" + StringProcessor.parseStackTraceHtml(e);
+				startedAllManagers = false;
+				break;
+			}
+		}
+		return startedAllManagers;
+	}
+
+	private static boolean appyInits()
+	{
+		boolean allInitsCreated = true;
+
 		ResolverUtil resolverUtil = new ResolverUtil();
 		resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
+
+		List<ApplyOnceInit> initSetups = new ArrayList<>();
 		for (Object testObject : resolverUtil.getClasses()) {
 			Class testClass = (Class) testObject;
 			try {
 				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
 					systemStatus = "Checking data init: " + testClass.getSimpleName();
-					((ApplyOnceInit) testClass.newInstance()).applyChanges();
+					initSetups.add((ApplyOnceInit) testClass.newInstance());
 				}
 			} catch (InstantiationException | IllegalAccessException ex) {
-				throw new OpenStorefrontRuntimeException(ex);
+				LOG.log(Level.SEVERE, "Failed to create apply once: " + testClass.getSimpleName(), ex);
+				systemStatus = "Failed to create apply once: " + testClass.getSimpleName();
+				detailedStatus = "Failure Trace: <br>" + StringProcessor.parseStackTraceHtml(ex);
+
+				allInitsCreated = false;
 			}
 		}
 
-		systemStatus = "Application is Ready";
-		started.set(true);
+		boolean allInitsApplied = true;
+		if (allInitsCreated) {
+			initSetups.sort((a, b) -> {
+				return new Integer(a.getPriority()).compareTo(b.getPriority());
+			});
+			for (ApplyOnceInit applyOnceInit : initSetups) {
+				try {
+					applyOnceInit.applyChanges();
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE, "Failed to apply: " + applyOnceInit.getClass().getSimpleName(), e);
+					systemStatus = "Failed to apply: " + applyOnceInit.getClass().getSimpleName();
+					detailedStatus = "Failure Trace: <br>" + StringProcessor.parseStackTraceHtml(e);
+
+					allInitsApplied = false;
+					//Drop out as migration may have order dependancies
+					break;
+				}
+			}
+		}
+		return allInitsApplied;
 	}
 
 	private static void startupManager(Initializable initializable)
@@ -211,7 +281,7 @@ public class CoreSystem
 		}
 		started.set(true);
 	}
-	
+
 	@PreDestroy
 	@SuppressWarnings("UseSpecificCatch")
 	public void shutdown()
@@ -249,7 +319,7 @@ public class CoreSystem
 		if (isStarted()) {
 			shutdown();
 		}
-		startup();
+		startup(null);
 	}
 
 	public static void standby(String message)
@@ -269,7 +339,13 @@ public class CoreSystem
 		SystemStatusView view = new SystemStatusView();
 		view.setStarted(started.get());
 		view.setSystemStatus(systemStatus);
+		view.setDetailedStatus(detailedStatus);
 		return view;
+	}
+
+	public static void setDetailedStatus(String aDetailedStatus)
+	{
+		detailedStatus = aDetailedStatus;
 	}
 
 }

@@ -46,7 +46,7 @@
 						resultElm.scrollIntoView(container, null, true, true);						
 					}, 1000);					
 					
-					SearchPage.detailContent.load('view.jsp?id=' + componentId);
+					SearchPage.detailContent.load('view.jsp?embedded=true&id=' + componentId);
 					SearchPage.currentLoadedComponent = componentId;
 				}
 			},
@@ -123,7 +123,7 @@
 
 			var savedSearchId = '${param.savedSearchId}';
 			
-			var maxPageSize = 300;
+			var maxPageSize = 30;
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
@@ -624,7 +624,7 @@
 					rating: Ext.getCmp('filterByRating').getValue(),
 					sortBy: Ext.getCmp('sortByCB').getSelection() ? Ext.getCmp('sortByCB').getSelection().data : null,
 					attributes: attributeFilters
-				};				
+				};
 				
 				//determine client side or server-side
 				if (filterMode === 'CLIENT') {
@@ -897,7 +897,7 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: false }
+				{ text: 'Index Relevance', section: 'searchscore', display: true }
 			];			
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){
@@ -1191,6 +1191,8 @@
 								typeAhead: false,
 								displayField: 'label',
 								valueField: 'fieldCode',
+								forceSelection: true,
+								value: 'searchScore',
 								listeners: {
 									change: function(cb, newValue, oldValue, opts) {
 										filterResults();
@@ -1479,7 +1481,12 @@
 											exportForm.submit();
 										}
 									}
-								]
+								],
+								listeners: {
+									change: function (me) {
+										Ext.getCmp('resultsDisplayPanel').body.scrollTo('top', 0);
+									}
+								}
 							})
 						]						
 					}
@@ -1612,7 +1619,8 @@
 											queryMode: 'remote',
 											hideTrigger: true,
 											valueField: 'query',
-											displayField: 'name',											
+											displayField: 'name',
+											id: 'searchTextFieldResults',
 											autoSelect: false,
 											store: {
 												autoLoad: false,
@@ -1743,6 +1751,7 @@
 		
 			//Load 
 			performSearch();
+			filterResults();
 		
 		});
 		

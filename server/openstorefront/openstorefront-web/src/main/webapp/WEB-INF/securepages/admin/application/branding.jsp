@@ -79,6 +79,10 @@
 					]
 				});
 				
+				var updateMediaUrl = function(link, textBox) {
+					textBox.setValue(link.replace("Media.action","Branding.action"));
+				};
+				
 				var addEditBranding = function(record) {
 
 					var addEditBrandingWin = Ext.create('Ext.window.Window', {
@@ -149,29 +153,7 @@
 														width: '100%',
 														allowBlank: true,
 														maxLength: 255
-													},
-													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Login Warning <i class="fa fa-question-circle"  data-qtip="Warning on login page (if applicable)" ></i>',
-														name: 'loginWarning',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
-														allowBlank: true,
-														maxLength: 16000
-													},
-													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Login Logo Section <i class="fa fa-question-circle"  data-qtip="Logo Section that can use image map" ></i>',
-														name: 'loginLogoBlock',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
-														allowBlank: true,
-														maxLength: 16000
-													},														
+													},	
 													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
@@ -269,6 +251,215 @@
 											},
 											{
 												xtype: 'panel',
+												title: 'Login Page',
+												width: '100%',
+												collapsible: true,
+												titleCollapse: true,
+												margin: '0 0 20 0',
+												bodyStyle: 'padding: 10px;',
+												layout: 'anchor',									
+												defaults: {
+													labelAlign: 'top',
+													labelSeparator: ''
+												},
+												items: [{
+														//deprecated field
+														xtype: 'hiddenfield',
+														name: 'loginWarning',										
+														allowBlank: true
+													},
+													{
+														//deprecated field
+														xtype: 'hiddenfield',
+														name: 'loginLogoBlock',										
+														allowBlank: true
+													},
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content" ></i>',
+														name: 'loginContentBlock',
+														resizable: {
+															handles: 's'
+														},
+														width: '100%',											
+														allowBlank: true,
+														maxLength: 16000
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginLogoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Logo URL <i class="fa fa-question-circle"  data-qtip="URL to the logo shown in the top left corner" ></i>',
+																name: 'loginLogoUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Image',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginLogoUrl = this.up('panel').queryById('loginLogoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Image',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginLogoUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginOverviewVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Overview Video URL <i class="fa fa-question-circle"  data-qtip="Site overview video under the content section" ></i>',
+																name: 'loginOverviewVideoUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Video',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginOverviewVideoUrl = this.up('panel').queryById('loginOverviewVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaToShow: 'VID',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginOverviewVideoUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginOverviewVideoPosterUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Overview Video Poster URL <i class="fa fa-question-circle"  data-qtip="Initial image to display for the video" ></i>',
+																name: 'loginOverviewVideoPosterUrl',
+																allowBlank: true,									
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Image',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginOverviewVideoPosterUrl = this.up('panel').queryById('loginOverviewVideoPosterUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Image',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginOverviewVideoPosterUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														layout: 'hbox',
+														width: '100%',
+														margin: '5px 0 0 0',
+														items: [
+															{
+																xtype: 'textfield',
+																itemId: 'loginRegistrationVideoUrl',
+																labelAlign: 'top',
+																labelSeparator: '',
+																fieldLabel: 'Login Registration Video URL <i class="fa fa-question-circle"  data-qtip="Displayed as a &quot;How to Video&quot; link" ></i>',
+																name: 'loginRegistrationVideoUrl',
+																allowBlank: true,											
+																maxLength: 255,																
+																flex: 4
+															},
+															{
+																xtype: 'button',
+																text: 'Insert Video',
+																flex: 1,
+																margin: '30 0 0 0',
+																handler: function() {
+																	var loginRegistrationVideoUrl = this.up('panel').queryById('loginRegistrationVideoUrl');																	
+																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
+																		isEditor: false,
+																		isBrandingMedia: true,
+																		mediaName:'Video',
+																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
+																		closeAction: 'destroy',
+																		mediaToShow: 'VID',
+																		mediaHandler: function(link) {
+																			updateMediaUrl(link,loginRegistrationVideoUrl);
+																		}
+																	});	
+																	mediaWindow.show();
+																}
+															}
+														]														
+													},
+													{
+														xtype: 'checkbox',
+														width: '100%',
+														boxLabel: 'Show Support Menu <i class="fa fa-exclamation-circle" data-qtip="When checked, will enable the support menu on the login page."></i>',
+														name: 'showSupportMenuOnLogin'
+													},												
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
+														name: 'loginFooter',
+														resizable: {
+															handles: 's'
+														},
+														width: '100%',											
+														allowBlank: true,
+														maxLength: 16000
+													}
+												]
+											},
+											{
+												xtype: 'panel',
 												title: 'Support',
 												width: '100%',
 												collapsible: true,
@@ -299,6 +490,16 @@
 															}
 														}
 													},
+													{
+														xtype: 'checkbox',
+														name: 'showSupportMedia',
+														boxLabel: 'Show Tutorials Menu <i class="fa fa-question-circle" data-qtip="Shows Tutorials link in the menu" ></i>'
+													},
+													{
+														xtype: 'checkbox',													
+														boxLabel: 'Show Frequently Asked Question Menu <i class="fa fa-question-circle" data-qtip="Shows the FAQ in the menu" ></i>',
+														name: 'showFAQ'
+													},													
 													{
 														xtype: 'textarea',
 														fieldLabel: 'Analytics Tracking Code <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
@@ -416,7 +617,7 @@
 																fieldLabel: 'Primary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Home page Logo (625w x 200h)" ></i>',
 																name: 'primaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																emptyText: 'Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -429,10 +630,11 @@
 																	var primaryLogoUrl = this.up('panel').queryById('primaryLogoUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			primaryLogoUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,primaryLogoUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -453,7 +655,7 @@
 																fieldLabel: 'Secondary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
 																name: 'secondaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																emptyText: 'Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -466,10 +668,11 @@
 																	var secondaryLogoUrl = this.up('panel').queryById('secondaryLogoUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			secondaryLogoUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,secondaryLogoUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -490,7 +693,7 @@
 																fieldLabel: 'Backsplash URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo ~(4000w x 1000h)" ></i>',
 																name: 'homebackSplashUrl',
 																allowBlank: false,
-																emptyText: 'Media.action?GeneralMedia&name=logo',											
+																emptyText: 'Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -503,10 +706,11 @@
 																	var homebackSplashUrl = this.up('panel').queryById('homebackSplashUrl');																	
 																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
 																		isEditor: false,
+																		isBrandingMedia: true,
 																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
 																		closeAction: 'destroy',
 																		mediaHandler: function(link) {
-																			homebackSplashUrl.setValue(encodeURI(link));
+																			updateMediaUrl(link,homebackSplashUrl);
 																		}
 																	});	
 																	mediaWindow.show();
@@ -732,6 +936,21 @@
 					}, 250);
 					
 					if (record) {
+						
+						//move depercated loginWarning to the loginFooter
+						if((record.data.loginFooter === undefined || record.data.loginFooter.length === 0) 
+									&& (record.data.loginWarning !== undefined && record.data.loginWarning.length > 0)) {
+							record.data.loginFooter = record.data.loginWarning;
+							record.data.loginWarning = "";
+						}
+						
+						//move depercated loginLogoBlock to the loginContentBlock
+						if((record.data.loginContentBlock === undefined || record.data.loginContentBlock.length === 0) 
+									&& (record.data.loginLogoBlock !== undefined && record.data.loginLogoBlock.length > 0)) {
+							record.data.loginContentBlock = record.data.loginLogoBlock;
+							record.data.loginLogoBlock = "";
+						}
+						
 						var landingTab = addEditBrandingWin.queryById('landingPageTab');
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
 						if (record.get('useDefaultLandingPage')) {
@@ -740,7 +959,7 @@
 							landingTab.setDisabled(false);
 							landingTab.initializeCallback = function() {
 								landingTab.loadData(record.data);
-							}
+							};
 						}
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(landingTab);
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
@@ -777,8 +996,7 @@
 						brandingWin.proceedWithClosing = true;
 						brandingWin.close();
 					}
-				}
-				
+				};
 				
 				var actionSaveBranding = function(form, successHandler, template) {
 					var data = form.getValues();
@@ -834,7 +1052,6 @@
 					});
 				};
 				
-
 				var brandingGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage Branding &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
 					id: 'brandingGrid',

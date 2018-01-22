@@ -193,7 +193,7 @@ Ext.define('OSF.widget.SavedSearch', {
 									]
 								});					
 								entryViewWindow.show();
-								frame.load('view.jsp?fullPage=true&id=' + componentId);								
+								frame.load('view.jsp?fullPage=true&embedded=true&id=' + componentId);								
 							}
 						},
 						{

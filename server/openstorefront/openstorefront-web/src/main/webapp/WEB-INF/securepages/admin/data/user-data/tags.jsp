@@ -1101,7 +1101,7 @@
 											fn: function(field, newValue, oldValue, eOpts) {
 												
 												// Lookup New Value Against Existing Tags
-												var matchingTags = store_tags_local.query('name', newValue, false, false, true);
+												var matchingTags = store_tags_local.query('name', new RegExp('^[\*]?' + newValue + '$', 'i'), false, false, true);
 												
 												// Store Save Button
 												var saveButton = Ext.getCmp('addTagForm-saveButton');

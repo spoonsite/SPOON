@@ -22,6 +22,10 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Embedded;
@@ -31,6 +35,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -52,11 +57,12 @@ public class ScheduledReport
 	@FK(ReportType.class)
 	private String reportType;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Deprecated
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
 	@FK(ReportFormat.class)
+	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
 	private String reportFormat;
 
 	@ConsumeField
@@ -64,19 +70,41 @@ public class ScheduledReport
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
+	@Deprecated
 	@ConsumeField
 	@Embedded
 	@DataType(EmailAddress.class)
 	@OneToMany(orphanRemoval = true)
+	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
 	private List<EmailAddress> emailAddresses;
 
-	@NotNull
 	@Min(1)
 	@Max(30)
 	@ConsumeField
 	private Integer scheduleIntervalDays;
 
+	@ConsumeField
+	@Min(1)
+	private Integer scheduleIntervalMinutes;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String scheduleIntervalCron;
+
+	@ConsumeField
+	@Embedded
+	@DataType(ReportDataId.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportDataId> ids;
+
 	private Date lastRanDts;
+
+	@ConsumeField
+	@Embedded
+	@DataType(ReportOutput.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportOutput> reportOutputs;
 
 	public ScheduledReport()
 	{
@@ -95,7 +123,41 @@ public class ScheduledReport
 		this.setReportOption(scheduledReport.getReportOption());
 		this.setReportType(scheduledReport.getReportType());
 		this.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
+		this.setScheduleIntervalMinutes(scheduledReport.getScheduleIntervalMinutes());
+		this.setScheduleIntervalCron(scheduledReport.getScheduleIntervalCron());
+		this.setIds(scheduledReport.getIds());
+		this.setReportOutputs(scheduledReport.getReportOutputs());
 
+	}
+
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (getReportOutputs() == null || getReportOutputs().isEmpty()) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ReportOutput.class.getSimpleName());
+			ruleResult.setFieldName("reportOutputs");
+			ruleResult.setMessage("Must have at least one output");
+			validationResult.getRuleResults().add(ruleResult);
+		} else {
+			for (ReportOutput output : getReportOutputs()) {
+				validationResult.merge(output.customValidation());
+			}
+		}
+
+		if (scheduleIntervalDays == null
+				&& scheduleIntervalMinutes == null
+				&& StringUtils.isBlank(scheduleIntervalCron)) {
+
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setEntityClassName(ScheduledReport.class.getSimpleName());
+			ruleResult.setFieldName("scheduleIntervalDays");
+			ruleResult.setMessage("Must have some scheduled option");
+			validationResult.getRuleResults().add(ruleResult);
+		}
+
+		return validationResult;
 	}
 
 	public String getScheduleReportId()
@@ -128,21 +190,25 @@ public class ScheduledReport
 		this.reportOption = reportOption;
 	}
 
+	@Deprecated
 	public List<EmailAddress> getEmailAddresses()
 	{
 		return emailAddresses;
 	}
 
+	@Deprecated
 	public void setEmailAddresses(List<EmailAddress> emailAddresses)
 	{
 		this.emailAddresses = emailAddresses;
 	}
 
+	@Deprecated
 	public String getReportFormat()
 	{
 		return reportFormat;
 	}
 
+	@Deprecated
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
@@ -166,6 +232,46 @@ public class ScheduledReport
 	public void setScheduleIntervalDays(Integer scheduleIntervalDays)
 	{
 		this.scheduleIntervalDays = scheduleIntervalDays;
+	}
+
+	public List<ReportOutput> getReportOutputs()
+	{
+		return reportOutputs;
+	}
+
+	public void setReportOutputs(List<ReportOutput> reportOutputs)
+	{
+		this.reportOutputs = reportOutputs;
+	}
+
+	public Integer getScheduleIntervalMinutes()
+	{
+		return scheduleIntervalMinutes;
+	}
+
+	public void setScheduleIntervalMinutes(Integer scheduleIntervalMinutes)
+	{
+		this.scheduleIntervalMinutes = scheduleIntervalMinutes;
+	}
+
+	public String getScheduleIntervalCron()
+	{
+		return scheduleIntervalCron;
+	}
+
+	public void setScheduleIntervalCron(String scheduleIntervalCron)
+	{
+		this.scheduleIntervalCron = scheduleIntervalCron;
+	}
+
+	public List<ReportDataId> getIds()
+	{
+		return ids;
+	}
+
+	public void setIds(List<ReportDataId> ids)
+	{
+		this.ids = ids;
 	}
 
 }

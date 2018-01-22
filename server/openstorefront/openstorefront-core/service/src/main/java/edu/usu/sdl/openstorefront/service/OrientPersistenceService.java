@@ -34,6 +34,7 @@ import static edu.usu.sdl.openstorefront.core.api.query.QueryType.COUNT;
 import static edu.usu.sdl.openstorefront.core.api.query.QueryType.COUNT_DISTINCT;
 import static edu.usu.sdl.openstorefront.core.api.query.QueryType.SELECT;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
@@ -42,10 +43,12 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,10 +75,11 @@ public class OrientPersistenceService
 	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
+	private final DBManager manager;
 
-	public OrientPersistenceService()
+	public OrientPersistenceService(DBManager manager)
 	{
-		//Nothing to set
+		this.manager = manager;
 	}
 
 	@Override
@@ -88,7 +92,7 @@ public class OrientPersistenceService
 	{
 		OObjectDatabaseTx db;
 		if (transaction == null) {
-			db = DBManager.getConnection();
+			db = manager.getConnection();
 		} else {
 			db = transaction;
 		}
@@ -107,7 +111,7 @@ public class OrientPersistenceService
 	public void begin()
 	{
 		if (transaction == null) {
-			transaction = DBManager.getConnection();
+			transaction = manager.getConnection();
 			transaction.begin();
 		} else {
 			throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");
@@ -353,34 +357,17 @@ public class OrientPersistenceService
 	@Override
 	public int deleteByExample(QueryByExample queryByExample)
 	{
+		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			queryByExample.setQueryType(QueryType.DELETE);
+		} else if (!QueryType.DELETE.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports DELETE type");
+		}
 		int deleteCount = 0;
-		StringBuilder queryString = new StringBuilder();
-
-		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
-
-		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
-		if (StringUtils.isNotBlank(whereClause)) {
-			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
-		}
-
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
-			}
-		});
-
-		if (queryByExample.getAdditionalWhere() != null) {
-			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
+			deleteCount = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
 		} finally {
 			closeConnection(db);
 		}
@@ -461,52 +448,32 @@ public class OrientPersistenceService
 	{
 		QueryByExample queryByExample = new QueryByExample(example);
 		queryByExample.setQueryType(QueryType.COUNT);
-		return countByExample(new QueryByExample(example));
+		return countByExample(queryByExample);
 	}
 
 	@Override
 	public long countByExample(QueryByExample queryByExample)
 	{
-		long count = 0;
-		StringBuilder queryString = new StringBuilder();
 		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
 			queryByExample.setQueryType(QueryType.COUNT);
-		}
-		switch (queryByExample.getQueryType()) {
-			case COUNT:
-				queryString.append("select count(*) ");
-				break;
-			case COUNT_DISTINCT:
-				queryString.append("select count(distinct(").append(queryByExample.getDistinctField()).append(") ");
-				break;
-			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
-		}
-		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
-
-		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
-		if (StringUtils.isNotBlank(whereClause)) {
-			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
+		} else if (!QueryType.COUNT.equals(queryByExample.getQueryType())
+				&& !QueryType.COUNT_DISTINCT.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
 		}
 
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
-			}
-		});
+		/**
+		 * Note: this method doesn't support limit/skip and sorting. We
+		 * currently don't have any use case for that.
+		 */
+		queryByExample.setMaxResults(null);
+		queryByExample.setFirstResult(null);
+		queryByExample.setOrderBy(null);
 
-		if (queryByExample.getAdditionalWhere() != null) {
-			appendToWhere(queryString, queryByExample.getAdditionalWhere());
-		}
-
+		long count = 0;
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
 		OObjectDatabaseTx db = getConnection();
 		try {
-			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
+			List<ODocument> documents = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
 			if (documents.isEmpty() == false) {
 				count = documents.get(0).field("count");
 			}
@@ -545,14 +512,34 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
+		if (!QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");
+		}
+		SimpleEntry<String, Map<String, Object>> query = generateQuery(queryByExample);
+		List<T> results = query(query.getKey(), query.getValue(), queryByExample.isReturnNonProxied());
+		return results;
+	}
+
+	public SimpleEntry<String, Map<String, Object>> generateQuery(QueryByExample queryByExample)
+	{
+
 		StringBuilder queryString = new StringBuilder();
 
 		switch (queryByExample.getQueryType()) {
 			case SELECT:
-				queryString.append("select  ");
+				queryString.append("select");
+				break;
+			case COUNT:
+				queryString.append("select count(*)");
+				break;
+			case COUNT_DISTINCT:
+				queryString.append("select count(distinct(").append(queryByExample.getDistinctField()).append("))");
+				break;
+			case DELETE:
+				queryString.append("delete");
 				break;
 			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");
+				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Invalid QueryType");
 		}
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
 
@@ -569,14 +556,18 @@ public class OrientPersistenceService
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions()));
 			}
 		}
-		queryByExample.getExtraWhereCauses().forEach(item -> {
-			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
-			if (StringUtils.isNotBlank(extraWhere)) {
-				appendToWhere(queryString, extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
+		if (queryByExample.getInExample() != null) {
+			String inClause = generateWhereClause(queryByExample.getInExample(), new ComplexFieldStack(), queryByExample.getInExampleOption(), queryByExample.getFieldOptions());
+			if (StringUtils.isNotBlank(inClause)) {
+				appendToWhere(queryString, inClause);
+				mappedParams.putAll(mapParameters(queryByExample.getInExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getInExampleOption(), queryByExample.getFieldOptions()));
 			}
-		});
+		}
+		SimpleEntry<String, Map<String, Object>> extraWhere = processExtraWhereClauses(queryByExample);
+		if (StringUtils.isNotBlank(extraWhere.getKey())) {
+			appendToWhere(queryString, extraWhere.getKey());
+			mappedParams.putAll(extraWhere.getValue());
+		}
 
 		if (queryByExample.getAdditionalWhere() != null) {
 			appendToWhere(queryString, queryByExample.getAdditionalWhere());
@@ -606,9 +597,83 @@ public class OrientPersistenceService
 		if (queryByExample.isParallelQuery()) {
 			queryString.append(" PARALLEL ");
 		}
+		mappedParams.putAll(queryByExample.getExtraParamMapping());
+		return new SimpleEntry(queryString.toString(), mappedParams);
+	}
 
-		List<T> results = query(queryString.toString(), mappedParams, queryByExample.isReturnNonProxied());
-		return results;
+	private SimpleEntry<String, Map<String, Object>> processExtraWhereClauses(QueryByExample queryByExample)
+	{
+		StringBuilder queryString = new StringBuilder();
+		Map<String, Object> mappedParams = new HashMap<>();
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			if (item.getClass() == SpecialOperatorModel.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else if (item.getClass() == WhereClauseGroup.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (StringUtils.isNotBlank(queryString)) {
+						queryString.append(" AND ");
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
+			}
+		});
+		return new SimpleEntry(queryString.toString(), mappedParams);
+	}
+
+	private SimpleEntry<String, Map<String, Object>> ProcessSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
+	{
+		Map<String, Object> mappedParams = new HashMap<>();
+		String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
+		if (StringUtils.isNotBlank(extraWhere)) {
+			mappedParams = mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
+		}
+		return new SimpleEntry(extraWhere, mappedParams);
+	}
+
+	private SimpleEntry<String, Map<String, Object>> ProcessWhereClauseGroup(QueryByExample queryByExample, WhereClauseGroup group)
+	{
+		StringBuilder queryString = new StringBuilder();
+		Map<String, Object> mappedParams = new HashMap<>();
+		group.getExtraWhereClause().forEach(item -> {
+			if (item.getClass() == SpecialOperatorModel.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (queryString.length() > 0) {
+						queryString.append(group.getStatementOption().getCondition());
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else if (item.getClass() == WhereClauseGroup.class) {
+				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				if (StringUtils.isNotBlank(extraWhere.getKey())) {
+					if (queryString.length() > 0) {
+						queryString.append(group.getStatementOption().getCondition());
+					}
+					queryString.append(extraWhere.getKey());
+					mappedParams.putAll(extraWhere.getValue());
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Where Clause unsupported: " + item.getClass(), "Only supports select");
+			}
+		});
+		if (queryString.length() > 0) {
+			// wrap the group in ()
+			queryString.insert(0, "(");
+			queryString.append(" )");
+		}
+		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
 	private void appendToWhere(StringBuilder queryString, String conditionClause)
@@ -674,6 +739,21 @@ public class OrientPersistenceService
 							if (GenerateStatementOption.OPERATION_NULL.equals(fieldOperation.getOperation())
 									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(fieldOperation.getOperation())) {
 								addParameter = false;
+							}
+							if (GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation())) {
+								addParameter = false;
+								where.append(" [ :")
+										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+										.append(fieldOperation.getParameterSuffix())
+										.append(0);
+								for (int i = 1; i < generateStatementOption.getParameterValues().size(); i++) {
+									where.append(", :")
+											.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+											.append(fieldOperation.getParameterSuffix())
+											.append(i);
+								}
+								where.append(" ]");
 							}
 
 							if (addParameter) {
@@ -768,6 +848,13 @@ public class OrientPersistenceService
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
+						} else if ((GenerateStatementOption.OPERATION_IN.equals(fieldOperation.getOperation())
+								|| GenerateStatementOption.OPERATION_NOT_IN.equals(fieldOperation.getOperation()))
+								&& !generateStatementOption.getParameterValues().isEmpty()) {
+							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
+							for (Integer i = 0; i < generateStatementOption.getParameterValues().size(); i++) {
+								parameterMap.put(fieldName + fieldOperation.getParameterSuffix() + i.toString(), generateStatementOption.getParameterValues().get(i));
+							}
 						} else {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							parameterMap.put(fieldName + fieldOperation.getParameterSuffix(), value);
@@ -867,12 +954,7 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
-			String pkValue = EntityUtil.getPKFieldValue(entity);
-			if (pkValue == null) {
-				if (EntityUtil.isPKFieldGenerated(entity)) {
-					EntityUtil.updatePKFieldValue(entity, generateId());
-				}
-			}
+			updatePKFieldValue(entity);
 
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
@@ -880,8 +962,10 @@ public class OrientPersistenceService
 			if (validationResult.valid()) {
 				t = db.save(entity);
 			} else {
-				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
+				throw new OpenStorefrontValidationException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), validationResult, "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
+		} catch (OpenStorefrontRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new OpenStorefrontRuntimeException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), e);
 		} finally {
@@ -889,6 +973,26 @@ public class OrientPersistenceService
 		}
 
 		return t;
+	}
+
+	private <T extends BaseEntity> void updatePKFieldValue(T entity) throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException, InvocationTargetException
+	{
+		String pkValue = EntityUtil.getPKFieldValue(entity);
+		if (pkValue == null) {
+			if (EntityUtil.isPKFieldGenerated(entity)) {
+				EntityUtil.updatePKFieldValue(entity, generateId());
+			}
+		}
+		List<Field> fields = ReflectionUtil.getAllFields(entity.getClass());
+		for (Field field : fields) {
+			if (BaseEntity.class.isAssignableFrom(field.getType())) {
+				Method method = entity.getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+				Object nestaedObj = method.invoke(entity, (Object[]) null);
+				if (nestaedObj != null) {
+					updatePKFieldValue(BaseEntity.class.cast(nestaedObj));
+				}
+			}
+		}
 	}
 
 	@Override

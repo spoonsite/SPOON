@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.filter;
 
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -43,6 +44,38 @@ public class FilterEngine
 	public static final String FIELD_DATA_SOURCE = "dataSource";
 	public static final String FIELD_DATA_SENSITIVITY = "dataSensitivity";
 
+	private UserContext userContext;
+	private Service service;
+	private boolean forceFiltering;
+
+	public FilterEngine()
+	{
+		this.userContext = SecurityUtil.getUserContext();
+		this.service = ServiceProxyFactory.getServiceProxy();
+	}
+
+	public FilterEngine(UserContext userContext, Service service)
+	{
+		this.userContext = userContext;
+		this.service = service;
+	}
+
+	public static FilterEngine getInstance()
+	{
+		return getInstance(SecurityUtil.getUserContext(), ServiceProxyFactory.getServiceProxy());
+	}
+
+	public static FilterEngine getInstance(UserContext userContext)
+	{
+		return getInstance(userContext, ServiceProxyFactory.getServiceProxy());
+	}
+
+	public static FilterEngine getInstance(UserContext userContext, Service service)
+	{
+		FilterEngine filterEngine = new FilterEngine(userContext, service);
+		return filterEngine;
+	}
+
 	/**
 	 * remove the records if user has data restrictions
 	 *
@@ -52,7 +85,7 @@ public class FilterEngine
 	 * @param dataItems
 	 * @return
 	 */
-	public static <T extends StandardEntity> List<T> filter(List<T> dataItems)
+	public <T extends StandardEntity> List<T> filter(List<T> dataItems)
 	{
 		return filter(dataItems, false);
 	}
@@ -65,7 +98,7 @@ public class FilterEngine
 	 * @param checkParentComponent
 	 * @return
 	 */
-	public static <T extends StandardEntity> List<T> filter(List<T> dataItems, boolean checkParentComponent)
+	public <T extends StandardEntity> List<T> filter(List<T> dataItems, boolean checkParentComponent)
 	{
 		if (isFilterable(dataItems)) {
 			dataItems = dataItems.stream()
@@ -83,7 +116,7 @@ public class FilterEngine
 	 * @param data
 	 * @return
 	 */
-	public static <T extends StandardEntity> T filter(T data)
+	public <T extends StandardEntity> T filter(T data)
 	{
 		return filter(data, false);
 	}
@@ -97,15 +130,13 @@ public class FilterEngine
 	 * restricted)
 	 * @return null if filter or the data if it should be kept
 	 */
-	public static <T extends StandardEntity> T filter(T data, boolean checkParentComponent)
+	public <T extends StandardEntity> T filter(T data, boolean checkParentComponent)
 	{
 		T returnValue = null;
 		if (data == null) {
 			return data;
 		}
 		if (isFilterable(data)) {
-
-			UserContext userContext = SecurityUtil.getUserContext();
 
 			Set<String> acceptedDataSources = userContext.dataSources();
 			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
@@ -132,7 +163,7 @@ public class FilterEngine
 				//look at both sides of relationship
 				ComponentRelationship componentRelationship = (ComponentRelationship) data;
 
-				boolean keepData = false;
+				boolean keepData;
 				keepData = keepComponent(acceptedDataSources, acceptedDataSensitivity, userContext, componentRelationship.getComponentId());
 
 				//check target
@@ -151,7 +182,7 @@ public class FilterEngine
 				}
 			} else if (data instanceof BaseComponent) {
 
-				boolean keepData = false;
+				boolean keepData;
 				if (checkParentComponent) {
 					//if base component - check component data restrictions
 					BaseComponent baseComponent = (BaseComponent) data;
@@ -185,11 +216,11 @@ public class FilterEngine
 		return returnValue;
 	}
 
-	private static boolean keepComponent(Set<String> acceptedDataSources, Set<String> acceptedDataSensitivity, UserContext userContext, String componentId)
+	private boolean keepComponent(Set<String> acceptedDataSources, Set<String> acceptedDataSensitivity, UserContext userContext, String componentId)
 	{
 		boolean keepData = false;
 
-		ComponentSensitivityModel componentSensitivityModel = ServiceProxyFactory.getServiceProxy().getComponentService().getComponentSensitivity(componentId);
+		ComponentSensitivityModel componentSensitivityModel = service.getComponentService().getComponentSensitivity(componentId);
 		if (componentSensitivityModel != null) {
 			boolean keepSource = false;
 			if ((componentSensitivityModel.getDataSource() == null && userContext.allowUnspecifiedDataSources())) {
@@ -220,13 +251,13 @@ public class FilterEngine
 	 * @param data (It's assume the list only contains one data type)
 	 * @return true if data can be Filtered
 	 */
-	public static <T extends StandardEntity> boolean isFilterable(List<T> data)
+	public <T extends StandardEntity> boolean isFilterable(List<T> data)
 	{
 		boolean filterable = false;
 
 		if (data != null
 				&& !data.isEmpty()
-				&& SecurityUtil.isLoggedIn()) {
+				&& !SecurityUtil.isSystemUser()) {
 			filterable = true;
 		}
 
@@ -241,12 +272,12 @@ public class FilterEngine
 	 * @param data
 	 * @return true if data can be Filtered
 	 */
-	public static <T extends StandardEntity> boolean isFilterable(T data)
+	public <T extends StandardEntity> boolean isFilterable(T data)
 	{
 		boolean filterable = false;
 
 		if (data != null
-				&& SecurityUtil.isLoggedIn()) {
+				&& !SecurityUtil.isSystemUser()) {
 			filterable = true;
 		}
 
@@ -259,12 +290,11 @@ public class FilterEngine
 	 *
 	 * @return
 	 */
-	public static String queryComponentRestriction()
+	public String queryComponentRestriction()
 	{
 		StringBuilder query = new StringBuilder();
 		query.append(queryStandardRestriction());
 
-		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
 
 			if (query.length() > 0) {
@@ -307,11 +337,10 @@ public class FilterEngine
 	 *
 	 * @return
 	 */
-	public static String queryStandardRestriction()
+	public String queryStandardRestriction()
 	{
 		StringBuilder query = new StringBuilder();
 
-		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
 			query.append("(");
 
@@ -342,6 +371,16 @@ public class FilterEngine
 		}
 
 		return query.toString();
+	}
+
+	public boolean getForceFiltering()
+	{
+		return forceFiltering;
+	}
+
+	public void setForceFiltering(boolean forceFiltering)
+	{
+		this.forceFiltering = forceFiltering;
 	}
 
 }

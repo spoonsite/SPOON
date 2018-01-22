@@ -200,8 +200,9 @@ public abstract class AbstractArchiveHandler
 			long countExample = service.getPersistenceService().countByExample(errorExample);
 			if (countExample > 0) {
 				archive.setRunStatus(RunStatus.ERROR);
+			} else {
+				archive.setRunStatus(RunStatus.COMPLETE);
 			}
-			archive.setRunStatus(RunStatus.COMPLETE);
 		}
 		archive.setCompletedDts(TimeUtil.currentDate());
 		archive.save();

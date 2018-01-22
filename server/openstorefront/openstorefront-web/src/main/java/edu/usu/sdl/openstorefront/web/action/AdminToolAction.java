@@ -49,6 +49,7 @@ public class AdminToolAction
 		pageMap.put("Lookups", new PageModel("/WEB-INF/securepages/admin/data/lookup.jsp", new String[]{SecurityPermission.ADMIN_LOOKUPS}));
 		pageMap.put("Media", new PageModel("/WEB-INF/securepages/admin/data/media.jsp", new String[]{SecurityPermission.ADMIN_MEDIA}));
 		pageMap.put("Metadata", new PageModel("/WEB-INF/securepages/admin/data/metadata.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
+		pageMap.put("FAQ", new PageModel("/WEB-INF/securepages/admin/data/faq.jsp", new String[]{SecurityPermission.ADMIN_FAQ}));
 		pageMap.put("Organizations", new PageModel("/WEB-INF/securepages/admin/data/organizations.jsp", new String[]{SecurityPermission.ADMIN_ORGANIZATION}));
 		pageMap.put("Questions", new PageModel("/WEB-INF/securepages/admin/data/user-data/questions.jsp", new String[]{SecurityPermission.ADMIN_QUESTIONS}));
 		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/admin/data/user-data/reviews.jsp", new String[]{SecurityPermission.ADMIN_REVIEW}));
@@ -67,6 +68,8 @@ public class AdminToolAction
 		pageMap.put("Feedback", new PageModel("/WEB-INF/securepages/admin/application/feedback.jsp", new String[]{SecurityPermission.ADMIN_FEEDBACK}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
+		pageMap.put("Support-Media", new PageModel("/WEB-INF/securepages/admin/data/help/supportMedia.jsp", new String[]{SecurityPermission.ADMIN_SUPPORT_MEDIA}));
+
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY}));
 		pageMap.put("Security-Roles", new PageModel("/WEB-INF/securepages/admin/application/roleManagement.jsp", new String[]{SecurityPermission.ADMIN_ROLE_MANAGEMENT}));

@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -134,8 +135,8 @@ public class ComponentExporter
 					}
 
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
-					addError("Media not found (Not included in export) filename: " + componentMedia.getFileName());
+					LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
+					addError("Media not found (Not included in export) filename: " + (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName()));
 				}
 			}
 		}
@@ -155,8 +156,8 @@ public class ComponentExporter
 					}
 
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
-					addError("Resource not found (Not included in export) filename: " + componentResource.getFileName());
+					LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
+					addError("Resource not found (Not included in export) filename: " + (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName()));
 				}
 			}
 		}
@@ -171,22 +172,30 @@ public class ComponentExporter
 		if (files != null) {
 			for (File dataFile : files) {
 				if (dataFile.isFile()) {
+					String componentId = dataFile.getName().replace(".json", "");
 					try (InputStream in = new TFileInputStream(dataFile)) {
-						archive.setStatusDetails("Importing: " + dataFile.getName());
+						archive.setStatusDetails("Importing: " + componentId);
 						archive.save();
 
 						ComponentAll componentAll = StringProcessor.defaultObjectMapper().readValue(in, ComponentAll.class);
 
 						FileHistoryOption options = new FileHistoryOption();
 						options.setSkipRequiredAttributes(Boolean.TRUE);
-						service.getComponentService().saveFullComponent(componentAll, options);
-
-						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						try {
+							service.getComponentService().saveFullComponent(componentAll, options);
+							archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						} catch (OpenStorefrontValidationException validationError) {
+							String validationMessage = "";
+							if (validationError.getValidationResult() != null) {
+								validationMessage = validationError.getValidationResult().toHtmlString();
+							}
+							addError(MessageFormat.format("Unable to load component: {0}<br>{1}", componentId, validationMessage));
+						}
 						archive.save();
 
 					} catch (Exception ex) {
-						LOG.log(Level.WARNING, "Failed to Load searches", ex);
-						addError("Unable to load searches: " + dataFile.getName());
+						LOG.log(Level.WARNING, "Failed to Load component", ex);
+						addError("Unable to load component: " + componentId);
 					}
 				}
 			}

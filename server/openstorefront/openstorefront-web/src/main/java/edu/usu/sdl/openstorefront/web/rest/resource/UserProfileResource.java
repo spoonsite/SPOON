@@ -95,7 +95,7 @@ public class UserProfileResource
 	@APIDescription("Get a list of user profiles")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(UserProfileView.class)
+	@DataType(UserProfileWrapper.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
 			@QueryParam("searchField") String searchField,
 			@QueryParam("searchValue") String searchValue)
@@ -211,12 +211,8 @@ public class UserProfileResource
 	@Path("/currentuser")
 	public Response getCurrentUser()
 	{
-		UserProfileView userProfileView = null;
-
 		UserContext userContext = SecurityUtil.getUserContext();
-		if (userContext != null) {
-			userProfileView = UserProfileView.toView(userContext);
-		}
+		UserProfileView userProfileView = UserProfileView.toView(userContext);
 		return sendSingleEntityResponse(userProfileView);
 	}
 

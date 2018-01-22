@@ -60,6 +60,14 @@ public class EvaluationChecklist
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;
 
+	@ConsumeField
+	@APIDescription("Private Summary is not published")
+	private Boolean privateSummaryFlg;
+
+	@ConsumeField
+	@APIDescription("The whole checklist will not show")
+	private Boolean privateChecklistFlg;
+
 	public EvaluationChecklist()
 	{
 	}
@@ -73,6 +81,9 @@ public class EvaluationChecklist
 
 		setSummary(evaluationChecklist.getSummary());
 		setWorkflowStatus(evaluationChecklist.getWorkflowStatus());
+		setPrivateSummaryFlg(evaluationChecklist.getPrivateSummaryFlg());
+		setPrivateChecklistFlg(evaluationChecklist.getPrivateChecklistFlg());
+
 	}
 
 	@Override
@@ -147,6 +158,26 @@ public class EvaluationChecklist
 	public void setWorkflowStatus(String workflowStatus)
 	{
 		this.workflowStatus = workflowStatus;
+	}
+
+	public Boolean getPrivateSummaryFlg()
+	{
+		return privateSummaryFlg;
+	}
+
+	public void setPrivateSummaryFlg(Boolean privateSummaryFlg)
+	{
+		this.privateSummaryFlg = privateSummaryFlg;
+	}
+
+	public Boolean getPrivateChecklistFlg()
+	{
+		return privateChecklistFlg;
+	}
+
+	public void setPrivateChecklistFlg(Boolean privateChecklistFlg)
+	{
+		this.privateChecklistFlg = privateChecklistFlg;
 	}
 
 }

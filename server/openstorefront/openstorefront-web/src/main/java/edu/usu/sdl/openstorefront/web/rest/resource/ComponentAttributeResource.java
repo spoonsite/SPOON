@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleWrapper;
@@ -81,7 +80,7 @@ public class ComponentAttributeResource
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
 		List<ComponentAttribute> attributeComponents = componentAttributeExample.findByExample();
-		attributeComponents = FilterEngine.filter(attributeComponents, true);
+		attributeComponents = filterEngine.filter(attributeComponents, true);
 
 		for (ComponentAttribute attributeComponent : attributeComponents) {
 			ComponentSimpleAttributeView view = new ComponentSimpleAttributeView();
@@ -91,28 +90,26 @@ public class ComponentAttributeResource
 			components.add(view);
 		}
 		int totalResults = 0;
-		if (filterParams != null) {
-			components = components.stream().filter(c -> {
-				boolean keep = true;
-				if (StringUtils.isNotBlank(filterParams.getComponentName())) {
-					if (!c.getName().contains(filterParams.getComponentName())) {
+		components = components.stream().filter(c -> {
+			boolean keep = true;
+			if (StringUtils.isNotBlank(filterParams.getComponentName())) {
+				if (!c.getName().contains(filterParams.getComponentName())) {
+					keep = false;
+				}
+			}
+			if (keep) {
+				if (StringUtils.isNotBlank(filterParams.getComponentType())
+						&& !ComponentType.ALL.equals(filterParams.getComponentType())) {
+					if (!c.getComponentType().equals(filterParams.getComponentType())) {
 						keep = false;
 					}
 				}
-				if (keep) {
-					if (StringUtils.isNotBlank(filterParams.getComponentType())
-							&& !ComponentType.ALL.equals(filterParams.getComponentType())) {
-						if (!c.getComponentType().equals(filterParams.getComponentType())) {
-							keep = false;
-						}
-					}
-				}
+			}
 
-				return keep;
-			}).collect(Collectors.toList());
-			totalResults = components.size();
-			components = filterParams.filter(components);
-		}
+			return keep;
+		}).collect(Collectors.toList());
+		totalResults = components.size();
+		components = filterParams.filter(components);
 
 //		for (ComponentSimpleAttributeView view : components) {
 //			List<ComponentAttribute> attributes = service.getComponentService().getAttributesByComponentId(view.getComponentId());

@@ -26,8 +26,9 @@
 	Ext.require('OSF.landing.DefaultSearchTools');
 	Ext.require('OSF.landing.DefaultActions');
 	Ext.require('OSF.landing.DefaultCategory');	
+	Ext.require('OSF.landing.StaticInfo');	
 	Ext.require('OSF.landing.DefaultInfo');	
-
+	
 	Ext.onReady(function(){
 
 	

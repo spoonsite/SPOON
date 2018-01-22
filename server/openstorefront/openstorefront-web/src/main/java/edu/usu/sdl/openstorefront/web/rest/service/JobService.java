@@ -109,25 +109,31 @@ public class JobService
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
-	@APIDescription("Pauses a system job  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
-	@Path("/{jobname}/pause")
+	@APIDescription("Pauses a job  (Note: this is not persisted.  Restarting the application will restart the scheduler.)")
+	@Path("/{jobname}/{groupname}/pause")
 	public Response pauseSystmJob(
 			@PathParam("jobname")
-			@RequiredParam String jobName)
+			@RequiredParam String jobName,
+			@PathParam("groupname")
+			@RequiredParam String groupname
+	)
 	{
-		JobManager.pauseSystemJob(jobName);
+		JobManager.pauseJob(jobName, groupname);
 		return Response.ok().build();
 	}
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
-	@APIDescription("Resumes a system Job")
-	@Path("/{jobname}/resume")
+	@APIDescription("Resumes a  Job")
+	@Path("/{jobname}/{groupname}/resume")
 	public Response resumeScheduler(
 			@PathParam("jobname")
-			@RequiredParam String jobName)
+			@RequiredParam String jobName,
+			@PathParam("groupname")
+			@RequiredParam String groupname
+	)
 	{
-		JobManager.resumeSystemJob(jobName);
+		JobManager.resumeJob(jobName, groupname);
 		return Response.ok().build();
 	}
 

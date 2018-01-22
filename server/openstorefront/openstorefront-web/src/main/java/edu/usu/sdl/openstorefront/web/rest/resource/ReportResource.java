@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -27,12 +28,15 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ReportDetailView;
+import edu.usu.sdl.openstorefront.core.view.ReportFilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ReportGenerateView;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
@@ -43,14 +47,15 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -61,12 +66,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -79,11 +84,11 @@ public class ReportResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)	
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
-	public Response getReports(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getReports(@BeanParam ReportFilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -92,8 +97,18 @@ public class ReportResource
 
 		Report reportExample = new Report();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {			
+		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		} else {
+			if (!filterQueryParams.getShowAllUsers()) {
+				reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			}
+		}
+		if (StringUtils.isNotBlank(filterQueryParams.getReportType())) {
+			reportExample.setReportType(filterQueryParams.getReportType());
+		}
+		if (filterQueryParams.getShowScheduledOnly()) {
+			reportExample.setScheduled(filterQueryParams.getShowScheduledOnly());
 		}
 
 		Report reportStartExample = new Report();
@@ -103,6 +118,16 @@ public class ReportResource
 		reportEndExample.setCreateDts(filterQueryParams.getEnd());
 
 		QueryByExample queryByExample = new QueryByExample(reportExample);
+
+		if (!filterQueryParams.getShowScheduledOnly()) {
+			Report reportScheduleExample = new Report();
+			reportScheduleExample.setScheduled(QueryByExample.BOOLEAN_FLAG);
+
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(reportScheduleExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		}
 
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(reportStartExample);
@@ -132,6 +157,15 @@ public class ReportResource
 		reportWrapper.getData().addAll(ReportView.toReportView(reports));
 		reportWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
+		//	Calculate the remaining lifetime for each report being displayed
+		reportWrapper.getData().stream().forEach(report -> {
+			long timeRemaining;
+			timeRemaining = report.getReportLifetimeMax() - ChronoUnit.DAYS.between(report.getCreateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), LocalDate.now());
+			if (report.getCreateDts() != null) {
+				report.setRemainingReportLifetime(timeRemaining >= 0 ? timeRemaining : 0);
+			}
+		});
+
 		return sendSingleEntityResponse(reportWrapper);
 	}
 
@@ -157,12 +191,34 @@ public class ReportResource
 
 	@GET
 	@RequireSecurity(SecurityPermission.REPORTS)
+	@APIDescription("Gets a report details.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportDetailView.class)
+	@Path("/{id}/detail")
+	public Response getReportDetails(
+			@PathParam("id") String reportId
+	)
+	{
+		Report reportExample = new Report();
+		reportExample.setReportId(reportId);
+		Report report = reportExample.find();
+		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
+		if (response == null) {
+			ReportDetailView reportDetailView = ReportDetailView.toView(report);
+			response = sendSingleEntityResponse(reportDetailView);
+		}
+		return response;
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
 	@Path("/{id}/report")
 	public Response getReportData(
-			@PathParam("id") String reportId
+			@PathParam("id") String reportId,
+			@QueryParam("notAttach") boolean notAttach
 	)
 	{
 		Report reportExample = new Report();
@@ -176,19 +232,29 @@ public class ReportResource
 				java.nio.file.Path path = report.pathToReport();
 
 				if (path.toFile().exists()) {
-					String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
-					Response.ResponseBuilder responseBuilder = Response.ok(new StreamingOutput()
-					{
 
-						@Override
-						public void write(OutputStream output) throws IOException, WebApplicationException
-						{
-							Files.copy(path, output);
+					String format = report.getReportFormat();
+					if (StringUtils.isBlank(format)) {
+						for (ReportOutput output : report.getReportOutputs()) {
+							if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+								format = output.getReportTransmissionOption().getReportFormat();
+							}
 						}
+					}
 
+					if (StringUtils.isBlank(format)) {
+						throw new OpenStorefrontRuntimeException("No Viewable Format for this report");
+					}
+
+					String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(format));
+					Response.ResponseBuilder responseBuilder = Response.ok((StreamingOutput) (OutputStream output) -> {
+						Files.copy(path, output);
 					});
-					responseBuilder.header("Content-Type", ReportFormat.mimeType(report.getReportFormat()));
-					responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+					responseBuilder.header("Content-Type", ReportFormat.mimeType(format));
+
+					if (!notAttach) {
+						responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+					}
 					response = responseBuilder.build();
 				}
 			}
@@ -213,7 +279,7 @@ public class ReportResource
 		}
 
 		reportTypes = reportTypes.stream().filter(r -> r.getRequiredPermission() == null || SecurityUtil.hasPermission(r.getRequiredPermission())).collect(Collectors.toList());
-		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
+		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupEntity.FIELD_DESCRIPTION));
 
 		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)
 		{
@@ -226,24 +292,42 @@ public class ReportResource
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("/{reportType}/formats")
+	@Path("/{reportType}/{reportTransmissionType}/formats")
 	public Response getReportFormats(
+			@PathParam("reportType") String reportType,
+			@PathParam("reportTransmissionType") String reportTransmissionType
+	)
+	{
+		List<ReportFormat> reportFormats = service.getReportService().getSupportedFormats(reportType, reportTransmissionType);
+
+		List<LookupModel> formats = new ArrayList<>();
+		for (ReportFormat format : reportFormats) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(format.getCode());
+			lookupModel.setDescription(format.getDescription());
+			formats.add(lookupModel);
+		}
+		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(formats)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.REPORTS)
+	@APIDescription("Gets report supported transmissiontypes for report")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportTransmissionType.class)
+	@Path("/{reportType}/transmissiontypes")
+	public Response getReportTransmissionTypes(
 			@PathParam("reportType") String reportType
 	)
 	{
-		Map<String, List<String>> reportFormatMap = service.getReportService().getSupportedFormats();
-
-		List<LookupModel> formats = new ArrayList<>();
-		List<String> formatList = reportFormatMap.get(reportType);
-		for (String format : formatList) {
-			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(format);
-			lookupModel.setDescription(TranslateUtil.translate(ReportFormat.class, format));
-			formats.add(lookupModel);
-		}
-		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
-
-		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(formats)
+		List<ReportTransmissionType> reportTransmissionTypes = service.getReportService().getSupportedOutputs(reportType);
+		reportTransmissionTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupEntity.FIELD_DESCRIPTION));
+		GenericEntity<List<ReportTransmissionType>> entity = new GenericEntity<List<ReportTransmissionType>>(reportTransmissionTypes)
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -262,6 +346,12 @@ public class ReportResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
+		validationResult.merge(report.customValidation());
+
+		if (reportView.getReportDataId() == null) {
+			reportView.setReportDataId(new ArrayList<>());
+		}
+
 		for (ReportDataId dataId : reportView.getReportDataId()) {
 			validationModel = new ValidationModel(dataId);
 			validationModel.setConsumeFieldsOnly(true);
@@ -276,7 +366,7 @@ public class ReportResource
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, report.getReportType());
 			boolean run = true;
-			if (SecurityUtil.hasPermission(reportType.getRequiredPermission()) == false) {				
+			if (SecurityUtil.hasPermission(reportType.getRequiredPermission()) == false) {
 				run = false;
 			}
 

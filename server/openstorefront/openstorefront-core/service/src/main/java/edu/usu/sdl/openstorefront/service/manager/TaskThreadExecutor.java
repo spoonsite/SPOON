@@ -80,10 +80,10 @@ public class TaskThreadExecutor
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
 
 					if (taskFuture.isQueueable()) {
-                                                TaskRequest nextRequest = queue.poll();
-                                                if (nextRequest != null) {
-                                                    this.submitTask(nextRequest);                                                    
-                                                }
+						TaskRequest nextRequest = queue.poll();
+						if (nextRequest != null) {
+							this.submitTask(nextRequest);
+						}
 					}
 
 					try {
@@ -157,6 +157,12 @@ public class TaskThreadExecutor
 						if (taskFuture.getCallback() != null) {
 							taskFuture.getCallback().beforeExecute(taskFuture);
 						}
+
+						//Mark thread as a system user
+						if (taskFuture.isSystemUser()) {
+							SecurityUtil.initSystemUser();
+						}
+
 						foundTask = true;
 					}
 				}
@@ -239,7 +245,7 @@ public class TaskThreadExecutor
 
 		TaskFuture taskFuture = null;
 		if (runJob) {
-			Future future = submit(taskRequest.getTask());
+			Future future = submit(SecurityUtil.associateSecurity(taskRequest.getTask()));
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
 			taskFuture.setQueueable(taskRequest.isQueueable());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
@@ -247,6 +253,7 @@ public class TaskThreadExecutor
 			taskFuture.setTaskData(taskRequest.getTaskData());
 			taskFuture.setTaskName(taskRequest.getName());
 			taskFuture.setCallback(taskRequest.getCallback());
+			taskFuture.setSystemUser(SecurityUtil.isSystemUser());
 			tasks.add(taskFuture);
 
 			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {

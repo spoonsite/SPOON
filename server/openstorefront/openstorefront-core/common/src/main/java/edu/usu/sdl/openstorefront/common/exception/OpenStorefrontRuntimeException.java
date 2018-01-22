@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.common.exception;
 
-import static edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.ERROR_CODE_SYSTEM;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,46 +28,7 @@ public class OpenStorefrontRuntimeException
 {
 
 	private String potentialResolution;
-	private String errorTypeCode = ERROR_CODE_SYSTEM;
-
-	public OpenStorefrontRuntimeException()
-	{
-	}
-
-	public OpenStorefrontRuntimeException(String message)
-	{
-		super(message);
-	}
-
-	public OpenStorefrontRuntimeException(String message, String potentialResolution)
-	{
-		super(message);
-		this.potentialResolution = potentialResolution;
-	}
-
-	public OpenStorefrontRuntimeException(String message, String potentialResolution, String errorTypeCode)
-	{
-		super(message);
-		this.potentialResolution = potentialResolution;
-		this.errorTypeCode = errorTypeCode;
-	}
-
-	public OpenStorefrontRuntimeException(String message, Throwable thrwbl)
-	{
-		super(message, thrwbl);
-	}
-
-	public OpenStorefrontRuntimeException(String message, Throwable thrwbl, String errorTypeCode)
-	{
-		super(message, thrwbl);
-		this.errorTypeCode = errorTypeCode;
-	}
-
-	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl)
-	{
-		super(message, thrwbl);
-		this.potentialResolution = potentialResolution;
-	}
+	private String errorTypeCode;
 
 	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl, String errorTypeCode)
 	{
@@ -76,29 +37,59 @@ public class OpenStorefrontRuntimeException
 		this.errorTypeCode = errorTypeCode;
 	}
 
+	public OpenStorefrontRuntimeException(String message, String potentialResolution, String errorTypeCode)
+	{
+		super(message);
+		this.potentialResolution = potentialResolution;
+		this.errorTypeCode = errorTypeCode;
+	}
+	
+	// <editor-fold desc="chained construtors" defaultstate="collapsed">
+
+	public OpenStorefrontRuntimeException()
+	{
+		this((String) null);
+	}
+
+	public OpenStorefrontRuntimeException(String message)
+	{
+		this(message, (String) null);
+	}
+
+	public OpenStorefrontRuntimeException(String message, String potentialResolution)
+	{
+		this(message, potentialResolution, OpenStorefrontConstant.ERROR_CODE_SYSTEM);
+	}
+
+	public OpenStorefrontRuntimeException(String message, Throwable thrwbl)
+	{
+		this(message, thrwbl, OpenStorefrontConstant.ERROR_CODE_SYSTEM);
+	}
+
+	public OpenStorefrontRuntimeException(String message, Throwable thrwbl, String errorTypeCode)
+	{
+		this(message, null, thrwbl, errorTypeCode);
+	}
+
+	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl)
+	{
+		this(message, potentialResolution, thrwbl, OpenStorefrontConstant.ERROR_CODE_SYSTEM);
+	}
+
 	public OpenStorefrontRuntimeException(Throwable thrwbl)
 	{
-		super(thrwbl);
+		this(null, thrwbl);
 	}
+	//</editor-fold>
 
 	public String getPotentialResolution()
 	{
 		return potentialResolution;
 	}
 
-	public void setPotentialResolution(String potentialResolution)
-	{
-		this.potentialResolution = potentialResolution;
-	}
-
 	public String getErrorTypeCode()
 	{
 		return errorTypeCode;
-	}
-
-	public void setErrorTypeCode(String errorTypeCode)
-	{
-		this.errorTypeCode = errorTypeCode;
 	}
 
 	@Override

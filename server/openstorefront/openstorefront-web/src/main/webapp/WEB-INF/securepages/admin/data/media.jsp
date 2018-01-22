@@ -60,14 +60,15 @@
 				
 				var mediaGrid = Ext.create('Ext.grid.Panel', {
 					id: 'mediaGrid',
-					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
+					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles,badges, and branding." ></i>',
 					store: mediaStore,
 					columnLines: true,
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200},
 						{ text: 'Resource URL', dataIndex: 'mediaLink', flex: 1, minWidth: 200 },
-						{ text: 'Original Filename', dataIndex: 'orignalFileName', width: 300 },
-						{ text: 'Mime Type', dataIndex: 'mimeType', width: 150},
+						{ text: 'Original Filename', dataIndex: 'originalFileName', width: 300 },
+						{ text: 'Mime Type', dataIndex: 'mimeType', width: 150 },
+						{ text: 'Used In Branding', dataIndex: 'allowInBranding', width: 150},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 150},
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
@@ -399,7 +400,7 @@
 					iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 					modal: true,
 					width: '40%',
-					height: 260,
+					height: 300,
 					y: 40,
 					resizable: false,
 					layout: 'fit',
@@ -426,15 +427,18 @@
 											width: '100%'
 										},
 										{
-											xtype: 'filefield',
-											name: 'file',
+											xtype: 'fileFieldMaxLabel',
+											resourceLabel: 'Upload Media',
 											id: 'file',
-											fieldLabel: 'Upload Media  (Limit of 1GB)<span class="field-required" />',
+											name: 'file',
 											width: '100%',
-											allowBlank: false,
-											listeners: {
-												change: CoreUtil.handleMaxFileLimit
-											}											
+											allowBlank: false
+										},
+										{
+											xtype: 'checkboxfield',
+											boxLabel: 'Allow Media to be used in Branding',
+											id: 'allowInBranding',
+											name: 'allowInBranding'
 										}
 									]
 								}
@@ -449,7 +453,17 @@
 										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
 										handler: function(){     
-											Ext.getCmp('addMediaForm').setLoading(true);
+											var progressMsg = Ext.MessageBox.show({
+												title: 'Media Upload',
+												msg: 'Uploading media please wait...',
+												width: 300,
+												height: 150,
+												closable: false,
+												progressText: 'Uploading...',
+												wait: true,
+												waitConfig: {interval: 300}
+											});
+											
 											var data = Ext.getCmp('addMediaForm').getValues();
 
 											// Check if name is unique
@@ -463,9 +477,12 @@
 												Ext.getCmp('addMediaForm').setLoading(false);
 												return;
 											}
-
+											var postUrl = 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name;
+											if(data.allowInBranding === "true") {
+												postUrl += '&generalMedia.allowInBranding=true'
+											}
 											Ext.getCmp('addMediaForm').submit({
-												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
+												url: postUrl,
 												method: 'POST',
 												callback: function() {
 													Ext.getCmp('addMediaForm').setLoading(false);
@@ -473,7 +490,8 @@
 												success: function(response, opts) {
 													Ext.toast('Uploaded Successfully', '', 'tr');													
 													Ext.getCmp('addMediaWin').close();													
-													refreshGrid();												
+													refreshGrid();	
+													progressMsg.hide();
 												},
 												failure: function(action, opts){
 													var data = Ext.decode(opts.response.responseText);
@@ -490,6 +508,7 @@
 														Ext.getCmp('addMediaWin').close();													
 														refreshGrid();
 													}
+													progressMsg.hide();
 												}
 											});												
 										}

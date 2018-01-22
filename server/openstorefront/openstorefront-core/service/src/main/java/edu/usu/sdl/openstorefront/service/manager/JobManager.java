@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.job.ImportJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
+import edu.usu.sdl.openstorefront.service.job.ScheduledReportCronJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
 import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
@@ -40,6 +41,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -73,14 +76,29 @@ public class JobManager
 
 	private static final Logger LOG = Logger.getLogger(JobManager.class.getName());
 
-	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
+	public static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
+	public static final String JOB_GROUP_REPORT = AddJobModel.JOB_GROUP_REPORT;
 	private static Scheduler scheduler;
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
 		try {
-			StdSchedulerFactory factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
+			StdSchedulerFactory factory;
+			try {
+				factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
+			} catch (Exception ex) {
+				LOG.log(Level.CONFIG, "Unable to load quartz.properties...using defaults");
+				LOG.log(Level.FINER, null, ex);
+
+				//If it can't load the properties ...fall back to default
+				Properties defaultProperties = new Properties();
+				defaultProperties.setProperty("org.quartz.scheduler.instanceName", "JobScheduler");
+				defaultProperties.setProperty("org.quartz.threadPool.threadCount", "10");
+				defaultProperties.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+				factory = new StdSchedulerFactory(defaultProperties);
+			}
+
 			scheduler = factory.getScheduler();
 			initSystemJobs();
 			scheduler.start();
@@ -196,6 +214,50 @@ public class JobManager
 			TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, JOB_GROUP_SYSTEM);
 			if (scheduler.checkExists(triggerKey)) {
 				scheduler.unscheduleJob(triggerKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
+		}
+	}
+
+	public static void addReportJob(String scheduledReportId, String reportType, String cronExpression) throws SchedulerException
+	{
+		Objects.requireNonNull(scheduledReportId);
+		Objects.requireNonNull(reportType);
+		Objects.requireNonNull(cronExpression);
+
+		String jobName = REPORT_JOB_PREFIX + scheduledReportId;
+
+		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_REPORT);
+		if (scheduler.checkExists(jobKey)) {
+			LOG.log(Level.FINER, MessageFormat.format("Job already Exist: {0} removing job; adding changed", jobName));
+			scheduler.deleteJob(jobKey);
+		}
+		JobDetail job = JobBuilder.newJob(ScheduledReportCronJob.class)
+				.withIdentity(jobKey)
+				.withDescription("Report Job for " + reportType)
+				.build();
+
+		job.getJobDataMap().put(ScheduledReportCronJob.SCHEDULED_REPORT_ID, scheduledReportId);
+		Trigger trigger = newTrigger()
+				.withIdentity(REPORT_JOB_PREFIX + scheduledReportId, JOB_GROUP_REPORT)
+				.startNow()
+				.withSchedule(cronSchedule(cronExpression))
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+	private static final String REPORT_JOB_PREFIX = "ReportJob-";
+
+	public static void removeReportJob(String reportJobName)
+	{
+		if (reportJobName.startsWith(REPORT_JOB_PREFIX) == false) {
+			reportJobName = REPORT_JOB_PREFIX + reportJobName;
+		}
+		try {
+			JobKey jobKey = JobKey.jobKey(reportJobName, JOB_GROUP_REPORT);
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
 			}
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
@@ -465,19 +527,19 @@ public class JobManager
 		}
 	}
 
-	public static void pauseSystemJob(String jobName)
+	public static void pauseJob(String jobName, String group)
 	{
 		try {
-			scheduler.pauseJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+			scheduler.pauseJob(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
 		}
 	}
 
-	public static void resumeSystemJob(String jobName)
+	public static void resumeJob(String jobName, String group)
 	{
 		try {
-			scheduler.resumeJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+			scheduler.resumeJob(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
 		}

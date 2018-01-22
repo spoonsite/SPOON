@@ -111,8 +111,6 @@ Ext.define('LookupDataModel', {
 		]
 });
 
-
-
 //Overrides
 
 /**
@@ -168,6 +166,13 @@ Ext.define('OSF.defaults.checkbox', {
     override: 'Ext.form.field.Checkbox',
 
 	 inputValue : 'true'
+
+});
+
+Ext.define('OSF.defaults.toolbar', {
+    override: 'Ext.toolbar.Toolbar',
+
+	overflowHandler: 'menu'
 
 });
 

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -24,20 +23,21 @@ import edu.usu.sdl.openstorefront.core.annotation.Unique;
 import edu.usu.sdl.openstorefront.validation.GeneralMediaUniqueHandler;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author dshurtleff
+ * @author kbair
  */
 @APIDescription("General media used for articles, bagdes, etc.")
 public class GeneralMedia
 		extends StandardEntity<GeneralMedia>
+		implements MediaModel
 {
 
 	@PK
@@ -49,17 +49,32 @@ public class GeneralMedia
 	private String name;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored filename")
+	@OneToOne(cascade = {CascadeType.ALL}, optional = false, orphanRemoval = true)
+	@APIDescription("Stored file information")
+	private MediaFile file;
+	
+	@ConsumeField
+	private Boolean allowInBranding;
+
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
-	@NotNull
-	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file uploaded")
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalFileName;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
 	public GeneralMedia()
@@ -67,19 +82,14 @@ public class GeneralMedia
 	}
 
 	/**
-	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use variable directly
+	 * Get the path to the media on disk.
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
 	public Path pathToMedia()
 	{
-		Path path = null;
-		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.GENERAL_MEDIA_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
-		}
-		return path;
+		//Note: this may be ran from a proxy so don't use variable directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	public String getName()
@@ -92,31 +102,89 @@ public class GeneralMedia
 		this.name = name;
 	}
 
+	@Override
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	@Override
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
+	}
+
+	public Boolean getAllowInBranding()
+	{
+		return allowInBranding;
+	}
+
+	public void setAllowInBranding(Boolean allowInBranding)
+	{
+		this.allowInBranding = allowInBranding;
+	}
+
+	/**
+	 * @return name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getFileName()}
+	 */
+	@Deprecated
 	public String getFileName()
 	{
 		return fileName;
 	}
 
+	/**
+	 * @param fileName name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setFileName(String fileName)}
+	 */
+	@Deprecated
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
 
+	/**
+	 * @return filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getOriginalName()}
+	 */
+	@Deprecated
 	public String getOriginalFileName()
 	{
 		return originalFileName;
 	}
 
-	public void setOriginalFileName(String originalFileName)
+	/**
+	 * @param originalFileName filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setOriginalName(String originalName)}
+	 */
+	@Deprecated
+	public void setOriginalName(String originalFileName)
 	{
 		this.originalFileName = originalFileName;
 	}
 
+	/**
+	 * @return the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getMimeType()}
+	 */
+	@Deprecated
 	public String getMimeType()
 	{
 		return mimeType;
 	}
 
+	/**
+	 * @param mimeType the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setMimeType(String mimeType)}
+	 */
+	@Deprecated
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;

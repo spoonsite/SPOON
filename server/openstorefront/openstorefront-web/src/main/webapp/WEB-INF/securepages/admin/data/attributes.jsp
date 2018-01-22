@@ -134,13 +134,13 @@
 				pageSize: 100,
 				remoteSort: true,
 				fields: [
-					{ name: 'defaultAttributeCodeDisplay', mapping: function(data) {
+					{ name: 'defaultAttributeCode', mapping: function(data) {
 						if (data.defaultAttributeCode) {
 							return data.defaultAttributeCode;
 						}
 						return '';	
 					}},
-					{ name: 'allowUserGeneratedCodesDisplay', mapping: function(data) {
+					{ name: 'allowUserGeneratedCodes', mapping: function(data) {
 						if (data.allowUserGeneratedCodes) {
 							return data.allowUserGeneratedCodes;
 						}
@@ -424,7 +424,7 @@
 					},
 					{
 						text: 'Allow User Codes',
-						dataIndex: 'allowUserGeneratedCodesDisplay',
+						dataIndex: 'allowUserGeneratedCodes',
 						flex: 1,
 						tooltip: 'Should users be able to generate codes for this attribute?',
 						align: 'center',
@@ -440,7 +440,7 @@
 					},
 					{
 						text: 'Default Code',
-						dataIndex: 'defaultAttributeCodeDisplay',
+						dataIndex: 'defaultAttributeCode',
 						flex: 1
 					},
 					{
@@ -671,11 +671,9 @@
 			});			
 			
 
-			var actionAddAttribute = function() {
-				Ext.getCmp('editAttributeForm').reset();
-				editAttributeWin.edit = false;
-				editAttributeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
-				editAttributeWin.show();
+			var actionAddAttribute = function() {				
+				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
+				
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
@@ -692,41 +690,55 @@
 
 
 			var actionEditAttribute = function(record) {
-				editAttributeWin.edit = true;
-				editAttributeWin.setTitle('<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType);
-				editAttributeWin.show();
+				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType);
 				
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
 				Ext.getCmp('allEntryTypes').setValue(true);
 				Ext.getCmp('requiredFlagCheckBox').setValue(false);
-				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
-				Ext.getCmp('editAttributeForm').reset();
+				//Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				//Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
+				//Ext.getCmp('editAttributeForm').reset();
 				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
-		
-				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
-				// Search the searchStore for the record matching the given code,
-				// that way we can display the name of the entry type rather than
-				// just the code.
-				if (record.getData().requiredRestrictions) {
-					Ext.getCmp('requiredFlagCheckBox').setValue(true);
-					var searchStore = Ext.getStore('requiredTypesSearchStore');
-					Ext.Array.each(record.getData().requiredRestrictions, function(type) {
-						requiredEntryTypes.add(searchStore.getData().find('code', type.componentType));
-					});
-				}
+				Ext.getCmp('editAttributeForm').setLoading(true);				
+				Ext.Ajax.request({
+					url: 'api/v1/resource/componenttypes/lookup',
+					callback: function() {
+						Ext.getCmp('editAttributeForm').setLoading(false);
+					},
+					success: function(response, opt) {
+						var componentTypes = Ext.decode(response.responseText);
+						
+						var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
+						// Search the searchStore for the record matching the given code,
+						// that way we can display the name of the entry type rather than
+						// just the code.
+						if (record.getData().requiredRestrictions) {
+							Ext.getCmp('requiredFlagCheckBox').setValue(true);					
+							Ext.Array.each(record.getData().requiredRestrictions, function(type) {
+								var componentTypeData = Ext.Array.findBy(componentTypes, function(item){
+									return item.code === type.componentType;
+								});							
+								requiredEntryTypes.add(componentTypeData);						
+							});
+						}
 
-				// And the same for the associated component types, as well as disabling the 'All' checkbox.
-				if (record.getData().associatedComponentTypes) {
-					Ext.getCmp('allEntryTypes').setValue(false);
-					var associatedComponentTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore();
-					var allowForTypesSearchStore = Ext.getStore('allowForTypesSearchStore');
-					Ext.Array.each(record.getData().associatedComponentTypes , function(type) {
-						associatedComponentTypes.add(allowForTypesSearchStore.getData().find('code', type.componentType));
-					});
-				} 
+						// And the same for the associated component types, as well as disabling the 'All' checkbox.
+						if (record.getData().associatedComponentTypes) {
+							Ext.getCmp('allEntryTypes').setValue(false);
+							var associatedComponentTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore();					
+							Ext.Array.each(record.getData().associatedComponentTypes , function(type) {
+								var componentTypeData = Ext.Array.findBy(componentTypes, function(item){
+									return item.code === type.componentType;
+								});							
+								associatedComponentTypes.add(componentTypeData);
+							});
+						} 						
+						
+					}
+				});
+				
 
 				Ext.getCmp('editAttributeForm-defaultCode').show();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
@@ -971,158 +983,96 @@
 										disabled: true,
 										handler: function() {
 
-											// Get Selection
 											var selection = Ext.getCmp('attributeGrid').getSelection();
-
-											// Get Number Of Selected
-											var selected = attributeGrid.getSelectionModel().getCount();
-
-											// Get Calling Window
 											var ownerWindow = this.up('window');
-
-											// Get Form
 											var form = this.up('form');
 
 											// Inform User Of Update Process
 											attributeGrid.mask('Updating Flag(s)...');
-
-											// Close Form Window
 											ownerWindow.close();
 											
-											// Store New Values
 											var attributeValues = form.getForm().getValues();
+											var requestDataList = [];
+											
+											var attributeOptions = {};
 
-											// Initialize Update Counter
-											var attributeUpdateCount = 0;
+											// Check For Visible
+											if (typeof attributeValues.visible !== 'undefined') {
+												attributeOptions.visibleFlg = attributeValues.visible;
+											}
+											
+											// Check For Important
+											if (typeof attributeValues.important !== 'undefined') {
+												attributeOptions.importantFlg = attributeValues.important;
+											}
+											
+											// Check For Architecture
+											if (typeof attributeValues.architecture !== 'undefined') {
+												attributeOptions.architectureFlg = attributeValues.architecture;
+											}
+											
+											// Check For Allow Multiples
+											if (typeof attributeValues.multiples !== 'undefined') {
+												attributeOptions.allowMultipleFlg = attributeValues.multiples;
+											}
+											
+											// Check For Allow User Codes
+											if (typeof attributeValues.user !== 'undefined') {
+												attributeOptions.allowUserGeneratedCodes = attributeValues.user;
+											}
 
-											// Loop Through Selected Components
-											for (i = 0; i < selected; i++) {
-												
-												// Save Record Data
-												var attributeData = selection[i].getData();
-												
-												// Initialize Request Data
+											// For each attribute selected, set componentTypeRestrictions or associatedComponentTypes if needed.
+											// Per attribute, push the requestData ontop the requestDataList.
+											Ext.Array.forEach(selection, function(item, index) {
+												item = item.getData();
 												var requestData = {
-													
-													attributeType: attributeData,
+													attributeType: Ext.apply(item, attributeOptions),
 													componentTypeRestrictions: [],
 													associatedComponentTypes: []
 												};
-												
+
+												// Check For Hide On Submission
+												if (typeof attributeValues.hide !== 'undefined' && ((item.requiredFlg && item.defaultAttributeCode) || !item.requiredFlg)) {
+													requestData.attributeType.hideOnSubmission = attributeValues.hide;
+												}
+
 												// Check Required For Components
-												if (typeof attributeData.requiredRestrictions !== 'undefined' && attributeData.requiredRestrictions !== null) {
-													
-													// Store Required For Components
-													requestData.componentTypeRestrictions = attributeData.requiredRestrictions;
+												if (typeof item.requiredRestrictions !== 'undefined' && item.requiredRestrictions !== null) {
+													requestData.attributeType.componentTypeRestrictions = item.requiredRestrictions;
+												}
+												else {
+													requestData.attributeType.componentTypeRestrictions = null;	
 												}
 												
 												// Check Associated Components
-												if (typeof attributeData.associatedComponentTypes !== 'undefined' && attributeData.associatedComponentTypes !== null) {
-													
-													// Store Associated Components
-													requestData.associatedComponentTypes = attributeData.associatedComponentTypes;
+												if (typeof item.associatedComponentTypes !== 'undefined' && item.associatedComponentTypes !== null) {
+													requestData.attributeType.associatedComponentTypes = item.associatedComponentTypes;
 												}
-												
-												//////////////////
-												// Update Flags //
-												//////////////////
-												
-												// Check For Visible
-												if (typeof attributeValues.visible !== 'undefined' && attributeValues.visible !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.visibleFlg = attributeValues.visible;
+												else {
+													requestData.attributeType.associatedComponentTypes = null;	
 												}
-												
-//												// Check For Required
-//												if (typeof attributeValues.required !== 'undefined' && attributeValues.required !== null) {
-//
-//													// Set New Flag Value
-//													requestData.attributeType.requiredFlg = attributeValues.required;
-//												}
-												
-												// Check For Important
-												if (typeof attributeValues.important !== 'undefined' && attributeValues.important !== null) {
 
-													// Set New Flag Value
-													requestData.attributeType.importantFlg = attributeValues.important;
+												requestDataList.push(requestData);
+											});
+											form.reset();
+
+											Ext.Ajax.request({
+												url: 'api/v1/resource/attributes/attributetypes/types',
+												method: 'PUT',
+												jsonData: requestDataList,
+												success: function(response, opts) {
+													attributeStore.load();
+													attributeGrid.unmask();
+												},
+												failure: function(response, opts) {
+													Ext.toast('An Attribute Failed To Update', 'Error');
+													attributeStore.load();
+													attributeGrid.unmask();
+
+													// Provide Log Information
+													console.error(response);
 												}
-												
-												// Check For Architecture
-												if (typeof attributeValues.architecture !== 'undefined' && attributeValues.architecture !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.architectureFlg = attributeValues.architecture;
-												}
-												
-												// Check For Allow Multiples
-												if (typeof attributeValues.multiples !== 'undefined' && attributeValues.multiples !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.multiplesFlg = attributeValues.multiples;
-												}
-												
-												// Check For Allow User Codes
-												if (typeof attributeValues.user !== 'undefined' && attributeValues.user !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.allowUserGeneratedCodes = attributeValues.user;
-												}
-												
-												// Check For Hide On Submission
-												if (typeof attributeValues.hide !== 'undefined' && attributeValues.hide !== null) {
-
-													// Set New Flag Value
-													requestData.attributeType.hideOnSubmission = attributeValues.hide;
-												}
-												
-												// Reset Flags Form
-												form.reset();
-												console.log(requestData);
-												// Make Request
-												Ext.Ajax.request({
-
-													url: 'api/v1/resource/attributes/attributetypes/' + attributeData.attributeType,
-													method: 'PUT',
-													jsonData: requestData,
-													success: function(response, opts) {
-
-														// Check If We Are On The Final Request
-														if (++attributeUpdateCount === selected) {
-
-															// Provide Success Notification
-															Ext.toast('All Attributes Have Been Processed', 'Success');
-
-															// Refresh Store
-															attributeStore.load();
-
-															// Unmask Grid
-															attributeGrid.unmask();
-														}
-													},
-													failure: function(response, opts) {
-
-														// Provide Error Notification
-														Ext.toast('An Attribute Failed To Update', 'Error');
-
-														// Provide Log Information
-														console.log(response);
-
-														// Check If We Are On The Final Request
-														if (++attributeUpdateCount === selected) {
-
-															// Provide Success Notification
-															Ext.toast('All Attributes Have Been Processed', 'Success');
-
-															// Refresh Store
-															attributeStore.load();
-
-															// Unmask Grid
-															attributeGrid.unmask();
-														}
-													}
-												});
-											}
+											});
 										}
 									},
 									{
@@ -1186,6 +1136,25 @@
 						Ext.getCmp('set-flags-multiples-group-true').unmask();
 						Ext.getCmp('set-flags-multiples-group-false').unmask();
 						Ext.getCmp('set-flags-multiples-group-none').unmask();
+					},
+					show: function (me) {
+						var selection = Ext.getCmp('attributeGrid').getSelection();
+						var needsDefaultValueFlg = false;
+						Ext.Array.forEach(selection, function (item, index) {
+							if (item.data.requiredFlg && !item.data.defaultAttributeCode) {
+								needsDefaultValueFlg = true;
+							}
+						});
+
+						var hideOnSubmissionField = Ext.getCmp('set-flags-hide-group');
+						if (needsDefaultValueFlg) {
+							var statusInfo = 'One or more of the attributes selected appear to be \'required\', but have no <b>default value</b>. '
+											+ 'The \'Hide On Submission\' flag cannot be set for attributes that are required and do not have a default value.';
+							hideOnSubmissionField.setFieldLabel('Hide On Submission <i style="color: #f4b642" class="fa fa-exclamation-triangle" aria-hidden="true" data-qtip="' + statusInfo + '"></i>');
+						}
+						else {
+							hideOnSubmissionField.setFieldLabel('Hide On Submission');
+						}
 					}
 				}
 			});
@@ -1436,7 +1405,7 @@
 				title: 'Add Attachment',
 				iconCls: 'fa fa-lg fa-paperclip',
 				width: '40%',
-				height: 175,
+				height: 200,
 				y: 60,
 				modal: true,
 				maximizable: false,
@@ -1453,15 +1422,14 @@
 						},
 						items: [
 							{
-								xtype: 'filefield',
+								xtype: 'fileFieldMaxLabel',
+								resourceLabel: 'Upload File',
+								itemId: 'upload',
+								buttonText: 'Select File...',
 								name: 'uploadFile',
 								width: '100%',
-								allowBlank: false,
-								fieldLabel: 'Choose a file to upload<span class="field-required" />',
-								buttonText: 'Select File...',
-								listeners: {
-									change: CoreUtil.handleMaxFileLimit
-								}
+								labelAlign: 'top',
+								allowBlank: false
 							}
 						]
 					}
@@ -1537,6 +1505,11 @@
 				}),
 				listeners: {
 					beforeLoad: function(store, operation, eOpts){
+						
+						var url = 'api/v1/resource/attributes/attributetypes/';
+						url += manageCodesWin.attributeType;
+						url += '/attributecodeviews';
+						store.getProxy().url = url;						
 						store.getProxy().extraParams = {
 							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
 							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
@@ -1815,16 +1788,6 @@
 				]
 			});
 			
-			var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
-				
-				isEditor: false,
-				mediaSelectionUrl: 'api/v1/resource/generalmedia',
-				closeAction: 'hide',
-				mediaHandler: function(link) {
-
-					Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: encodeURI(link) });
-				}
-			});
 
 			var editCodeWin = Ext.create('Ext.window.Window', {
 				id: 'editCodeWin',
@@ -1862,6 +1825,7 @@
 								name: 'label',
 								allowBlank: false,
 								allowDecimal: true,
+								decimalPrecision: 20,
 								hidden: true
 							},								
 							{
@@ -1877,6 +1841,7 @@
 								name: 'typeCode',
 								allowBlank: false,
 								allowDecimal: true,
+								decimalPrecision: 20,
 								hidden: true
 							},							
 							{
@@ -1934,6 +1899,14 @@
 										text: 'Insert Media',
 										flex: 1,
 										handler: function() {
+											
+											var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
+												isEditor: false,
+												mediaSelectionUrl: 'api/v1/resource/generalmedia',			
+												mediaHandler: function(link) {
+													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: link });
+												}
+											});
 											
 											mediaWindow.show();
 										}
@@ -2200,7 +2173,6 @@
 				layout: 'fit',
 				items: [
 					codesGrid
-//				]
 				],
 				dockedItems: [
 					{
@@ -2225,390 +2197,410 @@
 				]
 			});
 
-
-			var editAttributeWin = Ext.create('Ext.window.Window', {
-				id: 'editAttributeWin',
-				title: 'Add/Edit Attribute',
-				modal: true,
-				width: '75%',
-				height: '90%',
-				maximizable: true,
-				y: '2em',
-				layout: 'fit',
-				listeners: {
-					show: function(win) {
-						Ext.defer(function(){
-							win.down('form').updateLayout(true, true);
-						}, 500);
+			var showAttributeWin = function(edit, title) {
+				
+				var formChange = {
+					change: function () {
+						Ext.getCmp('editAttributeForm').getForm().checkValidity();
 					}
-				},
-				items: [
-					{
-						xtype: 'form',
-						id: 'editAttributeForm',
-						autoScroll: true,
-						bodyStyle: 'padding: 10px;',
-						defaults: {
-							labelAlign: 'top',
-							width: '100%'
-						},
-						items: [
-							{
-								xtype: 'textfield',
-								id: 'editAttributeForm-label',
-								fieldLabel: 'Label<span class="field-required" />',
-								allowBlank: false,
-								name: 'description'
+				};			
+
+				var editAttributeWin = Ext.create('Ext.window.Window', {
+					id: 'editAttributeWin',
+					title: title,
+					modal: true,
+					edit: edit,
+					closeAction: 'destroy',
+					width: '75%',
+					height: '90%',
+					maximizable: true,
+					y: '2em',
+					layout: 'fit',
+					listeners: {
+						show: function(win) {
+							Ext.defer(function(){
+								win.down('form').updateLayout(true, true);
+							}, 500);
+						}
+					},
+					items: [
+						{
+							xtype: 'form',
+							id: 'editAttributeForm',
+							autoScroll: true,
+							bodyStyle: 'padding: 10px;',
+							trackResetOnLoad: true,
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
 							},
-							{
-								xtype: 'textfield',
-								id: 'editAttributeForm-code',
-								fieldLabel: 'Type Code<span class="field-required" />',
-								allowBlank: false,
-								name: 'attributeType'
-							},
-							{
-								xtype: 'combobox',
-								fieldLabel: 'Default Code',
-								id: 'editAttributeForm-defaultCode',
-								displayField: 'label',
-								valueField: 'code',
-								typeAhead: false,
-								editable: false,
-								value: '',
-								name: 'defaultAttributeCode',
-								hidden: true
-							},
-							{
-								xtype: 'panel',
-								html: '<b>Detailed Description</b>'
-							},
-							{
-								xtype: 'tinymce_textarea',
-								fieldStyle: 'font-family: Courier New; font-size: 12px;',
-								style: {border: '0'},
-								name: 'detailedDescription',
-								width: '100%',
-								height: 300,
-								maxLength: 255,
-								tinyMCEConfig: CoreUtil.tinymceConfig()
-							},
-							{
-								id: 'attributeValueType',
-								xtype: 'combobox',
-								fieldLabel: 'Code Value Type<span class="field-required" />',							
-								displayField: 'description',
-								valueField: 'code',
-								typeAhead: false,
-								editable: false,
-								name: 'attributeValueType',
-								store: {
-									autoLoad: true,
-									proxy: {
-										type: 'ajax',
-										url: 'api/v1/resource/lookuptypes/AttributeValueType'
-									}
-								}
-							},	
-							{
-								xtype: 'panel',
-								html: '<b>Associated Entry Types:</b>'
-							},
-							{
-								xtype: 'checkboxfield',
-								id: 'allEntryTypes',
-								boxLabel: 'Allow For All Entry Types',
-								value: true,
-								handler: function(box, value) {
-									if (value) {
-										Ext.getCmp('editAttributeForm-associatedComponentTypes').hide();
-									} else {
-										Ext.getCmp('editAttributeForm-associatedComponentTypes').show();
-									}
-								}
-							},
-							{
-								xtype: 'multiselector',
-								id: 'editAttributeForm-associatedComponentTypes',
-								hidden: true,
-								title: 'Allow this attribute for these entry types: (click plus icon to add)',
-								name: 'associatedComponentTypes',
-								fieldName: 'description',
-								fieldTitle: 'Entry Type',
-								viewConfig: {
-									deferEmptyText: false,
-									emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'editAttributeForm-label',
+									fieldLabel: 'Label<span class="field-required" />',
+									allowBlank: false,
+									name: 'description'
 								},
-								search: {
-									id: 'allowForTypesSearch',
-									field: 'description',
-									bodyStyle: 'background: white;',
-									store: Ext.create('Ext.data.Store', {
-										id: 'allowForTypesSearchStore',
+								{
+									xtype: 'textfield',
+									id: 'editAttributeForm-code',
+									fieldLabel: 'Type Code<span class="field-required" />',
+									allowBlank: false,
+									name: 'attributeType'
+								},
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Default Code',
+									id: 'editAttributeForm-defaultCode',
+									displayField: 'label',
+									valueField: 'code',
+									typeAhead: false,
+									editable: false,
+									value: '',
+									name: 'defaultAttributeCode',
+									hidden: true
+								},
+								{
+									xtype: 'panel',
+									html: '<b>Detailed Description</b>'
+								},
+								{
+									xtype: 'tinymce_textarea',
+									fieldStyle: 'font-family: Courier New; font-size: 12px;',
+									style: {border: '0'},
+									name: 'detailedDescription',
+									width: '100%',
+									height: 300,
+									maxLength: 255,
+									tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()
+								},
+								{
+									id: 'attributeValueType',
+									xtype: 'combobox',
+									fieldLabel: 'Code Value Type<span class="field-required" />',							
+									displayField: 'description',
+									valueField: 'code',
+									typeAhead: false,
+									editable: false,
+									name: 'attributeValueType',
+									store: {
+										autoLoad: true,
 										proxy: {
 											type: 'ajax',
-											url: 'api/v1/resource/componenttypes/lookup'												
-										},
-										autoLoad: true
-									})
-								}
-							},
-							{
-								xtype: 'panel',
-								html: '<b>Flags:</b>'
-							},
-							{
-								xtype: 'fieldcontainer',
-								layout: 'hbox',
-								defaultType: 'checkboxfield',
-								defaultLayout: '100%',
-								defaults: {
-									flex: 1
+											url: 'api/v1/resource/lookuptypes/AttributeValueType'
+										}
+									}
+								},	
+								{
+									xtype: 'panel',
+									html: '<b>Associated Entry Types:</b>'
 								},
-								items: [
-									{
-										name: 'requiredFlg',
-										id: 'requiredFlagCheckBox',
-										boxLabel: 'Required',
-										listeners: {
-											change: function(reqBox, newValue) {
-												if (newValue)
-													{
-														Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+								{
+									xtype: 'checkboxfield',
+									id: 'allEntryTypes',
+									boxLabel: 'Allow For All Entry Types',
+									value: true,
+									handler: function(box, value) {
+										if (value) {
+											Ext.getCmp('editAttributeForm-associatedComponentTypes').hide();
+										} else {
+											Ext.getCmp('editAttributeForm-associatedComponentTypes').show();
+										}
+									}
+								},
+								{
+									xtype: 'multiselector',
+									id: 'editAttributeForm-associatedComponentTypes',
+									hidden: true,
+									title: 'Allow this attribute for these entry types: (click plus icon to add)',
+									name: 'associatedComponentTypes',
+									fieldName: 'description',
+									fieldTitle: 'Entry Type',
+									viewConfig: {
+										deferEmptyText: false,
+										emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
+									},
+									search: {
+										id: 'allowForTypesSearch',
+										field: 'description',
+										bodyStyle: 'background: white;',
+										store: Ext.create('Ext.data.Store', {											
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/componenttypes/lookup'												
+											},
+											autoLoad: true
+										})
+									}
+								},
+								{
+									xtype: 'panel',
+									html: '<b>Flags:</b>'
+								},
+								{
+									xtype: 'fieldcontainer',
+									layout: 'hbox',
+									defaultType: 'checkboxfield',
+									defaultLayout: '100%',
+									defaults: {
+										flex: 1
+									},
+									items: [
+										{
+											name: 'requiredFlg',
+											id: 'requiredFlagCheckBox',
+											boxLabel: 'Required',
+											listeners: {
+												change: function(reqBox, newValue) {
+													if (newValue)
+														{
+															Ext.getCmp('editAttributeForm-typesRequiredFor').show();
 
-														var select = Ext.getCmp('editAttributeForm-defaultCode');
-														if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
-															select.setFieldLabel('Default Code<span class="field-required" />');
-															select.allowBlank = false;
-														} else {
+															var select = Ext.getCmp('editAttributeForm-defaultCode');
+															if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
+																select.setFieldLabel('Default Code<span class="field-required" />');
+																select.allowBlank = false;
+															} else {
+																select.setFieldLabel('Default Code');
+																select.allowBlank = true;
+																select.clearInvalid();
+															}
+
+															var mult = Ext.getCmp('multipleFlagCheckBox');
+															if (mult.getValue() == true) {
+																var msg = 'Attributes that allow multiple codes cannot be required. You may delete the';
+																msg += " 'allow multiple' flag, or keep the multiple codes flag and not set the required flag.";
+																Ext.MessageBox.show({
+																	title: 'Attributes Allowing Multiple Codes Cannot Be Required',
+																	msg: msg,
+																	buttonText: {yes: "Delete 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
+																	fn: function(btn) {
+																		if (btn === 'yes') {
+																			mult.setValue('false');
+																		} else if (btn === 'no') {
+																			reqBox.setValue('false');
+																		}
+																	}
+																});	
+															}
+														}
+														else {
+															Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
+															var select = Ext.getCmp('editAttributeForm-defaultCode');
 															select.setFieldLabel('Default Code');
 															select.allowBlank = true;
 															select.clearInvalid();
 														}
-
-														var mult = Ext.getCmp('multipleFlagCheckBox');
-														if (mult.getValue() == true) {
-															var msg = 'Attributes that allow multiple codes cannot be required. You may delete the';
-															msg += " 'allow multiple' flag, or keep the multiple codes flag and not set the required flag.";
+													formChange.change();
+												}
+											}
+										},
+										{
+											name: 'visibleFlg',
+											boxLabel: 'Visible',
+											listeners: formChange
+										},
+										{
+											name: 'importantFlg',
+											boxLabel: 'Important',
+											allowBlank: true,
+											listeners: formChange
+										},
+										{
+											name: 'architectureFlg',
+											boxLabel: 'Architecture',
+											listeners: formChange
+										},
+										{
+											name: 'allowMultipleFlg',
+											id: 'multipleFlagCheckBox',
+											boxLabel: 'Allow Multiple',
+											listeners: {
+												change: function(multiple, newValue) {
+													if (newValue === true) {
+														var rf = Ext.getCmp('requiredFlagCheckBox')
+														if (rf.getValue() == true) {
+															var msg = 'Attributes that are required are not allowed to have multiple codes. You may either';
+															msg += ' delete the required flag, or keep the required flag and not allow multiple codes.'
 															Ext.MessageBox.show({
-																title: 'Attributes Allowing Multiple Codes Cannot Be Required',
+																title: 'Required Attributes Cannot Have Multiple Codes',
 																msg: msg,
-																buttonText: {yes: "Delete 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
+																buttonText: {yes: "Delete Required Flag", no: "Keep Required Flag"},
 																fn: function(btn) {
 																	if (btn === 'yes') {
-																		mult.setValue('false');
+																		rf.setValue('false');
 																	} else if (btn === 'no') {
-																		reqBox.setValue('false');
+																		multiple.setValue('false');
 																	}
 																}
 															});	
 														}
 													}
+													formChange.change();
+												}
+											}
+										},
+										{
+											name: 'allowUserGeneratedCodes',
+											boxLabel: 'Allow User-Created Codes',
+											listeners: formChange
+										},
+										{
+											name: 'hideOnSubmission',
+											boxLabel: 'Hide on Submission',
+											id: 'editAttributeForm-hideOnSubmission',
+											toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
+											listeners: {
+												change: function(box, newValue) {
+													var select = Ext.getCmp('editAttributeForm-defaultCode');
+													if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
+														select.setFieldLabel('Default Code<span class="field-required" />');
+														select.allowBlank = false;
+													}
 													else {
-														Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
-														var select = Ext.getCmp('editAttributeForm-defaultCode');
 														select.setFieldLabel('Default Code');
 														select.allowBlank = true;
 														select.clearInvalid();
 													}
-											}
-										}
-									},
-									{
-										name: 'visibleFlg',
-										boxLabel: 'Visible'
-									},
-									{
-										name: 'importantFlg',
-										boxLabel: 'Important'
-									},
-									{
-										name: 'architectureFlg',
-										boxLabel: 'Architecture'
-									},
-									{
-										name: 'allowMultipleFlg',
-										id: 'multipleFlagCheckBox',
-										boxLabel: 'Allow Multiple',
-										listeners: {
-											change: function(multiple, newValue) {
-												if (newValue === true) {
-													var rf = Ext.getCmp('requiredFlagCheckBox')
-													if (rf.getValue() == true) {
-														var msg = 'Attributes that are required are not allowed to have multiple codes. You may either';
-														msg += ' delete the required flag, or keep the required flag and not allow multiple codes.'
-														Ext.MessageBox.show({
-															title: 'Required Attributes Cannot Have Multiple Codes',
-															msg: msg,
-															buttonText: {yes: "Delete Required Flag", no: "Keep Required Flag"},
-															fn: function(btn) {
-																if (btn === 'yes') {
-																	rf.setValue('false');
-																} else if (btn === 'no') {
-																	multiple.setValue('false');
-																}
-															}
-														});	
-													}
+													formChange.change();
 												}
 											}
 										}
-									},
-									{
-										name: 'allowUserGeneratedCodes',
-										boxLabel: 'Allow User-Created Codes'
-									},
-									{
-										name: 'hideOnSubmission',
-										boxLabel: 'Hide on Submission',
-										id: 'editAttributeForm-hideOnSubmission',
-										toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
-										listeners: {
-											change: function(box, newValue) {
-												var select = Ext.getCmp('editAttributeForm-defaultCode');
-												if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
-													select.setFieldLabel('Default Code<span class="field-required" />');
-													select.allowBlank = false;
-												}
-												else {
-													select.setFieldLabel('Default Code');
-													select.allowBlank = true;
-													select.clearInvalid();
-												}
-												var form = Ext.getCmp('editAttributeForm');
-												form.getForm().checkValidity();
-											}
-										}
-									}
-								]
-							},
-							{
-								xtype: 'multiselector',
-								id: 'editAttributeForm-typesRequiredFor',
-								hidden: true,
-								title: 'Require this attribute for these entry types: (click plus icon to add)',
-								name: 'typesRequiredFor',
-								fieldName: 'description',
-								fieldTitle: 'Entry Type',
-								viewConfig: {
-									deferEmptyText: false,
-									emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
+									]
 								},
-								search: {									
-									field: 'description',
-									autoEl: {
-										"data-test": "reqAttrList"
+								{
+									xtype: 'multiselector',
+									id: 'editAttributeForm-typesRequiredFor',
+									hidden: true,
+									title: 'Require this attribute for these entry types: (click plus icon to add)',
+									name: 'typesRequiredFor',
+									fieldName: 'description',
+									fieldTitle: 'Entry Type',
+									viewConfig: {
+										deferEmptyText: false,
+										emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
 									},
-									bodyStyle: 'background: white;',
-									store: Ext.create('Ext.data.Store', {
-										id: 'requiredTypesSearchStore',
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/componenttypes/lookup'												
+									search: {									
+										field: 'description',
+										autoEl: {
+											"data-test": "reqAttrList"
 										},
-										autoLoad: true
-									})
-								}
-							},
-						],
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Save',
-										id: 'editAttributeWin-save',
-										iconCls: 'fa fa-lg fa-save icon-button-color-save',
-										formBind: true,
-										handler: function () {
-											var form = Ext.getCmp('editAttributeForm');
-											if (form.isValid()) {
-												
-												// Get Form Data
-												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
-												var formData = form.getValues();
-																								
-												// Build Request
-												var edit = editAttributeWin.edit;
-												var url = 'api/v1/resource/attributes/attributetypes';
-												var method = 'POST';
-												if (edit) {
-													url += '/' + formData.attributeType;
-													method = 'PUT';
-												}
+										bodyStyle: 'background: white;',
+										store: Ext.create('Ext.data.Store', {											
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/componenttypes/lookup'												
+											},
+											autoLoad: true
+										})
+									},
+									listeners: formChange
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											id: 'editAttributeWin-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											formBind: true,
+											handler: function () {
+												var form = Ext.getCmp('editAttributeForm');
+												if (form.isValid()) {
 
-												// Modify formData to exist inside AttributeSaveType
-												var data = {};
-												data.attributeType = formData;
+													// Get Form Data
+													// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
+													var formData = form.getValues();
 
-												// If we have a set of entry types for which this attribute is associated,
-												// compile them into the consumption format.
-												if (!Ext.getCmp('allEntryTypes').getValue()) { // If box is NOT checked, include the entry type associations.
-													var associatedTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().getData().getValues('code','data');
-
-													data.associatedComponentTypes = [];
-
-													Ext.Array.each(associatedTypes, function(type) {
-														data.associatedComponentTypes.push({
-															componentType: type
-														});		
-													});
-												}
-
-
-												// If we have a set of entry types for which this attribute is required,
-												// compile them into the consumption format.
-												if (formData.requiredFlg) {
-													var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
-
-													data.componentTypeRestrictions = [];
-
-													Ext.Array.each(restrictedTypes, function(type) {
-														data.componentTypeRestrictions.push({
-															componentType: type
-														});		
-													});
-												}
-												
-												CoreUtil.submitForm({
-													url: url,
-													method: method,
-													data: data,
-													removeBlankDataItems: false,
-													form: Ext.getCmp('editAttributeForm'),
-													success: function (response, opts) {
-														Ext.toast('Saved Successfully', '', 'tr');
-														attributeStore.load();
-														Ext.getCmp('editAttributeForm').reset();
-														editAttributeWin.hide();
-													},
-													failure: function (response, opts) {
-														Ext.toast('Failed to save', '', 'tr');
+													// Build Request
+													var edit = editAttributeWin.edit;
+													var url = 'api/v1/resource/attributes/attributetypes';
+													var method = 'POST';
+													if (edit) {
+														url += '/' + formData.attributeType;
+														method = 'PUT';
 													}
-												});
+
+													// Modify formData to exist inside AttributeSaveType
+													var data = {};
+													data.attributeType = formData;
+
+													// If we have a set of entry types for which this attribute is associated,
+													// compile them into the consumption format.
+													if (!Ext.getCmp('allEntryTypes').getValue()) { // If box is NOT checked, include the entry type associations.
+														var associatedTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().getData().getValues('code','data');
+
+														data.associatedComponentTypes = [];
+
+														Ext.Array.each(associatedTypes, function(type) {
+															data.associatedComponentTypes.push({
+																componentType: type
+															});		
+														});
+													}
 
 
+													// If we have a set of entry types for which this attribute is required,
+													// compile them into the consumption format.
+													if (formData.requiredFlg) {
+														var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
+
+														data.componentTypeRestrictions = [];
+
+														Ext.Array.each(restrictedTypes, function(type) {
+															data.componentTypeRestrictions.push({
+																componentType: type
+															});		
+														});
+													}
+
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: data,
+														removeBlankDataItems: false,
+														form: Ext.getCmp('editAttributeForm'),
+														success: function (response, opts) {
+															Ext.toast('Saved Successfully', '', 'tr');
+															attributeStore.load();
+															editAttributeWin.close();
+														},
+														failure: function (response, opts) {
+															Ext.toast('Failed to save', '', 'tr');
+														}
+													});
+
+
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function () {
+												Ext.getCmp('editAttributeForm').reset();
+												Ext.getCmp('editAttributeWin').close();
 											}
 										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-										handler: function () {
-											Ext.getCmp('editAttributeForm').reset();
-											Ext.getCmp('editAttributeWin').hide();
-										}
-									}
-								]
-							}
-						]
-					}
-				]
-			});
+									]
+								}
+							]
+						}
+					]
+				});
+				editAttributeWin.show();
+				
+			};
+			
+
+
 		
 			
 			addComponentToMainViewPort(attributeGrid);

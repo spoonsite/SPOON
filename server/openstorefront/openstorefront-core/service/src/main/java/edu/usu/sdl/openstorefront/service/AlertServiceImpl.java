@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,10 +106,13 @@ public class AlertServiceImpl
 						if (alertContext.getDataTrigger() != null) {
 							boolean adminModified = false;
 							if (alertContext.getDataTrigger() instanceof StandardEntity) {
-								adminModified = Convert.toBoolean(((StandardEntity)alertContext.getDataTrigger()).getAdminModified());
+								adminModified = Convert.toBoolean(((StandardEntity) alertContext.getDataTrigger()).getAdminModified());
+								if (adminModified == false) {
+									adminModified = SecurityUtil.isEvaluatorUser();
+								}
 							}
-								
-							if (adminModified == false) {	
+
+							if (adminModified == false) {
 								if (alertContext.getDataTrigger() instanceof ComponentTag) {
 									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnTags())) {
 										createUserMessage = true;
@@ -121,7 +125,7 @@ public class AlertServiceImpl
 										|| alertContext.getDataTrigger() instanceof ComponentQuestionResponse) {
 									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
 										createUserMessage = true;
-									}							
+									}
 								} else if (alertContext.getDataTrigger() instanceof Contact) {
 									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
 										createUserMessage = true;
@@ -173,7 +177,7 @@ public class AlertServiceImpl
 					userMessageType = UserMessageType.CHANGE_REQUEST_ALERT;
 					createUserMessage = true;
 					break;
-				case AlertType.USER_MANAGEMENT: 
+				case AlertType.USER_MANAGEMENT:
 					if (alert.getUserManagementAlertOption() != null) {
 						if (alertContext.getDataTrigger() instanceof UserRegistration) {
 							if (alert.getUserManagementAlertOption().getAlertOnUserRegistration()) {
@@ -200,15 +204,15 @@ public class AlertServiceImpl
 					userMessage.setAlertId(alert.getAlertId());
 					userMessage.setUserMessageType(userMessageType);
 					getUserService().queueUserMessage(userMessage);
-					
+
 					UserProfile userProfile = new UserProfile();
-					userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);					
-					userProfile.setEmail(email.getEmail());					
+					userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+					userProfile.setEmail(email.getEmail());
 					userProfile = (UserProfile) userProfile.find();
 					if (userProfile != null) {
 						if (AlertType.CHANGE_REQUEST.equals(alert.getAlertType())) {
 
-							String message = "";	
+							String message = "";
 							String componentId = null;
 							if (alertContext.getDataTrigger() instanceof Component) {
 								Component component = (Component) alertContext.getDataTrigger();
@@ -230,7 +234,7 @@ public class AlertServiceImpl
 
 						if (AlertType.COMPONENT_SUBMISSION.equals(alert.getAlertType())) {
 
-							String message = "";	
+							String message = "";
 							String componentId = null;
 							if (alertContext.getDataTrigger() instanceof Component) {
 								Component component = (Component) alertContext.getDataTrigger();
@@ -240,7 +244,7 @@ public class AlertServiceImpl
 								} else {
 									message = "Entry: " + component.getName() + " has been submitted for approval.";
 								}
-							}							
+							}
 							NotificationEvent notificationEvent = new NotificationEvent();
 							notificationEvent.setEventType(NotificationEventType.SUBMISSION);
 							notificationEvent.setUsername(userProfile.getUsername());

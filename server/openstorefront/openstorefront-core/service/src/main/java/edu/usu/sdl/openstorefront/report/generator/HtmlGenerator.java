@@ -16,12 +16,20 @@
 package edu.usu.sdl.openstorefront.report.generator;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.core.entity.Report;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -32,23 +40,53 @@ public class HtmlGenerator
 		extends BaseGenerator
 {
 
-	BufferedWriter writer;
+	private static final Logger LOG = Logger.getLogger(HtmlGenerator.class.getName());
 
-	public HtmlGenerator(Report report)
+	private BufferedWriter writer;
+
+	public HtmlGenerator(GeneratorOptions generatorOption)
 	{
-		super(report);
+		super(generatorOption);
 	}
 
 	@Override
 	public void init()
 	{
-		Objects.requireNonNull(report, "The generator requires the report to exist.");
-		Objects.requireNonNull(report.getReportId(), "The report id is required.");
+		if (generatorOptions.getOutputStream() != null) {
+			writer = new BufferedWriter(new OutputStreamWriter(generatorOptions.getOutputStream()));
+		} else {
+			File reportFile = null;
+			if (StringUtils.isNotBlank(generatorOptions.getOverrideOutputPath())) {
+				reportFile = new File(generatorOptions.getOverrideOutputPath());
+			} else {
+				Objects.requireNonNull(report, "The generator requires the report to exist.");
+				Objects.requireNonNull(report.getReportId(), "The report id is required.");
+				reportFile = report.pathToReport().toFile();
+			}
+
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reportFile)));
+			} catch (FileNotFoundException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			}
+		}
+	}
+
+	public void addDefaultStartBlock()
+	{
 		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(report.pathToReport().toFile())));
 			writer.append("<html><body style='padding: 20px'>");
 		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to open file to write report.", "Check file system permissions", ex);
+			throw new OpenStorefrontRuntimeException("Unable write to report.", "System error or bad outputstream", ex);
+		}
+	}
+
+	public void addDefaultEndBlock()
+	{
+		try {
+			writer.append("</body></html>");
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable write to report.", "System error or bad outputstream", ex);
 		}
 	}
 
@@ -84,7 +122,7 @@ public class HtmlGenerator
 		addLine("<hr>");
 	}
 
-	public void addSpace()
+	public void addBreak()
 	{
 		addLine("<br>");
 	}
@@ -101,15 +139,31 @@ public class HtmlGenerator
 		}
 	}
 
+	public String convertImageToDataUrl(String pathToMedia, String mimetype)
+	{
+		Path path = Paths.get(pathToMedia);
+		byte[] data;
+		try {
+			data = Files.readAllBytes(path);
+			byte[] encoded = Base64.getEncoder().encode(data);
+			String imgDataAsBase64 = new String(encoded);
+			String imgAsBase64 = "data:" + mimetype + ";base64," + imgDataAsBase64;
+			return imgAsBase64;
+		} catch (IOException ex) {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find or read media. Path: {0}", pathToMedia));
+			LOG.log(Level.FINER, null, ex);
+		}
+		return "";
+	}
+
 	@Override
 	protected void internalFinish()
 	{
 		if (writer != null) {
 			try {
-				writer.append("</body></html>");
 				writer.close();
 			} catch (IOException ex) {
-				throw new OpenStorefrontRuntimeException("Failed to close report file. Report: " + report.pathToReport(), ex);
+				throw new OpenStorefrontRuntimeException("Failed to close report output.", ex);
 			}
 		}
 	}

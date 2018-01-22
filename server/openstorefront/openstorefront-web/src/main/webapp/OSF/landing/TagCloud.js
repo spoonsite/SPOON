@@ -97,7 +97,7 @@ Ext.define('OSF.landing.TagCloudView', {
 		});			
 
 		Ext.Ajax.request({
-			url: 'api/v1/resource/components/tagviews',				
+			url: 'api/v1/resource/components/tagviews?approvedOnly=true',				
 			success: function(response, opts) {
 				var tags = Ext.decode(response.responseText);
 				var groupedTags = [];
@@ -119,6 +119,7 @@ Ext.define('OSF.landing.TagCloudView', {
 				});
 
 				var maxFontSize = 5;
+				var minFontSize = .625;
 				var maxCount = 0;
 				var minCount = 0;
 				Ext.Array.each(groupedTags, function(tag) {
@@ -131,6 +132,9 @@ Ext.define('OSF.landing.TagCloudView', {
 				});
 				Ext.Array.each(groupedTags, function(tag) {
 					var tagSize = Math.abs((maxFontSize * (tag.count - minCount)) / (maxCount - minCount));
+					if (tagSize < minFontSize) {
+						tagSize = minFontSize;
+					}
 					tag.tagSize = tagSize;
 				});
 

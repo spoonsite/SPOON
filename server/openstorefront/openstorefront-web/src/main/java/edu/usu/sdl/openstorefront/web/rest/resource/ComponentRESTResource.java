@@ -63,7 +63,6 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -77,6 +76,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.core.view.ComponentPrintView;
@@ -147,7 +147,6 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-// </editor-fold>
 
 /**
  * ComponentRESTResource Resource
@@ -179,9 +178,14 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Get a list of components based on filterQueryParams for selection list.")
 	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(LookupModel.class)
+	@DataType(ComponentLookupModel.class)
 	@Path("/lookup")
-	public Response getComponentLookupList(@BeanParam ComponentFilterParams filterQueryParams)
+	public Response getComponentLookupList(
+			@BeanParam ComponentFilterParams filterQueryParams,
+			@QueryParam("includePending")
+			@APIDescription("Include Pending change request")
+			@DefaultValue("false") boolean includePending
+	)
 	{
 		if (filterQueryParams != null) {
 
@@ -190,7 +194,7 @@ public class ComponentRESTResource
 				return sendSingleEntityResponse(validationResult.toRestError());
 			}
 
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
@@ -212,34 +216,38 @@ public class ComponentRESTResource
 				componentExample.setComponentType(null);
 			}
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
-			components = FilterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
+
+			if (!includePending) {
+				components.removeIf(c -> {
+					return Component.PENDING_STATUS.equals(c.getActiveStatus());
+				});
 			}
+
+			components = filterEngine.filter(components);
+			lookupModels = ComponentLookupModel.toView(components);
 			lookupModels = filterQueryParams.filter(lookupModels);
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
 		} else {
-			List<LookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
-			components = FilterEngine.filter(components);
-			for (Component component : components) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(component.getComponentId());
-				lookupModel.setDescription(component.getName());
-				lookupModels.add(lookupModel);
+
+			if (!includePending) {
+				components.removeIf(c -> {
+					return Component.PENDING_STATUS.equals(c.getActiveStatus());
+				});
 			}
 
-			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			components = filterEngine.filter(components);
+			lookupModels = ComponentLookupModel.toView(components);
+
+			GenericEntity<List<ComponentLookupModel>> entity = new GenericEntity<List<ComponentLookupModel>>(lookupModels)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -257,7 +265,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
-		componentResources = FilterEngine.filter(componentResources, true);
+		componentResources = filterEngine.filter(componentResources, true);
 
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -333,7 +341,7 @@ public class ComponentRESTResource
 		List<Component> componentViews = new ArrayList<>();
 		idList.forEach(componentId -> {
 			Component view = service.getPersistenceService().findById(Component.class, componentId);
-			view = FilterEngine.filter(view);
+			view = filterEngine.filter(view);
 			if (view != null) {
 				componentViews.add(view);
 			}
@@ -353,7 +361,7 @@ public class ComponentRESTResource
 	)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
-		view = FilterEngine.filter(view);
+		view = filterEngine.filter(view);
 		return sendSingleEntityResponse(view);
 	}
 
@@ -444,7 +452,7 @@ public class ComponentRESTResource
 									fileNameMediaSet.add(name);
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
 							}
 						}
 					}
@@ -461,7 +469,7 @@ public class ComponentRESTResource
 									fileNameResourceSet.add(name);
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
 							}
 						}
 					}
@@ -539,7 +547,7 @@ public class ComponentRESTResource
 		componentTagExample.setText(tagText);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(componentTagExample);
-		tags = FilterEngine.filter(tags, true);
+		tags = filterEngine.filter(tags, true);
 
 		if (approvedOnly) {
 			tags = tags.stream()
@@ -718,6 +726,7 @@ public class ComponentRESTResource
 				}
 			}
 
+			//if attribute do
 			service.getComponentService().saveComponent(component);
 			Component updatedComponent = new Component();
 			updatedComponent.setComponentId(componentId);
@@ -866,12 +875,11 @@ public class ComponentRESTResource
 			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
 		ComponentPrintView componentPrint = null;
-		ComponentDetailView componentDetail = null;
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+
 		if (type.equals("print")) {
-			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
-			componentPrint = ComponentPrintView.toView(temp);
-		} else {
-			componentDetail = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(componentDetail);
+			componentDetail = null;
 		}
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
@@ -1313,6 +1321,30 @@ public class ComponentRESTResource
 	}
 
 	@POST
+	@APIDescription("Add a list of attributes to the entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attributeList")
+	public Response addComponentAttributes(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam List<ComponentAttribute> attributeList)
+	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+		ValidationResult validationResult = new ValidationResult();
+		attributeList.forEach((attribute) -> {
+			validationResult.merge(saveAttribute(componentId, attribute));
+		});
+		if (!validationResult.valid()) {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok().build();
+	}
+
+	@POST
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAttribute.class)
@@ -1326,7 +1358,18 @@ public class ComponentRESTResource
 		if (response != null) {
 			return response;
 		}
+		ValidationResult validationResult = saveAttribute(componentId, attribute);
+		if (!validationResult.valid()) {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.created(URI.create("v1/resource/components/"
+				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
+	}
 
+	private ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
+	{
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
 
@@ -1336,13 +1379,8 @@ public class ComponentRESTResource
 		validationResult.merge(service.getComponentService().checkComponentAttribute(attribute));
 		if (validationResult.valid()) {
 			service.getComponentService().saveComponentAttribute(attribute);
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create("v1/resource/components/"
-				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
-				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
-				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
+		return validationResult;
 	}
 	// </editor-fold>
 
@@ -3213,6 +3251,7 @@ public class ComponentRESTResource
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
 		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
+		componentReview.setDataSensitivity(review.getDataSensitivity());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
@@ -3524,26 +3563,37 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		List<ComponentTag> componentTags = service.getComponentService().getComponentDetails(componentId).getTags();
-		List<ComponentTag> allTags = service.getComponentService().getTagCloud();
-		List<ComponentTag> filteredTags = new ArrayList<>();
-		
-		for (ComponentTag tag : allTags) {
-			boolean pass = true;
-			for (ComponentTag myTag : componentTags) {
-				if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
-					pass = false;
-					break;
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		Component component = componentExample.find();
+
+		if (component != null) {
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(componentId);
+			List<ComponentTag> componentTags = componentTagExample.findByExample();
+
+			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+			List<ComponentTag> filteredTags = new ArrayList<>();
+
+			for (ComponentTag tag : allTags) {
+				boolean pass = true;
+				for (ComponentTag myTag : componentTags) {
+					if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+						pass = false;
+						break;
+					}
+				}
+				if (pass) {
+					filteredTags.add(tag);
 				}
 			}
-			if (pass) {
-				filteredTags.add(tag);
-			}
-		}
 
-		return filteredTags;
+			return filteredTags;
+		} else {
+			return service.getComponentService().getTagCloud();
+		}
 	}
-	
+
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})

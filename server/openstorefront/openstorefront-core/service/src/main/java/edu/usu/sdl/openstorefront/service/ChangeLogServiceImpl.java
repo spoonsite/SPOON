@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Handles creating change log record
@@ -179,6 +180,12 @@ public class ChangeLogServiceImpl
 	@Override
 	public <T extends StandardEntity> ChangeLog logStatusChange(T statusEntity, String newStatus)
 	{
+		return logStatusChange(statusEntity, newStatus, null);
+	}
+
+	@Override
+	public <T extends StandardEntity> ChangeLog logStatusChange(T statusEntity, String newStatus, String comment)
+	{
 		ChangeLog changeLog = new ChangeLog();
 
 		statusEntity = unwrapProxy(statusEntity);
@@ -190,6 +197,9 @@ public class ChangeLogServiceImpl
 		changeLog.setField(StandardEntity.FIELD_ACTIVE_STATUS);
 		changeLog.setOldValue(statusEntity.getActiveStatus());
 		changeLog.setNewValue(newStatus);
+		if (StringUtils.isNotBlank(comment)) {
+			changeLog.setComment(comment);
+		}
 		setParent(changeLog, statusEntity);
 
 		saveChangeRecord(changeLog);

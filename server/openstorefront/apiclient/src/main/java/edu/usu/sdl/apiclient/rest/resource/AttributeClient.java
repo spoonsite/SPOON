@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
@@ -80,7 +81,7 @@ public class AttributeClient
 
 	public void deleteMappingType(String type)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/attributexreftypes/" + type, null);
 	}
 
 	public Response downloadAttributeCodeAttachment(String type, String code)
@@ -133,9 +134,19 @@ public class AttributeClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response getAttributeTypeById(String type, boolean view, boolean all)
+	public AttributeType getAttributeTypeById(String type, Boolean view, Boolean all)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, String> params = new HashMap<>();
+
+		if (view != null) {
+			params.put("view", view.toString());
+		}
+		if (all != null) {
+			params.put("all", all.toString());
+		}
+
+		APIResponse response = client.httpGet(basePath + "/attributetypes/" + type, params);
+		return response.getResponse(AttributeType.class);
 	}
 
 	public Response getAttributeTypes(FilterQueryParams filterQueryParams)
@@ -187,9 +198,10 @@ public class AttributeClient
 		client.httpDelete(basePath + "/attributetypes/" + type + "/force", null);
 	}
 
-	public Response postAttributeCode(String type, AttributeCode attributeCode)
+	public AttributeCode postAttributeCode(String type, AttributeCode attributeCode)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/attributetypes/" + type + "/attributecodes", attributeCode, null);
+		return response.getResponse(AttributeCode.class);
 	}
 
 	public AttributeType postAttributeType(AttributeTypeSave attributeTypeSave)
@@ -203,9 +215,9 @@ public class AttributeClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response saveMapping(AttributeXRefView attributeXref)
+	public void saveMapping(AttributeXRefView attributeXref)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpPost(basePath + "/attributexreftypes/detail", attributeXref, null);
 	}
 
 	public Response updateAttributeCode(String type, AttributeTypeView attributeType)

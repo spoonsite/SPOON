@@ -79,7 +79,7 @@
 								},
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Password <span class="field-required" />',
+									fieldLabel: 'New Password <span class="field-required" />',
 									inputType: 'password',
 									name: 'password',
 									allowBlank: false,
@@ -227,7 +227,7 @@
 						{
 							region: 'center',
 							scrollable: true,
-							bodyStyle: 'background-image: url(images/grid.png); background-repeat: repeat;',
+							bodyStyle: 'background-image: url(images/grid.png); background-repeat: repeat;'
 						}
 					]
 				});				

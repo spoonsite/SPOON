@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
  * @author dshurtleff
  * @param <T>
  */
-public class SpecialOperatorModel< T extends BaseEntity>
+public class SpecialOperatorModel< T extends BaseEntity> implements WhereClause
 {
 
 	private GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();

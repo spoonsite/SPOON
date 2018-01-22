@@ -16,28 +16,37 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.SchedulerException;
 
 /**
  * Handles report work-flow
@@ -49,7 +58,7 @@ public class ReportServiceImpl
 		implements ReportService
 {
 
-	private static final Logger log = Logger.getLogger(OrientPersistenceService.class.getName());
+	private static final Logger LOG = Logger.getLogger(OrientPersistenceService.class.getName());
 
 	private static final int MAX_RETRIES = 3;
 
@@ -74,7 +83,7 @@ public class ReportServiceImpl
 		//save Report
 		Report managedReport;
 		if (StringUtils.isBlank(report.getReportId())) {
-			managedReport = queueReport(report);
+			queueReport(report);
 			managedReport = persistenceService.findById(Report.class, report.getReportId());
 		} else {
 			managedReport = persistenceService.findById(Report.class, report.getReportId());
@@ -148,7 +157,7 @@ public class ReportServiceImpl
 				if (path.toFile().exists()) {
 					boolean success = path.toFile().delete();
 					if (success == false) {
-						log.log(Level.WARNING, MessageFormat.format("Unable to remove old report: {0}", path.toString()));
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to remove old report: {0}", path.toString()));
 					}
 				}
 			}
@@ -157,17 +166,23 @@ public class ReportServiceImpl
 	}
 
 	@Override
-	public Map<String, List<String>> getSupportedFormats()
+	public List<ReportFormat> getSupportedFormats(String reportType, String reportTranmissionType)
 	{
-		Map<String, List<String>> formatMap = new HashMap<>();
+		Report report = new Report();
+		report.setReportType(reportType);
+		BaseReport baseReport = BaseReport.getReport(report);
+		List<ReportFormat> reportFormat = baseReport.getSupportedFormats(reportTranmissionType);
+		return reportFormat;
+	}
 
-		//formats
-		List<ReportType> reportTypes = getLookupService().findLookup(ReportType.class);
-		reportTypes.stream().forEach((reportType) -> {
-			formatMap.put(reportType.getCode(), reportType.getSupportedFormats());
-		});
-
-		return formatMap;
+	@Override
+	public List<ReportTransmissionType> getSupportedOutputs(String reportType)
+	{
+		Report report = new Report();
+		report.setReportType(reportType);
+		BaseReport baseReport = BaseReport.getReport(report);
+		List<ReportTransmissionType> transmissionTypes = baseReport.getSupportedOutputs();
+		return transmissionTypes;
 	}
 
 	@Override
@@ -184,6 +199,15 @@ public class ReportServiceImpl
 			scheduledReport.populateBaseCreateFields();
 			persistenceService.persist(scheduledReport);
 		}
+
+		if (StringUtils.isNotBlank(scheduledReport.getScheduleIntervalCron())) {
+			try {
+				JobManager.addReportJob(scheduledReport.getScheduleReportId(), scheduledReport.getReportType(), scheduledReport.getScheduleIntervalCron());
+			} catch (SchedulerException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to create the cron job for report.", "See error ticket/log for issue", ex);
+			}
+		}
+
 		return scheduledReport;
 	}
 
@@ -193,6 +217,128 @@ public class ReportServiceImpl
 		ScheduledReport scheduledReport = persistenceService.findById(ScheduledReport.class, scheduledReportId);
 		if (scheduledReport != null) {
 			persistenceService.delete(scheduledReport);
+		}
+	}
+
+	@Override
+	public void deleteExpiredReports()
+	{
+		//	go through all reports and delete those which are
+		//		"expired" - is older than configured report lifetime.
+		LocalDate expirationLocalDate;
+		LocalDate currentDate = LocalDate.now();
+
+		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1);
+		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+		Report reportExample = new Report();
+		Report filteredReportExample = new Report();
+		filteredReportExample.setCreateDts(expirationDate);
+
+		//	Query reports that are older than the configured expiration value
+		QueryByExample<Report> queryByExample = new QueryByExample<>(reportExample);
+		SpecialOperatorModel<Report> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.setExample(filteredReportExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Report> results = getPersistenceService().queryByExample(queryByExample);
+
+		//	Remove expired reports
+		for (Report report : results) {
+			deleteReport(report.getReportId());
+		}
+	}
+
+	@Override
+	public void disableAllScheduledReportsForUser(String username)
+	{
+		ScheduledReport scheduledReportExample = new ScheduledReport();
+		scheduledReportExample.setCreateUser(username);
+
+		ScheduledReport scheduledReportSetExample = new ScheduledReport();
+		scheduledReportSetExample.setActiveStatus(ScheduledReport.INACTIVE_STATUS);
+		scheduledReportSetExample.populateBaseUpdateFields();
+		persistenceService.updateByExample(ScheduledReport.class, scheduledReportSetExample, scheduledReportExample);
+	}
+
+	@Override
+	public void runScheduledReportNow(ScheduledReport scheduledReport)
+	{
+		Objects.requireNonNull(scheduledReport);
+
+		Report reportHistory = new Report();
+		reportHistory.setScheduled(true);
+		reportHistory.setScheduledId(scheduledReport.getScheduleReportId());
+		reportHistory.setReportFormat(scheduledReport.getReportFormat());
+		reportHistory.setReportType(scheduledReport.getReportType());
+		reportHistory.setReportOption(scheduledReport.getReportOption());
+		reportHistory.setCreateUser(scheduledReport.getCreateUser());
+		reportHistory.setIds(scheduledReport.getIds());
+		reportHistory.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+		reportHistory.setReportOutputs(scheduledReport.getReportOutputs());
+
+		Report reportProcessed = generateReport(reportHistory);
+
+		//repull as the report may be inactive or delete while this was running
+		ScheduledReport existingReport = persistenceService.findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
+
+		if (existingReport != null) {
+			scheduledReport.setLastRanDts(TimeUtil.currentDate());
+			scheduledReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+			saveScheduledReport(scheduledReport);
+		} else {
+			LOG.log(Level.FINE, "Scheduled report was removed.  Old Id: " + scheduledReport.getScheduleReportId());
+		}
+
+		if (RunStatus.ERROR.equals(reportProcessed.getRunStatus())) {
+			LOG.log(Level.SEVERE, MessageFormat.format("A scheduled report failed to generate: {0} schedule report id: {1}", new Object[]{TranslateUtil.translate(ReportType.class, scheduledReport.getReportType()), scheduledReport.getScheduleReportId()}));
+		}
+	}
+
+	@Override
+	public void updateStatusOnScheduledReport(String scheduledReportId, String activeStatus)
+	{
+		Objects.requireNonNull(scheduledReportId);
+		Objects.requireNonNull(activeStatus);
+
+		ScheduledReport report = persistenceService.findById(ScheduledReport.class, scheduledReportId);
+		if (report != null) {
+
+			boolean updateRecord = true;
+			boolean addJob = false;
+			switch (activeStatus) {
+				case ScheduledReport.ACTIVE_STATUS:
+					addJob = true;
+					break;
+				case ScheduledReport.INACTIVE_STATUS:
+					addJob = false;
+					break;
+				default:
+					LOG.log(Level.FINE, MessageFormat.format("Active Status not supported: {0}", activeStatus));
+					updateRecord = false;
+					break;
+			}
+
+			if (updateRecord) {
+				report.setActiveStatus(activeStatus);
+				report.populateBaseUpdateFields();
+				persistenceService.persist(report);
+			}
+
+			if (addJob
+					&& StringUtils.isNotBlank(report.getScheduleIntervalCron())) {
+				try {
+					JobManager.addReportJob(scheduledReportId, report.getReportType(), report.getScheduleIntervalCron());
+				} catch (SchedulerException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to schedule report.", ex);
+				}
+			} else {
+				JobManager.removeReportJob(scheduledReportId);
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find scheduled report", "Check id");
 		}
 	}
 

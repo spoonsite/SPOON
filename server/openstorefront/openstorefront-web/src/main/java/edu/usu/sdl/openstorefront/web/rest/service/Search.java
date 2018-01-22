@@ -27,7 +27,6 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
@@ -40,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -255,6 +255,23 @@ public class Search
 	}
 
 	@GET
+	@APIDescription("Get top viewed entries")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRecordStatistic.class)
+	@Path("/topviewed")
+	public Response getTopViewed(
+			@DefaultValue("5")
+			@QueryParam("max") int maxResults)
+	{
+		List<ComponentRecordStatistic> topViewed = service.getComponentService().findTopViewedComponents(maxResults);
+
+		GenericEntity<List<ComponentRecordStatistic>> entity = new GenericEntity<List<ComponentRecordStatistic>>(topViewed)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get Listing Stats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ListingStats.class)
@@ -267,7 +284,7 @@ public class Search
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
-		queryByExample.setAdditionalWhere(FilterEngine.queryComponentRestriction());
+		queryByExample.setAdditionalWhere(filterEngine.queryComponentRestriction());
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
@@ -301,7 +318,7 @@ public class Search
 			String data[] = {
 				view.getName(),
 				view.getOrganization(),
-				view.getDescription(),
+				StringProcessor.stripHtml(view.getDescription()),
 				sdf.format(view.getLastActivityDts()),
 				view.getComponentTypeDescription()
 			};

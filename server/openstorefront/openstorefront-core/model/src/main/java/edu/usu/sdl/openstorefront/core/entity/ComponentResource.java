@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -29,9 +28,7 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -41,28 +38,44 @@ import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author jlaw
+ * @author kbair
  */
 @APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent<ComponentResource>
-		implements LoggableModel<ComponentResource>
+		implements LoggableModel<ComponentResource>, MediaModel
 {
 
 	@PK(generated = true)
 	@NotNull
 	private String resourceId;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("For a local resource")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String fileName;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("For a local resource")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String originalName;
 
+	/**
+	 * @deprecated As of release 2.5, replaced by {@link #file}
+	 */
+	@Deprecated
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("For a local resource")
+	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
+
+	@APIDescription("A local resource file")
+	private MediaFile file;
 
 	@NotNull
 	@ConsumeField
@@ -97,11 +110,10 @@ public class ComponentResource
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
 				+ getDescription()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
-				+ getMimeType()
-				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ ((getFile() != null) ? getFile().getMimeType() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR : "")
 				+ getRestricted()
 				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
-				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
+				+ (StringUtils.isNotBlank(getLink()) ? getLink() : (getFile() != null) ? getFile().getOriginalName() : "");
 		return key;
 	}
 
@@ -122,10 +134,12 @@ public class ComponentResource
 			this.setFileName(null);
 			this.setOriginalName(null);
 			this.setMimeType(null);
+			this.setFile(null);
 		} else {
 			this.setFileName(resource.getFileName());
 			this.setOriginalName(resource.getOriginalName());
 			this.setMimeType(resource.getMimeType());
+			this.setFile(resource.getFile());
 		}
 		this.setDescription(resource.getDescription());
 		this.setLink(resource.getLink());
@@ -137,28 +151,19 @@ public class ComponentResource
 	@Override
 	public int customCompareTo(ComponentResource o)
 	{
-		ComponentResource componentResource = o;
-		int value = ReflectionUtil.compareObjects(getFileName(), componentResource.getFileName());
-		if (value == 0) {
-			value = ReflectionUtil.compareObjects(getMimeType(), componentResource.getMimeType());
-		}
+		int value = ReflectionUtil.compareObjects(getFile(), o.getFile());
 		return value;
 	}
 
 	/**
-	 * Get the path to the resource on disk. Note: this may be ran from a proxy
-	 * so don't use variable directly
+	 * Get the path to the resource on disk. 
 	 *
 	 * @return Resource or null if this doesn't represent a disk resource
 	 */
 	public Path pathToResource()
 	{
-		Path path = null;
-		if (StringUtils.isNotBlank(getFileName())) {
-			File resourceDir = FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
-			path = Paths.get(resourceDir.getPath() + "/" + getFileName());
-		}
-		return path;
+		//Note: this may be ran from a proxy so don't use variable directly
+		return (this.getFile() == null) ? null : this.getFile().path();
 	}
 
 	@Override
@@ -174,7 +179,7 @@ public class ComponentResource
 	@Override
 	public String addRemoveComment()
 	{
-		return TranslateUtil.translate(ResourceType.class, getResourceType()) + " - " + (getLink() != null ? getLink() : getOriginalName());
+		return TranslateUtil.translate(ResourceType.class, getResourceType()) + " - " + (getLink() != null ? getLink() : (getFile() != null ? getFile().getOriginalName() : ""));
 	}
 
 	public String getResourceId()
@@ -227,34 +232,79 @@ public class ComponentResource
 		this.restricted = restricted;
 	}
 
+	/**
+	 * @return name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getFileName()}
+	 */
+	@Deprecated
 	public String getFileName()
 	{
 		return fileName;
 	}
 
+	/**
+	 * @param fileName name of the file on the file system
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setFileName(String fileName)}
+	 */
+	@Deprecated
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
 
+	/**
+	 * @return filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getOriginalName()}
+	 */
+	@Deprecated
 	public String getOriginalName()
 	{
 		return originalName;
 	}
 
+	/**
+	 * @param originalName filename used by the original source
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setOriginalName(String originalName)}
+	 */
+	@Deprecated
 	public void setOriginalName(String originalName)
 	{
 		this.originalName = originalName;
 	}
 
+	/**
+	 * @return the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().getMimeType()}
+	 */
+	@Deprecated
 	public String getMimeType()
 	{
 		return mimeType;
 	}
 
+	/**
+	 * @param mimeType the mime type encoding of the file
+	 * @deprecated As of release 2.5, replaced by
+	 * {@link #getFile().setMimeType(String mimeType)}
+	 */
+	@Deprecated
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
 	}
 
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
+	}
 }

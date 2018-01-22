@@ -27,7 +27,6 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -37,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeConditi
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.RelevanceComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -57,7 +57,7 @@ import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
-import edu.usu.sdl.openstorefront.service.search.ReviewProConSeatchHandler;
+import edu.usu.sdl.openstorefront.service.search.ReviewProConSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.UserRatingSearchHandler;
@@ -217,7 +217,8 @@ public class SearchServiceImpl
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
 			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
 			if (element != null) {
-				return searchResult = (AdvanceSearchResult) element.getObjectValue();
+				searchResult = (AdvanceSearchResult) element.getObjectValue();
+				return searchResult;
 			}
 		}
 
@@ -280,7 +281,7 @@ public class SearchServiceImpl
 					break;
 				case REVIEWCON:
 				case REVIEWPRO:
-					handlers.add(new ReviewProConSeatchHandler(searchElements));
+					handlers.add(new ReviewProConSearchHandler(searchElements));
 					break;
 				default:
 					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
@@ -311,7 +312,7 @@ public class SearchServiceImpl
 
 			//get intermediate Results
 			if (!masterResults.isEmpty()) {
-				String dataFilterRestriction = FilterEngine.queryComponentRestriction();
+				String dataFilterRestriction = getFilterEngine().queryComponentRestriction();
 				if (StringUtils.isNotBlank(dataFilterRestriction)) {
 					dataFilterRestriction += " and ";
 				}
@@ -395,6 +396,11 @@ public class SearchServiceImpl
 
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {
 					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+				}
+
+				//	Order by relevance then name
+				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
+					Collections.sort(views, new RelevanceComparator<>());
 				}
 
 				//trim descriptions to max length

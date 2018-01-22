@@ -25,11 +25,17 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
+import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import static edu.usu.sdl.openstorefront.core.view.FilterQueryParams.FILTER_ALL;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +51,9 @@ public class ComponentRESTTestClient
 {
 
 	private static Set<String> componentIds = new HashSet<>();
+	private static Set<String> integrationCompIds = new HashSet<>();
 	private ComponentRESTClient apiComponentREST;
+	private AttributeTestClient apiAttributeTestClient = new AttributeTestClient(client, apiClient);
 
 	public ComponentRESTTestClient(ClientAPI client, APIClient apiClient)
 	{
@@ -53,9 +61,24 @@ public class ComponentRESTTestClient
 		apiComponentREST = new ComponentRESTClient(client);
 	}
 
+	public ComponentQuestion addAPIComponentQuestion(String question, Component component)
+	{
+		ComponentQuestion compQuestion = new ComponentQuestion();
+		compQuestion.setQuestion(question);
+		compQuestion.setOrganization(component.getOrganization());
+		compQuestion.setUserTypeCode(END_USER);
+		
+		compQuestion = apiComponentREST.addComponentQuestion(component.getComponentId(), compQuestion);
+		return compQuestion;
+	}
+
 	public ComponentAdminView getComponentByName(String componentName)
 	{
-		FilterQueryParams param = new ComponentFilterParams();
+		ComponentFilterParams param = new ComponentFilterParams();
+		param.setStatus(FILTER_ALL);
+		param.setApprovalState(FILTER_ALL);
+		param.setAll(Boolean.TRUE);
+		param.setMax(Integer.MAX_VALUE);
 		param.setComponentName(componentName);
 		ComponentAdminWrapper compAdminWrapper = apiComponentREST.getComponentList(param);
 		List<ComponentAdminView> views = compAdminWrapper.getComponents();
@@ -65,17 +88,33 @@ public class ComponentRESTTestClient
 			return views.get(0);
 		}
 	}
+	
+	public ComponentTag addTagToComponent(String tagName, Component component)
+	{
+		ComponentTag tag = new ComponentTag();
+		tag.setText(tagName);
+		tag.setActiveStatus("A");
+		tag.setCreateUser("admin");
+		tag.setCreateDts(TimeUtil.currentDate());
+		tag.setUpdateUser("admin");
+		tag.setUpdateDts(TimeUtil.currentDate());
+		return apiComponentREST.addComponentTag(component.getComponentId(), tag);
+	}
 
 	public Component createAPIComponent(String componentName)
 	{
-		return createAPIComponent(componentName, "AAA-BATMAN-AAA", "This an API test component", componentName + " - organization");
+		return createAPIComponent(componentName, "Arcturus-Canopus", "This an API test component", componentName + " Organization");
 	}
 
+	// Component is created with a required attribute
 	public Component createAPIComponent(String componentName, String componentType, String description, String organization)
 	{
+		apiAttributeTestClient.createAPIAttribute("BETELGEUSE","POLARIS","Polaris-star Test");
+		
 		Component component;
 		ComponentTypeTestClient componentTypeClient = apiClient.getComponentTypeTestClient();
 		ComponentType type = componentTypeClient.createAPIComponentType(componentType);
+		Organization entryOrg = apiClient.getOrganizationTestClient().createOrganization(organization);
 
 		ComponentAdminView adminView = getComponentByName(componentName);
 		if (adminView != null) {
@@ -85,7 +124,7 @@ public class ComponentRESTTestClient
 			component.setName(componentName);
 			component.setDescription(description);
 			component.setComponentType(type.getComponentType());
-			component.setOrganization(organization);
+			component.setOrganization(entryOrg.getName());
 			component.setApprovalState(ApprovalStatus.APPROVED);
 			component.setLastActivityDts(TimeUtil.currentDate());
 
@@ -112,9 +151,11 @@ public class ComponentRESTTestClient
 			RequiredForComponent reqComponent = new RequiredForComponent();
 			reqComponent.setComponent(component);
 			reqComponent.setAttributes(compAttributes);
+			
 
 			RequiredForComponent reqComponentAPI = apiComponentREST.createComponent(reqComponent);
 			component = reqComponentAPI.getComponent();
+
 		}
 
 		if (component != null) {
@@ -123,10 +164,37 @@ public class ComponentRESTTestClient
 
 		return component;
 	}
+	
+	public ComponentIntegration createAPIComponentIntegration(String componentName) throws InterruptedException
+	{
+		Component integrationComp = createAPIComponent(componentName, "IntegrationTestType", "IntegrationTest", "IntegrationOrg");
+		
+		ComponentIntegration integration = new ComponentIntegration();
+		integration.setComponentId(integrationComp.getComponentId());
+		integration.setStatus(RunStatus.COMPLETE);
+		
+//		LOG.log(Level.INFO, "Component: {0}", integration.getComponentId());
+//		
+//		Thread.sleep(1000);
+		
+		integration = apiComponentREST.saveIntegration(integrationComp.getComponentId(), integration);
+		
+		if (integration != null)
+		{
+			integrationCompIds.add(integration.getComponentId());
+		}
+		
+		return integration;
+	}
 
-	protected void deleteAPIComponent(String id)
+	public void deleteAPIComponent(String id)
 	{
 		apiComponentREST.deleteComponent(id);
+	}
+	
+	public void deleteAPIComponentIntegration(String componentId)
+	{
+		apiComponentREST.deleteComponentConfig(componentId);
 	}
 
 	@Override

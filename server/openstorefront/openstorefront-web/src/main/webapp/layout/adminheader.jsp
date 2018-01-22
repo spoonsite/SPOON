@@ -91,14 +91,35 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});			
+			});	
+			dataMenu.push({
+				text: 'Help',
+				menu: {
+					items: [
+						{
+							text: 'Frequently Asked Questions',
+							permission: 'ADMIN-FAQ',
+							handler: function(){
+								actionLoadContent('FAQ');
+							}										
+						},
+						{
+							text: 'Support Media',
+							permission: 'ADMIN-SUPPORT-MEDIA',
+							handler: function(){
+								actionLoadContent('Support-Media');
+							}							
+						}
+					]
+				}
+			});
 			dataMenu.push({
 				text: 'Highlights',
 				permission: 'ADMIN-HIGHLIGHTS',
 				handler: function(){
 					actionLoadContent('Highlights');
 				}
-			});
+			});			
 			dataMenu.push({
 				text: 'Integrations',
 				permission: 'ADMIN-INTEGRATION',
@@ -412,13 +433,15 @@
 					dockedItems: [
 						{
 							dock: 'top',
-							xtype: 'toolbar',														
+							xtype: 'toolbar',
+							overflowHandler: 'scroller',
 							items:[
 								{
 									text: 'Dashboard',
 									id: 'dashboardAdminHomeButton',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
+									margin: '0 10 0 0',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -432,6 +455,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-database icon-button-color-default',
+									margin: '0 13 0 0',
 									menu: {																				
 										listeners: {
 											beforerender: function () {
@@ -446,6 +470,7 @@
 									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
+									margin: '0 15 0 0',
 									menu: {																				
 										listeners: {
 											beforerender: function () {
@@ -546,6 +571,10 @@
 				});	
 				
 			});	
+			
+			Ext.defer(function(){
+				Ext.getCmp('topNavPanel').updateLayout(true, true);
+			}, 500);			
 
 			var actionLoadContent = function(key) {
 				window.location.href = 'AdminTool.action?load=' + key;

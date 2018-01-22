@@ -131,7 +131,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 							]
 						});					
 						entryViewWindow.show();
-						frame.load('view.jsp?fullPage=true&id=' + componentId);	
+						frame.load('view.jsp?fullPage=true&embedded=true&id=' + componentId);	
 						
 						frame.on('load', function(){
 							Ext.defer(function(){

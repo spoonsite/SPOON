@@ -18,12 +18,15 @@ package edu.usu.sdl.openstorefront.security;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -47,6 +50,8 @@ public class SecurityUtil
 
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
+	private static final ThreadLocal<AtomicBoolean> systemUser = new ThreadLocal<>();
+
 	/**
 	 * Is the current request logged in
 	 *
@@ -66,23 +71,6 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Check for Guest or Anonymous user
-	 *
-	 * @return true if guest
-	 */
-	public static boolean isGuest()
-	{
-		boolean guest;
-		try {
-			guest = !SecurityUtils.getSubject().isRemembered();
-		} catch (Exception e) {
-			//ignore
-			guest = true;
-		}
-		return guest;
-	}
-
-	/**
 	 * Gets the current user logged in.
 	 *
 	 * @return the username
@@ -90,6 +78,9 @@ public class SecurityUtil
 	public static String getCurrentUserName()
 	{
 		String username = OpenStorefrontConstant.ANONYMOUS_USER;
+		if (isSystemUser()) {
+			username = OpenStorefrontConstant.SYSTEM_USER;
+		}
 		try {
 			Subject currentUser = SecurityUtils.getSubject();
 			if (currentUser.getPrincipal() != null) {
@@ -102,6 +93,48 @@ public class SecurityUtil
 	}
 
 	/**
+	 * This will add the user to the callable to run; If the security is not
+	 * initialize then this will pass through. (Expected for System user prior
+	 * to system init)
+	 *
+	 * @param <V>
+	 * @param task
+	 * @return
+	 */
+	public static <V> Callable<V> associateSecurity(Callable<V> task)
+	{
+		try {
+			return SecurityUtils.getSubject().associateWith(task);
+		} catch (Exception e) {
+			//security manager is not active; pass through in this case
+			LOG.log(Level.FINEST, "Security not active?", e);
+			return task;
+		}
+	}
+
+	/**
+	 * Sets the current thread to be running under the system user
+	 */
+	public static void initSystemUser()
+	{
+		systemUser.set(new AtomicBoolean(true));
+	}
+
+	/**
+	 * Check to see if this the system user
+	 *
+	 * @return
+	 */
+	public static boolean isSystemUser()
+	{
+		if (systemUser.get() == null) {
+			return false;
+		} else {
+			return systemUser.get().get();
+		}
+	}
+
+	/**
 	 * Checks the current user to see if they are an entry admin
 	 *
 	 * @return true if the user is an entry admin
@@ -109,7 +142,7 @@ public class SecurityUtil
 	public static boolean isEntryAdminUser()
 	{
 		boolean admin = false;
-		try {			
+		try {
 			admin = hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		} catch (Exception e) {
 			LOG.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
@@ -118,19 +151,58 @@ public class SecurityUtil
 	}
 
 	/**
-	 * Find the current user context in the session
+	 * Checks the current user to see if they are an evaluator
 	 *
-	 * @return context or null if not found
+	 * @return true if the user is an evaluator
+	 */
+	public static boolean isEvaluatorUser()
+	{
+		boolean admin = false;
+		try {
+			admin = hasPermission(SecurityPermission.EVALUATIONS);
+		} catch (Exception e) {
+			LOG.log(Level.FINE, "Determining evaluator user.  No user is logged in.  This is likely an auto process.");
+		}
+		return admin;
+	}
+
+	/**
+	 * Find the current user context in the session. If the no user is no login
+	 * the guest user is returned unless the user is the system in which case
+	 * the system user is return
+	 *
+	 * @return context or null if not found (Only in the case were the there a
+	 * login user with a missing context)
 	 */
 	public static UserContext getUserContext()
 	{
 		UserContext userContext = null;
-		try {
-			Subject currentUser = SecurityUtils.getSubject();
-			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
-		} catch (Exception e) {
-			LOG.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+		if (!isLoggedIn()) {
+			if (isSystemUser()) {
+				userContext = getSystemUserContext();
+			} else {
+				userContext = getGuestUserContext();
+			}
+		} else {
+			try {
+				Subject currentUser = SecurityUtils.getSubject();
+				userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+			}
 		}
+		return userContext;
+	}
+
+	private static UserContext getGuestUserContext()
+	{
+		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getGuestContext();
+		return userContext;
+	}
+
+	private static UserContext getSystemUserContext()
+	{
+		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getSystemContext();
 		return userContext;
 	}
 
@@ -148,10 +220,11 @@ public class SecurityUtil
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Checks the current for permission
-	 * @param permission
+	 *
+	 * @param permissions
 	 * @return true if the user has the permission (All of them)
 	 */
 	public static boolean hasPermission(String... permissions)
@@ -165,15 +238,15 @@ public class SecurityUtil
 				if (StringUtils.isNotBlank(permission)) {
 					toCheck.add(permission);
 				}
-			}			
+			}
 			try {
 				SecurityUtils.getSubject().checkPermissions(toCheck.toArray(new String[0]));
 				allow = true;
 			} catch (AuthorizationException authorizationException) {
-				LOG.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);			
+				LOG.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);
 			}
 		}
-		return allow;	
+		return allow;
 	}
 
 	/**
@@ -206,7 +279,7 @@ public class SecurityUtil
 	{
 		Subject currentUser = SecurityUtils.getSubject();
 		String userLoggedIn = SecurityUtil.getCurrentUserName();
-		
+
 		currentUser.logout();
 		request.getSession().invalidate();
 		try {
@@ -224,7 +297,7 @@ public class SecurityUtil
 				response.addCookie(cookie);
 			}
 		}
-		
+
 		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
 			LOG.log(Level.INFO, "User was not logged when the logout was called.");
 		} else {

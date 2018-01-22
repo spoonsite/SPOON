@@ -27,10 +27,14 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.DataSensitivity;
+import edu.usu.sdl.openstorefront.core.entity.DataSource;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRoleData;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRolePermission;
 import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
@@ -98,34 +102,47 @@ public class SecurityServiceImpl
 	public SecurityPolicy getSecurityPolicy()
 	{
 		SecurityPolicy securityPolicy = null;
-		Element element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
-		if (element != null) {
-			securityPolicy = (SecurityPolicy) element.getObjectValue();
-		}
 
-		if (securityPolicy == null) {
-			securityPolicy = new SecurityPolicy();
-			securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
-			securityPolicy = securityPolicy.find();
+		Element element;
 
-			if (securityPolicy == null) {
-				//default
-				securityPolicy = new SecurityPolicy();
-				securityPolicy.setAllowRegistration(Boolean.TRUE);
-				securityPolicy.setAutoApproveUsers(Boolean.FALSE);
-				securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
-				securityPolicy.setCsrfSupport(Boolean.TRUE);
-				securityPolicy.setLoginLockoutMaxAttempts(5);
-				securityPolicy.setMinPasswordLength(8);
-				securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
-				securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
-				securityPolicy.setResetLockoutTimeMinutes(15);
-				securityPolicy = updateSecurityPolicy(securityPolicy);
+		//Note: this is used in filter that may be running when system is not completely started.
+		if (OSFCacheManager.isActive()) {
+			element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
+			if (element != null) {
+				securityPolicy = (SecurityPolicy) element.getObjectValue();
 			}
 
-			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-			OSFCacheManager.getApplicationCache().put(element);
+			if (securityPolicy == null) {
+				securityPolicy = new SecurityPolicy();
+				securityPolicy.setActiveStatus(SecurityPolicy.ACTIVE_STATUS);
+				securityPolicy = securityPolicy.find();
+
+				if (securityPolicy == null) {
+					securityPolicy = getDefaultPolicy();
+					securityPolicy = updateSecurityPolicy(securityPolicy);
+				}
+
+				element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
+				OSFCacheManager.getApplicationCache().put(element);
+			}
+		} else {
+			securityPolicy = getDefaultPolicy();
 		}
+		return securityPolicy;
+	}
+
+	private SecurityPolicy getDefaultPolicy()
+	{
+		SecurityPolicy securityPolicy = new SecurityPolicy();
+		securityPolicy.setAllowRegistration(Boolean.TRUE);
+		securityPolicy.setAutoApproveUsers(Boolean.FALSE);
+		securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
+		securityPolicy.setCsrfSupport(Boolean.TRUE);
+		securityPolicy.setLoginLockoutMaxAttempts(5);
+		securityPolicy.setMinPasswordLength(8);
+		securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
+		securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
+		securityPolicy.setResetLockoutTimeMinutes(15);
 		return securityPolicy;
 	}
 
@@ -243,7 +260,7 @@ public class SecurityServiceImpl
 				userRegistration.setVerificationCode(generateRandomString(8));
 
 				if (StringUtils.isNotBlank(userRegistration.getEmail())) {
-					Map data = new HashMap();
+					Map<String, Object> data = new HashMap<>();
 					String subject = "Email Verification Code";
 					data.put("verificationCode", userRegistration.getVerificationCode());
 					data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
@@ -465,7 +482,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 
 		if (userSecurity != null) {
@@ -491,6 +508,7 @@ public class SecurityServiceImpl
 	public void unlockUser(String username)
 	{
 		Objects.requireNonNull(username);
+		username = username.toLowerCase();
 
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
@@ -508,9 +526,30 @@ public class SecurityServiceImpl
 	}
 
 	@Override
+	public void resetFailedAttempts(String username)
+	{
+		Objects.requireNonNull(username);
+		username = username.toLowerCase();
+
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.findProxy();
+
+		if (userSecurity != null) {
+			userSecurity.setFailedLoginAttempts(0);
+			userSecurity.populateBaseUpdateFields();
+			persistenceService.persist(userSecurity);
+			LOG.log(Level.INFO, MessageFormat.format("user {0} failed attempts was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find user to reset failed attempts.", "Check input: " + username);
+		}
+	}
+
+	@Override
 	public void disableUser(String username)
 	{
 		Objects.requireNonNull(username);
+		username = username.toLowerCase();
 
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
@@ -843,6 +882,102 @@ public class SecurityServiceImpl
 			}
 		}
 
+	}
+
+	@Override
+	public void forgotUser(String emailAddress)
+	{
+		String username = null;
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setEmail(emailAddress);
+
+		List<UserProfile> userProfiles = userProfileExample.findByExample();
+		for (UserProfile userProfile : userProfiles) {
+			if (username == null) {
+				username = "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+			} else {
+				username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
+						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+			}
+		}
+
+		Map<String, Object> data = new HashMap<>();
+		String subject = "Forgot Username";
+		data.put("username", username);
+		data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+		data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+		data.put("title", subject);
+		Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
+		email.setSubject(subject);
+		email.addRecipient("", emailAddress, Message.RecipientType.TO);
+		MailManager.send(email, true);
+
+	}
+
+	@Override
+	public UserContext getGuestContext()
+	{
+		UserContext userContext = new UserContext();
+		userContext.setGuest(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName("Guest");
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.ANONYMOUS_USER);
+
+		SecurityRole guestRole = new SecurityRole();
+		guestRole.setRoleName(SecurityRole.GUEST_GROUP);
+		guestRole = guestRole.find();
+		if (guestRole != null) {
+			userContext.getRoles().add(guestRole);
+		}
+		return userContext;
+	}
+
+	@Override
+	public UserContext getSystemContext()
+	{
+		UserContext userContext = new UserContext();
+		userContext.setSystemUser(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName(OpenStorefrontConstant.SYSTEM_USER);
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.SYSTEM_USER);
+
+		//puedo role with all permission and access to all data
+		SecurityRole systemRole = new SecurityRole();
+		systemRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		systemRole.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		systemRole.setRoleName("SPECIAL SYSTEM GROUP");
+		systemRole.setDescription("The group is only for the System");
+
+		List<SecurityPermission> permissions = getLookupService().findLookup(SecurityPermission.class);
+		systemRole.setPermissions(new ArrayList<>());
+		for (SecurityPermission permission : permissions) {
+			SecurityRolePermission rolePermission = new SecurityRolePermission();
+			rolePermission.setPermission(permission.getCode());
+			systemRole.getPermissions().add(rolePermission);
+		}
+
+		List<DataSource> dataSources = getLookupService().findLookup(DataSource.class);
+		systemRole.setDataSecurity(new ArrayList<>());
+		for (DataSource dataSource : dataSources) {
+			SecurityRoleData securityRoleData = new SecurityRoleData();
+			securityRoleData.setDataSource(dataSource.getCode());
+			systemRole.getDataSecurity().add(securityRoleData);
+		}
+
+		List<DataSensitivity> dataSensitivities = getLookupService().findLookup(DataSensitivity.class);
+		for (DataSensitivity dataSensitivity : dataSensitivities) {
+			SecurityRoleData securityRoleData = new SecurityRoleData();
+			securityRoleData.setDataSensitivity(dataSensitivity.getCode());
+			systemRole.getDataSecurity().add(securityRoleData);
+		}
+
+		userContext.getRoles().add(systemRole);
+
+		return userContext;
 	}
 
 }

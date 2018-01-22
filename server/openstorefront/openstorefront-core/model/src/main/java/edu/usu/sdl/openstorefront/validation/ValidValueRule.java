@@ -17,11 +17,13 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +95,22 @@ public class ValidValueRule
 	{
 		StringBuilder sb = new StringBuilder();
 		ValidValueType validValueType = field.getAnnotation(ValidValueType.class);
-		sb.append("Set of valid values: ").append(Arrays.toString(validValueType.value()));
+		sb.append("Set of static valid values: ").append(Arrays.toString(validValueType.value()));
+
+		if (validValueType.lookupClass().length > 0) {
+			LookupService serviceProxy = ServiceProxyFactory.getServiceProxy().getLookupService();
+			for (Class lookupClass : validValueType.lookupClass()) {
+				List<String> validValues = new ArrayList<>();
+				//get all records / active inactive
+				List<LookupEntity> lookups = serviceProxy.findLookup(lookupClass, null);
+				lookups.forEach(item -> {
+					validValues.add(item.getCode());
+				});
+				sb.append("\nLookup Class: ").append(lookupClass.getName());
+				sb.append("\nSet of lookup values: ").append(Arrays.toString(validValues.toArray()));
+			}
+		}
+
 		return sb.toString();
 	}
 

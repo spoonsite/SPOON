@@ -29,6 +29,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class HTMLSanitizerTest
 {
+
 	private final String input;
 	private final String expectedOutput;
 
@@ -45,6 +46,7 @@ public class HTMLSanitizerTest
 		// arrays.  Each array has two elements: { input, expectedOutput }.
 		// These data are hard-coded into the class, but they could be
 		// generated or loaded in any way you like.
+		String lineSeparator = Character.toString((char) 0x2028);
 		return Arrays.asList(new Object[][]{
 			{null, null},
 			{"<html><body><div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
@@ -52,6 +54,7 @@ public class HTMLSanitizerTest
 			{"<html><body><div class=\"box\" style=\"width: 1362px;position : fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position : absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
 			{"<html><body><div class=\"box\" style=\"width: 1362px;position: fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position: absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
 			{"<html><body><div class=\"box\" style=\"width: 1362px;position :fixed;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"position :absolute;top:100px;left:100px;\">Hello World</div></div></body></html>", "<div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"> \n <a href=\"/click\" rel=\"nofollow\">click ME</a> \n <div class=\"box\" style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
+			{"<html><body><div>Hello " + lineSeparator + "World</div></body></html>", "<div>\n  Hello<br><br>World \n</div>"},// hidden whitespace Line Seperator
 		});
 	}
 

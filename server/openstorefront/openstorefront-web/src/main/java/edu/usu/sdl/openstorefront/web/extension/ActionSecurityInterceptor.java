@@ -37,6 +37,7 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 
 /**
  * Handles the security check
+ *
  * @author dshurtleff
  */
 @Intercepts({LifecycleStage.BindingAndValidation})
@@ -141,7 +142,7 @@ public class ActionSecurityInterceptor
 				} else {
 					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(context.getActionBeanContext().getRequest()));
 				}
-			}			
+			}
 		}
 		return context.proceed();
 	}

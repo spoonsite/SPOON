@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
-import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -52,7 +51,7 @@ public class ComponentMetadataResource
 		componentMetadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 
 		List<ComponentMetadata> metadata = componentMetadata.findByExample();
-		metadata = FilterEngine.filter(metadata, true);
+		metadata = filterEngine.filter(metadata, true);
 		List<ComponentMetadataView> views = ComponentMetadataView.toViewList(metadata);
 
 		views = views.stream().collect(Collectors.toList());
@@ -75,7 +74,7 @@ public class ComponentMetadataResource
 		componentMetadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 
 		List<ComponentMetadata> metadata = componentMetadata.findByExample();
-		metadata = FilterEngine.filter(metadata, true);
+		metadata = filterEngine.filter(metadata, true);
 		List<LookupModel> lookupModels = new ArrayList<>();
 
 		Set<String> labels = new HashSet<>();
@@ -113,7 +112,7 @@ public class ComponentMetadataResource
 		componentMetadata.setLabel(label);
 
 		List<ComponentMetadata> metadata = componentMetadata.findByExample();
-		metadata = FilterEngine.filter(metadata, true);
+		metadata = filterEngine.filter(metadata, true);
 
 		Set<String> values = new HashSet<>();
 		for (ComponentMetadata md : metadata) {

@@ -474,6 +474,7 @@
 				title: 'Add/Edit Mapping',
 				modal: true,
 				width: '60%',
+				height: '90%',
 				y: '5em',
 				layout: 'fit',
 				closable: false,
@@ -483,6 +484,7 @@
 						id: 'addEditMappingForm',
 						width: '100%',
 						padding: '10px',
+						scrollable: true,
 						defaults: {
 							width: '100%'
 						},

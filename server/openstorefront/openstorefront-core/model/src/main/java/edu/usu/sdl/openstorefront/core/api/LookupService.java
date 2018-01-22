@@ -75,6 +75,16 @@ public interface LookupService
 	public <T extends LookupEntity> void syncLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues);
 
 	/**
+	 * This with check for existing items and leave them unchanged, and add any
+	 * new items with the status specified
+	 *
+	 * @param <T>
+	 * @param lookupClass
+	 * @param lookupValues
+	 */
+	public <T extends LookupEntity> void mergeLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues);
+
+	/**
 	 * Looks up the entity the for a given code
 	 *
 	 * @param <T>

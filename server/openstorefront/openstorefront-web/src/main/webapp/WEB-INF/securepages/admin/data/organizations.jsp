@@ -51,7 +51,14 @@
 								rootProperty: 'data',
 								totalProperty: 'totalNumber'
 							}
-						})
+						}),
+						listeners: {
+							beforeLoad: function(store, operation, eOpts){
+								store.getProxy().extraParams = {
+									name: Ext.getCmp('orgGrid-filterByName').getValue() ? Ext.getCmp('orgGrid-filterByName').getValue() : null,									
+								};
+							}
+						}						
 					}),
 					columnLines: true,
 					columns: [											
@@ -80,6 +87,29 @@
 						{ text: 'Contact Email', dataIndex: 'contactEmail', width: 150, hidden:true }
 					],
 					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [{
+								xtype: 'textfield',
+								id: 'orgGrid-filterByName',
+								name: 'name',
+								fieldLabel: 'Filter by Name',
+								labelAlign: 'top',
+								labelSeparator: '',
+								maxLength: 255,
+								width: 300,
+								listeners: {
+									change: {
+										fn: function(field, newValue, oldValue, opts) {
+											refreshGrid();
+										},
+										buffer: 1500
+									}
+								}
+							}]
+						},
+						
 						{
 							xtype: 'toolbar',
 							dock: 'top',
@@ -412,10 +442,9 @@
 				};
 				
 				var referenceRecords = function(){
-				     selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
-					 //console.log("selObj",selectedObj);
-					 
-					 Ext.getCmp('refWin').show();
+				    selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
+					showReferences('api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+ '/references', 
+					selectedObj.name + ' - References');
 				};
 				
 				var deleteRecord = function(){
@@ -467,8 +496,7 @@
 				};
 				
 				var noOrg = function(){
-                    Ext.getCmp('noOrgWin').show();
-					
+                    showReferences('api/v1/resource/organizations/references', '"No Organization" - References');					
 				};
 				
 				var runExtraction = function(){
@@ -488,165 +516,91 @@
 				
 				//
 				//
-				//  NO ORG WINDOW
+				//  reference Window
 				//
 				//
-				var noOrgWin = Ext.create('Ext.window.Window', {
-					id: 'noOrgWin',
-					title: '"No Organization" &nbsp References',
-					iconCls: 'fa fa-lg fa-exclamation-circle icon-small-vertical-correction',
-					modal: true,
-					width: '40%',
-					height: '50%',
-					listeners:{
-								show: function(){
-									console.log("Loading No Org");
-									Ext.getCmp('noOrgGrid').getStore().load();
-								}
-							},
-					items:[
-						{
-							xtype:'grid',
-							id: 'noOrgGrid',
-							title: '',
-							store: Ext.create('Ext.data.Store', {
-								autoLoad: false,
-								id: 'noOrgGridStore',
-								pageSize: 100,
-								remoteSort: true,
-								sorters: [
-									new Ext.util.Sorter({
-										property: 'componentName',
-										direction: 'ASC'
-									})
-								],
-								fields: [
-									{name: 'referenceType', mapping: function (data) {
-											
-											var retStr ='';
-											if(typeof data.componentName !== 'undefined'){
-												retStr=data.referenceType+'<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
-											}
-											else{
-												retStr=data.referenceType;
-											}
-											return retStr;
-										}},
-									{name: 'referenceName', mapping: function (data) {
-											
-											var retStr ='';
-											if(data.referenceName.trim() !== ''){
-												retStr=data.referenceName;
-											}
-											else if(typeof data.referenceId !== 'undefined'){
-												retStr=data.referenceId;
-											}
-											else{
-												retStr='No Reference Name';
-											}
-											return retStr;
-										}}
-											
-								],
-								proxy: CoreUtil.pagingProxy({
-									type: 'ajax',
-									url: 'api/v1/resource/organizations/references',
-									reader: {
-										type: 'json',
-										rootProperty: 'data',
-										totalProperty: 'totalNumber'
+				var showReferences = function(url, title) {
+				
+					var noOrgStore = Ext.create('Ext.data.Store', {
+						autoLoad: true,									
+						pageSize: 100,
+						remoteSort: true,
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'referenceName',
+								direction: 'ASC'
+							})
+						],
+						fields: [
+							{name: 'referenceType', mapping: function (data) {
+
+									var retStr ='';
+									if(typeof data.componentName !== 'undefined'){
+										retStr=data.referenceType + '<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
 									}
-								})
-							}),
-							columnLines: true,
-							columns: [						
-								{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200 },
-								{ text: 'Reference Type', dataIndex: 'referenceType', flex: 1, minWidth: 200 }
-							]
-							
-						}
-					],
-					dockedItems: [
-					{
-						
-							xtype: 'pagingtoolbar',
-							dock: 'bottom',
-							store: 'noOrgGridStore',
-							displayInfo: true
-					}]
+									else{
+										retStr=data.referenceType;
+									}
+									return retStr;
+								}
+							}
+						],
+						proxy: CoreUtil.pagingProxy({
+							type: 'ajax',
+							url: url,
+							reader: {
+								type: 'json',
+								rootProperty: 'data',
+								totalProperty: 'totalNumber'
+							}
+						})
+					});
+		
+					var noOrgWin = Ext.create('Ext.window.Window', {
+						title: title,
+						iconCls: 'fa fa-lg fa-exclamation-circle icon-small-vertical-correction',
+						modal: true,
+						width: '70%',
+						height: '50%',
+						closeAction: 'destroy',
+						layout: 'fit',
+						listeners:	{
+							show: function() {        
+								this.removeCls("x-unselectable");    
+							}
+						},
+						items:[
+							{
+								xtype:'grid',								
+								title: '',
+								store: noOrgStore,
+								columnLines: true,
+								viewConfig: {
+									enableTextSelection: true
+								},	
+								columns: [															
+									{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200,
+										tooltip: 'References missing information are sorted to the top initially'
+									},
+									{ text: 'Reference Type', dataIndex: 'referenceType', align: 'center', width: 200 },
+									{ text: 'Reference Id', dataIndex: 'referenceId', flex: 1, minWidth: 200 }
+								]
+
+							}
+						],
+						dockedItems: [{
+								xtype: 'pagingtoolbar',
+								dock: 'bottom',
+								store: noOrgStore,
+								displayInfo: true
+						}]
 
 					});
+					noOrgWin.show();					
+				}
 				
-				//
-				//
-				//  REF WINDOW
-				//
-				//
-				var refWin = Ext.create('Ext.window.Window', {
-					id: 'refWin',
-					title: 'Organization References',
-					iconCls: 'fa fa-lg fa-link icon-small-vertical-correction',
-					modal: true,
-					width: '50%',
-					height: '50%',
-					layout:'fit',
-					maximizable: true,
-					scrollable:true,
-					listeners:{
-						show: function () {
-							var refurl = 'api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+ '/references';
-							//console.log("url",refurl);
-							var store = Ext.data.StoreManager.lookup('refGridStore');
-							store.setProxy({
-									type: 'ajax',
-									url: refurl,
-									method: 'GET'
-								});
-							
-							store.load();
-						}
-					},
-					items:[
-						{
-							xtype:'grid',
-							id: 'refGrid',
-							width:'100%',
-							title: '',
-							store: Ext.create('Ext.data.Store', {
-								autoLoad: false,
-								id: 'refGridStore',
-								pageSize: 100,
-								remoteSort: true,
-								sorters: [
-									new Ext.util.Sorter({
-										property: 'name',
-										direction: 'ASC'
-									})
-								],
-								fields: [
-									{name: 'referenceType', mapping: function (data) {
-											//console.log("Data",data);
-											var retStr ='';
-											if(typeof data.componentName !== 'undefined'){
-												retStr=data.referenceType+'<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
-											}
-											else{
-												retStr=data.referenceType;
-											}
-											return retStr;
-										}} 
-											
-								]
-								
-							}),
-							columnLines: true,
-							columns: [						
-								{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200 },
-								{ text: 'Reference Type', dataIndex: 'referenceType', flex: 1, minWidth: 200 }
-							]
-						}
-					]
-					});	
+				
+				
 				//
 				//
 				//  Merge Window

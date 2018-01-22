@@ -68,7 +68,7 @@ public class UserLookupTypeExporter
 	{
 		super.exporterInit();
 
-		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
@@ -94,8 +94,8 @@ public class UserLookupTypeExporter
 	{
 		for (Class lookup : lookupsToExport) {
 
-			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup);
-			File lookupFile = new TFile(archiveBasePath + LOOKUP_DIR + lookup.getSimpleName());
+			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup, null);
+			File lookupFile = new TFile(archiveBasePath + LOOKUP_DIR + lookup.getSimpleName() + ".json");
 
 			try (OutputStream out = new TFileOutputStream(lookupFile)) {
 				StringProcessor.defaultObjectMapper().writeValue(out, lookupData);
@@ -122,11 +122,12 @@ public class UserLookupTypeExporter
 		File files[] = lookupDir.listFiles();
 		if (files != null) {
 			for (File lookupFile : files) {
+				String className = lookupFile.getName().replace(".json", "");
 				try (InputStream in = new TFileInputStream(lookupFile)) {
-					archive.setStatusDetails("Importing: " + lookupFile.getName());
+					archive.setStatusDetails("Importing: " + className);
 					archive.save();
 
-					Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.core.entity." + lookupFile.getName());
+					Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.core.entity." + className);
 
 					List<LookupEntity> lookupData = new ArrayList<>();
 					JsonNode nodeArray = StringProcessor.defaultObjectMapper().readTree(in);
@@ -151,14 +152,14 @@ public class UserLookupTypeExporter
 						lookupData.add(lookup);
 					}
 
-					service.getLookupService().syncLookupImport(lookupClass, lookupData);
+					service.getLookupService().mergeLookupImport(lookupClass, lookupData);
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();
 
 				} catch (InvocationTargetException | IllegalAccessException | InstantiationException | ClassNotFoundException | IOException ex) {
 					LOG.log(Level.WARNING, "Failed to Load loookup", ex);
-					addError("Unable to load lookup: " + lookupFile.getName());
+					addError("Unable to load lookup: " + className);
 				}
 			}
 		} else {

@@ -68,6 +68,12 @@ public class CustomField
 	{
 	}
 
+	@Override
+	public String toString()
+	{
+		return "CustomField{" + "label=" + label + ", value=" + value + '}';
+	}
+
 	public String getFieldType()
 	{
 		return fieldType;

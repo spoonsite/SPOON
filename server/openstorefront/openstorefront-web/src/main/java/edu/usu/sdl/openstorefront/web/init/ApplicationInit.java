@@ -34,19 +34,20 @@ import org.atmosphere.cpr.AtmosphereFramework;
  */
 public class ApplicationInit
 {
+
 	private static final Logger LOG = Logger.getLogger(ApplicationInit.class.getName());
 
 	// inject Items that need started at sytem startup
 	@Inject
 	private CoreSystem coreSystem;
-	
+
 	@Context
 	private ServletContext context;
-	
+
 	public ApplicationInit()
 	{
 	}
-	
+
 	@PostConstruct
 	public void contextInitialized()
 	{
@@ -56,9 +57,11 @@ public class ApplicationInit
 			atmospshereLog.setLevel(Level.OFF);
 		}
 
-		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
-		AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
-		ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
+		coreSystem.startup(() -> {
+			AtmosphereFramework atmosphereFramework = (AtmosphereFramework) context.getAttribute("AtmosphereServlet");
+			AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);
+			ServiceProxy.getProxy().getNotificationService().registerNotificationListerner(atmosphereNotificationListerner);
+		});
 
 	}
 

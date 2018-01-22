@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +84,7 @@ public class AttributeExporter
 			AttributeAll attributeAll = new AttributeAll();
 			attributeAll.setAttributeType(attributeType);
 			attributeAll.setAttributeCodes(service.getAttributeService().findCodesForType(attributeType.getAttributeType()));
-			File attributeFile = new TFile(archiveBasePath + DATA_DIR + attributeType.getAttributeType());
+			File attributeFile = new TFile(archiveBasePath + DATA_DIR + attributeType.getAttributeType() + ".json");
 
 			try (OutputStream out = new TFileOutputStream(attributeFile)) {
 				StringProcessor.defaultObjectMapper().writeValue(out, attributeAll);
@@ -120,8 +121,9 @@ public class AttributeExporter
 		File files[] = dataDir.listFiles();
 		if (files != null) {
 			for (File dataFile : files) {
+				String className = dataFile.getName().replace(".json", "");
 				try (InputStream in = new TFileInputStream(dataFile)) {
-					archive.setStatusDetails("Importing: " + dataFile.getName());
+					archive.setStatusDetails("Importing: " + className);
 					archive.save();
 
 					AttributeAll attributeAll = StringProcessor.defaultObjectMapper().readValue(in, AttributeAll.class);
@@ -129,14 +131,18 @@ public class AttributeExporter
 					List<AttributeAll> attributeAlls = new ArrayList<>();
 					attributeAlls.add(attributeAll);
 					FileHistoryOption options = new FileHistoryOption();
-					service.getAttributeService().importAttributes(attributeAlls, options);
+					ValidationResult validationResult = service.getAttributeService().importAttributes(attributeAlls, options);
+					if (validationResult.valid() == false) {
+						String message = "Failed to import Attribute: {0}<br><br>All imported entries will be missing this attribute<br>Details:<br>{1}";
+						addError(MessageFormat.format(message, className, validationResult.toHtmlString()));
+					}
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();
 
 				} catch (Exception ex) {
 					LOG.log(Level.WARNING, "Failed to Load attibutes", ex);
-					addError("Unable to load attributes: " + dataFile.getName());
+					addError("Unable to load attributes: " + className);
 				}
 			}
 		} else {

@@ -27,15 +27,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -291,10 +297,7 @@ public class StringProcessor
 
 	public static Boolean isEmail(String text)
 	{
-		if (text.matches(OpenStorefrontConstant.EMAIL_PATTERN)) {
-			return true;
-		}
-		return false;
+		return text.matches(OpenStorefrontConstant.EMAIL_PATTERN);
 	}
 
 	public static String stripHtml(String text)
@@ -442,7 +445,7 @@ public class StringProcessor
 	public static String cleanEntityKey(String key)
 	{
 		if (StringUtils.isNotBlank(key)) {
-			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~");
+			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~", "#");
 			for (String badChar : badChars) {
 				key = key.replace(badChar, "");
 			}
@@ -572,6 +575,72 @@ public class StringProcessor
 	public static String uniqueId()
 	{
 		return UUID.randomUUID().toString();
+	}
+
+	/**
+	 * Truncates a string of HTML relative to MAX_CHAR_COUNT This roughly
+	 * respects HTML, as it tries not to remove HTML tags.
+	 *
+	 * @param html
+	 * @param maxCharCount
+	 * @return
+	 */
+	public static String truncateHTML(String html, int maxCharCount)
+	{
+		List<String> htmlList = new ArrayList<>(Arrays.asList(html.split("")));
+		boolean canDelete = true;
+		boolean hasRemoved = false;
+		for (int ii = htmlList.size() - 1; ii > -1; ii--) {
+
+			//	Detect if the cursor is within an HTML tag
+			if (htmlList.get(ii).equals(">")) {
+				canDelete = false;
+				continue;
+			} else if (htmlList.get(ii).equals("<")) {
+				canDelete = true;
+				continue;
+			}
+
+			//	Bail if the cursor is inside the accepted char count
+			if (ii < maxCharCount) {
+				if (hasRemoved && canDelete) {
+					if (!"<".equals(htmlList.get(ii + 1))) {
+						htmlList.set(ii + 1, " ... ");
+					} else {
+						htmlList.set(ii, " ... ");
+					}
+				}
+				break;
+			}
+
+			//	"remove" the current item given that canDelete == true
+			if (canDelete && ii > maxCharCount) {
+				htmlList.set(ii, "");
+				hasRemoved = true;
+			}
+		}
+
+		//	Return the truncated result
+		html = String.join("", htmlList);
+		return html;
+	}
+
+	public static Map<String, List<String>> splitURLQuery(String query)
+	{
+		if (StringUtils.isBlank(query)) {
+			return Collections.emptyMap();
+		}
+		return Arrays.stream(query.split("&"))
+				.map(StringProcessor::splitQueryParameter)
+				.collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
+	}
+
+	private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String it)
+	{
+		final int idx = it.indexOf("=");
+		final String key = idx > 0 ? it.substring(0, idx) : it;
+		final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
+		return new AbstractMap.SimpleImmutableEntry<>(key, value);
 	}
 
 }

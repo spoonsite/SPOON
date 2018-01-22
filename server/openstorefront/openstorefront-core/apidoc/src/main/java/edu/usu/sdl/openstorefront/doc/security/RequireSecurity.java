@@ -33,10 +33,14 @@ import javax.ws.rs.NameBinding;
 @Documented
 public @interface RequireSecurity
 {
+
 	//Permissions
 	String[] value() default {};
+
 	String[] roles() default {};
-	LogicOperation logicOperator() default LogicOperation.AND;	
-	Class<? extends CustomRequiredHandler> specialCheck() default NoOpRequireHandler.class;		
-	
+
+	LogicOperation logicOperator() default LogicOperation.AND;
+
+	Class<? extends CustomRequiredHandler> specialCheck() default NoOpRequireHandler.class;
+
 }

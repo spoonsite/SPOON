@@ -25,14 +25,15 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.Contacts',
 		'OSF.form.Resources',
 		'OSF.form.Media',
-		'OSF.form.Dependencies',		
+		'OSF.form.Dependencies',
 		'OSF.form.EntrySummary',
 		'OSF.form.ChecklistSummary',
 		'OSF.form.ChecklistQuestion',
 		'OSF.form.ChecklistAll',
 		'OSF.form.Section',
 		'OSF.form.Review',
-		'OSF.form.Tags'
+		'OSF.form.Tags',
+		'OSF.form.ManageEvalQuestions'
 	],
 	
 	layout: 'border',
@@ -79,7 +80,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EvaluationInfo',
-									title: 'Evaluation Info'
+									title: 'Evaluation Info',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});
 							}
 						},
@@ -117,7 +119,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 							handler: function(){
 								evalPanel.loadContentForm({
 									form: 'EntrySummary',
-									title: 'Entry Summary'
+									title: 'Entry Summary',
+									refreshCallback: evalPanel.externalRefreshCallback
 								});								
 							}							
 						}
@@ -608,7 +611,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 			
 			evalPanel.loadContentForm({
 				form: 'EvaluationInfo',
-				title: 'Evaluation Info'
+				title: 'Evaluation Info',
+				refreshCallback: evalPanel.externalRefreshCallback
 			});			
 		});
 		
@@ -634,7 +638,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 						handler: function(){
 							evalPanel.loadContentForm({
 								form: 'EntrySummary',
-								title: 'Entry Summary'
+								title: 'Entry Summary',
+								refreshCallback: evalPanel.externalRefreshCallback
 							});								
 						}							
 					}					
@@ -739,26 +744,62 @@ Ext.define('OSF.component.EvaluationPanel', {
 							}							
 						});
 						
-						questions.push({														
-							text: 'All Questions',							
+						var allQuestionButtonType = 'button';
+						var allQuestionMenu = null;
+						if (evaluationAll.evaluation.allowQuestionManagement) {
+							allQuestionButtonType = 'splitbutton';
+							allQuestionMenu = {
+								items: [
+									{
+										text: 'Manage Questions',
+										iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+										handler: function() {
+											
+											var manageWin = Ext.create('OSF.form.ManageEvalQuestions', {
+												evaluationAll: evaluationAll,
+												successCallback: function() {
+													evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
+													allQuestionLoadAction();
+												}
+											});											
+											manageWin.show();
+										}
+									}
+								],
+								listeners: {
+									beforerender: function () {
+									 this.setWidth(this.up('button').getWidth());
+									}					
+								}								
+							};
+						}
+						
+						var allQuestionLoadAction = function() {
+							evalPanel.loadContentForm({
+								form: 'ChecklistAll',
+								title: 'Checklist Questions',
+								data: evaluationAll.checkListAll,
+								refreshCallback: function(updatedResponse) {
+									var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+
+									var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+									Ext.Array.each(checklistMenu.items.items, function(item){
+										if (item.questionId && updatedResponse.questionId === item.questionId) {
+											var itemStatus = item.getComponent('status');
+											itemStatus.setText(newStatusIcon);	
+											itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
+										}
+									});
+								}									
+							});
+						};
+						
+						questions.push({		
+							xtype: allQuestionButtonType,
+							text: 'All Questions',
+							menu: allQuestionMenu,
 							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'ChecklistAll',
-									title: 'Checklist Questions',
-									data: evaluationAll.checkListAll,
-									refreshCallback: function(updatedResponse) {
-										var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
-																				
-										var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
-										Ext.Array.each(checklistMenu.items.items, function(item){
-											if (item.questionId && updatedResponse.questionId === item.questionId) {
-												var itemStatus = item.getComponent('status');
-												itemStatus.setText(newStatusIcon);	
-												itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
-											}
-										});
-									}									
-								});
+								allQuestionLoadAction();
 							}							
 						});
 						
@@ -1019,42 +1060,75 @@ Ext.define('OSF.component.EvaluationPanel', {
 	},
 	loadContentForm: function(page) {
 		var evalPanel = this;
-		
-		if (evalPanel.currentContentForm && evalPanel.currentContentForm.unsavedChanges) {
-			evalPanel.currentContentForm.saveData();
-		}
-		
-		evalPanel.commentPanel.setHidden(false);
-		evalPanel.contentPanel.removeAll(true);
-		evalPanel.contentPanel.getComponent('tools').getComponent('title').update({
-			title: page.title
-		});
-		
-		var hideSecurityMarking = true;
-		if (evalPanel.branding) {
-			hideSecurityMarking = !evalPanel.branding.allowSecurityMarkingsFlg;
-		}
-		
-		var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
-			hideSecurityMarking: hideSecurityMarking
-		}, page.options)
-		);
-		
-		evalPanel.contentPanel.add(contentForm);
-		evalPanel.currentContentForm = contentForm;
+		this.checkFormSaveStatus(null, function () {
 
-		if (contentForm.loadData) {
-			if (page.refreshCallback) {
-				evalPanel.refreshCallback = page.refreshCallback;
+			evalPanel.pageStatus = page;
+			
+			if (evalPanel.currentContentForm && evalPanel.currentContentForm.unsavedChanges) {
+				evalPanel.currentContentForm.saveData();
 			}
 			
-			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data, {
-				commentPanel: evalPanel.commentPanel,
-				user: evalPanel.user,
-				mainForm: evalPanel
+			evalPanel.commentPanel.setHidden(false);
+			evalPanel.contentPanel.removeAll(true);
+			evalPanel.contentPanel.getComponent('tools').getComponent('title').update({
+				title: page.title
 			});
-		}
+			
+			var hideSecurityMarking = true;
+			if (evalPanel.branding) {
+				hideSecurityMarking = !evalPanel.branding.allowSecurityMarkingsFlg;
+			}
+			
+			var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
+				hideSecurityMarking: hideSecurityMarking
+			}, page.options)
+			);
+			
+			evalPanel.contentPanel.add(contentForm);
+			evalPanel.currentContentForm = contentForm;
+
+			if (contentForm.loadData) {
+				if (page.refreshCallback) {
+					evalPanel.refreshCallback = page.refreshCallback;
+				}
+				
+				contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data, {
+					commentPanel: evalPanel.commentPanel,
+					user: evalPanel.user,
+					mainForm: evalPanel
+				});
+			}
+		});
+	},
+	checkFormSaveStatus: function (evalWin, cb) {
+		evalPanel = this;
 		
+		if (evalPanel.down('form').unsavedChanges) {
+			// ask if they would like to save before closing...
+			Ext.Msg.show({
+				title: 'Discard Changes?',
+				message: 'You have unsaved changes.<br />Would you like to continue and <b>discard</b> all changes?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.WARNING,
+				fn: function (btn) {
+					if (btn === 'yes') {
+						if (evalWin) {
+							evalWin.doClose();
+						}
+						else if (cb) {
+							cb();
+						}
+					} else if (btn === 'no') {
+						// don't do anything...
+					}
+				}
+			});
+			return false;
+		}
+		else if (cb) {
+			cb();
+		}
+		return true;
 	}
 	
 	
@@ -1073,7 +1147,11 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	listeners: {
 		show: function() {        
 			this.removeCls("x-unselectable");    
-		}
+		},
+		beforeClose: function () {
+			var evalPanel = this.evalPanel;
+			return evalPanel.checkFormSaveStatus(this);
+		},
 	},	
 	initComponent: function () {
 		this.callParent();
@@ -1091,11 +1169,10 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
 		if (refreshCallback) {
-			evalWin.evalPanel.refreshCallback = refreshCallback;
+			evalWin.evalPanel.externalRefreshCallback = refreshCallback;
 		}		
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;
-		
 	}
 	 
 });

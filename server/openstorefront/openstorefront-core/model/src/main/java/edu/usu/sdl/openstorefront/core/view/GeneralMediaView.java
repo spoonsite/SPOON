@@ -30,10 +30,11 @@ public class GeneralMediaView
 
 	private String name;
 	private String mimeType;
-	private String orignalFileName;
+	private String originalFileName;
 	private String mediaLink;
 	private Date updateDts;
 	private String updateUser;
+	private Boolean allowInBranding;
 
 	public GeneralMediaView()
 	{
@@ -43,10 +44,13 @@ public class GeneralMediaView
 	{
 		GeneralMediaView generalMediaView = new GeneralMediaView();
 		generalMediaView.setName(generalMedia.getName());
-		generalMediaView.setOrignalFileName(generalMedia.getOriginalFileName());
-		generalMediaView.setMimeType(generalMedia.getMimeType());
+		if (generalMedia.getFile() != null) {
+			generalMediaView.setOriginalFileName(generalMedia.getFile().getOriginalName());
+			generalMediaView.setMimeType(generalMedia.getFile().getMimeType());
+		}
 		generalMediaView.setUpdateDts(generalMedia.getUpdateDts());
 		generalMediaView.setUpdateUser(generalMedia.getUpdateUser());
+		generalMediaView.setAllowInBranding(generalMedia.getAllowInBranding());
 		generalMediaView.setMediaLink("Media.action?GeneralMedia&name=" + generalMedia.getName());
 		generalMediaView.toStandardView(generalMedia);
 		return generalMediaView;
@@ -81,14 +85,14 @@ public class GeneralMediaView
 		this.mimeType = mimeType;
 	}
 
-	public String getOrignalFileName()
+	public String getOriginalFileName()
 	{
-		return orignalFileName;
+		return originalFileName;
 	}
 
-	public void setOrignalFileName(String orignalFileName)
+	public void setOriginalFileName(String originalFileName)
 	{
-		this.orignalFileName = orignalFileName;
+		this.originalFileName = originalFileName;
 	}
 
 	public String getMediaLink()
@@ -121,4 +125,13 @@ public class GeneralMediaView
 		this.updateUser = updateUser;
 	}
 
+	public Boolean getAllowInBranding()
+	{
+		return allowInBranding;
+	}
+
+	public void setAllowInBranding(Boolean allowInBranding)
+	{
+		this.allowInBranding = allowInBranding;
+	}
 }

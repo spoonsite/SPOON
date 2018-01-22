@@ -99,7 +99,7 @@ public class UserWatchResource
 	@PUT
 	@APIDescription("Activates a set of watches")
 	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
-	@Consumes({MediaType.APPLICATION_JSON})	
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/activate")
 	public void activateWatches(
 			MultipleIds mulitpleIds
@@ -115,7 +115,7 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}		
+		}
 	}
 
 	@PUT
@@ -137,7 +137,7 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}		
+		}
 	}
 
 }

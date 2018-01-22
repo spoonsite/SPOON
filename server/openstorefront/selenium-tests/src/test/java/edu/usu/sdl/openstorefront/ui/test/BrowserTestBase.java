@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateIT;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -28,7 +27,6 @@ import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -102,11 +100,15 @@ public class BrowserTestBase
 
 			// Enter password and hit ENTER since submit does not seem to work.
 			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-			userPassword.sendKeys(passWord, Keys.ENTER);
+			userPassword.sendKeys(passWord);
+			sleep(1000);
+			
+			WebElement loginBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='loginBtn']")));
+			loginBtn.click();
 
 			// Look for the titleText
 			try {
-				wait.until(ExpectedConditions.stalenessOf(userNameElement)); 
+				wait.until(ExpectedConditions.stalenessOf(userNameElement));
 				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
 				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
 			} catch (Exception e) {
@@ -126,13 +128,13 @@ public class BrowserTestBase
 		}
 	}
 
-	// Making Tread.sleep "universal"
-	protected void sleep(int mills)
+	// Making Thread.sleep "universal"
+	protected static void sleep(int mills)
 	{
 		try {
 			Thread.sleep(mills);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(AccountSignupActivateIT.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BrowserTestBase.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -140,7 +142,6 @@ public class BrowserTestBase
 	{
 		boolean done = false;
 		long startTime = System.currentTimeMillis();
-		System.out.println("********** START TIME: " + startTime);
 
 		while (!done && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			try {
@@ -149,7 +150,6 @@ public class BrowserTestBase
 			} catch (WebDriverException ex) {
 				sleep(500);
 				LOG.log(Level.WARNING, "{0} Retrying...", ex.getMessage());
-				System.out.println("Current TIME ******** " + System.currentTimeMillis());
 			}
 		}
 
@@ -189,15 +189,13 @@ public class BrowserTestBase
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
-					// Iterate through cells
+					
 					if (cell.getText().equals(searchFor)) {
-						LOG.log(Level.INFO, "--- Clicking on the table at: ROW {0}. ---", theRow);
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();
 						sleep(100);
 						builder.click().perform();
 						return true;
-						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
 					}
 				} catch (Exception e) {
 
@@ -210,7 +208,6 @@ public class BrowserTestBase
 		}
 
 		return false;
-		//return new TableItem(fRow, fColumn);
 	}
 
 	/**

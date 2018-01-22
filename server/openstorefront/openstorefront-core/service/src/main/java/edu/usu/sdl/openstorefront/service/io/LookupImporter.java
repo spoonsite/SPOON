@@ -56,7 +56,7 @@ public class LookupImporter
 
 			List<File> lookupCodeFiles = new ArrayList<>();
 
-			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+			Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 			for (Class entityClass : entityClasses) {
 				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
@@ -76,7 +76,7 @@ public class LookupImporter
 			filesUpdatedOrAdded((File[]) lookupCodeFiles.toArray(new File[0]));
 		} else {
 			//Put in defaults, if needed
-			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+			Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 			for (Class entityClass : entityClasses) {
 				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
@@ -128,7 +128,7 @@ public class LookupImporter
 		Class lookupClass = null;
 		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
 
-			lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + className);
+			lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + className);
 			SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
 			if (systemTable == null) {
 				List<String[]> allData = reader.readAll();

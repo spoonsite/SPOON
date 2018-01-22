@@ -44,9 +44,19 @@
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',									
-									height: 53,									
-									src: '${branding.secondaryLogoUrl}'
+									xtype: 'image',
+									height: 53,
+									alt: 'logo',
+									cls: 'linkItem',
+									title: 'Go back to Home Page',
+									src: '${branding.secondaryLogoUrl}',
+									listeners: {
+										el: {
+											click: function() {
+												window.location.replace('Landing.action');
+											}
+										}
+									}
 								},
 								{
 									xtype: 'tbfill'
@@ -72,8 +82,8 @@
 									}
 								},								
 								Ext.create('OSF.component.UserMenu', {									
-									showAdminTools: false,
-									showUserTools: false,
+									showAdminTools: true,
+									showUserTools: true,
 									showHelp: false,
 									ui: 'default',
 									initCallBack: function(usercontext) {

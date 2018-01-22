@@ -214,7 +214,7 @@ Ext.define('OSF.landing.RelationshipSearchView', {
 									text: org.name,
 									logo: org.logoOriginalFileName ? '<img src="Media.action?OrganizationLogo&organizationId=' + org.organizationId + '" width=100 />' : '<div class="search-tool-org-logo-text">'+ Ext.String.capitalize(org.name).substring(0, 1) + '</div>',
 									handler: function(record) {
-										var params = 'entityId=' + record.get('itemId') + '&entityName=' + encodeURIComponent(record.get('text'));
+										var params = 'entityId=' + encodeURIComponent(record.get('itemId')) + '&entityName=' + encodeURIComponent(record.get('text'));
 										window.location.href='UserTool.action?load=Relationships&viewType=ORG&'+ params;										
 									}
 								});	

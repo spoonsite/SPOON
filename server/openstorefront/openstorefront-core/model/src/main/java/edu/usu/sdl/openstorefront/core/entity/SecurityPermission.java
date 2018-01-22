@@ -39,6 +39,11 @@ public class SecurityPermission
 	public static final String EVALUATIONS = "EVALUATIONS";
 	public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
 
+	public static final String REPORT_ACTION_REPORT = "REPORT-ACTION-REPORT";
+	public static final String REPORT_ENTRY_LISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
+	public static final String REPORT_OUTPUT_EMAIL_ATTACH = "REPORT-OUTPUT-EMAIL-ATTACH";
+	public static final String REPORT_OUTPUT_EMAIL_BODY = "REPORT-OUTPUT-EMAIL-BODY";
+
 	public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
 	public static final String ADMIN_SYSTEM_MANAGEMENT = "ADMIN-SYSTEM-MANAGEMENT";
@@ -74,6 +79,9 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_MANAGEMENT = "ADMIN-EVALUATION-MANAGEMENT";
 	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
+	public static final String ADMIN_FAQ = "ADMIN-FAQ";
+
+	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 
 	public SecurityPermission()
 	{
@@ -91,6 +99,11 @@ public class SecurityPermission
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations"));
 		codeMap.put(RELATIONSHIP_VIEW_TOOL, newLookup(SecurityPermission.class, RELATIONSHIP_VIEW_TOOL, "Relationship View Tool"));
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allow User Attribute Type Creation"));
+
+		codeMap.put(REPORT_ACTION_REPORT, newLookup(SecurityPermission.class, REPORT_ACTION_REPORT, "Allows running action report"));
+		codeMap.put(REPORT_ENTRY_LISTING_REPORT, newLookup(SecurityPermission.class, REPORT_ENTRY_LISTING_REPORT, "Allows running entry listing report"));
+		codeMap.put(REPORT_OUTPUT_EMAIL_ATTACH, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_ATTACH, "Allows attaching the report"));
+		codeMap.put(REPORT_OUTPUT_EMAIL_BODY, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_BODY, "Allows email to body"));
 
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management"));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "Admin system management"));
@@ -126,6 +139,9 @@ public class SecurityPermission
 		codeMap.put(ADMIN_EVALUATION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_MANAGEMENT, "Admin evaluation management"));
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Admin security"));
 		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management"));
+		codeMap.put(ADMIN_FAQ, newLookup(SecurityPermission.class, ADMIN_FAQ, "Admin FAQ management"));
+
+		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Admin Support Media"));
 
 		return codeMap;
 	}

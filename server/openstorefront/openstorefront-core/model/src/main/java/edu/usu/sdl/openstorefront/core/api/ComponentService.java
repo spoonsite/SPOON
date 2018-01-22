@@ -222,6 +222,16 @@ public interface ComponentService
 	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+	
+	/**
+	 * Return the details object of the component attached to the given componentId and evaluationId. (the
+	 * full view)
+	 *
+	 * @param componentId
+	 * @param evaluationId
+	 * @return details or null if not found
+	 */
+	public ComponentDetailView getComponentDetails(String componentId, String evaluationId);
 
 	/**
 	 * Set the last view date for the component associated with the supplied id.
@@ -484,16 +494,22 @@ public interface ComponentService
 	 *
 	 * @param media
 	 * @param fileInput
+	 * @param mimeType
+	 * @param originalFileName
+	 * @return 
 	 */
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput);
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Saves component resource to disk sets the filename
 	 *
 	 * @param resource
 	 * @param fileInput
+	 * @param mimeType
+	 * @param originalFileName
+	 * @return 
 	 */
-	public void saveResourceFile(ComponentResource resource, InputStream fileInput);
+	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName);
 
 	/**
 	 * Find Recently Added

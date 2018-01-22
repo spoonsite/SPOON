@@ -101,6 +101,7 @@ import org.apache.commons.lang.StringUtils;
 public class Application
 		extends BaseResource
 {
+
 	@Inject
 	private CoreSystem coreSystem;
 

@@ -316,6 +316,9 @@
 									text: 'View Entry',
 									itemId: 'view',
 									scale: 'medium',
+									autoEl: {
+										"data-test": "viewQuestionEntryBtn"
+									},
 									disabled: true,
 									width: '140px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
@@ -389,7 +392,7 @@
 						]
 					});					
 					entryViewWindow.show();
-					frame.load('view.jsp?fullPage=true&id=' + componentId);
+					frame.load('view.jsp?fullPage=true&embedded=true&id=' + componentId);
 				};
 				
 				var actionRefreshQuestions = function() {
