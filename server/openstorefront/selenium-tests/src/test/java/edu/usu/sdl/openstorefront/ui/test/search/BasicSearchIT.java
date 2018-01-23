@@ -15,10 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,11 +43,21 @@ public class BasicSearchIT
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 	private static String entryName = "SeleniumTest";
+	private static String organizationName = "SeleniumOrganization";
+	private static String compDescription = "SeleniumTest Description"; 
+	private static AttributeProvider attributeProvider;
+	private static OrganizationProvider organizationProvider;
+	private static ComponentProvider componentProvider;
+	private static ComponentTypeProvider componentTypeProvider;
 
 	@BeforeClass
 	public static void basicSearchComponent()
 	{
-		createBasicSearchComponent(entryName);
+		attributeProvider = new AttributeProvider();
+		organizationProvider = new OrganizationProvider();
+		componentTypeProvider = new ComponentTypeProvider();
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider);
+		componentProvider.createComponent(entryName, compDescription, organizationName);
 	}
 
 	@Test
@@ -141,5 +156,11 @@ public class BasicSearchIT
 		}
 
 		Assert.assertTrue(isResult);
+	}
+	
+	@AfterClass
+	protected void cleanupTest()
+	{
+		componentProvider.cleanup();
 	}
 }

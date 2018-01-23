@@ -15,11 +15,86 @@
  */
 package edu.usu.sdl.openstorefront.selenium.provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.ClientAPI;
+import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author ccummings
  */
 public class AttributeProvider
 {
-	
+
+	ClientAPI apiClient;
+	AttributeClient client;
+	List<String> attributeTypes;
+
+	public AttributeProvider()
+	{
+		apiClient = new ClientAPI(new ObjectMapper());
+		client = new AttributeClient(apiClient);
+		attributeTypes = new ArrayList<>();
+	}
+
+	public AttributeType createAttribute(String attributeType, String attributeDefaultCode, String codeLabel)
+	{
+		AttributeType type = new AttributeType();
+		type.setAttributeType(attributeType);
+		type.setDescription("The Star Betelgeuse");
+		type.setVisibleFlg(Boolean.TRUE);
+		type.setImportantFlg(Boolean.TRUE);
+		type.setRequiredFlg(Boolean.TRUE);
+		type.setDefaultAttributeCode(attributeDefaultCode);
+		AttributeTypeSave attributeTypeSave = new AttributeTypeSave();
+		attributeTypeSave.setAttributeType(type);
+
+		AttributeType apiAttrType = client.postAttributeType(attributeTypeSave);
+		addAttributeCode(apiAttrType.getAttributeType(), attributeDefaultCode, codeLabel);
+
+		attributeTypes.add(apiAttrType.getAttributeType());
+
+		return apiAttrType;
+	}
+
+	public List<AttributeType> getReqAttributeTypes(String componentType)
+	{
+		return client.getRequiredAttributeTypes(componentType);
+	}
+
+	public List<AttributeCode> getListAttributeCodes(String attrType, FilterQueryParams params)
+	{
+		return client.getAttributeCodes(attrType, params);
+	}
+
+	public AttributeCode addAttributeCode(String attributeType, String codeLabel, String code)
+	{
+		AttributeType type = client.getAttributeTypeById(attributeType, null, null);
+
+		AttributeCodePk codePk = new AttributeCodePk();
+		codePk.setAttributeCode(code);
+		codePk.setAttributeType(type.getAttributeType());
+
+		AttributeCode attrCode = new AttributeCode();
+		attrCode.setLabel(codeLabel);
+		attrCode.setAttributeCodePk(codePk);
+
+		return client.postAttributeCode(attributeType, attrCode);
+	}
+
+	public void cleanup()
+	{
+		for (String type : attributeTypes) {
+			
+			client.deleteAttributeType(type);
+		}
+	}
+
 }
