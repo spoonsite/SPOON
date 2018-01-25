@@ -85,12 +85,12 @@ public class DBManager
 					LOG.info("Starting Orient DB...");
 					server = OServerMain.create();
 
-					String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
+					String home = FileSystemManager.getInstance().getDir(FileSystemManager.DB_DIR).getPath();
 					System.setProperty("ORIENTDB_HOME", home);
 					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 					server.setServerRootDirectory(home);
 
-					server.startup(FileSystemManager.getConfig("orientdb-server-config.xml"));
+					server.startup(FileSystemManager.getInstance().getConfig("orientdb-server-config.xml"));
 					server.activate();
 					this.dbFileDir = home + "/databases/openstorefront";
 					createDatabase();

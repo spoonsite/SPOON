@@ -99,7 +99,7 @@ public class Report
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank((getReportId()))) {
-			File reportDir = FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
+			File reportDir = FileSystemManager.getInstance().getDir(FileSystemManager.REPORT_DIR);
 			path = Paths.get(reportDir.getPath() + "/" + getReportId());
 		}
 		return path;

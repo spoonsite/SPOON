@@ -63,7 +63,7 @@ public class IniRealmManager
 
 		//load config
 		Ini ini = new Ini();
-		try (InputStream in = new FileInputStream(FileSystemManager.getConfig("shiro.ini"))) {
+		try (InputStream in = new FileInputStream(FileSystemManager.getInstance().getConfig("shiro.ini"))) {
 			ini.load(in);
 			Section section = ini.getSection("users");
 			if (section != null) {

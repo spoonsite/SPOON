@@ -2158,7 +2158,7 @@ public class CoreComponentServiceImpl
 								for (TFile mediaFile : mediaFiles) {
 									try {
 										TFile source = mediaFile;
-										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
+										TFile destination = new TFile(FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
 										if (destination.isArchive() || destination.isDirectory()) {
 											destination = new TFile(destination, source.getName());
 										}
@@ -2175,7 +2175,7 @@ public class CoreComponentServiceImpl
 								for (TFile resourceFile : resourceFiles) {
 									try {
 										TFile source = resourceFile;
-										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
+										TFile destination = new TFile(FileSystemManager.getInstance().getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
 										if (destination.isArchive() || destination.isDirectory()) {
 											destination = new TFile(destination, source.getName());
 										}

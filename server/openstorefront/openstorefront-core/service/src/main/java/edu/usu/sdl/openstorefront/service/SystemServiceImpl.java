@@ -295,7 +295,7 @@ public class SystemServiceImpl
 			persistenceService.persist(errorTicket);
 
 			//save file
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes(Charset.defaultCharset()));
 
 			AlertContext alertContext = new AlertContext();
@@ -317,7 +317,7 @@ public class SystemServiceImpl
 		String ticketData = null;
 		ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, errorTicketId);
 		if (errorTicket != null) {
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			try {
 				byte data[] = Files.readAllBytes(path);
 				ticketData = new String(data);
@@ -361,7 +361,7 @@ public class SystemServiceImpl
 	{
 		errorTickets.stream().forEach((errorTicket)
 				-> {
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
 				if (!path.toFile().delete()) {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to remove error ticket. Path: {0}", path.toString()));

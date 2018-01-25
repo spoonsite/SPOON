@@ -103,7 +103,7 @@ public class ImportServiceImpl
 		}
 
 		try (InputStream in = importContext.getInput(); OutputStream out = new FileOutputStream(fileHistory.pathToFileName().toFile())) {
-			FileSystemManager.copy(in, out);
+			FileSystemManager.getInstance().copy(in, out);
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException("Unable to save upload.", "Check file system permissions and disk space.", e);
 		}

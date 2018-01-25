@@ -123,7 +123,7 @@ public abstract class AbstractArchiveHandler
 	{
 
 		String archiveName = "archive-" + archive.getArchiveId() + ".zip";
-		fullArchiveName = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR) + "/" + archiveName;
+		fullArchiveName = FileSystemManager.getInstance().getDir(FileSystemManager.ARCHIVE_DIR) + "/" + archiveName;
 
 		archive.setArchiveFilename(archiveName);
 		archive.save();

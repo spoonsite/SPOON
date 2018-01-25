@@ -126,8 +126,8 @@ public class Application
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
 
-		applicationStatus.setRootStoragePath(FileSystemManager.MAIN_DIR);
-		File file = new File(FileSystemManager.MAIN_DIR);
+		applicationStatus.setRootStoragePath(FileSystemManager.getInstance().getBaseDirectory());
+		File file = new File(FileSystemManager.getInstance().getBaseDirectory());
 		applicationStatus.setFreeDiskSpace(file.getUsableSpace() / (1024 * 1024));
 		applicationStatus.setTotalDiskSpace(file.getTotalSpace() / (1024 * 1024));
 		applicationStatus.setUsedDiskSpace(applicationStatus.getTotalDiskSpace() - applicationStatus.getFreeDiskSpace());

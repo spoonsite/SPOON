@@ -278,7 +278,7 @@ public class PropertiesManager
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
 			defaults.put(KEY_MAX_POST_SIZE, "1000"); // 1GB
 
-			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
+			String propertiesFilename = FileSystemManager.getInstance().getConfig("openstorefront.properties").getPath();
 
 			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
 				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
@@ -301,7 +301,7 @@ public class PropertiesManager
 
 	private static void loadVersionProperties()
 	{
-		try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
+		try (InputStream in = FileSystemManager.getInstance().getApplicationResourceFile("/filter/version.properties")) {
 			Properties versionProperties = new Properties();
 			versionProperties.load(in);
 			if (properties == null) {
@@ -316,7 +316,7 @@ public class PropertiesManager
 	private static void saveProperties()
 	{
 		LOCK.lock();
-		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
+		String propertiesFilename = FileSystemManager.getInstance().getConfig("openstorefront.properties").getPath();
 		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
 			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {

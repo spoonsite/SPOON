@@ -140,7 +140,7 @@ public class SystemArchive
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getArchiveFilename())) {
-			File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
+			File archiveDir = FileSystemManager.getInstance().getDir(FileSystemManager.ARCHIVE_DIR);
 			path = Paths.get(archiveDir.getPath() + "/" + getArchiveFilename());
 		}
 		return path;

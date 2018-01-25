@@ -429,7 +429,7 @@ public class ComponentRESTResource
 		if (fullComponents.isEmpty() == false) {
 			try {
 				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-				String archiveName = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
+				String archiveName = FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
 				File entry = new TFile(archiveName + "/components.json");
 				try (Writer writer = new TFileWriter(entry)) {
 					writer.write(componentJson);

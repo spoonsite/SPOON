@@ -55,7 +55,7 @@ public class Plugin
 
 	public String fullPath()
 	{
-		return FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR) + "/" + getActualFilename();
+		return FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_DIR) + "/" + getActualFilename();
 	}
 
 	public String getPluginId()
