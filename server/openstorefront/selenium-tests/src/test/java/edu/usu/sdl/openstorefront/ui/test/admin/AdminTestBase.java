@@ -15,8 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.ClientAPI;
+import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import org.junit.BeforeClass;
 
@@ -29,27 +30,26 @@ public class AdminTestBase
 		extends BrowserTestBase
 {
 
+	public static ClientAPI apiClient;
+	
 	@BeforeClass
 	public static void setupBaseTest()
 	{
 		login();
 	}
 	
-	protected static void createBasicSearchComponent(String componentName)
+	public AdminTestBase()
 	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("Entry name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
+		apiClient = new ClientAPI(new ObjectMapper());
+		String server = PropertiesUtil.getProperties().getProperty("test.server", "http://localhost:8080/openstorefront/");
+		String username = PropertiesUtil.getProperties().getProperty("test.username");
+		String password = PropertiesUtil.getProperties().getProperty("test.password");
+		apiClient.connect(username, password, server);
+	}
+	
+	public void providerDisconnect()
+	{
+		apiClient.disconnect();
 	}
 
 }

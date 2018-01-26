@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
@@ -44,7 +43,6 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	protected static APIClient apiClient;
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
@@ -53,14 +51,12 @@ public class BrowserTestBase
 	{
 		properties = PropertiesUtil.getProperties();
 		webDriverUtil = new WebDriverUtil(properties);
-		apiClient = new APIClient();
 	}
 
 	@AfterClass
 	public static void cleanup() throws Exception
 	{
 		LOG.log(Level.INFO, "Starting cleanup");
-		apiClient.cleanup();
 		tearDown();
 	}
 

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.APIResponse;
 import edu.usu.sdl.apiclient.AbstractService;
@@ -60,7 +61,8 @@ public class ContactClient extends AbstractService
 
 	public List<Contact> getAllContacts()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpGet(basePath + "/filtered", null);
+		return response.getList(new TypeReference<List<Contact>>(){});
 	}
 
 	public Response getContact(String contactId)

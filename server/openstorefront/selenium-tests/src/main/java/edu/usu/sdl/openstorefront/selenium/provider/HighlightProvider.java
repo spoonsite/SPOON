@@ -16,9 +16,8 @@
 package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
-import edu.usu.sdl.apiclient.rest.resource.OrganizationClient;
-import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
-import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.apiclient.rest.resource.HighlightClient;
+import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,33 +25,38 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class OrganizationProvider
+public class HighlightProvider
 {
-	OrganizationClient client;
-	List<String> organizationIds;
 
-	public OrganizationProvider(ClientAPI apiClient)
+	HighlightClient client;
+	private static List<String> highlightIds;
+
+	public HighlightProvider(ClientAPI apiClient)
 	{
-		client = new OrganizationClient(apiClient);
-		organizationIds = new ArrayList<>();
+		client = new HighlightClient(apiClient);
+		highlightIds = new ArrayList<>();
 	}
 
-	public Organization createOrganization(String name)
+	public Highlight createHighlight(String highlightName)
 	{
-		Organization organization = new Organization();
-		organization.setName(name);
-		organization = client.createOrganization(organization);
+		Highlight highlight = new Highlight();
+		highlight.setTitle(highlightName);
+		highlight.setDescription("Selenium highlight description!");
+		highlight.setHighlightType(Highlight.TYPE_COMPONENT);
+		highlight.setOrderingPosition(1);
 
-		organizationIds.add(organization.getOrganizationId());
+		Highlight highlightAPI = client.postHighlight(highlight);
+		highlightIds.add(highlightAPI.getHighlightId());
 
-		return organization;
+		return highlightAPI;
 	}
 
-	public void cleanup() throws AttachedReferencesException
+	public void cleanup()
 	{
-		for (String id : organizationIds) {
+		for (String id : highlightIds) {
 			
-			client.deleteOrganization(id);
+			client.deleteHighlight(id);
 		}
 	}
+
 }

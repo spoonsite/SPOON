@@ -16,8 +16,8 @@
 package edu.usu.sdl.openstorefront.ui.test.search;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import static edu.usu.sdl.openstorefront.ui.test.search.SearchTestBase.createBasicSearchComponent;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.Assert;
@@ -47,7 +47,7 @@ public class AddTagSearchResultEntryIT
 	{
 		createBasicSearchComponent(entryName1);
 		Component entry2 = createBasicSearchComponent(entryName2);
-		apiClient.getComponentRESTTestClient().addTagToComponent(tagName, entry2);
+//		apiClient.getComponentRESTTestClient().addTagToComponent(tagName, entry2);
 		sleep(2500);
 	}
 
@@ -145,5 +145,25 @@ public class AddTagSearchResultEntryIT
 
 		WebElement close = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-qtip='Close dialog']")));
 		close.click();
+	}
+	
+	protected static Component createBasicSearchComponent(String componentName)
+	{
+//		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
+		Component myEntry = null;
+		System.out.println("Entry name: " + myEntry.getName());
+		ComponentAdminView entry = null;
+
+		int timer = 0;
+
+		while (entry == null && timer < 10000) {
+
+			timer += 200;
+			sleep(200);
+//			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
+
+		}
+		
+		return myEntry;
 	}
 }

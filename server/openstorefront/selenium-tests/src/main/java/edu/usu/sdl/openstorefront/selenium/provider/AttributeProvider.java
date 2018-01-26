@@ -15,13 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.selenium.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.IntegrationType;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
+import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +35,15 @@ import java.util.List;
  */
 public class AttributeProvider
 {
-
-	ClientAPI apiClient;
 	AttributeClient client;
 	List<String> attributeTypes;
+	List<String> attributeXRefTypes;
 
-	public AttributeProvider()
+	public AttributeProvider(ClientAPI apiClient)
 	{
-		apiClient = new ClientAPI(new ObjectMapper());
 		client = new AttributeClient(apiClient);
 		attributeTypes = new ArrayList<>();
+		attributeXRefTypes = new ArrayList();
 	}
 
 	public AttributeType createAttribute(String attributeType, String attributeDefaultCode, String codeLabel)
@@ -88,12 +90,46 @@ public class AttributeProvider
 
 		return client.postAttributeCode(attributeType, attrCode);
 	}
+	
+	public void createJiraMapping()
+	{
+		// Need to create an attribute here with api before mapping
+		//
+		createAttribute("MAPPINGTESTATTR", "MAPATTRTEST", "MAPATTR");
+		
+		AttributeXRefType xRefType = new AttributeXRefType();
+		xRefType.setAttributeType("MAPPINGTESTATTR");
+		xRefType.setIssueType("ASSET-TEST");
+		xRefType.setProjectType("ASSET");
+		xRefType.setFieldId("FieldId");
+		xRefType.setFieldName("DI2E Intent");
+		xRefType.setIntegrationType(IntegrationType.JIRA);
+		
+		attributeXRefTypes.add(xRefType.getAttributeType());
+		
+		AttributeXRefMap xRefMap = new AttributeXRefMap();
+		xRefMap.setAttributeType("MAPPINGTESTATTR");
+		xRefMap.setLocalCode("MAPATTR");
+		xRefMap.setExternalCode("No Evaluation Planned");
+		List<AttributeXRefMap> map = new ArrayList<>();
+		map.add(xRefMap);
+		
+		AttributeXRefView xRefView = new AttributeXRefView();
+		xRefView.setType(xRefType);
+		xRefView.setMap(map);
+		
+		client.saveMapping(xRefView);
+	}
 
 	public void cleanup()
 	{
 		for (String type : attributeTypes) {
 			
 			client.deleteAttributeType(type);
+		}
+		
+		for (String type : attributeXRefTypes) {
+			client.deleteMappingType(type);
 		}
 	}
 

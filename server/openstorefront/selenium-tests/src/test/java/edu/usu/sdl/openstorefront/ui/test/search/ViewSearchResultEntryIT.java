@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,5 +138,25 @@ public class ViewSearchResultEntryIT
 
 		boolean isDetailsTitle = detailsTitle.getText().contains(entryName);
 		Assert.assertTrue(isDetailsTitle);
+	}
+
+	protected static Component createBasicSearchComponent(String componentName)
+	{
+//		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
+		Component myEntry = null;
+		System.out.println("Entry name: " + myEntry.getName());
+		ComponentAdminView entry = null;
+
+		int timer = 0;
+
+		while (entry == null && timer < 10000) {
+
+			timer += 200;
+			sleep(200);
+//			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
+
+		}
+
+		return myEntry;
 	}
 }

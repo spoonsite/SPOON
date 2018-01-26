@@ -15,10 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.selenium.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.ComponentTypeClient;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,13 +27,13 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
  */
 public class ComponentTypeProvider
 {
-	ClientAPI apiClient;
 	ComponentTypeClient client;
+	List<String> compTypeIds;
 	
-	public ComponentTypeProvider()
+	public ComponentTypeProvider(ClientAPI apiClient)
 	{
-		apiClient = new ClientAPI(new ObjectMapper());
 		client = new ComponentTypeClient(apiClient);
+		compTypeIds = new ArrayList<>();
 	}
 	
 	public ComponentType createComponentType(String type)
@@ -48,12 +49,17 @@ public class ComponentTypeProvider
 		compType.setDataEntryReviews(Boolean.TRUE);
 
 		ComponentType apiCompType = client.createNewComponentType(compType);
+		
+		compTypeIds.add(apiCompType.getComponentType());
 				
 		return apiCompType;
 	}
 	
 	public void cleanup()
 	{
-		
+		for (String id : compTypeIds) {
+			
+			client.deleteComponentType(id, "COMP");
+		}
 	}
 }

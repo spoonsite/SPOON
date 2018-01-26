@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.selenium.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.ComponentRESTClient;
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -41,17 +42,14 @@ import java.util.List;
  */
 public class ComponentProvider
 {
-
 	ComponentRESTClient client;
-	ClientAPI apiClient;
 	AttributeProvider attributeProvider;
 	OrganizationProvider organizationProvider;
 	ComponentTypeProvider compTypeProvider;
 	List<String> componentIds;
 
-	public ComponentProvider(AttributeProvider ap, OrganizationProvider op, ComponentTypeProvider ctp)
+	public ComponentProvider(AttributeProvider ap, OrganizationProvider op, ComponentTypeProvider ctp, ClientAPI apiClient)
 	{
-		apiClient = new ClientAPI(new ObjectMapper());
 		client = new ComponentRESTClient(apiClient);
 		attributeProvider = ap;
 		organizationProvider = op;
@@ -59,10 +57,16 @@ public class ComponentProvider
 		componentIds = new ArrayList<>();
 	}
 
+	public ComponentRESTClient getComponentRESTClient()
+	{
+		return client;
+	}
+
 	public Component createComponent(String componentName, String description, String orgName)
 	{
 		AttributeType attrType = attributeProvider.createAttribute("SeleniumAttribute", "POLARIS", "POLARIS-STAR");
 		ComponentType compType = compTypeProvider.createComponentType("SeleniumEntryType");
+		Organization organization = organizationProvider.createOrganization(orgName);
 		Component component;
 		ComponentAdminView adminView = getComponentByName(componentName);
 
@@ -73,12 +77,12 @@ public class ComponentProvider
 			component.setName(componentName);
 			component.setDescription(description);
 			component.setComponentType(compType.getComponentType());
-			component.setOrganization(orgName);
+			component.setOrganization(organization.getName());
 			component.setApprovalState(ApprovalStatus.APPROVED);
 			component.setLastActivityDts(TimeUtil.currentDate());
 
 			List<ComponentAttribute> compAttributes = new ArrayList<>();
-			
+
 			List<AttributeCode> codes = attributeProvider.getListAttributeCodes(attrType.getAttributeType(), null);
 			if (!codes.isEmpty()) {
 				AttributeCodePk codePk = codes.get(0).getAttributeCodePk();
@@ -110,7 +114,7 @@ public class ComponentProvider
 		return component;
 	}
 
-	private ComponentAdminView getComponentByName(String componentName)
+	public ComponentAdminView getComponentByName(String componentName)
 	{
 		ComponentFilterParams param = new ComponentFilterParams();
 		param.setStatus(FILTER_ALL);
@@ -127,7 +131,7 @@ public class ComponentProvider
 		}
 	}
 
-	public void cleanup()
+	public void cleanup() throws AttachedReferencesException
 	{
 		for (String id : componentIds) {
 

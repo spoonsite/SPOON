@@ -15,10 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -39,6 +43,16 @@ public class AdminAttributesIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private AttributeProvider attributeProvider;
+	private ClientApiProvider provider;
+
+	@Before
+	public void setup()
+	{
+		provider = new ClientApiProvider();
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		attributeProvider.createAttribute("Rigel-Altair", "ALTAIR", "ALTAIR");
+	}
 
 	@Test
 	public void adminAttributesTest() throws InterruptedException
@@ -49,7 +63,6 @@ public class AdminAttributesIT
 			setupDriver(driver);
 			deleteAttribute(driver, "MyTestAttribute17");
 			createAttribute(driver, "MyTestAttribute17", "MYTESTATTR17");
-			createAPIAttributeType();
 			attributeManageCodes(driver, "MyTestAttribute17");
 			editManageCodes(driver, "MyTestCodeLabel11");
 			toggleStatusManageCodes(driver, "MyTestCodeLabel11");
@@ -73,11 +86,6 @@ public class AdminAttributesIT
 			}
 		});
 	}
-	
-	private void createAPIAttributeType()
-	{
-		apiClient.getAttributeTestClient().createAPIAttribute("Rigel-Altair", "ALTAIR", "ALTAIR");
-	}
 
 	public void createAttribute(WebDriver driver, String attrName, String attrCode)
 	{
@@ -90,7 +98,7 @@ public class AdminAttributesIT
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-label-inputEl"))).sendKeys(attrName);
 
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#editAttributeForm-code-inputEl"))).sendKeys(attrCode);
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#attributeValueType-trigger-picker"))).click();
 
 		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(.,'Text')]"))).click();
@@ -276,5 +284,11 @@ public class AdminAttributesIT
 
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#manageCodesCloseBtn"))).click();
 		}
+	}
+	
+	@After
+	public void cleanupTest()
+	{
+		attributeProvider.cleanup();
 	}
 }

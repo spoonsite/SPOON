@@ -46,7 +46,7 @@ public class PrintSearchResultsEntryIT
 	@BeforeClass
 	public static void createEntryToPrint()
 	{
-		createBasicSearchComponent(entryName);
+//		createBasicSearchComponent(entryName);
 	}
 
 	@Test

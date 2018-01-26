@@ -15,12 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ContactProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -38,6 +42,16 @@ public class AdminContactsIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private ContactProvider contactProvider;
+	private ClientApiProvider provider;
+
+	@Before
+	public void setup()
+	{
+		provider = new ClientApiProvider();
+		contactProvider = new ContactProvider(provider.getAPIClient());
+		contactProvider.createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "testAPIContact@test.com", "MyAmazingTest-Organization");
+	}
 
 	@Test
 	public void adminContactsTest() throws InterruptedException
@@ -46,7 +60,6 @@ public class AdminContactsIT
 
 			setupDriver(driver);
 			createContact(driver, "AAA-TesterFirst", "AAA-TesterLast", "MyAmazingTest-Organization", "testContact@test.com");
-			apiClient.getContactTestClient().createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "testAPIContact@test.com", "MyAmazingTest-Organization");
 			editContact(driver, "AAA-TesterFirst", "000-000-0000");
 			toggleStatusContact(driver, "AAA-TesterFirst", "Active");
 			Assert.assertTrue(verifyStatus(driver, "AAA-TesterFirst", "Inactive"));
@@ -54,7 +67,7 @@ public class AdminContactsIT
 			sleep(1000);
 		}
 	}
-	
+
 	public void setupDriver(WebDriver driver)
 	{
 		webDriverUtil.getPage(driver, "AdminTool.action?load=Contacts");
@@ -105,6 +118,8 @@ public class AdminContactsIT
 
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#contactRefreshBtn"))).click();
 
+		Contact contact = contactProvider.getContactByName(fName, lName);
+		contactProvider.registerContact(contact.getContactId());
 	}
 
 	public void editContact(WebDriver driver, String fName, String phone) throws InterruptedException
@@ -135,14 +150,13 @@ public class AdminContactsIT
 
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#addEditWindow_header-title-textEl")));
 
-		List<WebElement> allRows = new ArrayList<>();
-		allRows = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
+		List<WebElement> allRows = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
 
 		int colIndex = getColumnHeaderIndex(driver, "Phone", ".x-grid-header-ct");
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<>();
+			List<WebElement> cells;
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);
@@ -249,8 +263,7 @@ public class AdminContactsIT
 			}
 		}
 
-		List<WebElement> allRows = new ArrayList<>();
-		allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
+		List<WebElement> allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector("#contactGrid-body .x-grid-item-container"), By.tagName("tr")));
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-grid-header-ct")));
 
@@ -261,7 +274,7 @@ public class AdminContactsIT
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<>();
+			List<WebElement> cells;
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);
@@ -348,5 +361,11 @@ public class AdminContactsIT
 				break;
 			}
 		}
+	}
+
+	@After
+	public void cleanupTest()
+	{
+		contactProvider.cleanup();
 	}
 }

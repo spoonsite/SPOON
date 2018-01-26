@@ -55,7 +55,7 @@ public class AdminSavedSearchIT
 
 	public void createAPISavedSearch() throws JsonProcessingException
 	{
-		apiClient.getSystemSearchTestClient().createAPISystemSearch();
+//		apiClient.getSystemSearchTestClient().createAPISystemSearch();
 	}
 
 	public void createSavedSearch(WebDriver driver)

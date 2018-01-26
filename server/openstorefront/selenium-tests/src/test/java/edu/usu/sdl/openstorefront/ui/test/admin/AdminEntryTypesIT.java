@@ -15,14 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -41,6 +44,16 @@ public class AdminEntryTypesIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private ComponentTypeProvider compTypeProvider;
+	private ClientApiProvider provider;
+	
+	@Before
+	public void setup()
+	{
+		provider = new ClientApiProvider();
+		compTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		compTypeProvider.createComponentType("Selenium-EntryType");
+	}
 
 	@Test
 	public void adminEntryTypesTest() throws InterruptedException
@@ -50,16 +63,10 @@ public class AdminEntryTypesIT
 
 			setupDriver(driver);
 			createEntryType(driver, "AMAZING-TEST", "An Amazing Test");
-			createAPIComponentType();
 			editEntryTypes(driver, "AMAZING-TEST");
 			toggleStatusEntryType(driver, "AMAZING-TEST");
 			deleteEntryType(driver, "AMAZING-TEST");
 		}
-	}
-
-	private void createAPIComponentType()
-	{
-		apiClient.getComponentTypeTestClient().createAPIComponentType("AAA-ENTRYTYPE-API");
 	}
 
 	public void setupDriver(WebDriver driver)
@@ -160,8 +167,7 @@ public class AdminEntryTypesIT
 			LOG.log(Level.INFO, e.toString());
 		}
 
-		List<WebElement> allRows = new ArrayList<>();
-		allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(".x-grid-item-container"), By.tagName("tr")));
+		List<WebElement> allRows = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(By.cssSelector(".x-grid-item-container"), By.tagName("tr")));
 
 		int colIndex = getColumnHeaderIndex(driver, "Active Status");
 		if (colIndex == -1) {
@@ -170,7 +176,8 @@ public class AdminEntryTypesIT
 
 		for (WebElement row : allRows) {
 
-			List<WebElement> cells = new ArrayList<>();
+			List<WebElement> cells;
+			
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);
@@ -240,5 +247,11 @@ public class AdminEntryTypesIT
 			col++;
 		}
 		return -1;
+	}
+	
+	@After
+	public void cleanupTest()
+	{
+		compTypeProvider.cleanup();
 	}
 }

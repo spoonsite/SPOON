@@ -15,11 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentIntegrationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -38,6 +47,28 @@ public class AdminDeleteIntegrationIT
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private String componentName = "DeleteIntegrationTestComp";
+	private String compDescription = "Integration Description";
+	private String compOrganization = "Integration Test Organization";
+	private ClientApiProvider provider;
+	private ComponentProvider componentProvider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentTypeProvider compTypeProvider;
+	private ComponentIntegrationProvider compIntegrationProvider;
+
+	@Before
+	public void setup() throws InterruptedException
+	{
+		provider = new ClientApiProvider();
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		compTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		compIntegrationProvider = new ComponentIntegrationProvider(provider.getAPIClient());
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, compTypeProvider, provider.getAPIClient());
+		Component testComponent = componentProvider.createComponent(componentName, compDescription, compOrganization);
+		compIntegrationProvider.createComponentIntegration(testComponent);
+		sleep(1000);
+	}
 
 	@Test
 	public void deleteComponentIntegrationTest() throws InterruptedException
@@ -45,7 +76,6 @@ public class AdminDeleteIntegrationIT
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
-			apiClient.getComponentRESTTestClient().createAPIComponentIntegration(componentName);
 			deleteIntegration(driver, componentName);
 		}
 	}
@@ -54,15 +84,14 @@ public class AdminDeleteIntegrationIT
 	{
 		webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		
+
 		List<WebElement> tabs = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-tab.x-unselectable")));
 		WebElement componentConfigTab = tabs.get(0);
 		componentConfigTab.click();
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-refresh"))).click();
 
-		List<WebElement> headers = new ArrayList<>();
-		headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
+		List<WebElement> headers = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-column-header-inner.x-leaf-column-header")));
 		WebElement componentHeader = null;
 		for (WebElement header : headers) {
 			if (header.getText().equals("Component")) {
@@ -80,8 +109,7 @@ public class AdminDeleteIntegrationIT
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-delete"))).click();
 
-		List<WebElement> confirmBtns = new ArrayList<>();
-		confirmBtns = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small[aria-hidden='false']")));
+		List<WebElement> confirmBtns = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small[aria-hidden='false']")));
 		confirmBtns.get(0).click();
 
 		sleep(1000);
@@ -91,7 +119,13 @@ public class AdminDeleteIntegrationIT
 		}, 5);
 
 		Assert.assertFalse(tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1));
-
+	}
+	
+	@After
+	public void cleanupTest() throws AttachedReferencesException
+	{
+		compIntegrationProvider.cleanup();
+		componentProvider.cleanup();
 	}
 }
 

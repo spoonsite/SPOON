@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Logger;
@@ -43,8 +42,8 @@ public class UserAnswerQuestionIT
 	@BeforeClass
 	public static void setupTest()
 	{
-		Component questionComponent = createUserComponent(SUBMISSION_NAME);
-		apiClient.getComponentRESTTestClient().addAPIComponentQuestion("Are you Selenium?", questionComponent);
+//		Component questionComponent = createUserComponent(SUBMISSION_NAME);
+//		apiClient.getComponentRESTTestClient().addAPIComponentQuestion("Are you Selenium?", questionComponent);
 	}
 
 	@Test

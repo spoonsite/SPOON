@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import org.junit.BeforeClass;
 
@@ -27,29 +25,10 @@ import org.junit.BeforeClass;
  */
 public class SearchTestBase
 		extends BrowserTestBase
-{
+{	
 	@BeforeClass
 	public static void setupBaseTest()
 	{
 		login();
-	}
-	
-	protected static Component createBasicSearchComponent(String componentName)
-	{
-		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		System.out.println("Entry name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
-		
-		return myEntry;
 	}
 }

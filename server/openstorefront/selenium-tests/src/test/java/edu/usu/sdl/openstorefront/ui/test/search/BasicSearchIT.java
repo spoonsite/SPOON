@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
@@ -23,9 +25,9 @@ import edu.usu.sdl.openstorefront.ui.test.admin.AdminSavedSearchIT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -44,33 +46,36 @@ public class BasicSearchIT
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 	private static String entryName = "SeleniumTest";
 	private static String organizationName = "SeleniumOrganization";
-	private static String compDescription = "SeleniumTest Description"; 
+	private static String compDescription = "SeleniumTest Description";
+	private static ClientApiProvider provider;
 	private static AttributeProvider attributeProvider;
 	private static OrganizationProvider organizationProvider;
 	private static ComponentProvider componentProvider;
 	private static ComponentTypeProvider componentTypeProvider;
+	private String searchNoQuotes = "SeleniumTest";
+	private String searchWithQuotes = "\"SeleniumTest\"";
 
-	@BeforeClass
-	public static void basicSearchComponent()
+	@Before
+	public void basicSearchComponent()
 	{
-		attributeProvider = new AttributeProvider();
-		organizationProvider = new OrganizationProvider();
-		componentTypeProvider = new ComponentTypeProvider();
-		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider);
+		provider = new ClientApiProvider();
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
 		componentProvider.createComponent(entryName, compDescription, organizationName);
+		sleep(1000);
 	}
 
 	@Test
 	public void basicSearchWithoutQuotesLandingPage()
 	{
-
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromLandingPage(driver, "SeleniumTest");
-			verifyResults(driver, entryName);
+			searchFromLandingPage(driver, searchNoQuotes);
+			verifyResults(driver, entryName, searchNoQuotes);
 
 		}
-
 	}
 
 	@Test
@@ -78,8 +83,8 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromLandingPage(driver, "\"SeleniumTest\"");
-			verifyResults(driver, entryName);
+			searchFromLandingPage(driver, searchWithQuotes);
+			verifyResults(driver, entryName, searchWithQuotes);
 		}
 	}
 
@@ -88,8 +93,8 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromResultsPage(driver, "\"SeleniumTest\"");
-			verifyResults(driver, entryName);
+			searchFromResultsPage(driver, searchWithQuotes);
+			verifyResults(driver, entryName, searchWithQuotes);
 		}
 	}
 
@@ -98,8 +103,8 @@ public class BasicSearchIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchFromResultsPage(driver, "SeleniumTest");
-			verifyResults(driver, entryName);
+			searchFromResultsPage(driver, searchNoQuotes);
+			verifyResults(driver, entryName, searchNoQuotes);
 		}
 	}
 
@@ -113,7 +118,7 @@ public class BasicSearchIT
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
-		sleep(1500);
+		sleep(1000);
 
 	}
 
@@ -126,30 +131,30 @@ public class BasicSearchIT
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchTextFieldResults-inputEl"))).sendKeys(search);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
-
-		sleep(1500);
 	}
 
-	public void verifyResults(WebDriver driver, String entryName)
+	public void verifyResults(WebDriver driver, String entryName, String searchName)
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 8);
-		
+
 		List<WebElement> entryResults = new ArrayList<>();
-		
+
 		long startTime = System.currentTimeMillis();
 
-		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 30000) {
-			
-			driver.navigate().refresh();
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 60000) {
+
 			entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
 			
+			if (entryResults.isEmpty()) {
+				
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
+			}
 		}
-		
+
 		boolean isResult = false;
 
 		for (WebElement entry : entryResults) {
 
-			System.out.println("Entry Name: " + entry.getText());
 			if (entry.getText().equals(entryName)) {
 				isResult = true;
 			}
@@ -157,10 +162,11 @@ public class BasicSearchIT
 
 		Assert.assertTrue(isResult);
 	}
-	
-	@AfterClass
-	protected void cleanupTest()
+
+	@After
+	public void cleanupTest() throws AttachedReferencesException
 	{
 		componentProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }
