@@ -36,45 +36,47 @@
 			/* global Ext, CoreUtil */
 
 			Ext.onReady(function () {
-				
+				var evalGridStore = Ext.create('Ext.data.Store', {
+					pageSize: 100,
+					autoLoad: false,
+					fields: [
+						{ 
+							name: 'createDts', 
+							type: 'date',
+							dateFormat: 'c'							
+						},
+						{ 
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'				
+						}							
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/evaluations',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					}),										
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								'assignedUser': Ext.getCmp('filterAssignedUser').getValue(),
+								'assignedGroup': Ext.getCmp('filterAssignedGroup').getValue(),
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
+								published: false
+							};
+						}
+					}						
+				});
+					
 				var evaluationGrid = Ext.create('Ext.grid.Panel', {					
 					id: 'evaluationGrid',
 					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allows editing evaluations for entries" ></i>',										
 					columnLines: true,
-					store: {
-						autoLoad: false,
-						fields: [
-							{ 
-								name: 'createDts', 
-								type: 'date',
-								dateFormat: 'c'							
-							},
-							{ 
-								name: 'updateDts',
-								type: 'date',
-								dateFormat: 'c'				
-							}							
-						],
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/evaluations',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}
-						}),										
-						listeners: {
-							beforeLoad: function(store, operation, eOpts){
-								store.getProxy().extraParams = {
-									'assignedUser': Ext.getCmp('filterAssignedUser').getValue(),
-									'assignedGroup': Ext.getCmp('filterAssignedGroup').getValue(),
-									'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
-									published: false
-								};
-							}
-						}						
-					},
+					store: evalGridStore,
 					columns: [
 						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
 						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },						
@@ -123,7 +125,13 @@
 
 						}
 					},						
-					dockedItems: [
+					dockedItems: [,
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: evalGridStore,
+							displayInfo: true
+						},
 						{
 							xtype: 'toolbar',
 							dock: 'top',	 
