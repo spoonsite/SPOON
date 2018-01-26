@@ -105,8 +105,7 @@ public class ContentSectionServiceImpl
 	 */
 	private String parseTemporaryMedia(String sectionId, String content)
 	{
-		if(StringUtils.isBlank(content))
-		{
+		if (StringUtils.isBlank(content)) {
 			return content;
 		}
 		Document descriptionDoc = Jsoup.parse(content);
@@ -156,9 +155,8 @@ public class ContentSectionServiceImpl
 
 						contentSectionMedia.setMediaTypeCode(mediaTypeCode);
 
-						try {
-							Path path = existingTemporaryMedia.pathToMedia();
-							InputStream in = new FileInputStream(path.toFile());
+						Path path = existingTemporaryMedia.pathToMedia();
+						try (InputStream in = new FileInputStream(path.toFile())) {
 							contentSectionMedia.setContentSectionMediaId(persistenceService.generateId());
 							contentSectionMedia.populateBaseCreateFields();
 							contentSectionMedia.setFile(saveMediaFile(new MediaFile(), in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName()));
