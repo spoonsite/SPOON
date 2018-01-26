@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import edu.usu.sdl.openstorefront.core.view.SystemSearchWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +43,11 @@ public class SystemSearchProvider
 		systemSearchIds = new ArrayList<>();
 	}
 
-	public SystemSearch createSystemSearch() throws JsonProcessingException
+	public SystemSearch createSystemSearch(String searchName) throws JsonProcessingException
 	{
 		SearchElement element = new SearchElement();
 		element.setSearchType(SearchOperation.SearchType.COMPONENT);
-		element.setField("Name");
+		element.setField(searchName);
 		element.setValue("Selenium API public saved search value");
 		element.setMergeCondition(SearchOperation.MergeCondition.OR);
 		List<SearchElement> searchElements = new ArrayList<>();
@@ -67,10 +68,31 @@ public class SystemSearchProvider
 		return apiAdminSearch;
 	}
 
+	public SystemSearch getSystemSearchByName(String searchName)
+	{
+		SystemSearchWrapper searchWrapper = client.getAllSearches(null);
+		List<SystemSearch> activeSearches = searchWrapper.getData();
+
+		for (SystemSearch search : activeSearches) {
+
+			if (search.getSearchName().equals(searchName))
+			{
+				return search;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void registerSearchId(String searchId)
+	{
+		systemSearchIds.add(searchId);
+	}
+
 	public void cleanup()
 	{
 		for (String id : systemSearchIds) {
-			
+
 			client.deleteSearch(id);
 		}
 	}

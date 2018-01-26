@@ -45,6 +45,7 @@ public class AdminHighlightIT
 	private ClientApiProvider provider;
 	private HighlightProvider highlightProvider;
 	private SystemSearchProvider searchProvider;
+	private String searchName = "Selenium Saved Search";
 	private String highlightName = "Selenium Highlight";
 
 	@Before
@@ -54,7 +55,7 @@ public class AdminHighlightIT
 		highlightProvider = new HighlightProvider(provider.getAPIClient());
 		highlightProvider.createHighlight(highlightName);
 		searchProvider = new SystemSearchProvider(provider.getAPIClient());
-		searchProvider.createSystemSearch();
+		searchProvider.createSystemSearch(searchName);
 	}
 
 	@Test

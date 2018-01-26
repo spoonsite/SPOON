@@ -16,10 +16,13 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.SystemSearchProvider;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -36,6 +39,17 @@ public class AdminSavedSearchIT
 {
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
+	private ClientApiProvider provider;
+	private SystemSearchProvider searchProvider;
+	private String searchName = "Selenium Saved Search";
+
+	@Before
+	public void setup() throws JsonProcessingException
+	{
+		provider = new ClientApiProvider();
+		searchProvider = new SystemSearchProvider(provider.getAPIClient());
+		searchProvider.createSystemSearch(searchName);
+	}
 
 	@Test
 	public void adminSavedSearchTest() throws JsonProcessingException
@@ -45,17 +59,11 @@ public class AdminSavedSearchIT
 
 			webDriverUtil.getPage(driver, "AdminTool.action?load=Searches");
 			createSavedSearch(driver);
-			createAPISavedSearch();
 			editSavedSearch(driver);
 			sleep(2000);
 			deleteSavedSearch(driver);
 		}
 
-	}
-
-	public void createAPISavedSearch() throws JsonProcessingException
-	{
-//		apiClient.getSystemSearchTestClient().createAPISystemSearch();
 	}
 
 	public void createSavedSearch(WebDriver driver)
@@ -67,7 +75,7 @@ public class AdminSavedSearchIT
 
 		// fill out form
 		WebElement searchNameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
-		searchNameField.sendKeys("Regression DOD8500");
+		searchNameField.sendKeys("Selenium DOD8500");
 
 		WebElement searchType = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[name = 'searchType']")));
 		searchType.click();
@@ -110,6 +118,9 @@ public class AdminSavedSearchIT
 		// save search
 		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
 		saveCriteriaBtn.click();
+		
+		String searchId = searchProvider.getSystemSearchByName("Selenium DOD8500").getSearchId();
+		searchProvider.registerSearchId(searchId);
 
 		try {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#searchgrid-body .x-component.x-border-box.x-mask")));
@@ -126,12 +137,12 @@ public class AdminSavedSearchIT
 		List<WebElement> searchesList = wait.until(ExpectedConditions.presenceOfNestedElementsLocatedBy(By.cssSelector(".x-grid-view"), By.tagName("td")));
 		boolean inList = false;
 		for (WebElement search : searchesList) {
-			if (search.getText().equals("Regression DOD8500")) {
+			if (search.getText().equals("Selenium DOD8500")) {
 				inList = true;
 			}
 		}
 
-		Assert.assertEquals(true, inList);
+		Assert.assertTrue(inList);
 	}
 
 	public void editSavedSearch(WebDriver driver)
@@ -144,7 +155,7 @@ public class AdminSavedSearchIT
 		WebElement mySearch = null;
 
 		for (WebElement search : searchesList) {
-			if (search.getText().equals("Regression DOD8500")) {
+			if (search.getText().equals("Selenium DOD8500")) {
 				mySearch = search;
 			}
 		}
@@ -158,7 +169,7 @@ public class AdminSavedSearchIT
 		// change search name
 		WebElement searchNameField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#searchName-inputEl")));
 		searchNameField.clear();
-		searchNameField.sendKeys("Regression DOD8500 - Edited");
+		searchNameField.sendKeys("Selenium DOD8500 - Edited");
 
 		// save search
 		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
@@ -181,7 +192,7 @@ public class AdminSavedSearchIT
 
 		for (WebElement item : mySearchList) {
 			sleep(200);
-			if (item.getText().equals("Regression DOD8500 - Edited")) {
+			if (item.getText().equals("Selenium DOD8500 - Edited")) {
 				isInList = true;
 				break;
 			}
@@ -199,7 +210,7 @@ public class AdminSavedSearchIT
 		WebElement mySearch = null;
 
 		for (WebElement search : searchesList) {
-			if (search.getText().equals("Regression DOD8500") || search.getText().equals("Regression DOD8500 - Edited")) {
+			if (search.getText().equals("Selenium DOD8500") || search.getText().equals("Selenium DOD8500 - Edited")) {
 				mySearch = search;
 				mySearch.click();
 			}
@@ -227,7 +238,7 @@ public class AdminSavedSearchIT
 		boolean inList = false;
 
 		for (WebElement item : mySearchesList) {
-			if (item.getText().equals("Regression DOD8500") || item.getText().equals("Regression DOD8500 - Edited")) {
+			if (item.getText().equals("Selenium DOD8500") || item.getText().equals("Selenium DOD8500 - Edited")) {
 				inList = true;
 			}
 		}
@@ -240,26 +251,6 @@ public class AdminSavedSearchIT
 	@After
 	public void cleanUpTest()
 	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-
-			WebDriverWait wait = new WebDriverWait(driver, 5);
-			WebElement searchTable = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".x-grid-view.x-grid-with-col-lines")));
-
-			List<WebElement> searchesList = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(searchTable, By.tagName("td")));
-			WebElement mySearch;
-
-			for (WebElement search : searchesList) {
-				if (search.getText().equals("Regression DOD8500") || search.getText().equals("Regression DOD8500 - Edited")) {
-					mySearch = search;
-					mySearch.click();
-
-					WebElement toggleStatusBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='toggleBtnSearches']")));
-					toggleStatusBtn.click();
-
-					break;
-				}
-			}
-
-		}
+		searchProvider.cleanup();
 	}
 }
