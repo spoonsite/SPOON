@@ -37,10 +37,10 @@ public class UserProfileSyncJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		String run = PropertiesManager.getValue(PropertiesManager.KEY_EXTERNAL_SYNC_ACTIVATE, "false");
+		String run = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_SYNC_ACTIVATE, "false");
 		if (Convert.toBoolean(run)) {
 			try {
-				String userManagementClass = PropertiesManager.getValue(PropertiesManager.KEY_EXTERNAL_USER_MANAGER, "IniRealmManager");
+				String userManagementClass = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_USER_MANAGER, "IniRealmManager");
 				Class userManagerClass = Class.forName("edu.usu.sdl.openstorefront.security." + userManagementClass);
 				ExternalUserManager userManager = (ExternalUserManager) userManagerClass.newInstance();
 				service.getUserService().syncUserProfilesWithUserManagement(userManager);

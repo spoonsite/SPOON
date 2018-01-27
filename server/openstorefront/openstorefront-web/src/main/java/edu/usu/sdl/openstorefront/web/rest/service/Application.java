@@ -121,7 +121,7 @@ public class Application
 		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
 		ApplicationStatus applicationStatus = new ApplicationStatus();
-		applicationStatus.setApplicationVersion(PropertiesManager.getApplicationVersion());
+		applicationStatus.setApplicationVersion(PropertiesManager.getInstance().getApplicationVersion());
 		applicationStatus.setProcessorCount(operatingSystemMXBean.getAvailableProcessors());
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
@@ -239,7 +239,7 @@ public class Application
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
 
-		Map<String, String> props = PropertiesManager.getAllProperties();
+		Map<String, String> props = PropertiesManager.getInstance().getAllProperties();
 		for (String key : props.keySet()) {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(key);
@@ -261,7 +261,7 @@ public class Application
 	@Path("/configproperties/{key}")
 	public Response getConfigPropertiesForKey(@PathParam("key") String key)
 	{
-		String value = PropertiesManager.getValueDefinedDefault(key);
+		String value = PropertiesManager.getInstance().getValueDefinedDefault(key);
 
 		LookupModel lookupModel = new LookupModel();
 		lookupModel.setCode(key);
@@ -310,7 +310,7 @@ public class Application
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());
+			PropertiesManager.getInstance().setProperty(lookupModel.getCode(), lookupModel.getDescription());
 			return Response.ok(lookupModel).build();
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
@@ -322,7 +322,7 @@ public class Application
 	@Path("/configproperties/{key}")
 	public void removeConfigProperties(@PathParam("key") String key)
 	{
-		PropertiesManager.removeProperty(key);
+		PropertiesManager.getInstance().removeProperty(key);
 	}
 
 	@GET
@@ -517,7 +517,7 @@ public class Application
 	public LookupModel getShowFeedBack()
 	{
 		LookupModel lookupModel = new LookupModel();
-		lookupModel.setCode(PropertiesManager.getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "True").toUpperCase());
+		lookupModel.setCode(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "True").toUpperCase());
 		if (Convert.toBoolean(lookupModel.getCode())) {
 			lookupModel.setDescription("Allow jira feedback");
 		} else {
@@ -690,7 +690,7 @@ public class Application
 	@Path("/version")
 	public String getApplicationVersion()
 	{
-		return PropertiesManager.getApplicationVersion();
+		return PropertiesManager.getInstance().getApplicationVersion();
 	}
 
 }

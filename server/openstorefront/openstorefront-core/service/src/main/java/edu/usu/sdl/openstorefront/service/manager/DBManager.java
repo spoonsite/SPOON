@@ -87,7 +87,7 @@ public class DBManager
 
 					String home = FileSystemManager.getInstance().getDir(FileSystemManager.DB_DIR).getPath();
 					System.setProperty("ORIENTDB_HOME", home);
-					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 					server.setServerRootDirectory(home);
 
 					server.startup(FileSystemManager.getInstance().getConfig("orientdb-server-config.xml"));
@@ -117,9 +117,9 @@ public class DBManager
 	 */
 	protected synchronized void createPool()
 	{
-		globalInstance = new OObjectDatabasePool(url, PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		globalInstance = new OObjectDatabasePool(url, PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 
-		globalInstance.setup(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
+		globalInstance.setup(Integer.parseInt(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 		try (OObjectDatabaseTx db = getConnection()) {
 			db.getEntityManager().registerEntityClasses(entityModelPackage, BaseEntity.class.getClassLoader());
@@ -189,7 +189,7 @@ public class DBManager
 	public void exportDB(OutputStream out, DatabaseStatusListener dbListener) throws IOException
 	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
-		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		db.open(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 		try (OutputStream closableOut = out) {
 			OCommandOutputListener listener = (String iText) -> {
 				if (LOG.isLoggable(Level.FINEST)) {
@@ -218,7 +218,7 @@ public class DBManager
 	public void importDB(InputStream in, DatabaseStatusListener dbListener) throws IOException
 	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
-		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		db.open(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 		try (InputStream closableIn = in) {
 			OCommandOutputListener listener = (String iText) -> {
 				if (LOG.isLoggable(Level.FINEST)) {

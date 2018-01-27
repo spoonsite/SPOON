@@ -45,7 +45,7 @@ public class AsyncTaskManager
 
 	public static void init()
 	{
-		String maxPoolSize = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_POOL_SIZE, "20");
+		String maxPoolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_POOL_SIZE, "20");
 		int poolSize = Convert.toInteger(maxPoolSize);
 		taskPool = new TaskThreadExecutor(5, poolSize, 30L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(200));
 		taskPool.allowCoreThreadTimeOut(true);		

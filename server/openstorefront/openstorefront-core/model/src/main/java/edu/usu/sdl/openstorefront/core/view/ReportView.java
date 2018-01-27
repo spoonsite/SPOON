@@ -49,10 +49,10 @@ public class ReportView
 	public ReportView()
 	{
 		try {
-			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_REPORT_LIFETIME));
+			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_REPORT_LIFETIME));
 		} catch (NumberFormatException e) {
 			//	If the configured report lifetime is invalid, fallback to the default value for the max report lifetime
-			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME));
+			this.reportLifetimeMax = Integer.parseInt(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME));
 		}
 	}
 

@@ -225,7 +225,7 @@ public abstract class AbstractArchiveHandler
 	protected void createManifest(ArchiveManifest manifest)
 	{
 		manifest.setSystemArchiveType(archive.getSystemArchiveType());
-		manifest.setApplicationVersion(PropertiesManager.getApplicationVersion());
+		manifest.setApplicationVersion(PropertiesManager.getInstance().getApplicationVersion());
 
 		File manifestFile = new TFile(fullArchiveName + MANIFEST_FILENAME);
 

@@ -45,7 +45,7 @@ public class SystemArchiveJob
 	protected void executeInternaljob(JobExecutionContext context)
 	{
 		//check for stuck working archives that exceed processing time limits
-		Long maxWorkingMinutes = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES));
+		Long maxWorkingMinutes = Convert.toLong(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES));
 		if (maxWorkingMinutes == null) {
 			maxWorkingMinutes = DEFAULT_MAX_PROCESSING_MINUTES;
 		}

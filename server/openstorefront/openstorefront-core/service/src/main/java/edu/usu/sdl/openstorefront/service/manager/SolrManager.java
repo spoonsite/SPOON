@@ -110,12 +110,12 @@ public class SolrManager
 
 	public static void init()
 	{
-		String url = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
+		String url = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SOLR_URL);
 		if (StringUtils.isNotBlank(url)) {
 			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
 
 			//use the xml instead of binary
-			String xml = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_USE_XML);
+			String xml = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SOLR_USE_XML);
 			if (StringUtils.isNotBlank(xml)) {
 				solrServer = new HttpSolrClient.Builder(url)
 						.allowCompression(true)

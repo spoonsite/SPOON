@@ -39,6 +39,7 @@ import org.junit.Test;
 /**
  *
  * @author ccummings
+ * @author dshurtleff
  */
 public class FileSystemManagerTest
 {
@@ -82,7 +83,6 @@ public class FileSystemManagerTest
 				LOG.warning("Unable to delete temp directory");
 			}
 		}
-
 	}
 
 	/**

@@ -1685,7 +1685,7 @@ public class CoreComponentServiceImpl
 		lock.lock();
 		try {
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
-			updateQueueExample.setNodeId(PropertiesManager.getNodeName());
+			updateQueueExample.setNodeId(PropertiesManager.getInstance().getNodeName());
 
 			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(updateQueueExample);
 			if (componentUpdateQueues.isEmpty() == false) {

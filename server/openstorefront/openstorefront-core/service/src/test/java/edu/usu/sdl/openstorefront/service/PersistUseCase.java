@@ -43,8 +43,8 @@ public class PersistUseCase
 //		//NOTE: (KB) this will fail if DBManager is alreay initilzed
 		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
 		DBManager.getInstance().initialize();
-		if (PropertiesManager.getValue(PropertiesManager.KEY_DB_AT) == null) {
-			PropertiesManager.setProperty(PropertiesManager.KEY_DB_AT, "pass");
+		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT) == null) {
+			PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DB_AT, "pass");
 		}
 	}
 

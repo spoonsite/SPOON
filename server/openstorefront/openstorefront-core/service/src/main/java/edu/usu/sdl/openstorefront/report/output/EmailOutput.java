@@ -72,7 +72,7 @@ public class EmailOutput
 		if (Convert.toBoolean(reportOutput.getReportTransmissionOption().getPostToEmailBody())) {
 			message.append(reportGenerator.reportSummmary(reportModel));
 		} else {
-			String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
+			String replyAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
 			message.append("Report is ready to be viewed. To view your report, log in then go to the reports section under <i>History</i>")
 					.append(attachedReport != null ? " or see the attached file" : "")
 					.append(".<br><br><br>");
@@ -80,7 +80,7 @@ public class EmailOutput
 
 		}
 
-		String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
+		String applicationTitle = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 		if (reportOutput.getReportTransmissionOption().getEmailAddresses() == null) {
 			reportOutput.getReportTransmissionOption().setEmailAddresses(new ArrayList<>());
 		}

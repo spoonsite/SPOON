@@ -102,7 +102,7 @@ public class OpenAmRealm
 	private WebTarget restClient(String operationURL)
 	{
 		Client client = ClientBuilder.newClient();
-		String server = PropertiesManager.getValue("openam.url", "http://openam.example.com:6800/openam/");
+		String server = PropertiesManager.getInstance().getValue("openam.url", "http://openam.example.com:6800/openam/");
 		if (server.endsWith("/") == false) {
 			server += "/";
 		}

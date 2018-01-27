@@ -117,13 +117,13 @@ public class ElasticSearchManager
 
 	public static void init()
 	{
-		String host = PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
-		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
+		String host = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
+		Integer port = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
 		LOG.log(Level.CONFIG, MessageFormat.format("Setup to Connect to ElasticSearch at {0}", host + ":" + port));
 
 		LOG.log(Level.FINE, "Initializing Elasticsearch Pool");
 
-		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, "40");
+		String poolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, "40");
 		int maxPoolSize = Convert.toInteger(poolSize);
 		BlockingQueue<ElasticSearchClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 		poolInstance = new ElasticSearchManager(clientPool, maxPoolSize);
@@ -151,7 +151,7 @@ public class ElasticSearchManager
 
 	private ElasticSearchClient justGetClient()
 	{
-		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
 		try {
 			ElasticSearchClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (client == null) {

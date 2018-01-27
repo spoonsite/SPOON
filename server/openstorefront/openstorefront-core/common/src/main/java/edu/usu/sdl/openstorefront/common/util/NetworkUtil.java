@@ -15,6 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 public class NetworkUtil
 {
 
+	private NetworkUtil()
+	{
+	}
+
 	/**
 	 * Get the correct client ip from a request
 	 *

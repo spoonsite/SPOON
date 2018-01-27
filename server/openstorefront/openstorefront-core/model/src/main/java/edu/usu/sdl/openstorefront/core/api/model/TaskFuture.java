@@ -67,9 +67,9 @@ public class TaskFuture
 		if (completedDts != null) {
 			String expireTimeMinutes;
 			if (TaskStatus.DONE.equals(status) || TaskStatus.CANCELLED.equals(status)) {
-				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
+				expireTimeMinutes = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
 			} else {
-				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
+				expireTimeMinutes = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
 			}
 			long expireTime = Convert.toLong(expireTimeMinutes) * 60000;
 
@@ -85,9 +85,9 @@ public class TaskFuture
 		if (completedDts != null) {
 			String expireTimeMinutes;
 			if (TaskStatus.DONE.equals(status) || TaskStatus.CANCELLED.equals(status)) {
-				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
+				expireTimeMinutes = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
 			} else {
-				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
+				expireTimeMinutes = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
 			}
 			long expireTime = Convert.toLong(expireTimeMinutes) * 60000;
 
