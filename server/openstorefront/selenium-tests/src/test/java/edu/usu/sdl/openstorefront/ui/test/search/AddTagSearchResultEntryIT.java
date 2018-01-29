@@ -15,13 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.apiclient.ClientAPI;
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.TagProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -38,16 +47,28 @@ public class AddTagSearchResultEntryIT
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static String entryName1 = "A Selenium Test Entry";
-	private static String entryName2 = "Another Selenium Test Entry";
-	private static String tagName = "selenium";
+	private ClientApiProvider provider;
+	private ComponentProvider componentProvider;
+	private OrganizationProvider orgProvider;
+	private TagProvider tagProvider;
+	private String entryName1 = "A Selenium Test Entry";
+	private String entryName2 = "Another Selenium Test Entry";
+	private String tagName = "seleniumTag";
+	private String organizationName = "Selenium Organization";
 
-	@BeforeClass
-	public static void createEntries()
+	@Before
+	public void setup()
 	{
-		createBasicSearchComponent(entryName1);
-		Component entry2 = createBasicSearchComponent(entryName2);
-//		apiClient.getComponentRESTTestClient().addTagToComponent(tagName, entry2);
+		provider = new ClientApiProvider();
+		ClientAPI apiClient = provider.getAPIClient();
+		orgProvider = new OrganizationProvider(apiClient);
+		orgProvider.createOrganization(organizationName);
+		componentProvider = new ComponentProvider(new AttributeProvider(apiClient), orgProvider, new ComponentTypeProvider(apiClient), apiClient);
+		componentProvider.createComponent(entryName1, "First Selenium Entry", organizationName);
+
+		Component entry2 = componentProvider.createComponent(entryName2, "Second Selenium Entry", organizationName);
+		tagProvider = new TagProvider(apiClient);
+		tagProvider.addTagToComponent(entry2, tagName);
 		sleep(2500);
 	}
 
@@ -68,11 +89,22 @@ public class AddTagSearchResultEntryIT
 
 		webDriverUtil.getPage(driver, "Landing.action");
 
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("Test");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".home-search-field-new"))).sendKeys("Selenium");
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-small"))).click();
 
-		List<WebElement> entryResults = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#resultsDisplayPanel-innerCt h2")));
+		List<WebElement> entryResults = new ArrayList<>();
+		long startTime = System.currentTimeMillis();
+
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 60000) {
+
+			entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
+
+			if (entryResults.isEmpty()) {
+
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
+			}
+		}
 
 		boolean isResult = false;
 
@@ -146,24 +178,11 @@ public class AddTagSearchResultEntryIT
 		WebElement close = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-qtip='Close dialog']")));
 		close.click();
 	}
-	
-	protected static Component createBasicSearchComponent(String componentName)
+
+	@After
+	public void cleanupTest() throws AttachedReferencesException
 	{
-//		Component myEntry = apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
-		Component myEntry = null;
-		System.out.println("Entry name: " + myEntry.getName());
-		ComponentAdminView entry = null;
-
-		int timer = 0;
-
-		while (entry == null && timer < 10000) {
-
-			timer += 200;
-			sleep(200);
-//			entry = apiClient.getComponentRESTTestClient().getComponentByName(componentName);
-
-		}
-		
-		return myEntry;
+		componentProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

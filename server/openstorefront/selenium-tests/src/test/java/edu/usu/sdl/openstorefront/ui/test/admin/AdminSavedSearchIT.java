@@ -118,7 +118,7 @@ public class AdminSavedSearchIT
 		// save search
 		WebElement saveCriteriaBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='saveSearchCritBtn'")));
 		saveCriteriaBtn.click();
-		
+
 		String searchId = searchProvider.getSystemSearchByName("Selenium DOD8500").getSearchId();
 		searchProvider.registerSearchId(searchId);
 
@@ -252,5 +252,6 @@ public class AdminSavedSearchIT
 	public void cleanUpTest()
 	{
 		searchProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

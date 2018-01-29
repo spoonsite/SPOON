@@ -72,11 +72,8 @@ public class AdminAttributesIT
 
 	public void setupDriver(WebDriver driver)
 	{
-
 		webDriverUtil.getPage(driver, "AdminTool.action?load=Attributes");
 
-		//attributeGrid_header-title-textEl
-		//text = Manage Attributes
 		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
 			List<WebElement> titleElements = driverLocal.findElements(By.id("attributeGrid_header-title-textEl"));
 			if (titleElements.size() > 0) {

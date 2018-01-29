@@ -120,12 +120,13 @@ public class AdminDeleteIntegrationIT
 
 		Assert.assertFalse(tableClickRowCol("#componentConfigGrid-body .x-grid-view", componentName, driver, 1));
 	}
-	
+
 	@After
 	public void cleanupTest() throws AttachedReferencesException
 	{
 		compIntegrationProvider.cleanup();
 		componentProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }
 

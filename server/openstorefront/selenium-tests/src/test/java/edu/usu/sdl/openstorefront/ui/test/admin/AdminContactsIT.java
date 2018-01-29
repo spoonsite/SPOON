@@ -367,5 +367,6 @@ public class AdminContactsIT
 	public void cleanupTest()
 	{
 		contactProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

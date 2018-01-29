@@ -15,9 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.apiclient.ClientAPI;
-import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import org.junit.BeforeClass;
 
@@ -28,10 +25,7 @@ import org.junit.BeforeClass;
  */
 public class AdminTestBase
 		extends BrowserTestBase
-{
-
-	public static ClientAPI apiClient;
-	
+{	
 	@BeforeClass
 	public static void setupBaseTest()
 	{
@@ -40,16 +34,6 @@ public class AdminTestBase
 	
 	public AdminTestBase()
 	{
-		apiClient = new ClientAPI(new ObjectMapper());
-		String server = PropertiesUtil.getProperties().getProperty("test.server", "http://localhost:8080/openstorefront/");
-		String username = PropertiesUtil.getProperties().getProperty("test.username");
-		String password = PropertiesUtil.getProperties().getProperty("test.password");
-		apiClient.connect(username, password, server);
-	}
-	
-	public void providerDisconnect()
-	{
-		apiClient.disconnect();
-	}
 
+	}
 }

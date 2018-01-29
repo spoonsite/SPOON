@@ -78,7 +78,6 @@ public class AdminAddIntegrationIT
 		}
 	}
 
-
 	public void addComponentConfiguration(WebDriver driver, String componentName) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -156,5 +155,7 @@ public class AdminAddIntegrationIT
 		String compId = componentProvider.getComponentByName(entryName).getComponent().getComponentId();
 		componentProvider.getComponentRESTClient().deleteComponentConfig(compId);
 		componentProvider.cleanup();
+		provider.clientDisconnect();
+
 	}
 }

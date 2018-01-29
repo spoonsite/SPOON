@@ -195,6 +195,7 @@ public class AdminHighlightIT
 	{
 		searchProvider.cleanup();
 		highlightProvider.cleanup();
+		provider.clientDisconnect();
 	}
 
 }

@@ -46,7 +46,7 @@ public class AdminEntryTypesIT
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private ComponentTypeProvider compTypeProvider;
 	private ClientApiProvider provider;
-	
+
 	@Before
 	public void setup()
 	{
@@ -97,7 +97,7 @@ public class AdminEntryTypesIT
 
 		List<String> radioBtns = Arrays.asList("entryForm-radio-allow-on-sub-bodyEl", "entryForm-radio-attributes-bodyEl",
 				"entryForm-radio-relationships-bodyEl", "entryForm-radio-contacts-bodyEl", "entryForm-radio-resources-bodyEl",
-				"entryForm-radio-media-bodyEl", "entryForm-radio-dependencies-bodyEl", "entryForm-radio-eval-info-bodyEl", 
+				"entryForm-radio-media-bodyEl", "entryForm-radio-dependencies-bodyEl", "entryForm-radio-eval-info-bodyEl",
 				"entryForm-radio-reviews-bodyEl", "entryForm-radio-questions-bodyEl");
 
 		for (String btn : radioBtns) {
@@ -177,7 +177,7 @@ public class AdminEntryTypesIT
 		for (WebElement row : allRows) {
 
 			List<WebElement> cells;
-			
+
 			try {
 				cells = wait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(row, By.tagName("td")));
 				WebElement cell = cells.get(0);
@@ -248,10 +248,11 @@ public class AdminEntryTypesIT
 		}
 		return -1;
 	}
-	
+
 	@After
 	public void cleanupTest()
 	{
 		compTypeProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }
