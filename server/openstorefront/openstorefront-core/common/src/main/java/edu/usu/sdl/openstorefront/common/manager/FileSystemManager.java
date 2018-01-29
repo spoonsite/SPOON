@@ -112,6 +112,7 @@ public class FileSystemManager
 				}
 			}
 		}
+		directories.sort(null);
 		return directories;
 	}
 
