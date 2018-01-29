@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.common.manager;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,7 +51,7 @@ public class FileSystemManagerTest
 	{
 	}
 
-	private String testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osfunittest";
+	private String testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
 	private FileSystemManager testFileSystemManager;
 	private StringBuilder handlerResults = new StringBuilder();
 

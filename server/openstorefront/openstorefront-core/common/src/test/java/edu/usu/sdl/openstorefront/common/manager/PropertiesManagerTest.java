@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.common.manager;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class PropertiesManagerTest
 	{
 	}
 
-	private String testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osfunittest";
+	private String testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
 	private FileSystemManager testFileSystemManager;
 	private PropertiesManager testPropertiesManager;
 
