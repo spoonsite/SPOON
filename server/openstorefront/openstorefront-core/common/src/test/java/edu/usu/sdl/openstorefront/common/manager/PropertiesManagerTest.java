@@ -43,7 +43,7 @@ public class PropertiesManagerTest
 	{
 	}
 
-	private String testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
+	private String testDir;
 	private FileSystemManager testFileSystemManager;
 	private PropertiesManager testPropertiesManager;
 
@@ -60,6 +60,12 @@ public class PropertiesManagerTest
 	@Before
 	public void setUp()
 	{
+		if (FileSystemManager.SYSTEM_TEMP_DIR.endsWith(File.separator)) {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
+		} else {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + File.separator + "osf-" + StringProcessor.uniqueId();
+		}
+
 		testFileSystemManager = FileSystemManager.getInstance();
 		testFileSystemManager.setBaseDirectory(testDir);
 
