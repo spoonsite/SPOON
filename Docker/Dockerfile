@@ -1,85 +1,57 @@
-################
-## Base Image ##
-################
+FROM tomcat:7-jre8
 
-FROM tomcat:7-jre8-alpine
+MAINTAINER "Ryan Frazier <ryan.frazier@sdl.usu.edu>"
 
-MAINTAINER "Kent Bair <kent.bair@sdl.usu.edu>"
-
-RUN apk update
-RUN apk upgrade
-RUN apk add curl libc6-compat
+RUN apt-get update && apt-get install -y unzip tar wget procps
 
 ###################
 ## ElasticSearch ##
 ###################
 
 ENV ES_NAME elasticsearch
-ENV ES_HOME /usr/local/share/$ES_NAME
-ARG ES_VERSION=5.6.3
-ARG ES_TGZ_URL=https://artifacts.elastic.co/downloads/$ES_NAME/$ES_NAME-$ES_VERSION.tar.gz
+ARG ES_VERSION=6.0.1
+ENV ES_FILE=$ES_NAME-$ES_VERSION
+ENV ES_HOME /usr/local/share/$ES_FILE
+ARG ES_TGZ_URL=https://artifacts.elastic.co/downloads/$ES_NAME/$ES_FILE.tar.gz
 
-RUN mkdir -p "$ES_HOME" \
-	&& chmod 755 -R "$ES_HOME"
-
-RUN addgroup $ES_NAME
-
-RUN adduser -Ss /bin/sh -h $ES_HOME -G $ES_NAME $ES_NAME 
-
+RUN mkdir -p "$ES_HOME" 
 WORKDIR $ES_HOME
-
-RUN set -x \
-	&& curl -fSL "$ES_TGZ_URL" -o $ES_NAME.tar.gz \
-	&& tar -zxvf $ES_NAME.tar.gz --strip-components=1 \
-	&& rm $ES_NAME.tar.gz* \
-	&& chown -R $ES_NAME:$ES_NAME $ES_HOME
-
-
-ENV CATALINA_OPTS -Xmx2048m
-
-WORKDIR $CATALINA_HOME/webapps
+RUN wget $ES_TGZ_URL
+RUN tar -C $ES_HOME -zxvf $ES_FILE.tar.gz && \
+    rm $ES_FILE.tar.gz* && \
+    addgroup $ES_NAME && \
+	useradd --home-dir $ES_HOME --shell /bin/sh -g $ES_NAME $ES_NAME && \
+    chown -R $ES_NAME:$ES_NAME $ES_HOME
 
 ################
 ## StoreFront ##
 ################
 
-ARG BUILD=FALSE
-ARG STOREFRONT_HOME=/usr/local/share/openstorefront
-ARG STOREFRONT_VERSION=2.0
-ARG STOREFRONT_WAR_URL=https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
+# set the path of the database file when the container is run
+# --env CATALINA_OPTS="-Xmx2048m -Dapplication.datadir=/var/selenium"
 
-# Switching between development and production must be done manually
-#
-# To switch, uncomment the RUN line and comment out the COPY line below
-# Be sure to change the version so that the appropriate WAR file is downloaded
-#
-# The copy line pulls in the WAR file from the currently working set of directories
-# (It should only be used locally during development when the WAR file can be built first)
-# (Be sure to build the WAR file first before building the docker image)
+WORKDIR /var/
+COPY openstorefront.zip ./
+RUN unzip openstorefront.zip && rm openstorefront.zip
 
-RUN if [ "$BUILD" = "TRUE" ]; then echo "build not configured"; fi 
-RUN if [ "$BUILD" = "FALSE" ]; then echo "downloading $STOREFRONT_VERSION release from $STOREFRONT_WAR_URL"; fi
-RUN if [ "$BUILD" = "FALSE" ]; then curl -fSL "$STOREFRONT_WAR_URL" -o openstorefront.war; fi
+# ENV CATALINA_HOME /usr/local/tomcat
+# see https://hub.docker.com/_/tomcat/
 
-#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
-
-####################
-## Startup Script ##
-####################
-
-RUN mkdir -p "$STOREFRONT_HOME" \
-	&& chmod 755 -R "$STOREFRONT_HOME"
-
-WORKDIR $STOREFRONT_HOME
-
-COPY upgrade.sh upgrade.sh
-COPY startup.sh startup.sh
-COPY tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
-
-RUN chmod +x upgrade.sh startup.sh
+# mount the storefront.war to $CATALINA_HOME/webapps/openstorefront.war
+# -v $(pwd)/openstorefront.war:/usr/local/tomcat/webapps/openstorefront.war
 
 ####################
 ## Start Services ##
 ####################
 
-ENTRYPOINT ./startup.sh 
+ARG STOREFRONT_HOME=/usr/local/share/openstorefront
+RUN mkdir -p "$STOREFRONT_HOME" && \
+	chmod 755 -R "$STOREFRONT_HOME"
+WORKDIR $STOREFRONT_HOME
+
+COPY tomcat-users.xml $CATALINA_HOME/conf/
+COPY startup.sh ./
+
+RUN chmod +x startup.sh
+
+ENTRYPOINT ./startup.sh
