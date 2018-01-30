@@ -35,14 +35,16 @@ Ext.define('OSF.customSubmission.Grid', {
 		var dummyFormPanel = Ext.create('OSF.customSubmission.form.' + this.formPanel);
 		Ext.Array.forEach(dummyFormPanel.items.items, function (field) {
 
-			// add items as a field in the store
-			storeFields.push(field.name);
+			if (field.name) {
+				// add items as a field in the store
+				storeFields.push(field.name);
 
-			// add a column to the grid for each field
-			gridColumns.push({
-				dataIndex: field.name, 
-				text: (field.name.charAt(0).toUpperCase() + field.name.slice(1)).match(/[A-Z][a-z]+/g).join(' ') // Capitalize then split on capital letter (pretty-ify col name)
-			});
+				// add a column to the grid for each field
+				gridColumns.push({
+					dataIndex: field.name, 
+					text: (field.name.charAt(0).toUpperCase() + field.name.slice(1)).match(/[A-Z][a-z]+/g).join(' ') // Capitalize then split on capital letter (pretty-ify col name)
+				});
+			}
 		});
 
 		this.getStore().setFields(storeFields);
@@ -147,9 +149,9 @@ Ext.define('OSF.customSubmission.Grid', {
 Ext.define('OSF.customSubmission.GridWindow', {
 	extend: 'Ext.window.Window',
 	inEdit: false,
-	minWidth: 700,
+	minWidth: 500,
 	minHeight: 400,
-	maxWidth: 700,
+	maxWidth: 500,
 	padding: 10,
 	closeAction: 'hide',
 	modal: true,

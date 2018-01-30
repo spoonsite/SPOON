@@ -43,7 +43,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					margin: '0 0 5 0',
 					editable: false,
 					typeAhead: false,
-					width: 200,
+					width: 450,
 					fieldLabel: 'Contact Type <span class="field-required" />',
 					storeConfig: {
 						url: 'api/v1/resource/lookuptypes/ContactType',
@@ -58,7 +58,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					name: 'organization',
 					allowBlank: false,
 					margin: '0 0 5 0',
-					width: '100%',
+					width: 450,
 					fieldLabel: 'Organization <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'description',
@@ -70,7 +70,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					name: 'firstName',
 					allowBlank: false,
 					margin: '0 0 5 0',
-					width: '100%',
+					width: 450,
 					fieldLabel: 'First Name  <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'firstName',
@@ -104,7 +104,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					name: 'lastName',
 					allowBlank: false,
 					margin: '0 0 5 0',
-					width: '100%',
+					width: 450,
 					fieldLabel: 'Last Name <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'lastName',
@@ -155,7 +155,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				// 	// hidden: submissionPanel.hideSecurityMarkings
 				// }),
 				Ext.create('OSF.component.DataSensitivityComboBox', {
-					width: '100%'
+					width: 450,
 				})
 			]
 		);
