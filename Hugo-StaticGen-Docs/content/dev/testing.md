@@ -4,6 +4,31 @@ description = ""
 weight = 5
 +++
 
+## Test Process
+
+### Branch Testing:
+
+1. The ticket should have passed code review
+
+2. Run any Manually Test process not automated. (Currently, Selenium Tests)
+
+3. Run through the ticket's test steps
+
+4. If issues are found; create comments on the main ticket and put into needs fix.
+
+5. If unrelated issues are discovered create separate ticket for it. (Check with 
+developer, if not sure)
+
+### Regression Testing
+
+1. Run Integration/Container Tests on the Acceptance environment(s)
+
+2. Run through regression tests.  Create new ticket for issues.  These will need
+to be triaged by developers.
+
+3. Proceed to do a full sweep so we know the what passes and what does not.
+
+
 ## Layers
 
 1. Unit Tests (Server-side) - Unit test should cover Core libraries and utility classes. Test cases should be added for bug fixes and new features whenever possible.

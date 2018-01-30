@@ -37,10 +37,10 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class FreshInstallTest
+public class FreshInstallIT
 {
 
-	private static final Logger LOG = Logger.getLogger(FreshInstallTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(FreshInstallIT.class.getName());
 
 	private static final String tempFile = System.getProperty("java.io.tmpdir") + "/openstorefront.war";
 	private String dataDir = "/var/osfautotest";
