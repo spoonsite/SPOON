@@ -18,12 +18,19 @@
 
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'Ext.form.Panel',
-	initCompontent: function(){
+	initComponent: function(){
 		this.callParent();
+		var self = this;
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/attributes',
+			success: function (response, opts) {
+				self.items.items[0].store.setData(Ext.decode(response.responseText));
+			}
+		});
 		this.add([
 			
-			Ext.create('Ext.field.ComboBox',{
-				//xtype: 'combobox',
+			Ext.create('Ext.form.ComboBox',{
 				itemId: 'attributeTypeCB',
 				fieldLabel: 'Attribute Type <span class="field-required" />',
 				name: 'type',
@@ -38,6 +45,9 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				allowBlank: false,
 				valueField: 'attributeType',
 				displayField: 'description',
+				labelAlign: 'right',
+				labelSeparator: '',
+				width: 400,
 				store: Ext.create('Ext.data.Store', {
 					sorters: [
 						{
@@ -55,7 +65,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 						"attributeType",
 						"description"
 					],
-					data: submissionPanel.optionalAttributes
+					data: []
 				}),
 				listConfig: {
 					getInnerTpl: function () {
@@ -96,19 +106,19 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 						// Check For Selected Type
 						if (record) {
 							// Allow or Disallow Editing Of ComboBox based on if User-Generated Codes Being Enabled
+							// TODO: fix vtype
 							codeField.setEditable(record.get("allowUserGeneratedCodes"));
-							codeField.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
+							// codeField.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
 						} else {
 
 							// Nothing Selcted, Remove All Codes
 							codeField.getStore().removeAll();
-							codeField.vtype = undefined;
+							// codeField.vtype = undefined;
 						}
 					}
 				}
 			}),
-			Ext.create('Ext.field.ComboBox',{
-				xtype: 'combobox',
+			Ext.create('Ext.form.ComboBox',{
 				itemId: 'attributeCodeCB',
 				fieldLabel: 'Attribute Code <span class="field-required" />',
 				name: 'code',
@@ -119,6 +129,9 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				allowBlank: false,
 				valueField: 'code',
 				displayField: 'label',
+				labelAlign: 'right',
+				labelSeparator: '',
+				width: 400,
 				listConfig: {
 					getInnerTpl: function () {
 						return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
