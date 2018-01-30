@@ -82,6 +82,9 @@ public class AdminToolAction
 		pageMap.put("Checklist-Questions", new PageModel("/WEB-INF/securepages/admin/evaluation/checklistQuestions.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION}));
 		pageMap.put("Section-Templates", new PageModel("/WEB-INF/securepages/admin/evaluation/sectionTemplates.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION}));
 
+		//Custom Submission Form Sandbox
+		pageMap.put("Custom-Submission-Form-Sandbox", new PageModel("/WEB-INF/securepages/admin/application/customSubmissionSandbox.jsp", new String[]{SecurityPermission.ADMIN_SEARCH}));
+
 		return pageMap;
 	}
 
