@@ -29,7 +29,8 @@ Ext.define('OSF.customSubmission.Field', {
 		isScoped: false,
 		canComment: false,
 		commentRich: false,
-		commentLabel: 'If so, provide details below.'
+		commentLabel: 'If so, provide details below.',
+		hideSecurityMarkings: false
 	},
 	name: '', // what is this field mapped to?
 	fieldType: undefined,
@@ -66,7 +67,8 @@ Ext.define('OSF.customSubmission.Field', {
 	getValue: function () {
 		return {
 			value: this.field.getValue(),
-			fieldData: this.getForm().getValues()
+			fieldData: this.getForm().getValues(),
+			name: this.name
 		}
 	},
 	getItems: function () {
