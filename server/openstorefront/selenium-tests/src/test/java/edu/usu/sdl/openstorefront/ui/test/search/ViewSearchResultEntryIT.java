@@ -17,9 +17,11 @@ package edu.usu.sdl.openstorefront.ui.test.search;
 
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
@@ -41,21 +43,25 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class ViewSearchResultEntryIT
-		extends SearchTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static ClientApiProvider provider;
-	private static AttributeProvider attributeProvider;
-	private static OrganizationProvider organizationProvider;
-	private static ComponentProvider componentProvider;
-	private static ComponentTypeProvider componentTypeProvider;
-	private static String entryName = "SeleniumTest";
+	private ClientApiProvider provider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
+	private String entryName = "SeleniumTest";
 	private String entryOrganization = "Selenium Organization";
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
 		attributeProvider = new AttributeProvider(provider.getAPIClient());
 		organizationProvider = new OrganizationProvider(provider.getAPIClient());
@@ -63,6 +69,7 @@ public class ViewSearchResultEntryIT
 		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
 		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
 		componentProvider.createComponent(entryName, "Selenium entry for test", entryOrganization);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 	}
 
 	@Test
@@ -159,10 +166,12 @@ public class ViewSearchResultEntryIT
 		boolean isDetailsTitle = detailsTitle.getText().contains(entryName);
 		Assert.assertTrue(isDetailsTitle);
 	}
-	
+
 	@After
 	public void cleanupTest() throws AttachedReferencesException
 	{
 		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

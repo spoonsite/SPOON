@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,16 +41,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminAttributesIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private AttributeProvider attributeProvider;
 	private ClientApiProvider provider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
 		attributeProvider = new AttributeProvider(provider.getAPIClient());
 		attributeProvider.createAttribute("Rigel-Altair", "ALTAIR", "ALTAIR");
@@ -282,10 +289,12 @@ public class AdminAttributesIT
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#manageCodesCloseBtn"))).click();
 		}
 	}
-	
+
 	@After
 	public void cleanupTest()
 	{
 		attributeProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

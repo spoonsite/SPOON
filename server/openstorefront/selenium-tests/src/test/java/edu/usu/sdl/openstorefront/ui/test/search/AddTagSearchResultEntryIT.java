@@ -19,9 +19,11 @@ import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.TagProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
@@ -43,7 +45,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AddTagSearchResultEntryIT
-		extends SearchTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
@@ -51,14 +53,18 @@ public class AddTagSearchResultEntryIT
 	private ComponentProvider componentProvider;
 	private OrganizationProvider orgProvider;
 	private TagProvider tagProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 	private String entryName1 = "A Selenium Test Entry";
 	private String entryName2 = "Another Selenium Test Entry";
 	private String tagName = "seleniumTag";
 	private String organizationName = "Selenium Organization";
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
 		ClientAPI apiClient = provider.getAPIClient();
 		orgProvider = new OrganizationProvider(apiClient);
@@ -69,7 +75,8 @@ public class AddTagSearchResultEntryIT
 		Component entry2 = componentProvider.createComponent(entryName2, "Second Selenium Entry", organizationName);
 		tagProvider = new TagProvider(apiClient);
 		tagProvider.addTagToComponent(entry2, tagName);
-		sleep(2500);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+		sleep(2000);
 	}
 
 	@Test
@@ -183,6 +190,7 @@ public class AddTagSearchResultEntryIT
 	public void cleanupTest() throws AttachedReferencesException
 	{
 		componentProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 }

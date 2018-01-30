@@ -15,14 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import static edu.usu.sdl.openstorefront.core.entity.ApprovalStatus.PENDING;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
-import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
+import edu.usu.sdl.openstorefront.selenium.provider.ApplicationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -36,28 +45,44 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class CreateUserSubmissionIT
-		extends UserTestBase
+		extends BrowserTestBase
 {
 
-	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static final String typeName = "Test Component Type";
-	private static String entryName = "My First Test Submission";
-	private static String entryOrganization = "The Singleton Factory";
+	private static final Logger LOG = Logger.getLogger(CreateUserSubmissionIT.class.getName());
+	private ClientApiProvider provider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private ApplicationProvider appProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
+
+	private static final String entryType = "Test Component Type";
+	private String entryName = "My First Test Submission";
+	private String entryOrganization = "The Singleton Factory";
 	private String entryDesc = "Stop sniffing my cookies";
-	private String email = PropertiesUtil.getProperties().getProperty("test.newuseremail");
-	private static String autoApproveVal = "TRUE";
+	private String autoApproveVal = "TRUE";
+	private String configProperty = "userreview.autoapprove";
 	private WebElement nextBtn = null;
 	private WebElement submitReviewBtn = null;
-	private static ComponentAdminView entry = null;
 
-	@BeforeClass
-	public static void setupTest()
+	@Before
+	public void setupTest() throws InterruptedException
 	{
-//		LookupModel config = apiClient.getApplicationTestClient().getCurrentConfigProp("userreview.autoapprove");
-//		config.setDescription(autoApproveVal);
-//		apiClient.getApplicationTestClient().setConfigProperties(config);
-//		apiClient.getComponentTypeTestClient().createAPIComponentType(typeName);
-//		apiClient.getOrganizationTestClient().createOrganization(entryOrganization);
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
+		appProvider = new ApplicationProvider(provider.getAPIClient());
+		appProvider.updateSystemConfigProperty(configProperty, autoApproveVal);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+
+		componentTypeProvider.createComponentType(entryType);
+		organizationProvider.createOrganization(entryOrganization);
 	}
 
 	@Test
@@ -89,15 +114,14 @@ public class CreateUserSubmissionIT
 		List<WebElement> typeOptions = driver.findElements(By.cssSelector(".x-boundlist.x-boundlist-floating.x-layer.x-boundlist-default.x-border-box li"));
 		boolean found = false;
 		for (WebElement option : typeOptions) {
-			if (option.getText().equals("Test Component Type - test label"))
-			{
+			if (option.getText().equals("Test Component Type - test label")) {
 				option.click();
 				found = true;
 				break;
 			}
 		}
 		Assert.assertTrue(found);
-		
+
 		driver.findElement(By.cssSelector("[name='name']")).sendKeys(entryName);
 		sleep(100);
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-test='organizationInput'] [name='organization']"))).sendKeys(entryOrganization);
@@ -113,10 +137,10 @@ public class CreateUserSubmissionIT
 			submitReviewBtn.click();
 		}, 5);
 		sleep(2000);
-		
-//		ComponentAdminView compView = apiClient.getComponentRESTTestClient().getComponentByName(entryName);
-//		Assert.assertEquals(compView.getComponent().getName(), entryName);
-//		Assert.assertEquals(compView.getComponent().getApprovalState(), PENDING);
+
+		ComponentAdminView compView = componentProvider.getComponentByName(entryName);
+		Assert.assertEquals(compView.getComponent().getName(), entryName);
+		Assert.assertEquals(PENDING, compView.getComponent().getApprovalState());
 	}
 
 	protected void setButtons(List<WebElement> buttons)
@@ -131,11 +155,12 @@ public class CreateUserSubmissionIT
 		}
 	}
 
-	@AfterClass
-	public static void cleanupTest()
+	@After
+	public void cleanupTest() throws AttachedReferencesException
 	{
-//		entry = apiClient.getComponentRESTTestClient().getComponentByName(entryName);
-//		String deleteEntry = entry.getComponent().getComponentId();
-//		apiClient.getComponentRESTTestClient().deleteAPIComponent(deleteEntry);
+		componentProvider.registerComponent(componentProvider.getComponentByName(entryName).getComponent());
+		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

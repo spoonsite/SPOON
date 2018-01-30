@@ -17,9 +17,11 @@ package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
@@ -41,25 +43,30 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminAddIntegrationIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static String entryName = "SeleniumTest";
-	private static String organizationName = "SeleniumOrganization";
-	private static String compDescription = "SeleniumTest Description";
-	private static ClientApiProvider provider;
-	private static AttributeProvider attributeProvider;
-	private static OrganizationProvider organizationProvider;
-	private static ComponentProvider componentProvider;
-	private static ComponentTypeProvider componentTypeProvider;
+	private String entryName = "SeleniumTest";
+	private String organizationName = "SeleniumOrganization";
+	private String compDescription = "SeleniumTest Description";
+	private ClientApiProvider provider;
+	private AuthenticationProvider authProvider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private NotificationEventProvider notificationProvider;
 	private WebElement componentConfigTab;
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
 		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		organizationProvider = new OrganizationProvider(provider.getAPIClient());
 		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
 		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
@@ -155,7 +162,7 @@ public class AdminAddIntegrationIT
 		String compId = componentProvider.getComponentByName(entryName).getComponent().getComponentId();
 		componentProvider.getComponentRESTClient().deleteComponentConfig(compId);
 		componentProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
-
 	}
 }

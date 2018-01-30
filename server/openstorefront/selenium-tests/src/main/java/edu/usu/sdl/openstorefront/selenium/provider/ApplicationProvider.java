@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.service.ApplicationClient;
@@ -25,38 +25,37 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class ApplicationTestClient
-		extends BaseTestClient
+public class ApplicationProvider
 {
-	private ApplicationClient apiApplication;
-	private List<LookupModel> previousAppConfigs = new ArrayList<>();
 
-	public ApplicationTestClient(ClientAPI client, APIClient apiClient)
+	private ApplicationClient client;
+	private List<LookupModel> previousSystemConfigs;
+
+	public ApplicationProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiApplication = new ApplicationClient(client);
-	}
-	
-	public LookupModel getCurrentConfigProp(String key)
-	{
-		
-		LookupModel config = apiApplication.getConfigPropertiesForKey(key);
-		previousAppConfigs.add(config);
-		return config;
-	}
-	
-	public void setConfigProperties(LookupModel model)
-	{
-		apiApplication.addConfigProperty(model);
+		client = new ApplicationClient(apiClient);
+		previousSystemConfigs = new ArrayList<>();
 	}
 
-	@Override
+	public LookupModel getSystemConfigProperty(String key)
+	{
+		return client.getConfigPropertiesForKey(key);
+	}
+
+	public void updateSystemConfigProperty(String key, String newValue)
+	{
+		LookupModel config = client.getConfigPropertiesForKey(key);
+		previousSystemConfigs.add(config);
+		config.setDescription(newValue);
+
+		client.addConfigProperty(config);
+	}
+
 	public void cleanup()
 	{
-		for (LookupModel config : previousAppConfigs) {
+		for (LookupModel model : previousSystemConfigs) {
 			
-			setConfigProperties(config);
+			client.addConfigProperty(model);
 		}
 	}
-
 }

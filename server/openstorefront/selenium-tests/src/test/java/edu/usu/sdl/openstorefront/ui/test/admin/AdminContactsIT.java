@@ -16,8 +16,10 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ContactProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,16 +40,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminContactsIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private ContactProvider contactProvider;
 	private ClientApiProvider provider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
 		contactProvider = new ContactProvider(provider.getAPIClient());
 		contactProvider.createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "testAPIContact@test.com", "MyAmazingTest-Organization");
@@ -367,6 +374,7 @@ public class AdminContactsIT
 	public void cleanupTest()
 	{
 		contactProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 }

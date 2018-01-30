@@ -18,12 +18,13 @@ package edu.usu.sdl.openstorefront.ui.test.search;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import edu.usu.sdl.openstorefront.ui.test.admin.AdminTestBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,25 +44,30 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class PrintSearchResultsEntryIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private ClientApiProvider provider;
 	private ComponentProvider componentProvider;
 	private OrganizationProvider orgProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 	private String entryName = "SeleniumTest";
 	private String entryOrg = "Selenium Organization";
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
 		ClientAPI apiClient = provider.getAPIClient();
 		orgProvider = new OrganizationProvider(apiClient);
 		orgProvider.createOrganization(entryOrg);
 		componentProvider = new ComponentProvider(new AttributeProvider(apiClient), orgProvider, new ComponentTypeProvider(apiClient), apiClient);
 		componentProvider.createComponent(entryName, "Selenium Entry for Print Search Result test", entryOrg);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 	}
 
 	@Test
@@ -134,10 +140,8 @@ public class PrintSearchResultsEntryIT
 		String printWindow = (String) windows.get(windows.size() - 1);
 		driver.switchTo().window(printWindow);
 
-		sleep(1000);
-
-		WebDriverWait wait10 = new WebDriverWait(driver, 10);
-		WebElement element = wait10.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#customTemplateBtn")));
+		sleep(1500);
+		WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#customTemplateBtn")));
 		element.click();
 
 		List<WebElement> templateItems = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".x-menu-body.x-menu-body.x-unselectable .x-menu-item-text.x-menu-item-text-default.x-menu-item-indent-no-separator")));
@@ -185,6 +189,8 @@ public class PrintSearchResultsEntryIT
 	public void cleanupTest() throws AttachedReferencesException
 	{
 		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 
 }

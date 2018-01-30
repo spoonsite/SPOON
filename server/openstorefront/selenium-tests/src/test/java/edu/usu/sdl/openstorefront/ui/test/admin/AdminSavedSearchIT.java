@@ -16,8 +16,11 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.SystemSearchProvider;
+import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -35,20 +38,25 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminSavedSearchIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(AdminSavedSearchIT.class.getName());
 	private ClientApiProvider provider;
 	private SystemSearchProvider searchProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 	private String searchName = "Selenium Saved Search";
 
 	@Before
-	public void setup() throws JsonProcessingException
+	public void setup() throws InterruptedException, JsonProcessingException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
 		searchProvider = new SystemSearchProvider(provider.getAPIClient());
 		searchProvider.createSystemSearch(searchName);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 	}
 
 	@Test
@@ -252,6 +260,7 @@ public class AdminSavedSearchIT
 	public void cleanUpTest()
 	{
 		searchProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 }

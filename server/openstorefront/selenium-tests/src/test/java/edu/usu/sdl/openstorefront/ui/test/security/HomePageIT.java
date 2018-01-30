@@ -15,68 +15,69 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.security;
 
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class HomePageIT
-		extends SecurityTestBase
+		extends BrowserTestBase
 {
-    private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-    
-    /**
-     *
-     */
-    public HomePageIT(){
 
-    }
+	private final Logger LOG = Logger.getLogger(HomePageIT.class.getName());
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
+	private ClientApiProvider provider;
 
-    @Test
-    // Output build version at bottom of the page
-    public void versionUnderTest(){
-        for (WebDriver driver : webDriverUtil.getDrivers()) { 
-              webDriverUtil.getPage(driver, "index.jsp");
-              String vers = driver.findElement(By.xpath("//div[@class='home-footer-version']")).getText();
-              //TODO:  Replace with Logger Out
-              LOG.log(Level.INFO, "*******   VERSION UNDER TEST:  {0}   *******", vers);
+	@Before
+	public void setup() throws InterruptedException
+	{
+		provider = new ClientApiProvider();
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+	}
 
-        }
-    }
-    
-    @Test
-    // Help File test
-    public void helpMenu(){
-        for (WebDriver driver : webDriverUtil.getDrivers()) { 
-            driver.findElement(By.xpath("//span[@class='x-btn-wrap x-btn-wrap-default-large x-btn-arrow x-btn-arrow-right']")).click();
-            driver.findElement(By.xpath("//b[contains(.,'Help')]")).click();
-            // Verify Help Window, switch the focus?
-            
-            // Expand and collapse some menu items
-        }
-    }
+	@Test
+	// Output build version at bottom of the page
+	public void versionUnderTest()
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			webDriverUtil.getPage(driver, "index.jsp");
+			String vers = driver.findElement(By.xpath("//div[@class='home-footer-version']")).getText();
+			//TODO:  Replace with Logger Out
+			LOG.log(Level.INFO, "*******   VERSION UNDER TEST:  {0}   *******", vers);
+		}
+	}
 
-    // Print and search on Help window
-    public void printSearchHelp(){
-        
-    }
+	@Test
+	// Help File test
+	public void helpMenu()
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			driver.findElement(By.xpath("//span[@class='x-btn-wrap x-btn-wrap-default-large x-btn-arrow x-btn-arrow-right']")).click();
+			driver.findElement(By.xpath("//b[contains(.,'Help')]")).click();
+		}
+	}
 
-    // Feedback/ issues
-    public void feedbackIssues(){
-        
-    }
+	// Logout
+	public void logoutTest()
+	{
+		logout();
+		// ensure signin screen is shown.
+	}
 
-    // Home page links, check for bad links (Highlights, Recents, footer, etc.)
-    public void homepageLinkCheck(){
-        
-    }
-    
-    // Logout
-    public void logoutTest(){
-        logout();
-        // ensure signin screen is shown.
-    }
-            
+	@After
+	public void cleanupTest()
+	{
+		notificationProvider.cleanup();
+	}
+
 }

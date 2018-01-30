@@ -18,10 +18,12 @@ package edu.usu.sdl.openstorefront.ui.test.admin;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentIntegrationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
@@ -42,7 +44,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminDeleteIntegrationIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
@@ -55,11 +57,16 @@ public class AdminDeleteIntegrationIT
 	private OrganizationProvider organizationProvider;
 	private ComponentTypeProvider compTypeProvider;
 	private ComponentIntegrationProvider compIntegrationProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 
 	@Before
 	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		attributeProvider = new AttributeProvider(provider.getAPIClient());
 		organizationProvider = new OrganizationProvider(provider.getAPIClient());
 		compTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
@@ -126,6 +133,7 @@ public class AdminDeleteIntegrationIT
 	{
 		compIntegrationProvider.cleanup();
 		componentProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 }

@@ -16,8 +16,10 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.HighlightProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.SystemSearchProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Level;
@@ -38,20 +40,25 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminHighlightIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private ClientApiProvider provider;
 	private HighlightProvider highlightProvider;
 	private SystemSearchProvider searchProvider;
+	private NotificationEventProvider notificationProvider;
+	private AuthenticationProvider authProvider;
 	private String searchName = "Selenium Saved Search";
 	private String highlightName = "Selenium Highlight";
 
 	@Before
-	public void setup() throws JsonProcessingException
+	public void setup() throws JsonProcessingException, InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
 		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		highlightProvider = new HighlightProvider(provider.getAPIClient());
 		highlightProvider.createHighlight(highlightName);
 		searchProvider = new SystemSearchProvider(provider.getAPIClient());
@@ -195,6 +202,7 @@ public class AdminHighlightIT
 	{
 		searchProvider.cleanup();
 		highlightProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 

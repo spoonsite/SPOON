@@ -73,48 +73,6 @@ public class BrowserTestBase
 		webDriverUtil.closeDrivers();
 	}
 
-	protected static void login()
-	{
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		login(username, password);
-	}
-
-	protected static void login(String userName, String passWord)
-	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-
-			WebDriverWait wait = new WebDriverWait(driver, 20);
-			// Make sure logged out before attempting login.
-			webDriverUtil.getPage(driver, "Login.action?Logout");
-
-			// Now log in
-			webDriverUtil.getPage(driver, "login.jsp");
-
-			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-			userNameElement.sendKeys(userName);
-
-			// Enter password and hit ENTER since submit does not seem to work.
-			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-			userPassword.sendKeys(passWord);
-			sleep(1000);
-			
-			WebElement loginBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='loginBtn']")));
-			loginBtn.click();
-
-			// Look for the titleText
-			try {
-				wait.until(ExpectedConditions.stalenessOf(userNameElement));
-				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
-				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
-			} catch (Exception e) {
-				LOG.log(Level.WARNING, "--- EXCEPTION --- {0}", e);
-				String message = driver.findElement(By.cssSelector(".showError")).getText();
-				LOG.log(Level.WARNING, "--- Problem logging in as ''{0}'' ---\n Login Page MESSAGE is: --- ''{1}'' ---", new Object[]{userName, message});
-			}
-		}
-	}
-
 	protected static void logout()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -37,13 +36,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class SecurityTestBase
 		extends BrowserTestBase
 {
-
-	@BeforeClass
-	public static void setupBaseTest()
-	{
-		login();
-	}
-
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 
 	protected Map<String, Boolean> customizedDataSources = new HashMap<>();

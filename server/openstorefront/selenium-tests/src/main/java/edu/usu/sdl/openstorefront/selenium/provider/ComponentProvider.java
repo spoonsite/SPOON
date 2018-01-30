@@ -61,6 +61,11 @@ public class ComponentProvider
 	{
 		return client;
 	}
+	
+	public void registerComponent(Component component)
+	{
+		componentIds.add(component.getComponentId());
+	}
 
 	public Component createComponent(String componentName, String description, String orgName)
 	{

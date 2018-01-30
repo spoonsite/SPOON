@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.Arrays;
 import java.util.List;
@@ -40,16 +42,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminEntryTypesIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
 	private ComponentTypeProvider compTypeProvider;
 	private ClientApiProvider provider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 
 	@Before
-	public void setup()
+	public void setup() throws InterruptedException
 	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
 		compTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
 		compTypeProvider.createComponentType("Selenium-EntryType");
@@ -253,6 +260,7 @@ public class AdminEntryTypesIT
 	public void cleanupTest()
 	{
 		compTypeProvider.cleanup();
+		notificationProvider.cleanup();
 		provider.clientDisconnect();
 	}
 }
