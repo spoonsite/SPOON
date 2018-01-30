@@ -21,6 +21,6 @@
 
 Ext.define('OSF.customSubmission.field.ContactsGrid', {
 	extend: 'OSF.customSubmission.Grid',
-	formPanel: Ext.create('OSF.customSubmission.form.Contacts'),
+	formPanel: 'Contacts',
 	title: 'Contacts'
 });

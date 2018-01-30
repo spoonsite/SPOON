@@ -32,7 +32,8 @@ Ext.define('OSF.customSubmission.Grid', {
 
 		var storeFields = [];
 		var gridColumns = [];
-		Ext.Array.forEach(this.formPanel.items.items, function (field) {
+		var dummyFormPanel = Ext.create('OSF.customSubmission.form.' + this.formPanel);
+		Ext.Array.forEach(dummyFormPanel.items.items, function (field) {
 
 			// add items as a field in the store
 			storeFields.push(field.name);
@@ -98,7 +99,7 @@ Ext.define('OSF.customSubmission.Grid', {
 						var grid = this.up('grid');
 						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
 							title: 'Add Item to ' + grid.title,
-							items: [grid.formPanel],
+							formPanel: [Ext.create('OSF.customSubmission.form.' + grid.formPanel)],
 							gridReference: grid
 						}).show();
 					}
@@ -113,7 +114,7 @@ Ext.define('OSF.customSubmission.Grid', {
 						var grid = this.up('grid');
 						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
 							title: 'Edit ' + grid.title + ' Item',
-							items: [grid.formPanel],
+							formPanel: [Ext.create('OSF.customSubmission.form.' + grid.formPanel)],
 							gridReference: grid,
 							inEdit: true
 						}).show();
@@ -131,6 +132,11 @@ Ext.define('OSF.customSubmission.Grid', {
 
 						var grid = this.up('grid');
 						grid.store.remove(grid.getSelection()[0]);
+
+						var deleteButton = grid.query('[itemId=deleteBtn]')[0];
+						var editButton = grid.query('[itemId=editBtn]')[0];
+						editButton.setDisabled(true);
+						deleteButton.setDisabled(true);
 					}
 				}
 			]
@@ -150,17 +156,12 @@ Ext.define('OSF.customSubmission.GridWindow', {
 	alwaysOnTop: true,
 	scrollable: true,
 	gridReference: null,
+	formPanel: undefined,
 	initComponent: function () {
 		this.callParent();
-
+		this.add(this.formPanel);
 		if (this.inEdit) {
-			this.gridReference.formPanel.loadRecord(this.gridReference.getSelection()[0]);
-		}
-	},
-	listeners: {
-		close: function () {
-
-			this.gridReference.formPanel.reset();
+			this.query('form')[0].loadRecord(this.gridReference.getSelection()[0]);
 		}
 	},
 	dockedItems: [
