@@ -253,7 +253,7 @@ public class EvaluationResource
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(EvaluationView.class)
+	@DataType(ComponentDetailView.class)
 	@APIDescription("Get component view (including evals) for published and current evaluation (whether published or not)")
 	@Path("/{evaluationId}/componentdetails")
 	public Response getEvaluationComponentDetails(
