@@ -64,7 +64,10 @@ Ext.define('OSF.customSubmission.Field', {
 
 	},
 	getValue: function () {
-		return this.field.getValue();
+		return {
+			value: this.field.getValue(),
+			fieldData: this.getForm().getValues()
+		}
 	},
 	getItems: function () {
 		return this.items.items;
@@ -97,7 +100,8 @@ Ext.define('OSF.customSubmission.Field', {
 					labelAlign: 'top',
 					width: '75%',
 					height: fieldParent.getCommentRich() ? 300 : 150,
-					labelSeparator: ''
+					labelSeparator: '',
+					name: 'comments'
 				}));
 			}.call(this));
 		}
@@ -111,6 +115,7 @@ Ext.define('OSF.customSubmission.Field', {
 				labelAlign: 'top',
 				value: 'public',
 				editable: false,
+				name: 'scope',
 				store: Ext.create('Ext.data.Store', {
 					fields: ['value', 'text'],
 					data: [
