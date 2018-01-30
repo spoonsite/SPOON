@@ -143,12 +143,12 @@ Ext.define('OSF.customSubmission.GridWindow', {
 	inEdit: false,
 	minWidth: 700,
 	minHeight: 400,
+	maxWidth: 700,
 	padding: 10,
-	closeAction: 'destory',
+	closeAction: 'hide',
 	modal: true,
 	alwaysOnTop: true,
 	scrollable: true,
-	inEdit: false,
 	gridReference: null,
 	initComponent: function () {
 		this.callParent();
@@ -159,7 +159,7 @@ Ext.define('OSF.customSubmission.GridWindow', {
 	},
 	listeners: {
 		close: function () {
-			
+
 			this.gridReference.formPanel.reset();
 		}
 	},
