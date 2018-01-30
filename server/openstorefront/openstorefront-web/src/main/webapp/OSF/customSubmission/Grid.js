@@ -40,16 +40,27 @@ Ext.define('OSF.customSubmission.Grid', {
 			// add a column to the grid for each field
 			gridColumns.push({
 				dataIndex: field.name, 
-				text: (field.name.charAt(0).toUpperCase() + field.name.slice(1)).match(/[A-Z][a-z]+/g).join(' ')
+				text: (field.name.charAt(0).toUpperCase() + field.name.slice(1)).match(/[A-Z][a-z]+/g).join(' ') // Capitalize then split on capital letter (pretty-ify col name)
 			});
 		});
 
 		this.getStore().setFields(storeFields);
 		this.setColumns(gridColumns);
+
 	},
 	getValue: function () {
 
 		console.log("TODO: get the grid's value (probably all it's rows!)");
+	},
+	listeners: {
+		itemclick: function (self, record) {
+
+			var deleteButton = this.query('[itemId=deleteBtn]')[0];
+			var editButton = this.query('[itemId=editBtn]')[0];
+
+			editButton.setDisabled(false);
+			deleteButton.setDisabled(false);
+		}
 	},
 	dockedItems: [
 		{
@@ -60,43 +71,12 @@ Ext.define('OSF.customSubmission.Grid', {
 					text: 'Add',
 					iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 					handler: function () {
+
 						var grid = this.up('grid');
-						var addEditWindow = Ext.create('Ext.window.Window', {
-							minWidth: 700,
-							minHeight: 400,
-							padding: 10,
-							closeAction: 'destory',
-							modal: true,
-							alwaysOnTop: true,
-							scrollable: true,
+						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
 							title: 'Add Item to ' + grid.title,
 							items: [grid.formPanel],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									frame: true,
-									items: [
-										{
-											text: 'Save',
-											iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
-											handler: function () {
-
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function () {
-												addEditWindow.close();
-											}
-										}
-									]
-								}
-							]
+							gridReference: grid
 						}).show();
 					}
 				},
@@ -104,8 +84,16 @@ Ext.define('OSF.customSubmission.Grid', {
 					text: 'Edit',
 					iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 					disabled: true,
+					itemId: 'editBtn',
 					handler: function () {
 
+						var grid = this.up('grid');
+						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
+							title: 'Edit ' + grid.title + ' Item',
+							items: [grid.formPanel],
+							gridReference: grid,
+							inEdit: true
+						}).show();
 					}
 				},
 				{
@@ -115,11 +103,72 @@ Ext.define('OSF.customSubmission.Grid', {
 					text: 'Delete',
 					iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 					disabled: true,
+					itemId: 'deleteBtn',
 					handler: function () {
-
+						
+						var grid = this.up('grid');
+						grid.store.remove(grid.getSelection()[0]);
 					}
 				}
 			]
 		}
 	]
 });
+
+Ext.define('OSF.customSubmission.GridWindow', {
+	extend: 'Ext.window.Window',
+	inEdit: false,
+	minWidth: 700,
+	minHeight: 400,
+	padding: 10,
+	closeAction: 'destory',
+	modal: true,
+	alwaysOnTop: true,
+	scrollable: true,
+	inEdit: false,
+	gridReference: null,
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Save',
+					iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+					handler: function () {
+
+						var self = this.up('window');
+						var form = self.query('form')[0];
+						var newRecord = {};
+						Ext.Array.forEach(form.items.items, function (el) {
+							newRecord[el.name] = el.getValue();
+						});
+
+						// remove currently selected item
+						if (self.inEdit) {
+							self.gridReference.store.remove(self.gridReference.getSelection()[0]);
+						}
+
+						self.gridReference.setSelection();
+						self.gridReference.getStore().add(newRecord);
+						form.reset();
+						self.close();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Cancel',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+					handler: function () {
+						var self = this.up('window');
+						var form = self.query('form')[0];
+						form.reset();
+						self.close();
+					}
+				}
+			]
+		}
+	]
+})
