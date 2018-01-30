@@ -48,9 +48,32 @@ Ext.define('OSF.customSubmission.Grid', {
 		this.setColumns(gridColumns);
 
 	},
+
+	// return the records in a meaningful way
 	getValue: function () {
 
-		console.log("TODO: get the grid's value (probably all it's rows!)");
+		var columnDataIndices = [];
+		Ext.Array.forEach(this.getColumns(), function (el) {
+			columnDataIndices.push(el.dataIndex);
+		});
+
+		var storeRecords = [];
+		Ext.Array.forEach(this.store.getData().items, function (el) {
+			storeRecords.push(el.data);
+		});
+
+		var primedRecords = [];
+		Ext.Array.forEach(storeRecords, function (sRec) {
+
+			var primedRecord = {};
+			Ext.Array.forEach(columnDataIndices, function (dataIndex) {
+
+				primedRecord[dataIndex] = sRec[dataIndex];
+			});
+			primedRecords.push(primedRecord);
+		});
+
+		return primedRecords;
 	},
 	listeners: {
 		itemclick: function (self, record) {
@@ -105,7 +128,7 @@ Ext.define('OSF.customSubmission.Grid', {
 					disabled: true,
 					itemId: 'deleteBtn',
 					handler: function () {
-						
+
 						var grid = this.up('grid');
 						grid.store.remove(grid.getSelection()[0]);
 					}
@@ -127,6 +150,19 @@ Ext.define('OSF.customSubmission.GridWindow', {
 	scrollable: true,
 	inEdit: false,
 	gridReference: null,
+	initComponent: function () {
+		this.callParent();
+
+		if (this.inEdit) {
+			this.gridReference.formPanel.loadRecord(this.gridReference.getSelection()[0]);
+		}
+	},
+	listeners: {
+		close: function () {
+			
+			this.gridReference.formPanel.reset();
+		}
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -150,6 +186,8 @@ Ext.define('OSF.customSubmission.GridWindow', {
 						}
 
 						self.gridReference.setSelection();
+						self.gridReference.query('[itemId=deleteBtn]')[0].setDisabled(true);
+						self.gridReference.query('[itemId=editBtn]')[0].setDisabled(true);
 						self.gridReference.getStore().add(newRecord);
 						form.reset();
 						self.close();
@@ -162,6 +200,7 @@ Ext.define('OSF.customSubmission.GridWindow', {
 					text: 'Cancel',
 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function () {
+
 						var self = this.up('window');
 						var form = self.query('form')[0];
 						form.reset();
