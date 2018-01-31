@@ -25,10 +25,10 @@ Ext.define('OSF.customSubmission.Grid', {
 	title: '&nbsp',
 	forceFit: true,
 	frame: true,
-	store: Ext.create('Ext.data.Store'),
 	initComponent: function () {
 
 		this.callParent();
+		this.setStore(Ext.create('Ext.data.Store'));
 
 		var storeFields = [];
 		var gridColumns = [];
