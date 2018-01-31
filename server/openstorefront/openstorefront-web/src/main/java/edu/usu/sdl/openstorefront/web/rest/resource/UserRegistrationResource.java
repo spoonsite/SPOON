@@ -227,7 +227,7 @@ public class UserRegistrationResource
 
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
-	@APIDescription("Deletes a user registeration record and the associated user.")
+	@APIDescription("Deletes a user registeration record only")
 	@Path("/{registrationId}")
 	public void deleteUserRegistration(
 			@PathParam("registrationId") String registrationId

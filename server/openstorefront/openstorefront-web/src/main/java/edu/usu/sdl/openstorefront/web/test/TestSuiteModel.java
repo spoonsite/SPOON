@@ -13,6 +13,7 @@ import net.sourceforge.stripes.util.ResolverUtil;
  * Handles container tests.
  *
  * @author dshurtleff
+ * @author kbair
  */
 public class TestSuiteModel
 {
@@ -88,4 +89,8 @@ public class TestSuiteModel
 		this.tests = tests;
 	}
 
+	public long getRunTimeInMills()
+	{
+		return runTimeInMills;
+	}
 }
