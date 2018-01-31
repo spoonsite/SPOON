@@ -43,6 +43,8 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	
+	// WebDriverUtil and Properties objects must stay in BrowserTestBase because there can only be one instance that all tests share
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
@@ -57,29 +59,7 @@ public class BrowserTestBase
 	public static void cleanup() throws Exception
 	{
 		LOG.log(Level.INFO, "Starting cleanup");
-		tearDown();
-	}
-
-	/*@BeforeClass
-	public static void setSize() throws Exception
-	{
-		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
-	}
-	 */
-	private static void tearDown() throws Exception
-	{
-		//Bot.driver().quit();
-		//WebDriverExtensionsContext.removeDriver();
 		webDriverUtil.closeDrivers();
-	}
-
-	protected static void logout()
-	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			webDriverUtil.getPage(driver, "Login.action?Logout");
-
-			//TODO: confirm logout, return -1 or 0 or a boolean?
-		}
 	}
 
 	// Making Thread.sleep "universal"

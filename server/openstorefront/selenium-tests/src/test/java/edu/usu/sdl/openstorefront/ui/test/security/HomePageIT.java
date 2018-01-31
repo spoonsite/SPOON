@@ -67,13 +67,6 @@ public class HomePageIT
 		}
 	}
 
-	// Logout
-	public void logoutTest()
-	{
-		logout();
-		// ensure signin screen is shown.
-	}
-
 	@After
 	public void cleanupTest()
 	{
