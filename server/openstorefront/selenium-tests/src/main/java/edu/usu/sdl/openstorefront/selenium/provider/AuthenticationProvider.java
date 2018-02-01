@@ -74,7 +74,7 @@ public class AuthenticationProvider
 			// Look for the titleText
 			try {
 				wait.until(ExpectedConditions.stalenessOf(userNameElement));
-				wait.until(ExpectedConditions.titleContains("DI2E Clearinghouse"));  // Title has suffix of (dev), (Acceptance), etc.
+				wait.until(ExpectedConditions.titleContains("Storefront"));
 				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
 			} catch (Exception e) {
 				LOG.log(Level.WARNING, "--- EXCEPTION --- {0}", e);
