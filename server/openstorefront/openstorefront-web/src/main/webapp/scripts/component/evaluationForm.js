@@ -21,12 +21,12 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 	readOnly: false,
 	initComponent: function () {
 		this.callParent();
-		var self = this;
+		var rootEvalPanel = this;
 
 		var changeHistory = Ext.create('OSF.component.ChangeLogWindow', {									
 		});
 
-		self.contentPanel = Ext.create('Ext.panel.Panel', {
+		rootEvalPanel.contentPanel = Ext.create('Ext.panel.Panel', {
 
 			region: 'center',			
 			layout: 'fit',
@@ -59,12 +59,12 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 								
 								changeHistory.load({
 									entity: 'Component',												
-									entityId: self.componentId,
+									entityId: rootEvalPanel.componentId,
 									includeChildren: true,
 									addtionalLoad: function(data, changeWindow) {
 										changeWindow.setLoading(true);
 										Ext.Ajax.request({
-											url: 'api/v1/resource/changelogs/Evaluation/' + self.evaluationId + '?includeChildren=true',
+											url: 'api/v1/resource/changelogs/Evaluation/' + rootEvalPanel.evaluationId + '?includeChildren=true',
 											callback: function() {
 												changeWindow.setLoading(false);
 											},
@@ -86,7 +86,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 			]			
 		});
 
-		self.commentPanel = Ext.create('Ext.panel.Panel', {
+		rootEvalPanel.commentPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Comments',
 			iconCls: 'fa fa-lg fa-comment',
 			region: 'east',			
@@ -150,9 +150,9 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 													method = 'PUT',
 													update = '/' + data.commentId;		
 												}
-												var evaluationId = self.commentPanel.lastLoadOpt.evaluationId;
-												var entity = self.commentPanel.lastLoadOpt.entity;
-												var entityId = self.commentPanel.lastLoadOpt.entityId;
+												var evaluationId = rootEvalPanel.commentPanel.lastLoadOpt.evaluationId;
+												var entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
+												var entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;
 												if (!entity) {
 													data.entity = 'Evaluation';
 													data.entityId = evaluationId;	
@@ -167,16 +167,16 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 													data: data,
 													form: form,
 													success: function(){
-														self.commentPanel.loadComments(evaluationId, entity, entityId);														
+														rootEvalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
 														form.reset();
 														
-														if (self.commentPanel.getComponent('comments').replyMessage) {
-															self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').replyMessage, true);
-															self.commentPanel.getComponent('comments').replyMessage = null;
+														if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+															rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+															rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
 														}
-														if (self.commentPanel.getComponent('comments').editMessage) {
-															self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').editMessage, true);
-															self.commentPanel.getComponent('comments').editMessage = null;
+														if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+															rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+															rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
 														}														
 													}
 												});												
@@ -193,13 +193,13 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 											handler: function(){										
 												var form = this.up('form');
 												form.reset();
-												if (self.commentPanel.getComponent('comments').replyMessage) {
-													self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').replyMessage, true);
-													self.commentPanel.getComponent('comments').replyMessage = null;
+												if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+													rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+													rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
 												}
-												if (self.commentPanel.getComponent('comments').editMessage) {
-													self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').editMessage, true);
-													self.commentPanel.getComponent('comments').editMessage = null;
+												if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+													rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+													rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
 												}												
 											}
 										}
@@ -213,8 +213,8 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 			listeners: {
 				afterrender: function () {
 
-					if (self.readOnly) {
-						var subCommentPanel = self.query('[itemId=comments]')[0];
+					if (rootEvalPanel.readOnly) {
+						var subCommentPanel = rootEvalPanel.query('[itemId=comments]')[0];
 
 						Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
 							el.setStyle('pointer-events', 'none');
@@ -231,22 +231,22 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 				}
 			}
 		});
-		self.commentPanel.loadComments = function(evaluationId, entity, entityId){
+		rootEvalPanel.commentPanel.loadComments = function(evaluationId, entity, entityId){
 			
 			if (evaluationId) {			
-				self.commentPanel.lastLoadOpt = {
+				rootEvalPanel.commentPanel.lastLoadOpt = {
 					evaluationId: evaluationId,
 					entity: entity,
 					entityId: entityId
 				};
 			} else {
-				evaluationId = self.commentPanel.lastLoadOpt.evaluationId;
-				entity = self.commentPanel.lastLoadOpt.entity;
-				entityId = self.commentPanel.lastLoadOpt.entityId;				
+				evaluationId = rootEvalPanel.commentPanel.lastLoadOpt.evaluationId;
+				entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
+				entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;				
 			}
 			
-			self.commentPanel.getComponent('comments').removeAll(true);
-			self.commentPanel.setLoading(true);
+			rootEvalPanel.commentPanel.getComponent('comments').removeAll(true);
+			rootEvalPanel.commentPanel.setLoading(true);
 			Ext.Ajax.request({
 				url: 'api/v1/resource/evaluations/' + evaluationId + '/comments',
 				method: 'GET',
@@ -255,7 +255,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					entityId: entityId
 				},
 				callback: function(){
-					self.commentPanel.setLoading(false);
+					rootEvalPanel.commentPanel.setLoading(false);
 				},
 				success: function(response, opts) {
 					var data = Ext.decode(response.responseText);
@@ -300,7 +300,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					var createComments = function(comment, parent) {
 						var closeable = false;
 						var editHidden = true;
-						if (self.user.admin || self.user.username === comment.createUser) {
+						if (rootEvalPanel.user.admin || rootEvalPanel.user.username === comment.createUser) {
 							closeable = true;
 							editHidden = false;
 						}
@@ -386,7 +386,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 												panel.setLoading(false);
 											},
 											success: function(response, opts) {
-												self.commentPanel.loadComments();
+												rootEvalPanel.commentPanel.loadComments();
 											}
 										});	
 									}
@@ -398,9 +398,9 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 									callback: function(panel, tool, event) {
 										var comment = this.up('panel');
 
-										if (self.commentPanel.getComponent('comments').replyMessage) {
-											self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').replyMessage, true);
-											self.commentPanel.getComponent('comments').replyMessage = null;
+										if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+											rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+											rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
 										}
 
 										var replyMessage = Ext.create('Ext.panel.Panel', {
@@ -408,9 +408,9 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 											html: 'Replying to ' + comment.getTitle(),
 											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
 										});
-										self.commentPanel.getComponent('comments').addDocked(replyMessage);
-										self.commentPanel.getComponent('comments').replyMessage = replyMessage;
-										var form = self.commentPanel.getComponent('comments').getComponent('form');
+										rootEvalPanel.commentPanel.getComponent('comments').addDocked(replyMessage);
+										rootEvalPanel.commentPanel.getComponent('comments').replyMessage = replyMessage;
+										var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
 
 										var record = Ext.create('Ext.data.Model', {												
 										});
@@ -423,16 +423,16 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 									tooltip: 'Edit',
 									hidden: true,									
 									callback: function(panel, tool, event) {
-										var form = self.commentPanel.getComponent('comments').getComponent('form');
+										var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
 
 										var record = Ext.create('Ext.data.Model', {												
 										});
 										record.set(comment);
 										form.loadRecord(record);
 																				
-										if (self.commentPanel.getComponent('comments').editMessage) {
-											self.commentPanel.getComponent('comments').removeDocked(self.commentPanel.getComponent('comments').editMessage, true);
-											self.commentPanel.getComponent('comments').editMessage = null;
+										if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+											rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+											rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
 										}
 
 										var editMessage = Ext.create('Ext.panel.Panel', {
@@ -440,8 +440,8 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 											html: 'Editing ' + panel.getTitle(),
 											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
 										});
-										self.commentPanel.getComponent('comments').addDocked(editMessage);
-										self.commentPanel.getComponent('comments').editMessage = editMessage;										
+										rootEvalPanel.commentPanel.getComponent('comments').addDocked(editMessage);
+										rootEvalPanel.commentPanel.getComponent('comments').editMessage = editMessage;										
 									}
 								}
 							],
@@ -472,33 +472,33 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					};
 					processCommentPanel(comments);						
 					
-					self.commentPanel.getComponent('comments').add(commentPanels);
+					rootEvalPanel.commentPanel.getComponent('comments').add(commentPanels);
 				}
 			});		
 		};
 		
 		CoreService.brandingservice.getCurrentBranding().then(function(branding){			
-			self.branding = branding;
+			rootEvalPanel.branding = branding;
 		});
 	},
 	loadContentForm: function(page) {
-		var self = this;
+		var rootEvalPanel = this;
 		this.checkFormSaveStatus(null, function () {
 
-			self.pageStatus = page;
+			rootEvalPanel.pageStatus = page;
 			
-			if (self.currentContentForm && self.currentContentForm.unsavedChanges) {
-				self.currentContentForm.saveData();
+			if (rootEvalPanel.currentContentForm && rootEvalPanel.currentContentForm.unsavedChanges) {
+				rootEvalPanel.currentContentForm.saveData();
 			}
 			
-			self.contentPanel.removeAll(true);
-			self.contentPanel.getComponent('tools').getComponent('title').update({
+			rootEvalPanel.contentPanel.removeAll(true);
+			rootEvalPanel.contentPanel.getComponent('tools').getComponent('title').update({
 				title: page.title
 			});
 			
 			var hideSecurityMarking = true;
-			if (self.branding) {
-				hideSecurityMarking = !self.branding.allowSecurityMarkingsFlg;
+			if (rootEvalPanel.branding) {
+				hideSecurityMarking = !rootEvalPanel.branding.allowSecurityMarkingsFlg;
 			}
 			
 			var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
@@ -506,32 +506,32 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 			}, page.options)
 			);
 			
-			self.contentPanel.add(contentForm);
-			self.currentContentForm = contentForm;
+			rootEvalPanel.contentPanel.add(contentForm);
+			rootEvalPanel.currentContentForm = contentForm;
 
 			if (contentForm.loadData) {
 				if (page.refreshCallback) {
-					self.refreshCallback = page.refreshCallback;
+					rootEvalPanel.refreshCallback = page.refreshCallback;
 				}
 				
-				contentForm.loadData(self.evaluationId, self.componentId, page.data, {
-					commentPanel: self.commentPanel,
-					user: self.user,
-					mainForm: self
+				contentForm.loadData(rootEvalPanel.evaluationId, rootEvalPanel.componentId, page.data, {
+					commentPanel: rootEvalPanel.commentPanel,
+					user: rootEvalPanel.user,
+					mainForm: rootEvalPanel
 				}, function () {
 
 					// if readOnly, disable/hide the appropriate fields for the content form
-					if (self.readOnly) {
+					if (rootEvalPanel.readOnly) {
 
-						Ext.Array.forEach(self.contentPanel.query('button'), function (field, index) {
+						Ext.Array.forEach(rootEvalPanel.contentPanel.query('button'), function (field, index) {
 							field.setVisible(false);
 							field.setDisabled(true);
 						});
-						Ext.Array.forEach(self.contentPanel.query('grid'), function (grid, index) {
+						Ext.Array.forEach(rootEvalPanel.contentPanel.query('grid'), function (grid, index) {
 							grid.setStyle('opacity', '0.6');
 							grid.events = {};
 						});
-						Ext.Array.forEach(self.contentPanel.query('field'), function (field) {
+						Ext.Array.forEach(rootEvalPanel.contentPanel.query('field'), function (field) {
 							if (field.xtype !== 'tinymce_textarea') {
 								field.setReadOnly(true);
 							}
@@ -543,7 +543,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 						//	NOTE: when attempting to "setReadOnly" before this delay will force the tinymce
 						//		in such a state, where the method "setReadOnly()" does not operate as expected.
 						Ext.Function.createDelayed(function () {
-							Ext.Array.forEach(self.contentPanel.query('tinymce_textarea'), function (field) {
+							Ext.Array.forEach(rootEvalPanel.contentPanel.query('tinymce_textarea'), function (field) {
 								field.setReadOnly(true);
 							});
 						}, 100)();
@@ -553,9 +553,9 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 		});
 	},
 	checkFormSaveStatus: function (evalWin, cb) {
-		self = this;
+		var rootEvalPanel = this;
 		
-		if (self.down('form') !== null && self.down('form').unsavedChanges) {
+		if (rootEvalPanel.down('form') !== null && rootEvalPanel.down('form').unsavedChanges) {
 			// ask if they would like to save before closing...
 			Ext.Msg.show({
 				title: 'Discard Changes?',
