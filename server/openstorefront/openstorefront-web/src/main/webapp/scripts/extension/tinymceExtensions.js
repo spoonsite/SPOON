@@ -925,6 +925,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 				table_default_styles: fswin.editor.settings.table_default_styles,
 				mediaSelectionUrl: fswin.editor.settings.mediaSelectionUrl,
 				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler,
+				browser_spellcheck: true,
 				paste_data_images: true
 			}
 		});

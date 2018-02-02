@@ -417,6 +417,10 @@ the column header.  // Describe process flow
 The first tab of a new submission should be pre-filled with your logged in user information.  
 Make any necessary corrections and click on the Next button at the bottom.
 
+If a description of the product or entry already exists then it can be copied and pasted directly into the description text box.
+Clicking on the eye button on the far right of the toolbar of the description text box will cause another window to be displayed that shows how the entered info will be displayed on the final submitted form.
+If more room is needed or desired, click on the four outward arrows (second icon from the right) to change the text box to a full screen mode. 
+Misspelled words can also be corrected by doing a Shift+Right Click on any words with a red squiggly underline. 
 
 #### 2.3.3.2 How to Create a Change Request/Edit Entry @USER-SUBMISSIONS
 -----------
