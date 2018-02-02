@@ -152,6 +152,8 @@ public class PropertiesManager
 
 	public static final String KEY_USER_REVIEW_AUTO_APPROVE = "userreview.autoapprove";
 
+	public static final String REPORT_HISTORY_DAYS_TO_LIVE = "180";
+
 	public static final String KEY_NODE_NAME = "node.name";
 	public static final String DEFAULT_NODE_NAME = "PrimaryNode";
 
@@ -340,9 +342,9 @@ public class PropertiesManager
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
-			defaults.put(KEY_REPORT_LIFETIME, "180");
+			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
-			defaults.put(KEY_MAX_POST_SIZE, "1000"); // 1GB
+			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
 
 			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
 
