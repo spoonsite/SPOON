@@ -46,21 +46,22 @@ Ext.define('OSF.customSubmission.Field', {
 	initComponent: function () {
 
 		this.callParent();
+		var csField = this;
 
-		if (typeof this.fieldType === 'undefined') {
+		if (typeof csField.fieldType === 'undefined') {
 
 			console.warn('WARNING: A customSubmission field was defined and does NOT have a fieldType (String)!');
 		}
 		else {
 
 			// create the custom field from OSF/customSubmission/field/<field-name>.js
-			this.field = Ext.create('OSF.customSubmission.field.' + this.fieldType, Ext.apply({name: this.name, style: 'margin-top: 8px;'}, this.fieldConfig));
+			csField.field = Ext.create('OSF.customSubmission.field.' + csField.fieldType, Ext.apply({name: csField.name, style: 'margin-top: 8px;'}, csField.fieldConfig));
 
-			if (typeof this.field.getValue === 'undefined') {
-				console.warn('WARNING: A customSubmission field was defined and does NOT have a "getValue" function!' + (this.fieldType ? ' - field type: ' + this.fieldType : ''));
+			if (typeof csField.field.getValue === 'undefined') {
+				console.warn('WARNING: A customSubmission field was defined and does NOT have a "getValue" function!' + (csField.fieldType ? ' - field type: ' + csField.fieldType : ''));
 			}
 
-			this.updateField();
+			csField.updateField();
 		}
 
 	},
@@ -83,33 +84,31 @@ Ext.define('OSF.customSubmission.Field', {
 
 	// clear all items from the current field, and replace them
 	updateField: function () {
-		this.getItems()[0].removeAll(false);
-		this.getItems()[1].removeAll(false);
+		var csField = this;
+		csField.getItems()[0].removeAll(false);
+		csField.getItems()[1].removeAll(false);
 
-		this.getItems()[0].add(Ext.create('Ext.form.Label', {
-			html: this.getFullLabel(),
+		csField.getItems()[0].add(Ext.create('Ext.form.Label', {
+			html: csField.getFullLabel(),
 			style: 'font-size: 1.5em;'
 		}));
-		this.getItems()[0].add(this.field);
-		this.getItems()[0].add(Ext.create('Ext.form.Label', {html: '<h3>' + this.getQuestionComment() + '</h3>'}));
+		csField.getItems()[0].add(csField.field);
+		csField.getItems()[0].add(Ext.create('Ext.form.Label', {html: '<h3>' + csField.getQuestionComment() + '</h3>'}));
 
-		if (this.getCanComment()) {
-			(function () {
+		if (csField.getCanComment()) {
 
-				var fieldParent = this;
-				fieldParent.getItems()[0].add(Ext.create(fieldParent.getCommentRich() ? 'Ext.ux.form.TinyMCETextArea' : 'Ext.form.field.TextArea', {
-					fieldLabel: fieldParent.getCommentLabel(),
-					labelAlign: 'top',
-					width: '75%',
-					height: fieldParent.getCommentRich() ? 300 : 150,
-					labelSeparator: '',
-					name: 'comments'
-				}));
-			}.call(this));
+			csField.getItems()[0].add(Ext.create(csField.getCommentRich() ? 'Ext.ux.form.TinyMCETextArea' : 'Ext.form.field.TextArea', {
+				fieldLabel: csField.getCommentLabel(),
+				labelAlign: 'top',
+				width: '75%',
+				height: csField.getCommentRich() ? 300 : 150,
+				labelSeparator: '',
+				name: 'comments'
+			}));
 		}
 
-		if (this.getIsScoped()) {
-			this.getItems()[1].add(Ext.create('Ext.form.ComboBox', {
+		if (csField.getIsScoped()) {
+			csField.getItems()[1].add(Ext.create('Ext.form.ComboBox', {
 				fieldLabel: 'Scope',
 				queryMode: 'local',
 				displayField: 'text',

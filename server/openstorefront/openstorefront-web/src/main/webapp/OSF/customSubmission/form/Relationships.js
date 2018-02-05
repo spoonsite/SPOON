@@ -27,9 +27,8 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				allowBlank: false,
 				editable: false,
 				typeAhead: false,
-				width: 400,
+				width: 450,
 				margin: '0 0 0 0',
-				width: '100%',
 				fieldLabel: 'Relationship Type <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/RelationshipType'
@@ -42,8 +41,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				typeAhead: false,
 				emptyText: 'All',
 				margin: '0 0 0 0',
-				width:400,
-				//width: '100%',
+				width:450,
 				fieldLabel: 'Entry Type',
 				storeConfig: {
 					url: 'api/v1/resource/componenttypes/lookup',
@@ -73,8 +71,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				name: 'relatedComponentId',
 				allowBlank: false,
 				margin: '0 0 0 0',
-				//width: '100%',
-				width: 400,
+				width: 450,
 				fieldLabel: 'Target Entry <span class="field-required" />',
 				forceSelection: true,
 				storeConfig: {

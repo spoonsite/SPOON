@@ -58,8 +58,8 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				width: 450,
 				name: 'comment'
 			},
-			// Ext.create('OSF.component.SecurityComboBox', {								
-			// }),
+			Ext.create('OSF.component.SecurityComboBox', {								
+			}),
 			Ext.create('OSF.component.DataSensitivityComboBox', {			
 				width: 450
 			})	

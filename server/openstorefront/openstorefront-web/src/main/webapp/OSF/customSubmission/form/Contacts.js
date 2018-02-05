@@ -150,10 +150,10 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					maxLength: '120',
 					name: 'phone'
 				},
-				// Ext.create('OSF.component.SecurityComboBox', {
-				// 	itemId: 'securityMarkings'
-				// 	// hidden: submissionPanel.hideSecurityMarkings
-				// }),
+				Ext.create('OSF.component.SecurityComboBox', {
+					itemId: 'securityMarkings'
+					// hidden: submissionPanel.hideSecurityMarkings
+				}),
 				Ext.create('OSF.component.DataSensitivityComboBox', {
 					width: 450,
 				})

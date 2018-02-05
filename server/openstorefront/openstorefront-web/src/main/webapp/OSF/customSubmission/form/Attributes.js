@@ -16,6 +16,8 @@
  * See NOTICE.txt for more information.
  */
 
+ /* Author: cyearsley */
+
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'Ext.form.Panel',
 	initComponent: function(){

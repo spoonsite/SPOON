@@ -16,6 +16,8 @@
  * See NOTICE.txt for more information.
  */
 
+ /* Author: cyearsley */
+
 Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	extend: 'OSF.customSubmission.Grid',
 	formPanel: 'Attributes',
