@@ -105,6 +105,7 @@ Except as noted below, it is very rarely correct to do nothing in response to a 
 
 When it truly is appropriate to take no action whatsoever in a catch block, the reason this is justified is explained in a comment.
 
+```
 try {
   int i = Integer.parseInt(response);
   return handleNumericResponse(i);
@@ -112,15 +113,18 @@ try {
   // it's not numeric; that's fine, just continue
 }
 return handleTextResponse(response);
+```
 
 ### Static members: qualified using class
 
 When a reference to a static class member must be qualified, it is qualified with that class's name, not with a reference or expression of that class's type.
 
+```
 Foo aFoo = ...;
 Foo.aStaticMethod(); // good
 aFoo.aStaticMethod(); // bad
 somethingThatYieldsAFoo().aStaticMethod(); // very bad
+```
 
 ### Finalizers: not used
 
@@ -132,8 +136,12 @@ Tip: Don't do it. If you absolutely must, first read and understand Effective Ja
 ### Where Javadoc is used
 
 Public API points.  Also, on protected method.
-No comments on get or setters is needed unless there different behavior than simply 
-wrapping field access.
+No comments on get or setters is generally needed unless there different behavior than simply 
+wrapping field access. (Default documentation generated from IDE isn't very helpful...avoid that.)
+
+However, on DB Entities it can be useful to add documentation as to what the field is for. 
+Also see adding APIDescription on the field as that is rendered  out to the API documentation.
+On 
 
 Exception: overrides - Javadoc is not always present on a method that overrides a supertype method. 
 
@@ -142,7 +150,7 @@ Use Block tags:
 Any of the standard "block tags" that are used appear in the order @param, @return, @throws, @deprecated, and these four types never appear with an empty description. When a block tag doesn't fit on a single line, continuation lines are indented four (or more) spaces from the position of the @.
 
 
-##General 
+## General 
 
 1. Business logic, Transactions, rules should be handled in the service code. (core-service)
 2. API Interface should have documentation (javadocs)
@@ -159,9 +167,10 @@ Any of the standard "block tags" that are used appear in the order @param, @retu
 ## Entities
 
 1. Entities should have all validation annotations marked and have documentation annotations as well.
-2. Use 'get' and 'set' and not 'is' as there's a lot of automatic processing (reflection) on entities. Also, no need to add javadocs on getters and setters.  Unless there is special handling.
+2. Use 'get' and 'set' and not 'is' as there's a lot of automatic processing (reflection) on entities.
 3. Most entities should extends the standard entity.
-4. Preference is to keep model flat (meaning don't embedded complex classes)  If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn't handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses> 
+4. Preference is to keep model flat there cases where complex is fine. (meaning care should be taken with embedded complex classes) * Revisit in orient 3.0
+  If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn't handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses> 
 5. Document Entities with @APIdocument to update the api docs.
 6. Prefer composition of entities in view rather than inheritance. Use inheritance for substitutability.
 7. All storage entities must be registered with the DB.  This automatic for class in the entity package of the api module.
@@ -206,7 +215,33 @@ Think, "If I was troubleshooting this in production could I get enough informati
 Log the data owner and state.
 Note: Tomcat's loghandler doesn't seem to handle "{0}" substitution.  Use MessageFormat.format to handle that.
 
+Do not use a ' in log comments as it affects the formatter.  see https://stackoverflow.com/questions/22670627/java-logger-apostrophe-issues-with-tokens
+
+### How To Use Logging Tools
+
+Java Logging has two components:
+
+1. Logger  - These are hierarchical meaning setting the level will be set by rolling upwards until the next setting. 
+
+2. Handler - these are associated with a Logger
+
+The logger has Level and each handler has a level. Both must be set to get the output to show the level.
+Logs by default show in the console output for the application server.  Which is typically in /logs directory but,
+it can be in the var server output which install via yum.
+
+Built into the application is a DB Logger which when activated will log all components in the system. At Level ALL.
+Keep mind the logger may be set at a different level.
+
+It will capture the logs in the DB which the Admin system logs can be used to view that.
+
+The UI allows to for setting each loggers level.  Setting Handler levels is not currently supported.
+
+Note the logging.properties file (currently not loaded) sets defaults. By default the console handler is set to INFO.
+
+
 ## Cross Cutting Concerns
+
+Design template ask about these item.
 
 **Security** - Make sure permission are applied to the REST/External API and UI features.
 

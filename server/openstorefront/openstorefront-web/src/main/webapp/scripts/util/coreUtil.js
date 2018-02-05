@@ -492,7 +492,7 @@ var CoreUtil = {
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen | preview",
 
 			content_css: "contents.css",
-
+			browser_spellcheck: true,
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
@@ -527,7 +527,7 @@ var CoreUtil = {
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen | preview",
 
 			content_css: "contents.css",
-
+			browser_spellcheck: true,
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
@@ -561,7 +561,7 @@ var CoreUtil = {
 			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen | preview",
 
 			content_css: "contents.css",
-
+			browser_spellcheck: true,
 			menubar: "edit format tools",
 			statusbar: false,
 			skin: 'openstorefront',
