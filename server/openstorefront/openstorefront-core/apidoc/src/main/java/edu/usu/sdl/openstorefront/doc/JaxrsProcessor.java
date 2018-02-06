@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
 import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
 import edu.usu.sdl.openstorefront.doc.model.SecurityRestriction;
+import edu.usu.sdl.openstorefront.doc.security.CustomRequiredHandler;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
 import java.lang.annotation.Annotation;
@@ -73,7 +74,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.StringUtils;
-import edu.usu.sdl.openstorefront.doc.security.CustomRequiredHandler;
 
 /**
  *
@@ -231,6 +231,8 @@ public class JaxrsProcessor
 									valueModel.setTypeDescription(aPIDescription.value());
 								}
 
+							} catch (NumberFormatException iex) {
+								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: '{0}' make sure the type is not abstract.", dataType.value()));
 							} catch (InstantiationException iex) {
 								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", dataType.value()));
 							}
