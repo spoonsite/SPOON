@@ -294,7 +294,7 @@ public class PluginManager
 				if (plugin != null) {
 					service.getPluginService().inactivatePlugin(plugin.getPluginId());
 				} else {
-					log.log(Level.INFO, MessageFormat.format("Can't find plugin metadata record for: {0}  Continuing.", bundle.getLocation()));
+					log.log(Level.INFO, MessageFormat.format("Cannot find plugin metadata record for: {0}  Continuing.", bundle.getLocation()));
 				}
 			} catch (Exception e) {
 				log.log(Level.WARNING, MessageFormat.format("Failed to unstalled: {0} (Continuing).", bundle.getLocation()));

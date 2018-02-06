@@ -136,7 +136,7 @@ public class PluginScanJob
 						LOG.log(Level.INFO, MessageFormat.format("Failed to uninstalled:  {0} See log.  Try to use admin tools to uninstall.", path), e);
 					}
 				} else {
-					LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} wasn't installed", path));
+					LOG.log(Level.INFO, MessageFormat.format("Plugin: {0} was not installed", path));
 				}
 				keysToRemove.add(path);
 			}

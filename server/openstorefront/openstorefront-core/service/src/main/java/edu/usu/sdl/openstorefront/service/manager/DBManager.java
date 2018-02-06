@@ -131,8 +131,10 @@ public class DBManager
 		File dbFile = new File(this.dbFileDir);
 		if (dbFile.exists() == false) {
 			LOG.log(Level.INFO, "Creating DB at %s", this.dbFileDir);
-			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir).create();
-			db.close();
+			try(ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir)){
+				db.create();
+				db.close();
+			}
 			LOG.log(Level.INFO, "Done");
 		}
 	}
