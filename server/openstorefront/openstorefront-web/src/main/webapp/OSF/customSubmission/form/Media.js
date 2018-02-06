@@ -112,10 +112,10 @@ Ext.define('OSF.customSubmission.form.Media', {
 				emptyText: 'http://www.example.com/image.png',
 				name: 'originalLink'
 			},
-			// Ext.create('OSF.component.SecurityComboBox', {
-			// 	itemId: 'securityMarkings',
-			// 	hidden: submissionPanel.hideSecurityMarkings
-			// }),
+			Ext.create('OSF.component.SecurityComboBox', {
+				itemId: 'securityMarkings'
+				// hidden: submissionPanel.hideSecurityMarkings
+			}),
 			Ext.create('OSF.component.DataSensitivityComboBox', {
 				width: 450
 			})

@@ -98,10 +98,10 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				labelAlign: 'top',
 				hidden: true
 			},
-			// Ext.create('OSF.component.SecurityComboBox', {
-			// 	itemId: 'securityMarkings',
-			// 	hidden: submissionPanel.hideSecurityMarkings
-			// }),
+			Ext.create('OSF.component.SecurityComboBox', {
+				itemId: 'securityMarkings'
+				// hidden: submissionPanel.hideSecurityMarkings
+			}),
 			Ext.create('OSF.component.DataSensitivityComboBox', {
 				width: 450
 			})
