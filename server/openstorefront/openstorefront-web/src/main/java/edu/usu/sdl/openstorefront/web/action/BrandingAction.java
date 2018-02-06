@@ -110,8 +110,8 @@ public class BrandingAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
-						FileSystemManager.copy(in, response.getOutputStream());
+					try (InputStream in = new BrandingAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
 
@@ -126,7 +126,7 @@ public class BrandingAction
 			length = path.toFile().length();
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
-			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = new BrandingAction().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 

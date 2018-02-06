@@ -50,7 +50,12 @@ public class ReportView
 	{
 	}
 
-	private static ReportView toReportView(Report report)
+	public static ReportView toReportView(Report report)
+	{
+		return toReportView(report, PropertiesManager.getInstance());
+	}
+
+	public static ReportView toReportView(Report report, PropertiesManager propertiesManager)
 	{
 		ReportView view = new ReportView();
 		try {
@@ -61,7 +66,7 @@ public class ReportView
 		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 
 		try {
-			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
+			view.setReportLifetimeMax(Integer.parseInt(propertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
 		} catch (NumberFormatException e) {
 			//	If the configured report lifetime is invalid, fallback to the default value for the max report lifetime
 			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.REPORT_HISTORY_DAYS_TO_LIVE));

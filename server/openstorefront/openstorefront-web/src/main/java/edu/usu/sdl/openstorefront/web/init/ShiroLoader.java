@@ -32,7 +32,7 @@ public class ShiroLoader
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
-		File configFile = FileSystemManager.getConfig("shiro.ini");
+		File configFile = FileSystemManager.getInstance().getConfig("shiro.ini");
 		sce.getServletContext().setInitParameter(CONFIG_LOCATIONS_PARAM, configFile.toURI().toString());
 		super.contextInitialized(sce);
 	}

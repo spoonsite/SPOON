@@ -72,7 +72,7 @@ public class HelpImporter
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			try (InputStream is = HelpImporter.class.getResourceAsStream("/userhelp.md"); DigestInputStream dis = new DigestInputStream(is, md);)
 			{
-				FileSystemManager.copy(dis, bout);
+				FileSystemManager.getInstance().copy(dis, bout);
 			}
 			byte[] digest = md.digest();
 			String checkSum = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.HELP_SYNC);

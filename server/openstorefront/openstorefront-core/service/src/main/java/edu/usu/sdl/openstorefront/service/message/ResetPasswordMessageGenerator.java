@@ -44,7 +44,7 @@ public class ResetPasswordMessageGenerator
 		message.append("A password reset was requested for your user.<br>");
 		message.append("Click or Copy/Paste the link into your web browser to Approve the request.<br><br>");
 		
-		String externalHostUrl = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
+		String externalHostUrl = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		
 		String urlToApprove = externalHostUrl +"/approveChange.jsp?approvalCode=" +  messageContext.getUserPasswordResetCode();
 		

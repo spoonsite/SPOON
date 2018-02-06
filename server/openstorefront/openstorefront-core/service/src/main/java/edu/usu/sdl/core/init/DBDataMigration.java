@@ -38,7 +38,7 @@ public class DBDataMigration
 	{
 		StringBuilder results = new StringBuilder();
 
-//		File exportDir = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR);
+//		File exportDir = FileSystemManager.getInstance().getDir(FileSystemManager.getInstance().SYSTEM_TEMP_DIR);
 //
 //		try {
 //			CoreSystem.standby("Running DB Export/Import");
@@ -52,8 +52,8 @@ public class DBDataMigration
 //			service.getSystemService().toggleDBlogger(false);
 //			DBManager.cleanup();
 //			LOG.log(Level.INFO, "Clearing orient directory");
-//			String dataDir = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath() + "/databases/openstorefront";
-//			FileUtils.deleteDirectory(FileSystemManager.getDir(dataDir));
+//			String dataDir = FileSystemManager.getInstance().getDir(FileSystemManager.getInstance().DB_DIR).getPath() + "/databases/openstorefront";
+//			FileUtils.deleteDirectory(FileSystemManager.getInstance().getDir(dataDir));
 //
 //			LOG.log(Level.INFO, "restarting orient");
 //			DBManager.init();

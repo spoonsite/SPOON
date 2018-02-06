@@ -82,7 +82,7 @@ public class TemporaryMedia
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.TEMPORARY_MEDIA_DIR);
+			File mediaDir = FileSystemManager.getInstance().getDir(FileSystemManager.TEMPORARY_MEDIA_DIR);
 			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
 		}
 		return path;

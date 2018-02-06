@@ -94,7 +94,7 @@ public class SecurityInit
 		LOG.log(Level.CONFIG, "Guest group was setup");
 
 		//Admin Role
-		String adminRoleName = PropertiesManager.getValue(
+		String adminRoleName = PropertiesManager.getInstance().getValue(
 				PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP,
 				"STOREFRONT-Admin"
 		);

@@ -50,8 +50,8 @@ public class JiraCreateTicket
 			feedbackTicket.setSummary("TEST - AUTO TEST");
 			feedbackTicket.setDescription("This was generated from an auto test.");
 			feedbackTicket.setWebInformation(new WebInformation());
-			feedbackTicket.getWebInformation().setLocation(PropertiesManager.getNodeName());
-			feedbackTicket.getWebInformation().setUserAgent(PropertiesManager.getApplicationVersion());
+			feedbackTicket.getWebInformation().setLocation(PropertiesManager.getInstance().getNodeName());
+			feedbackTicket.getWebInformation().setUserAgent(PropertiesManager.getInstance().getApplicationVersion());
 			feedbackTicket.getWebInformation().setReferrer("Auto Test");
 			feedbackTicket.getWebInformation().setScreenResolution("0 x 0");
 

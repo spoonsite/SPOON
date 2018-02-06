@@ -548,7 +548,7 @@ public class UserServiceImpl
 	@Override
 	public void cleanupOldUserMessages()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
+		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
@@ -661,8 +661,8 @@ public class UserServiceImpl
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 
 		List<UserMessage> userMessages = persistenceService.queryByExample(userMessageExample);
-		int minQueueMinutes = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
-		int maxRetries = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
+		int minQueueMinutes = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
+		int maxRetries = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
 		if (minQueueMinutes < 0) {
 			minQueueMinutes = 0;
 		}

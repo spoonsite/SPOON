@@ -92,8 +92,10 @@ public class OpenStorefrontConstant
 	private static final Map<String, String> extMap = loadExtMap();
 
 	/**
-	 * used to select a standardized extension for mime types that have multiple extensions
-	 * @return 
+	 * used to select a standardized extension for mime types that have multiple
+	 * extensions
+	 *
+	 * @return
 	 */
 	private static Map<String, String> loadExtMap()
 	{
@@ -107,10 +109,12 @@ public class OpenStorefrontConstant
 		extMapLocal.put(".tiff", ".tif");	//Tagged Image File Format (TIFF)
 		return extMapLocal;
 	}
+
 	/**
-	 * used to select a standardized mimeType for extensions that have multiple mime types
-	 * https://www.iana.org/assignments/media-types/media-types.xhtml
-	 * @return 
+	 * used to select a standardized mimeType for extensions that have multiple
+	 * mime types https://www.iana.org/assignments/media-types/media-types.xhtml
+	 *
+	 * @return
 	 */
 	private static Map<String, String> loadMimeTypeMap()
 	{
@@ -125,15 +129,17 @@ public class OpenStorefrontConstant
 		mimeTypeMapLocal.put("image/jpeg", "image/jpg");	//JPEG images
 		mimeTypeMapLocal.put("text/json", "application/json");	//JSON format
 		mimeTypeMapLocal.put("video/mpeg", "video/mpg");	//MPEG Video
-		mimeTypeMapLocal.put("video/mpeg", "video/mpg");	//MPEG Video
 		mimeTypeMapLocal.put("video/x-msvideo", "video/avi");	//AVI: Audio Video Interleave
 
 		return mimeTypeMapLocal;
 	}
+
 	/**
-	 * list based off https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
+	 * list based off
+	 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 	 * "... table lists some important MIME types for the Web:"
-	 * @return 
+	 *
+	 * @return
 	 */
 	private static Map<String, String> loadMimeXref()
 	{
@@ -231,9 +237,9 @@ public class OpenStorefrontConstant
 
 	public static String getFileExtensionForMime(String mimeType)
 	{
-		String ext = "NA";
+		String ext = NOT_AVAILABLE;
 		if (mimeType != null) {
-			if(mimeTypeMap.containsKey(mimeType.toLowerCase())) {
+			if (mimeTypeMap.containsKey(mimeType.toLowerCase())) {
 				mimeType = mimeTypeMap.get(mimeType.toLowerCase());
 			}
 			String found = mimeXref.get(mimeType.toLowerCase());
@@ -252,15 +258,15 @@ public class OpenStorefrontConstant
 			if (extensionToCheck.startsWith(".") == false) {
 				extensionToCheck = "." + fileExtension;
 			}
-			if(extMap.containsKey(extensionToCheck.toLowerCase())) {
+			if (extMap.containsKey(extensionToCheck.toLowerCase())) {
 				extensionToCheck = extMap.get(extensionToCheck.toLowerCase());
 			}
 			if (mimeXref.containsValue(extensionToCheck.toLowerCase())) {
 				//get first match
 				for (String extCheckKey : mimeXref.keySet()) {
 					String value = mimeXref.get(extCheckKey);
-					if (value.equalsIgnoreCase(fileExtension)) {
-						mime = value;
+					if (value.equalsIgnoreCase(extensionToCheck.toLowerCase())) {
+						mime = extCheckKey;
 						break;
 					}
 				}

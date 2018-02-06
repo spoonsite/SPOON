@@ -56,7 +56,7 @@ public class PluginScanJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
+		File pluginDir = FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_DIR);
 
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 

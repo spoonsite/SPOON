@@ -42,7 +42,7 @@ public class TrackingCleanupJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		String maxDays = PropertiesManager.getValue(PropertiesManager.KEY_MAX_AGE_TRACKING_RECORDS, "365");
+		String maxDays = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_AGE_TRACKING_RECORDS, "365");
 
 		Instant maxInstant = Instant.now();
 		maxInstant = maxInstant.minus(Long.parseLong(maxDays), ChronoUnit.DAYS);

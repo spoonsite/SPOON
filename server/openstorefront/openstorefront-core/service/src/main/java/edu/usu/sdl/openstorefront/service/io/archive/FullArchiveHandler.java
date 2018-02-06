@@ -54,7 +54,7 @@ public class FullArchiveHandler
 	{
 		Set<String> excludeDir = new HashSet<>();
 		excludeDir.add(FileSystemManager.DB_DIR.replace("/", File.separator));
-		List<String> directoriesToPull = FileSystemManager.getTopLevelDirectories(excludeDir);
+		List<String> directoriesToPull = FileSystemManager.getInstance().getTopLevelDirectories(excludeDir);
 
 		long totalRecords = (long) directoriesToPull.size() + 1;
 		archive.setTotalRecords(totalRecords);
@@ -151,7 +151,7 @@ public class FullArchiveHandler
 						archive.setStatusDetails("Importing directory: " + dir);
 						archive.save();
 						try {
-							File existingDir = FileSystemManager.getDir(FileSystemManager.MAIN_DIR + "/" + dir.getName());
+							File existingDir = FileSystemManager.getInstance().getDir(FileSystemManager.getInstance().getBaseDirectory() + "/" + dir.getName());
 							new TFile(dir).cp_r(new TFile(existingDir));
 						} catch (IOException ex) {
 							LOG.log(Level.WARNING, "Unable to copy dir: " + dir, ex);

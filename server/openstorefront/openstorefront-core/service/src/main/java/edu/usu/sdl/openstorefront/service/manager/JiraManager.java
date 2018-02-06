@@ -55,15 +55,15 @@ public class JiraManager
 
 	public static void init()
 	{
-		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_JIRA_POOL_SIZE, "20");
+		String poolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_POOL_SIZE, "20");
 		maxPoolSize = Convert.toInteger(poolSize);
 		clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
 		log.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
-		connectionModel.setUrl(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_URL));
-		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
-		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+		connectionModel.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL));
+		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		for (int i = 0; i < maxPoolSize; i++) {
 			clientPool.offer(new JiraClient(connectionModel));
@@ -100,7 +100,7 @@ public class JiraManager
 					}			
 				} catch (Exception e){
 					//critical block (must catch all)				
-					log.log(Level.WARNING, "Unable to connect to Jira("+PropertiesManager.getValue(PropertiesManager.KEY_JIRA_URL)+")...Jira maybe down or there is a configuration issue.", e);					
+					log.log(Level.WARNING, "Unable to connect to Jira("+PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL)+")...Jira maybe down or there is a configuration issue.", e);					
 				} finally {
 					lastCheckTime = System.currentTimeMillis();
 				}			
@@ -113,7 +113,7 @@ public class JiraManager
 
 	public static JiraClient getClient()
 	{
-		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
 		try {
 			JiraClient jiraClient = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (jiraClient == null) {

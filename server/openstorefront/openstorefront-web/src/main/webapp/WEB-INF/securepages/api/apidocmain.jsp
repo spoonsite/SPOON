@@ -51,7 +51,7 @@
     <body>
         
 	<%
-		String appVersion = PropertiesManager.getApplicationVersion();		
+		String appVersion = PropertiesManager.getInstance().getApplicationVersion();		
 		request.setAttribute("appVersion", appVersion);
 	%>		
 		
