@@ -59,7 +59,7 @@ public class LandingAction
 			String fullTemplate = landingTemplateFull.fullTemplate();
 			setLandingTemplate(fullTemplate);
 		} else {
-			String defaultLanding = PropertiesManager.getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
+			String defaultLanding = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
 			if (StringUtils.isBlank(defaultLanding)) {
 				defaultLanding = "defaultLanding.jsp";
 			}

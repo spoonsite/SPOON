@@ -409,7 +409,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 		});
 
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		
 		var summaryForm = this;
 		
@@ -441,6 +441,10 @@ Ext.define('OSF.form.ChecklistSummary', {
 				summaryForm.topPanel.getComponent('summary').on('change', function(){
 					summaryForm.markUnsaved();			
 				}, undefined);
+
+				if (callback) {
+					callback();
+				}
 			}
 		});
 				

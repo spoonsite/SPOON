@@ -64,7 +64,7 @@ public abstract class BaseComponentServiceImpl
 		ComponentUpdateQueue componentUpdateQueue = new ComponentUpdateQueue();
 		componentUpdateQueue.setComponentId(componentId);
 		componentUpdateQueue.setUpdateDts(TimeUtil.currentDate());
-		componentUpdateQueue.setNodeId(PropertiesManager.getNodeName());
+		componentUpdateQueue.setNodeId(PropertiesManager.getInstance().getNodeName());
 		componentUpdateQueue.setUpdateId(componentService.getPersistenceService().generateId());
 		componentUpdateQueue.setModificationType(componentService.getModificationType());
 		componentUpdateQueue.populateBaseCreateFields();

@@ -67,7 +67,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getApplicationName() == null) {
-					branding.setApplicationName(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "DI2E Clearinghouse"));
+					branding.setApplicationName(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE, "DI2E Clearinghouse"));
 				}
 
 				if (branding.getLandingPageTitle() == null) {

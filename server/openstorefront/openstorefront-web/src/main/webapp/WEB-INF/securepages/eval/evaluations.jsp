@@ -29,6 +29,8 @@
 
 		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 		</stripes:layout-render>			
+
+		<link rel="stylesheet" href="css/evaluations.css">	
 		
 		<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
 		
@@ -79,7 +81,10 @@
 					store: evalGridStore,
 					columns: [
 						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
-						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },						
+						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },	
+						{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+							renderer: CoreUtil.renderer.booleanRenderer
+						},
 						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
 						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
@@ -111,18 +116,23 @@
 
 							if (evalGrid.getSelectionModel().getCount() === 1) {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+								tools.getComponent('edit').setDisabled(false);	
 							} else {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 							}
 
-							if (selected.length > 0) {									
-								tools.getComponent('edit').setDisabled(false);	
+							if (selected.length > 0 && !selected[0].data.published) {									
 								tools.getComponent('assignUser').setDisabled(false);							
-							} else {															
-								tools.getComponent('edit').setDisabled(true);														
-								tools.getComponent('assignUser').setDisabled(true);
-							}
 
+								tools.getComponent('edit').setText('Edit');
+								tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
+							} else {															
+								// tools.getComponent('edit').setDisabled(true);														
+								tools.getComponent('assignUser').setDisabled(true);
+
+								tools.getComponent('edit').setText('Details');
+								tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
+							}
 						}
 					},						
 					dockedItems: [,
@@ -264,6 +274,7 @@
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit',
 									scale: 'medium',
+									width: '100px',
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionEdit(record);
@@ -304,12 +315,13 @@
 						},
 						success: function(response, opts) {
 							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
-								title: 'Evaluation Form - ' + record.get('componentName')
+								title: 'Evaluation Form - ' + record.get('componentName'),
+								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
-							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId, function(){
+							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
 							

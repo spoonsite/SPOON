@@ -45,7 +45,7 @@ public class AttributeStandardTest extends BaseDataImportTest
 	protected void runInternalTest()
 	{
 		ImportContext importContext = new ImportContext();
-		importContext.setInput(FileSystemManager.getApplicationResourceFile("/data/test/attributes.json"));
+		importContext.setInput(FileSystemManager.getInstance().getApplicationResourceFile("/data/test/attributes.json"));
 
 		FileHistory fileHistory = new FileHistory();
 		fileHistory.setFileFormat(ATTRIBUTE_STANDARD);

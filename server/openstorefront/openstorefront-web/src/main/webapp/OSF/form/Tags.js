@@ -159,7 +159,7 @@ Ext.define('OSF.form.Tags', {
 		tagPanel.add(tagPanel.tagGrid);		
 		
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		
 		var tagPanel = this;
 		
@@ -170,6 +170,9 @@ Ext.define('OSF.form.Tags', {
 			url: 'api/v1/resource/components/' + componentId + '/tagsview'
 		});		
 		
+		if (callback) {
+			callback();
+		}
 	}
 	
 	

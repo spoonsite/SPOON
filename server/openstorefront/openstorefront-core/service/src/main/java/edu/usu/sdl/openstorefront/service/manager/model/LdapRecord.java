@@ -40,12 +40,12 @@ public class LdapRecord
 
 	public void populateFormAttributes()
 	{
-		setUsername(attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_USERNAME, "sAMAccountName")));
-		setEmail(attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_EMAIL, "mail")));
-		setPhone(attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_PHONE, "telephonenumber")));
-		setOrganization(attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION, "company")));
-		setGuid(attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_GUID, "objectGUID")));
-		String fullName = attributeMap.get(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_FULLNAME, "name"));
+		setUsername(attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_USERNAME, "sAMAccountName")));
+		setEmail(attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_EMAIL, "mail")));
+		setPhone(attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_PHONE, "telephonenumber")));
+		setOrganization(attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION, "company")));
+		setGuid(attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_GUID, "objectGUID")));
+		String fullName = attributeMap.get(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_FULLNAME, "name"));
 		if (StringUtils.isNotBlank(fullName)) {
 			String nameSplit[] = fullName.split(" ");
 			if (nameSplit.length > 1) {

@@ -278,7 +278,7 @@ public class UploadAction
 					}
 				} else {
 					//zip handling
-					File tempFile = new File(FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/" + System.currentTimeMillis() + "-Temp.zip");
+					File tempFile = new File(FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/" + System.currentTimeMillis() + "-Temp.zip");
 					uploadFile.save(tempFile);
 					TFile archive = new TFile(tempFile.getPath());
 					TFile archiveFiles[] = archive.listFiles();
@@ -296,14 +296,14 @@ public class UploadAction
 								TFile mediaFiles[] = file.listFiles();
 								if (mediaFiles != null) {
 									for (TFile mediaFile : mediaFiles) {
-										Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 									}
 								}
 							} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
 								TFile resourcesFiles[] = file.listFiles();
 								if (resourcesFiles != null) {
 									for (TFile resourceFile : resourcesFiles) {
-										Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										Files.copy(resourceFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 									}
 								}
 							}
@@ -364,7 +364,7 @@ public class UploadAction
 					&& (fileExtension.equals("war") || fileExtension.equals("jar"))) {
 
 				//just copy plugin to  plugin directory...to avoid double pickup
-				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
+				File pluginDir = FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_DIR);
 				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
 			} else {
 
@@ -436,7 +436,7 @@ public class UploadAction
 
 		File tempFile = null;
 		try {
-			tempFile = File.createTempFile("import-", "tmp", FileSystemManager.getDir(FileSystemManager.MAIN_TEMP_DIR));
+			tempFile = File.createTempFile("import-", "tmp", FileSystemManager.getInstance().getDir(FileSystemManager.MAIN_TEMP_DIR));
 			uploadFile.save(tempFile);
 
 			try (InputStream input = new FileInputStream(tempFile)) {
@@ -589,7 +589,7 @@ public class UploadAction
 		systemArchive.setIoDirectionType(IODirectionType.IMPORT);
 
 		systemArchive.setArchiveFilename("import-" + service.getPersistenceService().generateId() + ".zip");
-		File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
+		File archiveDir = FileSystemManager.getInstance().getDir(FileSystemManager.ARCHIVE_DIR);
 		Path path = Paths.get(archiveDir.getPath() + "/" + systemArchive.getArchiveFilename());
 		File fullArchive = path.toFile();
 

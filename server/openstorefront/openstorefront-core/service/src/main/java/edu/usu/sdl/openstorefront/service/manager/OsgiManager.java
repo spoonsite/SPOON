@@ -67,7 +67,7 @@ public class OsgiManager
 
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
-		String moduleVersion = PropertiesManager.getModuleVersion();
+		String moduleVersion = PropertiesManager.getInstance().getModuleVersion();
 		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
 				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", "

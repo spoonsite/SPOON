@@ -61,16 +61,16 @@ public class ConfluenceManager
 	{
 		log.log(Level.FINE, "Initializing Confluence Pool");
 
-		String poolSize = PropertiesManager.getValue(PropertiesManager.KEY_CONFLUENCE_POOL_SIZE, "20");
+		String poolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_CONFLUENCE_POOL_SIZE, "20");
 		int maxPoolSize = Convert.toInteger(poolSize);
 		BlockingQueue<ConfluenceClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 		poolInstance = new ConfluenceManager(clientPool, maxPoolSize);
 
 		log.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
-		connectionModel.setUrl(PropertiesManager.getValue(PropertiesManager.KEY_CONFLUENCE_URL));
-		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
-		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+		connectionModel.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_CONFLUENCE_URL));
+		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		for (int i = 0; i < maxPoolSize; i++) {
 			ConfluenceClient client = new ConfluenceClient(connectionModel, poolInstance);
@@ -121,7 +121,7 @@ public class ConfluenceManager
 
 	public ConfluenceClient getClient()
 	{
-		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
 		try {
 			ConfluenceClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (client == null) {

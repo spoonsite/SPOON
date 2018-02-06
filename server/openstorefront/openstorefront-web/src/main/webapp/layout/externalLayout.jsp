@@ -54,7 +54,7 @@
 		<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>			
 		
 		<%
-			String appVersion = PropertiesManager.getApplicationVersion();		
+			String appVersion = PropertiesManager.getInstance().getApplicationVersion();		
 			request.setAttribute("appVersion", appVersion);
 
 			Branding brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();

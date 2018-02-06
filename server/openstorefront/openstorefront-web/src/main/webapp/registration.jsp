@@ -390,6 +390,9 @@
 																		text: 'Login',
 																		iconCls: 'fa fa-2x fa-sign-in icon-button-color-default icon-vertical-correction',
 																		scale: 'medium',
+																		autoEl: {
+																			'data-test' : 'loginAfterSignup'
+																		},
 																		handler: function() {
 																			window.location.href = 'login.jsp';
 																		}

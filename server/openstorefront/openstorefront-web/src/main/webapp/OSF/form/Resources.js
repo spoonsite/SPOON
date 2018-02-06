@@ -358,7 +358,7 @@ Ext.define('OSF.form.Resources', {
 		
 		resourcePanel.add(resourcePanel.resourcesGrid);
 	},	
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var resourcePanel = this;
 		
 		resourcePanel.componentId = componentId;
@@ -370,6 +370,10 @@ Ext.define('OSF.form.Resources', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Resources", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}
 	

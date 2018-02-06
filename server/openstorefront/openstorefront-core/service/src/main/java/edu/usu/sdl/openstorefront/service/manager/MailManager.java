@@ -95,12 +95,12 @@ public class MailManager
 			log.log(Level.WARNING, "While configuring the email template, the follow error was caught: {0}", e);
 		}
 		//pull properties
-		String server = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER);
-		String serverPort = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PORT));
-		String serverUser = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_USER));
-		String serverPW = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PW));
-		String useSSL = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_USE_SSL);
-		String useTLS = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_USE_TLS);
+		String server = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_SERVER);
+		String serverPort = StringProcessor.nullIfBlank(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_SERVER_PORT));
+		String serverUser = StringProcessor.nullIfBlank(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_SERVER_USER));
+		String serverPW = StringProcessor.nullIfBlank(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_SERVER_PW));
+		String useSSL = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_USE_SSL);
+		String useTLS = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_USE_TLS);
 
 		if (StringUtils.isNotBlank(server)) {
 			TransportStrategy transportStrategy = TransportStrategy.SMTP_PLAIN;
@@ -123,10 +123,10 @@ public class MailManager
 
 	public static Email newEmail()
 	{
-		String fromName = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_FROM_NAME, OpenStorefrontConstant.NOT_AVAILABLE);
-		String fromAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_FROM_ADDRESS, OpenStorefrontConstant.DEFAULT_FROM_ADDRESS);
-		String fromReply = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME);
-		String fromReplyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
+		String fromName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_NAME, OpenStorefrontConstant.NOT_AVAILABLE);
+		String fromAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_ADDRESS, OpenStorefrontConstant.DEFAULT_FROM_ADDRESS);
+		String fromReply = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME);
+		String fromReplyAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
 
 		Email email = new Email();
 		email.setFromAddress(fromName, fromAddress);

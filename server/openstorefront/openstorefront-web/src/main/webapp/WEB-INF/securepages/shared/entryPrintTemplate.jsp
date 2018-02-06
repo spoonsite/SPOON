@@ -16,7 +16,7 @@ limitations under the License.
 
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%
-	String appVersion = PropertiesManager.getApplicationVersion();
+	String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 	request.setAttribute("appVersion", appVersion);
 %>
 

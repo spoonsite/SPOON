@@ -234,7 +234,7 @@ Ext.define('OSF.form.Dependencies', {
 		dependanciesPanel.add(dependanciesPanel.dependenciesGrid);
 		
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var dependanciesPanel = this;
 		
 		dependanciesPanel.componentId = componentId;
@@ -246,6 +246,10 @@ Ext.define('OSF.form.Dependencies', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Dependencies", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}
 	

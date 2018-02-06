@@ -13,6 +13,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 		<tomcat.version>7.0.78</tomcat.version>
+		<sonar.skip>true</sonar.skip>
 	</properties>	
     <dependencies>
         <dependency>

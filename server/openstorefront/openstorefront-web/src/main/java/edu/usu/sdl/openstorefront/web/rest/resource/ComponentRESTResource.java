@@ -429,7 +429,7 @@ public class ComponentRESTResource
 		if (fullComponents.isEmpty() == false) {
 			try {
 				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-				String archiveName = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
+				String archiveName = FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
 				File entry = new TFile(archiveName + "/components.json");
 				try (Writer writer = new TFileWriter(entry)) {
 					writer.write(componentJson);
@@ -2762,7 +2762,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
 				question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			} else {
 				question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
@@ -2969,7 +2969,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
 				response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			} else {
 				response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);

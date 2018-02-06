@@ -357,7 +357,7 @@ Ext.define('OSF.form.ChecklistAll', {
 		questionForm.add(questionForm.questionGrid);
 		
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		
 		var questionForm = this;
 				
@@ -372,6 +372,10 @@ Ext.define('OSF.form.ChecklistAll', {
 		}		
 		
 		opts.commentPanel.loadComments(evaluationId, "Checklist All", evaluationId);	
+
+		if (callback) {
+			callback();
+		}
 	}
 	
 });
