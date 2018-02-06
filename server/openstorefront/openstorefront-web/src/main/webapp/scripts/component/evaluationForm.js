@@ -601,9 +601,9 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 	initComponent: function () {
 		this.callParent();
 
-		var evalPanel = this;
+		var entryPanel = this;
 
-		evalPanel.navigation = Ext.create('Ext.panel.Panel', {
+		entryPanel.navigation = Ext.create('Ext.panel.Panel', {
 			itemId: 'entrymenu',
 			title: 'Entry Navigation',	
 			titleCollapse: true,
@@ -629,36 +629,36 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 				{							
 					text: 'Summary',							
 					handler: function(){
-						evalPanel.loadContentForm({
+						entryPanel.loadContentForm({
 							form: 'EntrySummary',
 							title: 'Entry Summary',
-							refreshCallback: evalPanel.externalRefreshCallback
+							refreshCallback: entryPanel.externalRefreshCallback
 						});								
 					}							
 				}
 			]
 		});
 
-		evalPanel.add(evalPanel.navigation);
-		evalPanel.add(evalPanel.contentPanel);
-		evalPanel.add(evalPanel.commentPanel);
+		entryPanel.add(entryPanel.navigation);
+		entryPanel.add(entryPanel.contentPanel);
+		entryPanel.add(entryPanel.commentPanel);
 
 		CoreService.userservice.getCurrentUser().then(function(user){
-			evalPanel.user = user;	
+			entryPanel.user = user;	
 			
-			evalPanel.loadContentForm({
+			entryPanel.loadContentForm({
 				form: 'EntrySummary',
 				title: 'Entry Summary',
-				refreshCallback: evalPanel.externalRefreshCallback
+				refreshCallback: entryPanel.externalRefreshCallback
 			});				
 		});
 	},
 	loadEval: function(evaluationId, componentId){
-		var evalPanel = this;
+		var entryPanel = this;
 
-		evalPanel.setLoading(true);
-		evalPanel.evaluationId = evaluationId;
-		evalPanel.componentId = componentId;
+		entryPanel.setLoading(true);
+		entryPanel.evaluationId = evaluationId;
+		entryPanel.componentId = componentId;
 		
 		var entryType = 'COMP';		
 		Ext.Ajax.request({
@@ -672,10 +672,10 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					{							
 						text: 'Summary',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'EntrySummary',
 								title: 'Entry Summary',
-								refreshCallback: evalPanel.externalRefreshCallback
+								refreshCallback: entryPanel.externalRefreshCallback
 							});								
 						}							
 					}					
@@ -684,7 +684,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Attributes',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Attributes',
 								title: 'Entry Attributes'
 							});
@@ -695,7 +695,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Relationships',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Relationships',
 								title: 'Entry Relationships'
 							});
@@ -706,7 +706,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Contacts',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Contacts',
 								title: 'Entry Contacts'
 							});
@@ -717,7 +717,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Resources',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Resources',
 								title: 'Entry Resources'
 							});	
@@ -728,7 +728,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Media',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Media',
 								title: 'Entry Media'
 							});
@@ -739,7 +739,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 					menuItems.push({						
 						text: 'Dependencies',							
 						handler: function(){
-							evalPanel.loadContentForm({
+							entryPanel.loadContentForm({
 								form: 'Dependencies',
 								title: 'Entry Dependencies'
 							});
@@ -749,17 +749,17 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 				menuItems.push({						
 					text: 'Tags',							
 					handler: function(){
-						evalPanel.loadContentForm({
+						entryPanel.loadContentForm({
 							form: 'Tags',
 							title: 'Tags'
 						});
 					}
 				});
 
-				evalPanel.navigation.removeAll();
-				evalPanel.navigation.add(menuItems);
+				entryPanel.navigation.removeAll();
+				entryPanel.navigation.add(menuItems);
 
-				evalPanel.setLoading(false);
+				entryPanel.setLoading(false);
 			}
 		});
 	}
@@ -910,7 +910,8 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				evalPanel.setLoading(false);	
 			},
 			success: function(response, opt) {
-				var evaluationAll = Ext.decode(response.responseText);
+				
+				evalPanel.evaluationAll = Ext.decode(response.responseText);
 
 				var questions = [];
 				
@@ -920,7 +921,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 						evalPanel.loadContentForm({
 							form: 'ChecklistSummary',
 							title: 'Checklist Summary',
-							data: evaluationAll.checkListAll
+							data: evalPanel.evaluationAll.checkListAll
 						});
 						evalPanel.commentPanel.setHidden(false);
 					}							
@@ -928,7 +929,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				
 				var allQuestionButtonType = 'button';
 				var allQuestionMenu = null;
-				if (evaluationAll.evaluation.allowQuestionManagement) {
+				if (evalPanel.evaluationAll.evaluation.allowQuestionManagement) {
 					allQuestionButtonType = 'splitbutton';
 					allQuestionMenu = {
 						items: [
@@ -938,7 +939,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 								handler: function() {
 									
 									var manageWin = Ext.create('OSF.form.ManageEvalQuestions', {
-										evaluationAll: evaluationAll,
+										evaluationAll: evalPanel.evaluationAll,
 										successCallback: function() {
 											evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
 											allQuestionLoadAction();
@@ -960,7 +961,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 					evalPanel.loadContentForm({
 						form: 'ChecklistAll',
 						title: 'Checklist Questions',
-						data: evaluationAll.checkListAll,
+						data: evalPanel.evaluationAll.checkListAll,
 						refreshCallback: function(updatedResponse) {
 							var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
 
@@ -1001,7 +1002,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				};
 				
 				
-				Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
+				Ext.Array.each(evalPanel.evaluationAll.checkListAll.responses, function(chkresponse) {
 												
 					var statusIcon = questionStatusIcon(chkresponse.workflowStatus);
 					
@@ -1060,11 +1061,11 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				evalPanel.navigation.getComponent('checklistmenu').add(questions);
 				
 				var sections = [];
-				Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+				Ext.Array.each(evalPanel.evaluationAll.contentSections, function(sectionAll) {
 					
 					var menu = null;
 					var buttonType = 'button';
-					if (evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
+					if (evalPanel.evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
 						
 						buttonType = 'splitbutton';
 						menu = {
@@ -1124,7 +1125,8 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 				evalPanel.navigation.getComponent('sectionmenu').removeAll();
 				evalPanel.navigation.getComponent('sectionmenu').add(sections);
 				
-				if (evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
+				if (evalPanel.evaluationAll.evaluation.allowNewSections && !evalPanel.readOnly) {
+
 					var dockedTools = evalPanel.navigation.getComponent('sectionmenu').getDockedComponent('tools');
 					if (!dockedTools) {							
 						evalPanel.navigation.getComponent('sectionmenu').addDocked({
@@ -1137,6 +1139,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 									text: 'Add Section',
 									itemId: 'addSectionButton',
 									handler: function() {
+
 										var sectionWindow = Ext.create('Ext.window.Window', {
 											title: 'Add Section',
 											modal: true,
@@ -1171,7 +1174,7 @@ Ext.define('OSF.component.EvaluationEvalPanel', {
 																	load: function(store, records, opts) {
 																		store.filterBy(function(record){
 																			var keep = true;
-																			Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+																			Ext.Array.each(evalPanel.evaluationAll.contentSections, function(sectionAll) {
 																				if (record.get('templateId') === sectionAll.section.templateId) {
 																					keep = false;
 																				}
