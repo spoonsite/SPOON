@@ -4,7 +4,6 @@ description = ""
 weight = 9
 +++
 
-
 This is an internal document but, but outside developer/reuses may find this of
 interest.
 
@@ -46,10 +45,5 @@ apply in certain environments.
 1. Any SPOON specifics should documented in a separate ticket.
 
 2. Moves are handled internally...however move instruction should be clear. 
-
-
-
-
-
 
 
