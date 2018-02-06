@@ -25,28 +25,35 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class UserRegistrationTestClient extends BaseTestClient
+public class UserRegistrationTestClient
+		extends BaseTestClient
 {
+
 	private static List<String> accountSignupIDs = new ArrayList<>();
 	private static UserRegistrationClient apiAccountSignup;
-	
+
 	public UserRegistrationTestClient(ClientAPI client, APIClient apiClient)
 	{
 		super(client, apiClient);
 		apiAccountSignup = new UserRegistrationClient(client);
 	}
-	
-	public UserRegistration getUserRegistration(String registrationId)
+
+	public UserRegistration getAPIUserRegistration(String registrationId)
 	{
 		return apiAccountSignup.getUserRegistration(registrationId);
 	}
-	
+
+	public void deleteAPIUserRegistration(String registrationId)
+	{
+		apiAccountSignup.deleteUserRegistration(registrationId);
+	}
+
 	@Override
 	public void cleanup()
 	{
 		for (String id : accountSignupIDs) {
-			
+
 		}
 	}
-	
+
 }
