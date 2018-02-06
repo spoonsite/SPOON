@@ -541,7 +541,7 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.add(attributePanel.attributeGrid);
 	},
-	loadData: function (evaluationId, componentId, data, opts) {
+	loadData: function (evaluationId, componentId, data, opts, callback) {
 		//just load option (filter out required)
 		var attributePanel = this;
 
@@ -560,6 +560,10 @@ Ext.define('OSF.form.Attributes', {
 				attributePanel.component = component;
 				attributePanel.loadComponentAttributes();
 				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
+
+				if (callback) {
+					callback();
+				}
 			}
 		});
 

@@ -357,7 +357,7 @@ Ext.define('OSF.form.Contacts', {
 		contactPanel.add(contactPanel.contactGrid);
 		
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var contactPanel = this;
 		
 		contactPanel.componentId = componentId;
@@ -369,6 +369,10 @@ Ext.define('OSF.form.Contacts', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Contacts", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}
 	

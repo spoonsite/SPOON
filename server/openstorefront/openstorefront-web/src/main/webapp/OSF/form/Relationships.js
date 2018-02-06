@@ -212,7 +212,7 @@ Ext.define('OSF.form.Relationships', {
 		
 		relationshipPanel.add(relationshipPanel.relationshipsGrid);
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		//just load option (filter out required)
 		var relationshipPanel = this;
 		
@@ -225,6 +225,10 @@ Ext.define('OSF.form.Relationships', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}	
 	
