@@ -10,7 +10,7 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>di2e-github</sonar.organization>
 		<sonar.login>d0499c5a2dc1e97534f18c9fc33fddba4e17449a</sonar.login>
-		<sonar.projectKey>edu.usu.sdl:openstorefront-maven</sonar.projectKey>
+		<sonar.projectKey>edu.usu.sdl:OSF</sonar.projectKey>
 		<sonar.organization>di2e-github</sonar.organization>
 		<sonar.sources>src/main</sonar.sources>
 		<sonar.test.sources>src/test</sonar.test.sources>
