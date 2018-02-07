@@ -80,6 +80,7 @@ public class SecurityPermission
 	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
 	public static final String ADMIN_FAQ = "ADMIN-FAQ";
+	public static final String ADMIN_FORM = "ADMIN_FORM";
 
 	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 
@@ -140,6 +141,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Admin security"));
 		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management"));
 		codeMap.put(ADMIN_FAQ, newLookup(SecurityPermission.class, ADMIN_FAQ, "Admin FAQ management"));
+		codeMap.put(ADMIN_FORM, newLookup(SecurityPermission.class, ADMIN_FORM, "Admin Custom Submission Form management"));
 
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Admin Support Media"));
 
