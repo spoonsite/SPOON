@@ -47,11 +47,26 @@ public class OsgiManager
 
 	private static final Logger log = Logger.getLogger(OsgiManager.class.getName());
 
-	private static final long MAX_SHUTDOWN_WAIT_TIME = 60000;
-	private static Felix felix = null;
-	private static AtomicBoolean started = new AtomicBoolean(false);
+	private final long MAX_SHUTDOWN_WAIT_TIME = 60000;
+	private Felix felix = null;
+	private AtomicBoolean started = new AtomicBoolean(false);
+	
+	protected static OsgiManager singleton = null;
+	
+	protected OsgiManager()
+	{
+		
+	}
+	
+	public static OsgiManager getInstance()
+	{
+		if (singleton == null) {
+			singleton = new OsgiManager();
+		}
+		return singleton;
+	}
 
-	public static void init()
+	public void init()
 	{
 		Map configMap = new HashMap();
 
@@ -103,7 +118,7 @@ public class OsgiManager
 
 	}
 
-	public static void cleanup()
+	public void cleanup()
 	{
 		if (felix != null) {
 
@@ -117,7 +132,7 @@ public class OsgiManager
 		}
 	}
 
-	public static Felix getFelix()
+	public Felix getFelix()
 	{
 		return felix;
 	}
@@ -125,14 +140,14 @@ public class OsgiManager
 	@Override
 	public void initialize()
 	{
-		OsgiManager.init();
+		init();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		OsgiManager.cleanup();
+		cleanup();
 		started.set(false);
 	}
 
