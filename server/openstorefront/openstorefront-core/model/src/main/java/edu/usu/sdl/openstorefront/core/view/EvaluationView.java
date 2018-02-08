@@ -16,12 +16,15 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
@@ -39,6 +42,8 @@ public class EvaluationView
 
 	private String componentName;
 	private String workflowStatusDescription;
+	private String issueNumber;
+	private String integrationUrl;
 
 	public EvaluationView()
 	{
@@ -59,6 +64,16 @@ public class EvaluationView
 		}
 		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
 
+		ComponentIntegrationConfig integrationExample = new ComponentIntegrationConfig();
+		integrationExample.setActiveStatus(ACTIVE_STATUS);
+		integrationExample.setComponentId(evaluation.getOriginComponentId());
+		ComponentIntegrationConfig integration = integrationExample.find();
+		if(integration != null && integration.getIntegrationType().equals("JIRA"))
+		{
+			evaluationView.setIssueNumber(integration.getIssueNumber());
+			String url = MessageFormat.format("{0}/browse/{1}", PropertiesManager.getInstance().getValue("jira.server.url"),integration.getIssueNumber());
+			evaluationView.setIntegrationUrl(url);
+		}
 		return evaluationView;
 	}
 
@@ -92,4 +107,23 @@ public class EvaluationView
 		this.workflowStatusDescription = workflowStatusDescription;
 	}
 
+	public String getIssueNumber()
+	{
+		return issueNumber;
+	}
+
+	public void setIssueNumber(String issueNumber)
+	{
+		this.issueNumber = issueNumber;
+	}
+
+	public String getIntegrationUrl()
+	{
+		return integrationUrl;
+	}
+
+	public void setIntegrationUrl(String integrationUrl)
+	{
+		this.integrationUrl = integrationUrl;
+	}
 }
