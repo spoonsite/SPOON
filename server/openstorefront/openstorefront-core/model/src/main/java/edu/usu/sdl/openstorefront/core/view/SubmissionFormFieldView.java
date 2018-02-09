@@ -35,6 +35,7 @@ public class SubmissionFormFieldView
 	private String mappingTypeDescription;
 	private String fieldTypeDescription;
 
+	@SuppressWarnings("empty")
 	public SubmissionFormFieldView()
 	{
 	}

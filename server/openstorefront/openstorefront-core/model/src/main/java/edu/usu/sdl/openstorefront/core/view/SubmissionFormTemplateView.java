@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +36,36 @@ public class SubmissionFormTemplateView
 
 	private List<SubmissionFormStepView> steps = new ArrayList<>();
 
+	@SuppressWarnings("empty")
 	public SubmissionFormTemplateView()
 	{
+	}
+
+	public static SubmissionFormTemplateView toView(SubmissionFormTemplate template)
+	{
+		SubmissionFormTemplateView view = new SubmissionFormTemplateView();
+		view.setTemplateId(template.getTemplateId());
+		view.setName(template.getName());
+		view.setDescription(template.getDescription());
+		view.setTemplateStatus(template.getTemplateStatus());
+		view.setTemplateStatusLabel(TranslateUtil.translate(SubmissionTemplateStatus.class, template.getTemplateStatus()));
+
+		if (template.getSteps() != null) {
+			template.getSteps().forEach(step -> {
+				view.getSteps().add(SubmissionFormStepView.toView(step));
+			});
+		}
+
+		return view;
+	}
+
+	public static List<SubmissionFormTemplateView> toView(List<SubmissionFormTemplate> templates)
+	{
+		List<SubmissionFormTemplateView> views = new ArrayList<>();
+		templates.forEach(template -> {
+			views.add(toView(template));
+		});
+		return views;
 	}
 
 	public List<SubmissionFormStepView> getSteps()

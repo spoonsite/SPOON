@@ -33,6 +33,7 @@ public class SubmissionFormStepView
 	private Integer stepOrder;
 	private List<SubmissionFormFieldView> fields = new ArrayList<>();
 
+	@SuppressWarnings("empty")
 	public SubmissionFormStepView()
 	{
 	}

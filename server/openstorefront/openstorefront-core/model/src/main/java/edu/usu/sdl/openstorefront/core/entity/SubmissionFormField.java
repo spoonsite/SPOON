@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.persistence.Embeddable;
@@ -75,6 +76,14 @@ public class SubmissionFormField
 	@Sanitize(TextSanitizer.class)
 	private String fieldName;
 
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
+	private String attributeType;
+
+	@ConsumeField
+	private String subSubmissionTemplateId;
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
@@ -109,6 +118,7 @@ public class SubmissionFormField
 	@Max(Integer.MAX_VALUE)
 	private Integer fieldOrder;
 
+	@SuppressWarnings("empty")
 	public SubmissionFormField()
 	{
 	}
@@ -274,6 +284,26 @@ public class SubmissionFormField
 	public void setFieldId(String fieldId)
 	{
 		this.fieldId = fieldId;
+	}
+
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
+
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
+
+	public String getSubSubmissionTemplateId()
+	{
+		return subSubmissionTemplateId;
+	}
+
+	public void setSubSubmissionTemplateId(String subSubmissionTemplateId)
+	{
+		this.subSubmissionTemplateId = subSubmissionTemplateId;
 	}
 
 }

@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
-import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 
 /**
@@ -28,14 +28,44 @@ public interface SubmissionFormService
 		extends AsyncService
 {
 
+	/**
+	 * Saves a template and validates it to determine status
+	 *
+	 * @param template
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveSubmissionFormTemplate(SubmissionFormTemplate template);
+	public SubmissionFormTemplate saveSubmissionFormTemplate(SubmissionFormTemplate template);
 
+	/**
+	 * Deletes a Submission Form Template
+	 *
+	 * @param templateId
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteSubmissionFormTemplate(String templateId);
 
-	public void saveSubmissionResource(SubmissionFormResource resource, InputStream in);
+	/**
+	 * Save Submission Resource
+	 *
+	 * @param resource
+	 * @param in
+	 */
+	public SubmissionFormResource saveSubmissionFormResource(SubmissionFormResource resource, InputStream in);
 
-	public ValidationModel validateTemplate(SubmissionFormTemplate template);
+	/**
+	 * Delete Submission Resource this will remove it from the file system
+	 *
+	 * @param resourceId
+	 */
+	public void deleteSubmissionFormResource(String resourceId);
+
+	/**
+	 * Checks the template mappings to make sure they represent a complete
+	 * mapping to a valid entry.
+	 *
+	 * @param template
+	 * @return
+	 */
+	public ValidationResult validateTemplate(SubmissionFormTemplate template);
 
 }

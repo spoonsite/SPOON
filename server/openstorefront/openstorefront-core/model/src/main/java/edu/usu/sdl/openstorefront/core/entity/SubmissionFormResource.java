@@ -62,6 +62,7 @@ public class SubmissionFormResource
 	@FK(ResourceType.class)
 	private String resourceType;
 
+	@SuppressWarnings("empty")
 	public SubmissionFormResource()
 	{
 	}

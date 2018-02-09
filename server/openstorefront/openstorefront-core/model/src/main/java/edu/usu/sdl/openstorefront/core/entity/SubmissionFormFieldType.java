@@ -38,6 +38,7 @@ public class SubmissionFormFieldType
 	public static final String RADIO = "RADIO";
 	public static final String CHECKBOX = "CHECKBOX";
 
+	@SuppressWarnings("empty")
 	public SubmissionFormFieldType()
 	{
 	}
@@ -49,6 +50,7 @@ public class SubmissionFormFieldType
 		codeMap.put(TEXT, newLookup(SubmissionFormFieldType.class, TEXT, "Text"));
 		codeMap.put(TEXT_AREA, newLookup(SubmissionFormFieldType.class, TEXT_AREA, "Text Area"));
 		codeMap.put(RADIO, newLookup(SubmissionFormFieldType.class, RADIO, "Radio Single Option"));
+		codeMap.put(CHECKBOX, newLookup(SubmissionFormFieldType.class, CHECKBOX, "Checkbox"));
 		return codeMap;
 	}
 

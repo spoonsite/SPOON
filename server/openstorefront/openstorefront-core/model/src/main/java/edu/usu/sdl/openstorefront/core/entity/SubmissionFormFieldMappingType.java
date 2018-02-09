@@ -35,8 +35,10 @@ public class SubmissionFormFieldMappingType
 
 	public static final String FIELD = "FIELD";
 	public static final String COMPLEX = "COMPLEX";
+	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String SUBMISSION = "SUBMISSION";
 
+	@SuppressWarnings("empty")
 	public SubmissionFormFieldMappingType()
 	{
 	}
@@ -47,6 +49,7 @@ public class SubmissionFormFieldMappingType
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(FIELD, newLookup(SubmissionFormFieldMappingType.class, FIELD, "Field"));
 		codeMap.put(COMPLEX, newLookup(SubmissionFormFieldType.class, COMPLEX, "Complex"));
+		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(SUBMISSION, newLookup(SubmissionFormFieldType.class, SUBMISSION, "Submission"));
 		return codeMap;
 	}
