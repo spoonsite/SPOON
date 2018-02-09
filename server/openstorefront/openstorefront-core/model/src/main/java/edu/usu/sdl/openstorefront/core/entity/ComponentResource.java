@@ -156,7 +156,7 @@ public class ComponentResource
 	}
 
 	/**
-	 * Get the path to the resource on disk. 
+	 * Get the path to the resource on disk.
 	 *
 	 * @return Resource or null if this doesn't represent a disk resource
 	 */
