@@ -19,7 +19,7 @@
 Ext.define('OSF.customSubmissionTool.Window', {
 	extend: 'Ext.window.Window',
 
-	record: undefined,
+	recordItem: undefined,
 	formBuilderPanel: undefined,
 
 	maximizable: true,
@@ -27,7 +27,6 @@ Ext.define('OSF.customSubmissionTool.Window', {
 	minWidth: 1000,
 	minHeight: 800,
 	modal: true,
-	containerScroll: true,
 	title: 'Form Builder Tool',
 	layout: 'fit',
 
@@ -36,13 +35,10 @@ Ext.define('OSF.customSubmissionTool.Window', {
 		this.callParent();
 		var csfWindow = this;
 
-		if (typeof csfWindow.fromBuilderPanel === 'undefined') {
-			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {record: csfWindow.record});
+		if (typeof csfWindow.formBuilderPanel === 'undefined') {
+			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {recordItem: csfWindow.record});
 		}
 
 		csfWindow.add(csfWindow.formBuilderPanel);
-	},
-	listeners: {
-
 	}
 });

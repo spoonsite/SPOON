@@ -18,7 +18,6 @@
 
 Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
-	// extend: 'Ext.container.Container',
 	extend: 'Ext.container.Container',
 
 	recordItem: undefined,
@@ -35,19 +34,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	        width: '50%'
     	}
     ],
-   //  constrain: true,
-   //  draggable: {
-   //  	delegate: 'h1',
-   //  	vertical: true,
-   //  	snap: {
-   //  		snap: 30
-   //  	},
-   //  	endDrag: function () {
-   //  		console.log("END DRAG", this);
-   //  		this.panelProxy.hide();
-			// this.panel.saveState();
-   //  	}
-   //  },
 
     generateRandomId: function (num) {
     	var newId = [];
@@ -60,20 +46,21 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	return newId.join('');
     },
 
-	initComponent: function () {
+    listeners: {
+    	afterrender: function () {
 
-		this.callParent();
-		var fieldContainer = this;
+			var fieldContainer = this;
 
-		Ext.defer(function () {
+    		// style the question input field
+			fieldContainer.items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
+
+			// set this container as a drag source
 			new Ext.drag.Source({
 				handle: '.drag-handle',
 				element: fieldContainer.getEl(),
 				draggingCls: 'csf-drag',
-				// delegate: 'h1',
 				constrain: {
 					vertical: true,
-					// el: fieldContainer.up().getEl(),
 				},
 				listeners: {
 					dragend: function (self, info, event, eOpts) {
@@ -92,22 +79,21 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 								return Ext.getCmp(regex.exec(divId)[0]);
 							}
 						};
-						var checkFormat = function (divId) {
-							return getPanel(divId, true);
-						};
 
 						if (info.target !== null) {
 
+							// identify the active (container being dragged,) and the target container
 							var activeContainer = getPanel(self._element.dom.id);
 							var targetContainer = getPanel(info.target._element.dom.id);
-							var prevY = fieldContainer.getY() - event.delta.y;
 
+							// swap positions in the items list
 							var activeIndex = activeContainer.up().items.items.indexOf(activeContainer);
 							var targetIndex = activeContainer.up().items.items.indexOf(targetContainer);
-
 							activeContainer.up().items.items[activeIndex] = targetContainer;
 							activeContainer.up().items.items[targetIndex] = activeContainer;
 
+							// reposition the containers
+							var prevY = fieldContainer.getY() - event.delta.y;
 							activeContainer.setY(targetContainer.getY());
 							targetContainer.setY(prevY);
 						} else {
@@ -118,15 +104,22 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				}
 			});
 
+			// set this container as an eligible drag source
 			new Ext.drag.Target({
 				element: fieldContainer.getEl()
 			});
-		},1000)
+    	}
+    },
+
+	initComponent: function () {
+
+		this.callParent();
+		var fieldContainer = this;
 
 		fieldContainer.add(Ext.create('Ext.DataView', {
     		itemId: 'questionDataView',
     		store: {},
-    		tpl: new Ext.XTemplate('<h1>QUESTION: ' + fieldContainer.generateRandomId(4) + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div>'),
+    		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4) + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'),
     		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
     	}));
 		if (fieldContainer.recordItem === undefined) { // display the record with some default settings

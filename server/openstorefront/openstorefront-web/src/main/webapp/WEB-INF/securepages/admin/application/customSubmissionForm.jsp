@@ -33,6 +33,7 @@
 		/* global Ext, CoreUtil */
 		Ext.require('OSF.customSubmissionTool.Window');
 		Ext.require('OSF.customSubmissionTool.FormBuilderPanel');
+		Ext.require('OSF.customSubmissionTool.FormBuilderItem');
 		Ext.onReady(function(){	
 			
 			var formTemplateGrid = Ext.create('Ext.grid.Panel', {

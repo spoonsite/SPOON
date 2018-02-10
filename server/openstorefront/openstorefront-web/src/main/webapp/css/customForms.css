@@ -1,7 +1,10 @@
 .csf-drag {
-	background: rgba(0,200,0,0.1)!important;
+	background: rgba(0,200,0,0.5)!important;
 	z-index: -1;
 }
+.question-tf {
+	font-size: 32px!important;
+}
 .csf-hover {
-	background: rgba(0,0,0,0.1);
+	background: rgba(200,200,200, 0.8);
 }

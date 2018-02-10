@@ -43,12 +43,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		}
 	],
 
-	record: undefined,
+	recordItem: undefined,
 
 	initComponent: function () {
 
 		this.callParent();
-		console.log("FORM BUILDER PANEL: ", this);
 
 		// TODO query the template...
 
