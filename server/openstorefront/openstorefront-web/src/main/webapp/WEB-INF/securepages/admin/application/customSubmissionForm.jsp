@@ -26,6 +26,8 @@
 	
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">
 	</stripes:layout-render>
+
+	<link rel="stylesheet" href="css/customForms.css">	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */

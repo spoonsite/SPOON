@@ -27,16 +27,22 @@ Ext.define('OSF.customSubmissionTool.Window', {
 	minWidth: 1000,
 	minHeight: 800,
 	modal: true,
+	containerScroll: true,
 	title: 'Form Builder Tool',
+	layout: 'fit',
 
 	initComponent: function () {
-		
+
 		this.callParent();
-		
-		if (typeof this.fromBuilderPanel === 'undefined') {
-			this.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel');
+		var csfWindow = this;
+
+		if (typeof csfWindow.fromBuilderPanel === 'undefined') {
+			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {record: csfWindow.record});
 		}
 
-		this.add(this.formBuilderPanel);
+		csfWindow.add(csfWindow.formBuilderPanel);
+	},
+	listeners: {
+
 	}
 });

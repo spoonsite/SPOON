@@ -18,9 +18,44 @@
 
 Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	extend: 'Ext.panel.Panel',
-	title: 'Create a form!!',
-	trim: true,
-	width: '80%',
-	alignTarget: 'center'
+	width: '100%',
+	alignTarget: 'center',
+	style: 'background: #6c6c6c',
+	layout: {
+		type: 'hbox',
+		align: 'stretch'
+	},
+	items: [
+		{
+			title: 'Form Info',
+			flex: 0.15,
+			style: 'background: #fff; border-bottom: 8px solid #6c6c6c;',
+			height: '100%'
+		},
+		{
+			flex: 0.85,
+			margin: '0 0 0 10',
+			scrollable: 'vertical',
+			style: 'background: #fff;',
+			height: '100%',
+			minHeight: '100%',
+			maxHeight: '100%'
+		}
+	],
 
+	record: undefined,
+
+	initComponent: function () {
+
+		this.callParent();
+		console.log("FORM BUILDER PANEL: ", this);
+
+		// TODO query the template...
+
+		// for each items in record... add FormBuilderItem...
+		for (var i = 0; i < 100; i++) {
+			this.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
+		}
+
+	}
 });

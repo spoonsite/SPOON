@@ -1,0 +1,7 @@
+.csf-drag {
+	background: rgba(0,200,0,0.1)!important;
+	z-index: -1;
+}
+.csf-hover {
+	background: rgba(0,0,0,0.1);
+}
