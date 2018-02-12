@@ -210,8 +210,70 @@
 			};
 		
 			var actionAddEdit = function(record) {
-				Ext.create('OSF.customSubmissionTool.Window', {
-					record: record
+				record = record || {};
+				Ext.create('Ext.window.Window', {
+					width: 400,
+					height: 200,
+					modal: true,
+					title: 'Form Name',
+					itemId: 'createFormWindow',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'createFormWindowForm',
+							layout: 'anchor',
+						    defaults: {
+						        anchor: '100%'
+						    },
+							items: [
+								{
+									xtype: 'textfield',
+									fieldLabel: 'New Form Name',
+									labelAlign: 'top',
+									name: 'formName',
+									margin: 15,
+									flex: 1
+								}
+							]
+						}
+					],
+					dockedItems: [{
+				        xtype: 'toolbar',
+				        dock: 'bottom',
+				        items: [
+				        	{
+					            xtype: 'button',
+					            text: 'Create Form',
+					            listeners: {
+					            	click: function () {
+					            		var createFormWindow = this.up('[itemId=createFormWindow]');
+					            		var form = createFormWindow.queryById('createFormWindowForm');
+					            		form.setLoading(true);
+
+										Ext.create('OSF.customSubmissionTool.Window', {
+											recordItem: Ext.apply(record, {formName: form.getValues().formName}),
+											listeners: {
+												show: function () {
+					            					createFormWindow.close();
+												}
+											}
+										}).show();
+					            		
+					            	}
+					            }
+					        },
+					        '->',
+					        {
+					            xtype: 'button',
+					            text: 'Cancel',
+					            listeners: {
+					            	click: function () {
+					            		this.up('[itemId=createFormWindow]').close();
+					            	}
+					            }
+					        }
+				        ]
+				    }]
 				}).show();
 			};
 			
