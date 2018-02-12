@@ -25,7 +25,7 @@ import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
  */
 public class ClientApiProvider
 {
-	public ClientAPI apiClient;
+	private ClientAPI apiClient;
 	
 	public ClientApiProvider()
 	{
@@ -45,6 +45,5 @@ public class ClientApiProvider
 	{
 		return apiClient;
 	}
-	
 	
 }

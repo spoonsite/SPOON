@@ -34,7 +34,7 @@ public class AuthenticationProvider
 
 	protected WebDriverUtil webDriverUtil;
 	protected Properties properties;
-	private final Logger LOG = Logger.getLogger(AuthenticationProvider.class.getName());
+	private static final Logger LOG = Logger.getLogger(AuthenticationProvider.class.getName());
 
 	public AuthenticationProvider(Properties prop, WebDriverUtil util)
 	{

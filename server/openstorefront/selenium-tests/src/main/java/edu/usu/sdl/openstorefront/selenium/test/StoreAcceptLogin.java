@@ -17,62 +17,48 @@ package edu.usu.sdl.openstorefront.selenium.test;
 
 /**
  *
- * @author dshurtleff
+ * @author besplin
  */
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class Sample
+public class StoreAcceptLogin
 {
-
-	private static final Logger LOG = Logger.getLogger(Sample.class.getName());
+	private static final Logger LOG = Logger.getLogger(StoreAcceptLogin.class.getName());
 
 	public static void main(String[] args)
 	{
 
 		System.setProperty("webdriver.gecko.driver", "drivers\\firefox\\geckodriver.exe");
 
-		// Create a new instance of the Firefox driver
-		// Notice that the remainder of the code relies on the interface, 
-		// not the implementation.
+		// Create a new instance of the Firefox webDriver
 		WebDriver driver = new FirefoxDriver();
 
-		// And now use this to visit Google
-		driver.get("http://www.google.com");
+		driver.get("http://store-accept.usu.di2e.net/openstorefront/");
 
 		// Find the text input element by its name
-		WebElement element = driver.findElement(By.name("q"));
+		WebElement element = driver.findElement(By.name("username"));
+		element.sendKeys("admin");
 
-		// Enter something to search for
-		element.sendKeys("Cheese!");
+		// Enter password and hit ENTER since submit does not seem to work.
+		driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
 
-		// Now submit the form. WebDriver will find the form for us from the element
-		element.submit();
-
-		// Check the title of the page
-		LOG.log(Level.INFO, String.format("Page title is: %s", driver.getTitle()));
-
-		// Google's search is rendered dynamically with JavaScript.
 		// Wait for the page to load, timeout after 10 seconds
-		(new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>()
+		(new WebDriverWait(driver, 12)).until(new ExpectedCondition<Boolean>()
 		{
 			public Boolean apply(WebDriver d)
 			{
-				return d.getTitle().toLowerCase().startsWith("cheese!");
+				LOG.log(Level.INFO, "Logo image is displayed? (logged on successfully) %s", driver.findElement(By.id("logoImage")).isDisplayed());
+
+				return d.findElement(By.id("logoImage")).isDisplayed();
 			}
 		});
-
-		// Should see: "cheese! - Google Search"
-		LOG.log(Level.INFO, String.format("Page title is: %s", driver.getTitle()));
-
-		//Close the browser
-		driver.close();
-
 	}
 }

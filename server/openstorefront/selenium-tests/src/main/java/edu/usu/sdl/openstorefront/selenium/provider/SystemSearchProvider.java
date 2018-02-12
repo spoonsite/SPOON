@@ -35,7 +35,7 @@ public class SystemSearchProvider
 {
 
 	private SystemSearchClient client;
-	private static List<String> systemSearchIds;
+	private List<String> systemSearchIds;
 
 	public SystemSearchProvider(ClientAPI apiClient)
 	{

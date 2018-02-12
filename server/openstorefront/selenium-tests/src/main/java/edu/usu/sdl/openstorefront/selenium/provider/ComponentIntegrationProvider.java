@@ -39,7 +39,7 @@ public class ComponentIntegrationProvider
 		integrationCompIds = new ArrayList<>();
 	}
 	
-	public ComponentIntegration createComponentIntegration(Component component) throws InterruptedException
+	public ComponentIntegration createComponentIntegration(Component component)
 	{	
 		ComponentIntegration integration = new ComponentIntegration();
 		integration.setComponentId(component.getComponentId());

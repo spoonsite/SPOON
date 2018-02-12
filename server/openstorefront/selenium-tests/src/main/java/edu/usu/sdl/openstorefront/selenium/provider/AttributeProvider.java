@@ -35,9 +35,13 @@ import java.util.List;
  */
 public class AttributeProvider
 {
-	AttributeClient client;
-	List<String> attributeTypes;
-	List<String> attributeXRefTypes;
+	private AttributeClient client;
+	private List<String> attributeTypes;
+	private List<String> attributeXRefTypes;
+	
+	private String attrType = "MappingTestAttr";
+	private String attrDefaultCode = "MappingAttrTest";
+	private String attrCodeLabel = "MappingAttr";
 
 	public AttributeProvider(ClientAPI apiClient)
 	{
@@ -95,7 +99,7 @@ public class AttributeProvider
 	{
 		// Need to create an attribute here with api before mapping
 		//
-		createAttribute("MAPPINGTESTATTR", "MAPATTRTEST", "MAPATTR");
+		createAttribute(attrType,attrDefaultCode , attrCodeLabel);
 		
 		AttributeXRefType xRefType = new AttributeXRefType();
 		xRefType.setAttributeType("MAPPINGTESTATTR");

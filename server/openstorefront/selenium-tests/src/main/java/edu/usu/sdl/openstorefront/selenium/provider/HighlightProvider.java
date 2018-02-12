@@ -29,7 +29,7 @@ public class HighlightProvider
 {
 
 	HighlightClient client;
-	private static List<String> highlightIds;
+	private List<String> highlightIds;
 
 	public HighlightProvider(ClientAPI apiClient)
 	{
