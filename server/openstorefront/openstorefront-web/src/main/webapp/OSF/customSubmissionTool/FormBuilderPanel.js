@@ -54,15 +54,16 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	initComponent: function () {
 
 		this.callParent();
+		var formBuilderPanel = this;
 
 		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
 		for (var i = 0; i < 100; i++) {
-			this.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
+			formBuilderPanel.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
 		}
 
 		// add the form info items
-		this.items.items[0].add(Ext.create('Ext.form.Panel', {
+		formBuilderPanel.items.items[0].add(Ext.create('Ext.form.Panel', {
 			items: [
 				{
 					xtype: 'textfield',

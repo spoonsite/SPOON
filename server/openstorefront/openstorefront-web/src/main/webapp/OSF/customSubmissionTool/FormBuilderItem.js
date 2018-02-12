@@ -22,7 +22,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 	recordItem: undefined,
 
-	width: '100%',
+	width: '80%',
 	margin: '10 10 10 0',
 	padding: 20,
 	target: true,
@@ -48,19 +48,24 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	return newId.join('');
     },
 
+    setActiveFormItem: function (cmp) {
+    	var newItem = cmp || this;
+    	var formBuilderPanel = newItem.up('[itemId=formBuilderPanel]');
+		var previousActiveItem = formBuilderPanel.activeItem;
+
+		if (previousActiveItem !== null) {
+			previousActiveItem.removeCls('csf-active');
+		}
+		newItem.addCls('csf-active');
+		formBuilderPanel.activeItem = newItem;
+    },
+
     listeners: {
     	click: {
     		element: 'el',
     		fn: function () {
     			var formBuilderItem = Ext.getCmp(this.id);
-    			var formBuilderPanel = formBuilderItem.up('[itemId=formBuilderPanel]');
-    			var previousActiveItem = formBuilderPanel.activeItem;
-
-    			if (previousActiveItem !== null) {
-    				previousActiveItem.removeCls('csf-active');
-    			}
-    			formBuilderItem.addCls('csf-active');
-    			formBuilderPanel.activeItem = formBuilderItem;
+    			formBuilderItem.setActiveFormItem();
     		}
     	},
     	afterrender: function () {
@@ -99,6 +104,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							}
 						};
 
+						// if there is a valid target container:
+						//		* swap the y coords of both containers
+						//		* swap the location in the parent panel's items array
 						if (info.target !== null) {
 
 							// identify the active (container being dragged,) and the target container
@@ -121,6 +129,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 
 						fieldContainer.enable();
+						fieldContainer.setActiveFormItem();
 					}
 				}
 			});
