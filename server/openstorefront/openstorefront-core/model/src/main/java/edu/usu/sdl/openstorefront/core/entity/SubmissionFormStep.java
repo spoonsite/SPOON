@@ -74,6 +74,7 @@ public class SubmissionFormStep
 	@OneToMany(orphanRemoval = true)
 	private List<SubmissionFormField> fields;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormStep()
 	{
 	}

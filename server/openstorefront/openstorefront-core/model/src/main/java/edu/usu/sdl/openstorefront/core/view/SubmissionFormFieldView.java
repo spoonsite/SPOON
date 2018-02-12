@@ -35,7 +35,7 @@ public class SubmissionFormFieldView
 	private String mappingTypeDescription;
 	private String fieldTypeDescription;
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormFieldView()
 	{
 	}

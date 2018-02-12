@@ -38,7 +38,7 @@ public class SubmissionFormFieldType
 	public static final String RADIO = "RADIO";
 	public static final String CHECKBOX = "CHECKBOX";
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormFieldType()
 	{
 	}

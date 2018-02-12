@@ -15,16 +15,37 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.manager.MemoryDBManager;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import edu.usu.sdl.openstorefront.service.mapping.MappingController;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  *
@@ -33,6 +54,11 @@ import org.junit.Test;
 public class SubmissionFormServiceImplTest
 {
 
+	private static final Logger LOG = Logger.getLogger(PersistUseCase.class.getName());
+
+	private static final String URL = "memory:test";
+	private static String testDir;
+
 	public SubmissionFormServiceImplTest()
 	{
 	}
@@ -40,22 +66,28 @@ public class SubmissionFormServiceImplTest
 	@BeforeClass
 	public static void setUpClass()
 	{
-		DBManager.getInstance().shutdown();
-		String modelPackage = "edu.usu.sdl.openstorefront.core.entity"
-				+ "";
-		DBManager manager = MemoryDBManager.getInstance("", modelPackage);
-//		//NOTE: (KB) this will fail if DBManager is alreay initilzed
-		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
-		DBManager.getInstance().initialize();
-		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT) == null) {
-			PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DB_AT, "pass");
+		if (FileSystemManager.SYSTEM_TEMP_DIR.endsWith(File.separator)) {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
+		} else {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + File.separator + "osf-" + StringProcessor.uniqueId();
 		}
+
+		FileSystemManager testFileSystemManager = FileSystemManager.getInstance();
+		testFileSystemManager.setBaseDirectory(testDir);
 	}
 
 	@AfterClass
 	public static void tearDownClass()
 	{
-		DBManager.getInstance().shutdown();
+		LOG.info("Clean up temp data folder");
+		File file = new File(testDir);
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException ex) {
+				LOG.log(Level.WARNING, "Unable to delete temp directory", ex);
+			}
+		}
 	}
 
 	/**
@@ -63,80 +95,164 @@ public class SubmissionFormServiceImplTest
 	 * SubmissionFormServiceImpl.
 	 */
 	@Test
-	public void testSaveSubmissionFormTemplate()
+	public void testSaveSubmissionFormTemplateInvalid()
 	{
-		System.out.println("saveSubmissionFormTemplate");
-		SubmissionFormTemplate template = null;
-		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-		SubmissionFormTemplate expResult = null;
-		SubmissionFormTemplate result = instance.saveSubmissionFormTemplate(template);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		System.out.println("testSaveSubmissionFormTemplateInvalid");
+		handleSaveSubmissionTemplateTest(SubmissionTemplateStatus.INCOMPLETE, true);
 	}
 
-//
-//	/**
-//	 * Test of deleteSubmissionFormTemplate method, of class
-//	 * SubmissionFormServiceImpl.
-//	 */
-//	@Test
-//	public void testDeleteSubmissionFormTemplate()
-//	{
-//		System.out.println("deleteSubmissionFormTemplate");
-//		String templateId = "";
-//		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-//		instance.deleteSubmissionFormTemplate(templateId);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of validateTemplate method, of class SubmissionFormServiceImpl.
-//	 */
-//	@Test
-//	public void testValidateTemplate()
-//	{
-//		System.out.println("validateTemplate");
-//		SubmissionFormTemplate template = null;
-//		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-//		ValidationResult expResult = null;
-//		ValidationResult result = instance.validateTemplate(template);
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of saveSubmissionFormResource method, of class
-//	 * SubmissionFormServiceImpl.
-//	 */
-//	@Test
-//	public void testSaveSubmissionFormResource()
-//	{
-//		System.out.println("saveSubmissionFormResource");
-//		SubmissionFormResource resource = null;
-//		InputStream in = null;
-//		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-//		SubmissionFormResource expResult = null;
-//		SubmissionFormResource result = instance.saveSubmissionFormResource(resource, in);
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of deleteSubmissionFormResource method, of class
-//	 * SubmissionFormServiceImpl.
-//	 */
-//	@Test
-//	public void testDeleteSubmissionFormResource()
-//	{
-//		System.out.println("deleteSubmissionFormResource");
-//		String resourceId = "";
-//		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-//		instance.deleteSubmissionFormResource(resourceId);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
+	@Test
+	public void testSaveSubmissionFormTemplateValid()
+	{
+		System.out.println("testSaveSubmissionFormTemplateValid");
+		handleSaveSubmissionTemplateTest(SubmissionTemplateStatus.VALID, false);
+	}
+
+	private void handleSaveSubmissionTemplateTest(String expected, boolean addError)
+	{
+		MappingController mappingController = Mockito.mock(MappingController.class);
+		ValidationResult validationResult = new ValidationResult();
+		if (addError) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setFieldName("Test");
+			ruleResult.setMessage("Fail");
+			validationResult.getRuleResults().add(ruleResult);
+		}
+
+		Mockito.when(mappingController.verifyTemplate(Mockito.any())).thenReturn(validationResult);
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setName("Test");
+		template.setDescription("This is a test");
+
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		Mockito.when(persistenceService.persist(Mockito.any())).thenReturn(template);
+		Mockito.when(persistenceService.unwrapProxyObject(Mockito.any())).thenReturn(template);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		instance.setMappingController(mappingController);
+		String expResult = expected;
+		SubmissionFormTemplate result = instance.saveSubmissionFormTemplate(template);
+
+		assertEquals(expResult, result.getTemplateStatus());
+	}
+
+	/**
+	 * Test of deleteSubmissionFormTemplate method, of class
+	 * SubmissionFormServiceImpl.
+	 */
+	@Test
+	public void testDeleteSubmissionFormTemplateNoResources()
+	{
+		System.out.println("deleteSubmissionFormTemplate - no resources");
+
+		String templateId = "1";
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setName("Test");
+		template.setDescription("This is a test");
+
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		Mockito.when(persistenceService.findById(SubmissionFormTemplate.class, "1")).thenReturn(template);
+		Mockito.when(persistenceService.queryByExample(Mockito.any(BaseEntity.class))).thenReturn(new ArrayList<>());
+
+		Service testService = Mockito.mock(Service.class);
+		Mockito.when(testService.getPersistenceService()).thenReturn(persistenceService);
+		ServiceProxyFactory.setTestService(testService);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		instance.deleteSubmissionFormTemplate(templateId);
+
+		//Expected to not throw an error
+	}
+
+	/**
+	 * Test of deleteSubmissionFormTemplate method, of class
+	 * SubmissionFormServiceImpl.
+	 */
+	@Test
+	public void testDeleteSubmissionFormTemplateWithResources() throws IOException
+	{
+		System.out.println("deleteSubmissionFormTemplate - with resource");
+
+		String templateId = "1";
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setName("Test");
+		template.setDescription("This is a test");
+
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		Mockito.when(persistenceService.findById(SubmissionFormTemplate.class, "1")).thenReturn(template);
+
+		SubmissionFormResource submissionFormResource = new SubmissionFormResource();
+		submissionFormResource.setResourceId("1");
+
+		MediaFile mediaFile = new MediaFile();
+		mediaFile.setFileName("Test.csv");
+		mediaFile.setFileType(MediaFileType.RESOURCE);
+		submissionFormResource.setFile(mediaFile);
+
+		File fullPath = Paths.get(MediaFileType.RESOURCE.getPath(), "Test.csv").toFile();
+		fullPath.mkdirs();
+		fullPath.createNewFile();
+
+		List<Object> resources = new ArrayList<>();
+		resources.add(submissionFormResource);
+
+		Mockito.when(persistenceService.queryByExample(Mockito.any(BaseEntity.class))).thenReturn(resources);
+		Mockito.when(persistenceService.findById(SubmissionFormResource.class, "1")).thenReturn(submissionFormResource);
+
+		Service testService = Mockito.mock(Service.class);
+		Mockito.when(testService.getPersistenceService()).thenReturn(persistenceService);
+		ServiceProxyFactory.setTestService(testService);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		instance.deleteSubmissionFormTemplate(templateId);
+
+		//check for file
+		if (fullPath.exists()) {
+			fail("File should not exist");
+		}
+
+	}
+
+	/**
+	 * Test of saveSubmissionFormResource method, of class
+	 * SubmissionFormServiceImpl.
+	 */
+	@Test
+	public void testSaveSubmissionFormResource() throws IOException
+	{
+		System.out.println("saveSubmissionFormResource");
+
+		try (InputStream in = new ByteArrayInputStream("Test".getBytes())) {
+
+			SubmissionFormResource submissionFormResource = new SubmissionFormResource();
+			submissionFormResource.setResourceId("1");
+
+			MediaFile mediaFile = new MediaFile();
+			mediaFile.setFileType(MediaFileType.RESOURCE);
+			submissionFormResource.setFile(mediaFile);
+
+			PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+			Mockito.when(persistenceService.findById(SubmissionFormResource.class, "1")).thenReturn(submissionFormResource);
+			Mockito.when(persistenceService.persist(submissionFormResource)).thenReturn(submissionFormResource);
+			Mockito.when(persistenceService.unwrapProxyObject(Mockito.any())).thenReturn(submissionFormResource);
+
+			Service testService = Mockito.mock(Service.class);
+			Mockito.when(testService.getPersistenceService()).thenReturn(persistenceService);
+			ServiceProxyFactory.setTestService(testService);
+
+			SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+
+			SubmissionFormResource result = instance.saveSubmissionFormResource(submissionFormResource, in);
+			Assert.assertNotNull(result);
+
+			File fullPath = Paths.get(MediaFileType.RESOURCE.getPath(), mediaFile.getFileName()).toFile();
+			if (!fullPath.exists()) {
+				fail("File Should exist");
+			}
+
+		}
+	}
 }

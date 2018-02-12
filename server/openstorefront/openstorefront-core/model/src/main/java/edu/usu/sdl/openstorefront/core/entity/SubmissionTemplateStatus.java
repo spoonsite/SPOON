@@ -36,6 +36,7 @@ public class SubmissionTemplateStatus
 	public static final String VALID = "VALID";
 	public static final String INCOMPLETE = "INCOMPLETE";
 
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionTemplateStatus()
 	{
 	}

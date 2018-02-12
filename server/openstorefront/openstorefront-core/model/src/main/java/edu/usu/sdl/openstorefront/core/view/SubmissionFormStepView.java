@@ -33,7 +33,7 @@ public class SubmissionFormStepView
 	private Integer stepOrder;
 	private List<SubmissionFormFieldView> fields = new ArrayList<>();
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormStepView()
 	{
 	}

@@ -38,7 +38,7 @@ public class SubmissionFormFieldMappingType
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String SUBMISSION = "SUBMISSION";
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormFieldMappingType()
 	{
 	}

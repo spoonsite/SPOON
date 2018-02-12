@@ -36,7 +36,7 @@ public class SubmissionFormTemplateView
 
 	private List<SubmissionFormStepView> steps = new ArrayList<>();
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormTemplateView()
 	{
 	}

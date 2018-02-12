@@ -118,7 +118,7 @@ public class SubmissionFormField
 	@Max(Integer.MAX_VALUE)
 	private Integer fieldOrder;
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormField()
 	{
 	}

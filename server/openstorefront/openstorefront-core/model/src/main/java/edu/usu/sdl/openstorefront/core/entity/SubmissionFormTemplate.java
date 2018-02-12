@@ -68,6 +68,7 @@ public class SubmissionFormTemplate
 	@OneToMany(orphanRemoval = true)
 	private List<SubmissionFormStep> steps;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormTemplate()
 	{
 	}

@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
@@ -50,6 +51,15 @@ public class SubmissionFormServiceImpl
 	private static final Logger LOG = Logger.getLogger(SubmissionFormServiceImpl.class.getName());
 
 	private MappingController mappingController = new MappingController();
+
+	public SubmissionFormServiceImpl()
+	{
+	}
+
+	public SubmissionFormServiceImpl(PersistenceService persistenceService)
+	{
+		super(persistenceService);
+	}
 
 	@Override
 	public SubmissionFormTemplate saveSubmissionFormTemplate(SubmissionFormTemplate template)
@@ -98,9 +108,7 @@ public class SubmissionFormServiceImpl
 	public ValidationResult validateTemplate(SubmissionFormTemplate template)
 	{
 		Objects.requireNonNull(template);
-
-		ValidationResult validationResult = mappingController.verifyTemplate(template);
-		return validationResult;
+		return mappingController.verifyTemplate(template);
 	}
 
 	@Override
@@ -115,7 +123,7 @@ public class SubmissionFormServiceImpl
 			MediaFile mediaFile = savedResource.getFile();
 			mediaFile.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
 			mediaFile.setFileType(MediaFileType.RESOURCE);
-			Path path = Paths.get(MediaFileType.RESOURCE.getPath() + "/" + mediaFile.getFileName());
+			Path path = Paths.get(MediaFileType.RESOURCE.getPath(), mediaFile.getFileName());
 			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
 
 			persistenceService.persist(savedResource);
@@ -135,13 +143,15 @@ public class SubmissionFormServiceImpl
 
 		if (resource.getFile() != null) {
 			Path path = resource.getFile().path();
-			if (path != null) {
-				if (path.toFile().exists()) {
-					if (path.toFile().delete() == false) {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
-					}
+			if (path != null && path.toFile().exists()) {
+				try {
+					Files.delete(path);
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path));
+					LOG.log(Level.FINE, null, ex);
 				}
 			}
+
 			persistenceService.delete(resource);
 		}
 	}

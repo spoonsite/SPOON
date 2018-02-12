@@ -62,7 +62,7 @@ public class SubmissionFormResource
 	@FK(ResourceType.class)
 	private String resourceType;
 
-	@SuppressWarnings("empty")
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormResource()
 	{
 	}
