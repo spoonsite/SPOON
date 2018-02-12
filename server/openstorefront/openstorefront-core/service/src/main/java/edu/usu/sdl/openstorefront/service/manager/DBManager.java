@@ -126,6 +126,7 @@ public class DBManager
 	 * use the new multi-model api in conjuction as needed for additional
 	 * features.
 	 */
+	@SuppressWarnings("squid:CallToDeprecatedMethod")
 	protected synchronized void createPool()
 	{
 		globalInstance = new OObjectDatabasePool(url, propertiesManager.getValue(PropertiesManager.KEY_DB_USER), propertiesManager.getValue(PropertiesManager.KEY_DB_AT));

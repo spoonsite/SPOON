@@ -27,7 +27,7 @@ public class ComplexMapper
 {
 
 	@Override
-	public SubmissionComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
+	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

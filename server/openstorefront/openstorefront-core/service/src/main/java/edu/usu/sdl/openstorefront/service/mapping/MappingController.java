@@ -52,26 +52,45 @@ public class MappingController
 		List<ComponentAll> allComponents = new ArrayList<>();
 		ComponentAll mainComponent = new ComponentAll();
 		allComponents.add(mainComponent);
-		if (template.getSteps() != null) {
-			for (SubmissionFormStep step : template.getSteps()) {
-				List<SubmissionFormField> fields = step.getFields();
-				if (fields != null) {
-					for (SubmissionFormField field : fields) {
-						BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
-						ComponentAll newChildComponent = mapper.mapField(mainComponent, field);
-						if (newChildComponent != null) {
-							allComponents.add(newChildComponent);
-						}
-					}
-				}
-			}
-		}
-		for (ComponentAll componentAll : allComponents) {
-			result.merge(componentAll.validate());
-		}
+
+		verifySteps(template, mainComponent, allComponents);
+		result.merge(validateComponents(allComponents));
 		return result;
 	}
 
-	//TODO: Add Map to User Submission
-	//TODO: Add Entry to User Submission
+	private void verifySteps(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents)
+	{
+		if (template.getSteps() != null) {
+			for (SubmissionFormStep step : template.getSteps()) {
+				verifyFields(step.getFields(), mainComponent, allComponents);
+			}
+		}
+	}
+
+	private void verifyFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents)
+	{
+		if (fields != null) {
+			for (SubmissionFormField field : fields) {
+				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
+				ComponentAll newChildComponent = mapper.mapField(mainComponent, field);
+				if (newChildComponent != null) {
+					allComponents.add(newChildComponent);
+				}
+			}
+		}
+	}
+
+	private ValidationResult validateComponents(List<ComponentAll> allComponents)
+	{
+		ValidationResult result = new ValidationResult();
+
+		for (ComponentAll componentAll : allComponents) {
+			result.merge(componentAll.validate());
+		}
+
+		return result;
+	}
+
+	//Add Map to User Submission
+	//Add Entry to User Submission
 }

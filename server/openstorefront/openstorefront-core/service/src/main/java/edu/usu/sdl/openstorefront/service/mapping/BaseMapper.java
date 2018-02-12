@@ -43,7 +43,7 @@ public abstract class BaseMapper
 	 *
 	 * @param componentAll
 	 * @param submissionField
-	 * @param userSubmission (TODO: this should be the user submission)
+	 * @param userSubmission
 	 * @return new child component or null if no child was created.
 	 */
 	public abstract ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission);
