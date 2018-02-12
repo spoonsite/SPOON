@@ -15,10 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import org.junit.After;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.MemoryDBManager;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -34,40 +40,41 @@ public class SubmissionFormServiceImplTest
 	@BeforeClass
 	public static void setUpClass()
 	{
+		DBManager.getInstance().shutdown();
+		String modelPackage = "edu.usu.sdl.openstorefront.core.entity"
+				+ "";
+		DBManager manager = MemoryDBManager.getInstance("", modelPackage);
+//		//NOTE: (KB) this will fail if DBManager is alreay initilzed
+		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
+		DBManager.getInstance().initialize();
+		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT) == null) {
+			PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DB_AT, "pass");
+		}
 	}
 
 	@AfterClass
 	public static void tearDownClass()
 	{
+		DBManager.getInstance().shutdown();
 	}
 
-	@Before
-	public void setUp()
+	/**
+	 * Test of saveSubmissionFormTemplate method, of class
+	 * SubmissionFormServiceImpl.
+	 */
+	@Test
+	public void testSaveSubmissionFormTemplate()
 	{
+		System.out.println("saveSubmissionFormTemplate");
+		SubmissionFormTemplate template = null;
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
+		SubmissionFormTemplate expResult = null;
+		SubmissionFormTemplate result = instance.saveSubmissionFormTemplate(template);
+		assertEquals(expResult, result);
+		// TODO review the generated test code and remove the default call to fail.
+		fail("The test case is a prototype.");
 	}
 
-	@After
-	public void tearDown()
-	{
-	}
-
-	//TODO: Finish adding
-//	/**
-//	 * Test of saveSubmissionFormTemplate method, of class
-//	 * SubmissionFormServiceImpl.
-//	 */
-//	@Test
-//	public void testSaveSubmissionFormTemplate()
-//	{
-//		System.out.println("saveSubmissionFormTemplate");
-//		SubmissionFormTemplate template = null;
-//		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl();
-//		SubmissionFormTemplate expResult = null;
-//		SubmissionFormTemplate result = instance.saveSubmissionFormTemplate(template);
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
 //
 //	/**
 //	 * Test of deleteSubmissionFormTemplate method, of class
