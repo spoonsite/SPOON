@@ -22,10 +22,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 	recordItem: undefined,
 
-	width: '85%',
+	width: '100%',
+	margin: '10 10 10 0',
 	padding: 20,
 	target: true,
 	overCls: 'csf-hover',
+	style: 'border-top: 3px solid white; border-bottom: 3px solid white;',
 	items: [
 		{
 	        xtype: 'textfield',
@@ -47,6 +49,20 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
     listeners: {
+    	click: {
+    		element: 'el',
+    		fn: function () {
+    			var formBuilderItem = Ext.getCmp(this.id);
+    			var formBuilderPanel = formBuilderItem.up('[itemId=formBuilderPanel]');
+    			var previousActiveItem = formBuilderPanel.activeItem;
+
+    			if (previousActiveItem !== null) {
+    				previousActiveItem.removeCls('csf-active');
+    			}
+    			formBuilderItem.addCls('csf-active');
+    			formBuilderPanel.activeItem = formBuilderItem;
+    		}
+    	},
     	afterrender: function () {
 
 			var fieldContainer = this;
@@ -63,6 +79,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					vertical: true,
 				},
 				listeners: {
+					dragstart: function (self, info, event, eOpts) {
+						fieldContainer.disable();
+					},
 					dragend: function (self, info, event, eOpts) {
 						console.log("this.container", fieldContainer);
 						// console.log("self",self);
@@ -70,7 +89,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						// console.log("event",event);
 						// console.log("eOpts",eOpts);
 
-						var getPanel = function (divId, isChecking = false) {
+						var getPanel = function (divId, isChecking) {
 							var regex = /ext\-comp\-[0-9]{4}/;
 							if (isChecking) {
 								return regex.exec(divId) !== null;	
@@ -100,12 +119,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 							fieldContainer.setY(fieldContainer.getY() - event.delta.y);
 						}
+
+						fieldContainer.enable();
 					}
 				}
 			});
 
 			// set this container as an eligible drag source
-			new Ext.drag.Target({
+			fieldContainer.dragTarget = new Ext.drag.Target({
 				element: fieldContainer.getEl()
 			});
     	}

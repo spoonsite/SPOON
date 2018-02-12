@@ -18,19 +18,25 @@
 
 Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	extend: 'Ext.panel.Panel',
+	itemId: 'formBuilderPanel',
 	width: '100%',
 	alignTarget: 'center',
 	style: 'background: #6c6c6c',
+	activeItem: null,
 	layout: {
 		type: 'hbox',
 		align: 'stretch'
 	},
 	items: [
 		{
-			title: 'Form Info',
+			// title: 'Form Info',
 			flex: 0.15,
 			style: 'background: #fff; border-bottom: 8px solid #6c6c6c;',
-			height: '100%'
+			height: '100%',
+			layout: {
+				type: 'hbox',
+				align: 'stretch'
+			},
 		},
 		{
 			flex: 0.85,
@@ -49,12 +55,50 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 		this.callParent();
 
-		// TODO query the template...
-
+		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
 		for (var i = 0; i < 100; i++) {
 			this.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
 		}
 
+		// add the form info items
+		this.items.items[0].add(Ext.create('Ext.form.Panel', {
+			items: [
+				{
+					xtype: 'textfield',
+					itemId: 'formNameSaveField',
+					trackResetOnLoad: true,
+					fieldLabel: 'Form Name',
+					labelAlign: 'top',
+					margin: 10,
+					listeners: {
+						change: function () {
+							var formPanel = this.up();
+							var saveNameButton = formPanel.queryById('formNameSaveButton');
+							if (saveNameButton.isDisabled()) {
+								saveNameButton.setDisabled(false);
+							}
+						}
+					}
+				},
+				{
+					xtype: 'button',
+					itemId: 'formNameSaveButton',
+					text: 'Save Name',
+					margin: '0 10 10 10',
+					disabled: true,
+					listeners: {
+						click: function () {
+							// TODO: save name!
+
+							console.log("Save form name.");
+							var formPanel = this.up();
+							var nameField = formPanel.queryById('formNameSaveField');
+							this.setDisabled(true);
+						}
+					}
+				}
+			]
+		}));
 	}
 });
