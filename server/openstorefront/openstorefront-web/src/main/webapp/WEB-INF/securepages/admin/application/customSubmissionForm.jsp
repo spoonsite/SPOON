@@ -228,7 +228,7 @@
 							items: [
 								{
 									xtype: 'textfield',
-									fieldLabel: 'New Form Name',
+									fieldLabel: 'New Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template will be identified by"></i>',
 									labelAlign: 'top',
 									name: 'formName',
 									margin: 15,

@@ -31,7 +31,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		{
 			// title: 'Form Info',
 			flex: 0.15,
-			style: 'background: #fff; border-bottom: 8px solid #6c6c6c;',
+			style: 'background: #fff;',
 			height: '100%',
 			layout: {
 				type: 'vbox'
@@ -65,20 +65,23 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.items.items[0].add(
 			[
 				Ext.create('Ext.form.Panel', {
-					layout: 'anchor',
-				    defaults: {
-				        anchor: '100%'
-				    },
-				    bodyPadding: 10,
+				 	title: 'Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template is identified by"></i>',
+				    bodyPadding: 5,
+				 	layout: 'hbox',
 				    width: '100%',
-				    flex: 1.2,
+				    flex: 1,
+				    layout: {
+				        type: 'hbox',
+				        align: 'center',
+				        pack: 'center'
+				    }, 
 					items: [
 						{
 							xtype: 'textfield',
 							itemId: 'formNameSaveField',
 							trackResetOnLoad: true,
-							fieldLabel: 'Form Name',
-							labelAlign: 'top',
+							height: '32px',
+							flex: 8,
 							value: formBuilderPanel.recordItem.formName,
 							listeners: {
 								change: function () {
@@ -93,9 +96,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 						{
 							xtype: 'button',
 							itemId: 'formNameSaveButton',
-							text: 'Save Name',
-							margin: '0 10 10 10',
+							iconCls: 'fa fa-floppy-o',
+							height: '32px',
+							layout: {
+								pack: 'center'
+							},
+							style: 'border-left: none;',
 							disabled: true,
+							flex: 2,
 							listeners: {
 								click: function () {
 									// TODO: save name!
@@ -110,9 +118,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					]
 				}),
 				Ext.create('Ext.panel.Panel', {
-					title: 'als;dkfjalsdfj',
+					title: 'Info',
 					width: '100%',
-					flex: 8.8
+					flex: 9
 				})
 			]
 		);
