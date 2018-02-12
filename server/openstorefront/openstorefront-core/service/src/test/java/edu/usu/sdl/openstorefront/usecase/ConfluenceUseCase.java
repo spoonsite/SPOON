@@ -41,8 +41,8 @@ public class ConfluenceUseCase
 
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl("https://confluence.di2e.net");
-		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
-		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		try (ConfluenceClient client = new ConfluenceClient(connectionModel, null)) {
 			SpaceResults results = client.getSpaces(0, 5);
@@ -56,8 +56,8 @@ public class ConfluenceUseCase
 	{
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl("https://confluence.di2e.net");
-		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
-		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		try (ConfluenceClient client = new ConfluenceClient(connectionModel, null)) {
 			Content content = new Content();
@@ -110,8 +110,8 @@ public class ConfluenceUseCase
 	{
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl("https://confluence.di2e.net");
-		connectionModel.setUsername(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER));
-		connectionModel.setCredential(PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
+		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
+		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		try (ConfluenceClient client = new ConfluenceClient(connectionModel, null)) {
 			Content content = client.getPage("~devin.shurtleff", "MTest");

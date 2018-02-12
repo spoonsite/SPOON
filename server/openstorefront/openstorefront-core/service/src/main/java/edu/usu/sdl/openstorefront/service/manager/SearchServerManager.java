@@ -48,7 +48,7 @@ public class SearchServerManager
 	
 	public static void init()
 	{	
-		String searchImplementation = PropertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER,  SOLR).toLowerCase();
+		String searchImplementation = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SEARCH_SERVER,  SOLR).toLowerCase();
 		switch(searchImplementation) 
 		{
 			case SOLR:

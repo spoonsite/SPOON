@@ -40,7 +40,7 @@ public class RecentChangeNotifyJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		long days = Convert.toLong(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, OpenStorefrontConstant.DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL));
+		long days = Convert.toLong(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, OpenStorefrontConstant.DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL));
 		long daysInMillis = TimeUtil.daysToMillis(days);
 		String lastRunDtsString = service.getSystemService().getPropertyValue(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS);
 

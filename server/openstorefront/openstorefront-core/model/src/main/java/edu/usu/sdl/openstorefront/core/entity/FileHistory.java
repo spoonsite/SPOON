@@ -42,15 +42,15 @@ public class FileHistory
 	@PK(generated = true)
 	@NotNull
 	private String fileHistoryId;
-	
+
 	@FK(FileFormat.class)
 	@NotNull
 	@APIDescription("May be a built in format or a format from a plugin which may not be loaded.")
 	private String fileFormat;
-	
+
 	@ConsumeField
 	@FK(FileDataMap.class)
-	private String fileDataMapId;	
+	private String fileDataMapId;
 
 	private Integer numberRecords;
 	private Integer recordsProcessed;
@@ -102,7 +102,7 @@ public class FileHistory
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getFilename())) {
-			File resourceDir = FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
+			File resourceDir = FileSystemManager.getInstance().getDir(FileSystemManager.IMPORT_HISTORY_DIR);
 			path = Paths.get(resourceDir.getPath() + "/" + getFilename());
 		}
 		return path;

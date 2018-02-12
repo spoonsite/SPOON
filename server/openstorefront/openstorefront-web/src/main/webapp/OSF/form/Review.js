@@ -308,7 +308,7 @@ Ext.define('OSF.form.Review', {
 		
 		reviewForm.add(reviewForm.grid);
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var reviewForm = this;
 		
 		reviewForm.evaluationId = evaluationId;
@@ -318,6 +318,9 @@ Ext.define('OSF.form.Review', {
 		reviewForm.user = opts.user;
 		reviewForm.mainForm = opts.mainForm;
 	
+		if (callback) {
+			callback();
+		}
 	}
 });
 

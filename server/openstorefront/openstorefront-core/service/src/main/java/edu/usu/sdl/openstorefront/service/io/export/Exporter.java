@@ -38,38 +38,38 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class Exporter
 {
-	private static final Logger log = Logger.getLogger(Exporter.class.getName());
-	
+
+	private static final Logger LOG = Logger.getLogger(Exporter.class.getName());
+
 	protected ServiceProxy service = ServiceProxy.getProxy();
-	
-	public  File export(List<ComponentAll> components) 
+
+	public File export(List<ComponentAll> components)
 	{
 		//open temp file
-		String archiveName = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/export-" + System.currentTimeMillis() + ".zip";
-		
+		String archiveName = FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/export-" + System.currentTimeMillis() + ".zip";
+
 		for (ComponentAll componentAll : components) {
 			String name = StringUtils.left(StringProcessor.cleanFileName(componentAll.getComponent().getName()), 15);
 			name = name.replace(" ", "_");
-						
-			File entry = new TFile(archiveName + "/describe-" + name+ ".xml");
+
+			File entry = new TFile(archiveName + "/describe-" + name + ".xml");
 			try (OutputStream out = new TFileOutputStream(entry)) {
 				writeRecord(out, componentAll);
 			} catch (IOException ioe) {
-				log.log(Level.WARNING, MessageFormat.format("Failed writing record: {0}", componentAll.getComponent().getName()));				
+				LOG.log(Level.WARNING, MessageFormat.format("Failed writing record: {0}", componentAll.getComponent().getName()));
 			}
 		}
-				
+
 		try {
 			TVFS.umount();
 		} catch (FsSyncException ex) {
-			log.log(Level.SEVERE, "Unable to unmount zip.  It may not be readable.", ex);
+			LOG.log(Level.SEVERE, "Unable to unmount zip.  It may not be readable.", ex);
 		}
-		
+
 		File entry = new File(archiveName);
 		return entry;
 	}
-	
+
 	protected abstract void writeRecord(OutputStream out, ComponentAll record);
-		
-	
+
 }

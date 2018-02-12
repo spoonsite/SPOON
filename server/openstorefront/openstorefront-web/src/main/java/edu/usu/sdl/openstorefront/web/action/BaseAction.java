@@ -73,7 +73,7 @@ public abstract class BaseAction
 
 	public String getApplicationVersion()
 	{
-		return PropertiesManager.getApplicationVersion();
+		return PropertiesManager.getInstance().getApplicationVersion();
 	}
 
 	protected String getCookieValue(String key)
@@ -95,7 +95,7 @@ public abstract class BaseAction
 	protected boolean doesFileExceedLimit(FileBean fileBean)
 	{
 		//	get the number of of max file size we can have in bytes
-		long maxFileSize = Convert.toLong(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_MAX_POST_SIZE)) * OpenStorefrontConstant.FIELD_SIZE_1MB;
+		long maxFileSize = Convert.toLong(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_MAX_POST_SIZE)) * OpenStorefrontConstant.FIELD_SIZE_1MB;
 		return doesFileExceedLimit(fileBean, maxFileSize);
 	}
 

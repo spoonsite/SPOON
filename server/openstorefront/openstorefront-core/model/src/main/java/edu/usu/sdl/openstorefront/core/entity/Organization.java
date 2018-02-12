@@ -140,7 +140,7 @@ public class Organization
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getLogoFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.ORGANIZATION_DIR);
+			File mediaDir = FileSystemManager.getInstance().getDir(FileSystemManager.ORGANIZATION_DIR);
 			path = Paths.get(mediaDir.getPath() + "/" + getLogoFileName());
 		}
 		return path;

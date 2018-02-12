@@ -210,7 +210,7 @@ public class NotificationServiceImpl
 	@Override
 	public void cleanupOldEvents()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_NOTIFICATION_MAX_DAYS));
+		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_NOTIFICATION_MAX_DAYS));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);

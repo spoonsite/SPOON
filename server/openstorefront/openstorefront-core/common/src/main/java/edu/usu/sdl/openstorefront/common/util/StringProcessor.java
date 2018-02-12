@@ -330,25 +330,39 @@ public class StringProcessor
 		return result;
 	}
 
+	/**
+	 * Only Encode the part that needs encoding...this will encode the whole
+	 * input
+	 *
+	 * @param value
+	 * @return
+	 */
 	public static String urlEncode(String value)
 	{
 		if (StringUtils.isNotBlank(value)) {
 			try {
 				value = URLEncoder.encode(value, "UTF-8");
 			} catch (UnsupportedEncodingException ex) {
-				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+				throw new OpenStorefrontRuntimeException("Unsupported encoding", "Check encode character set for the platform");
 			}
 		}
 		return value;
 	}
 
+	/**
+	 * Only decode the part that needs encoding...this will encode the whole
+	 * input
+	 *
+	 * @param value
+	 * @return
+	 */
 	public static String urlDecode(String value)
 	{
 		if (StringUtils.isNotBlank(value)) {
 			try {
 				value = URLDecoder.decode(value, "UTF-8");
 			} catch (UnsupportedEncodingException ex) {
-				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+				throw new OpenStorefrontRuntimeException("Unsupported encoding", "Check encode character set for the platform");
 			}
 		}
 		return value;
@@ -372,7 +386,7 @@ public class StringProcessor
 			for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
 				String style = "color: grey; font-size: 10px;";
 				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
-					style = "color: black; font-size: 12px; font-wieght: bold;";
+					style = "color: black; font-size: 12px; font-weight: bold;";
 				}
 				exception.append("<span style='")
 						.append(style).append("'>")

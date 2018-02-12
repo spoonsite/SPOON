@@ -86,15 +86,15 @@ public abstract class BaseMessageGenerator
 
 	protected String getApplcationTitle()
 	{
-		String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
+		String applicationTitle = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 		return applicationTitle;
 	}
 
 	protected String getContactLine()
 	{
 		StringBuilder contactLine = new StringBuilder();
-		String replyName = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME);
-		String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
+		String replyName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME);
+		String replyAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
 		if (StringUtils.isNotBlank(replyName) && StringUtils.isNotBlank(replyAddress)) {
 			contactLine.append("Contact ").append(replyName).append(" at ").append(replyAddress).append(" for questions.");
 		} else if (StringUtils.isNotBlank(replyAddress)) {

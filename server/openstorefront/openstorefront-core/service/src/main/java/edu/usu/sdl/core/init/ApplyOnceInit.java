@@ -51,7 +51,7 @@ public abstract class ApplyOnceInit
 	public void applyChanges()
 	{
 		SecurityUtil.initSystemUser();
-		log.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it's applied.", appliedKey));
+		log.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it is applied.", appliedKey));
 
 		String lastRunString = service.getSystemService().getPropertyValue(appliedKey + "_LASTRUN_DTS");
 		if (StringUtils.isNotBlank(lastRunString)) {

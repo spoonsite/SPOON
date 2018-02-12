@@ -20,7 +20,7 @@
 	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 
-	String appVersion = PropertiesManager.getApplicationVersion();
+	String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 	request.setAttribute("appVersion", appVersion);
 	// control css classes that may be set on html tag: no-overview no-registration no-registration-video
 %>

@@ -228,7 +228,7 @@ public class ReportServiceImpl
 		LocalDate expirationLocalDate;
 		LocalDate currentDate = LocalDate.now();
 
-		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1);
+		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1);
 		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 		Report reportExample = new Report();

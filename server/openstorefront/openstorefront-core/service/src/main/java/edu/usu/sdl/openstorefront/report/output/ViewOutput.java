@@ -55,7 +55,7 @@ public class ViewOutput
 	{
 		// if the user indicated they wanted to be notified on report completion, send the email.
 		if (Convert.toBoolean(reportOutput.getReportTransmissionOption().getReportNotify())) {
-			String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
+			String applicationTitle = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 			String message = reportGenerator.reportSummmaryDefault(reportModel);
 
 			Email email = MailManager.newEmail();

@@ -64,7 +64,7 @@ public class LookupImporter
 						if (systemTable != null) {
 							log.log(Level.WARNING, "Skipping System Table.   System Tables are not user-definable.");
 						} else {
-							File codeFile = FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
+							File codeFile = FileSystemManager.getInstance().getImportLookup(entityClass.getSimpleName() + ".csv");
 							if (codeFile.exists()) {
 								lookupCodeFiles.add(codeFile);
 							}
@@ -82,7 +82,7 @@ public class LookupImporter
 					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 						if (systemTable == null) {
-							FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()
+							FileSystemManager.getInstance().getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()
 							{
 								@Override
 								public void handleNewFile(File newFile)

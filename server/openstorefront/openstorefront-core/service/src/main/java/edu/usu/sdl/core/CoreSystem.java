@@ -73,9 +73,9 @@ public class CoreSystem
 
 	//Order is important
 	private static List<Initializable> managers = Arrays.asList(
-			new PropertiesManager(),
+			PropertiesManager.getInstance(),
 			new OsgiManager(),
-			new FileSystemManager(),
+			FileSystemManager.getInstance(),
 			DBManager.getInstance(),
 			new SearchServerManager(),
 			new OSFCacheManager(),

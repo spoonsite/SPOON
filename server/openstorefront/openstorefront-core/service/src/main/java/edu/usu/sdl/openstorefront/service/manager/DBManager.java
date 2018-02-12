@@ -85,12 +85,12 @@ public class DBManager
 					LOG.info("Starting Orient DB...");
 					server = OServerMain.create();
 
-					String home = FileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
+					String home = FileSystemManager.getInstance().getDir(FileSystemManager.DB_DIR).getPath();
 					System.setProperty("ORIENTDB_HOME", home);
-					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+					System.setProperty("ORIENTDB_ROOT_PASSWORD", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 					server.setServerRootDirectory(home);
 
-					server.startup(FileSystemManager.getConfig("orientdb-server-config.xml"));
+					server.startup(FileSystemManager.getInstance().getConfig("orientdb-server-config.xml"));
 					server.activate();
 					this.dbFileDir = home + "/databases/openstorefront";
 					createDatabase();
@@ -117,9 +117,9 @@ public class DBManager
 	 */
 	protected synchronized void createPool()
 	{
-		globalInstance = new OObjectDatabasePool(url, PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		globalInstance = new OObjectDatabasePool(url, PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 
-		globalInstance.setup(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
+		globalInstance.setup(Integer.parseInt(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 		try (OObjectDatabaseTx db = getConnection()) {
 			db.getEntityManager().registerEntityClasses(entityModelPackage, BaseEntity.class.getClassLoader());
@@ -131,8 +131,10 @@ public class DBManager
 		File dbFile = new File(this.dbFileDir);
 		if (dbFile.exists() == false) {
 			LOG.log(Level.INFO, "Creating DB at %s", this.dbFileDir);
-			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir).create();
-			db.close();
+			try(ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir)){
+				db.create();
+				db.close();
+			}
 			LOG.log(Level.INFO, "Done");
 		}
 	}
@@ -189,7 +191,7 @@ public class DBManager
 	public void exportDB(OutputStream out, DatabaseStatusListener dbListener) throws IOException
 	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
-		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		db.open(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 		try (OutputStream closableOut = out) {
 			OCommandOutputListener listener = (String iText) -> {
 				if (LOG.isLoggable(Level.FINEST)) {
@@ -218,7 +220,7 @@ public class DBManager
 	public void importDB(InputStream in, DatabaseStatusListener dbListener) throws IOException
 	{
 		ODatabaseDocumentTx db = new ODatabaseDocumentTx(url);
-		db.open(PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		db.open(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT));
 		try (InputStream closableIn = in) {
 			OCommandOutputListener listener = (String iText) -> {
 				if (LOG.isLoggable(Level.FINEST)) {

@@ -86,8 +86,8 @@ public class EntryListingReport
 	protected EntryListingReportModel gatherData()
 	{
 		EntryListingReportModel entryListingReportModel = new EntryListingReportModel();
-		entryListingReportModel.setTitle(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront") + " Listing Index");
-		String viewLinkBase = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/View.action?id=";
+		entryListingReportModel.setTitle(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront") + " Listing Index");
+		String viewLinkBase = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/View.action?id=";
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);

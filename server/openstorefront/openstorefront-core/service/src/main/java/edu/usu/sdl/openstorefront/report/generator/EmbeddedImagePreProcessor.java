@@ -58,7 +58,7 @@ public class EmbeddedImagePreProcessor
 
 	public String processHtml(String originHtml)
 	{
-		String baseUri = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
+		String baseUri = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		Document document = Jsoup.parse(originHtml, baseUri);
 		Elements images = document.select("img");
 		updateImageNodes(images);
