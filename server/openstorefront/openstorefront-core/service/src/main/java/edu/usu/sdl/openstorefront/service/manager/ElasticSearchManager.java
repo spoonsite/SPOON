@@ -254,7 +254,7 @@ public class ElasticSearchManager
 
 		IndexSearchResult indexSearchResult = doIndexSearch(searchQuery.getQuery(), filter);
 
-		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
+		SearchServerManager.getInstance().updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
 
 		componentSearchWrapper.setData(indexSearchResult.getSearchViews());
 		componentSearchWrapper.setResults(indexSearchResult.getSearchViews().size());

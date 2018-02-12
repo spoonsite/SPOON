@@ -77,7 +77,7 @@ public class CoreSystem
 			OsgiManager.getInstance(),
 			FileSystemManager.getInstance(),
 			DBManager.getInstance(),
-			new SearchServerManager(),
+			SearchServerManager.getInstance(),
 			new OSFCacheManager(),
 			new JiraManager(),
 			new ConfluenceManager(),

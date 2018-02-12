@@ -221,7 +221,7 @@ public class SolrManager
 				totalFound--;
 			}
 		}
-		SearchServerManager.updateSearchScore(searchQuery.getQuery(), componentSearchViews);
+		SearchServerManager.getInstance().updateSearchScore(searchQuery.getQuery(), componentSearchViews);
 
 		views.addAll(componentSearchViews);
 

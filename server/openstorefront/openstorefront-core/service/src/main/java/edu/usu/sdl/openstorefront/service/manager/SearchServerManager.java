@@ -35,20 +35,41 @@ public class SearchServerManager
 {
 	private static final Logger log = Logger.getLogger(SearchServerManager.class.getName());
 	
-	private static final String SOLR = "solr";
-	private static final String ELASTICSEARCH = "elasticsearch";
+	private final String SOLR = "solr";
+	private final String ELASTICSEARCH = "elasticsearch";
 	
-	private static AtomicBoolean started = new AtomicBoolean(false);
-	private static SearchServer searchServer;
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private SearchServer searchServer = null;
+	private static SearchServerManager singleton = null;
+	private PropertiesManager propertiesManager;
 
-	public static SearchServer getSearchServer()
+	public SearchServer getSearchServer()
 	{
 		return searchServer;
 	}
 	
-	public static void init()
+	private SearchServerManager(PropertiesManager propManager)
+	{
+		this.propertiesManager = propManager;
+	}
+	
+	public static SearchServerManager getInstance()
+	{
+		return getInstance(PropertiesManager.getInstance());
+	}
+	
+	public static SearchServerManager getInstance(PropertiesManager propertiesManager)
+	{
+		if (singleton == null) {
+			
+			singleton = new SearchServerManager(propertiesManager);
+		}
+		return singleton;
+	}
+	
+	private void init()
 	{	
-		String searchImplementation = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SEARCH_SERVER,  SOLR).toLowerCase();
+		String searchImplementation = propertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER,  SOLR).toLowerCase();
 		switch(searchImplementation) 
 		{
 			case SOLR:
@@ -64,20 +85,20 @@ public class SearchServerManager
 			break;
 			default:
 			{
-				searchServer = new SolrManager();				
+				searchServer = new ElasticSearchManager();
 			}			
 		}
 		((Initializable)searchServer).initialize();
 	}
 	
-	public static void cleanup()
+	private void cleanup()
 	{
 		if (searchServer != null) {
 			((Initializable)searchServer).shutdown();
 		}
 	}	
 	
-	public static void updateSearchScore(String query, List<ComponentSearchView> views)
+	public void updateSearchScore(String query, List<ComponentSearchView> views)
 	{
 		if (StringUtils.isNotBlank(query)) {
 			String queryNoWild = query.replace("*", "").toLowerCase();
@@ -125,14 +146,14 @@ public class SearchServerManager
 	@Override
 	public void initialize()
 	{
-		SearchServerManager.init();
+		init();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		SearchServerManager.cleanup();
+		cleanup();
 		started.set(false);
 	}
 

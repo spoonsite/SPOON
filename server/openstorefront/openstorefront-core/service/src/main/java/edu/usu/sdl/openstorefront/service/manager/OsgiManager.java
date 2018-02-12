@@ -50,23 +50,31 @@ public class OsgiManager
 	private final long MAX_SHUTDOWN_WAIT_TIME = 60000;
 	private Felix felix = null;
 	private AtomicBoolean started = new AtomicBoolean(false);
+	private PropertiesManager propManager;
 	
-	protected static OsgiManager singleton = null;
+	private static OsgiManager singleton = null;
 	
-	protected OsgiManager()
+	private OsgiManager(PropertiesManager propManager)
 	{
-		
+		this.propManager = propManager;
 	}
 	
 	public static OsgiManager getInstance()
 	{
+		return getInstance(PropertiesManager.getInstance());
+	}
+	
+	// Created second getInstance with parameter due to @Inject requiring beans.xml
+	// This is temporary until decision has been made on using @Inject
+	public static OsgiManager getInstance(PropertiesManager propertiesManager)
+	{
 		if (singleton == null) {
-			singleton = new OsgiManager();
+			singleton = new OsgiManager(propertiesManager);
 		}
 		return singleton;
 	}
 
-	public void init()
+	private void init()
 	{
 		Map configMap = new HashMap();
 
@@ -82,7 +90,7 @@ public class OsgiManager
 
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
-		String moduleVersion = PropertiesManager.getInstance().getModuleVersion();
+		String moduleVersion = propManager.getModuleVersion();
 		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
 				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", "
@@ -118,7 +126,7 @@ public class OsgiManager
 
 	}
 
-	public void cleanup()
+	private void cleanup()
 	{
 		if (felix != null) {
 
@@ -135,6 +143,11 @@ public class OsgiManager
 	public Felix getFelix()
 	{
 		return felix;
+	}
+	
+	public void setProperty(PropertiesManager propertiesManager)
+	{
+		propManager = propertiesManager;
 	}
 
 	@Override
