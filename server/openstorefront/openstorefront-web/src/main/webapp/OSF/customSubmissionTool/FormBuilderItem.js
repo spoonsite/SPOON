@@ -24,16 +24,38 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 	width: '80%',
 	margin: '10 10 10 0',
-	padding: 20,
+	padding: '20 0 20 0',
 	target: true,
 	overCls: 'csf-hover',
 	style: 'border-top: 3px solid white; border-bottom: 3px solid white;',
+	layout: {
+		type: 'hbox',
+		align: 'stretch'
+	},
 	items: [
 		{
-	        xtype: 'textfield',
-	        emptyText: 'Enter Question Here',
-	        height: 50,
-	        width: '50%'
+			xtype: 'container',
+			baseCls: 'drag-handle',
+			margin: 10,
+			height: 75,
+			width: 40,
+			layout: {
+				type: 'vbox',
+				pack: 'center',
+				align: 'center'
+			},
+			items: [{xtype: 'container', html: '<div style="margin: auto;"><i class="fa fa-arrows-v fa-4x" aria-hidden="true"></i></div>'}]
+		},
+		{
+			xtype: 'container',
+			items: [
+				{
+			        xtype: 'textfield',
+			        emptyText: 'Enter Question Here',
+			        height: 50,
+			        width: '50%'
+				}
+			]
     	}
     ],
 
@@ -73,7 +95,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var fieldContainer = this;
 
     		// style the question input field
-			fieldContainer.items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
+			fieldContainer.items.items[1].el.dom.querySelector('input').style.fontSize = '32px';
 
 			// set this container as a drag source
 			new Ext.drag.Source({
@@ -146,10 +168,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		this.callParent();
 		var fieldContainer = this;
 
-		fieldContainer.add(Ext.create('Ext.DataView', {
+		fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
     		itemId: 'questionDataView',
     		store: {},
-    		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4) + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'),
+    		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4)), // + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'
     		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
     	}));
 		if (fieldContainer.recordItem === undefined) { // display the record with some default settings

@@ -15,6 +15,17 @@
 	z-index: 9998;
 }
 
+.drag-handle {
+	background: rgb(170,170,170);
+	margin: auto;
+	box-shadow: 2px 2px 4px rgb(30,30,30);
+}
+.drag-handle:hover {
+	cursor: n-resize;
+	box-shadow: 1px 1px 2px rgb(30,30,30);
+	background: rgb(180,180,180);
+}
+
 .csf-hover.csf-active {
 	background: rgba(142,186,230,0.6);
 }
