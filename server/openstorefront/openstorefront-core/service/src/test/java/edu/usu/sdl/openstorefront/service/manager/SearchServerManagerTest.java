@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import java.util.logging.Logger;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,15 +28,18 @@ import org.mockito.Mockito;
 public class SearchServerManagerTest
 {
 
+	private static final Logger LOG = Logger.getLogger(SearchServerManagerTest.class.getName());
+
 	/**
 	 * Test of initialize method, of class SearchServerManager.
 	 */
 	@Test
 	public void testInitializeElasticsearch()
 	{
-		System.out.println("initialize");
+		LOG.info("initialize: Elastic Search");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
@@ -52,9 +56,10 @@ public class SearchServerManagerTest
 	@Test
 	public void testInitializeSolr()
 	{
-		System.out.println("initialize");
+		LOG.info("initialize: Solr");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.SOLR);
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.SOLR);
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
@@ -71,9 +76,10 @@ public class SearchServerManagerTest
 	@Test
 	public void testInitializeDefault()
 	{
-		System.out.println("initialize");
+		LOG.info("initialize: Default");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn("junk");
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn("junk");
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
@@ -90,12 +96,15 @@ public class SearchServerManagerTest
 	@Test
 	public void testShutdown()
 	{
-		System.out.println("shutdown");
+		LOG.info("shutdown");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
+		instance.initialize();
+
 		instance.shutdown();
 
 		if (instance.isStarted()) {
