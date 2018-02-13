@@ -57,7 +57,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
-		for (var i = 0; i < 25; i++) {
+		for (var i = 0; i < 10; i++) {
 			formBuilderPanel.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
 		}
 
@@ -118,9 +118,52 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					]
 				}),
 				Ext.create('Ext.panel.Panel', {
-					title: 'Info',
+					title: 'Tools',
 					width: '100%',
-					flex: 9
+					flex: 9,
+					items: [
+						{
+							xtype: 'container',
+							layout: {
+								type: 'vbox',
+								pack: 'center'
+							},
+							height: 50,
+							items: [
+								{
+									xtype: 'container',
+									layout: {
+										type: 'hbox',
+										align: 'center',
+										pack: 'center'
+									},
+									padding: 15,
+									items: [
+										{
+											xtype: 'label',
+											style: 'font-size: 1.25em; font-weight: bold;',
+											text: 'Focus on active item ',
+										},
+										{
+											xtype: 'button',
+											text: '<i class="fa fa-eye fa-2x" aria-hidden="true"></i>',
+											margin: '0 0 0 10',
+											padding: 0,
+											listeners: {
+												click: function () {
+													if (formBuilderPanel.activeItem) {
+														formBuilderPanel.items.items[1].scrollTo(formBuilderPanel.activeItem.getX(), formBuilderPanel.activeItem.getY(), true);
+													}
+												}
+											}
+										}
+									]
+								},
+
+								// other tools
+							]
+						}
+					]
 				})
 			]
 		);

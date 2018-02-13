@@ -22,6 +22,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 	recordItem: undefined,
 
+	height: 250,
 	width: '80%',
 	margin: '10 10 10 0',
 	padding: '20 0 20 0',
@@ -36,7 +37,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'container',
 			baseCls: 'drag-handle',
-			margin: 10,
+			margin: '50 10 50 10',
 			height: 75,
 			width: 40,
 			layout: {
@@ -111,10 +112,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					},
 					dragend: function (self, info, event, eOpts) {
 						console.log("this.container", fieldContainer);
-						// console.log("self",self);
-						// console.log("info",info);
-						// console.log("event",event);
-						// console.log("eOpts",eOpts);
 
 						var getPanel = function (divId, isChecking) {
 							var regex = /ext\-comp\-[0-9]{4}/;
@@ -151,7 +148,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 
 						fieldContainer.enable();
-						fieldContainer.setActiveFormItem();
+						// fieldContainer.setActiveFormItem();
 					}
 				}
 			});
