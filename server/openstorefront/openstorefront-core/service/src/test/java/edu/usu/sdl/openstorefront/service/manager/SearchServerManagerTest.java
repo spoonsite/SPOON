@@ -39,8 +39,12 @@ public class SearchServerManagerTest
 		LOG.info("initialize: Elastic Search");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
-		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
-		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SEARCH_SERVER))).thenReturn(SearchServerManager.ELASTICSEARCH);
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SEARCH_SERVER), Mockito.anyString())).thenReturn(SearchServerManager.ELASTICSEARCH);
+
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_SEARCH_POOL), Mockito.anyString())).thenReturn("40");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_HOST), Mockito.anyString())).thenReturn("dummy");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_PORT), Mockito.anyString())).thenReturn("9200");
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
 		instance.initialize();
@@ -62,6 +66,9 @@ public class SearchServerManagerTest
 		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.SOLR);
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.SOLR);
 
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SOLR_URL), Mockito.anyString())).thenReturn("dummy");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SOLR_USE_XML), Mockito.anyString())).thenReturn("true");
+
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
 		instance.initialize();
 		BaseSearchManager searchManager = instance.getSearchServer();
@@ -82,6 +89,10 @@ public class SearchServerManagerTest
 		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn("junk");
 		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn("junk");
 
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_SEARCH_POOL), Mockito.anyString())).thenReturn("40");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_HOST), Mockito.anyString())).thenReturn("dummy");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_PORT), Mockito.anyString())).thenReturn("9200");
+
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
 		instance.initialize();
 		BaseSearchManager searchManager = instance.getSearchServer();
@@ -99,8 +110,12 @@ public class SearchServerManagerTest
 		LOG.info("shutdown");
 
 		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
-		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
-		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SEARCH_SERVER))).thenReturn(SearchServerManager.ELASTICSEARCH);
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SEARCH_SERVER), Mockito.anyString())).thenReturn(SearchServerManager.ELASTICSEARCH);
+
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_SEARCH_POOL), Mockito.anyString())).thenReturn("40");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_HOST), Mockito.anyString())).thenReturn("dummy");
+		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_ELASTIC_PORT), Mockito.anyString())).thenReturn("9200");
 
 		SearchServerManager instance = new SearchServerManager(propertiesManager);
 		instance.initialize();

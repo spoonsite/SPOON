@@ -68,17 +68,17 @@ public class SearchServerManager
 		LOG.config("Using " + searchImplementation + " as search server.");
 		switch (searchImplementation) {
 			case SOLR: {
-				searchServer = new SolrManager();
+				searchServer = SolrManager.getInstance(propertiesManager, null);
 			}
 			break;
 
 			case ELASTICSEARCH: {
-				searchServer = new ElasticSearchManager();
+				searchServer = ElasticSearchManager.getInstance(propertiesManager);
 			}
 			break;
 			default: {
 				LOG.config("Unsupported Search Server. Switching to Elasticsearch.");
-				searchServer = new ElasticSearchManager();
+				searchServer = ElasticSearchManager.getInstance(propertiesManager);
 			}
 		}
 		((Initializable) searchServer).initialize();
