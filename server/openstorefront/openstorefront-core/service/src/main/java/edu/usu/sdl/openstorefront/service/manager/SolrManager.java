@@ -40,7 +40,6 @@ import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,7 +123,7 @@ public class SolrManager
 	public static SolrManager getInstance(PropertiesManager propertiesManager, SolrClient client)
 	{
 		if (singleton == null) {
-			singleton = new SolrManager(propertiesManager, null);
+			singleton = new SolrManager(propertiesManager, client);
 		}
 		return singleton;
 	}
@@ -134,7 +133,7 @@ public class SolrManager
 		if (solrClient == null) {
 			String url = propertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
 			if (StringUtils.isNotBlank(url)) {
-				LOG.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
+				LOG.log(Level.INFO, () -> "Connecting to Solr at " + url);
 				solrClient = initLiveClient(url);
 			} else {
 				LOG.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
@@ -164,14 +163,14 @@ public class SolrManager
 
 	private SolrClient initMock()
 	{
-		SolrClient mockClient = new SolrClient()
+		return new SolrClient()
 		{
 
 			@Override
 			public NamedList<Object> request(SolrRequest request, String string) throws SolrServerException, IOException
 			{
 				NamedList<Object> results = new NamedList<>();
-				LOG.log(Level.INFO, MessageFormat.format("Mock Solr recieved request: {0}", request));
+				LOG.log(Level.INFO, () -> "Mock Solr recieved request: " + request);
 				return results;
 			}
 
@@ -182,7 +181,6 @@ public class SolrManager
 			}
 
 		};
-		return mockClient;
 	}
 
 	public void cleanup()
@@ -251,7 +249,7 @@ public class SolrManager
 
 		for (String componentId : componentIds) {
 			if (goodComponentIdSet.contains(componentId) == false) {
-				LOG.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
+				LOG.log(Level.FINE, () -> "Removing bad index: " + componentId);
 				deleteById(componentId);
 				totalFound--;
 			}

@@ -114,33 +114,11 @@ public abstract class BaseSearchManager
 			for (ComponentSearchView view : views) {
 				float score = 0;
 
-				if (StringUtils.isNotBlank(view.getName())
-						&& view.getName().toLowerCase().contains(queryNoWild)) {
-					score += 100;
-				}
-
-				if (StringUtils.isNotBlank(view.getOrganization())
-						&& view.getOrganization().toLowerCase().contains(queryNoWild)) {
-					score += 50;
-				}
-
-				if (StringUtils.isNotBlank(view.getDescription())) {
-					int count = StringUtils.countMatches(view.getDescription().toLowerCase(), queryNoWild);
-					score += count * 5;
-				}
-
-				for (ComponentTag tag : view.getTags()) {
-					int count = StringUtils.countMatches(tag.getText().toLowerCase(), queryNoWild);
-					score += count * 5;
-				}
-
-				for (SearchResultAttribute attribute : view.getAttributes()) {
-					int count = StringUtils.countMatches(attribute.getLabel().toLowerCase(), queryNoWild);
-					score += count * 5;
-
-					count = StringUtils.countMatches(attribute.getTypeLabel().toLowerCase(), queryNoWild);
-					score += count * 5;
-				}
+				score += scoreName(view, queryNoWild);
+				score += scoreOrganization(view, queryNoWild);
+				score += scoreDescription(view, queryNoWild);
+				score += scoreTags(view, queryNoWild);
+				score += scoreAttributes(view, queryNoWild);
 
 				score = score / 150f;
 				if (score > 1) {
@@ -150,6 +128,59 @@ public abstract class BaseSearchManager
 				view.setSearchScore(score);
 			}
 		}
+	}
+
+	private float scoreName(ComponentSearchView view, String queryNoWild)
+	{
+		float score = 0;
+		if (StringUtils.isNotBlank(view.getName())
+				&& view.getName().toLowerCase().contains(queryNoWild)) {
+			score += 100;
+		}
+		return score;
+	}
+
+	private float scoreOrganization(ComponentSearchView view, String queryNoWild)
+	{
+		float score = 0;
+		if (StringUtils.isNotBlank(view.getOrganization())
+				&& view.getOrganization().toLowerCase().contains(queryNoWild)) {
+			score += 50;
+		}
+		return score;
+	}
+
+	private float scoreDescription(ComponentSearchView view, String queryNoWild)
+	{
+		float score = 0;
+		if (StringUtils.isNotBlank(view.getDescription())) {
+			int count = StringUtils.countMatches(view.getDescription().toLowerCase(), queryNoWild);
+			score += count * 5;
+		}
+		return score;
+	}
+
+	private float scoreTags(ComponentSearchView view, String queryNoWild)
+	{
+		float score = 0;
+		for (ComponentTag tag : view.getTags()) {
+			int count = StringUtils.countMatches(tag.getText().toLowerCase(), queryNoWild);
+			score += count * 5;
+		}
+		return score;
+	}
+
+	private float scoreAttributes(ComponentSearchView view, String queryNoWild)
+	{
+		float score = 0;
+		for (SearchResultAttribute attribute : view.getAttributes()) {
+			int count = StringUtils.countMatches(attribute.getLabel().toLowerCase(), queryNoWild);
+			score += count * 5;
+
+			count = StringUtils.countMatches(attribute.getTypeLabel().toLowerCase(), queryNoWild);
+			score += count * 5;
+		}
+		return score;
 	}
 
 }

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -65,21 +66,18 @@ public class SearchServerManager
 	{
 		String searchImplementation = propertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER, ELASTICSEARCH).toLowerCase();
 
-		LOG.config("Using " + searchImplementation + " as search server.");
+		LOG.log(Level.CONFIG, () -> "Using " + searchImplementation + " as search server.");
 		switch (searchImplementation) {
-			case SOLR: {
+			case SOLR:
 				searchServer = SolrManager.getInstance(propertiesManager, null);
-			}
-			break;
+				break;
 
-			case ELASTICSEARCH: {
+			case ELASTICSEARCH:
 				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-			}
-			break;
-			default: {
+				break;
+			default:
 				LOG.config("Unsupported Search Server. Switching to Elasticsearch.");
 				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-			}
 		}
 		((Initializable) searchServer).initialize();
 	}

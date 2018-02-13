@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.model.internal.CoreAPIActivator;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +118,7 @@ public class OsgiManager
 			felix = new Felix(configMap);
 			felix.start();
 
-			LOG.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
+			LOG.log(Level.INFO, () -> "Started Felix Version: " + felix.getVersion());
 
 		} catch (BundleException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to load module system", ex);
@@ -134,7 +133,7 @@ public class OsgiManager
 			try {
 				felix.stop();
 				FrameworkEvent frameworkEvent = felix.waitForStop(MAX_SHUTDOWN_WAIT_TIME);
-				LOG.log(Level.INFO, MessageFormat.format("Framework Shutdown Event: {0}", frameworkEvent.getType()));
+				LOG.log(Level.INFO, () -> "Framework Shutdown Event: " + frameworkEvent.getType());
 			} catch (BundleException | InterruptedException ex) {
 				Logger.getLogger(OsgiManager.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -148,7 +147,7 @@ public class OsgiManager
 
 	public void setPropertyManager(PropertiesManager propertiesManager)
 	{
-		propertiesManager = propertiesManager;
+		this.propertiesManager = propertiesManager;
 	}
 
 	@Override

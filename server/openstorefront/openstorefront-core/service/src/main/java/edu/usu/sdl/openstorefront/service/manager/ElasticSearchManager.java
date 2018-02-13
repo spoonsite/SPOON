@@ -136,11 +136,11 @@ public class ElasticSearchManager
 		if (clientPool == null) {
 			String poolSize = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, DEFAULT_POOL_SIZE);
 			maxPoolSize = Convert.toInteger(poolSize);
-			LOG.log(Level.CONFIG, MessageFormat.format("Initializing Elasticsearch Pool size: {0}", maxPoolSize));
+			LOG.log(Level.CONFIG, () -> "Initializing Elasticsearch Pool size: " + maxPoolSize);
 
 			String host = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
 			Integer port = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
-			LOG.log(Level.CONFIG, MessageFormat.format("Initializing Elasticsearch Connection to server: {0} port: {1}", new Object[]{host, port}));
+			LOG.log(Level.CONFIG, () -> "Initializing Elasticsearch Connection to server: " + host + " port: " + port);
 			clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
 			for (int i = 0; i < maxPoolSize; i++) {
@@ -240,7 +240,7 @@ public class ElasticSearchManager
 	{
 		if (singleton != null) {
 			if (singleton.getAvailableConnections() != singleton.getMaxConnections()) {
-				LOG.log(Level.WARNING, MessageFormat.format("{0} elasticsearch connections were in process. ", singleton.getAvailableConnections()));
+				LOG.log(Level.WARNING, () -> singleton.getAvailableConnections() + " elasticsearch connections were in process. ");
 			}
 			LOG.log(Level.FINE, "Stopping pool.");
 			singleton.shutdownPool();
