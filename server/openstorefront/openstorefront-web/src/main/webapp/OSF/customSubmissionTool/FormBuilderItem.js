@@ -37,7 +37,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'container',
 			baseCls: 'drag-handle',
-			margin: '50 10 50 10',
+			margin: '50 20 25 10',
 			height: 75,
 			width: 40,
 			layout: {
@@ -49,12 +49,13 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		},
 		{
 			xtype: 'container',
+			width: '50%',
 			items: [
 				{
 			        xtype: 'textfield',
 			        emptyText: 'Enter Question Here',
 			        height: 50,
-			        width: '50%'
+			        width: '100%'
 				}
 			]
     	}
@@ -165,17 +166,19 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		this.callParent();
 		var fieldContainer = this;
 
-		fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
-    		itemId: 'questionDataView',
-    		store: {},
-    		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4)), // + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'
-    		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
-    	}));
-		if (fieldContainer.recordItem === undefined) { // display the record with some default settings
+		fieldContainer.items.items[1].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
 
-		}
-		else { // display the field with the predefined data
+		// fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
+  //   		itemId: 'questionDataView',
+  //   		store: {},
+  //   		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4)), // + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'
+  //   		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
+  //   	}));
+		// if (fieldContainer.recordItem === undefined) { // display the record with some default settings
 
-		}
+		// }
+		// else { // display the field with the predefined data
+
+		// }
 	}
 });
