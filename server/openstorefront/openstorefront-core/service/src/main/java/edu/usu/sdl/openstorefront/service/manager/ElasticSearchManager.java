@@ -38,7 +38,6 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchServer;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -84,7 +83,8 @@ import org.elasticsearch.search.sort.SortOrder;
  * @author dshurtleff
  */
 public class ElasticSearchManager
-		implements Initializable, SearchServer, PooledResourceManager<ElasticSearchClient>
+		extends BaseSearchManager
+		implements Initializable, PooledResourceManager<ElasticSearchClient>
 {
 
 	private static final Logger LOG = Logger.getLogger(ElasticSearchManager.class.getName());
@@ -254,7 +254,7 @@ public class ElasticSearchManager
 
 		IndexSearchResult indexSearchResult = doIndexSearch(searchQuery.getQuery(), filter);
 
-		SearchServerManager.getInstance().updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
+		updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
 
 		componentSearchWrapper.setData(indexSearchResult.getSearchViews());
 		componentSearchWrapper.setResults(indexSearchResult.getSearchViews().size());

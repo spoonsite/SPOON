@@ -45,26 +45,26 @@ public class OsgiManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(OsgiManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(OsgiManager.class.getName());
 
-	private final long MAX_SHUTDOWN_WAIT_TIME = 60000;
+	private static final long MAX_SHUTDOWN_WAIT_TIME = 60000;
 	private Felix felix = null;
 	private AtomicBoolean started = new AtomicBoolean(false);
-	private PropertiesManager propManager;
-	
+	private PropertiesManager propertiesManager;
+
 	private static OsgiManager singleton = null;
-	
+
 	private OsgiManager(PropertiesManager propManager)
 	{
-		this.propManager = propManager;
+		this.propertiesManager = propManager;
 	}
-	
+
 	public static OsgiManager getInstance()
 	{
 		return getInstance(PropertiesManager.getInstance());
 	}
-	
-	// Created second getInstance with parameter due to @Inject requiring beans.xml
+
+	// Created second getInstance with parameter due to @Inject requires CDI support
 	// This is temporary until decision has been made on using @Inject
 	public static OsgiManager getInstance(PropertiesManager propertiesManager)
 	{
@@ -74,6 +74,7 @@ public class OsgiManager
 		return singleton;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void init()
 	{
 		Map configMap = new HashMap();
@@ -90,7 +91,7 @@ public class OsgiManager
 
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
-		String moduleVersion = propManager.getModuleVersion();
+		String moduleVersion = propertiesManager.getModuleVersion();
 		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
 				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", "
@@ -118,9 +119,9 @@ public class OsgiManager
 			felix = new Felix(configMap);
 			felix.start();
 
-			log.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
+			LOG.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
 
-		} catch (Exception ex) {
+		} catch (BundleException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to load module system", ex);
 		}
 
@@ -133,7 +134,7 @@ public class OsgiManager
 			try {
 				felix.stop();
 				FrameworkEvent frameworkEvent = felix.waitForStop(MAX_SHUTDOWN_WAIT_TIME);
-				log.log(Level.INFO, MessageFormat.format("Framework Shutdown Event: {0}", frameworkEvent.getType()));
+				LOG.log(Level.INFO, MessageFormat.format("Framework Shutdown Event: {0}", frameworkEvent.getType()));
 			} catch (BundleException | InterruptedException ex) {
 				Logger.getLogger(OsgiManager.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -144,10 +145,10 @@ public class OsgiManager
 	{
 		return felix;
 	}
-	
-	public void setProperty(PropertiesManager propertiesManager)
+
+	public void setPropertyManager(PropertiesManager propertiesManager)
 	{
-		propManager = propertiesManager;
+		propertiesManager = propertiesManager;
 	}
 
 	@Override

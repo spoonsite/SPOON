@@ -391,7 +391,7 @@ public class SearchServiceImpl
 				if (indexSearches.isEmpty() == false) {
 					//only the first one counts
 					String indexQuery = indexSearches.get(0).getValue();
-					SearchServerManager.getInstance().updateSearchScore(indexQuery, views);
+					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
 				}
 
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {

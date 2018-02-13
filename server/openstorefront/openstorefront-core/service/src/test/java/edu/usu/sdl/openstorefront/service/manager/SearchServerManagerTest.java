@@ -16,14 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
-import edu.usu.sdl.openstorefront.service.search.SearchServer;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -34,81 +27,61 @@ import org.mockito.Mockito;
 public class SearchServerManagerTest
 {
 
-	public SearchServerManagerTest()
-	{
-	}
-
-	@BeforeClass
-	public static void setUpClass()
-	{
-	}
-
-	@AfterClass
-	public static void tearDownClass()
-	{
-	}
-
-	@Before
-	public void setUp()
-	{
-	}
-
-	@After
-	public void tearDown()
-	{
-	}
-
 	/**
-	 * Test of getSearchServer method, of class SearchServerManager.
+	 * Test of initialize method, of class SearchServerManager.
 	 */
 	@Test
-	public void testGetSearchServer()
+	public void testInitializeElasticsearch()
 	{
-		System.out.println("getSearchServer");
-		PropertiesManager mockPropertiesManager = Mockito.mock(PropertiesManager.class);
-		Mockito.when(mockPropertiesManager.getModuleVersion()).thenReturn("3.0");
+		System.out.println("initialize");
 
-		SearchServerManager instance = null;
-		SearchServer expResult = null;
-		SearchServer result = instance.getSearchServer();
-		Assert.assertEquals(expResult, result);
-	}
+		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
 
-	/**
-	 * Test of getInstance method, of class SearchServerManager.
-	 */
-	@Test
-	public void testGetInstance_PropertiesManager()
-	{
-		System.out.println("getInstance");
-		PropertiesManager propertiesManager = null;
-		SearchServerManager expResult = null;
-		SearchServerManager result = SearchServerManager.getInstance(propertiesManager);
-		Assert.assertEquals(expResult, result);
-	}
-
-	/**
-	 * Test of updateSearchScore method, of class SearchServerManager.
-	 */
-	@Test
-	public void testUpdateSearchScore()
-	{
-		System.out.println("updateSearchScore");
-		String query = "";
-		List<ComponentSearchView> views = null;
-		SearchServerManager instance = null;
-		instance.updateSearchScore(query, views);
+		SearchServerManager instance = new SearchServerManager(propertiesManager);
+		instance.initialize();
+		BaseSearchManager searchManager = instance.getSearchServer();
+		if (!(searchManager instanceof ElasticSearchManager)) {
+			fail("Expected Elasticsearch Manager");
+		}
 	}
 
 	/**
 	 * Test of initialize method, of class SearchServerManager.
 	 */
 	@Test
-	public void testInitialize()
+	public void testInitializeSolr()
 	{
 		System.out.println("initialize");
-		SearchServerManager instance = null;
+
+		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.SOLR);
+
+		SearchServerManager instance = new SearchServerManager(propertiesManager);
 		instance.initialize();
+		BaseSearchManager searchManager = instance.getSearchServer();
+		if (!(searchManager instanceof SolrManager)) {
+			fail("Expected Solr Manager");
+		}
+	}
+
+	/**
+	 * Test of initialize method, of class SearchServerManager.
+	 */
+	@Test
+	public void testInitializeDefault()
+	{
+		System.out.println("initialize");
+
+		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn("junk");
+
+		SearchServerManager instance = new SearchServerManager(propertiesManager);
+		instance.initialize();
+		BaseSearchManager searchManager = instance.getSearchServer();
+		if (!(searchManager instanceof ElasticSearchManager)) {
+			fail("Expected Elasticsearch Manager");
+		}
 	}
 
 	/**
@@ -118,21 +91,17 @@ public class SearchServerManagerTest
 	public void testShutdown()
 	{
 		System.out.println("shutdown");
-		SearchServerManager instance = null;
-		instance.shutdown();
-	}
 
-	/**
-	 * Test of isStarted method, of class SearchServerManager.
-	 */
-	@Test
-	public void testIsStarted()
-	{
-		System.out.println("isStarted");
-		SearchServerManager instance = null;
-		boolean expResult = false;
-		boolean result = instance.isStarted();
-		Assert.assertEquals(expResult, result);
+		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
+		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.ELASTICSEARCH);
+
+		SearchServerManager instance = new SearchServerManager(propertiesManager);
+		instance.shutdown();
+
+		if (instance.isStarted()) {
+			fail("Expected to not be started");
+		}
+
 	}
 
 }

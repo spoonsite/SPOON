@@ -37,7 +37,6 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchServer;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -70,7 +69,8 @@ import org.apache.solr.common.util.NamedList;
  * @author dshurtleff
  */
 public class SolrManager
-		implements Initializable, SearchServer
+		extends BaseSearchManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(SolrManager.class.getName());
@@ -221,7 +221,7 @@ public class SolrManager
 				totalFound--;
 			}
 		}
-		SearchServerManager.getInstance().updateSearchScore(searchQuery.getQuery(), componentSearchViews);
+		updateSearchScore(searchQuery.getQuery(), componentSearchViews);
 
 		views.addAll(componentSearchViews);
 
