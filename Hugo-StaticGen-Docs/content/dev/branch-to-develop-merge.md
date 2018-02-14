@@ -1,5 +1,5 @@
 +++
-title = "Merge Branch Back Into Devlop"
+title = "Merge Branch Back Into Develop"
 description = ""
 weight = 7
 +++
@@ -14,7 +14,7 @@ weight = 7
 
 ## GitHub
 
-1. Navigate to the [Pull Requests](https://github.com/di2e/openstorefront/pulls) tab on GitHub and select your branch
+1. Navigate to the [Pull Requests](https://github.com/di2e/openstorefront/pulls) tab on GitHub and select the branch relating to your ticket
 
 2. If GitHub tells you:
     > This branch has no conflicts with the base branch
@@ -41,9 +41,11 @@ weight = 7
 
 1. Navigate to the [Portainer](http://sf-jenkins.usurf.usu.edu:9000) server and log in.
 
-2. Select the Docker container relating to the ticket
+2. CLick on the Containers section
 
-3. Click on the Delete Container button. The container does not need to be stopped or paused first. NOTE: This action cannot be undone
+3. Select the check box next to the Docker container relating to the ticket
+
+4. Click on the Remove button. The container does not need to be stopped or paused first. NOTE: This action cannot be undone
 
 ## Jira
 
