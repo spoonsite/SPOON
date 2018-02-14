@@ -5,9 +5,30 @@ description = ""
 weight = 1
 +++
 
+## High Level Developer Workflow
+
+{{<mermaid align="center">}}
+graph TB;
+    A[Pickup Jira Ticket from Backlog];
+    B[Create Git Branch];
+    C[Create Jenkins task for Branch];
+    A --> B 
+    B --> C
+    C --> Dev
+    Dev[Develop];
+    F[Merge into Develop];
+    Dev -->|Dev Complete| D;
+    D{Code Review} -->|Pass| E;
+    E{Test Ticket} --> |Pass| F;
+    D --> |Fail| Dev;
+    E --> |Fail| Dev;
+    F --> |Fail| Dev;
+    click D "/dev/codereview" "Code Review";
+{{< /mermaid >}}
+
 # 1. Internal Development
 
-See documents under /dev for Coding and Style guides.
+See [User Interface Guide](/dev/uiguide), [Server Code Standard](/dev/server-code-standard), and [Front-end Code Standards](/dev/front-end-code-standard) for Coding and Style guides.
 
 ## 1.1 Key Components Used
  
@@ -45,10 +66,11 @@ The following key libraries were used in the development:
 
 1. **NetBeans Install/configuration**
   * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
-    * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
+     * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
   * If you already have NetBeans installed
-    * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
-    * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
+     * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
+     * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
+  * Download [nbformatting.zip](/files/nbformatting.zip) and go to *Tools->Options->Editor* and import the formatting settings.
 2. **Clone the openstorefront GitHub repo to the desired directory**
   * https://help.github.com/articles/cloning-a-repository/
 3. **Open the openstorefront Project**

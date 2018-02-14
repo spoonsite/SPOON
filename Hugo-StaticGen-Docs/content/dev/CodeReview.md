@@ -4,16 +4,29 @@ description = ""
 weight = 8
 +++
 
-# Code Review Process
+{{<mermaid align="left">}}
+graph LR;
+A[Build];
+B[SonarQube];
+C[Code Standard];
+D[Style Check];
+E[Check Business Logic];
+F[Update Documentation];
+A-->B;
+B-->C;
+C-->D;
+D-->E;
+E-->F;
+{{< /mermaid >}}
 
 1. Branch build is passed. (Green)
 
 2. It's expected the formating and basic style is handled by the IDE setting.
-Check that those were apply. (quick scan)
+Check that those were applied. (quick scan) The netbeans configuration can be found [here](/files/nbformating.zip).
 
-3. Check vs Coding Standards (Front-end and Server)
+3. Check Coding Standards ([Front-end](/dev/front-end-code-standard) and [Server](/dev/server-code-standard))
 
-4. Check UI vs Style Guide
+4. Check UI against [Style Guide](/dev/uiguide)
 
 5. Check for known business rule breaks (missing cross cutting concerns; regression is expected to catch some of this)
 
@@ -25,4 +38,4 @@ Check that those were apply. (quick scan)
 
 On Failure:
 
-Note: specifically what failed and why.  Also, suggest a correction path; where possible.
+Note specifically what failed and why.  Also, suggest a correction path; where possible.
