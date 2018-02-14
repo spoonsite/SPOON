@@ -133,23 +133,24 @@ public class ElasticSearchManager
 
 	private void init()
 	{
-		if (clientPool == null) {
-			String poolSize = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, DEFAULT_POOL_SIZE);
-			maxPoolSize = Convert.toInteger(poolSize);
-			LOG.log(Level.CONFIG, () -> "Initializing Elasticsearch Pool size: " + maxPoolSize);
+		String poolSize = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, DEFAULT_POOL_SIZE);
+		maxPoolSize = Convert.toInteger(poolSize);
+		LOG.log(Level.INFO, () -> "Initializing Elasticsearch Pool size: " + maxPoolSize);
 
-			String host = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
-			Integer port = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
-			LOG.log(Level.CONFIG, () -> "Initializing Elasticsearch Connection to server: " + host + " port: " + port);
-			clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
+		String host = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
+		Integer port = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
+		LOG.log(Level.INFO, () -> "Initializing Elasticsearch Connection to server: " + host + " port: " + port);
+		clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
-			for (int i = 0; i < maxPoolSize; i++) {
-				ElasticSearchClient client = new ElasticSearchClient(host, port, this);
-				clientPool.offer(client);
-			}
-		} else {
-			maxPoolSize = clientPool.size();
+		for (int i = 0; i < maxPoolSize; i++) {
+			ElasticSearchClient client = createClient(host, port);
+			clientPool.offer(client);
 		}
+	}
+
+	protected ElasticSearchClient createClient(String host, Integer port)
+	{
+		return new ElasticSearchClient(host, port, this);
 	}
 
 	/**
@@ -167,15 +168,23 @@ public class ElasticSearchManager
 
 	private ElasticSearchClient justGetClient()
 	{
+		if (!isStarted()) {
+			throw new OpenStorefrontRuntimeException("Search Manager is not started", "Restart search manager and try again");
+		}
+
+		if (clientPool.size() == 0) {
+			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server");
+		}
+
 		int waitTimeSeconds = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
 		try {
 			ElasticSearchClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (client == null) {
-				throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection in time.  No resource available.", "Adjust confluence pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
+				throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection in time.  No resource available.", "Adjust Elasticsearch pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
 			}
 			return client;
 		} catch (InterruptedException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection - wait interrupted.  No resource available.", "Adjust Elasticsearch pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
 

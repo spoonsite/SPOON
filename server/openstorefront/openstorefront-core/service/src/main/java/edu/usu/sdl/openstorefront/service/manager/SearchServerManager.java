@@ -66,7 +66,7 @@ public class SearchServerManager
 	{
 		String searchImplementation = propertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER, ELASTICSEARCH).toLowerCase();
 
-		LOG.log(Level.CONFIG, () -> "Using " + searchImplementation + " as search server.");
+		LOG.log(Level.INFO, () -> "Using " + searchImplementation + " as search server.");
 		switch (searchImplementation) {
 			case SOLR:
 				searchServer = SolrManager.getInstance(propertiesManager, null);
