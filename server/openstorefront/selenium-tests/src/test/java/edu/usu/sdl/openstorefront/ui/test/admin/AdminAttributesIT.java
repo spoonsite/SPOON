@@ -55,8 +55,8 @@ public class AdminAttributesIT
 	{
 		authProvider = new AuthenticationProvider(properties, webDriverUtil);
 		authProvider.login();
-		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		attributeProvider = new AttributeProvider(provider.getAPIClient());
 		attributeProvider.createAttribute("Rigel-Altair", "ALTAIR", "ALTAIR");
 	}

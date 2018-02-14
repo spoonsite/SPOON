@@ -54,8 +54,8 @@ public class AdminContactsIT
 	{
 		authProvider = new AuthenticationProvider(properties, webDriverUtil);
 		authProvider.login();
-		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		contactProvider = new ContactProvider(provider.getAPIClient());
 		contactProvider.createAPIContact("BBB-TesterFirst", "BBB-TesterLast", "testAPIContact@test.com", "MyAmazingTest-Organization");
 	}

@@ -39,9 +39,9 @@ public class AttributeProvider
 	private List<String> attributeTypes;
 	private List<String> attributeXRefTypes;
 	
-	private String attrType = "MappingTestAttr";
-	private String attrDefaultCode = "MappingAttrTest";
-	private String attrCodeLabel = "MappingAttr";
+	private String attrType = "MAPPINGTESTATTR";
+	private String attrDefaultCode = "MAPPINGATTRTEST";
+	private String attrCodeLabel = "MAPPINGATTR";
 
 	public AttributeProvider(ClientAPI apiClient)
 	{
@@ -113,7 +113,7 @@ public class AttributeProvider
 		
 		AttributeXRefMap xRefMap = new AttributeXRefMap();
 		xRefMap.setAttributeType("MAPPINGTESTATTR");
-		xRefMap.setLocalCode("MAPATTR");
+		xRefMap.setLocalCode("MAPPINGATTR");
 		xRefMap.setExternalCode("No Evaluation Planned");
 		List<AttributeXRefMap> map = new ArrayList<>();
 		map.add(xRefMap);

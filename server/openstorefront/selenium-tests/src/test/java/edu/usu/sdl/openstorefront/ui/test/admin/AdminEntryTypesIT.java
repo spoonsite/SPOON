@@ -56,8 +56,8 @@ public class AdminEntryTypesIT
 	{
 		authProvider = new AuthenticationProvider(properties, webDriverUtil);
 		authProvider.login();
-		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 		compTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
 		compTypeProvider.createComponentType("Selenium-EntryType");
 	}
