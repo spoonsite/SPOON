@@ -172,7 +172,7 @@ public class ElasticSearchManager
 			throw new OpenStorefrontRuntimeException("Search Manager is not started", "Restart search manager and try again (system admin)");
 		}
 
-		if (clientPool.size() == 0) {
+		if (clientPool.isEmpty()) {
 			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server (system admin)");
 		}
 
@@ -206,7 +206,7 @@ public class ElasticSearchManager
 						.getLowLevelClient()
 						.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
 
-				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
+				LOG.log(Level.INFO, () -> "Search index: " + INDEX + " has been created. " + response.getStatusLine().getStatusCode());
 				indexCreated.set(true);
 
 			} catch (ResponseException e) {
