@@ -169,11 +169,11 @@ public class ElasticSearchManager
 	private ElasticSearchClient justGetClient()
 	{
 		if (!isStarted()) {
-			throw new OpenStorefrontRuntimeException("Search Manager is not started", "Restart search manager and try again");
+			throw new OpenStorefrontRuntimeException("Search Manager is not started", "Restart search manager and try again (system admin)");
 		}
 
 		if (clientPool.size() == 0) {
-			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server");
+			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server (system admin)");
 		}
 
 		int waitTimeSeconds = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
@@ -184,7 +184,7 @@ public class ElasticSearchManager
 			}
 			return client;
 		} catch (InterruptedException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection - wait interrupted.  No resource available.", "Adjust Elasticsearch pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection - wait interrupted.  No resource available.", "Adjust Elasticsearch pool size appropriate to load. (system admin)", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
 
