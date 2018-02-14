@@ -23,10 +23,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	recordItem: undefined,
 
 	height: 250,
-	width: '80%',
+	width: '100%',
 	margin: '10 10 10 0',
-	padding: '20 0 20 0',
+	padding: '10 20 10 20',
 	target: true,
+	cls: 'form-builder-item',
 	overCls: 'csf-hover',
 	style: 'border-top: 3px solid white; border-bottom: 3px solid white;',
 	layout: {
@@ -34,30 +35,83 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		align: 'stretch'
 	},
 	items: [
-		{
-			xtype: 'container',
-			baseCls: 'drag-handle',
-			margin: '50 20 25 10',
-			height: 75,
-			width: 40,
-			layout: {
-				type: 'vbox',
-				pack: 'center',
-				align: 'center'
-			},
-			items: [{xtype: 'container', html: '<div style="margin: auto;"><i class="fa fa-arrows-v fa-4x" aria-hidden="true"></i></div>'}]
-		},
+		// {
+		// 	xtype: 'container',
+		// 	baseCls: 'drag-handle',
+		// 	margin: '50 20 25 10',
+		// 	height: 75,
+		// 	width: 40,
+			// layout: {
+			// 	type: 'vbox',
+			// 	pack: 'center',
+			// 	align: 'center'
+			// },
+		// 	items: [{xtype: 'container', html: '<div style="margin: auto;"><i class="fa fa-arrows-v fa-4x" aria-hidden="true"></i></div>'}]
+		// },
 		{
 			xtype: 'container',
 			width: '50%',
+			layout: 'vbox',
 			items: [
 				{
-			        xtype: 'textfield',
-			        emptyText: 'Enter Question Here',
-			        height: 50,
-			        width: '100%'
+					xtype: 'container',
+					width: '100%',
+					height: 170,
+					style: 'border-bottom: 2px solid #b4b4b4;',
+					items: [
+						{
+					        xtype: 'textfield',
+					        emptyText: 'Enter Question Here',
+					        height: 50,
+					        width: '100%'
+						}
+					]
+				},
+				{
+					xtype: 'container',
+					width: '100%',
+					height: '30%',
+					items: [
+						{
+							xtype: 'button',
+							text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>',
+							padding: 0,
+							width: 40,
+							height: 35,
+							margin: '10 0 0 0',
+							overCls: 'csf-meta-menu-item',
+							style: 'border: none; background: none; float: right;'
+						},
+						{
+							xtype: 'button',
+							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true"></i>',
+							padding: 0,
+							width: 40,
+							height: 35,
+							margin: '10 0 0 0',
+							overCls: 'csf-meta-menu-item',
+							style: 'border: none; background: none; float: right;'
+						},
+						{
+							xtype: 'button',
+							text: '<i style="color:#5f5f5f;" class="fa fa-files-o fa-2x" aria-hidden="true"></i>',
+							padding: 0,
+							width: 40,
+							height: 35,
+							margin: '10 0 0 0',
+							overCls: 'csf-meta-menu-item',
+							style: 'border: none; background: none; float: right;',
+						}
+					]
 				}
 			]
+    	},
+    	{
+			xtype: 'container',
+			width: '50%',
+			items: [],
+			style: 'background: cyan; border-left: 2px solid #b4b4b4;',
+			margin: '0 0 0 10'
     	}
     ],
 
@@ -95,13 +149,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	afterrender: function () {
 
 			var fieldContainer = this;
+			console.log("FIELD CONTAINER: ", fieldContainer);
 
     		// style the question input field
-			fieldContainer.items.items[1].el.dom.querySelector('input').style.fontSize = '32px';
+			fieldContainer.items.items[0].items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
 
 			// set this container as a drag source
 			new Ext.drag.Source({
-				handle: '.drag-handle',
+				// handle: '#' + fieldContainer.el.dom.id,
 				element: fieldContainer.getEl(),
 				draggingCls: 'csf-drag',
 				constrain: {
@@ -166,7 +221,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		this.callParent();
 		var fieldContainer = this;
 
-		fieldContainer.items.items[1].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
+		fieldContainer.items.items[0].items.items[0].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
 
 		// fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
   //   		itemId: 'questionDataView',

@@ -44,8 +44,29 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 		    valueField: 'value'
 		}));
 
+
+		// Add mapped to combo...
+		this.items.items[0].add(Ext.create('Ext.form.ComboBox', {
+			fieldLabel: 'Mapped To',
+		    store: Ext.create('Ext.data.Store', {
+			    fields: ['value', 'label'],
+			    data : [
+			        {"value":"name", "label":"Contact Name"},
+			        {"value":"phone", "label":"Contact Phone"},
+			        {"value":"email", "label":"Contact Email"},
+			        {"value":"attr", "label":"Attribute"},
+			        {"value":"private", "label":"Is Private"},
+			        {"value":"description", "label":"Entry Description"},
+			        {"value":"summary", "label":"Entry Summary"}
+			    ]
+			}),
+		    queryMode: 'local',
+		    displayField: 'label',
+		    valueField: 'value'
+		}));
+
 		// add is optional radio
-		this.items.items[0].add(Ext.create('Ext.form.FieldContainer', {
+		this.items.items[1].add(Ext.create('Ext.form.FieldContainer', {
             fieldLabel: 'Is Required?',
             defaultType: 'radiofield',
             defaults: {
@@ -69,25 +90,20 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
             ]
 		}));
 
-		// Add mapped to combo...
-		this.items.items[0].add(Ext.create('Ext.form.ComboBox', {
-			fieldLabel: 'Mapped To',
-		    store: Ext.create('Ext.data.Store', {
-			    fields: ['value', 'label'],
-			    data : [
-			        {"value":"name", "label":"Contact Name"},
-			        {"value":"phone", "label":"Contact Phone"},
-			        {"value":"email", "label":"Contact Email"},
-			        {"value":"attr", "label":"Attribute"},
-			        {"value":"private", "label":"Is Private"},
-			        {"value":"description", "label":"Entry Description"},
-			        {"value":"summary", "label":"Entry Summary"}
-			    ]
-			}),
-		    queryMode: 'local',
-		    displayField: 'label',
-		    valueField: 'value'
-		}));
+		// add additional settings button
+		this.items.items[1].add({
+			xtype: 'button',
+			text: 'Additional Settings <i style="margin-left: 5px;" class="fa fa-cog" aria-hidden="true"></i>',
+			listeners: {
+				click: function () {
+					Ext.create('Ext.window.Window', {
+						title: 'Additional Field Settings',
+						modal: true,
+						html: '<h1>TODO: Dynamically load in fields here for specific fields.</h1>'
+					}).show();
+				}
+			}
+		});
 	},
 	items: [
 		{
@@ -99,30 +115,7 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 		{
 			columnWidth: 0.5,
 			items: [
-				{
-					xtype: 'textfield',
-					style: 'float: right;',
-					fieldLabel: 'Label Code'
-				},
-				{
-					xtype: 'textfield',
-					style: 'float: right;',
-					fieldLabel: 'Label Tip'
-				},
-				{
-					xtype: 'button',
-					style: 'float: right;',
-					text: 'Additional Settings <i style="margin-left: 5px;" class="fa fa-cog" aria-hidden="true"></i>',
-					listeners: {
-						click: function () {
-							Ext.create('Ext.window.Window', {
-								title: 'Additional Field Settings',
-								modal: true,
-								html: '<h1>TODO: Dynamically load in fields here for specific fields.</h1>'
-							}).show();
-						}
-					}
-				}
+				
 			]
 		}
 	]

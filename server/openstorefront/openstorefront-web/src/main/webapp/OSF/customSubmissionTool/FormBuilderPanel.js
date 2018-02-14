@@ -30,7 +30,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	items: [
 		{
 			// title: 'Form Info',
-			flex: 0.15,
+			flex: 0.25,
 			style: 'background: #fff;',
 			height: '100%',
 			layout: {
@@ -38,7 +38,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			}
 		},
 		{
-			flex: 0.85,
+			flex: 0.75,
 			margin: '0 0 0 10',
 			scrollable: 'vertical',
 			style: 'background: #fff;',
@@ -67,7 +67,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 				Ext.create('Ext.form.Panel', {
 				 	title: 'Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template is identified by"></i>',
 				    bodyPadding: 5,
-				 	layout: 'hbox',
 				    width: '100%',
 				    flex: 1,
 				    layout: {
@@ -109,8 +108,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 									// TODO: save name!
 
 									console.log("Save form name.");
-									var formPanel = this.up();
-									var nameField = formPanel.queryById('formNameSaveField');
+									// can use these when we actually save the form...
+									// var formPanel = this.up();
+									// var nameField = formPanel.queryById('formNameSaveField');
 									this.setDisabled(true);
 								}
 							}

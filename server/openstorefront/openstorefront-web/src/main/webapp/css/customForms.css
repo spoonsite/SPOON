@@ -27,6 +27,10 @@
 	box-shadow: 1px 1px 2px rgb(30,30,30);
 	background: rgb(180,180,180);
 }
+
+.csf-meta-menu-item {
+	background: rgba(255,255,255,0.2)!important;
+}
 .csf-hover .drag-handle {
 	visibility: visible;
 }
