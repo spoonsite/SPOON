@@ -25,27 +25,40 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 		this.callParent();
 
 		// Add field type combo...
+		// TODO: query actual data for this combo
 		this.items.items[0].add(Ext.create('Ext.form.ComboBox', {
 			fieldLabel: 'Field Type',
 		    store: Ext.create('Ext.data.Store', {
 			    fields: ['value', 'label'],
 			    data : [
-			        {"value":"grid", "label":"Grid"},
-			        {"value":"radiobtn", "label":"Radio Button"},
-			        {"value":"checkbox", "label":"Checkbox"},
-			        {"value":"combo", "label":"Dropdown"},
-			        {"value":"tf", "label":"Text Field"},
-			        {"value":"ta", "label":"Text Area"},
-			        {"value":"contactsgrid", "label":"Contacts Grid"}
+			        {'value':'grid', 'label':'Grid'},
+			        {'value':'radiobtn', 'label':'Radio Button'},
+			        {'value':'checkbox', 'label':'Checkbox'},
+			        {'value':'combo', 'label':'Dropdown'},
+			        {'value':'textfield', 'label':'Short answer'},
+			        {'value':'textarea', 'label':'Long Answer'},
+			        {'value':'contactsgrid', 'label':'Contacts Grid'}
 			    ]
 			}),
 		    queryMode: 'local',
 		    displayField: 'label',
-		    valueField: 'value'
+		    valueField: 'value',
+		    listConfig: {
+				getInnerTpl: function () {
+					return '{label} <tpl if="value == \'radiobtn\'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'checkbox\'"><i class="fa fa-check-square-o" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'combo\'"><i class="fa fa-chevron-circle-down" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'textfield\'"><i class="fa fa-minus" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'textarea\'"><i class="fa fa-align-left" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'grid\'"><i class="fa fa-table" aria-hidden="true"></i></tpl>' +
+					'<tpl if="value == \'contactsgrid\'"><i class="fa fa-table" aria-hidden="true"></i></tpl>';
+				}
+			}
 		}));
 
 
 		// Add mapped to combo...
+		// TODO: query actual data for this combo
 		this.items.items[0].add(Ext.create('Ext.form.ComboBox', {
 			fieldLabel: 'Mapped To',
 		    store: Ext.create('Ext.data.Store', {
@@ -66,28 +79,20 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 		}));
 
 		// add is optional radio
-		this.items.items[1].add(Ext.create('Ext.form.FieldContainer', {
-            fieldLabel: 'Is Required?',
-            defaultType: 'radiofield',
-            defaults: {
-                flex: 1
-            },
-            layout: 'hbox',
-            items: [
-            	{
-            		boxLabel: 'Yes',
-            		name: 'isRequired',
-            		inputValue: 'yes'
-            	},
-            	{
-
-            		boxLabel: 'No',
-            		name: 'isRequired',
-            		inputValue: 'no',
-            		value: true,
-            		margin: '0 0 0 10'
-            	}
-            ]
+		this.items.items[1].add(Ext.create('Ext.form.RadioGroup', {
+			fieldLabel: 'Is Required?',
+			defaults: {
+				flex: 1
+			},
+			items: [
+				{
+					xtype: 'radiogroup',
+					items: [
+						{ boxLabel: 'Yes', name: 'isRequired_' + this.id, inputValue: 'yes' },
+						{ boxLabel: 'No', name: 'isRequired_' + this.id, inputValue: 'no', margin: '0 0 0 10' }
+					]
+				}
+			]
 		}));
 
 		// add additional settings button

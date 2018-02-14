@@ -94,7 +94,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						},
 						{
 							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-files-o fa-2x" aria-hidden="true"></i>',
+							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true"></i>',
 							padding: 0,
 							width: 40,
 							height: 35,
@@ -149,7 +149,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	afterrender: function () {
 
 			var fieldContainer = this;
-			console.log("FIELD CONTAINER: ", fieldContainer);
 
     		// style the question input field
 			fieldContainer.items.items[0].items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
