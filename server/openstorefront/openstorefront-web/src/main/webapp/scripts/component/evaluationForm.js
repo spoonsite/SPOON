@@ -297,12 +297,12 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					});
 					
 					var commentPanels = [];
-					var createComments = function(comment, parent) {
+					var createComments = function(comment, parent, messageMenu) {
 						var closeable = false;
 						var editHidden = true;
 						if (rootEvalPanel.user.admin || rootEvalPanel.user.username === comment.createUser) {
 							closeable = true;
-							editHidden = false;
+							messageMenu.queryById('edit').setHidden(false);
 						}
 						var iconCls = '';
 						var headerStyle = 'background: olive;';
@@ -310,7 +310,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 							iconCls = 'fa fa-reply';
 							headerStyle = 'background: darkolivegreen;';
 						}
-												
+																		
 						var panel = Ext.create('Ext.panel.Panel', {	
 							iconCls: iconCls,
 							header: {
@@ -347,101 +347,75 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 										});
 									}
 									return false;
-								},
-								afterrender: function(panel) {
-									var header = panel.getHeader();
-									header.getTools().forEach(function(tool) {
-										tool.hide();
-									});
-									
-									header.getEl().on('mouseover', function() {
-										header.getTools().forEach(function(tool) {
-											if (tool.type === 'gear') {
-												if (!editHidden) {
-													tool.show();
-												}
-											} else {
-												tool.show();
-											}
-										});
-									}, this);
-									header.getEl().on('mouseout', function() {
-										header.getTools().forEach(function(tool) {
-											tool.hide();
-										});
-									}, this);
 								}
 							},							
-							tools: [
-								{
-									type: 'save',									
-									tooltip: 'Toggle Acknowledge',
-									hidden: true,
-									callback: function(panel, tool, event) {																
-										panel.setLoading('Updating record...');								
-										Ext.Ajax.request({
-											url: 'api/v1/resource/evaluations/' + evaluationId + '/comments/' + panel.data.commentId + '/acknowlege',
-											method: 'PUT',
-											callback: function() {
-												panel.setLoading(false);
-											},
-											success: function(response, opts) {
-												rootEvalPanel.commentPanel.loadComments();
-											}
-										});	
-									}
-								},
-								{
-									type: 'prev',									
-									tooltip: 'Reply',
-									hidden: true,
-									callback: function(panel, tool, event) {
-										var comment = this.up('panel');
-
-										if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
-											rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
-											rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
-										}
-
-										var replyMessage = Ext.create('Ext.panel.Panel', {
-											dock: 'bottom',
-											html: 'Replying to ' + comment.getTitle(),
-											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
-										});
-										rootEvalPanel.commentPanel.getComponent('comments').addDocked(replyMessage);
-										rootEvalPanel.commentPanel.getComponent('comments').replyMessage = replyMessage;
-										var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
-
-										var record = Ext.create('Ext.data.Model', {												
-										});
-										record.set('replyCommentId', comment.data.commentId);
-										form.loadRecord(record);										
-									}
-								},
+							tools: [								
 								{
 									type: 'gear',
-									tooltip: 'Edit',
-									hidden: true,									
+									tooltip: 'Actions',																	
 									callback: function(panel, tool, event) {
-										var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
+										
+										messageMenu.showAt(event.getXY());
+										
+										messageMenu.handlerEdit = function() {
+											var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
 
-										var record = Ext.create('Ext.data.Model', {												
-										});
-										record.set(comment);
-										form.loadRecord(record);
-																				
-										if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
-											rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
-											rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
-										}
+											var record = Ext.create('Ext.data.Model', {												
+											});
+											record.set(comment);
+											form.loadRecord(record);
 
-										var editMessage = Ext.create('Ext.panel.Panel', {
-											dock: 'bottom',
-											html: 'Editing ' + panel.getTitle(),
-											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
-										});
-										rootEvalPanel.commentPanel.getComponent('comments').addDocked(editMessage);
-										rootEvalPanel.commentPanel.getComponent('comments').editMessage = editMessage;										
+											if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+												rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+												rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
+											}
+
+											var editMessage = Ext.create('Ext.panel.Panel', {
+												dock: 'bottom',
+												html: 'Editing ' + panel.getTitle(),
+												bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
+											});
+											rootEvalPanel.commentPanel.getComponent('comments').addDocked(editMessage);
+											rootEvalPanel.commentPanel.getComponent('comments').editMessage = editMessage;										
+										};
+										
+										messageMenu.handlerReply = function() {
+											
+
+											if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+												rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+												rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
+											}
+
+											var replyMessage = Ext.create('Ext.panel.Panel', {
+												dock: 'bottom',
+												html: 'Replying to ' + panel.getTitle(),
+												bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
+											});
+											rootEvalPanel.commentPanel.getComponent('comments').addDocked(replyMessage);
+											rootEvalPanel.commentPanel.getComponent('comments').replyMessage = replyMessage;
+											var form = rootEvalPanel.commentPanel.getComponent('comments').getComponent('form');
+
+											var record = Ext.create('Ext.data.Model', {												
+											});
+											record.set('replyCommentId', comment.commentId);
+											form.loadRecord(record);											
+										};										
+										
+										messageMenu.handlerAcknowledge = function() {
+											panel.setLoading('Updating record...');								
+											Ext.Ajax.request({
+												url: 'api/v1/resource/evaluations/' + evaluationId + '/comments/' + panel.data.commentId + '/acknowlege',
+												method: 'PUT',
+												callback: function() {
+													panel.setLoading(false);
+												},
+												success: function(response, opts) {
+													rootEvalPanel.commentPanel.loadComments();
+												}
+											});											
+										};
+										
 									}
 								}
 							],
@@ -464,13 +438,42 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 						}
 						return panel;
 					};
+					var messageMenu = Ext.create('Ext.menu.Menu', {											
+						margin: '0 0 10 0',
+						items: [
+							{
+								text: 'Reply',
+								handler: function() {
+									messageMenu.handlerReply();
+								}
+							},
+							{
+								xtype: 'menuseparator'								
+							},
+							{
+								text: 'Edit',
+								itemId: 'edit',
+								hidden: true,
+								handler: function() {
+									messageMenu.handlerEdit();
+								}
+							},
+							{
+								text: 'Toggle Acknowledge',
+								handler: function() {
+									messageMenu.handlerAcknowledge();
+								}													
+							}
+						]
+					});
+					
 					var processCommentPanel = function (comments, parent) {
 						Ext.Array.each(comments, function(comment) {
-							var createdPanel = createComments(comment, parent);
-							processCommentPanel(comment.replies);
+							var createdPanel = createComments(comment, parent, messageMenu);
+							processCommentPanel(comment.replies, null, messageMenu);
 						});
 					};
-					processCommentPanel(comments);						
+					processCommentPanel(comments, null, messageMenu);						
 					
 					rootEvalPanel.commentPanel.getComponent('comments').add(commentPanels);
 				}
