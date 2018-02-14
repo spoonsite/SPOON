@@ -298,8 +298,7 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					
 					var commentPanels = [];
 					var createComments = function(comment, parent, messageMenu) {
-						var closeable = false;
-						var editHidden = true;
+						var closeable = false;						
 						if (rootEvalPanel.user.admin || rootEvalPanel.user.username === comment.createUser) {
 							closeable = true;
 							messageMenu.queryById('edit').setHidden(false);
@@ -469,11 +468,11 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					
 					var processCommentPanel = function (comments, parent) {
 						Ext.Array.each(comments, function(comment) {
-							var createdPanel = createComments(comment, parent, messageMenu);
-							processCommentPanel(comment.replies, null, messageMenu);
+							createComments(comment, parent, messageMenu);
+							processCommentPanel(comment.replies);
 						});
 					};
-					processCommentPanel(comments, null, messageMenu);						
+					processCommentPanel(comments);						
 					
 					rootEvalPanel.commentPanel.getComponent('comments').add(commentPanels);
 				}
