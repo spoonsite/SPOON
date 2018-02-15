@@ -103,9 +103,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
-		for (var i = 0; i < 5; i++) {
-			formBuilderPanel.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
-		}
+		formBuilderPanel.items.items[1].add(Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
 
 		// add the form info items
 		formBuilderPanel.items.items[0].add(
@@ -154,9 +152,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 									// TODO: save name!
 
 									console.log("Save form name.");
-									// can use these when we actually save the form...
-									// var formPanel = this.up();
-									// var nameField = formPanel.queryById('formNameSaveField');
 									this.setDisabled(true);
 								}
 							}
@@ -168,6 +163,82 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					width: '100%',
 					flex: 3,
 					items: [
+						{
+							xtype: 'treelist',
+							store: {
+								root: {
+									expanded: true,
+									children: [
+										{
+											text: 'Page 1',
+											expanded: true,
+											iconCls: 'fa fa-file-text',
+											children: [
+												{
+													text: 'Is private',
+													iconCls: 'fa fa-dot-circle-o',
+													leaf: true
+												},
+												{
+													text: 'Summary',
+													iconCls: 'fa fa-minus',
+													leaf: true
+												},
+												{
+													text: 'Contacts',
+													iconCls: 'fa fa-table',
+													leaf: true
+												},
+											]
+										},
+										{
+											text: 'Page 2',
+											expanded: false,
+											iconCls: 'fa fa-file-text',
+											children: [
+												{
+													text: 'Is private',
+													iconCls: 'fa fa-dot-circle-o',
+													leaf: true
+												},
+												{
+													text: 'Summary',
+													iconCls: 'fa fa-minus',
+													leaf: true
+												},
+												{
+													text: 'Contacts',
+													iconCls: 'fa fa-table',
+													leaf: true
+												},
+											]
+										},
+										{
+											text: 'Page 3',
+											expanded: false,
+											iconCls: 'fa fa-file-text',
+											children: [
+												{
+													text: 'Is private',
+													iconCls: 'fa fa-dot-circle-o',
+													leaf: true
+												},
+												{
+													text: 'Summary',
+													iconCls: 'fa fa-minus',
+													leaf: true
+												},
+												{
+													text: 'Contacts',
+													iconCls: 'fa fa-table',
+													leaf: true
+												},
+											]
+										}
+									]
+								}
+							}
+						}
 					]
 				}),
 

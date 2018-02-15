@@ -164,7 +164,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			xtype: 'container',
 			width: '50%',
 			items: [],
-			style: 'background: cyan; border-left: 2px solid #b4b4b4;',
+			html: '<h1>TODO: Demo Area</h1>',
+			style: 'background: rgba(255,255,255,0.8); border-left: 2px solid #b4b4b4;',
 			margin: '0 0 0 10'
     	}
     ],
