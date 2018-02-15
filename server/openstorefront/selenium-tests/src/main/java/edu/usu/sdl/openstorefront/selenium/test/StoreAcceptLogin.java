@@ -31,6 +31,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class StoreAcceptLogin
 {
+
 	private static final Logger LOG = Logger.getLogger(StoreAcceptLogin.class.getName());
 
 	public static void main(String[] args)
@@ -51,14 +52,10 @@ public class StoreAcceptLogin
 		driver.findElement(By.name("password")).sendKeys("Secret1@", Keys.ENTER);
 
 		// Wait for the page to load, timeout after 10 seconds
-		(new WebDriverWait(driver, 12)).until(new ExpectedCondition<Boolean>()
-		{
-			public Boolean apply(WebDriver d)
-			{
-				LOG.log(Level.INFO, "Logo image is displayed? (logged on successfully) %s", driver.findElement(By.id("logoImage")).isDisplayed());
+		(new WebDriverWait(driver, 12)).until((ExpectedCondition<Boolean>) (WebDriver d) -> {
+			LOG.log(Level.INFO, () -> "Logo image is displayed? (logged on successfully) " + driver.findElement(By.id("logoImage")).isDisplayed());
 
-				return d.findElement(By.id("logoImage")).isDisplayed();
-			}
+			return d.findElement(By.id("logoImage")).isDisplayed();
 		});
 	}
 }

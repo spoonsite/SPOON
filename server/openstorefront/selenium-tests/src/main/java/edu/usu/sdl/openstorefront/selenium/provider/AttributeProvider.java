@@ -35,13 +35,14 @@ import java.util.List;
  */
 public class AttributeProvider
 {
+
 	private AttributeClient client;
 	private List<String> attributeTypes;
 	private List<String> attributeXRefTypes;
-	
-	private String attrType = "MAPPINGTESTATTR";
-	private String attrDefaultCode = "MAPPINGATTRTEST";
-	private String attrCodeLabel = "MAPPINGATTR";
+
+	private static final String TEST_ATTRIBUTE_TYPE = "MAPPINGTESTATTR";
+	private static final String TEST_ATTRIBUTE_CODE = "MAPPINGATTRTEST";
+	private static final String TEST_ATTRIBUTE_MAPPING_CODE = "MAPPINGATTR";
 
 	public AttributeProvider(ClientAPI apiClient)
 	{
@@ -94,44 +95,44 @@ public class AttributeProvider
 
 		return client.postAttributeCode(attributeType, attrCode);
 	}
-	
+
 	public void createJiraMapping()
 	{
 		// Need to create an attribute here with api before mapping
 		//
-		createAttribute(attrType,attrDefaultCode , attrCodeLabel);
-		
+		createAttribute(TEST_ATTRIBUTE_TYPE, TEST_ATTRIBUTE_CODE, TEST_ATTRIBUTE_MAPPING_CODE);
+
 		AttributeXRefType xRefType = new AttributeXRefType();
-		xRefType.setAttributeType("MAPPINGTESTATTR");
+		xRefType.setAttributeType(TEST_ATTRIBUTE_TYPE);
 		xRefType.setIssueType("ASSET-TEST");
 		xRefType.setProjectType("ASSET");
 		xRefType.setFieldId("FieldId");
 		xRefType.setFieldName("DI2E Intent");
 		xRefType.setIntegrationType(IntegrationType.JIRA);
-		
+
 		attributeXRefTypes.add(xRefType.getAttributeType());
-		
+
 		AttributeXRefMap xRefMap = new AttributeXRefMap();
-		xRefMap.setAttributeType("MAPPINGTESTATTR");
-		xRefMap.setLocalCode("MAPPINGATTR");
+		xRefMap.setAttributeType(TEST_ATTRIBUTE_TYPE);
+		xRefMap.setLocalCode(TEST_ATTRIBUTE_MAPPING_CODE);
 		xRefMap.setExternalCode("No Evaluation Planned");
 		List<AttributeXRefMap> map = new ArrayList<>();
 		map.add(xRefMap);
-		
+
 		AttributeXRefView xRefView = new AttributeXRefView();
 		xRefView.setType(xRefType);
 		xRefView.setMap(map);
-		
+
 		client.saveMapping(xRefView);
 	}
 
 	public void cleanup()
 	{
 		for (String type : attributeTypes) {
-			
+
 			client.deleteAttributeType(type);
 		}
-		
+
 		for (String type : attributeXRefTypes) {
 			client.deleteMappingType(type);
 		}
