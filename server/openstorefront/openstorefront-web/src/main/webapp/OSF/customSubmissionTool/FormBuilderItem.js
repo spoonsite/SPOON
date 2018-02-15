@@ -80,16 +80,42 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							height: 35,
 							margin: '10 0 0 0',
 							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;'
+							style: 'border: none; background: none; float: right;',
+							listeners: {
+								click: function () {
+									var button = this;
+									var disabledUp = false;
+									var disabledDown = false;
+									var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
+									var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
+									if (itemIndex === 0) {
+										disabledUp = true;
+									}
+									if (itemIndex === fieldDisplayPanel.items.items.length -1) {
+										disabledDown = true;
+									}
+									var popupMenu = Ext.create('Ext.menu.Menu', {
+										floating: true,
+										items: [
+											{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
+											{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
+											{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
+											{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
+										]
+									});
+									popupMenu.showAt(this.getXY());
+								}
+							}
 						},
 						{
 							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true"></i>',
+							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete this field"></i>',
 							padding: 0,
 							width: 40,
 							height: 35,
 							margin: '10 0 0 0',
 							overCls: 'csf-meta-menu-item',
+							itemId: 'deleteButton',
 							style: 'border: none; background: none; float: right;',
 							listeners: {
 								click: function () {
@@ -100,13 +126,35 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						},
 						{
 							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true"></i>',
+							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy this field"></i>',
 							padding: 0,
 							width: 40,
 							height: 35,
 							margin: '10 0 0 0',
 							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;'
+							style: 'border: none; background: none; float: right;',
+							listeners: {
+								click: function () {
+									alert('TODO: Clone the field!');
+								}
+							}
+						},
+						{
+							xtype: 'button',
+							text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a new field here"></i>',
+							padding: 0,
+							width: 40,
+							height: 35,
+							margin: '10 0 0 0',
+							overCls: 'csf-meta-menu-item',
+							style: 'border: none; background: none; float: right;',
+							listeners: {
+								click: function () {
+									// add a field after the current
+									var fieldIndex = this.up('[itemId=fieldDisplayPanel]').items.items.indexOf(this.up('[cls=form-builder-item]'));
+									this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
+								}
+							}
 						}
 					]
 				}
@@ -145,9 +193,22 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
     listeners: {
+    	afterlayout: function () {
+
+    		// disabled/enable delete button
+    		var fieldDisplayPanel = this.up('[itemId=fieldDisplayPanel]');
+    		if (fieldDisplayPanel.items.items.length === 1) {
+    			
+    			this.queryById('deleteButton').setDisabled(true);
+    		}
+    		else if (fieldDisplayPanel.items.items.length === 2) {
+    			this.queryById('deleteButton').setDisabled(false);
+    		}
+    	},
     	click: {
     		element: 'el',
     		fn: function () {
+
     			var formBuilderItem = Ext.getCmp(this.id);
     			formBuilderItem.setActiveFormItem();
     		}

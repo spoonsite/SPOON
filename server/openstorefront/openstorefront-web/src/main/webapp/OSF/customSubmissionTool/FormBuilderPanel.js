@@ -41,6 +41,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			margin: '0 0 0 10',
 			scrollable: 'vertical',
 			style: 'background: #fff;',
+			itemId: 'fieldDisplayPanel',
 			height: '100%',
 			minHeight: '100%',
 			maxHeight: '100%',
