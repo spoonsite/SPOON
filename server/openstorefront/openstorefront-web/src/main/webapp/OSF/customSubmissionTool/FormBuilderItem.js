@@ -93,6 +93,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							style: 'border: none; background: none; float: right;',
 							listeners: {
 								click: function () {
+									this.up('[itemId=formBuilderPanel]').activeItem = null;
 									this.up('[cls=form-builder-item]').destroy();
 								}
 							}
@@ -191,24 +192,23 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							// identify the active (container being dragged,) and the target container
 							var activeContainer = getPanel(self._element.dom.id);
 							var targetContainer = getPanel(info.target._element.dom.id);
+							var formBuilderPanel = fieldContainer.up('[itemId=formBuilderPanel]');
 
 							// swap positions in the items list
 							var activeIndex = activeContainer.up().items.items.indexOf(activeContainer);
 							var targetIndex = activeContainer.up().items.items.indexOf(targetContainer);
-							activeContainer.up().items.items[activeIndex] = targetContainer;
-							activeContainer.up().items.items[targetIndex] = activeContainer;
 
-							// reposition the containers
-							var prevY = fieldContainer.getY() - event.delta.y;
-							activeContainer.setY(targetContainer.getY());
-							targetContainer.setY(prevY);
+							// reset the y index of the active container, then swap the items.
+							activeContainer.setY(fieldContainer.getY() - event.delta.y);
+							formBuilderPanel.items.items[1].insert(targetIndex, activeContainer);
+							formBuilderPanel.items.items[1].insert(activeIndex, targetContainer);
+
 						} else {
 
 							fieldContainer.setY(fieldContainer.getY() - event.delta.y);
 						}
 
 						fieldContainer.enable();
-						// fieldContainer.setActiveFormItem();
 					}
 				}
 			});
