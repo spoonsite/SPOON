@@ -61,7 +61,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					items: [
 						{
 					        xtype: 'textfield',
-					        emptyText: 'Enter Question Here',
+					        emptyText: 'Untitled Question',
 					        height: 50,
 					        width: '100%'
 						}
@@ -90,7 +90,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							height: 35,
 							margin: '10 0 0 0',
 							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;'
+							style: 'border: none; background: none; float: right;',
+							listeners: {
+								click: function () {
+									this.up('[cls=form-builder-item]').destroy();
+								}
+							}
 						},
 						{
 							xtype: 'button',
@@ -100,7 +105,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							height: 35,
 							margin: '10 0 0 0',
 							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;',
+							style: 'border: none; background: none; float: right;'
 						}
 					]
 				}
