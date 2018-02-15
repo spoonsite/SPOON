@@ -5,9 +5,69 @@ description = ""
 weight = 1
 +++
 
+This guide is meant for internal developer to help in setting up their environments for development
+and to aid in understanding process/procedures related to the project.  This guide links together
+the other development documentation to provide an overview of the whole process.
+From time to time this process evolves as changes occur in the development process and environment.
+This will represent the process followed at the time of the release.  Always, confirm with current 
+developer on the latest practice followed.
+
+
+## High Level Developer Workflow
+
+{{<mermaid align="center">}}
+graph TB;
+    A[1 - Pickup Jira Ticket from Backlog];
+    B[2 - Create Git Branch];
+    C[3 - Create Jenkins task for Branch];
+    A --> B 
+    B --> C
+    C --> Dev
+    Dev[Develop];
+    F[6 - Merge into Develop];
+	G[7 - Acceptance/Regression Test];
+	H[8 - Release];
+    Dev -->|Dev Complete| D;
+    D{4 - Code Review} -->|Pass| E;
+    E{5 - Test Ticket} --> |Pass| F;
+    D --> |Fail| Dev;
+    E --> |Fail| Dev;
+    F --> |Fail| Dev;
+	F --> |Ready For Release| G;
+	G --> |Pass| H;
+	G --> |Fail| Dev;
+	click A "/dev/jira-workflow" "Jira Workflow";
+	click B "/dev/gitworkflow" "Git Workflow";
+    click D "/dev/codereview" "Code Review";
+	click E "/dev/testing" "Branch testing";
+	click F "/dev/branch-to-develop-merge" "Merge to Develop";
+	click G "/dev/testing" "Regression testing";
+	click H "/dev/releaseprocess" "Release Process";
+	
+{{< /mermaid >}}
+
+1. See [Jira Workflow](/dev/jira-workflow) for the ticket flow
+
+2. See [Git Workflow](/dev/gitworkflow) for branch style/management
+
+3. Create a job per branch copying from the branch template and following instructions
+on the branch job to complete setup.
+
+4. See [Code Review](/dev/codereview) for code review steps
+
+5. See [Branch Testing](/dev/testing) (Branch testing)
+
+6. See [Merge to Develop](/dev/branch-to-develop-merge)
+
+7. See [Regression Testing](/dev/testing) (Regression testing)
+
+8. See [Release Process](/dev/releaseprocess)
+
+
+
 # 1. Internal Development
 
-See documents under /dev for Coding and Style guides.
+See [User Interface Guide](/dev/uiguide), [Server Code Standard](/dev/server-code-standard), and [Front-end Code Standards](/dev/front-end-code-standard) for Coding and Style guides.
 
 ## 1.1 Key Components Used
  
@@ -45,10 +105,11 @@ The following key libraries were used in the development:
 
 1. **NetBeans Install/configuration**
   * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
-    * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
+     * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
   * If you already have NetBeans installed
-    * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
-    * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
+     * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
+     * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
+  * Download [nbformatting.zip](/files/nbformatting.zip) and go to *Tools->Options->Editor* and import the formatting settings.
 2. **Clone the openstorefront GitHub repo to the desired directory**
   * https://help.github.com/articles/cloning-a-repository/
 3. **Open the openstorefront Project**
