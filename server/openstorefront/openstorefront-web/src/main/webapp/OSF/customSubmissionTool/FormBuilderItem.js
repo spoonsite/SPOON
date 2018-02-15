@@ -135,7 +135,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							style: 'border: none; background: none; float: right;',
 							listeners: {
 								click: function () {
-									alert('TODO: Clone the field!');
+									console.log("CLONE THE FIELD!");
 								}
 							}
 						},
