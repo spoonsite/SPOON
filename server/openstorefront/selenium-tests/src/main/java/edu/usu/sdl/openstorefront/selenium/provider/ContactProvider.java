@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.ContactClient;
@@ -25,19 +25,17 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class ContactTestClient
-		extends BaseTestClient
+public class ContactProvider
 {
-
-	private ContactClient apiContact;
-	private static List<String> contactIds = new ArrayList<>();
-
-	public ContactTestClient(ClientAPI client, APIClient apiClient)
+	ContactClient client;
+	List<String> contactIds;
+	
+	public ContactProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiContact = new ContactClient(client);
+		client = new ContactClient(apiClient);
+		contactIds = new ArrayList<>();
 	}
-
+	
 	public Contact createAPIContact(String firstName, String lastName, String email, String organization)
 	{
 		Contact contact = new Contact();
@@ -46,23 +44,38 @@ public class ContactTestClient
 		contact.setEmail(email);
 		contact.setOrganization(organization);
 
-		Contact contactAPI = apiContact.createContact(contact);
+		Contact contactAPI = client.createContact(contact);
+		
 		contactIds.add(contactAPI.getContactId());
 
 		return contactAPI;
 	}
-
-	public void deleteAPIContact(String id)
+	
+	public Contact getContactByName(String firstName, String lastName)
 	{
-		apiContact.deleteContact(id);
+		List<Contact> contacts = client.getAllContacts();
+		
+		for (Contact contact : contacts) {
+			
+			if (contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName))
+			{
+				return contact;
+			}
+		}
+		
+		return null;
 	}
-
-	@Override
+	
+	public void registerContact(String contactId)
+	{
+		contactIds.add(contactId);
+	}
+	
 	public void cleanup()
 	{
 		for (String id : contactIds) {
-			deleteAPIContact(id);
+			
+			client.deleteContact(id);
 		}
 	}
-
 }

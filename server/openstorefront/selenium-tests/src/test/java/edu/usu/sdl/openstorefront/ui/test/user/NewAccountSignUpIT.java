@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.ui.test.nologin;
+package edu.usu.sdl.openstorefront.ui.test.user;
 
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
-import edu.usu.sdl.openstorefront.selenium.apitestclient.UserRegistrationTestClient;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.UserRegistrationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -40,18 +43,29 @@ public class NewAccountSignUpIT
 {
 
 	private final String organization = "Storefront";
-	private static final String userName = "BobTester";
-	private static final Logger LOG = Logger.getLogger(NewAccountSignUpIT.class.getName());
+	private final String userName = "BobTester";
+	private final Logger LOG = Logger.getLogger(NewAccountSignUpIT.class.getName());
+	private AuthenticationProvider authProvider;
+	private UserRegistrationProvider registrationProvider;
+	private ClientApiProvider provider;
+	@Before
+	public void setup()
+	{
+		provider = new ClientApiProvider();
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		registrationProvider = new UserRegistrationProvider(provider.getAPIClient());
+	}
+	
 
 	@Test
-	public void TestNoLogin()
+	public void TestNoLogin() throws InterruptedException
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 			webDriverUtil.getPage(driver, "registration.jsp");
 			submitRegistrationForm(driver);
 
 			// login as admin and verify registration request
-			login();
+			authProvider.login();
 			webDriverUtil.getPage(driver, "AdminTool.action?load=User-Management");
 			verifyRegistration(driver);
 		}
@@ -83,11 +97,12 @@ public class NewAccountSignUpIT
 
 		// retrieve verfication code from server
 		String registrationId = getRegistrationId(driver);
+
 		Assert.assertNotEquals("failed to load registration ID", registrationId, "");
 
-		UserRegistrationTestClient client = apiClient.getUserRegistrationTestClient();
-		UserRegistration registration = client.getAPIUserRegistration(registrationId);
-
+		UserRegistration registration = registrationProvider.getUserRegistration(registrationId);
+		registrationProvider.registerUser(userName.toLowerCase());
+		
 		driver.findElement(By.cssSelector("input[name='verificationCode']")).sendKeys(registration.getVerificationCode());
 
 		LOG.log(Level.INFO, "--- verification Code {0} CREATED for {1} ---", new Object[]{registration.getVerificationCode(), registrationId});
@@ -115,7 +130,7 @@ public class NewAccountSignUpIT
 
 		// get the registrationID
 		long startTime = System.currentTimeMillis();
-		long maxMilliSeconds = 5000;
+		long maxMilliSeconds = 10000;
 		String registrationId = "";
 		WebElement element = driver.findElement(By.id("registrationId-inputEl"));
 		while (registrationId.equals("") && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
@@ -124,9 +139,9 @@ public class NewAccountSignUpIT
 		return registrationId;
 	}
 	
-	@AfterClass
-	public static void cleanupTest()
+	@After
+	public void cleanupTest()
 	{
-		apiClient.getUserTestClient().deleteAPIUser(userName);
+		registrationProvider.cleanup();
 	}
 }

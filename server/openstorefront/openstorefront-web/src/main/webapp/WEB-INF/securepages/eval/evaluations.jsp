@@ -104,7 +104,19 @@
 						},					
 						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true  },
 						{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
-						{ text: 'Update User', dataIndex: 'updateUser', width: 175 }
+						{ text: 'Update User', dataIndex: 'updateUser', width: 175 },
+						{ text: 'Integration Management', dataIndex: 'issueNumber', width: 175, sortable: false,
+							renderer: function(value, meta, record) { 
+								if(value)
+								{
+									return "<a target='_blank' href='" + record.get("integrationUrl") + "'>" + value + "</a>";
+								}
+								else
+								{
+									return "";
+								}
+							}
+						}
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){

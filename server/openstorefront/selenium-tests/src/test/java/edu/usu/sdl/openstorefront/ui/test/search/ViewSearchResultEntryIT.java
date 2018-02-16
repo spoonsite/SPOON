@@ -15,13 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.search;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,16 +43,33 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class ViewSearchResultEntryIT
-		extends SearchTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static String entryName = "SeleniumTest";
+	private ClientApiProvider provider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
+	private String entryName = "SeleniumTest";
+	private String entryOrganization = "Selenium Organization";
 
-	@BeforeClass
-	public static void createTestEntry()
+	@Before
+	public void setup() throws InterruptedException
 	{
-		createBasicSearchComponent(entryName);
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		organizationProvider.createOrganization(entryOrganization);
+		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
+		componentProvider.createComponent(entryName, "Selenium entry for test", entryOrganization);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 	}
 
 	@Test
@@ -51,7 +77,7 @@ public class ViewSearchResultEntryIT
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			searchForEntry(driver, "SeleniumTest");
+			searchForEntry(driver, entryName);
 			verifyResults(driver, entryName);
 			viewFullPageEntry(driver, entryName);
 
@@ -76,11 +102,14 @@ public class ViewSearchResultEntryIT
 
 		long startTime = System.currentTimeMillis();
 
-		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 30000) {
+		while (entryResults.isEmpty() && (System.currentTimeMillis() - startTime) < 60000) {
 
-			driver.navigate().refresh();
 			entryResults = driver.findElements(By.cssSelector("#resultsDisplayPanel-innerCt h2"));
 
+			if (entryResults.isEmpty()) {
+
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".x-btn.x-unselectable.x-box-item.x-btn-default-large"))).click();
+			}
 		}
 
 		boolean isResult = false;
@@ -136,5 +165,13 @@ public class ViewSearchResultEntryIT
 
 		boolean isDetailsTitle = detailsTitle.getText().contains(entryName);
 		Assert.assertTrue(isDetailsTitle);
+	}
+
+	@After
+	public void cleanupTest() throws AttachedReferencesException
+	{
+		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

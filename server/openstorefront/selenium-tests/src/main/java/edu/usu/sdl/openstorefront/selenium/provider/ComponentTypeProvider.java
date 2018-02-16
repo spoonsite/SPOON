@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,61 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.ComponentTypeClient;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author ccummings
  */
-public class ComponentTypeTestClient
-		extends BaseTestClient
+public class ComponentTypeProvider
 {
-
-	private ComponentTypeClient apiComponentType;
-	private static Set<String> componentTypeIds = new HashSet<>();
-
-	public ComponentTypeTestClient(ClientAPI client, APIClient apiClient)
+	ComponentTypeClient client;
+	List<String> compTypeIds;
+	
+	public ComponentTypeProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiComponentType = new ComponentTypeClient(client);
+		client = new ComponentTypeClient(apiClient);
+		compTypeIds = new ArrayList<>();
 	}
-
-	public ComponentType createAPIComponentType(String componentType)
+	
+	public ComponentType createComponentType(String type)
 	{
 		ComponentType compType = new ComponentType();
-		compType.setComponentType(componentType);
-		compType.setLabel(componentType + " - test label");
-		compType.setDescription(componentType + " - test description");
+		compType.setComponentType(type);
+		compType.setLabel(type + " - test label");
+		compType.setDescription(type + " - test description");
 		compType.setAllowOnSubmission(Boolean.TRUE);
 		compType.setDataEntryAttributes(Boolean.TRUE);
 		compType.setDataEntryContacts(Boolean.TRUE);
 		compType.setDataEntryQuestions(Boolean.TRUE);
 		compType.setDataEntryReviews(Boolean.TRUE);
 
-		ComponentType apiCompType = apiComponentType.createNewComponentType(compType);
-		componentTypeIds.add(apiCompType.getComponentType());
+		ComponentType apiCompType = client.createNewComponentType(compType);
 		
+		compTypeIds.add(apiCompType.getComponentType());
+				
 		return apiCompType;
 	}
-
-	public void deleteAPIEntryType(String type)
-	{
-		apiComponentType.deleteComponentType(type, ComponentType.ARTICLE);
-	}
-
-	@Override
+	
 	public void cleanup()
 	{
-		for (String id : componentTypeIds) {
-
-			deleteAPIEntryType(id);
+		for (String id : compTypeIds) {
+			
+			client.deleteComponentType(id, "COMP");
 		}
 	}
-
 }

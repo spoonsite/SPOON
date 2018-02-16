@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.HighlightClient;
@@ -25,38 +25,37 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class HighlightTestClient
-		extends BaseTestClient
+public class HighlightProvider
 {
 
-	private static List<String> highlightIDs = new ArrayList<>();
-	private HighlightClient apiHighlight;
+	HighlightClient client;
+	private List<String> highlightIds;
 
-	public HighlightTestClient(ClientAPI client, APIClient apiClient)
+	public HighlightProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiHighlight = new HighlightClient(client);
+		client = new HighlightClient(apiClient);
+		highlightIds = new ArrayList<>();
 	}
 
-	public Highlight createAPIHighlight()
+	public Highlight createHighlight(String highlightName)
 	{
 		Highlight highlight = new Highlight();
-		highlight.setTitle("An API-Highlight");
-		highlight.setDescription("This is a very cool api highlight!");
+		highlight.setTitle(highlightName);
+		highlight.setDescription("Selenium highlight description!");
 		highlight.setHighlightType(Highlight.TYPE_COMPONENT);
 		highlight.setOrderingPosition(1);
 
-		Highlight highlightAPI = apiHighlight.postHighlight(highlight);
-		highlightIDs.add(highlightAPI.getHighlightId());
+		Highlight highlightAPI = client.postHighlight(highlight);
+		highlightIds.add(highlightAPI.getHighlightId());
 
 		return highlightAPI;
 	}
 
-	@Override
 	public void cleanup()
 	{
-		for (String id : highlightIDs) {
-			apiHighlight.deleteHighlight(id);
+		for (String id : highlightIds) {
+			
+			client.deleteHighlight(id);
 		}
 	}
 
