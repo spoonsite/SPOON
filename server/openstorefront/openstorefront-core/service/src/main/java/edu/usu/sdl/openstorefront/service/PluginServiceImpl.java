@@ -96,7 +96,7 @@ public class PluginServiceImpl
 		if (filenameSafe == false) {
 			try (InputStream in = pluginInput; OutputStream out = new FileOutputStream(plugin.fullPath())) {
 				//save plugin
-				FileSystemManager.copy(in, out);
+				FileSystemManager.getInstance().copy(in, out);
 			} catch (Exception ex) {
 				throw new OpenStorefrontRuntimeException("Unable to save plugin.", "See log for more details.", ex);
 			}
@@ -130,7 +130,7 @@ public class PluginServiceImpl
 			File file = new File(plugin.fullPath());
 			if (file.exists()) {
 				Path source = file.toPath();
-				Path newdir = FileSystemManager.getDir(FileSystemManager.PLUGIN_UNINSTALLED_DIR).toPath();
+				Path newdir = FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_UNINSTALLED_DIR).toPath();
 
 				try {
 					Files.move(source, newdir.resolve(source.getFileName()), REPLACE_EXISTING);
@@ -145,22 +145,22 @@ public class PluginServiceImpl
 			log.log(Level.WARNING, MessageFormat.format("Unable to find plugin to uninstall: {0}", pluginId));
 		}
 	}
-        
-        @Override
+
+	@Override
 	public void failPlugin(String filename)
 	{
-                //move plugin to failed area
-                File file = new File(filename);
-                if (file.exists()) {
-                        Path source = file.toPath();
-                        Path newdir = FileSystemManager.getDir(FileSystemManager.PLUGIN_FAILED_DIR).toPath();
+		//move plugin to failed area
+		File file = new File(filename);
+		if (file.exists()) {
+			Path source = file.toPath();
+			Path newdir = FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_FAILED_DIR).toPath();
 
-                        try {
-                                Files.move(source, newdir.resolve(source.getFileName()), REPLACE_EXISTING);
-                        } catch (IOException ex) {
-                                throw new OpenStorefrontRuntimeException("Failed to move Plugin to failed directory", "Check permissions; Disk Space", ex);
-                        }
-                }
+			try {
+				Files.move(source, newdir.resolve(source.getFileName()), REPLACE_EXISTING);
+			} catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Failed to move Plugin to failed directory", "Check permissions; Disk Space", ex);
+			}
+		}
 	}
 
 	@Override

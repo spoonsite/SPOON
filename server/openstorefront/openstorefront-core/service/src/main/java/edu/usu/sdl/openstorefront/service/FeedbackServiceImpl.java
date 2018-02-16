@@ -96,7 +96,7 @@ public class FeedbackServiceImpl
 				break;
 			case FeedbackHandleType.EMAIL:
 
-				String emailAddress = PropertiesManager.getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
+				String emailAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
 				if (StringUtils.isNotBlank(emailAddress)) {
 					Email email = MailManager.newEmail();
 					email.setSubject(ticket.fullSubject());

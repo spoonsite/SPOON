@@ -37,7 +37,7 @@
 		branding = branding.find();
 		request.setAttribute("branding", branding);
 	
-		String appVersion = PropertiesManager.getApplicationVersion();
+		String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());

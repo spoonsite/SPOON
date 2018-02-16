@@ -43,7 +43,7 @@ public class ElasticSearchClient
 	{
 		this.serverUrl = serverUrl;
 		this.port = port;
-		this.elasticSearchManager = ElasticSearchManager.getPoolInstance();
+		this.elasticSearchManager = ElasticSearchManager.getInstance();
 	}
 
 	public ElasticSearchClient(String serverUrl, Integer port, ElasticSearchManager elasticSearchManager)

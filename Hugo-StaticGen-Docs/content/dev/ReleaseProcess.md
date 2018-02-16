@@ -47,8 +47,3 @@ apply in certain environments.
 2. Moves are handled internally...however move instruction should be clear. 
 
 
-
-
-
-
-

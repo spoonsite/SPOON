@@ -43,7 +43,7 @@ public class DBLogHandler
 		if (record != null && active) {
 			try {
 				//Filter Audit logging as it can fill the logs and it's better captured else where
-				boolean logSecurityFilter = Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_LOG_SECURITY, "false"));
+				boolean logSecurityFilter = Convert.toBoolean(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DBLOG_LOG_SECURITY, "false"));
 				if (logSecurityFilter || record.getSourceClassName().equals("edu.usu.sdl.openstorefront.web.rest.SecurityFilter") == false) {
 					DBLogRecord logRecord = DBLogRecord.fromLogRecord(record);
 

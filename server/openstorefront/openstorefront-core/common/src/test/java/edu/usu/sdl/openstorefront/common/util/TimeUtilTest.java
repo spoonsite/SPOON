@@ -15,13 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.common.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -32,26 +29,6 @@ public class TimeUtilTest
 {
 
 	public TimeUtilTest()
-	{
-	}
-
-	@BeforeClass
-	public static void setUpClass()
-	{
-	}
-
-	@AfterClass
-	public static void tearDownClass()
-	{
-	}
-
-	@Before
-	public void setUp()
-	{
-	}
-
-	@After
-	public void tearDown()
 	{
 	}
 
@@ -98,13 +75,64 @@ public class TimeUtilTest
 		Date result = TimeUtil.currentDate();
 		assertNotNull(result);
 	}
-	
-	@Test 
+
+	@Test
 	public void testMinMaxDate()
 	{
 		System.out.println("testMinMaxDate: ");
 		System.out.println("Start: " + TimeUtil.beginningOfDay(new Date()));
-		System.out.println("End: " + TimeUtil.endOfDay(new Date()));		
+		System.out.println("End: " + TimeUtil.endOfDay(new Date()));
+	}
+
+	/**
+	 * Test of minutesToMillis method, of class TimeUtil.
+	 */
+	@Test
+	public void testMinutesToMillis()
+	{
+		System.out.println("minutesToMillis");
+		long minutes = 1L;
+		long expResult = 60000L;
+		long result = TimeUtil.minutesToMillis(minutes);
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of standardDateFormater method, of class TimeUtil.
+	 */
+	@Test
+	public void testStandardDateFormater()
+	{
+		System.out.println("standardDateFormater");
+		SimpleDateFormat expResult = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
+		SimpleDateFormat result = TimeUtil.standardDateFormater();
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of daysToMillis method, of class TimeUtil.
+	 */
+	@Test
+	public void testDaysToMillis()
+	{
+		System.out.println("daysToMillis");
+		long days = 1L;
+		long expResult = 86400000L;
+		long result = TimeUtil.daysToMillis(days);
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of millisToString method, of class TimeUtil.
+	 */
+	@Test
+	public void testMillisToString()
+	{
+		System.out.println("millisToString");
+		long millis = 1L;
+		String expResult = "0 hr(s) 0 min(s) 0 sec(s) 1 ms";
+		String result = TimeUtil.millisToString(millis);
+		assertEquals(expResult, result);
 	}
 
 }

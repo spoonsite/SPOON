@@ -191,7 +191,7 @@ public abstract class BaseTestCase
 
 	protected String getSystemEmail()
 	{
-		String systemEmail = PropertiesManager.getValue(PropertiesManager.KEY_TEST_EMAIL);
+		String systemEmail = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TEST_EMAIL);
 		if (StringUtils.isBlank(systemEmail)) {
 			throw new OpenStorefrontRuntimeException("Unable to find test email.", "Add/Update system property: " + PropertiesManager.KEY_TEST_EMAIL + " set a email for test.");
 		}

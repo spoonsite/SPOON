@@ -16,93 +16,98 @@
  * See NOTICE.txt for more information.
  */
 
- /* global Ext, CoreUtil */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.landing.TagCloud', {
-	
-	handler: function(record, item) {
-		var tagCloud = this;		
+
+	handler: function (record, item) {
+		var tagCloud = this;
+
 		if (!tagCloud.view) {
-			tagCloud.view = Ext.create('OSF.landing.TagCloudView', {				
+			tagCloud.view = Ext.create('OSF.landing.TagCloudView', {
 			});
-		}	
+		}
 		tagCloud.view.show();
+		if (!tagCloud.view.dataLoaded) {
+			tagCloud.view.setLoading(true);
+		}
 	}
-	
 });
 
 Ext.define('OSF.landing.TagCloudView', {
 	extend: 'Ext.window.Window',
 	alias: 'widget.osf-tagcloudview',
-	
+
 	width: '70%',
 	height: '70%',
 	scrollable: true,
-	maximizable: true,	
+	maximizable: true,
 	modal: true,
 	title: 'Tags - Click on Tag to view Entries. The more Entries tagged the larger the text.',
 	iconCls: 'fa fa-lg fa-tags',
 	listeners: {
-		resize: function(view, width, height, oldWidth, oldHeight, eOpts) {
+		resize: function (view, width, height, oldWidth, oldHeight, eOpts) {
 			if (width < 568) {
 				this.maximize(false);
 			} else {
 				this.restore();
-			}		
+			}
 		}
-	},	
-	
+	},
+	dataLoaded: false,
 	initComponent: function () {
-		this.callParent();			
-		var	tagView = this;
-		
-		CoreUtil.pageActions.viewTag = function(tag) {
-				var searchObj = {
-					"sortField": null,
-					"sortDirection": "ASC",
-					"startOffset": 0,
-					"max": 2147483647,
-					"searchElements": [{
-							"searchType": "TAG",
-							"field": null,
-							"value": tag,
-							"keyField": null,
-							"keyValue": null,
-							"startDate": null,
-							"endDate": null,
-							"caseInsensitive": false,
-							"numberOperation": "EQUALS",
-							"stringOperation": "EQUALS",
-							"mergeCondition": "OR"
-						}]
-				};
-				
-				var searchRequest = {
-					type: 'Advance',
-					query: searchObj
-				};
-				
-				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-				window.location.href = 'searchResults.jsp';				
+
+		this.callParent();
+		var tagView = this;
+
+		CoreUtil.pageActions.viewTag = function (tag) {
+			var searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "TAG",
+						"field": null,
+						"value": tag,
+						"keyField": null,
+						"keyValue": null,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"
+					}]
+			};
+
+			var searchRequest = {
+				type: 'Advance',
+				query: searchObj
+			};
+
+			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+			window.location.href = 'searchResults.jsp';
 		};
-		
-		
-		var tagPanel = Ext.create('Ext.panel.Panel', {			
-			bodyStyle: 'padding: 20px;',			
+
+
+		var tagPanel = Ext.create('Ext.panel.Panel', {
+			bodyStyle: 'padding: 20px;',
 			tpl: new Ext.XTemplate(
-				'<tpl for=".">',
-				' <span style="font-size: {tagSize}em; padding: 0px 10px 0px; 10px; line-height: 100%;"><a href="#" class="link" title="{count}" onclick="CoreUtil.pageActions.viewTag(\'{text}\');">{text}</a></span>',
-				'</tpl>'
-			)
-		});			
+					'<tpl for=".">',
+					' <span style="font-size: {tagSize}em; padding: 0px 10px 0px; 10px; line-height: 100%;"><a href="#" class="link" title="{count}" onclick="CoreUtil.pageActions.viewTag(\'{text}\');">{text}</a></span>',
+					'</tpl>'
+					)
+		});
+
 
 		Ext.Ajax.request({
-			url: 'api/v1/resource/components/tagviews?approvedOnly=true',				
-			success: function(response, opts) {
+			url: 'api/v1/resource/components/tagviews?approvedOnly=true',
+			success: function (response, opts) {
 				var tags = Ext.decode(response.responseText);
 				var groupedTags = [];
-				Ext.Array.each(tags, function(tag) {
-					var existingTag = Ext.Array.findBy(groupedTags, function(item){
+				Ext.Array.each(tags, function (tag) {
+					var existingTag = Ext.Array.findBy(groupedTags, function (item) {
 						return item.text === tag.text;
 					});
 					if (existingTag) {
@@ -113,8 +118,8 @@ Ext.define('OSF.landing.TagCloudView', {
 							count: 1
 						});
 					}
-				});	
-				groupedTags.sort(function(a, b){
+				});
+				groupedTags.sort(function (a, b) {
 					return a.text.localeCompare(b.text);
 				});
 
@@ -122,7 +127,7 @@ Ext.define('OSF.landing.TagCloudView', {
 				var minFontSize = .625;
 				var maxCount = 0;
 				var minCount = 0;
-				Ext.Array.each(groupedTags, function(tag) {
+				Ext.Array.each(groupedTags, function (tag) {
 					if (maxCount < tag.count) {
 						maxCount = tag.count;
 					}
@@ -130,7 +135,7 @@ Ext.define('OSF.landing.TagCloudView', {
 						minCount = tag.count;
 					}
 				});
-				Ext.Array.each(groupedTags, function(tag) {
+				Ext.Array.each(groupedTags, function (tag) {
 					var tagSize = Math.abs((maxFontSize * (tag.count - minCount)) / (maxCount - minCount));
 					if (tagSize < minFontSize) {
 						tagSize = minFontSize;
@@ -140,11 +145,12 @@ Ext.define('OSF.landing.TagCloudView', {
 
 
 				tagPanel.update(groupedTags);
+				tagView.dataLoaded = true;
+				tagView.setLoading(false);
 			}
-		});	
-		
+		});
+
 		tagView.add(tagPanel);
-		
 	}
-	
+
 });

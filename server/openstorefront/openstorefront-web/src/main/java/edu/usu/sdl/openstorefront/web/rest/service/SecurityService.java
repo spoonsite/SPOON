@@ -73,7 +73,7 @@ public class SecurityService
 	@Path("/shiroconfig")
 	public Response getShiroConfig()
 	{
-		File shiroConfig = FileSystemManager.getConfig("shiro.ini");
+		File shiroConfig = FileSystemManager.getInstance().getConfig("shiro.ini");
 
 		String config = "";
 		try {
@@ -95,7 +95,7 @@ public class SecurityService
 			GenericDataView dataView
 	)
 	{
-		File shiroConfig = FileSystemManager.getConfig("shiro.ini");
+		File shiroConfig = FileSystemManager.getInstance().getConfig("shiro.ini");
 
 		try {
 			Files.copy(shiroConfig.toPath(),

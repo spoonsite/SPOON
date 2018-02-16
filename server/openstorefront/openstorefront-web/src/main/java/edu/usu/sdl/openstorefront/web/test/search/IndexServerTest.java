@@ -44,7 +44,7 @@ public class IndexServerTest
 	protected void initializeTest()
 	{
 		super.initializeTest(); 		
-		SearchServerManager.getSearchServer().deleteAll();	
+		SearchServerManager.getInstance().getSearchServer().deleteAll();	
 	}
 
 	
@@ -56,14 +56,14 @@ public class IndexServerTest
 		FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
 		filterQueryParams.setSortField("name");
 		
-		IndexSearchResult searchResults = SearchServerManager.getSearchServer().doIndexSearch("*", filterQueryParams);
+		IndexSearchResult searchResults = SearchServerManager.getInstance().getSearchServer().doIndexSearch("*", filterQueryParams);
 		addResultsLines("Results found (There may be a delay): " + searchResults.getTotalResults());
 		
 		//Add Record
 		ComponentAll componentAll = getTestComponent();
 		List<Component> components = new ArrayList<>();
 		components.add(componentAll.getComponent());
-		SearchServerManager.getSearchServer().index(components);
+		SearchServerManager.getInstance().getSearchServer().index(components);
 		
 		try {
 			Thread.sleep(1000);
@@ -71,7 +71,7 @@ public class IndexServerTest
 			Logger.getLogger(IndexServerTest.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		//Search for record
-		searchResults = SearchServerManager.getSearchServer().doIndexSearch("Test", filterQueryParams);
+		searchResults = SearchServerManager.getInstance().getSearchServer().doIndexSearch("Test", filterQueryParams);
 		addResultsLines("Results found: " + searchResults.getTotalResults());
 		if (searchResults.getTotalResults() == 0) {
 			addFailLines("Unable to find indexed record");			
@@ -83,7 +83,7 @@ public class IndexServerTest
 	protected void cleanupTest()
 	{
 		super.cleanupTest(); 
-		SearchServerManager.getSearchServer().resetIndexer();
+		SearchServerManager.getInstance().getSearchServer().resetIndexer();
 	}
 
 }

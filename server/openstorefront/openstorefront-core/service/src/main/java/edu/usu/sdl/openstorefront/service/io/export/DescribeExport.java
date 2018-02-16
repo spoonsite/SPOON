@@ -60,8 +60,9 @@ import java.util.stream.Collectors;
  * @author dshurtleff
  */
 public class DescribeExport
-	extends Exporter
+		extends Exporter
 {
+
 	private static final String ATTRIBUTE_TYPE_CONFORMANCE = "DESCCOMF";
 	private static final String ATTRIBUTE_TYPE_NETWORK = "DESCNETW";
 
@@ -70,13 +71,12 @@ public class DescribeExport
 	{
 		TrustedDataCollection dataCollection = new TrustedDataCollection();
 		TrustedDataObject dataObject = new TrustedDataObject();
-		
-		dataObject.setVersion(PropertiesManager.getApplicationVersion());
+
+		dataObject.setVersion(PropertiesManager.getInstance().getApplicationVersion());
 		dataObject.setPayloadURI(OpenStorefrontConstant.NOT_AVAILABLE);
-		
-				
+
 		HandlingAssertion handlingAssertion = new HandlingAssertion();
-		handlingAssertion.setScope(OpenStorefrontConstant.NOT_AVAILABLE);				
+		handlingAssertion.setScope(OpenStorefrontConstant.NOT_AVAILABLE);
 		HandlingStatement handlingStatement = new HandlingStatement();
 		Edh edh = new Edh();
 		edh.setCreateDts(TimeUtil.dateToString(record.getComponent().getCreateDts()));
@@ -89,154 +89,153 @@ public class DescribeExport
 		security.setClassification("U");
 		security.setCompliesWith(OpenStorefrontConstant.NOT_AVAILABLE);
 		security.setCreateDate(TimeUtil.dateToString(TimeUtil.currentDate()));
-		security.setOwnerProducer(OpenStorefrontConstant.NOT_AVAILABLE);		
-		edh.setSecurity(security);		
-		
-		handlingStatement.setEdh(edh);		
+		security.setOwnerProducer(OpenStorefrontConstant.NOT_AVAILABLE);
+		edh.setSecurity(security);
+
+		handlingStatement.setEdh(edh);
 		handlingAssertion.setHandlingStatement(handlingStatement);
-		
+
 		dataObject.setHandlingAssertion(handlingAssertion);
-		
+
 		dataCollection.setHandlingAssertion(handlingAssertion);
-		dataCollection.setVersion(PropertiesManager.getApplicationVersion());						
+		dataCollection.setVersion(PropertiesManager.getInstance().getApplicationVersion());
 		dataCollection.getTrustedDataObjects().add(dataObject);
-		
+
 		Assertion collectionAssertion = new Assertion();
-		collectionAssertion.setStatement(OpenStorefrontConstant.NOT_AVAILABLE);		
+		collectionAssertion.setStatement(OpenStorefrontConstant.NOT_AVAILABLE);
 		dataCollection.setAssertion(collectionAssertion);
-				
+
 		Assertion assertion = new Assertion();
 		StructuredStatement structuredStatement = new StructuredStatement();
 		assertion.setStructuredStatement(structuredStatement);
-		
+
 		dataObject.getAssertions().add(assertion);
-				
-		SearchProvider searchProvider = new SearchProvider();		
+
+		SearchProvider searchProvider = new SearchProvider();
 		structuredStatement.setSearchProvider(searchProvider);
-		
+
 		GeneralInfo generalInfo = new GeneralInfo();
 		searchProvider.setGeneralInfo(generalInfo);
-		
+
 		generalInfo.setName(record.getComponent().getName());
 		generalInfo.setDescription(record.getComponent().getDescription());
 		generalInfo.setDescriptionClassification(StringProcessor.blankIfNull(record.getComponent().getSecurityMarkingType()));
 		generalInfo.setGuid(StringProcessor.blankIfNull(record.getComponent().getGuid()));
 		generalInfo.setNameClassification("");
 		generalInfo.setNetwork("");
-		
+
 		Map<String, List<ComponentAttribute>> attributeTypeMap = record.getAttributes().stream().collect(Collectors.groupingBy(c -> c.getComponentAttributePk().getAttributeType()));
-		
+
 		if (attributeTypeMap.containsKey(ATTRIBUTE_TYPE_NETWORK)) {
-			List<ComponentAttribute> attributes  = attributeTypeMap.get(ATTRIBUTE_TYPE_NETWORK);
-			StringBuilder sb = new StringBuilder();			
+			List<ComponentAttribute> attributes = attributeTypeMap.get(ATTRIBUTE_TYPE_NETWORK);
+			StringBuilder sb = new StringBuilder();
 			int count = 0;
 			for (ComponentAttribute attribute : attributes) {
 				sb.append(attribute.getComponentAttributePk().getAttributeCode());
 				if (count > 1) {
 					sb.append(" ");
-				} 
-				
+				}
+
 				count++;
 			}
 			generalInfo.setNetwork(sb.toString());
 		}
-		
+
 		PointOfContact pointOfContact = new PointOfContact();
 		Organization organization = new Organization();
 		organization.setName(record.getComponent().getOrganization());
-				
-		edu.usu.sdl.openstorefront.core.entity.Organization  sfOrg = new edu.usu.sdl.openstorefront.core.entity.Organization();
+
+		edu.usu.sdl.openstorefront.core.entity.Organization sfOrg = new edu.usu.sdl.openstorefront.core.entity.Organization();
 		sfOrg.setName(record.getComponent().getOrganization());
 		sfOrg = sfOrg.find();
-		
+
 		if (sfOrg != null) {
 			organization.setEmail(sfOrg.getContactEmail());
 			organization.setPhone(sfOrg.getContactPhone());
 			organization.setSubOrganization(sfOrg.getAgency());
-		}	
+		}
 		pointOfContact.setOrganization(organization);
 		generalInfo.getContacts().add(pointOfContact);
-		
+
 		for (ComponentContact contact : record.getContacts()) {
 			pointOfContact = new PointOfContact();
-			
+
 			Person person = new Person();
 			person.setName(contact.getFirstName());
 			person.setSurname(contact.getLastName());
 			person.setEmail(contact.getEmail());
 			person.setPhone(contact.getPhone());
 			person.setAffiliation(contact.getOrganization());
-			pointOfContact.setPerson(person);			
+			pointOfContact.setPerson(person);
 			generalInfo.getContacts().add(pointOfContact);
 		}
-				
+
 		List<ComponentResource> serviceResources = new ArrayList<>();
-		for (ComponentResource  resource : record.getResources()) 
-		{
+		for (ComponentResource resource : record.getResources()) {
 			if (ResourceType.SERVICE.equals(resource.getResourceType())) {
 				serviceResources.add(resource);
 			} else {
 				RelatedResource relatedResource = new RelatedResource();
 				relatedResource.setDescription(resource.getDescription());
 
-				ComponentResourceView view = ComponentResourceView.toView(resource);				
-				relatedResource.setLink(view.getLink());		
-				
-				relatedResource.setRelationship(resource.getResourceType());				
+				ComponentResourceView view = ComponentResourceView.toView(resource);
+				relatedResource.setLink(view.getLink());
+
+				relatedResource.setRelationship(resource.getResourceType());
 				searchProvider.getRelatedResources().add(relatedResource);
 			}
 		}
-		
+
 		if (!serviceResources.isEmpty()) {
-			
-			for (ComponentResource  resource : serviceResources) {
-				SearchInterface searchInterface  = new SearchInterface();
-				Service serviceResource  = new Service();
+
+			for (ComponentResource resource : serviceResources) {
+				SearchInterface searchInterface = new SearchInterface();
+				Service serviceResource = new Service();
 				searchInterface.setService(serviceResource);
-				
-				serviceResource.setName(resource.getDescription());				
+
+				serviceResource.setName(resource.getDescription());
 				if (resource.getRestricted() != null) {
 					ServiceType serviceType = new ServiceType();
 					serviceType.setSecure(Boolean.toString(resource.getRestricted()));
 					serviceResource.setServiceType(serviceType);
 				}
-				
+
 				Address address = new Address();
-				ComponentResourceView view = ComponentResourceView.toView(resource);		
-				address.setText(view.getLink());	
+				ComponentResourceView view = ComponentResourceView.toView(resource);
+				address.setText(view.getLink());
 				serviceResource.getAddresses().add(address);
-				
+
 				if (attributeTypeMap.containsKey(ATTRIBUTE_TYPE_CONFORMANCE)) {
-					List<ComponentAttribute> attributes  = attributeTypeMap.get(ATTRIBUTE_TYPE_CONFORMANCE);
-		
+					List<ComponentAttribute> attributes = attributeTypeMap.get(ATTRIBUTE_TYPE_CONFORMANCE);
+
 					for (ComponentAttribute attribute : attributes) {
-						 Conformance conformance = new Conformance();
-						 conformance.setId(attribute.getComponentAttributePk().getAttributeCode());
-						 
-						 AttributeCodePk attributeCodePk = new AttributeCodePk();
-						 attributeCodePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
-						 attributeCodePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-						 
-						 AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-						 if (attributeCode != null) {						 
+						Conformance conformance = new Conformance();
+						conformance.setId(attribute.getComponentAttributePk().getAttributeCode());
+
+						AttributeCodePk attributeCodePk = new AttributeCodePk();
+						attributeCodePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+						attributeCodePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+
+						AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+						if (attributeCode != null) {
 							conformance.setName(attributeCode.getLabel());
-						 } else {
-							 conformance.setName(attribute.getComponentAttributePk().getAttributeCode());
-						 }
-						 
-						 serviceResource.getConformances().add(conformance);
+						} else {
+							conformance.setName(attribute.getComponentAttributePk().getAttributeCode());
+						}
+
+						serviceResource.getConformances().add(conformance);
 					}
-				}	
-			
+				}
+
 				searchProvider.getSearchInterfaces().add(searchInterface);
 			}
 		}
-		
+
 		try {
-			DescribeParser.write(out, dataCollection);		
+			DescribeParser.write(out, dataCollection);
 		} catch (Exception e) {
 			throw new OpenStorefrontRuntimeException(e);
 		}
 	}
-	
+
 }

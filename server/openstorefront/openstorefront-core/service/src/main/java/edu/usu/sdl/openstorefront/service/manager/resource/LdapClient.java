@@ -113,7 +113,7 @@ public class LdapClient
 				+ "    (| ");
 		for (String user : usernames) {
 			filter.append("(")
-					.append(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_USERNAME, "sAMAccountName"))
+					.append(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_ATTRIB_USERNAME, "sAMAccountName"))
 					.append("=")
 					.append(user)
 					.append(") ");

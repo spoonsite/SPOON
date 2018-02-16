@@ -954,7 +954,7 @@ public class SubComponentServiceImpl
 		}
 
 		if (validationResult.valid()) {
-			if (PropertiesManager.getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
 				review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			} else {
 				review.setActiveStatus(ComponentReview.PENDING_STATUS);

@@ -39,6 +39,7 @@ public class APIClient
 	private ComponentRESTTestClient apiComponentRESTClient;
 	private UserRegistrationTestClient apiUserRegistrationClient;
 	private OrganizationTestClient apiOrganizationClient;
+	private UserTestClient apiUserTestClient;
 
 	public APIClient()
 	{
@@ -138,6 +139,15 @@ public class APIClient
 			testClients.push(apiOrganizationClient);
 		}
 		return apiOrganizationClient;
+	}
+	
+	public UserTestClient getUserTestClient()
+	{
+		if (apiUserTestClient == null) {
+			apiUserTestClient = new UserTestClient(client, this);
+			testClients.push(apiUserTestClient);
+		}
+		return apiUserTestClient;
 	}
 	
 	public void cleanup()

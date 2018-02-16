@@ -1,4 +1,5 @@
 baseURL = "/openstorefront/"
+canonifyURLs = "true"
 languageCode = "en-us"
 DefaultContentLanguage = "en"
 

@@ -262,7 +262,7 @@ public class SystemServiceImpl
 			ticket.append("TicketNumber: ").append(ticketNumber).append("\n");
 			ticket.append("Client IP: ").append(errorInfo.getClientIp()).append("\n");
 			ticket.append("User: ").append(SecurityUtil.getCurrentUserName()).append("\n");
-			ticket.append("Application Version: ").append(PropertiesManager.getApplicationVersion()).append("\n");
+			ticket.append("Application Version: ").append(PropertiesManager.getInstance().getApplicationVersion()).append("\n");
 			ticket.append("Message: ").append(systemErrorModel.getMessage()).append("\n");
 			ticket.append("Potential Resolution: ").append(StringProcessor.blankIfNull(systemErrorModel.getPotentialResolution())).append("\n");
 			ticket.append("Request: ").append(errorInfo.getRequestUrl()).append("\n");
@@ -295,7 +295,7 @@ public class SystemServiceImpl
 			persistenceService.persist(errorTicket);
 
 			//save file
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes(Charset.defaultCharset()));
 
 			AlertContext alertContext = new AlertContext();
@@ -317,7 +317,7 @@ public class SystemServiceImpl
 		String ticketData = null;
 		ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, errorTicketId);
 		if (errorTicket != null) {
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			try {
 				byte data[] = Files.readAllBytes(path);
 				ticketData = new String(data);
@@ -345,7 +345,7 @@ public class SystemServiceImpl
 	public void cleanupOldErrors()
 	{
 		long count = persistenceService.countClass(ErrorTicket.class);
-		long max = Long.parseLong(PropertiesManager.getValue(PropertiesManager.KEY_MAX_ERROR_TICKETS, OpenStorefrontConstant.ERRORS_MAX_COUNT_DEFAULT));
+		long max = Long.parseLong(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_ERROR_TICKETS, OpenStorefrontConstant.ERRORS_MAX_COUNT_DEFAULT));
 
 		if (count > max) {
 
@@ -361,7 +361,7 @@ public class SystemServiceImpl
 	{
 		errorTickets.stream().forEach((errorTicket)
 				-> {
-			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
 				if (!path.toFile().delete()) {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to remove error ticket. Path: {0}", path.toString()));
@@ -576,7 +576,7 @@ public class SystemServiceImpl
 
 		String query = "SELECT FROM " + TemporaryMedia.class.getSimpleName();
 		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
-		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
+		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
 
 		for (TemporaryMedia media : allTemporaryMedia) {
 			LocalDate today = LocalDate.now();
@@ -713,8 +713,8 @@ public class SystemServiceImpl
 
 			//Root Section
 			HelpSection helpSectionRoot = new HelpSection();
-			helpSectionRoot.setTitle(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE));
-			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getApplicationVersion() + "</center>");
+			helpSectionRoot.setTitle(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getInstance().getApplicationVersion() + "</center>");
 			helpSectionAll.setHelpSection(helpSectionRoot);
 
 			//sort in original section order
@@ -813,7 +813,7 @@ public class SystemServiceImpl
 	@Override
 	public void toggleDBlogger(boolean activate)
 	{
-		PropertiesManager.setProperty(PropertiesManager.KEY_DBLOG_ON, Boolean.toString(Convert.toBoolean(activate)));
+		PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DBLOG_ON, Boolean.toString(Convert.toBoolean(activate)));
 
 		//restart
 		DBLogManager.cleanup();

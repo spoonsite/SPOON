@@ -199,4 +199,11 @@ public interface Service
 	 */
 	public HelpSupportService getHelpSupportService();
 
+	/**
+	 * Handles submission form services
+	 *
+	 * @return
+	 */
+	public SubmissionFormService getSubmissionFormService();
+
 }

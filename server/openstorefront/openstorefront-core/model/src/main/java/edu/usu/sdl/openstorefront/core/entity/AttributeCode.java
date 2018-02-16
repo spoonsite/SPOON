@@ -119,7 +119,7 @@ public class AttributeCode
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getAttachmentFileName())) {
-			File attachmentDir = FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR);
+			File attachmentDir = FileSystemManager.getInstance().getDir(FileSystemManager.ATTACHMENT_DIR);
 			path = Paths.get(attachmentDir.getPath() + "/" + getAttachmentFileName());
 		}
 		return path;

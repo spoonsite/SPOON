@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import javax.ws.rs.core.Response;
@@ -24,16 +26,23 @@ import javax.ws.rs.core.Response;
  * @author ccummings
  */
 public class UserClient
+			extends AbstractService
 {
+	private String basePath = "api/v1/resource/users";
+
+	public UserClient(ClientAPI client)
+	{
+		super(client);
+	}
 
 	public Response approveRegistration(String username)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response deleteUser(String username)
+	public void deleteUser(String username)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/" + username, null);
 	}
 
 	public Response disableUser(String username)

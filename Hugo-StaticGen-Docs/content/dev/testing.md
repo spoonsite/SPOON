@@ -53,22 +53,38 @@ Regression tests are captured in a separate document. [Regression Docs](https://
 
 ## Selenium Tests
 
-How to run Selenium tests:
+### Run Selenium on Local Instance
 
-1. These steps assume you have the latest code for your branch.
-2. Go to your testconfig.properties file found in your var directory (/var/openstorefront/config/testconfig).  Update the email field in the following section:
+1. These steps assume you have the latest code for your branch and are running the application locally at http://localhost:8080/openstorefront.
+2. Go to your testconfig.properties file found in your var directory `/var/openstorefront/config/testconfig`.  Update the email field in the following section:
+
+```
 test.server=http://localhost:8080/openstorefront/
 #EDGE, CHROME, IE, FIREFOX, ALL
 test.drivers=CHROME
 test.username=admin
 test.password=Secret1@
-test.newuseremail= *_your email_*
+test.newuseremail= <YOUR_EMAIL>
 report.dir=/var/openstorefront/testreports
+```
+
 3. Storefront and ElasticSearch must be running in order to run a Selenium test.
 4. Right click on *selenium-tests* found in the Projects tab of NetBeans.
 5. Select *Run Selenium Tests*.
 6. To run an individual Selenium test: locate the test file, right click on it, and select *Test File*.
-7. Note: Selenium tests end with _IT.java_.
+
+{{% notice note %}}
+Selenium tests end with _IT.java_.
+{{% /notice %}}
+
+### Run Selenium on Remote Instance
+
+1. Checkout the branch under test locally
+2. Build *Selenium-Tests*. The whole project does not need to be built. Only the Selenium tests will be built and run locally.
+3. Edit the testconfig.properties file to `test.server=<server>:<port>/openstorefont/`.
+4. Right click on *selenium-tests* found in the Projects tab of NetBeans.
+5. Select *Run Selenium Tests*.
+6. To run an individual Selenium test: locate the test file, right click on it, and select *Test File*.
 
 ## Unit Tests
 
