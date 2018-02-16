@@ -53,7 +53,6 @@ public class ComponentTypeClient extends AbstractService
 
 	public void deleteComponentType(String type, String newType)
 	{
-		System.out.println("#($*($ What is new type: " + newType + " The type is " + type);
 		client.httpDelete(basePath + "/" + type + "?newtype=" + newType, null);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.apiclient.rest.resource.AttributeClient;
@@ -33,20 +33,25 @@ import java.util.List;
  *
  * @author ccummings
  */
-public class AttributeTestClient extends BaseTestClient
+public class AttributeProvider
 {
 
-	private AttributeClient apiAttribute;
-	private static List<String> attributeIDs = new ArrayList<>();
-	private static List<String> attributeXRefTypes = new ArrayList<>();
-	
-	public AttributeTestClient(ClientAPI client, APIClient apiClient)
+	private AttributeClient client;
+	private List<String> attributeTypes;
+	private List<String> attributeXRefTypes;
+
+	private static final String TEST_ATTRIBUTE_TYPE = "MAPPINGTESTATTR";
+	private static final String TEST_ATTRIBUTE_CODE = "MAPPINGATTRTEST";
+	private static final String TEST_ATTRIBUTE_MAPPING_CODE = "MAPPINGATTR";
+
+	public AttributeProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiAttribute = new AttributeClient(client);
+		client = new AttributeClient(apiClient);
+		attributeTypes = new ArrayList<>();
+		attributeXRefTypes = new ArrayList();
 	}
-	
-	public AttributeType createAPIAttribute(String attributeType, String attrDefaultCode, String codeLabel)
+
+	public AttributeType createAttribute(String attributeType, String attributeDefaultCode, String codeLabel)
 	{
 		AttributeType type = new AttributeType();
 		type.setAttributeType(attributeType);
@@ -54,91 +59,83 @@ public class AttributeTestClient extends BaseTestClient
 		type.setVisibleFlg(Boolean.TRUE);
 		type.setImportantFlg(Boolean.TRUE);
 		type.setRequiredFlg(Boolean.TRUE);
-		type.setDefaultAttributeCode(attrDefaultCode);
+		type.setDefaultAttributeCode(attributeDefaultCode);
 		AttributeTypeSave attributeTypeSave = new AttributeTypeSave();
 		attributeTypeSave.setAttributeType(type);
-		
-		AttributeType apiAttrType = apiAttribute.postAttributeType(attributeTypeSave);
-		addAttributeCode(apiAttrType.getAttributeType(), attrDefaultCode, codeLabel);
-		attributeIDs.add(apiAttrType.getAttributeType());
-		
+
+		AttributeType apiAttrType = client.postAttributeType(attributeTypeSave);
+		addAttributeCode(apiAttrType.getAttributeType(), attributeDefaultCode, codeLabel);
+
+		attributeTypes.add(apiAttrType.getAttributeType());
+
 		return apiAttrType;
 	}
-	
-	public void deleteAPIAttribute(String type)
-	{
-		apiAttribute.hardDeleteAttributeType(type);
-	}
-	
+
 	public List<AttributeType> getReqAttributeTypes(String componentType)
 	{
-		return apiAttribute.getRequiredAttributeTypes(componentType);
+		return client.getRequiredAttributeTypes(componentType);
 	}
-	
+
+	public List<AttributeCode> getListAttributeCodes(String attrType, FilterQueryParams params)
+	{
+		return client.getAttributeCodes(attrType, params);
+	}
+
 	public AttributeCode addAttributeCode(String attributeType, String codeLabel, String code)
-	{	
-		AttributeType type = apiAttribute.getAttributeTypeById(attributeType, null, null);
-		
+	{
+		AttributeType type = client.getAttributeTypeById(attributeType, null, null);
+
 		AttributeCodePk codePk = new AttributeCodePk();
 		codePk.setAttributeCode(code);
 		codePk.setAttributeType(type.getAttributeType());
-		
+
 		AttributeCode attrCode = new AttributeCode();
 		attrCode.setLabel(codeLabel);
 		attrCode.setAttributeCodePk(codePk);
-		
-		return apiAttribute.postAttributeCode(attributeType, attrCode);
+
+		return client.postAttributeCode(attributeType, attrCode);
 	}
-	
-	public List<AttributeCode> getListAttributeCodes(String attrType, FilterQueryParams params)
-	{
-		return apiAttribute.getAttributeCodes(attrType, params);
-	}
-	
+
 	public void createJiraMapping()
 	{
 		// Need to create an attribute here with api before mapping
 		//
-		createAPIAttribute("MAPPINGTESTATTR", "MAPATTRTEST", "MAPATTR");
-		
+		createAttribute(TEST_ATTRIBUTE_TYPE, TEST_ATTRIBUTE_CODE, TEST_ATTRIBUTE_MAPPING_CODE);
+
 		AttributeXRefType xRefType = new AttributeXRefType();
-		xRefType.setAttributeType("MAPPINGTESTATTR");
+		xRefType.setAttributeType(TEST_ATTRIBUTE_TYPE);
 		xRefType.setIssueType("ASSET-TEST");
 		xRefType.setProjectType("ASSET");
 		xRefType.setFieldId("FieldId");
 		xRefType.setFieldName("DI2E Intent");
 		xRefType.setIntegrationType(IntegrationType.JIRA);
-		
+
 		attributeXRefTypes.add(xRefType.getAttributeType());
-		
+
 		AttributeXRefMap xRefMap = new AttributeXRefMap();
-		xRefMap.setAttributeType("MAPPINGTESTATTR");
-		xRefMap.setLocalCode("MAPATTR");
+		xRefMap.setAttributeType(TEST_ATTRIBUTE_TYPE);
+		xRefMap.setLocalCode(TEST_ATTRIBUTE_MAPPING_CODE);
 		xRefMap.setExternalCode("No Evaluation Planned");
 		List<AttributeXRefMap> map = new ArrayList<>();
 		map.add(xRefMap);
-		
+
 		AttributeXRefView xRefView = new AttributeXRefView();
 		xRefView.setType(xRefType);
 		xRefView.setMap(map);
-		
-		apiAttribute.saveMapping(xRefView);
-	}
-	
-	public void deleteAttrXRefType(String type)
-	{
-		apiAttribute.deleteMappingType(type);
+
+		client.saveMapping(xRefView);
 	}
 
-	@Override
 	public void cleanup()
 	{
-		for (String id : attributeIDs) {
-			deleteAPIAttribute(id);
+		for (String type : attributeTypes) {
+
+			client.deleteAttributeType(type);
 		}
-		
+
 		for (String type : attributeXRefTypes) {
-			deleteAttrXRefType(type);
+			client.deleteMappingType(type);
 		}
-	}	
+	}
+
 }

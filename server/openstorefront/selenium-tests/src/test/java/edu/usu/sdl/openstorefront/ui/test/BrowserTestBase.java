@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
@@ -44,7 +43,8 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	protected static APIClient apiClient;
+	
+	// WebDriverUtil and Properties objects must stay in BrowserTestBase because there can only be one instance that all tests share
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
@@ -53,79 +53,13 @@ public class BrowserTestBase
 	{
 		properties = PropertiesUtil.getProperties();
 		webDriverUtil = new WebDriverUtil(properties);
-		apiClient = new APIClient();
 	}
 
 	@AfterClass
 	public static void cleanup() throws Exception
 	{
 		LOG.log(Level.INFO, "Starting cleanup");
-		apiClient.cleanup();
-		tearDown();
-	}
-
-	/*@BeforeClass
-	public static void setSize() throws Exception
-	{
-		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
-	}
-	 */
-	private static void tearDown() throws Exception
-	{
-		//Bot.driver().quit();
-		//WebDriverExtensionsContext.removeDriver();
 		webDriverUtil.closeDrivers();
-	}
-
-	protected static void login()
-	{
-		String username = properties.getProperty("test.username");
-		String password = properties.getProperty("test.password");
-		login(username, password);
-	}
-
-	protected static void login(String userName, String passWord)
-	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-
-			WebDriverWait wait = new WebDriverWait(driver, 20);
-			// Make sure logged out before attempting login.
-			webDriverUtil.getPage(driver, "Login.action?Logout");
-
-			// Now log in
-			webDriverUtil.getPage(driver, "login.jsp");
-
-			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-			userNameElement.sendKeys(userName);
-
-			// Enter password and hit ENTER since submit does not seem to work.
-			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-			userPassword.sendKeys(passWord);
-			sleep(1000);
-			
-			WebElement loginBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='loginBtn']")));
-			loginBtn.click();
-
-			// Look for the titleText
-			try {
-				wait.until(ExpectedConditions.stalenessOf(userNameElement));
-				wait.until(ExpectedConditions.titleContains("Storefront"));  // Title has suffix of (dev), (Acceptance), etc.
-				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
-			} catch (Exception e) {
-				LOG.log(Level.WARNING, "--- EXCEPTION --- {0}", e);
-				String message = driver.findElement(By.cssSelector(".showError")).getText();
-				LOG.log(Level.WARNING, "--- Problem logging in as ''{0}'' ---\n Login Page MESSAGE is: --- ''{1}'' ---", new Object[]{userName, message});
-			}
-		}
-	}
-
-	protected static void logout()
-	{
-		for (WebDriver driver : webDriverUtil.getDrivers()) {
-			webDriverUtil.getPage(driver, "Login.action?Logout");
-
-			//TODO: confirm logout, return -1 or 0 or a boolean?
-		}
 	}
 
 	// Making Thread.sleep "universal"

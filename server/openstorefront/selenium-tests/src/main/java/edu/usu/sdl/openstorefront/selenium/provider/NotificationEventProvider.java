@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.selenium.apitestclient;
+package edu.usu.sdl.openstorefront.selenium.provider;
 
 import edu.usu.sdl.apiclient.ClientAPI;
-import edu.usu.sdl.apiclient.rest.resource.UserProfileClient;
+import edu.usu.sdl.apiclient.rest.resource.NotificationEventClient;
 
 /**
  *
  * @author ccummings
  */
-public class UserProfileTestClient
-		extends BaseTestClient
+public class NotificationEventProvider
 {
-
-	private static UserProfileClient apiUserProfile;
-
-	public UserProfileTestClient(ClientAPI client, APIClient apiClient)
+	NotificationEventClient client;
+	
+	public NotificationEventProvider(ClientAPI apiClient)
 	{
-		super(client, apiClient);
-		apiUserProfile = new UserProfileClient(client);
+		client = new NotificationEventClient(apiClient);
 	}
-
-	@Override
+	
 	public void cleanup()
 	{
-
+		client.clearUserNotificationEvents();
 	}
-
+	
 }

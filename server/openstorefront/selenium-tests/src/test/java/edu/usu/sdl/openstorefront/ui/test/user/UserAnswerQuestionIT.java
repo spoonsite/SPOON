@@ -15,12 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentQuestionProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.List;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -33,18 +43,37 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author rfrazier
  */
 public class UserAnswerQuestionIT
-		extends UserTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	private static final String SUBMISSION_NAME = "Selenium Question";
-	private static final String SUBMISSION_ANSWER = "Selenium Answer";
+	private final String SUBMISSION_NAME = "Selenium Question";
+	private final String SUBMISSION_ANSWER = "Selenium Answer";
+	private String entryOrganization = "Selenium Organization";
+	private ClientApiProvider provider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private ComponentQuestionProvider questionProvider;
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
 
-	@BeforeClass
-	public static void setupTest()
+	@Before
+	public void setupTest() throws InterruptedException
 	{
-		Component questionComponent = createUserComponent(SUBMISSION_NAME);
-		apiClient.getComponentRESTTestClient().addAPIComponentQuestion("Are you Selenium?", questionComponent);
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		organizationProvider.createOrganization(SUBMISSION_NAME);
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
+		Component component = componentProvider.createComponent(SUBMISSION_NAME, "Selenium Test Entry", entryOrganization);
+		questionProvider = new ComponentQuestionProvider(provider.getAPIClient());
+		questionProvider.addComponentQuestion("Are you Selenium?", component);
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
 	}
 
 	@Test
@@ -125,6 +154,14 @@ public class UserAnswerQuestionIT
 			}
 		}
 		return element;
+	}
+
+	@After
+	public void cleanupTest() throws AttachedReferencesException
+	{
+		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 
 }
