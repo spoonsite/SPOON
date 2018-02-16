@@ -15,11 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.MemoryDBManager;
 import edu.usu.sdl.openstorefront.service.testModels.TestChild;
 import edu.usu.sdl.openstorefront.service.testModels.TestParent;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -32,26 +39,53 @@ import org.junit.Test;
 public class PersistUseCase
 {
 
+	private static final Logger LOG = Logger.getLogger(PersistUseCase.class.getName());
+
 	private static final String URL = "memory:test";
+	private static String testDir;
 
 	@BeforeClass
 	public static void setup()
 	{
+		if (FileSystemManager.SYSTEM_TEMP_DIR.endsWith(File.separator)) {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + "osf-" + StringProcessor.uniqueId();
+		} else {
+			testDir = FileSystemManager.SYSTEM_TEMP_DIR + File.separator + "osf-" + StringProcessor.uniqueId();
+		}
+
+		FileSystemManager testFileSystemManager = FileSystemManager.getInstance();
+		testFileSystemManager.setBaseDirectory(testDir);
+
+		PropertiesManager testPropertiesManager = PropertiesManager.getInstance(testFileSystemManager);
+		testPropertiesManager.setVersionFile("/unittest-version.properties");
+		testPropertiesManager.setPropertiesFile("unittest.properties");
+
 		DBManager.getInstance().shutdown();
 		String modelPackage = "edu.usu.sdl.openstorefront.service.testModels";
-		DBManager manager = MemoryDBManager.getInstance(URL, modelPackage);
+		String configFile = "test-orientdb-server-config.xml";
+		DBManager manager = MemoryDBManager.getInstance(URL, modelPackage, configFile, testFileSystemManager, testPropertiesManager);
 //		//NOTE: (KB) this will fail if DBManager is alreay initilzed
 		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
-		DBManager.getInstance().initialize();
 		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT) == null) {
 			PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DB_AT, "pass");
 		}
+		DBManager.getInstance().initialize();
 	}
 
 	@AfterClass
 	public static void cleanup()
 	{
 		DBManager.getInstance().shutdown();
+
+		LOG.info("Clean up temp data folder");
+		File file = new File(testDir);
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException ex) {
+				LOG.log(Level.WARNING, "Unable to delete temp directory", ex);
+			}
+		}
 	}
 
 	@Test

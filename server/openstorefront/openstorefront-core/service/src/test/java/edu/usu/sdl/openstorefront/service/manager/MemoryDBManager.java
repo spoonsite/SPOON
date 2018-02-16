@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,25 +27,30 @@ import java.util.logging.Logger;
  *
  * @author kbair
  */
-public class MemoryDBManager extends DBManager
+public class MemoryDBManager
+		extends DBManager
 {
 
 	private static final Logger LOG = Logger.getLogger(MemoryDBManager.class.getName());
+
+	private static final String DB_USER = "admin";
+	private static final String DB_PW = "admin";
+
 	private static OObjectDatabaseTx globalInstance;
 
 	// <editor-fold defaultstate="collapsed" desc="Singleton getInstance() Methods">
-	public static MemoryDBManager getInstance(String url, String entityModelPackage)
+	public static MemoryDBManager getInstance(String url, String entityModelPackage, String configFile, FileSystemManager fileSystemManager, PropertiesManager propertiesManager)
 	{
 		if (singleton == null) {
-			singleton = new MemoryDBManager(url, entityModelPackage);
+			singleton = new MemoryDBManager(url, entityModelPackage, configFile, fileSystemManager, propertiesManager);
 		}
 		return (MemoryDBManager) singleton;
 	}
 
 	// </editor-fold>
-	protected MemoryDBManager(String url, String entityModelPackage)
+	protected MemoryDBManager(String url, String entityModelPackage, String configFile, FileSystemManager fileSystemManager, PropertiesManager propertiesManager)
 	{
-		super(url, entityModelPackage);
+		super(url, entityModelPackage, configFile, fileSystemManager, propertiesManager);
 	}
 
 	@Override
@@ -68,7 +75,7 @@ public class MemoryDBManager extends DBManager
 	public OObjectDatabaseTx getConnection()
 	{
 		if (globalInstance.isClosed()) {
-			globalInstance.open("admin", "admin");
+			globalInstance.open(DB_USER, DB_PW);
 		}
 		return globalInstance;
 	}
