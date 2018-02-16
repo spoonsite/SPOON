@@ -172,7 +172,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 		 * state
 		 */
 		ServiceProxy.Test.setPersistenceServiceToTest();
-		OsgiManager.init();
+		OsgiManager.getInstance().initialize();
 		OSFCacheManager.init();
 	}
 
@@ -187,7 +187,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 	@AfterClass
 	public static void cleanup()
 	{
-		OsgiManager.cleanup();
+		OsgiManager.getInstance().shutdown();
 		OSFCacheManager.cleanUp();
 	}
 

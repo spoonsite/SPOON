@@ -37,11 +37,9 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchServer;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,23 +68,26 @@ import org.apache.solr.common.util.NamedList;
  * @author dshurtleff
  */
 public class SolrManager
-		implements Initializable, SearchServer
+		extends BaseSearchManager
+		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(SolrManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(SolrManager.class.getName());
 
 	public static final String SOLR_ALL_QUERY = "*:*";
 	public static final String SOLR_QUERY_SEPERATOR = ":";
-	private static AtomicBoolean started = new AtomicBoolean(false);
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private PropertiesManager propertiesManager;
+	private static SolrManager singleton = null;
 
-	public static enum SolrAndOr
+	private enum SolrAndOr
 	{
 
 		AND,
 		OR
 	}
 
-	public static enum SolrEquals
+	public enum SolrEquals
 	{
 
 		EQUAL(""),
@@ -106,64 +107,96 @@ public class SolrManager
 	}
 
 	//Should reuse server to avoid leaks according to docs.
-	private static SolrClient solrServer;
+	private SolrClient solrClient;
 
-	public static void init()
+	protected SolrManager(PropertiesManager propManager, SolrClient client)
 	{
-		String url = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SOLR_URL);
-		if (StringUtils.isNotBlank(url)) {
-			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
+		this.propertiesManager = propManager;
+		this.solrClient = client;
+	}
 
-			//use the xml instead of binary
-			String xml = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_SOLR_USE_XML);
-			if (StringUtils.isNotBlank(xml)) {
-				solrServer = new HttpSolrClient.Builder(url)
-						.allowCompression(true)
-						.withResponseParser(new XMLResponseParser())
-						.build();
+	public static SolrManager getInstance()
+	{
+		return getInstance(PropertiesManager.getInstance(), null);
+	}
+
+	public static SolrManager getInstance(PropertiesManager propertiesManager, SolrClient client)
+	{
+		if (singleton == null) {
+			singleton = new SolrManager(propertiesManager, client);
+		}
+		return singleton;
+	}
+
+	public void init()
+	{
+		if (solrClient == null) {
+			String url = propertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
+			if (StringUtils.isNotBlank(url)) {
+				LOG.log(Level.INFO, () -> "Connecting to Solr at " + url);
+				solrClient = initLiveClient(url);
 			} else {
-				solrServer = new HttpSolrClient.Builder(url)
-						.allowCompression(true)
-						.build();
+				LOG.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
+				solrClient = initMock();
 			}
+		}
+	}
 
+	private SolrClient initLiveClient(String url)
+	{
+		SolrClient liveClient;
+
+		//use the xml instead of binary
+		String xml = propertiesManager.getValue(PropertiesManager.KEY_SOLR_USE_XML);
+		if (StringUtils.isNotBlank(xml)) {
+			liveClient = new HttpSolrClient.Builder(url)
+					.allowCompression(true)
+					.withResponseParser(new XMLResponseParser())
+					.build();
 		} else {
-			log.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
-			solrServer = new SolrClient()
-			{
-
-				@Override
-				public NamedList<Object> request(SolrRequest request, String string) throws SolrServerException, IOException
-				{
-					NamedList<Object> results = new NamedList<>();
-					log.log(Level.INFO, MessageFormat.format("Mock Solr recieved request: {0}", request));
-					return results;
-				}
-
-				@Override
-				public void close() throws IOException
-				{
-					//nothing to do
-				}
-
-			};
+			liveClient = new HttpSolrClient.Builder(url)
+					.allowCompression(true)
+					.build();
 		}
+		return liveClient;
 	}
 
-	public static void cleanup()
+	private SolrClient initMock()
 	{
-		if (solrServer != null) {
+		return new SolrClient()
+		{
+
+			@Override
+			public NamedList<Object> request(SolrRequest request, String string) throws SolrServerException, IOException
+			{
+				NamedList<Object> results = new NamedList<>();
+				LOG.log(Level.INFO, () -> "Mock Solr recieved request: " + request);
+				return results;
+			}
+
+			@Override
+			public void close() throws IOException
+			{
+				//nothing to do
+			}
+
+		};
+	}
+
+	public void cleanup()
+	{
+		if (solrClient != null) {
 			try {
-				solrServer.close();
+				solrClient.close();
 			} catch (IOException ex) {
-				log.log(Level.WARNING, "Unable to close connection to Solr. Connection may be unstable.", ex);
+				LOG.log(Level.WARNING, "Unable to close connection to Solr. Connection may be unstable.", ex);
 			}
 		}
 	}
 
-	public static SolrClient getServer()
+	public SolrClient getServer()
 	{
-		return solrServer;
+		return solrClient;
 	}
 
 	private ServiceProxy service = ServiceProxy.getProxy();
@@ -171,14 +204,14 @@ public class SolrManager
 	@Override
 	public void initialize()
 	{
-		SolrManager.init();
+		init();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		SolrManager.cleanup();
+		cleanup();
 		started.set(false);
 	}
 
@@ -216,12 +249,12 @@ public class SolrManager
 
 		for (String componentId : componentIds) {
 			if (goodComponentIdSet.contains(componentId) == false) {
-				log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
+				LOG.log(Level.FINE, () -> "Removing bad index: " + componentId);
 				deleteById(componentId);
 				totalFound--;
 			}
 		}
-		SearchServerManager.updateSearchScore(searchQuery.getQuery(), componentSearchViews);
+		updateSearchScore(searchQuery.getQuery(), componentSearchViews);
 
 		views.addAll(componentSearchViews);
 
@@ -240,7 +273,7 @@ public class SolrManager
 	public void index(List<Component> components)
 	{
 		// initialize solr server
-		SolrClient solrService = SolrManager.getServer();
+		SolrClient solrService = getServer();
 
 		Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 		Map<String, List<ComponentTag>> tagMap = new HashMap<>();
@@ -390,7 +423,7 @@ public class SolrManager
 		} else {
 			myQueryString = SolrManager.SOLR_ALL_QUERY;
 		}
-		log.log(Level.FINER, myQueryString);
+		LOG.log(Level.FINER, myQueryString);
 
 		// execute the searchComponent method and bring back from solr a list array
 		long totalFound = 0;
@@ -425,7 +458,7 @@ public class SolrManager
 
 			solrQuery.setIncludeScore(true);
 
-			QueryResponse response = SolrManager.getServer().query(solrQuery);
+			QueryResponse response = getServer().query(solrQuery);
 			SolrDocumentList results = response.getResults();
 			totalFound = results.getNumFound();
 
@@ -454,7 +487,7 @@ public class SolrManager
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
 		} catch (Exception ex) {
-			log.log(Level.WARNING, "Solr query failed unexpectly; likely bad input.", ex);
+			LOG.log(Level.WARNING, "Solr query failed unexpectly; likely bad input.", ex);
 		}
 		indexSearchResult.getResultsList().addAll(resultsList);
 		indexSearchResult.setTotalResults(totalFound);
@@ -543,7 +576,7 @@ public class SolrManager
 	@Override
 	public void deleteById(String id)
 	{
-		SolrClient solrService = SolrManager.getServer();
+		SolrClient solrService = getServer();
 
 		try {
 			solrService.deleteById(id);
@@ -556,7 +589,7 @@ public class SolrManager
 	@Override
 	public void deleteAll()
 	{
-		SolrClient solrService = SolrManager.getServer();
+		SolrClient solrService = getServer();
 		try {
 			// CAUTION: deletes everything!
 			solrService.deleteByQuery(SolrManager.SOLR_ALL_QUERY);

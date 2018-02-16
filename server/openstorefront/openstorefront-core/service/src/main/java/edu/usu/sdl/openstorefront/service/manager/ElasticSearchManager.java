@@ -38,7 +38,6 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchServer;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -84,7 +83,8 @@ import org.elasticsearch.search.sort.SortOrder;
  * @author dshurtleff
  */
 public class ElasticSearchManager
-		implements Initializable, SearchServer, PooledResourceManager<ElasticSearchClient>
+		extends BaseSearchManager
+		implements Initializable, PooledResourceManager<ElasticSearchClient>
 {
 
 	private static final Logger LOG = Logger.getLogger(ElasticSearchManager.class.getName());
@@ -92,49 +92,65 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
+	private static final String DEFAULT_POOL_SIZE = "40";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static AtomicBoolean indexCreated = new AtomicBoolean(false);
 
 	private BlockingQueue<ElasticSearchClient> clientPool;
 	private int maxPoolSize;
-	private static ElasticSearchManager poolInstance;
+	private static ElasticSearchManager singleton = null;
+	private PropertiesManager propertiesManager;
+	private ServiceProxy service;
 
-	public ElasticSearchManager()
-	{
-	}
-
-	public ElasticSearchManager(BlockingQueue<ElasticSearchClient> clientPool, int maxPoolSize)
+	protected ElasticSearchManager(ServiceProxy service, PropertiesManager propertiesManager, BlockingQueue<ElasticSearchClient> clientPool)
 	{
 		this.clientPool = clientPool;
-		this.maxPoolSize = maxPoolSize;
+		this.propertiesManager = propertiesManager;
+		this.service = service;
 	}
 
-	public static ElasticSearchManager getPoolInstance()
+	public static ElasticSearchManager getInstance()
 	{
-		return poolInstance;
+		return getInstance(ServiceProxy.getProxy(), PropertiesManager.getInstance(), null);
 	}
 
-	public static void init()
+	public static ElasticSearchManager getInstance(PropertiesManager propertiesManager)
 	{
-		String host = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
-		Integer port = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
-		LOG.log(Level.CONFIG, MessageFormat.format("Setup to Connect to ElasticSearch at {0}", host + ":" + port));
+		if (singleton == null) {
+			singleton = new ElasticSearchManager(ServiceProxy.getProxy(), propertiesManager, null);
+		}
+		return singleton;
+	}
 
-		LOG.log(Level.FINE, "Initializing Elasticsearch Pool");
+	public static ElasticSearchManager getInstance(ServiceProxy service, PropertiesManager propertiesManager, BlockingQueue<ElasticSearchClient> clientPool)
+	{
+		if (singleton == null) {
+			singleton = new ElasticSearchManager(service, propertiesManager, clientPool);
+		}
+		return singleton;
+	}
 
-		String poolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, "40");
-		int maxPoolSize = Convert.toInteger(poolSize);
-		BlockingQueue<ElasticSearchClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
-		poolInstance = new ElasticSearchManager(clientPool, maxPoolSize);
+	private void init()
+	{
+		String poolSize = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_SEARCH_POOL, DEFAULT_POOL_SIZE);
+		maxPoolSize = Convert.toInteger(poolSize);
+		LOG.log(Level.INFO, () -> "Initializing Elasticsearch Pool size: " + maxPoolSize);
 
-		LOG.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
+		String host = propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_HOST, "localhost");
+		Integer port = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9200"));
+		LOG.log(Level.INFO, () -> "Initializing Elasticsearch Connection to server: " + host + " port: " + port);
+		clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
 		for (int i = 0; i < maxPoolSize; i++) {
-			ElasticSearchClient client = new ElasticSearchClient(host, port, poolInstance);
+			ElasticSearchClient client = createClient(host, port);
 			clientPool.offer(client);
 		}
+	}
 
+	protected ElasticSearchClient createClient(String host, Integer port)
+	{
+		return new ElasticSearchClient(host, port, this);
 	}
 
 	/**
@@ -142,6 +158,7 @@ public class ElasticSearchManager
 	 *
 	 * @return a new client
 	 */
+	@Override
 	public ElasticSearchClient getClient()
 	{
 		checkSearchIndexCreation();
@@ -151,15 +168,23 @@ public class ElasticSearchManager
 
 	private ElasticSearchClient justGetClient()
 	{
-		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
+		if (!isStarted()) {
+			throw new OpenStorefrontRuntimeException("Search Manager is not started", "Restart search manager and try again (system admin)");
+		}
+
+		if (clientPool.isEmpty()) {
+			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server (system admin)");
+		}
+
+		int waitTimeSeconds = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
 		try {
 			ElasticSearchClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (client == null) {
-				throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection in time.  No resource available.", "Adjust confluence pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
+				throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection in time.  No resource available.", "Adjust Elasticsearch pool size appropriate to load or try again", ErrorTypeCode.INTEGRATION);
 			}
 			return client;
 		} catch (InterruptedException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection - wait interrupted.  No resource available.", "Adjust Elasticsearch pool size appropriate to load. (system admin)", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
 
@@ -181,7 +206,7 @@ public class ElasticSearchManager
 						.getLowLevelClient()
 						.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
 
-				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created.{0}", response.getStatusLine().getStatusCode());
+				LOG.log(Level.INFO, () -> "Search index: " + INDEX + " has been created. " + response.getStatusLine().getStatusCode());
 				indexCreated.set(true);
 
 			} catch (ResponseException e) {
@@ -220,32 +245,30 @@ public class ElasticSearchManager
 		clientPool.clear();
 	}
 
-	public static void cleanup()
+	private void cleanup()
 	{
-		if (poolInstance != null) {
-			if (poolInstance.getAvailableConnections() != poolInstance.getMaxConnections()) {
-				LOG.log(Level.WARNING, MessageFormat.format("{0} elasticsearch connections were in process. ", poolInstance.getAvailableConnections()));
+		if (singleton != null) {
+			if (singleton.getAvailableConnections() != singleton.getMaxConnections()) {
+				LOG.log(Level.WARNING, () -> singleton.getAvailableConnections() + " elasticsearch connections were in process. ");
 			}
 			LOG.log(Level.FINE, "Stopping pool.");
-			poolInstance.shutdownPool();
+			singleton.shutdownPool();
 		}
 	}
 
 	@Override
 	public void initialize()
 	{
-		ElasticSearchManager.init();
+		init();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		ElasticSearchManager.cleanup();
+		cleanup();
 		started.set(false);
 	}
-
-	private ServiceProxy service = ServiceProxy.getProxy();
 
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)
@@ -254,7 +277,7 @@ public class ElasticSearchManager
 
 		IndexSearchResult indexSearchResult = doIndexSearch(searchQuery.getQuery(), filter);
 
-		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
+		updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());
 
 		componentSearchWrapper.setData(indexSearchResult.getSearchViews());
 		componentSearchWrapper.setResults(indexSearchResult.getSearchViews().size());
@@ -437,7 +460,7 @@ public class ElasticSearchManager
 	{
 		// perform search
 		SearchResponse response;
-		try (ElasticSearchClient client = poolInstance.getClient()) {
+		try (ElasticSearchClient client = singleton.getClient()) {
 			response = client.getInstance().search(searchRequest);
 		}
 
@@ -634,7 +657,7 @@ public class ElasticSearchManager
 			}
 
 			BulkResponse bulkResponse;
-			try (ElasticSearchClient client = poolInstance.getClient()) {
+			try (ElasticSearchClient client = singleton.getClient()) {
 				bulkResponse = client.getInstance().bulk(bulkRequest);
 
 				if (bulkResponse.hasFailures()) {
@@ -657,7 +680,7 @@ public class ElasticSearchManager
 	{
 		DeleteRequest deleteRequest = new DeleteRequest(INDEX, INDEX_TYPE, id);
 		DeleteResponse response;
-		try (ElasticSearchClient client = poolInstance.getClient()) {
+		try (ElasticSearchClient client = singleton.getClient()) {
 			response = client.getInstance().delete(deleteRequest);
 			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
 		} catch (IOException ex) {
@@ -688,7 +711,7 @@ public class ElasticSearchManager
 					.source(sourceBuilder);
 
 			SearchResponse response;
-			try (ElasticSearchClient client = poolInstance.getClient()) {
+			try (ElasticSearchClient client = singleton.getClient()) {
 				response = client.getInstance().search(searchRequest);
 
 				SearchHits searchHits = response.getHits();
@@ -751,11 +774,11 @@ public class ElasticSearchManager
 		return started.get();
 	}
 
-	private static void updateMapping()
+	private void updateMapping()
 	{
 		// Update description field to use fielddata=true
 		//	Here, we must update all types
-		try (ElasticSearchClient client = poolInstance.getClient()) {
+		try (ElasticSearchClient client = singleton.getClient()) {
 
 			List<String> fieldsToUpdate = Arrays.asList(
 					ComponentSearchView.FIELD_NAME,
