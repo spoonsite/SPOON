@@ -34,7 +34,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				editable: false,
 				typeAhead: false,
 				width: 450,
-				fieldLabel: 'Resource Type <span class="field-required" />',
+				fieldLabel: 'Resource Type: <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ResourceType'
 				}
@@ -51,7 +51,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'checkbox',
 				name: 'restricted',
 				width: 450,
-				boxLabel: 'Restricted'
+				boxLabel: '<strong>Restricted</strong>'
 			},
 			{
 				xtype: 'button',
@@ -88,12 +88,14 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				emptyText: 'http://www.example.com/resource',
 				width: 450,
 				labelAlign: 'top',
-				name: 'originalLink'
+				name: 'originalLink',
+				colName: 'externalLink'
 			},
 			{
 				xtype: 'fileFieldMaxLabel',
 				itemId: 'upload',
 				name: 'file',
+				colName: 'filePath',
 				width: 450,
 				labelAlign: 'top',
 				hidden: true
@@ -103,7 +105,8 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				// hidden: submissionPanel.hideSecurityMarkings
 			}),
 			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450
+				width: 450,
+				fieldLabel: 'Data Sensitivity:'
 			})
 		]);
 	}

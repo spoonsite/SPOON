@@ -33,7 +33,8 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				allowBlank: false,	
 				width: 450,								
 				maxLength: '255',
-				name: 'dependencyName'
+				name: 'dependencyName',
+				colName: 'name'
 			},
 			{
 				xtype: 'textfield',
@@ -49,7 +50,8 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				emptyText: 'http://dependency.com/download',									
 				maxLength: '255',
 				width: 450,
-				name: 'dependancyReferenceLink'
+				name: 'dependancyReferenceLink',
+				colName: 'externalLink'
 			},
 			{
 				xtype: 'textfield',
@@ -61,7 +63,8 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 			Ext.create('OSF.component.SecurityComboBox', {								
 			}),
 			Ext.create('OSF.component.DataSensitivityComboBox', {			
-				width: 450
+				width: 450,
+				labelAlign: 'left'
 			})	
 		]);
 	}

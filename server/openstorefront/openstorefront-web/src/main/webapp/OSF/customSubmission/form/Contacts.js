@@ -137,6 +137,9 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Email <span class="field-required" />',
+					labelWidth: 80,
+					width: 400,
+					margin: '15 0 0 0',
 					maxLength: '255',
 					allowBlank: false,
 					regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
@@ -147,7 +150,10 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					xtype: 'textfield',
 					fieldLabel: 'Phone <span class="field-required" />',
 					allowBlank: false,
+					labelWidth: 80,
+					width: 400,
 					maxLength: '120',
+					margin: '15 0 10 0',
 					name: 'phone'
 				},
 				Ext.create('OSF.component.SecurityComboBox', {

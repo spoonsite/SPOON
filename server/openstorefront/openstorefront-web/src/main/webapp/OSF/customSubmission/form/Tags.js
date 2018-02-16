@@ -27,6 +27,7 @@ Ext.define('OSF.customSubmission.form.Tags', {
 		//	we have to add them on init...
 		this.add(Ext.create('OSF.component.StandardComboBox', {
 			name: 'text',
+			colName: 'name',
 			allowBlank: false,
 			margin: '0 0 0 0',
 			width: 400,

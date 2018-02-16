@@ -36,6 +36,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				}),
 			Ext.create('OSF.component.StandardComboBox', {
 				name: 'componentType',
+				colName: 'Entry Type',
 				allowBlank: true,
 				editable: false,
 				typeAhead: false,
@@ -69,8 +70,9 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 			Ext.create('OSF.component.StandardComboBox', {
 				itemId: 'relationshipTargetCB',
 				name: 'relatedComponentId',
+				colName: 'Target Entry',
 				allowBlank: false,
-				margin: '0 0 0 0',
+				margin: '0 0 10 0',
 				width: 450,
 				fieldLabel: 'Target Entry <span class="field-required" />',
 				forceSelection: true,

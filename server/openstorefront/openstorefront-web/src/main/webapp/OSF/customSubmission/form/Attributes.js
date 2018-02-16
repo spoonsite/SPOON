@@ -36,9 +36,8 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				itemId: 'attributeTypeCB',
 				fieldLabel: 'Attribute Type <span class="field-required" />',
 				name: 'type',
-				flex: 1,
-				labelWidth: 150,
-				labelAlign: 'right',
+				labelWidth: 120,
+				labelAlign: 'left',
 				labelSeparator: '',
 				forceSelection: true,
 				queryMode: 'local',
@@ -47,9 +46,8 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				allowBlank: false,
 				valueField: 'attributeType',
 				displayField: 'description',
-				labelAlign: 'right',
-				labelSeparator: '',
 				width: 400,
+				flex: 1,
 				store: Ext.create('Ext.data.Store', {
 					sorters: [
 						{
@@ -125,13 +123,13 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				fieldLabel: 'Attribute Code <span class="field-required" />',
 				name: 'code',
 				queryMode: 'local',
-				labelWidth: 150,
+				labelWidth: 120,
 				editable: false,
 				typeAhead: false,
 				allowBlank: false,
 				valueField: 'code',
 				displayField: 'label',
-				labelAlign: 'right',
+				labelAlign: 'left',
 				labelSeparator: '',
 				width: 400,
 				listConfig: {
