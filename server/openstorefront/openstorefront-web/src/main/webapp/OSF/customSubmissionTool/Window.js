@@ -18,29 +18,72 @@
 
 Ext.define('OSF.customSubmissionTool.Window', {
 	extend: 'Ext.window.Window',
+	requires: ['OSF.customSubmissionTool.FormBuilderPanel'],
 
 	config: {
 		recordItem: undefined
 	},
 	formBuilderPanel: undefined,
 
-	maximizable: true,
-	maximized: true,
-	minWidth: 1000,
-	minHeight: 800,
+	maximizable: true,	
+	width: '90%',
+	height: '90%',
+	
 	modal: true,
 	title: 'Form Builder Tool',
+	iconCls: 'fa fa-edit',
 	layout: 'fit',
-
+	closeAction: 'destroy',
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Save',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
+					handler: function() {
+						
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Preview',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
+					handler: function() {
+						
+					}					
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Close',
+					scale: 'medium',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+					handler: function() {
+						
+						this.up('window').close();
+					}
+				}				
+			]
+		}
+	],
 	initComponent: function () {
-
 		this.callParent();
 		var csfWindow = this;
 
-		if (typeof csfWindow.formBuilderPanel === 'undefined') {
-			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {recordItem: csfWindow.recordItem});
+		if (!csfWindow.formBuilderPanel) {
+			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {
+				templateRecord: csfWindow.recordItem
+			});
 		}
 
 		csfWindow.add(csfWindow.formBuilderPanel);
-	},
+	}
+
 });

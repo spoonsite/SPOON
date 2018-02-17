@@ -16,14 +16,14 @@
  /* Author: cyearsley */
 /* global Ext, CoreUtil, CoreService */
 
-Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
+Ext.define('OSF.customSubmissionTool.FormBuilderItem', {	
+	extend: 'Ext.panel.Panel',
+	alias: 'widget.osf-formbuilderitem',
 
-	extend: 'Ext.container.Container',
+	templateRecord: undefined,
 
-	recordItem: undefined,
-
-	height: 250,
 	width: '100%',
+	height: 275,
 	margin: '10 10 10 0',
 	padding: '10 20 10 20',
 	target: true,
@@ -31,162 +31,169 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	overCls: 'csf-hover',
 	style: 'border-top: 3px solid white; border-bottom: 3px solid white;',
 	layout: {
-		type: 'hbox',
-		align: 'stretch'
+		type: 'anchor'
 	},
-	items: [
-		// {
-		// 	xtype: 'container',
-		// 	baseCls: 'drag-handle',
-		// 	margin: '50 20 25 10',
-		// 	height: 75,
-		// 	width: 40,
-			// layout: {
-			// 	type: 'vbox',
-			// 	pack: 'center',
-			// 	align: 'center'
-			// },
-		// 	items: [{xtype: 'container', html: '<div style="margin: auto;"><i class="fa fa-arrows-v fa-4x" aria-hidden="true"></i></div>'}]
-		// },
+	dockedItems: [
 		{
-			xtype: 'container',
-			width: '50%',
-			layout: 'vbox',
+			xtype: 'toolbar',
+			margin: '0 0 0 10',
+			dock: 'right',
+			style: 'background: transparent;',
+			//ui: 'footer',
 			items: [
 				{
-					xtype: 'container',
-					width: '100%',
-					height: 170,
-					style: 'border-bottom: 2px solid #b4b4b4;',
-					items: [
-						{
-					        xtype: 'textfield',
-					        emptyText: 'Untitled Question',
-					        height: 50,
-					        width: '100%'
-						}
-					]
+					scale: 'medium',
+					iconCls: 'fa fa-plus-circle fa-2x',
+					handler: function() {
+						
+					}
 				},
 				{
-					xtype: 'container',
-					width: '100%',
-					height: '30%',
-					items: [
-						{
-							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>',
-							padding: 0,
-							width: 40,
-							height: 35,
-							margin: '10 0 0 0',
-							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;',
-							listeners: {
-								click: function () {
-									var button = this;
-									var disabledUp = false;
-									var disabledDown = false;
-									var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
-									var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
-									if (itemIndex === 0) {
-										disabledUp = true;
-									}
-									if (itemIndex === fieldDisplayPanel.items.items.length -1) {
-										disabledDown = true;
-									}
-									var popupMenu = Ext.create('Ext.menu.Menu', {
-										floating: true,
-										items: [
-											{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
-											{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
-											{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
-											{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
-										]
-									});
-									popupMenu.showAt(this.getXY());
-								}
-							}
-						},
-						{
-							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete this field"></i>',
-							padding: 0,
-							width: 40,
-							height: 35,
-							margin: '10 0 0 0',
-							overCls: 'csf-meta-menu-item',
-							itemId: 'deleteButton',
-							style: 'border: none; background: none; float: right;',
-							listeners: {
-								click: function () {
-									this.up('[itemId=formBuilderPanel]').activeItem = null;
-									this.up('[cls=form-builder-item]').destroy();
-								}
-							}
-						},
-						{
-							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy this field"></i>',
-							padding: 0,
-							width: 40,
-							height: 35,
-							margin: '10 0 0 0',
-							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;',
-							listeners: {
-								click: function () {
-									console.log("CLONE THE FIELD!");
-								}
-							}
-						},
-						{
-							xtype: 'button',
-							text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a new field here"></i>',
-							padding: 0,
-							width: 40,
-							height: 35,
-							margin: '10 0 0 0',
-							overCls: 'csf-meta-menu-item',
-							style: 'border: none; background: none; float: right;',
-							listeners: {
-								click: function () {
-									// add a field after the current
-									var fieldIndex = this.up('[itemId=fieldDisplayPanel]').items.items.indexOf(this.up('[cls=form-builder-item]'));
-									this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
-								}
-							}
-						}
-					]
-				}
+					scale: 'medium',
+					iconCls: 'fa fa-font fa-2x',
+					handler: function() {
+						
+					}					
+				},				
+				{
+					scale: 'medium',
+					iconCls: 'fa fa-minus fa-2x',
+					handler: function() {
+						
+					}					
+				},
+				{
+					scale: 'medium',
+					iconCls: 'fa fa-image fa-2x',
+					handler: function() {
+						
+					}					
+				},				
+				{
+					scale: 'medium',
+					iconCls: 'fa fa-trash fa-2x',
+					handler: function() {
+						
+					}					
+				}			
 			]
-    	},
-    	{
-			xtype: 'container',
-			width: '50%',
-			items: [],
-			html: '<h1>TODO: Demo Area</h1>',
-			style: 'background: rgba(255,255,255,0.8); border-left: 2px solid #b4b4b4;',
-			margin: '0 0 0 10'
-    	}
+		}
+	],
+	items: [
+		{
+	        xtype: 'textfield',
+	        emptyText: 'Untitled Question',
+			fieldStyle: 'font-size: 32px',
+	        height: 50,
+	        width: '100%'
+		}
+				
+//				{
+//					xtype: 'container',
+//					width: '100%',
+//					height: '30%',
+//					items: [
+//						{
+//							xtype: 'button',
+//							text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>',
+//							padding: 0,
+//							width: 40,
+//							height: 35,
+//							margin: '10 0 0 0',
+//							overCls: 'csf-meta-menu-item',
+//							style: 'border: none; background: none; float: right;',
+//							listeners: {
+//								click: function () {
+//									var button = this;
+//									var disabledUp = false;
+//									var disabledDown = false;
+//									var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
+//									var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
+//									if (itemIndex === 0) {
+//										disabledUp = true;
+//									}
+//									if (itemIndex === fieldDisplayPanel.items.items.length -1) {
+//										disabledDown = true;
+//									}
+//									var popupMenu = Ext.create('Ext.menu.Menu', {
+//										floating: true,
+//										items: [
+//											{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
+//											{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
+//											{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
+//											{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
+//										]
+//									});
+//									popupMenu.showAt(this.getXY());
+//								}
+//							}
+//						},
+//						{
+//							xtype: 'button',
+//							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete this field"></i>',
+//							padding: 0,
+//							width: 40,
+//							height: 35,
+//							margin: '10 0 0 0',
+//							overCls: 'csf-meta-menu-item',
+//							itemId: 'deleteButton',
+//							style: 'border: none; background: none; float: right;',
+//							listeners: {
+//								click: function () {
+//									this.up('FormBuilderItem').displayPanel.activeItem = null;
+//									this.up('[cls=form-builder-item]').destroy();
+//								}
+//							}
+//						},
+//						{
+//							xtype: 'button',
+//							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy this field"></i>',
+//							padding: 0,
+//							width: 40,
+//							height: 35,
+//							margin: '10 0 0 0',
+//							overCls: 'csf-meta-menu-item',
+//							style: 'border: none; background: none; float: right;',
+//							listeners: {
+//								click: function () {
+//									console.log("CLONE THE FIELD!");
+//								}
+//							}
+//						},
+//						{
+//							xtype: 'button',
+//							text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a new field here"></i>',
+//							padding: 0,
+//							width: 40,
+//							height: 35,
+//							margin: '10 0 0 0',
+//							overCls: 'csf-meta-menu-item',
+//							style: 'border: none; background: none; float: right;',
+//							listeners: {
+//								click: function () {
+//									// add a field after the current
+//									var displayPanel = this.up('osf-formbuilderitem').displayPanel;
+//									
+//									//This need be re-examined 
+//									//perhaps a maintain a separate array and render on change 
+//									
+//									var fieldIndex = displayPanel.items.items.indexOf(this.up('[cls=form-builder-item]'));
+//									this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
+//								}
+//							}
+//						}
+//					]
+//				}
+//			]
+//    	}
     ],
-
-    generateRandomId: function (num) {
-    	var newId = [];
-    	var charString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-    	for (var ii = 0; ii < (num ? num : 20); ii++) {
-    		newId.push(charString.charAt(Math.floor(Math.random() * charString.length)));
-    	}
-
-    	return newId.join('');
-    },
 
     setActiveFormItem: function (cmp) {
     	var newItem = cmp || this;
-    	var formBuilderPanel = newItem.up('[itemId=formBuilderPanel]');
+    	var formBuilderPanel = newItem.formBuilderPanel.displayPanel;
 		var previousActiveItem = formBuilderPanel.activeItem;
 
-		if (previousActiveItem !== null) {
+		if (previousActiveItem) {
 			previousActiveItem.removeCls('csf-active');
 		}
 		newItem.addCls('csf-active');
@@ -195,9 +202,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
     listeners: {
     	afterlayout: function () {
+			var itemPanel = this;
 
     		// disabled/enable delete button
-    		var fieldDisplayPanel = this.up('[itemId=fieldDisplayPanel]');
+    		var fieldDisplayPanel = itemPanel.formBuilderPanel.displayPanel;
     		if (fieldDisplayPanel.items.items.length === 1) {
     			
     			this.queryById('deleteButton').setDisabled(true);
@@ -219,7 +227,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var fieldContainer = this;
 
     		// style the question input field
-			fieldContainer.items.items[0].items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
+			//fieldContainer.items.items[0].items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
 
 			// set this container as a drag source
 			new Ext.drag.Source({
@@ -287,7 +295,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		this.callParent();
 		var fieldContainer = this;
 
-		fieldContainer.items.items[0].items.items[0].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
+		//fieldContainer.items.items[0].items.items[0].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
 
 		// fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
   //   		itemId: 'questionDataView',
@@ -295,7 +303,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
   //   		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4)), // + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'
   //   		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
   //   	}));
-		// if (fieldContainer.recordItem === undefined) { // display the record with some default settings
+		// if (fieldContainer.templateRecord === undefined) { // display the record with some default settings
 
 		// }
 		// else { // display the field with the predefined data
