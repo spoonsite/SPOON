@@ -16,12 +16,18 @@
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.HighlightProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.SystemSearchProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -34,47 +40,50 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminHighlightIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private ClientApiProvider provider;
+	private HighlightProvider highlightProvider;
+	private SystemSearchProvider searchProvider;
+	private NotificationEventProvider notificationProvider;
+	private AuthenticationProvider authProvider;
+	private String searchName = "Selenium Saved Search";
+	private String highlightName = "Selenium Highlight";
+
+	@Before
+	public void setup() throws JsonProcessingException, InterruptedException
+	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+		highlightProvider = new HighlightProvider(provider.getAPIClient());
+		highlightProvider.createHighlight(highlightName);
+		searchProvider = new SystemSearchProvider(provider.getAPIClient());
+		searchProvider.createSystemSearch(searchName);
+	}
 
 	@Test
 	public void adminHighlightTest() throws InterruptedException, JsonProcessingException
 	{
-
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			createHighlight(driver);
-			createAPIHighlight();
-			createAPISavedSearch();
 			editHighlight(driver);
 			addSavedSearchToHighlight(driver);
 			deleteHighlight(driver);
-
 		}
-	}
-
-	public void createAPIHighlight()
-	{
-		apiClient.getHighlightTestClient().createAPIHighlight();
-	}
-
-	public void createAPISavedSearch() throws JsonProcessingException
-	{
-		apiClient.getSystemSearchTestClient().createAPISystemSearch();
 	}
 
 	public void createHighlight(WebDriver driver) throws InterruptedException
 	{
-
 		webDriverUtil.getPage(driver, "AdminTool.action?load=Highlights");
 		WebDriverWait wait = new WebDriverWait(driver, 5);
 
-		// Click add button
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-add"))).click();
 
-		// Fill out form
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#highlightEntryForm-Title-inputEl"))).sendKeys("TestHighlight1");
 
 		((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1')");
@@ -101,16 +110,13 @@ public class AdminHighlightIT
 	public void editHighlight(WebDriver driver) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		// locate highlight in table and edit
+
 		if (tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0)) {
 
-			// Click Edit
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-edit"))).click();
 
-			// Add/Edit text in tinyMCE textarea
 			((JavascriptExecutor) driver).executeScript("tinyMCE.activeEditor.setContent('Test Description 1 - Edited')");
 
-			// click save
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test = 'addEditHighlightSave']"))).click();
 
 			try {
@@ -124,7 +130,7 @@ public class AdminHighlightIT
 			} catch (Exception e) {
 				System.out.println(e);
 			}
-			// refresh table
+
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-test='highlightRefreshBtn']"))).click();
 		}
 	}
@@ -132,7 +138,7 @@ public class AdminHighlightIT
 	public void addSavedSearchToHighlight(WebDriver driver) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		// locate highlight in table and edit
+
 		Assert.assertTrue(tableClickRowCol("#highlightGrid-body .x-grid-view", "TestHighlight1", driver, 0));
 
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#highlightGrid-tools-edit"))).click();
@@ -149,7 +155,7 @@ public class AdminHighlightIT
 		Assert.assertTrue(tableClickRowCol("#linkToSaveSearchWindow-body .x-grid-item-container", "An API Test Admin Saved Search", driver, 0));
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#insertLinkBtn"))).click();
-		
+
 		sleep(2000);
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test = 'addEditHighlightSave']"))).click();
@@ -192,9 +198,12 @@ public class AdminHighlightIT
 	}
 
 	@After
-	public void cleanUpTest() throws InterruptedException
+	public void cleanupTest()
 	{
-
+		searchProvider.cleanup();
+		highlightProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 
 }

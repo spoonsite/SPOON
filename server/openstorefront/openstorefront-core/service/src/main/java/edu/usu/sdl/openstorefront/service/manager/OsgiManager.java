@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.model.internal.CoreAPIActivator;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +44,37 @@ public class OsgiManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(OsgiManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(OsgiManager.class.getName());
 
 	private static final long MAX_SHUTDOWN_WAIT_TIME = 60000;
-	private static Felix felix = null;
-	private static AtomicBoolean started = new AtomicBoolean(false);
+	private Felix felix = null;
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private PropertiesManager propertiesManager;
 
-	public static void init()
+	private static OsgiManager singleton = null;
+
+	private OsgiManager(PropertiesManager propManager)
+	{
+		this.propertiesManager = propManager;
+	}
+
+	public static OsgiManager getInstance()
+	{
+		return getInstance(PropertiesManager.getInstance());
+	}
+
+	// Created second getInstance with parameter due to @Inject requires CDI support
+	// This is temporary until decision has been made on using @Inject
+	public static OsgiManager getInstance(PropertiesManager propertiesManager)
+	{
+		if (singleton == null) {
+			singleton = new OsgiManager(propertiesManager);
+		}
+		return singleton;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void init()
 	{
 		Map configMap = new HashMap();
 
@@ -67,7 +90,7 @@ public class OsgiManager
 
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
-		String moduleVersion = PropertiesManager.getInstance().getModuleVersion();
+		String moduleVersion = propertiesManager.getModuleVersion();
 		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
 				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", "
@@ -95,44 +118,49 @@ public class OsgiManager
 			felix = new Felix(configMap);
 			felix.start();
 
-			log.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
+			LOG.log(Level.INFO, () -> "Started Felix Version: " + felix.getVersion());
 
-		} catch (Exception ex) {
+		} catch (BundleException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to load module system", ex);
 		}
 
 	}
 
-	public static void cleanup()
+	private void cleanup()
 	{
 		if (felix != null) {
 
 			try {
 				felix.stop();
 				FrameworkEvent frameworkEvent = felix.waitForStop(MAX_SHUTDOWN_WAIT_TIME);
-				log.log(Level.INFO, MessageFormat.format("Framework Shutdown Event: {0}", frameworkEvent.getType()));
+				LOG.log(Level.INFO, () -> "Framework Shutdown Event: " + frameworkEvent.getType());
 			} catch (BundleException | InterruptedException ex) {
 				Logger.getLogger(OsgiManager.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	}
 
-	public static Felix getFelix()
+	public Felix getFelix()
 	{
 		return felix;
+	}
+
+	public void setPropertyManager(PropertiesManager propertiesManager)
+	{
+		this.propertiesManager = propertiesManager;
 	}
 
 	@Override
 	public void initialize()
 	{
-		OsgiManager.init();
+		init();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		OsgiManager.cleanup();
+		cleanup();
 		started.set(false);
 	}
 

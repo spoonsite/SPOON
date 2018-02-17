@@ -176,6 +176,15 @@ public class PropertiesManager
 		return singleton;
 	}
 
+	public static PropertiesManager getInstance(FileSystemManager fileSystemManager)
+	{
+		if (singleton == null) {
+			singleton = new PropertiesManager(fileSystemManager);
+		}
+		singleton.setFileSystemManager(fileSystemManager);
+		return singleton;
+	}
+
 	protected PropertiesManager(FileSystemManager fileSystemManager)
 	{
 		this.fileSystemManager = fileSystemManager;

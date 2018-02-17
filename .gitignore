@@ -63,3 +63,4 @@ project*.properties
 /server/openstorefront/system-tests/tomcat.7980/
 /server/openstorefront/system-tests/felix-cache/
 /server/openstorefront/openstorefront-core/common/nbproject/
+/server/openstorefront/openstorefront-core/service/nbproject/

@@ -15,15 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.user;
 
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,35 +34,32 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author dshurtleff
  */
 public class UserProfileIT
-		extends UserTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private AuthenticationProvider authProvider;
+	private NotificationEventProvider notificationProvider;
+	private ClientApiProvider provider;
+
+	@Before
+	public void setup() throws InterruptedException
+	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+	}
 
 	@Test
 	public void userProfileTest()
 	{
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
-			setup(driver);
+			webDriverUtil.getPage(driver, "UserTool.action");
 			editProfile(driver, properties.getProperty("test.newuseremail"));
 			sendTestMessage(driver);
 		}
-
-	}
-
-	public void setup(WebDriver driver)
-	{
-		webDriverUtil.getPage(driver, "UserTool.action");
-
-		(new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) (WebDriver driverLocal) -> {
-			List<WebElement> titleElements = driverLocal.findElements(By.id("dashPanel_header-title-textEl"));
-			if (titleElements.size() > 0) {
-				return titleElements.get(0).isDisplayed();
-			} else {
-				return false;
-			}
-		});
 	}
 
 	public void editProfile(WebDriver driver, String email)
@@ -114,5 +113,11 @@ public class UserProfileIT
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#dashPanel_header-title-textEl")));
 
+	}
+
+	@After
+	public void cleanupTest()
+	{
+		notificationProvider.cleanup();
 	}
 }

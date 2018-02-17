@@ -104,14 +104,14 @@ public class SearchServiceImpl
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-		return SearchServerManager.getSearchServer().search(query, filter);
+		return SearchServerManager.getInstance().getSearchServer().search(query, filter);
 	}
 
 	@Override
 	public void indexComponents(List<Component> components)
 	{
 		if (!components.isEmpty()) {
-			SearchServerManager.getSearchServer().index(components);
+			SearchServerManager.getInstance().getSearchServer().index(components);
 			OSFCacheManager.getSearchCache().removeAll();
 		}
 	}
@@ -181,28 +181,28 @@ public class SearchServiceImpl
 	@Override
 	public void deleteById(String id)
 	{
-		SearchServerManager.getSearchServer().deleteById(id);
+		SearchServerManager.getInstance().getSearchServer().deleteById(id);
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void deleteAll()
 	{
-		SearchServerManager.getSearchServer().deleteAll();
+		SearchServerManager.getInstance().getSearchServer().deleteAll();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void saveAll()
 	{
-		SearchServerManager.getSearchServer().saveAll();
+		SearchServerManager.getInstance().getSearchServer().saveAll();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void resetIndexer()
 	{
-		SearchServerManager.getSearchServer().resetIndexer();
+		SearchServerManager.getInstance().getSearchServer().resetIndexer();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
@@ -391,7 +391,7 @@ public class SearchServiceImpl
 				if (indexSearches.isEmpty() == false) {
 					//only the first one counts
 					String indexQuery = indexSearches.get(0).getValue();
-					SearchServerManager.updateSearchScore(indexQuery, views);
+					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
 				}
 
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {
@@ -424,18 +424,18 @@ public class SearchServiceImpl
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
 	{
-		return SearchServerManager.getSearchServer().doIndexSearch(query, filter);
+		return SearchServerManager.getInstance().getSearchServer().doIndexSearch(query, filter);
 	}
 
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
-		return SearchServerManager.getSearchServer().doIndexSearch(query, filter, addtionalFieldsToReturn);
+		return SearchServerManager.getInstance().getSearchServer().doIndexSearch(query, filter, addtionalFieldsToReturn);
 	}
 
 	@Override
 	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
-		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult, componentType);
+		return SearchServerManager.getInstance().getSearchServer().searchSuggestions(query, maxResult, componentType);
 	}
 
 	@Override
