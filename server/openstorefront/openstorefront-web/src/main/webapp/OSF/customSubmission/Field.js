@@ -35,7 +35,6 @@ Ext.define('OSF.customSubmission.Field', {
 	name: '', // what is this field mapped to?
 	fieldType: undefined,
 	field: undefined,
-	getValue: undefined,
 	fieldConfig: {},
 	items: [
 		{columnWidth: 0.75, style: 'padding-right: 50px;', items: []},

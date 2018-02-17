@@ -104,7 +104,7 @@ Ext.define('OSF.customSubmission.Grid', {
 					handler: function () {
 
 						var grid = this.up('grid');
-						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
+						Ext.create('OSF.customSubmission.GridWindow', {
 							title: 'Add Item to ' + grid.title,
 							formPanel: [Ext.create('OSF.customSubmission.form.' + grid.formPanel)],
 							gridReference: grid
@@ -119,7 +119,7 @@ Ext.define('OSF.customSubmission.Grid', {
 					handler: function () {
 
 						var grid = this.up('grid');
-						var newWindow = Ext.create('OSF.customSubmission.GridWindow', {
+						Ext.create('OSF.customSubmission.GridWindow', {
 							title: 'Edit ' + grid.title + ' Item',
 							formPanel: [Ext.create('OSF.customSubmission.form.' + grid.formPanel)],
 							gridReference: grid,
