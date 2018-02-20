@@ -41,7 +41,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 							}
 						}
 					},
-					{text: 'Entity ', dataIndex: 'entity', flex: 6},
+					{text: 'Entity ', dataIndex: 'entity', flex: 6, hidden: true},
 					{text: 'Field', dataIndex: 'field', flex: 6},
 					{
 						text: 'Required',
@@ -100,8 +100,10 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 						}
 					}
 				],
+				features: [{ ftype: 'grouping' }],
 				store: Ext.create('Ext.data.Store', {
 					sortInfo: { field: "required", direction: "ASC" },
+					groupField: 'entity',
 					data: [
 						{entity: 'Entry', field: 'Description', required: 'Required', mapped: true, fieldTypes: ['textarea','textfield']},									
 						{entity: 'Entry', field: 'Entry Type', required: 'Required', mapped: true, fieldTypes: ['dropdown','radio','checkbox']},
