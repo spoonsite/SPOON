@@ -33,53 +33,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	layout: {
 		type: 'anchor'
 	},
-	// dockedItems: [
-	// 	{
-	// 		xtype: 'toolbar',
-	// 		margin: '0 0 0 10',
-	// 		dock: 'right',
-	// 		style: 'background: transparent;',
-	// 		//ui: 'footer',
-	// 		items: [
-				// {
-				// 	scale: 'medium',
-				// 	iconCls: 'fa fa-plus-circle fa-2x',
-				// 	handler: function() {
-						
-				// 	}
-				// },
-				// {
-				// 	scale: 'medium',
-				// 	padding: '10 0 0 0',
-				// 	iconCls: 'fa fa-quote-right',
-				// 	handler: function() {
-						
-				// 	}					
-				// },				
-				// {
-				// 	scale: 'medium',
-				// 	iconCls: 'fa fa-minus fa-2x',
-				// 	handler: function() {
-						
-				// 	}					
-				// },
-				// {
-				// 	scale: 'medium',
-				// 	iconCls: 'fa fa-image fa-2x',
-				// 	handler: function() {
-						
-				// 	}					
-				// },				
-				// {
-				// 	scale: 'medium',
-				// 	iconCls: 'fa fa-trash fa-2x',
-				// 	handler: function() {
-						
-				// 	}					
-				// }			
-	// 		]
-	// 	}
-	// ],
 	items: [
 		{
 	        xtype: 'textfield',
@@ -88,111 +41,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	        height: 50,
 	        width: '100%'
 		}
-				
-//				{
-//					xtype: 'container',
-//					width: '100%',
-//					height: '30%',
-//					items: [
-//						{
-//							xtype: 'button',
-//							text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>',
-//							padding: 0,
-//							width: 40,
-//							height: 35,
-//							margin: '10 0 0 0',
-//							overCls: 'csf-meta-menu-item',
-//							style: 'border: none; background: none; float: right;',
-							// listeners: {
-							// 	click: function () {
-							// 		var button = this;
-							// 		var disabledUp = false;
-							// 		var disabledDown = false;
-							// 		var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
-							// 		var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
-							// 		if (itemIndex === 0) {
-							// 			disabledUp = true;
-							// 		}
-							// 		if (itemIndex === fieldDisplayPanel.items.items.length -1) {
-							// 			disabledDown = true;
-							// 		}
-							// 		var popupMenu = Ext.create('Ext.menu.Menu', {
-							// 			floating: true,
-							// 			items: [
-							// 				{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
-							// 				{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
-							// 				{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
-							// 				{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
-							// 			]
-							// 		});
-							// 		popupMenu.showAt(this.getXY());
-							// 	}
-							// }
-//						},
-//						{
-//							xtype: 'button',
-//							text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete this field"></i>',
-//							padding: 0,
-//							width: 40,
-//							height: 35,
-//							margin: '10 0 0 0',
-//							overCls: 'csf-meta-menu-item',
-//							itemId: 'deleteButton',
-//							style: 'border: none; background: none; float: right;',
-//							listeners: {
-//								click: function () {
-//									this.up('FormBuilderItem').displayPanel.activeItem = null;
-//									this.up('[cls=form-builder-item]').destroy();
-//								}
-//							}
-//						},
-//						{
-//							xtype: 'button',
-//							text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy this field"></i>',
-//							padding: 0,
-//							width: 40,
-//							height: 35,
-//							margin: '10 0 0 0',
-//							overCls: 'csf-meta-menu-item',
-//							style: 'border: none; background: none; float: right;',
-//							listeners: {
-//								click: function () {
-//									console.log("CLONE THE FIELD!");
-//								}
-//							}
-//						},
-//						{
-//							xtype: 'button',
-//							text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a new field here"></i>',
-//							padding: 0,
-//							width: 40,
-//							height: 35,
-//							margin: '10 0 0 0',
-//							overCls: 'csf-meta-menu-item',
-//							style: 'border: none; background: none; float: right;',
-//							listeners: {
-//								click: function () {
-									// // add a field after the current
-									// var displayPanel = this.up('osf-formbuilderitem').displayPanel;
-									
-									// //This need be re-examined 
-									// //perhaps a maintain a separate array and render on change 
-									
-									// var fieldIndex = displayPanel.items.items.indexOf(this.up('[cls=form-builder-item]'));
-									// this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
-//								}
-//							}
-//						}
-//					]
-//				}
-//			]
-//    	}
     ],
 
     setActiveFormItem: function (cmp) {
-    	
+
     	var newItem = cmp || this;
-    	var formBuilderPanel = newItem.up('[itemId=formBuilderPanel]');
+    	var formBuilderPanel = this.formBuilderPanel;
 		var previousActiveItem = formBuilderPanel.activeItem;
 
 		if (previousActiveItem) {
@@ -202,7 +56,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		formBuilderPanel.activeItem = newItem;
 
 		// update the menu position
-		formBuilderPanel.queryById('floatingItemMenu').updatePosition();
+		formBuilderPanel.floatingMenu.updatePosition();
     },
 
     listeners: {
@@ -210,7 +64,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 			var fieldItem = this;
 
-			var formBuilderPanel = fieldItem.up('[itemId=formBuilderPanel]');
+			var formBuilderPanel = this.formBuilderPanel;
 			var itemContainer = formBuilderPanel.queryById('itemContainer');
 			if (itemContainer.items.items.length === 1) {
 				formBuilderPanel.queryById('deleteButton').setDisabled(true);
@@ -230,9 +84,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	afterrender: function () {
 
 			var fieldContainer = this;
-
-    		// style the question input field
-			//fieldContainer.items.items[0].items.items[0].el.dom.querySelector('input').style.fontSize = '32px';
 
 			// set this container as a drag source
 			new Ext.drag.Source({
@@ -267,7 +118,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							// identify the active (container being dragged,) and the target container
 							var activeContainer = getPanel(self._element.dom.id);
 							var targetContainer = getPanel(info.target._element.dom.id);
-							var formBuilderPanel = fieldContainer.up('[itemId=formBuilderPanel]');
+							var formBuilderPanel = fieldContainer.formBuilderPanel;
 
 							// swap positions in the items list
 							var activeIndex = activeContainer.up().items.items.indexOf(activeContainer);
