@@ -73,6 +73,7 @@ Ext.define('OSF.customSubmission.form.Media', {
 				xtype: 'button',
 				text: 'Local Resource',
 				width: 450,
+				margin: '0 0 15 0',
 				menu: [
 					{
 						text: 'Local Resource',

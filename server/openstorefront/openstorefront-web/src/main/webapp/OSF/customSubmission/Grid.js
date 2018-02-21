@@ -45,7 +45,12 @@ Ext.define('OSF.customSubmission.Grid', {
 				// add a column to the grid for each field
 				gridColumns.push({
 					dataIndex: colName, 
-					text: (colName.charAt(0).toUpperCase() + colName.slice(1)).match(/[A-Z][a-z]+/g).join(' ') // Capitalize then split on capital letter (pretty-ify col name)
+					text: (colName.charAt(0).toUpperCase() + colName.slice(1)).match(/[A-Z][a-z]+/g).join(' '), // Capitalize then split on capital letter (pretty-ify col name)
+					renderer: function(value, meta, record) {
+						
+						console.log(record.getData());
+						return record.getData()[colName + 'Display'];
+					}
 				});
 			}
 		});
@@ -184,24 +189,33 @@ Ext.define('OSF.customSubmission.GridWindow', {
 					iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 					handler: function () {
 
-						var csGrid = this.up('window');
-						var form = csGrid.query('form')[0];
+						var gridWindow = this.up('window');
+						var form = gridWindow.query('form')[0];
 						var newRecord = {};
 						Ext.Array.forEach(form.items.items, function (el) {
-							newRecord[el.name] = el.getValue();
+							
+							var colName = el.colName || el.name;
+							
+							newRecord[colName] = el.getValue();
+							
+							newRecord[colName + 'Display'] = el.getDisplayValue ? el.getDisplayValue() : el.getValue();
+							
+//							
+//							newRecord[el.colName || el.name].displayValue = el.getDisplayValue();
+
 						});
 
 						// remove currently selected item
-						if (csGrid.inEdit) {
-							csGrid.gridReference.store.remove(csGrid.gridReference.getSelection()[0]);
+						if (gridWindow.inEdit) {
+							gridWindow.gridReference.store.remove(gridWindow.gridReference.getSelection()[0]);
 						}
 
-						csGrid.gridReference.setSelection();
-						csGrid.gridReference.query('[itemId=deleteBtn]')[0].setDisabled(true);
-						csGrid.gridReference.query('[itemId=editBtn]')[0].setDisabled(true);
-						csGrid.gridReference.getStore().add(newRecord);
+						gridWindow.gridReference.setSelection();
+						gridWindow.gridReference.query('[itemId=deleteBtn]')[0].setDisabled(true);
+						gridWindow.gridReference.query('[itemId=editBtn]')[0].setDisabled(true);
+						gridWindow.gridReference.getStore().add(newRecord);
 						form.reset();
-						csGrid.close();
+						gridWindow.close();
 					}
 				},
 				{

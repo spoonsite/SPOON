@@ -40,7 +40,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: AttributesGrid',
+					label: 'Field for: Attributes Grid',
 					labelTip: 'This is a totally useful tip for the field: AttributesGrid',
 					labelCode: 'G6'
 				});
@@ -50,7 +50,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: ContactsGrid',
+					label: 'Field for: Contacts Grid',
 					labelTip: 'This is a totally useful tip for the field: ContactsGrid',
 					labelCode: 'E3'
 				});
@@ -60,7 +60,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: DependenciesGrid',
+					label: 'Field for: Dependencies Grid',
 					labelTip: 'This is a totally useful tip for the field: DependenciesGrid',
 					labelCode: 'K8'
 				});
@@ -70,7 +70,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: MediaGrid',
+					label: 'Field for: Media Grid',
 					labelTip: 'This is a totally useful tip for the field: MediaGrid',
 					labelCode: 'M1'
 				});
@@ -80,7 +80,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: RelationshipsGrid',
+					label: 'Field for: Relationships Grid',
 					labelTip: 'This is a totally useful tip for the field: RelationshipsGrid',
 					labelCode: 'Y3'
 				});
@@ -90,7 +90,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: ResourcesGrid',
+					label: 'Field for: Resources  Grid',
 					labelTip: 'This is a totally useful tip for the field: ResourcesGrid',
 					labelCode: 'R2'
 				});
@@ -100,7 +100,7 @@
 					isScoped: true,
 					canComment: true,
 					commentRich: true,
-					label: 'Field for: TagsGrid',
+					label: 'Field for: Tags Grid',
 					labelTip: 'This is a totally useful tip for the field: TagsGrid',
 					labelCode: 'F6'
 				});
