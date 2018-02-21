@@ -22,63 +22,64 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 	templateRecord: undefined,
 
-	width: '100%',
 	height: 275,
 	margin: '10 10 10 0',
 	padding: '10 20 10 20',
 	target: true,
+	width: '100%',
 	cls: 'form-builder-item',
 	overCls: 'csf-hover',
-	style: 'border-top: 3px solid white; border-bottom: 3px solid white;',
+	isActive: false,
 	layout: {
 		type: 'anchor'
 	},
-	dockedItems: [
-		{
-			xtype: 'toolbar',
-			margin: '0 0 0 10',
-			dock: 'right',
-			style: 'background: transparent;',
-			//ui: 'footer',
-			items: [
-				{
-					scale: 'medium',
-					iconCls: 'fa fa-plus-circle fa-2x',
-					handler: function() {
+	// dockedItems: [
+	// 	{
+	// 		xtype: 'toolbar',
+	// 		margin: '0 0 0 10',
+	// 		dock: 'right',
+	// 		style: 'background: transparent;',
+	// 		//ui: 'footer',
+	// 		items: [
+				// {
+				// 	scale: 'medium',
+				// 	iconCls: 'fa fa-plus-circle fa-2x',
+				// 	handler: function() {
 						
-					}
-				},
-				{
-					scale: 'medium',
-					iconCls: 'fa fa-font fa-2x',
-					handler: function() {
+				// 	}
+				// },
+				// {
+				// 	scale: 'medium',
+				// 	padding: '10 0 0 0',
+				// 	iconCls: 'fa fa-quote-right',
+				// 	handler: function() {
 						
-					}					
-				},				
-				{
-					scale: 'medium',
-					iconCls: 'fa fa-minus fa-2x',
-					handler: function() {
+				// 	}					
+				// },				
+				// {
+				// 	scale: 'medium',
+				// 	iconCls: 'fa fa-minus fa-2x',
+				// 	handler: function() {
 						
-					}					
-				},
-				{
-					scale: 'medium',
-					iconCls: 'fa fa-image fa-2x',
-					handler: function() {
+				// 	}					
+				// },
+				// {
+				// 	scale: 'medium',
+				// 	iconCls: 'fa fa-image fa-2x',
+				// 	handler: function() {
 						
-					}					
-				},				
-				{
-					scale: 'medium',
-					iconCls: 'fa fa-trash fa-2x',
-					handler: function() {
+				// 	}					
+				// },				
+				// {
+				// 	scale: 'medium',
+				// 	iconCls: 'fa fa-trash fa-2x',
+				// 	handler: function() {
 						
-					}					
-				}			
-			]
-		}
-	],
+				// 	}					
+				// }			
+	// 		]
+	// 	}
+	// ],
 	items: [
 		{
 	        xtype: 'textfield',
@@ -171,14 +172,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 //							style: 'border: none; background: none; float: right;',
 //							listeners: {
 //								click: function () {
-//									// add a field after the current
-//									var displayPanel = this.up('osf-formbuilderitem').displayPanel;
-//									
-//									//This need be re-examined 
-//									//perhaps a maintain a separate array and render on change 
-//									
-//									var fieldIndex = displayPanel.items.items.indexOf(this.up('[cls=form-builder-item]'));
-//									this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
+									// // add a field after the current
+									// var displayPanel = this.up('osf-formbuilderitem').displayPanel;
+									
+									// //This need be re-examined 
+									// //perhaps a maintain a separate array and render on change 
+									
+									// var fieldIndex = displayPanel.items.items.indexOf(this.up('[cls=form-builder-item]'));
+									// this.up('[itemId=formBuilderPanel]').items.items[1].insert(fieldIndex+1, Ext.create('OSF.customSubmissionTool.FormBuilderItem'));
 //								}
 //							}
 //						}
@@ -190,7 +191,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
     setActiveFormItem: function (cmp) {
     	var newItem = cmp || this;
-    	var formBuilderPanel = newItem.formBuilderPanel.displayPanel;
+    	// var formBuilderPanel = newItem.formBuilderPanel.displayPanel;
+    	var formBuilderPanel = newItem.up('[itemId=formBuilderPanel]');
 		var previousActiveItem = formBuilderPanel.activeItem;
 
 		if (previousActiveItem) {
@@ -198,6 +200,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 		newItem.addCls('csf-active');
 		formBuilderPanel.activeItem = newItem;
+
+		// update the menu position
+		formBuilderPanel.queryById('floatingItemMenu').updatePosition();
     },
 
     listeners: {
@@ -205,14 +210,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var itemPanel = this;
 
     		// disabled/enable delete button
-    		var fieldDisplayPanel = itemPanel.formBuilderPanel.displayPanel;
-    		if (fieldDisplayPanel.items.items.length === 1) {
+    		// var fieldDisplayPanel = itemPanel.formBuilderPanel.displayPanel;
+    		// if (fieldDisplayPanel.items.items.length === 1) {
     			
-    			this.queryById('deleteButton').setDisabled(true);
-    		}
-    		else if (fieldDisplayPanel.items.items.length === 2) {
-    			this.queryById('deleteButton').setDisabled(false);
-    		}
+    		// 	this.queryById('deleteButton').setDisabled(true);
+    		// }
+    		// else if (fieldDisplayPanel.items.items.length === 2) {
+    		// 	this.queryById('deleteButton').setDisabled(false);
+    		// }
     	},
     	click: {
     		element: 'el',

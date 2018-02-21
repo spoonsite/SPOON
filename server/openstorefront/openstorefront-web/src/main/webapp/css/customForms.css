@@ -43,6 +43,12 @@
 	background: rgba(142,186,230,0.6);
 }
 
+.form-builder-item {
+	/*width: 100%;*/
+	border-top: 3px solid white;
+	border-bottom: 3px solid white;
+}
+
 /*pulse demo: https://codepen.io/olam/pen/zcqea*/
 @-webkit-keyframes pulse {
 	0% {

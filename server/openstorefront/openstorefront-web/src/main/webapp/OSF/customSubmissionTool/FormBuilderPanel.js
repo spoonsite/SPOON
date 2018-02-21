@@ -27,6 +27,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 	width: '100%',		
 	style: 'background: #6c6c6c',
+	itemId: 'formBuilderPanel',
 	activeItem: null,
 	layout: {
 		type: 'border'
@@ -51,8 +52,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			scrollable: true,
 			style: 'background: #fff;',
 			itemId: 'fieldDisplayPanel',
-			layout: 'anchor',
 			bodyStyle: 'padding: 5px;',
+			addItem: function (item) {
+				this.queryById('itemContainer').add(item);
+			},
 			items: [
 				{
 					xtype: 'textfield',
@@ -65,6 +68,110 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					name: 'instructions',
 					emptyText: 'Instructions',
 					width: '100%'					
+				},
+				{
+					xtype: 'container',
+					layout: 'column',
+					items: [
+						{
+							xtype: 'container',
+							itemId: 'itemContainer',
+							columnWidth: 0.9,
+						},
+						{
+							xtype: 'container',
+							height: '100%',
+							padding: '10 40 0 20',
+							columnWidth: 0.1,
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'floatingItemMenu',
+									height: 275,
+									hidden: true,
+									style: 'background: rgba(200,200,200,0.8);',
+									defaultType: 'button',
+									defaults: {
+										width: '100%',
+										style: 'border: none; background: none; color: rgb(200,200,200);'
+									},
+									layout: 'vbox',
+									items: [
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+
+												// // add a field after the current
+												var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+												var itemContainer = formBuilderPanel.queryById('itemContainer');
+												var fieldIndex = itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
+												var newFormBuilderItem = Ext.create('OSF.customSubmissionTool.FormBuilderItem');
+
+												itemContainer.insert(fieldIndex+1, newFormBuilderItem);
+												newFormBuilderItem.setActiveFormItem(newFormBuilderItem);
+											}
+										},
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+												
+											}					
+										},
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-quote-right fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+												
+											}					
+										},				
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-minus fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+												
+											}					
+										},
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-picture-o fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+												
+											}					
+										},
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true"></i>',
+											flex: 1,
+											handler: function() {
+
+												// delete formBuilderItem
+												var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+												var activeItem = formBuilderPanel.activeItem;
+												activeItem.destroy();
+												formBuilderPanel.activeItem = null;
+
+												var floatingMenu = this.up('[itemId=floatingItemMenu]');
+
+												// hide floating menu
+												floatingMenu.setHidden(true);
+
+											}					
+										}				
+									],
+									updatePosition: function () {
+										var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+										if (this.hidden) {
+											this.setHidden(false);
+										}
+										if (formBuilderPanel.activeItem) {
+											this.setY(formBuilderPanel.activeItem.getY(), true);
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			]
 		}
@@ -102,10 +209,17 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
 		formBuilderPanel.displayPanel = formBuilderPanel.queryById('fieldDisplayPanel');
-		formBuilderPanel.displayPanel.add(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
+		formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
 			formBuilderPanel: formBuilderPanel,
-			templateRecord: formBuilderPanel.templateRecord
+			templateRecord: formBuilderPanel.templateRecord,
+			isActive: true
 		}));
+		for (var i = 0; i < 5; i++) {
+			formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
+				formBuilderPanel: formBuilderPanel,
+				templateRecord: formBuilderPanel.templateRecord
+			}));
+		}
 
 	}
 });
