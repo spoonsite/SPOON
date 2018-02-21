@@ -43,6 +43,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
     ],
 
+    getFormBuilderPanel: function () {
+    	return this.formBuilderPanel || this.up('[itemId=formBuilderPanel]');
+    },
+
+    getItemContainer: function () {
+    	return this.getFormBuilderPanel().itemContainer;// || this.getFormBuilderPanel().queryById('itemContainer');
+    },
+
     setActiveFormItem: function (cmp) {
 
     	var newItem = cmp || this;
@@ -65,7 +73,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var fieldItem = this;
 
 			var formBuilderPanel = this.formBuilderPanel;
-			var itemContainer = formBuilderPanel.queryById('itemContainer');
+			var itemContainer = formBuilderPanel.itemContainer;
 			if (itemContainer.items.items.length === 1) {
 				formBuilderPanel.queryById('deleteButton').setDisabled(true);
 			}
@@ -98,17 +106,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						fieldContainer.disable();
 					},
 					dragend: function (self, info, event, eOpts) {
-						console.log("this.container", fieldContainer);
-
-						var getPanel = function (divId, isChecking) {
-							var regex = /ext\-comp\-[0-9]{4}/;
-							if (isChecking) {
-								return regex.exec(divId) !== null;	
-							}
-							else {
-								return Ext.getCmp(regex.exec(divId)[0]);
-							}
-						};
 
 						// if there is a valid target container:
 						//		* swap the y coords of both containers
@@ -116,18 +113,21 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						if (info.target !== null) {
 
 							// identify the active (container being dragged,) and the target container
-							var activeContainer = getPanel(self._element.dom.id);
-							var targetContainer = getPanel(info.target._element.dom.id);
-							var formBuilderPanel = fieldContainer.formBuilderPanel;
+							var activeContainer = fieldContainer;
+							var targetContainer = Ext.getCmp(info.target._element.id);
+							var itemContainer = fieldContainer.getItemContainer();
 
-							// swap positions in the items list
-							var activeIndex = activeContainer.up().items.items.indexOf(activeContainer);
-							var targetIndex = activeContainer.up().items.items.indexOf(targetContainer);
+							// get the index of the active and target field items in the item container
+							var activeIndex = itemContainer.items.items.indexOf(activeContainer);
+							var targetIndex = itemContainer.items.items.indexOf(targetContainer);
 
-							// reset the y index of the active container, then swap the items.
+							// reset the y index of the active container, and then swap the items.
 							activeContainer.setY(fieldContainer.getY() - event.delta.y);
-							formBuilderPanel.items.items[1].insert(targetIndex, activeContainer);
-							formBuilderPanel.items.items[1].insert(activeIndex, targetContainer);
+							itemContainer.insert(targetIndex, activeContainer);
+							itemContainer.insert(activeIndex, targetContainer);
+
+							// update the floating menu
+							fieldContainer.getFormBuilderPanel().floatingMenu.updatePosition();
 
 						} else {
 

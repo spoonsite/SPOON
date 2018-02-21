@@ -53,7 +53,8 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				// // add a field after the current and set as active
 				var formBuilderPanel = this.up('[itemId=floatingMenu]').getFormBuilderPanel();
 				var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
-				var newFormBuilderItem = Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
+				var newFormBuilderItem = Ext.create({
+					xtype: 'osf-formbuilderitem',
 					formBuilderPanel: formBuilderPanel
 				});
 

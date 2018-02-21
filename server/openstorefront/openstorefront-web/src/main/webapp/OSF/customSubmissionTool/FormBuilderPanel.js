@@ -134,11 +134,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
 
-		formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
+		formBuilderPanel.displayPanel.addItem({
+			xtype: 'osf-formbuilderitem',
 			formBuilderPanel: formBuilderPanel,
 			templateRecord: formBuilderPanel.templateRecord,
 			isActive: true
-		}));
+		});
 		// for (var i = 0; i < 5; i++) {
 		// 	formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
 		// 		formBuilderPanel: formBuilderPanel,
