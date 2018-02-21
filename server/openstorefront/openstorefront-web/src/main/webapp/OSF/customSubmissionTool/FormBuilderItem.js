@@ -103,31 +103,31 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 //							margin: '10 0 0 0',
 //							overCls: 'csf-meta-menu-item',
 //							style: 'border: none; background: none; float: right;',
-//							listeners: {
-//								click: function () {
-//									var button = this;
-//									var disabledUp = false;
-//									var disabledDown = false;
-//									var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
-//									var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
-//									if (itemIndex === 0) {
-//										disabledUp = true;
-//									}
-//									if (itemIndex === fieldDisplayPanel.items.items.length -1) {
-//										disabledDown = true;
-//									}
-//									var popupMenu = Ext.create('Ext.menu.Menu', {
-//										floating: true,
-//										items: [
-//											{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
-//											{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
-//											{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
-//											{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
-//										]
-//									});
-//									popupMenu.showAt(this.getXY());
-//								}
-//							}
+							// listeners: {
+							// 	click: function () {
+							// 		var button = this;
+							// 		var disabledUp = false;
+							// 		var disabledDown = false;
+							// 		var fieldDisplayPanel = button.up('[itemId=fieldDisplayPanel]');
+							// 		var itemIndex = fieldDisplayPanel.items.items.indexOf(button.up('[cls=form-builder-item]'));
+							// 		if (itemIndex === 0) {
+							// 			disabledUp = true;
+							// 		}
+							// 		if (itemIndex === fieldDisplayPanel.items.items.length -1) {
+							// 			disabledDown = true;
+							// 		}
+							// 		var popupMenu = Ext.create('Ext.menu.Menu', {
+							// 			floating: true,
+							// 			items: [
+							// 				{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp},
+							// 				{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown},
+							// 				{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
+							// 				{text: 'Move to page', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
+							// 			]
+							// 		});
+							// 		popupMenu.showAt(this.getXY());
+							// 	}
+							// }
 //						},
 //						{
 //							xtype: 'button',
@@ -190,8 +190,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     ],
 
     setActiveFormItem: function (cmp) {
+    	
     	var newItem = cmp || this;
-    	// var formBuilderPanel = newItem.formBuilderPanel.displayPanel;
     	var formBuilderPanel = newItem.up('[itemId=formBuilderPanel]');
 		var previousActiveItem = formBuilderPanel.activeItem;
 
@@ -207,17 +207,17 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
     listeners: {
     	afterlayout: function () {
-			var itemPanel = this;
 
-    		// disabled/enable delete button
-    		// var fieldDisplayPanel = itemPanel.formBuilderPanel.displayPanel;
-    		// if (fieldDisplayPanel.items.items.length === 1) {
-    			
-    		// 	this.queryById('deleteButton').setDisabled(true);
-    		// }
-    		// else if (fieldDisplayPanel.items.items.length === 2) {
-    		// 	this.queryById('deleteButton').setDisabled(false);
-    		// }
+			var fieldItem = this;
+
+			var formBuilderPanel = fieldItem.up('[itemId=formBuilderPanel]');
+			var itemContainer = formBuilderPanel.queryById('itemContainer');
+			if (itemContainer.items.items.length === 1) {
+				formBuilderPanel.queryById('deleteButton').setDisabled(true);
+			}
+			else if (itemContainer.items.items.length === 2) {
+				formBuilderPanel.queryById('deleteButton').setDisabled(false);	
+			}
     	},
     	click: {
     		element: 'el',

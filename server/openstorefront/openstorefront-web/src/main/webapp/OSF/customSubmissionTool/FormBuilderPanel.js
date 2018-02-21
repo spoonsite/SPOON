@@ -98,51 +98,51 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 									layout: 'vbox',
 									items: [
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a field"></i>',
 											flex: 1,
 											handler: function() {
 
 												// // add a field after the current
 												var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
-												var itemContainer = formBuilderPanel.queryById('itemContainer');
-												var fieldIndex = itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
+												var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
 												var newFormBuilderItem = Ext.create('OSF.customSubmissionTool.FormBuilderItem');
 
-												itemContainer.insert(fieldIndex+1, newFormBuilderItem);
+												formBuilderPanel.itemContainer.insert(fieldIndex+1, newFormBuilderItem);
 												newFormBuilderItem.setActiveFormItem(newFormBuilderItem);
 											}
 										},
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy a field"></i>',
 											flex: 1,
 											handler: function() {
 												
 											}					
 										},
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-quote-right fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-quote-right fa-2x" aria-hidden="true" data-qtip="Add a paragraph section"></i>',
 											flex: 1,
 											handler: function() {
 												
 											}					
 										},				
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-minus fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-minus fa-2x" aria-hidden="true" data-qtip="Add a horizontal rule"></i>',
 											flex: 1,
 											handler: function() {
 												
 											}					
 										},
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-picture-o fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-picture-o fa-2x" aria-hidden="true" data-qtip="Add media"></i>',
 											flex: 1,
 											handler: function() {
 												
 											}					
 										},
 										{
-											text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true"></i>',
+											text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete section"></i>',
 											flex: 1,
+											itemId: 'deleteButton',
 											handler: function() {
 
 												// delete formBuilderItem
@@ -151,13 +151,44 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 												activeItem.destroy();
 												formBuilderPanel.activeItem = null;
 
-												var floatingMenu = this.up('[itemId=floatingItemMenu]');
-
 												// hide floating menu
-												floatingMenu.setHidden(true);
+												formBuilderPanel.floatingMenu.setHidden(true);
 
 											}					
-										}				
+										},
+										{
+											text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true" data-qtip="More options"></i>',
+											flex: 1,
+											listeners: {
+												click: function () {
+													var button = this;
+													var disabledUp = false;
+													var disabledDown = false;
+													var formBuilderPanel = button.up('[itemId=formBuilderPanel]');
+
+													var itemIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
+													if (itemIndex === 0) {
+														disabledUp = true;
+													}
+													if (itemIndex === formBuilderPanel.itemContainer.items.items.length -1) {
+														disabledDown = true;
+													}
+													var popupMenu = Ext.create('Ext.menu.Menu', {
+														floating: true,
+														items: [
+															{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp}, //TODO
+															{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown}, //TODO
+															{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
+															{text: 'Move to Section', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
+														]
+													});
+													popupMenu.showAt(button.getXY());
+												}
+											},
+											handler: function() {
+												
+											}					
+										}
 									],
 									updatePosition: function () {
 										var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
@@ -209,6 +240,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		// TODO: query the template...
 		// for each items in record... add FormBuilderItem...
 		formBuilderPanel.displayPanel = formBuilderPanel.queryById('fieldDisplayPanel');
+		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
+		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
+
 		formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
 			formBuilderPanel: formBuilderPanel,
 			templateRecord: formBuilderPanel.templateRecord,
