@@ -49,14 +49,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
     getItemContainer: function () {
-    	return this.getFormBuilderPanel().itemContainer;// || this.getFormBuilderPanel().queryById('itemContainer');
+    	return this.getFormBuilderPanel().itemContainer;
     },
 
     setActiveFormItem: function (cmp) {
 
     	var newItem = cmp || this;
     	var formBuilderPanel = this.getFormBuilderPanel();
-		var previousActiveItem = newItem.activeItem;
+		var previousActiveItem = formBuilderPanel.activeItem;
 
 		if (previousActiveItem) {
 			previousActiveItem.removeCls('csf-active');

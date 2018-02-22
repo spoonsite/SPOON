@@ -23,7 +23,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		'OSF.customSubmissionTool.FormTemplateInfoPanel',
 		'OSF.customSubmissionTool.SectionNavPanel',
 		'OSF.customSubmissionTool.TemplateProgressPanel',
-		'OSF.customSubmissionTool.FloatingMenu',
 		'OSF.customSubmissionTool.FieldDisplayPanel'
 	],
 
@@ -74,6 +73,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 				{
 					xtype: 'osf-csf-sectionnavpanel',					
 					width: '100%',					
+					itemId: 'sectionPanel',
 					templateRecord: formBuilderPanel.templateRecord,
 					flex: 2
 				},
@@ -89,16 +89,37 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.displayPanel = formBuilderPanel.queryById('fieldDisplayPanel');
 		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
+		formBuilderPanel.sectionPanel = formBuilderPanel.queryById('sectionPanel');
 
-		// if there no template record section has been defined, define it...
+		// if no template record section has been defined, define it
 		if (typeof formBuilderPanel.templateRecord.sections === 'undefined') {
 			formBuilderPanel.templateRecord.sections = [
 				{
 					name: 'Untitled',
 					instructions: '',
+					sectionId: Math.random().toString(36).substr(2, 10),
 					fieldItems: [
 						{
-							question: 'This is a test question! w0000t',
+							question: 'Question #1',
+							formBuilderPanel: formBuilderPanel
+						},
+						{
+							question: 'Question #2',
+							formBuilderPanel: formBuilderPanel
+						}
+					]
+				},
+				{
+					name: 'A brand new section!',
+					instructions: 'This is some dummy data to fill out the "instructions" textfield :)',
+					sectionId: Math.random().toString(36).substr(2, 10),
+					fieldItems: [
+						{
+							question: 'Super cool question #1',
+							formBuilderPanel: formBuilderPanel
+						},
+						{
+							question: 'Super cool question #2',
 							formBuilderPanel: formBuilderPanel
 						}
 					]
@@ -106,7 +127,28 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			];
 		}
 
+		// utils for easily adding/removing sections to the templateRecord
+		formBuilderPanel.templateRecord.sections.add = function (newSection) {
+			formBuilderPanel.templateRecord.sections.push(newSection);
+			formBuilderPanel.sectionPanel.updateNavList();
+			formBuilderPanel.activeItem = null;
+			formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[formBuilderPanel.templateRecord.sections.length - 1]);
+		};
+		formBuilderPanel.templateRecord.sections.remove = function (section) {
+			var sectionId = section.sectionId || section;
+			Ext.Array.forEach(formBuilderPanel.templateRecord.sections, function (el, index) {
+				if (el.sectionId === sectionId) {
+					formBuilderPanel.templateRecord.sections.splice(index, 1);
+				}
+			});
+			formBuilderPanel.sectionPanel.updateNavList();
+			formBuilderPanel.activeItem = null;
+			formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
+		};
+
 		// loads the first section in the tempateRecord
 		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
+
+		formBuilderPanel.sectionPanel.updateNavList();
 	}
 });

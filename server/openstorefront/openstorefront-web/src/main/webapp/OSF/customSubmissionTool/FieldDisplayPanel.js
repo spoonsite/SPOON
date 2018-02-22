@@ -19,6 +19,7 @@
 Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	extend: 'Ext.container.Container',
 	alias: 'widget.osf-csf-displaypanel',
+	requires: ['OSF.customSubmissionTool.FloatingMenu'],
 
 	scrollable: true,
 	bodyStyle: 'padding: 5px;',
@@ -41,12 +42,13 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	loadSection: function (section, saveSection) {
 
 		var displayPanel = this;
-		saveSection = saveSection ? saveSection : true;
+		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
 
 		if (saveSection) {
 			displayPanel.saveSection();
 		}
 
+		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
 
@@ -67,6 +69,13 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		}
 
 		itemContainer.add(fieldItems);
+
+		// set the first item as active (need to push this back on the stack though...)
+		Ext.defer(function () {
+			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
+		},1);
+
+		formBuilderPanel.activeSection = section;
 	},
 	items: [
 		{

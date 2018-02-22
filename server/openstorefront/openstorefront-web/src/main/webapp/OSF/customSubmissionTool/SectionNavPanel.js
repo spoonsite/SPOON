@@ -32,7 +32,23 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					text: 'Add',
 					iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 					handler: function() {
-						
+						var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+						formBuilderPanel.templateRecord.sections.add({
+							name: 'Untitled',
+							instructions: '',
+							sectionId: Math.random().toString(36).substr(2, 10),
+							fieldItems: [
+								{
+									question: '',
+									formBuilderPanel: formBuilderPanel
+								}
+							]
+						});
+
+						// set the selection to the last tree list section
+						var navList = formBuilderPanel.queryById('navList');
+						var navRoot = navList.getStore().getRoot();
+						navList.setSelection(navRoot.childNodes[navRoot.childNodes.length - 1]);
 					}
 				},
 				{
@@ -42,65 +58,76 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					text: 'Delete',
 					iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 					handler: function() {
-						
+						var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+						if (formBuilderPanel.templateRecord.sections.length > 1) {
+							formBuilderPanel.templateRecord.sections.remove(formBuilderPanel.activeSection);
+
+							// set the selection to the first tree list section
+							var navList = formBuilderPanel.queryById('navList');
+							navList.setSelection(navList.getStore().getRoot().childNodes[0]);
+						}
 					}					
 				}
 			]
 		}
 	],	
-	initComponent: function () {		
-		this.callParent();
-		var sectionPanel = this;
 
-		var items = [
-			{
-				xtype: 'treelist',				
-				store: {
-					root: {
-						expanded: true,
-						children: [
-							{
-								text: 'Instuctions',
-								expanded: false,
-								iconCls: 'fa fa-file-text',
-								children: [
-									{
-										text: 'G-1. Company Name',													
-										leaf: true
-									},
-									{
-										text: 'G-2. Point of Contact',													
-										leaf: true
-									}
-								]
-							},
-							{
-								text: 'Software Description',
-								expanded: false,
-								iconCls: 'fa fa-file-text',
-								children: [
-									{
-										text: 'P-1.  List the machines and/or services you require and machine resources.',													
-										leaf: true
-									},
-									{
-										text: 'P-2. List hardware attributes that would have a negative impact on the operation of your software, or identify hardware attributes that would have a optimize the operation of your software.',													
-										leaf: true
-									},
-									{
-										text: 'P-3. What operating system(s) does the software require?',												
-										leaf: true
-									}
-								]
+	updateNavList: function (templateRecord) {
+		var sectionPanel = this;
+		var formBuilderPanel = sectionPanel.up('[itemId=formBuilderPanel]');
+		var templateRecord = templateRecord || formBuilderPanel.templateRecord;
+
+		// clear the current tree list, and build a new one
+		formBuilderPanel.sectionPanel.removeAll();
+		formBuilderPanel.sectionPanel.add({
+
+			xtype: 'treelist',				
+			itemId: 'navList',
+			listeners: {
+				selectionchange: function (self, record) {
+
+					if (!record.data.leaf) {
+						
+						// loads selection if ids match
+						Ext.Array.forEach(templateRecord.sections, function (el, index) {
+							if (el.sectionId === record.data.sectionId) {
+								formBuilderPanel.displayPanel.loadSection(el);
 							}
-						]
+						});
+						formBuilderPanel.activeItem = null;
 					}
 				}
-			}
-		];
-		
-		sectionPanel.add(items);
-		
-	}
-});
+			},
+			store: {
+				root: {
+					expanded: true,
+					children: (function () {
 
+						// dynamically create section list in regards to what is in templateRecord.sections
+						var childrenItems = [];
+						Ext.Array.forEach(templateRecord.sections, function (el, index) {
+
+							childrenItems.push({});
+							Ext.apply(childrenItems[index], {
+								text: el.name,
+								expanded: false,
+								iconCls: 'fa fa-file-text',
+								children: [],
+								sectionId: el.sectionId,
+							});
+
+							Ext.Array.forEach(el.fieldItems, function (el) {
+								childrenItems[index].children.push({
+									text: el.question,
+									leaf: true
+								});
+							});
+						});
+
+						return childrenItems;
+					}())
+				}
+			}
+		});
+	},
+});
