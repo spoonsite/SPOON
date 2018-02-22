@@ -36,6 +36,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	items: [
 		{
 	        xtype: 'textfield',
+	        itemId: 'question',
 	        emptyText: 'Untitled Question',
 			fieldStyle: 'font-size: 32px',
 	        height: 50,
@@ -54,8 +55,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     setActiveFormItem: function (cmp) {
 
     	var newItem = cmp || this;
-    	var formBuilderPanel = this.formBuilderPanel;
-		var previousActiveItem = formBuilderPanel.activeItem;
+    	var formBuilderPanel = this.getFormBuilderPanel();
+		var previousActiveItem = newItem.activeItem;
 
 		if (previousActiveItem) {
 			previousActiveItem.removeCls('csf-active');
@@ -72,7 +73,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 			var fieldItem = this;
 
-			var formBuilderPanel = this.formBuilderPanel;
+			var formBuilderPanel = fieldItem.getFormBuilderPanel();
 			var itemContainer = formBuilderPanel.itemContainer;
 			if (itemContainer.items.items.length === 1) {
 				formBuilderPanel.queryById('deleteButton').setDisabled(true);
@@ -150,6 +151,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 		this.callParent();
 		var fieldContainer = this;
+
+		fieldContainer.queryById('question').setValue(fieldContainer.question);
 
 		//fieldContainer.items.items[0].items.items[0].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
 

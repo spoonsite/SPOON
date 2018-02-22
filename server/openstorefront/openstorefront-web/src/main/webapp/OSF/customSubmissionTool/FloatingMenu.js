@@ -21,9 +21,10 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 	alias: 'widget.osf-csf-floatingMenu',
 
 	itemId: 'floatingMenu',
-	eight: 275,
+	height: 275,
 	hidden: true,
-	style: 'background: rgba(200,200,200,0.8);',
+	cls: 'floating-menu-container',
+	style: 'background: rgba(200,200,200,0.8); box-shadow: 2px 2px 10px; border-radius: 5px;',
 	defaultType: 'button',
 	defaults: {
 		width: '100%',
@@ -48,6 +49,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a field"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			handler: function() {
 
 				// // add a field after the current and set as active
@@ -65,6 +67,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy a field"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			handler: function() {
 				
 			}					
@@ -72,6 +75,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-quote-right fa-2x" aria-hidden="true" data-qtip="Add a paragraph section"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			handler: function() {
 				
 			}					
@@ -79,6 +83,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-minus fa-2x" aria-hidden="true" data-qtip="Add a horizontal rule"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			handler: function() {
 				
 			}					
@@ -86,6 +91,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-picture-o fa-2x" aria-hidden="true" data-qtip="Add media"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			handler: function() {
 				
 			}					
@@ -93,6 +99,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete section"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			itemId: 'deleteButton',
 			handler: function() {
 
@@ -113,6 +120,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true" data-qtip="More options"></i>',
 			flex: 1,
+			cls: 'floating-menu-button',
 			listeners: {
 				click: function () {
 					var button = this;

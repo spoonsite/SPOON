@@ -28,8 +28,8 @@
 	background: rgb(180,180,180);
 }
 
-.csf-meta-menu-item {
-	background: rgba(255,255,255,0.2)!important;
+.floating-menu-button:hover {
+	background: rgba(255,255,255,0.4)!important;
 }
 
 .csf-hover .drag-handle {
@@ -44,7 +44,6 @@
 }
 
 .form-builder-item {
-	/*width: 100%;*/
 	border-top: 3px solid white;
 	border-bottom: 3px solid white;
 }

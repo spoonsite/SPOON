@@ -23,13 +23,15 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		'OSF.customSubmissionTool.FormTemplateInfoPanel',
 		'OSF.customSubmissionTool.SectionNavPanel',
 		'OSF.customSubmissionTool.TemplateProgressPanel',
-		'OSF.customSubmissionTool.FloatingMenu'
+		'OSF.customSubmissionTool.FloatingMenu',
+		'OSF.customSubmissionTool.FieldDisplayPanel'
 	],
 
 	width: '100%',		
 	style: 'background: #6c6c6c',
 	itemId: 'formBuilderPanel',
 	activeItem: null,
+	activeSection: null,
 	layout: {
 		type: 'border'
 	},
@@ -48,54 +50,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			}
 		},
 		{
-			flex: 0.75,			
-			region: 'center',
-			scrollable: true,
-			style: 'background: #fff;',
+			xtype: 'osf-csf-displaypanel',
 			itemId: 'fieldDisplayPanel',
-			bodyStyle: 'padding: 5px;',
-			addItem: function (item) {
-				this.queryById('itemContainer').add(item);
-			},
-			items: [
-				{
-					xtype: 'textfield',
-					name: 'name',
-					emptyText: 'Untitled Section',
-					width: '100%'					
-				},
-				{
-					xtype: 'textarea',
-					name: 'instructions',
-					emptyText: 'Instructions',
-					width: '100%'					
-				},
-
-				// display area for fieldItems and the floating menu
-				{
-					xtype: 'container',
-					layout: 'column',
-					items: [
-						{
-							xtype: 'container',
-							itemId: 'itemContainer',
-							columnWidth: 0.9,
-						},
-						{
-							xtype: 'container',
-							height: '100%',
-							padding: '10 40 0 20',
-							columnWidth: 0.1,
-							items: [
-								{
-									xtype: 'osf-csf-floatingMenu',
-									formBuilderPanel: Ext.getCmp('formBuilderPanel')
-								}
-							]
-						}
-					]
-				}
-			]
+			flex: 0.75,			
+			region: 'center'
 		}
 	],
 
@@ -128,23 +86,27 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			]
 		);
 
-		// TODO: query the template...
-		// for each items in record... add FormBuilderItem...
 		formBuilderPanel.displayPanel = formBuilderPanel.queryById('fieldDisplayPanel');
 		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
 
-		formBuilderPanel.displayPanel.addItem({
-			xtype: 'osf-formbuilderitem',
-			formBuilderPanel: formBuilderPanel,
-			templateRecord: formBuilderPanel.templateRecord,
-			isActive: true
-		});
-		// for (var i = 0; i < 5; i++) {
-		// 	formBuilderPanel.displayPanel.addItem(Ext.create('OSF.customSubmissionTool.FormBuilderItem', {
-		// 		formBuilderPanel: formBuilderPanel,
-		// 		templateRecord: formBuilderPanel.templateRecord
-		// 	}));
-		// }
+		// if there no template record section has been defined, define it...
+		if (typeof formBuilderPanel.templateRecord.sections === 'undefined') {
+			formBuilderPanel.templateRecord.sections = [
+				{
+					name: 'Untitled',
+					instructions: '',
+					fieldItems: [
+						{
+							question: 'This is a test question! w0000t',
+							formBuilderPanel: formBuilderPanel
+						}
+					]
+				}
+			];
+		}
+
+		// loads the first section in the tempateRecord
+		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 	}
 });
