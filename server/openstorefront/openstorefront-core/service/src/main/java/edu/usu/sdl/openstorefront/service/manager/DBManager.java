@@ -145,7 +145,6 @@ public class DBManager
 			LOG.log(Level.INFO, "Creating DB at %s", this.dbFileDir);
 			try (ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir)) {
 				db.create();
-				db.close();
 			}
 			LOG.log(Level.INFO, "Done");
 		}
