@@ -164,7 +164,7 @@ public class PropertiesManager
 	private String versionFile = "/filter/version.properties";
 
 	private SortedProperties defaults = new SortedProperties();
-	private final ReentrantLock LOCK = new ReentrantLock();
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	protected static PropertiesManager singleton = null;
 
