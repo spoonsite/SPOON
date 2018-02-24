@@ -142,6 +142,16 @@ limitations under the License.
 	cursor: pointer;
 }
 
+.private-badge {
+    border-radius: 15%;
+	padding-left: 3px;
+    padding-right: 3px;
+    text-align: center;
+    background-color: red;
+    border: 1px darkred solid;
+    color: white;
+}
+
 .page-title{
 	text-align: center; 
 	font-size: 35px; 

@@ -374,14 +374,20 @@ public class SearchServiceImpl
 				}
 
 				List<String> idsToResolve = new ArrayList<>();
-				if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
-					int count = 0;
-					for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
-						idsToResolve.add(intermediateViews.get(i).getComponentId());
-						count++;
-						if (count >= searchModel.getMax()) {
-							break;
+				if (indexSearches.isEmpty()) {
+					if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
+						int count = 0;
+						for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
+							idsToResolve.add(intermediateViews.get(i).getComponentId());
+							count++;
+							if (count >= searchModel.getMax()) {
+								break;
+							}
 						}
+					}
+				} else {
+					for (ComponentSearchView view : intermediateViews) {
+						idsToResolve.add(view.getComponentId());
 					}
 				}
 
@@ -401,6 +407,11 @@ public class SearchServiceImpl
 				//	Order by relevance then name
 				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
 					Collections.sort(views, new RelevanceComparator<>());
+				}
+
+				if (indexSearches.isEmpty() == false) {
+					//FIXME:
+					//views = FilterQueryParams.defaultFilter().windowData(views);
 				}
 
 				//trim descriptions to max length

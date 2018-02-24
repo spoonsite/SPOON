@@ -278,7 +278,7 @@ public class UploadAction
 					}
 				} else {
 					//zip handling
-					File tempFile = new File(FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/" + System.currentTimeMillis() + "-Temp.zip");
+					File tempFile = new File(FileSystemManager.SYSTEM_TEMP_DIR + "/" + System.currentTimeMillis() + "-Temp.zip");
 					uploadFile.save(tempFile);
 					TFile archive = new TFile(tempFile.getPath());
 					TFile archiveFiles[] = archive.listFiles();

@@ -292,6 +292,11 @@ public class CoreComponentServiceImpl
 
 	public ComponentDetailView getComponentDetails(String componentId)
 	{
+		return getComponentDetails(componentId, false);
+	}
+
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation)
+	{
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
@@ -334,6 +339,15 @@ public class CoreComponentServiceImpl
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
 		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
+
+		if (!showPrivateInformation) {
+			if (attributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getPrivateFlag());
+			})) {
+				LOG.log(Level.FINEST, "Private Attributes were removed");
+			}
+		}
+
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
 		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
 

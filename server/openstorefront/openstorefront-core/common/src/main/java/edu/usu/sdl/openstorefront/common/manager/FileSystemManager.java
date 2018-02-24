@@ -47,7 +47,13 @@ public class FileSystemManager
 
 	public static final String MAIN_PERM_DIR = "/perm";
 	public static final String MAIN_TEMP_DIR = "/temp";
+
+	/**
+	 * Do not use with getDir() since that expects relative paths; use this
+	 * directly
+	 */
 	public static final String SYSTEM_TEMP_DIR = System.getProperty("java.io.tmpdir");
+
 	public static final String CONFIG_DIR = "/config";
 	public static final String IMPORT_DIR = "/import";
 	public static final String IMPORT_HISTORY_DIR = "/import/history";
@@ -116,6 +122,12 @@ public class FileSystemManager
 		return directories;
 	}
 
+	/**
+	 * This get the relative path and create directories as needed
+	 *
+	 * @param directory
+	 * @return
+	 */
 	public File getDir(String directory)
 	{
 		Objects.requireNonNull(directory);

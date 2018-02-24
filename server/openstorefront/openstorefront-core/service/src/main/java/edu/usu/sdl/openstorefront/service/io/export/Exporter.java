@@ -46,7 +46,7 @@ public abstract class Exporter
 	public File export(List<ComponentAll> components)
 	{
 		//open temp file
-		String archiveName = FileSystemManager.getInstance().getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/export-" + System.currentTimeMillis() + ".zip";
+		String archiveName = FileSystemManager.SYSTEM_TEMP_DIR + "/export-" + System.currentTimeMillis() + ".zip";
 
 		for (ComponentAll componentAll : components) {
 			String name = StringUtils.left(StringProcessor.cleanFileName(componentAll.getComponent().getName()), 15);
