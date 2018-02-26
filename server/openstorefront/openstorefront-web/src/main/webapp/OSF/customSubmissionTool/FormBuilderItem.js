@@ -40,7 +40,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	        emptyText: 'Untitled Question',
 			fieldStyle: 'font-size: 32px',
 	        height: 50,
-	        width: '100%'
+	        width: '100%',
+	        listeners: {
+	        	change: function (self, newVal) {
+	        		this.up('[cls=form-builder-item]').question = newVal;
+	        	}
+	        }
 		}
     ],
 

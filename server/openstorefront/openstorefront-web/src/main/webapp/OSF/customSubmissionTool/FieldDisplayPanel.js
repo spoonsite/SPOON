@@ -26,11 +26,24 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	style: 'background: #fff;',
 	addItem: function (item) {
 		this.queryById('itemContainer').add(item);
-	},
-	getItems: function () {
 
 	},
+	getFieldItems: function () {
+
+		var items = this.queryById('itemContainer').getRefItems();
+		var dataItems = [];
+
+		Ext.Array.forEach(items, function (el, index) {
+			dataItems.push({
+				question: el.question
+				//TODO specify other field attributes (e.g. fieldType)
+			});
+		});
+
+		return dataItems;
+	},
 	createItem: function (sectionItem) {
+
 		return Ext.create({
 			xtype: 'osf-formbuilderitem',
 			question: sectionItem.question
@@ -38,6 +51,31 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	},
 	saveSection: function () {
 
+		var displayPanel = this;
+		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
+		var sectionFormValues = displayPanel.queryById('sectionContainer').getForm().getFieldValues();
+
+		var navNeedsUpdate = false;
+
+		if (sectionFormValues.name) {
+
+			if (formBuilderPanel.activeSection.name !== sectionFormValues.name) {
+
+				navNeedsUpdate = true;
+			}
+
+			formBuilderPanel.activeSection.name = sectionFormValues.name;
+			formBuilderPanel.activeSection.instructions = sectionFormValues.instructions;
+		}
+
+		if (navNeedsUpdate) {
+
+			formBuilderPanel.sectionPanel.updateNavList();
+		}
+
+		if (formBuilderPanel.activeSection) {
+			formBuilderPanel.activeSection.fieldItems = displayPanel.getFieldItems()
+		}
 	},
 	loadSection: function (section, saveSection) {
 

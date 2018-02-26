@@ -85,12 +85,13 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			itemId: 'navList',
 			listeners: {
 				selectionchange: function (self, record) {
-
+					
 					if (!record.data.leaf) {
 						
 						// loads selection if ids match
 						Ext.Array.forEach(templateRecord.sections, function (el, index) {
 							if (el.sectionId === record.data.sectionId) {
+								formBuilderPanel.displayPanel.saveSection();
 								formBuilderPanel.displayPanel.loadSection(el);
 							}
 						});
