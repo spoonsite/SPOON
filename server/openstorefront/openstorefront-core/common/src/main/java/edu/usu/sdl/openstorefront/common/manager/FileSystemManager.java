@@ -48,10 +48,6 @@ public class FileSystemManager
 	public static final String MAIN_PERM_DIR = "/perm";
 	public static final String MAIN_TEMP_DIR = "/temp";
 
-	/**
-	 * Do not use with getDir() since that expects relative paths; use this
-	 * directly
-	 */
 	public static final String SYSTEM_TEMP_DIR = System.getProperty("java.io.tmpdir");
 
 	public static final String CONFIG_DIR = "/config";
@@ -132,9 +128,14 @@ public class FileSystemManager
 	{
 		Objects.requireNonNull(directory);
 
-		File dir = new File(getBaseDirectory() + directory);
-		if (dir.mkdirs()) {
-			LOG.log(Level.FINEST, "Not all directories were created. Highly likely directories already exist.  If not, Check permission and Disk Space");
+		File dir;
+		if (!SYSTEM_TEMP_DIR.equals(directory)) {
+			dir = new File(getBaseDirectory() + directory);
+			if (dir.mkdirs()) {
+				LOG.log(Level.FINEST, "Not all directories were created. Highly likely directories already exist.  If not, Check permission and Disk Space");
+			}
+		} else {
+			dir = new File(directory);
 		}
 		return dir;
 	}

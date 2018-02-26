@@ -410,8 +410,7 @@ public class SearchServiceImpl
 				}
 
 				if (indexSearches.isEmpty() == false) {
-					//FIXME:
-					//views = FilterQueryParams.defaultFilter().windowData(views);
+					views = windowData(views, searchModel.getStartOffset(), searchModel.getMax());
 				}
 
 				//trim descriptions to max length
@@ -430,6 +429,24 @@ public class SearchServiceImpl
 			OSFCacheManager.getSearchCache().put(element);
 		}
 		return searchResult;
+	}
+
+	private List<ComponentSearchView> windowData(List<ComponentSearchView> data, int offset, int max)
+	{
+		List<ComponentSearchView> results = new ArrayList<>();
+
+		//window
+		if (offset < data.size() && max > 0) {
+			int count = 0;
+			for (int i = offset; i < data.size(); i++) {
+				results.add(data.get(i));
+				count++;
+				if (count >= max) {
+					break;
+				}
+			}
+		}
+		return results;
 	}
 
 	@Override
