@@ -67,6 +67,7 @@ import org.apache.solr.common.util.NamedList;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SolrManager
 		extends BaseSearchManager
 		implements Initializable

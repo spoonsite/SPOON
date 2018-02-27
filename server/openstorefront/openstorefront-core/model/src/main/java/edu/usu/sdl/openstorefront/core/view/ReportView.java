@@ -46,10 +46,6 @@ public class ReportView
 	private boolean noViewAvailable;
 	private String reportViewFormat;
 
-	public ReportView()
-	{
-	}
-
 	public static ReportView toReportView(Report report)
 	{
 		return toReportView(report, PropertiesManager.getInstance());
