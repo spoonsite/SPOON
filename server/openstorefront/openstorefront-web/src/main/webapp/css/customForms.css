@@ -48,18 +48,6 @@
 	border-bottom: 3px solid white;
 }
 
-/*pulse demo: https://codepen.io/olam/pen/zcqea*/
-@-webkit-keyframes pulse {
-	0% {
-	  -webkit-box-shadow: 0 0 0 0 rgba(142,186,230,0.4);
-	}
-	50% {
-	    -webkit-box-shadow: 0 0 0 20px rgba(142,186,230,0);
-	}
-	100% {
-	    -webkit-box-shadow: 0 0 0 0 rgba(142,186,230,0);
-	} 
-}
 @keyframes pulse {
 	0% {
 	    -moz-box-shadow: 0 0 0 0 rgba(142,186,230,0.4);
