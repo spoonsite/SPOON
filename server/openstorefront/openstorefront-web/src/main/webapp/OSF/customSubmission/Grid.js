@@ -48,7 +48,6 @@ Ext.define('OSF.customSubmission.Grid', {
 					text: (colName.charAt(0).toUpperCase() + colName.slice(1)).match(/[A-Z][a-z]+/g).join(' '), // Capitalize then split on capital letter (pretty-ify col name)
 					renderer: function(value, meta, record) {
 						
-						console.log(record.getData());
 						return record.getData()[colName + 'Display'];
 					}
 				});
