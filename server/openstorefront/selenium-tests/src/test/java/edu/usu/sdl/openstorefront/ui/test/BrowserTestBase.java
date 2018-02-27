@@ -91,6 +91,29 @@ public class BrowserTestBase
 			throw new WebDriverException("Browser failure");
 		}
 	}
+	
+	/**
+	 * Locates a WebElement from a String and a list of css selected WebElements
+	 * 
+	 * @param driver Selenium webdriver
+	 * @param selector css selector
+	 * @param text text to search for within list of web elements
+	 * @return WebElement
+	 */
+	protected static WebElement findElementByString(WebDriver driver, String selector, String text)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+		List<WebElement> els = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(selector)));
+		WebElement element = null;
+
+		for (WebElement el : els) {
+			if (el.getText().contains(text)) {
+				element = el;
+				break;
+			}
+		}
+		return element;
+	}
 
 	/**
 	 * Used to located item in table
