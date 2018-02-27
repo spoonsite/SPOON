@@ -18,6 +18,11 @@ public abstract class BaseTestAction
 		extends BaseAction
 {
 
+	private final String appendTestsString = " tests=";
+	private final String appendFailuresString = " failures=";
+	private final String appendFailedString = "failed";
+	private final String appendPassedString = "passed";
+
 	private class TestResults
 	{
 
@@ -94,9 +99,9 @@ public abstract class BaseTestAction
 			}
 			output.append("<testsuites id='ContainerTests' name='Container Tests ")
 					.append("timestamp")
-					.append("' tests='")
+					.append(appendTestsString)
 					.append(testCount)
-					.append("' failures='")
+					.append(appendFailuresString)
 					.append(failTestCount)
 					.append("' time='")
 					.append(time / 1000.0)
@@ -114,9 +119,15 @@ public abstract class BaseTestAction
 				testCasses.append(results.getContent());
 			}
 
-			output.append("<div class='test-suite ")
-					.append(failTestCount == 0 ? "passed" : (failTestCount == testCount) ? "failed" : "")
-					.append("'>")
+			output.append("<div class='test-suite ");
+			if (failTestCount == 0) {
+				output.append(appendPassedString);
+			} else if (failTestCount == testCount) {
+				output.append(appendFailedString);
+			} else {
+				output.append("");
+			}
+			output.append("'>")
 					.append("<h1>Total Results</h1>")
 					.append("<div class='test-suite-stat'>")
 					.append("Total: ").append(testCount).append(" ")
@@ -139,9 +150,9 @@ public abstract class BaseTestAction
 					.append(testSuiteModel.getName().replace(" ", ""))
 					.append("' name='Container Tests ")
 					.append("timestamp_here")
-					.append("' tests='")
+					.append(appendTestsString)
 					.append(results.getTestCount())
-					.append("' failures='")
+					.append(appendFailuresString)
 					.append(results.getFailTestCount())
 					.append("'>")
 					.append(results.getContent())
@@ -168,7 +179,7 @@ public abstract class BaseTestAction
 					//					.append("' time='")
 					//					.append(test.getTime() / 1000.0)
 					.append("'>");
-			if (test.isSuccess() == false) {
+			if (!test.isSuccess()) {
 				testCase.append("\n<failure message='")
 						.append(test.getResults().toString().replace("<br>", ""))
 						.append("'>")
@@ -183,9 +194,9 @@ public abstract class BaseTestAction
 				.append(testSuiteModel.getName().replace(" ", ""))
 				.append("' name='")
 				.append(testSuiteModel.getName())
-				.append("' tests='")
+				.append(appendTestsString)
 				.append(testCount)
-				.append("' failures='")
+				.append(appendFailuresString)
 				.append(failTestCount)
 				.append("' time='")
 				.append(testSuiteModel.getRunTimeInMills() / 1000.0)
@@ -204,7 +215,7 @@ public abstract class BaseTestAction
 		if (summary) {
 			for (BaseTestCase test : testSuiteModel.getTests()) {
 				String passed = "<span style='color: green'> PASSED </span>";
-				if (test.isSuccess() == false) {
+				if (!test.isSuccess()) {
 					passed = "<span style='color: red'> FAILED </span>";
 				}
 
@@ -214,9 +225,9 @@ public abstract class BaseTestAction
 			StringBuilder testCase = new StringBuilder();
 			for (BaseTestCase test : testSuiteModel.getTests()) {
 				testCount++;
-				testCase.append("<div class='test-case ").append(test.isSuccess() ? "passed" : "failed").append("'>");
+				testCase.append("<div class='test-case ").append(test.isSuccess() ? appendPassedString : appendFailedString).append("'>");
 				String passed = "<span class='result passed'> PASSED </span>";
-				if (test.isSuccess() == false) {
+				if (!test.isSuccess()) {
 					passed = "<span class='result failed'> FAILED </span>";
 				}
 
@@ -225,7 +236,7 @@ public abstract class BaseTestAction
 				//results or failure
 				testCase.append("<div class='output'>Output: <br><br>");
 				testCase.append(test.getResults());
-				if (test.isSuccess() == false) {
+				if (!test.isSuccess()) {
 					testCase.append("<br>Failure Reason: <br>");
 					testCase.append(test.getFailureReason());
 					failTestCount++;
@@ -233,7 +244,7 @@ public abstract class BaseTestAction
 				testCase.append("</div></div>");
 			}
 
-			output.append("<div class='test-suite ").append(failTestCount == 0 ? "passed" : (failTestCount == testCount) ? "failed" : "").append("'>");
+			output.append("<div class='test-suite ").append(failTestCount == 0 ? appendPassedString : (failTestCount == testCount) ? appendFailedString : "").append("'>");
 			output.append("<h2>").append(testSuiteModel.getName()).append("</h2>");
 			output.append("<div class='test-list'>");
 			output.append(testCase);
