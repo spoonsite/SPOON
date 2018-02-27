@@ -94,7 +94,7 @@ public class BrowserTestBase
 	
 	/**
 	 * Locates a WebElement from a String and a list of css selected WebElements
-	 * 
+	 *
 	 * @param driver Selenium webdriver
 	 * @param selector css selector
 	 * @param text text to search for within list of web elements

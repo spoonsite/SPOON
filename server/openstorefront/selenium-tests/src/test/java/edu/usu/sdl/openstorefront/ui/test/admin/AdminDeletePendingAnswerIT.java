@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
 import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -131,10 +130,9 @@ public class AdminDeletePendingAnswerIT
 		Assert.assertTrue(confirm != null);
 		confirm.click();
 
-		//confirm answer no longer there
 		sleep(100);
-		List<WebElement> answers = driver.findElements(By.cssSelector(".question-response"));
-		Assert.assertTrue(answers.size() < 1);
+		Boolean hasNoAnswer = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".question-response")));
+		Assert.assertTrue(hasNoAnswer);
 	}
 
 	
