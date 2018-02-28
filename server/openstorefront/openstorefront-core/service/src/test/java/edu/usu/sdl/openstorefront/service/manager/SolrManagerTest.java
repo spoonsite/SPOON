@@ -15,10 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import java.util.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -28,88 +25,10 @@ import org.junit.Test;
 public class SolrManagerTest
 {
 
+	private static final Logger LOG = Logger.getLogger(SolrManagerTest.class.getName());
+
 	public SolrManagerTest()
 	{
-	}
-
-	@BeforeClass
-	public static void setUpClass()
-	{
-	}
-
-	@AfterClass
-	public static void tearDownClass()
-	{
-	}
-
-	@Before
-	public void setUp()
-	{
-	}
-
-	@After
-	public void tearDown()
-	{
-	}
-
-	/**
-	 * Test of getInstance method, of class SolrManager.
-	 */
-	@Test
-	public void testGetInstance_0args()
-	{
-//		System.out.println("getInstance");
-//		SolrManager expResult = null;
-//		SolrManager result = SolrManager.getInstance();
-	}
-
-	/**
-	 * Test of getInstance method, of class SolrManager.
-	 */
-	@Test
-	public void testGetInstance_PropertiesManager_SolrClient()
-	{
-//		System.out.println("getInstance");
-//		PropertiesManager propertiesManager = null;
-//		SolrClient client = null;
-//		SolrManager expResult = null;
-//		SolrManager result = SolrManager.getInstance(propertiesManager, client);
-
-	}
-
-	/**
-	 * Test of init method, of class SolrManager.
-	 */
-	@Test
-	public void testInit()
-	{
-//		System.out.println("init");
-//		SolrManager instance = null;
-//		instance.init();
-	}
-
-	/**
-	 * Test of cleanup method, of class SolrManager.
-	 */
-	@Test
-	public void testCleanup()
-	{
-//		System.out.println("cleanup");
-//		SolrManager instance = null;
-//		instance.cleanup();
-	}
-
-	/**
-	 * Test of getServer method, of class SolrManager.
-	 */
-	@Test
-	public void testGetServer()
-	{
-//		System.out.println("getServer");
-//		SolrManager instance = null;
-//		SolrClient expResult = null;
-//		SolrClient result = instance.getServer();
-
 	}
 
 	/**
@@ -118,10 +37,8 @@ public class SolrManagerTest
 	@Test
 	public void testInitialize()
 	{
-//		System.out.println("initialize");
-//		SolrManager instance = null;
-//		instance.initialize();
-
+		LOG.info("initialize: SolrManager");
+		
 	}
 
 	/**

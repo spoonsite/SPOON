@@ -452,6 +452,7 @@ public class JaxrsProcessor
 		mapValueField(fieldModels, fields, false);
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static Set<String> mapValueField(List<APIValueFieldModel> fieldModels, Field fields[], boolean onlyComsumeField)
 	{
 		Set<String> fieldNamesCaptured = new HashSet<>();
