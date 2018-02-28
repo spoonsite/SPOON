@@ -83,9 +83,11 @@ public class JaxrsProcessor
 {
 
 	private static final Logger log = Logger.getLogger(JaxrsProcessor.class.getName());
+	private static final String javaxResponse = "javax.ws.rs.core.Response";
 
 	private JaxrsProcessor()
 	{
+ 
 	}
 
 	public static APIResourceModel processRestClass(Class resource, String rootPath)
@@ -125,7 +127,7 @@ public class JaxrsProcessor
 					DataType dataType = method.getAnnotation(DataType.class);
 
 					boolean addResponseObject = true;
-					if (method.getReturnType().getName().equals("javax.ws.rs.core.Response")
+					if (method.getReturnType().getName().equals(javaxResponse)
 							&& dataType == null) {
 						addResponseObject = false;
 					}
@@ -140,7 +142,7 @@ public class JaxrsProcessor
 							returnTypeClass = method.getReturnType();
 						}
 
-						if (!method.getReturnType().getName().equals("javax.ws.rs.core.Response") && 
+						if (!method.getReturnType().getName().equals(javaxResponse) && 
 							!ReflectionUtil.isCollectionClass(method.getReturnType())) {
 							try {
 								valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
