@@ -86,14 +86,14 @@ public class JaxrsProcessor
 
 	private JaxrsProcessor()
 	{
- 
+
 	}
 
-	@SuppressWarnings("squid:S1872")
+	@SuppressWarnings({"squid:S1872", "squid:S1905"})
 	public static APIResourceModel processRestClass(Class resource, String rootPath)
 	{
-		APIDescription apiDescription = null;
-		
+		APIDescription apiDescription = (APIDescription) resource.getAnnotation(APIDescription.class);
+
 		APIResourceModel resourceModel = createResourceModel(resource, rootPath, apiDescription);
 
 		//class parameters
@@ -120,7 +120,7 @@ public class JaxrsProcessor
 			}
 
 			setMethodModel(methodModel, method);
-			
+
 			try {
 				if (!(method.getReturnType().getSimpleName().equalsIgnoreCase(Void.class.getSimpleName()))) {
 					APIValueModel valueModel = new APIValueModel();
@@ -142,8 +142,8 @@ public class JaxrsProcessor
 							returnTypeClass = method.getReturnType();
 						}
 
-						if (!method.getReturnType().getName().equals("javax.ws.rs.core.Response") && 
-							!ReflectionUtil.isCollectionClass(method.getReturnType())) {
+						if (!method.getReturnType().getName().equals("javax.ws.rs.core.Response")
+								&& !ReflectionUtil.isCollectionClass(method.getReturnType())) {
 							try {
 								valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
 								mapValueField(valueModel.getValueFields(), ReflectionUtil.getAllFields(returnTypeClass).toArray(new Field[0]));
@@ -197,7 +197,7 @@ public class JaxrsProcessor
 		Collections.sort(resourceModel.getMethods(), new ApiMethodComparator<>());
 		return resourceModel;
 	}
-	
+
 	private static APIResourceModel createResourceModel(Class resource, String rootPath, APIDescription apiDescription)
 	{
 		APIResourceModel resourceModel = new APIResourceModel();
@@ -205,7 +205,6 @@ public class JaxrsProcessor
 		resourceModel.setClassName(resource.getName());
 		resourceModel.setResourceName(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(resource.getSimpleName())));
 
-		apiDescription = (APIDescription) resource.getAnnotation(APIDescription.class);
 		if (apiDescription != null) {
 			resourceModel.setResourceDescription(apiDescription.value());
 		}
@@ -220,7 +219,7 @@ public class JaxrsProcessor
 			SecurityRestriction securityRestriction = getSecurityRestrictions(requireSecurity);
 			resourceModel.setSecurityRestriction(securityRestriction);
 		}
-		
+
 		return resourceModel;
 	}
 
@@ -240,16 +239,15 @@ public class JaxrsProcessor
 		}
 		APIDescription apiDescription = method.getAnnotation(APIDescription.class);
 		if (apiDescription != null) {
-			
+
 			methodModel.setDescription(apiDescription.value());
 		}
 		Path path = method.getAnnotation(Path.class);
-		if (path != null)
-		{
+		if (path != null) {
 			methodModel.setMethodPath(path.value());
 		}
 		RequireSecurity security = method.getAnnotation(RequireSecurity.class);
-		if (security != null){
+		if (security != null) {
 			SecurityRestriction securityRestriction = getSecurityRestrictions(security);
 			methodModel.setSecurityRestriction(securityRestriction);
 		}
@@ -385,6 +383,7 @@ public class JaxrsProcessor
 		}
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static void mapComplexTypes(List<APITypeModel> typeModels, Field fields[], boolean onlyConsumeField)
 	{
 		//Should strip duplicate types
@@ -577,42 +576,26 @@ public class JaxrsProcessor
 			paramModel.setFieldName(parameter.getName());
 
 			QueryParam queryParam = parameter.getAnnotation(QueryParam.class);
+			checkQueryParam(queryParam, paramModel);
+
 			FormParam formParam = parameter.getAnnotation(FormParam.class);
+			checkFormParam(formParam, paramModel);
+
 			MatrixParam matrixParam = parameter.getAnnotation(MatrixParam.class);
+			checkMatrixParam(matrixParam, paramModel);
+
 			HeaderParam headerParam = parameter.getAnnotation(HeaderParam.class);
+			checkHeaderParam(headerParam, paramModel);
+
 			CookieParam cookieParam = parameter.getAnnotation(CookieParam.class);
+			checkCookieParam(cookieParam, paramModel);
+
 			PathParam pathParam = parameter.getAnnotation(PathParam.class);
+			checkPathParam(pathParam, paramModel);
+
 			BeanParam beanParam = parameter.getAnnotation(BeanParam.class);
+			checkBeanParam(beanParam, parameter, parameterList);
 
-			if (queryParam != null) {
-				paramModel.setParameterType(QueryParam.class.getSimpleName());
-				paramModel.setParameterName(queryParam.value());
-			}
-			if (formParam != null) {
-				paramModel.setParameterType(FormParam.class.getSimpleName());
-				paramModel.setParameterName(formParam.value());
-			}
-			if (matrixParam != null) {
-				paramModel.setParameterType(MatrixParam.class.getSimpleName());
-				paramModel.setParameterName(matrixParam.value());
-			}
-			if (pathParam != null) {
-				paramModel.setParameterType(PathParam.class.getSimpleName());
-				paramModel.setParameterName(pathParam.value());
-			}
-			if (headerParam != null) {
-				paramModel.setParameterType(HeaderParam.class.getSimpleName());
-				paramModel.setParameterName(headerParam.value());
-			}
-			if (cookieParam != null) {
-				paramModel.setParameterType(CookieParam.class.getSimpleName());
-				paramModel.setParameterName(cookieParam.value());
-			}
-
-			if (beanParam != null) {
-				Class paramClass = parameter.getType();
-				mapParameters(parameterList, ReflectionUtil.getAllFields(paramClass).toArray(new Field[0]));
-			}
 			if (StringUtils.isNotBlank(paramModel.getParameterType())) {
 				APIDescription aPIDescription = parameter.getAnnotation(APIDescription.class);
 				if (aPIDescription != null) {
@@ -636,6 +619,62 @@ public class JaxrsProcessor
 
 				parameterList.add(paramModel);
 			}
+		}
+	}
+
+	private static void checkQueryParam(QueryParam queryParam, APIParamModel paramModel)
+	{
+		if (queryParam != null) {
+			paramModel.setParameterType(QueryParam.class.getSimpleName());
+			paramModel.setParameterName(queryParam.value());
+		}
+	}
+
+	private static void checkFormParam(FormParam formParam, APIParamModel paramModel)
+	{
+		if (formParam != null) {
+			paramModel.setParameterType(FormParam.class.getSimpleName());
+			paramModel.setParameterName(formParam.value());
+		}
+	}
+
+	private static void checkMatrixParam(MatrixParam matrixParam, APIParamModel paramModel)
+	{
+		if (matrixParam != null) {
+			paramModel.setParameterType(MatrixParam.class.getSimpleName());
+			paramModel.setParameterName(matrixParam.value());
+		}
+	}
+
+	private static void checkPathParam(PathParam pathParam, APIParamModel paramModel)
+	{
+		if (pathParam != null) {
+			paramModel.setParameterType(PathParam.class.getSimpleName());
+			paramModel.setParameterName(pathParam.value());
+		}
+	}
+
+	private static void checkHeaderParam(HeaderParam headerParam, APIParamModel paramModel)
+	{
+		if (headerParam != null) {
+			paramModel.setParameterType(HeaderParam.class.getSimpleName());
+			paramModel.setParameterName(headerParam.value());
+		}
+	}
+
+	private static void checkCookieParam(CookieParam cookieParam, APIParamModel paramModel)
+	{
+		if (cookieParam != null) {
+			paramModel.setParameterType(CookieParam.class.getSimpleName());
+			paramModel.setParameterName(cookieParam.value());
+		}
+	}
+
+	private static void checkBeanParam(BeanParam beanParam, Parameter parameter, List<APIParamModel> parameterList)
+	{
+		if (beanParam != null) {
+			Class paramClass = parameter.getType();
+			mapParameters(parameterList, ReflectionUtil.getAllFields(paramClass).toArray(new Field[0]));
 		}
 	}
 
