@@ -83,13 +83,13 @@ public class JaxrsProcessor
 {
 
 	private static final Logger log = Logger.getLogger(JaxrsProcessor.class.getName());
-	private static final String javaxResponse = "javax.ws.rs.core.Response";
 
 	private JaxrsProcessor()
 	{
  
 	}
 
+	@SuppressWarnings("squid:S1872")
 	public static APIResourceModel processRestClass(Class resource, String rootPath)
 	{
 		APIDescription apiDescription = null;
@@ -127,7 +127,7 @@ public class JaxrsProcessor
 					DataType dataType = method.getAnnotation(DataType.class);
 
 					boolean addResponseObject = true;
-					if (method.getReturnType().getName().equals(javaxResponse)
+					if (method.getReturnType().getName().equals("javax.ws.rs.core.Response")
 							&& dataType == null) {
 						addResponseObject = false;
 					}
@@ -142,7 +142,7 @@ public class JaxrsProcessor
 							returnTypeClass = method.getReturnType();
 						}
 
-						if (!method.getReturnType().getName().equals(javaxResponse) && 
+						if (!method.getReturnType().getName().equals("javax.ws.rs.core.Response") && 
 							!ReflectionUtil.isCollectionClass(method.getReturnType())) {
 							try {
 								valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
