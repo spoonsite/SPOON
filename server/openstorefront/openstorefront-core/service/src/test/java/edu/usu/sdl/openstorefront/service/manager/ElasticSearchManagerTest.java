@@ -15,17 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.SearchQuery;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
-import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,26 +27,26 @@ import org.junit.Test;
  */
 public class ElasticSearchManagerTest
 {
-	
+
 	public ElasticSearchManagerTest()
 	{
 	}
-	
+
 	@BeforeClass
 	public static void setUpClass()
 	{
 	}
-	
+
 	@AfterClass
 	public static void tearDownClass()
 	{
 	}
-	
+
 	@Before
 	public void setUp()
 	{
 	}
-	
+
 	@After
 	public void tearDown()
 	{
@@ -69,9 +58,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetInstance_0args()
 	{
-		System.out.println("getInstance");
-		ElasticSearchManager expResult = null;
-		ElasticSearchManager result = ElasticSearchManager.getInstance();
+//		System.out.println("getInstance");
+//		ElasticSearchManager expResult = null;
+//		ElasticSearchManager result = ElasticSearchManager.getInstance();
 
 	}
 
@@ -81,10 +70,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetInstance_PropertiesManager()
 	{
-		System.out.println("getInstance");
-		PropertiesManager propertiesManager = null;
-		ElasticSearchManager expResult = null;
-		ElasticSearchManager result = ElasticSearchManager.getInstance(propertiesManager);
+//		System.out.println("getInstance");
+//		PropertiesManager propertiesManager = null;
+//		ElasticSearchManager expResult = null;
+//		ElasticSearchManager result = ElasticSearchManager.getInstance(propertiesManager);
 
 	}
 
@@ -94,12 +83,12 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetInstance_3args()
 	{
-		System.out.println("getInstance");
-		ServiceProxy service = null;
-		PropertiesManager propertiesManager = null;
-		BlockingQueue<ElasticSearchClient> clientPool = null;
-		ElasticSearchManager expResult = null;
-		ElasticSearchManager result = ElasticSearchManager.getInstance(service, propertiesManager, clientPool);
+//		System.out.println("getInstance");
+//		ServiceProxy service = null;
+//		PropertiesManager propertiesManager = null;
+//		BlockingQueue<ElasticSearchClient> clientPool = null;
+//		ElasticSearchManager expResult = null;
+//		ElasticSearchManager result = ElasticSearchManager.getInstance(service, propertiesManager, clientPool);
 
 	}
 
@@ -109,10 +98,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetClient()
 	{
-		System.out.println("getClient");
-		ElasticSearchManager instance = null;
-		ElasticSearchClient expResult = null;
-		ElasticSearchClient result = instance.getClient();
+//		System.out.println("getClient");
+//		ElasticSearchManager instance = null;
+//		ElasticSearchClient expResult = null;
+//		ElasticSearchClient result = instance.getClient();
 
 	}
 
@@ -122,9 +111,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testReleaseClient()
 	{
-		System.out.println("releaseClient");
-		ElasticSearchClient client = null;
-		ElasticSearchManager instance = null;
+//		System.out.println("releaseClient");
+//		ElasticSearchClient client = null;
+//		ElasticSearchManager instance = null;
 
 	}
 
@@ -134,10 +123,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetMaxConnections()
 	{
-		System.out.println("getMaxConnections");
-		ElasticSearchManager instance = null;
-		int expResult = 0;
-		int result = instance.getMaxConnections();
+//		System.out.println("getMaxConnections");
+//		ElasticSearchManager instance = null;
+//		int expResult = 0;
+//		int result = instance.getMaxConnections();
 
 	}
 
@@ -147,10 +136,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testGetAvailableConnections()
 	{
-		System.out.println("getAvailableConnections");
-		ElasticSearchManager instance = null;
-		int expResult = 0;
-		int result = instance.getAvailableConnections();
+//		System.out.println("getAvailableConnections");
+//		ElasticSearchManager instance = null;
+//		int expResult = 0;
+//		int result = instance.getAvailableConnections();
 
 	}
 
@@ -160,8 +149,8 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testShutdownPool()
 	{
-		System.out.println("shutdownPool");
-		ElasticSearchManager instance = null;
+//		System.out.println("shutdownPool");
+//		ElasticSearchManager instance = null;
 
 	}
 
@@ -171,9 +160,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testInitialize()
 	{
-		System.out.println("initialize");
-		ElasticSearchManager instance = null;
-		instance.initialize();
+//		System.out.println("initialize");
+//		ElasticSearchManager instance = null;
+//		instance.initialize();
 
 	}
 
@@ -183,9 +172,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testShutdown()
 	{
-		System.out.println("shutdown");
-		ElasticSearchManager instance = null;
-		instance.shutdown();
+//		System.out.println("shutdown");
+//		ElasticSearchManager instance = null;
+//		instance.shutdown();
 
 	}
 
@@ -195,13 +184,12 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testSearch()
 	{
-		System.out.println("search");
-		SearchQuery searchQuery = null;
-		FilterQueryParams filter = null;
-		ElasticSearchManager instance = null;
-		ComponentSearchWrapper expResult = null;
-		ComponentSearchWrapper result = instance.search(searchQuery, filter);
-
+//		System.out.println("search");
+//		SearchQuery searchQuery = null;
+//		FilterQueryParams filter = null;
+//		ElasticSearchManager instance = null;
+//		ComponentSearchWrapper expResult = null;
+//		ComponentSearchWrapper result = instance.search(searchQuery, filter);
 
 	}
 
@@ -211,12 +199,12 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testDoIndexSearch_String_FilterQueryParams()
 	{
-		System.out.println("doIndexSearch");
-		String query = "";
-		FilterQueryParams filter = null;
-		ElasticSearchManager instance = null;
-		IndexSearchResult expResult = null;
-		IndexSearchResult result = instance.doIndexSearch(query, filter);
+//		System.out.println("doIndexSearch");
+//		String query = "";
+//		FilterQueryParams filter = null;
+//		ElasticSearchManager instance = null;
+//		IndexSearchResult expResult = null;
+//		IndexSearchResult result = instance.doIndexSearch(query, filter);
 
 	}
 
@@ -226,13 +214,13 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testDoIndexSearch_3args()
 	{
-		System.out.println("doIndexSearch");
-		String query = "";
-		FilterQueryParams filter = null;
-		String[] addtionalFieldsToReturn = null;
-		ElasticSearchManager instance = null;
-		IndexSearchResult expResult = null;
-		IndexSearchResult result = instance.doIndexSearch(query, filter, addtionalFieldsToReturn);
+//		System.out.println("doIndexSearch");
+//		String query = "";
+//		FilterQueryParams filter = null;
+//		String[] addtionalFieldsToReturn = null;
+//		ElasticSearchManager instance = null;
+//		IndexSearchResult expResult = null;
+//		IndexSearchResult result = instance.doIndexSearch(query, filter, addtionalFieldsToReturn);
 
 	}
 
@@ -242,13 +230,13 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testSearchSuggestions()
 	{
-		System.out.println("searchSuggestions");
-		String query = "";
-		int maxResult = 0;
-		String componentType = "";
-		ElasticSearchManager instance = null;
-		List<SearchSuggestion> expResult = null;
-		List<SearchSuggestion> result = instance.searchSuggestions(query, maxResult, componentType);
+//		System.out.println("searchSuggestions");
+//		String query = "";
+//		int maxResult = 0;
+//		String componentType = "";
+//		ElasticSearchManager instance = null;
+//		List<SearchSuggestion> expResult = null;
+//		List<SearchSuggestion> result = instance.searchSuggestions(query, maxResult, componentType);
 
 	}
 
@@ -258,10 +246,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testIndex()
 	{
-		System.out.println("index");
-		List<Component> components = null;
-		ElasticSearchManager instance = null;
-		instance.index(components);
+//		System.out.println("index");
+//		List<Component> components = null;
+//		ElasticSearchManager instance = null;
+//		instance.index(components);
 
 	}
 
@@ -271,10 +259,10 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testDeleteById()
 	{
-		System.out.println("deleteById");
-		String id = "";
-		ElasticSearchManager instance = null;
-		instance.deleteById(id);
+//		System.out.println("deleteById");
+//		String id = "";
+//		ElasticSearchManager instance = null;
+//		instance.deleteById(id);
 
 	}
 
@@ -284,9 +272,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testDeleteAll()
 	{
-		System.out.println("deleteAll");
-		ElasticSearchManager instance = null;
-		instance.deleteAll();
+//		System.out.println("deleteAll");
+//		ElasticSearchManager instance = null;
+//		instance.deleteAll();
 
 	}
 
@@ -296,9 +284,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testSaveAll()
 	{
-		System.out.println("saveAll");
-		ElasticSearchManager instance = null;
-		instance.saveAll();
+//		System.out.println("saveAll");
+//		ElasticSearchManager instance = null;
+//		instance.saveAll();
 
 	}
 
@@ -308,9 +296,9 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testResetIndexer()
 	{
-		System.out.println("resetIndexer");
-		ElasticSearchManager instance = null;
-		instance.resetIndexer();
+//		System.out.println("resetIndexer");
+//		ElasticSearchManager instance = null;
+//		instance.resetIndexer();
 
 	}
 
@@ -320,11 +308,11 @@ public class ElasticSearchManagerTest
 	@Test
 	public void testIsStarted()
 	{
-		System.out.println("isStarted");
-		ElasticSearchManager instance = null;
-		boolean expResult = false;
-		boolean result = instance.isStarted();
+//		System.out.println("isStarted");
+//		ElasticSearchManager instance = null;
+//		boolean expResult = false;
+//		boolean result = instance.isStarted();
 
 	}
-	
+
 }
