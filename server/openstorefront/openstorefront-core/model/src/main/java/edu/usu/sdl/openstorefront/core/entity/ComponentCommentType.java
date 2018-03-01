@@ -26,21 +26,21 @@ import java.util.Map;
  * @author dshurtleff
  */
 @SystemTable
-@APIDescription("Defines the available field type; the UI will determine how it is rendered")
-public class SubmissionFormFieldMappingType
-		extends LookupEntity<SubmissionFormFieldMappingType>
+@APIDescription("Describes the type of comment for categorization")
+public class ComponentCommentType
+		extends LookupEntity<ChangeType>
 {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String FIELD = "FIELD";
-	public static final String COMPLEX = "COMPLEX";
-	public static final String ATTRIBUTE = "ATTRIBUTE";
-	public static final String SUBMISSION = "SUBMISSION";
-	public static final String NONE = "NONE";
+	public static final String ADJUSTMENT_REQUIRED = "ADJUSTMENT";
+	public static final String EXPIRE = "EXPIRE";
+	public static final String INFORMATION = "INFO";
+	public static final String MERGE = "MERGE";
+	public static final String ADMINISTRATION = "ADMIN";
 
 	@SuppressWarnings({"squid:S1186"})
-	public SubmissionFormFieldMappingType()
+	public ComponentCommentType()
 	{
 	}
 
@@ -48,12 +48,11 @@ public class SubmissionFormFieldMappingType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(FIELD, newLookup(SubmissionFormFieldMappingType.class, FIELD, "Field"));
-		codeMap.put(COMPLEX, newLookup(SubmissionFormFieldType.class, COMPLEX, "Complex"));
-		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
-		codeMap.put(SUBMISSION, newLookup(SubmissionFormFieldType.class, SUBMISSION, "Submission"));
-		codeMap.put(NONE, newLookup(SubmissionFormFieldType.class, NONE, "None"));
+		codeMap.put(ADJUSTMENT_REQUIRED, newLookup(ComponentCommentType.class, ADJUSTMENT_REQUIRED, "Adjustment Required"));
+		codeMap.put(EXPIRE, newLookup(ComponentCommentType.class, EXPIRE, "Expired"));
+		codeMap.put(INFORMATION, newLookup(ComponentCommentType.class, INFORMATION, "General Information"));
+		codeMap.put(MERGE, newLookup(ComponentCommentType.class, MERGE, "Merge"));
+		codeMap.put(ADMINISTRATION, newLookup(ComponentCommentType.class, ADMINISTRATION, "Administration"));
 		return codeMap;
 	}
-
 }

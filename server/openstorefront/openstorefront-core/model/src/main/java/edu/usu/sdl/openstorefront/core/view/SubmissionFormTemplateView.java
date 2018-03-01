@@ -34,7 +34,7 @@ public class SubmissionFormTemplateView
 	private String templateStatus;
 	private String templateStatusLabel;
 
-	private List<SubmissionFormStepView> steps = new ArrayList<>();
+	private List<SubmissionFormSectionView> sections = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormTemplateView()
@@ -50,9 +50,9 @@ public class SubmissionFormTemplateView
 		view.setTemplateStatus(template.getTemplateStatus());
 		view.setTemplateStatusLabel(TranslateUtil.translate(SubmissionTemplateStatus.class, template.getTemplateStatus()));
 
-		if (template.getSteps() != null) {
-			template.getSteps().forEach(step -> {
-				view.getSteps().add(SubmissionFormStepView.toView(step));
+		if (template.getSections() != null) {
+			template.getSections().forEach(section -> {
+				view.getSections().add(SubmissionFormSectionView.toView(section));
 			});
 		}
 
@@ -68,14 +68,14 @@ public class SubmissionFormTemplateView
 		return views;
 	}
 
-	public List<SubmissionFormStepView> getSteps()
+	public List<SubmissionFormSectionView> getSections()
 	{
-		return steps;
+		return sections;
 	}
 
-	public void setSteps(List<SubmissionFormStepView> steps)
+	public void setSections(List<SubmissionFormSectionView> sections)
 	{
-		this.steps = steps;
+		this.sections = sections;
 	}
 
 	public String getTemplateId()

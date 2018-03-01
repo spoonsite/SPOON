@@ -63,10 +63,10 @@ public class SubmissionFormTemplate
 	private String templateStatus;
 
 	@ConsumeField
-	@DataType(SubmissionFormStep.class)
+	@DataType(SubmissionFormSection.class)
 	@Embedded
 	@OneToMany(orphanRemoval = true)
-	private List<SubmissionFormStep> steps;
+	private List<SubmissionFormSection> sections;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormTemplate()
@@ -83,7 +83,7 @@ public class SubmissionFormTemplate
 		this.setName(template.getName());
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
-		this.setSteps(template.getSteps());
+		this.setSections(template.getSections());
 
 	}
 
@@ -127,14 +127,14 @@ public class SubmissionFormTemplate
 		this.templateStatus = templateStatus;
 	}
 
-	public List<SubmissionFormStep> getSteps()
+	public List<SubmissionFormSection> getSections()
 	{
-		return steps;
+		return sections;
 	}
 
-	public void setSteps(List<SubmissionFormStep> steps)
+	public void setSections(List<SubmissionFormSection> sections)
 	{
-		this.steps = steps;
+		this.sections = sections;
 	}
 
 }

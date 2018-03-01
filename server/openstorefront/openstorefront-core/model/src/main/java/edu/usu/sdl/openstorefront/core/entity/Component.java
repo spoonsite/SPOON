@@ -160,6 +160,15 @@ public class Component
 	@APIDescription("Component Id of the pending change component.")
 	private String pendingChangeId;
 
+	@APIDescription("User that last submitted the entry")
+	private String submissionUser;
+
+	@APIDescription("Current owner/managing user")
+	private String ownerUser;
+
+	@APIDescription("Librarian that is currently assigned")
+	private String assignedLibrarian;
+
 	public Component()
 	{
 	}
@@ -214,7 +223,16 @@ public class Component
 		this.setReleaseDate(component.getReleaseDate());
 		this.setVersion(component.getVersion());
 		this.setNotifyOfApprovalEmail(component.getNotifyOfApprovalEmail());
-		this.setSubmittedDts(component.getSubmittedDts());
+
+		//Keep the last submission date
+		if (component.getSubmittedDts() != null) {
+			this.setSubmittedDts(component.getSubmittedDts());
+		}
+
+		if (component.getSubmissionUser() != null) {
+			this.setSubmissionUser(component.getSubmissionUser());
+		}
+
 		this.setDataSource(component.getDataSource());
 		this.setExternalId(component.getExternalId());
 		this.setFileHistoryId(component.getFileHistoryId());
@@ -222,6 +240,15 @@ public class Component
 		this.setChangeApprovalMode(component.getChangeApprovalMode());
 		this.setRecordVersion(component.getRecordVersion());
 
+	}
+
+	public String findOwnerUsername()
+	{
+		if (getOwnerUser() != null) {
+			return getOwnerUser();
+		} else {
+			return getCreateUser();
+		}
 	}
 
 	@Override
@@ -461,6 +488,36 @@ public class Component
 	public void setPendingChangeId(String pendingChangeId)
 	{
 		this.pendingChangeId = pendingChangeId;
+	}
+
+	public String getSubmissionUser()
+	{
+		return submissionUser;
+	}
+
+	public void setSubmissionUser(String submissionUser)
+	{
+		this.submissionUser = submissionUser;
+	}
+
+	public String getOwnerUser()
+	{
+		return ownerUser;
+	}
+
+	public void setOwnerUser(String ownerUser)
+	{
+		this.ownerUser = ownerUser;
+	}
+
+	public String getAssignedLibrarian()
+	{
+		return assignedLibrarian;
+	}
+
+	public void setAssignedLibrarian(String assignedLibrarian)
+	{
+		this.assignedLibrarian = assignedLibrarian;
 	}
 
 }

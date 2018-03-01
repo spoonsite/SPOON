@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.persistence.Embeddable;
@@ -46,9 +47,9 @@ public class SubmissionFormField
 	@NotNull
 	private String fieldId;
 
-	@FK(SubmissionFormStep.class)
+	@FK(SubmissionFormSection.class)
 	@NotNull
-	private String stepId;
+	private String sectionId;
 
 	@NotNull
 	@ConsumeField
@@ -64,9 +65,8 @@ public class SubmissionFormField
 	@FK(SubmissionFormFieldMappingType.class)
 	private String mappingType;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	@APIDescription("Typically should match existing entity name")
 	private String entityName;
@@ -84,9 +84,18 @@ public class SubmissionFormField
 	@ConsumeField
 	private String subSubmissionTemplateId;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	@Sanitize(TextSanitizer.class)
+	private String questionNumber;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)
+	private String staticContent;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(TextSanitizer.class)
 	private String label;
 
@@ -142,18 +151,8 @@ public class SubmissionFormField
 		this.setRequireComment(submissionFormField.getRequireComment());
 		this.setRequired(submissionFormField.getRequired());
 		this.setRequiredCommentOnValue(submissionFormField.getRequiredCommentOnValue());
-		this.setStepId(submissionFormField.getStepId());
+		this.setSectionId(submissionFormField.getSectionId());
 
-	}
-
-	public String getStepId()
-	{
-		return stepId;
-	}
-
-	public void setStepId(String stepId)
-	{
-		this.stepId = stepId;
 	}
 
 	public String getFieldType()
@@ -304,6 +303,36 @@ public class SubmissionFormField
 	public void setSubSubmissionTemplateId(String subSubmissionTemplateId)
 	{
 		this.subSubmissionTemplateId = subSubmissionTemplateId;
+	}
+
+	public String getSectionId()
+	{
+		return sectionId;
+	}
+
+	public void setSectionId(String sectionId)
+	{
+		this.sectionId = sectionId;
+	}
+
+	public String getQuestionNumber()
+	{
+		return questionNumber;
+	}
+
+	public void setQuestionNumber(String questionNumber)
+	{
+		this.questionNumber = questionNumber;
+	}
+
+	public String getStaticContent()
+	{
+		return staticContent;
+	}
+
+	public void setStaticContent(String staticContent)
+	{
+		this.staticContent = staticContent;
 	}
 
 }

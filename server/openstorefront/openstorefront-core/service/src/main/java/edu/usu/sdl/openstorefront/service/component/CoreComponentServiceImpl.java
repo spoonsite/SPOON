@@ -2591,7 +2591,20 @@ public class CoreComponentServiceImpl
 	{
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
-			component.setCreateUser(newOwner);
+			component.setOwnerUser(newOwner);
+			component.populateBaseUpdateFields();
+			persistenceService.persist(component);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
+		}
+		return component;
+	}
+
+	public Component assignLibrarian(String componentId, String librarianUsername)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setAssignedLibrarian(librarianUsername);
 			component.populateBaseUpdateFields();
 			persistenceService.persist(component);
 		} else {

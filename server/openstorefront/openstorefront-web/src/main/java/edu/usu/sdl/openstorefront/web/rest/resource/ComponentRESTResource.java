@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
@@ -847,6 +848,24 @@ public class ComponentRESTResource
 		if (component != null) {
 			service.getComponentService().changeOwner(componentId, newOwner);
 			component.setCreateUser(newOwner);
+		}
+		return sendSingleEntityResponse(component);
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Changes owner of component")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Path("/{id}/assignLibrarian")
+	public Response assignLibrarian(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			String assignLibrarian)
+	{
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			service.getComponentService().assignLibrarian(componentId, assignLibrarian);
+			component.setAssignedLibrarian(assignLibrarian);
 		}
 		return sendSingleEntityResponse(component);
 	}
@@ -2328,6 +2347,23 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource Comment section">
+	@GET
+	@APIDescription("Gets the list of comments associated to an entity")
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@DataType(ComponentComment.class)
+	@Path("/{id}/comments")
+	public List<ComponentComment> getComponentComment(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")

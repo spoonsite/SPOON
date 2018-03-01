@@ -227,6 +227,7 @@ public class ComponentReport
 					sdf.format(lineModel.getLastActivityDts()),
 					lineModel.getApprovalStatus(),
 					lineModel.getApprovalDts() == null ? "" : sdf.format(lineModel.getApprovalDts()),
+					lineModel.getApprovalUser(),
 					lineModel.getActiveStatus(),
 					sdf.format(lineModel.getCreateDts()),
 					lineModel.getCreateUser(),
