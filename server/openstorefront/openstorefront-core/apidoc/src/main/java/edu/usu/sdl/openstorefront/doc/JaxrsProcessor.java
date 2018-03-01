@@ -302,6 +302,7 @@ public class JaxrsProcessor
 		return securityRestriction;
 	}
 
+	@SuppressWarnings("squid:S3776")
 	private static void mapConsumedObjects(APIMethodModel methodModel, Parameter[] parameters)
 	{
 		ObjectMapper objectMapper = new ObjectMapper();
