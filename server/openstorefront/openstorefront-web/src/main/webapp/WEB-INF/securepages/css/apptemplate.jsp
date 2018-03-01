@@ -16,7 +16,6 @@ limitations under the License.
 
 <%@page  contentType="text/css" %>
 
-
 @media print {
     .pageBreak {		
 		page-break-after: always;

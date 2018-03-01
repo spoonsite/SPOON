@@ -111,6 +111,12 @@ Ext.define('OSF.widget.EvaluationStats', {
 		statPanel.statusStore = Ext.create('Ext.data.Store', {			
 		});
 				
+		var pieToolTip = {
+			trackMouse: true,
+			renderer: function (toolTip, record, ctx) {
+				 toolTip.setHtml(record.get('label') + ': ' + record.get('count'));
+			}
+		};
 		var container = Ext.create('Ext.panel.Panel', {
 			layout: {
 				type: 'hbox',
@@ -143,10 +149,12 @@ Ext.define('OSF.widget.EvaluationStats', {
 							label: {
 								field: 'label'
 							},
-							tooltip: {
+							tooltip: pieToolTip,
+							initTooltip: pieToolTip,
+							noResultsTooltip: {
 								trackMouse: true,
-								renderer: function (toolTip, record, ctx) {
-									 toolTip.setHtml(record.get('label') + ': ' + record.get('count'));
+								renderer: function (toolTip) {
+									 toolTip.setHtml('No results');
 								}
 							}
 						}
@@ -251,14 +259,25 @@ Ext.define('OSF.widget.EvaluationStats', {
 						percent: totalRecords > 0 ?  (data.unpublished / totalRecords) : 0						
 					}
 				];				
-				statPanel.publishStore.loadData(publishData);
+
+				
+				var publishedChart = statPanel.queryById('publishedChart');
+				var publishedChartContainer = Ext.query('[data-componentid^=polar-][data-componentid$=-series]')[0].parentElement;
 				
 				if (totalRecords === 0) {
-					statPanel.queryById('publishedChart').setTitle("No Evaluations Found");
+
+					publishedChart.setTitle("No Evaluations Found");
+					publishedChartContainer.classList.add('eval-stats-no-results');
+					publishedChart.getSeries()[0].setTooltip(publishedChart.getSeries()[0].noResultsTooltip);
+
 				} else {
-					statPanel.queryById('publishedChart').setTitle(totalRecords + " Evaluation(s)");
+
+					publishedChart.setTitle(totalRecords + " Evaluation(s)");
+					publishedChartContainer.classList.remove('eval-stats-no-results');
+					publishedChart.getSeries()[0].setTooltip(publishedChart.getSeries()[0].initTooltip);
 				}
 				
+				statPanel.publishStore.loadData(publishData);
 				statPanel.statusStore.loadData(data.statusStats);
 			}
 		});

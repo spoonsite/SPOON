@@ -69,6 +69,7 @@ public class AdminToolAction
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
 		pageMap.put("Support-Media", new PageModel("/WEB-INF/securepages/admin/data/help/supportMedia.jsp", new String[]{SecurityPermission.ADMIN_SUPPORT_MEDIA}));
+		pageMap.put("Custom-Forms", new PageModel("/WEB-INF/securepages/admin/data/customSubmissionForm.jsp", new String[]{SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE}));
 
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY}));
@@ -81,6 +82,9 @@ public class AdminToolAction
 		pageMap.put("Checklist-Templates", new PageModel("/WEB-INF/securepages/admin/evaluation/checklistTemplates.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST}));
 		pageMap.put("Checklist-Questions", new PageModel("/WEB-INF/securepages/admin/evaluation/checklistQuestions.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION}));
 		pageMap.put("Section-Templates", new PageModel("/WEB-INF/securepages/admin/evaluation/sectionTemplates.jsp", new String[]{SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION}));
+
+		//Custom Submission Form Sandbox
+		pageMap.put("Custom-Submission-Form-Sandbox", new PageModel("/WEB-INF/securepages/admin/application/customSubmissionSandbox.jsp", new String[]{SecurityPermission.ADMIN_SEARCH}));
 
 		return pageMap;
 	}
