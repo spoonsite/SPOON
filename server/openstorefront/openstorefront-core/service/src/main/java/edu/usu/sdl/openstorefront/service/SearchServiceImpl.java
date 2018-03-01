@@ -394,7 +394,7 @@ public class SearchServiceImpl
 				//resolve results
 				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
 
-				if (indexSearches.isEmpty() == false) {
+				if (!indexSearches.isEmpty()) {
 					//only the first one counts
 					String indexQuery = indexSearches.get(0).getValue();
 					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
@@ -409,7 +409,7 @@ public class SearchServiceImpl
 					Collections.sort(views, new RelevanceComparator<>());
 				}
 
-				if (indexSearches.isEmpty() == false) {
+				if (!indexSearches.isEmpty()) {
 					views = windowData(views, searchModel.getStartOffset(), searchModel.getMax());
 				}
 

@@ -341,9 +341,11 @@ public class CoreComponentServiceImpl
 		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
 
 		if (!showPrivateInformation) {
-			if (attributes.removeIf((attribute) -> {
+			boolean removedAttributes = attributes.removeIf((attribute) -> {
 				return Convert.toBoolean(attribute.getPrivateFlag());
-			})) {
+			});
+
+			if (removedAttributes) {
 				LOG.log(Level.FINEST, "Private Attributes were removed");
 			}
 		}
