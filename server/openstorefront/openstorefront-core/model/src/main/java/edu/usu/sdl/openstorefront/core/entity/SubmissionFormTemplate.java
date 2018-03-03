@@ -41,7 +41,7 @@ public class SubmissionFormTemplate
 
 	@PK(generated = true)
 	@NotNull
-	private String templateId;
+	private String submissionTemplateId;
 
 	@NotNull
 	@ConsumeField
@@ -87,14 +87,14 @@ public class SubmissionFormTemplate
 
 	}
 
-	public String getTemplateId()
+	public String getSubmissionTemplateId()
 	{
-		return templateId;
+		return submissionTemplateId;
 	}
 
-	public void setTemplateId(String templateId)
+	public void setSubmissionTemplateId(String submissionTemplateId)
 	{
-		this.templateId = templateId;
+		this.submissionTemplateId = submissionTemplateId;
 	}
 
 	public String getName()

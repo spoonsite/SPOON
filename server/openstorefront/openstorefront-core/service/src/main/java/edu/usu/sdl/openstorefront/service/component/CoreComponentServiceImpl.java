@@ -2605,6 +2605,7 @@ public class CoreComponentServiceImpl
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
 			component.setAssignedLibrarian(librarianUsername);
+			component.setAssignedLibrarianDts(TimeUtil.currentDate());
 			component.populateBaseUpdateFields();
 			persistenceService.persist(component);
 		} else {

@@ -51,6 +51,8 @@ public class Component
 		implements OrganizationModel, LoggableModel<Component>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
 
@@ -168,6 +170,9 @@ public class Component
 
 	@APIDescription("Librarian that is currently assigned")
 	private String assignedLibrarian;
+
+	@APIDescription("When was it assigned")
+	private Date assignedLibrarianDts;
 
 	public Component()
 	{
@@ -518,6 +523,16 @@ public class Component
 	public void setAssignedLibrarian(String assignedLibrarian)
 	{
 		this.assignedLibrarian = assignedLibrarian;
+	}
+
+	public Date getAssignedLibrarianDts()
+	{
+		return assignedLibrarianDts;
+	}
+
+	public void setAssignedLibrarianDts(Date assignedLibrarianDts)
+	{
+		this.assignedLibrarianDts = assignedLibrarianDts;
 	}
 
 }
