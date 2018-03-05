@@ -325,14 +325,33 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Toggle Status',
-									id: 'lookupGrid-tools-status',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									disabled: true,
-									handler: function () {
-										actionToggleStatus();
-									}								
+									text: 'Action',
+									scale: 'medium',
+									menu: [
+										{
+											text: 'Hierarchy Tool',
+											iconCls: 'fa fa-sitemap fa-2x icon-button-color-default'
+										},
+										{
+											xtype: 'menuseparator'
+										},
+										{
+											text: 'Entry Assignment',
+											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
+										},
+										{
+											xtype: 'menuseparator'
+										},
+										{
+											text: 'Toggle Status',
+											id: 'lookupGrid-tools-status',
+											disabled: true,
+											iconCls: 'fa fa-power-off fa-2x icon-button-color-default',
+											handler: function () {
+												actionToggleStatus();
+											}	
+										}
+									]
 								},
 								{
 									xtype: 'tbfill'
