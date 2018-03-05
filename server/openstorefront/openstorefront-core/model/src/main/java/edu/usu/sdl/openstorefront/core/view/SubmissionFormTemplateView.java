@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SubmissionFormTemplateView
 {
 

@@ -36,6 +36,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Represents and section of content")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ContentSection
 		extends StandardEntity<ContentSection>
 		implements LoggableModel<ContentSection>

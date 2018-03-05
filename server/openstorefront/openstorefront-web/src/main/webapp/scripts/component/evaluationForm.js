@@ -1267,8 +1267,8 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 			var entryPanel = this.query('[itemId=entryPanel]')[0];
 			var evalPanel = this.query('[itemId=evalPanel]')[0];
 
-			return evalPanel ? evalPanel.checkFormSaveStatus(this) : true && entryPanel.checkFormSaveStatus(this);
-		},
+			return evalPanel ? evalPanel.checkFormSaveStatus(this) : entryPanel.checkFormSaveStatus(this);
+		}
 	},	
 	initComponent: function () {
 

@@ -152,7 +152,7 @@ public class FileSystemManager
 	{
 		File configFile = new File(getDir(directory) + "/" + configFilename);
 		if (configFile.exists() == false) {
-			LOG.log(Level.INFO, MessageFormat.format("Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile}));
+			LOG.log(Level.INFO, MessageFormat.format("Trying to copy: {0}{1} to {2}", resourceDir, configFilename, configFile));
 
 			URL resourceUrl = new FileSystemManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
@@ -163,7 +163,7 @@ public class FileSystemManager
 				}
 			} else {
 				throw new OpenStorefrontRuntimeException(
-						MessageFormat.format("Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename}),
+						MessageFormat.format("Unable to find resource: {0}{1}", resourceDir, configFilename),
 						"Check name and jar/packaging"
 				);
 			}

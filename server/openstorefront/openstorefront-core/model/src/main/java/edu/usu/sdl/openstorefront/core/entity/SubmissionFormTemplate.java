@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SubmissionFormTemplate
 		extends StandardEntity<SubmissionFormTemplate>
 {
