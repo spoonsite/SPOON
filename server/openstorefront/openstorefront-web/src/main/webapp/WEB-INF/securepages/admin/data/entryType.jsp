@@ -86,77 +86,114 @@
 									allowBlank: false,
 									width: '100%',
 									fieldBodyCls: 'form-comp-htmleditor-border',
-									maxLength: 65536,
-									margin: '0 0 30 0'
+									maxLength: 65536
 								},																
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'componentParentType',																		
+									width: '100%',
+									margin: '0 0 20 0',
+									fieldLabel: 'Parent Type',
+									emptyText: 'None',
+									storeConfig: {
+										url: 'api/v1/resource/componenttypes/lookup',
+										addRecords: [
+											{
+												code: null,
+												description: 'None'
+											} 
+										]
+									}
+								}),
 								{
 									xtype: 'panel',
 									html: '<b>Data Entry</b>'
 								},
 								{
-									xtype: 'checkbox',
-									boxLabel: '<b>Allow On Submission Form</b>',
-									name: 'allowOnSubmission',
-									id: 'entryForm-radio-allow-on-sub'
-								},								
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Attributes',
-									name: 'dataEntryAttributes',
-									id: 'entryForm-radio-attributes'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Relationships ',
-									name: 'dataEntryRelationships',
-									id: 'entryForm-radio-relationships'									
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Contacts',
-									name: 'dataEntryContacts',
-									id: 'entryForm-radio-contacts'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Resources',
-									name: 'dataEntryResources',
-									id: 'entryForm-radio-resources'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Media',
-									name: 'dataEntryMedia',
-									id: 'entryForm-radio-media'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Dependencies',
-									name: 'dataEntryDependencies',
-									id: 'entryForm-radio-dependencies'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Evaluation Information',
-									name: 'dataEntryEvaluationInformation',
-									id: 'entryForm-radio-eval-info'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Reviews',
-									name: 'dataEntryReviews',
-									id: 'entryForm-radio-reviews'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Questions',
-									name: 'dataEntryQuestions',
-									id: 'entryForm-radio-questions'
+									xtype: 'container',
+									layout: 'column',
+									width: '100%',
+									items: [
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: '<b>Allow On Submission Form</b>',
+													name: 'allowOnSubmission',
+													id: 'entryForm-radio-allow-on-sub'
+												},								
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Attributes',
+													name: 'dataEntryAttributes',
+													id: 'entryForm-radio-attributes'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Relationships ',
+													name: 'dataEntryRelationships',
+													id: 'entryForm-radio-relationships'									
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Contacts',
+													name: 'dataEntryContacts',
+													id: 'entryForm-radio-contacts'
+												}
+											]
+										},
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Resources',
+													name: 'dataEntryResources',
+													id: 'entryForm-radio-resources'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Media',
+													name: 'dataEntryMedia',
+													id: 'entryForm-radio-media'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Dependencies',
+													name: 'dataEntryDependencies',
+													id: 'entryForm-radio-dependencies'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Evaluation Information',
+													name: 'dataEntryEvaluationInformation',
+													id: 'entryForm-radio-eval-info'
+												}
+											]
+										},
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Reviews',
+													name: 'dataEntryReviews',
+													id: 'entryForm-radio-reviews'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Questions',
+													name: 'dataEntryQuestions',
+													id: 'entryForm-radio-questions'
+												}
+											]
+										}
+									]
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'componentTypeTemplate',																		
 									width: '100%',
-									margin: '0 0 0 0',
+									margin: '0 0 20 0',
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
