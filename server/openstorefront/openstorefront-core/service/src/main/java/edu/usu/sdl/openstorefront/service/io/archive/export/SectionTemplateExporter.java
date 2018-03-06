@@ -214,7 +214,7 @@ public class SectionTemplateExporter
 				if (media != null) {
 					for (TFile mediaFile : media) {
 						try {
-							Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.getInstance().MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+							Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 
 						} catch (IOException ex) {
 							LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);

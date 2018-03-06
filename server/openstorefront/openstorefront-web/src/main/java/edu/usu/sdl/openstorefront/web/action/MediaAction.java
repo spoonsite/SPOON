@@ -170,7 +170,7 @@ public class MediaAction
 			} else {
 				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media file record: {1}", new Object[]{mediaFile.path(), mediaId}));
 			}
-			in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 		return new RangeResolutionBuilder()
@@ -262,7 +262,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+					try (InputStream in = MediaAction.class.getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
@@ -278,7 +278,7 @@ public class MediaAction
 			length = path.toFile().length();
 		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
-			in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
@@ -339,7 +339,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+					try (InputStream in = MediaAction.class.getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
@@ -355,7 +355,7 @@ public class MediaAction
 			length = path.toFile().length();
 		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check support media record: {1} ", new Object[]{supportMedia.pathToMedia(), supportMedia.getSupportMediaId()}));
-			in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
@@ -417,7 +417,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+					try (InputStream in = MediaAction.class.getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
@@ -433,7 +433,7 @@ public class MediaAction
 			length = path.toFile().length();
 		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMediaFound.pathToMedia(), temporaryMediaFound.getName()}));
-			in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
@@ -563,7 +563,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+					try (InputStream in = MediaAction.class.getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
@@ -582,7 +582,7 @@ public class MediaAction
 			} else {
 				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
 			}
-			in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
@@ -643,7 +643,7 @@ public class MediaAction
 				length = path.toFile().length();
 			} else {
 				LOG.log(Level.WARNING, MessageFormat.format("Organization logo not on disk: {0} Check organization media record: {1} ", new Object[]{organization.pathToLogo(), organization.getOrganizationId()}));
-				in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE);
+				in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 				length = MISSING_MEDIA_IMAGE_SIZE;
 			}
 
@@ -661,7 +661,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new MediaAction().getClass().getResourceAsStream(MISSING_IMAGE)) {
+					try (InputStream in = MediaAction.class.getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}

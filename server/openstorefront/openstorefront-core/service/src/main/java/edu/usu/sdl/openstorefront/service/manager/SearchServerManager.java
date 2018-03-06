@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SearchServerManager
 		implements Initializable
 {

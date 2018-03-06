@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @Embeddable
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SubmissionFormSection
 		extends StandardEntity<SubmissionFormSection>
 {

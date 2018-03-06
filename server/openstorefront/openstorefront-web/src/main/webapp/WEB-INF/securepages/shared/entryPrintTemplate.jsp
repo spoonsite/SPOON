@@ -20,8 +20,7 @@ limitations under the License.
 	request.setAttribute("appVersion", appVersion);
 %>
 
-<link href="../webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>	
+<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 
 <style>
 	.print-general-block {
