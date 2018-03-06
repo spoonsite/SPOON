@@ -742,6 +742,23 @@ public class ComponentRESTResource
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
+	@APIDescription("Approves a set components; Typically for approve related entries.")
+	@DataType(Component.class)
+	@Path("/approve")
+	public List<Component> approveComponents(
+			@DataType(String.class) List<String> componentIds)
+	{
+		List<Component> approvedComponents = new ArrayList<>();
+		for (String componentId : componentIds) {
+			Component component = service.getComponentService().approveComponent(componentId);
+			approvedComponents.add(component);
+		}
+		return approvedComponents;
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
 	@Path("/{id}/approve")
@@ -3883,7 +3900,7 @@ public class ComponentRESTResource
 
 		for (ComponentRelationship parent : parents) {
 			ComponentRelationship componentRelationship = new ComponentRelationship();
-			componentRelationship.setComponentId(parent.getComponentId());
+			componentRelationship.setComponentId(parent.getRelatedComponentId());
 			componentRelationship.setActiveStatus(filterQueryParams.getStatus());
 			List<ComponentRelationship> children = componentRelationship.findByExample();
 

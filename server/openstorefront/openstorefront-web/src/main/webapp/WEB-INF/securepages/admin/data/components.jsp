@@ -1164,6 +1164,116 @@
 						Ext.getCmp('previewWinTools-nextBtn').setDisabled(true);
 					}
 				};
+				
+				var showMultiApproveForm = function(componentId, componentName) {
+					
+					var approveWin = Ext.create('Ext.window.Window', {
+						title: 'Approve Related Entries',
+						layout: 'fit',
+						modal: true,
+						width: '50%',
+						height: '50%',
+						closeMode: 'destroy',
+						items: [
+							{
+								xtype: 'grid',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/components/' + componentId + '/relationships?pullAllChildren=true'
+									}
+								},
+								selModel: {
+									selType: 'checkboxmodel'
+								},
+								columnLines: true,
+								columns: [
+									{ text: 'Origin Entry', dataIndex: 'ownerComponentName', width: 175, hidden: true },
+									{ text: 'Relationship', dataIndex: 'relationshipTypeDescription', width: 175 },
+									{ text: 'Related Entry', dataIndex: 'targetComponentName', flex: 1, minWidth: 150 },									
+									{ text: 'Approved', dataIndex: 'targetApproved', align: 'center', 
+										renderer: CoreUtil.renderer.booleanRenderer
+									},
+									{
+										xtype: 'actioncolumn',
+										width:50,
+										items: [
+											{
+												iconCls: 'x-fa fa-eye',
+												tooltip: 'view',
+												handler: function(grid, rowIndex, colIndex) {
+													var rec = grid.getStore().getAt(rowIndex);
+													actionPreviewComponent(rec.get('targetComponentId'));
+												}
+ 											}
+										]
+										
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'panel',
+										dock: 'top',
+										margin: '5 5 5 5',
+										html: 'Approve: <b>' + componentName + '</b> and all selected entries.'
+									},
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Approve',
+												scale: 'medium',
+												iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save icon-vertical-correction',
+												handler: function() {
+													var grid = this.up('grid');
+													
+													var idsToApprove = [];
+													idsToApprove.push(componentId);
+													var records = grid.getSelection();
+													Ext.Array.each(records, function(item){
+														idsToApprove.push(item.get('targetComponentId'));
+													});
+													
+													approveWin.setLoading('Approving Entries');												
+													
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/approve',
+														method: 'PUT',
+														jsonData: idsToApprove,
+														callback: function() {
+															approveWin.setLoading(false);
+														},
+														success: function(response, opts) {
+															actionRefreshComponentGrid(true);
+															approveWin.close();
+														}
+													});
+													
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												scale: 'medium',
+												iconCls: 'fa fa-2x fa-close icon-button-color-warning',
+												handler: function() {
+													approveWin.close();
+												}
+											}
+										]
+									}
+								]
+							}
+						]						
+					});
+		
+					approveWin.show();					
+				};
+				
 
 				var changeOwnerWin = Ext.create('Ext.window.Window', {
 					id: 'changeOwnerWin',
@@ -1891,6 +2001,7 @@
 									xtype: 'tbseparator'
 								},
 								{
+									xtype: 'splitbutton',
 									text: 'Approve',
 									id: 'lookupGrid-tools-approve',
 									scale: 'medium',
@@ -1898,6 +2009,18 @@
 									disabled: true,
 									handler: function () {
 										actionApproveComponent();
+									},
+									menu: {
+										items: [
+											{
+												text: 'Approve Related Entries',
+												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+												handler: function() {
+													var record = Ext.getCmp('componentGrid').getSelection()[0];
+													showMultiApproveForm(record.get('componentId'), record.get('name'));
+												}
+											}
+										]
 									}
 								},
 								{
@@ -1928,6 +2051,14 @@
 												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
 										},
+										{
+											text: 'Approve Related Entries',
+											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											handler: function() {
+												var record = Ext.getCmp('componentGrid').getSelection()[0];
+												showMultiApproveForm(record.get('componentId'), record.get('name'));
+											}
+										},										
 										{
 											xtype: 'menuseparator'
 										},
