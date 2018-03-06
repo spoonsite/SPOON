@@ -22,10 +22,13 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Embedded;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -43,6 +46,16 @@ public class ComponentAttribute
 	@OneToOne(orphanRemoval = true)
 	private ComponentAttributePk componentAttributePk;
 
+	@ConsumeField
+	@APIDescription("Denotes whether this is publically viewable.")
+	private Boolean privateFlag;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(TextSanitizer.class)
+	private String comment;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentAttribute()
 	{
 	}
@@ -62,6 +75,17 @@ public class ComponentAttribute
 		if (getComponentAttributePk() != null) {
 			getComponentAttributePk().setComponentId(null);
 		}
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ComponentAttribute attribute = (ComponentAttribute) entity;
+		this.setPrivateFlag(attribute.getPrivateFlag());
+		this.setComment(attribute.getComment());
+
 	}
 
 	@Override
@@ -98,6 +122,26 @@ public class ComponentAttribute
 	public void setComponentAttributePk(ComponentAttributePk componentAttributePk)
 	{
 		this.componentAttributePk = componentAttributePk;
+	}
+
+	public Boolean getPrivateFlag()
+	{
+		return privateFlag;
+	}
+
+	public void setPrivateFlag(Boolean privateFlag)
+	{
+		this.privateFlag = privateFlag;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
 	}
 
 }

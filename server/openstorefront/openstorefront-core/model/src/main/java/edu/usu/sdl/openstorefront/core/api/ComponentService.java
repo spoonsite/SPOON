@@ -216,12 +216,22 @@ public interface ComponentService
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
-	 * full view)
+	 * full view) Only Public information is returned
 	 *
 	 * @param componentId
 	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+
+	/**
+	 * Return the details object of the component attached to the given id. (the
+	 * full view)
+	 *
+	 * @param componentId
+	 * @param showPrivateInformation if true it will pull private information
+	 * @return details or null if not found
+	 */
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation);
 
 	/**
 	 * Return the details object of the component attached to the given

@@ -209,6 +209,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation)
+	{
+		return core.getComponentDetails(componentId, showPrivateInformation);
+	}
+
+	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		getComponentServicePrivate().saveComponentAttribute(attribute, true);
