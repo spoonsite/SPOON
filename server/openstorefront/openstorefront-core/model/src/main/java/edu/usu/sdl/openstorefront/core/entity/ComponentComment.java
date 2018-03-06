@@ -36,9 +36,11 @@ public class ComponentComment
 {
 
 	@PK(generated = true)
+	@NotNull
 	private String commentId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ComponentCommentType.class)
 	@FK(ComponentCommentType.class)
@@ -57,7 +59,7 @@ public class ComponentComment
 	@APIDescription("Private comments are not shared with owners")
 	private Boolean privateComment;
 
-	@SuppressWarnings({"squid:S1186"})
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentComment()
 	{
 	}

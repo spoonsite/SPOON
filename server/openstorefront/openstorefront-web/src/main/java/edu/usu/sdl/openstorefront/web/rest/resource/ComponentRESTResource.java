@@ -3850,6 +3850,7 @@ public class ComponentRESTResource
 	public Response getComponentRelationships(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@QueryParam("pullAllChildren") boolean pullAllChildren,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -3861,7 +3862,12 @@ public class ComponentRESTResource
 		componentRelationship.setComponentId(componentId);
 		componentRelationship.setActiveStatus(filterQueryParams.getStatus());
 		List<ComponentRelationship> relationships = componentRelationship.findByExample();
+
+		if (pullAllChildren) {
+			relationships.addAll(pullChildrenRelationships(relationships, filterQueryParams));
+		}
 		relationships = filterQueryParams.filter(relationships);
+
 		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
 
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
@@ -3869,6 +3875,23 @@ public class ComponentRESTResource
 		};
 
 		return sendSingleEntityResponse(entity);
+	}
+
+	private List<ComponentRelationship> pullChildrenRelationships(List<ComponentRelationship> parents, FilterQueryParams filterQueryParams)
+	{
+		List<ComponentRelationship> foundRelationships = new ArrayList<>();
+
+		for (ComponentRelationship parent : parents) {
+			ComponentRelationship componentRelationship = new ComponentRelationship();
+			componentRelationship.setComponentId(parent.getComponentId());
+			componentRelationship.setActiveStatus(filterQueryParams.getStatus());
+			List<ComponentRelationship> children = componentRelationship.findByExample();
+
+			foundRelationships.addAll(children);
+			foundRelationships.addAll(pullChildrenRelationships(children, filterQueryParams));
+		}
+
+		return foundRelationships;
 	}
 
 	@GET

@@ -605,6 +605,7 @@ public class CoreComponentServiceImpl
 					component.getComponent().setComponentId(persistenceService.generateId());
 				}
 				component.getComponent().populateBaseCreateFields();
+				component.getComponent().setOwnerUser(SecurityUtil.getCurrentUserName());
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 				if (component.getComponent().getRecordVersion() == null) {
 					component.getComponent().setRecordVersion(1);
@@ -1638,6 +1639,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				persistenceService.persist(component);
@@ -1662,6 +1664,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				component.setActiveStatus(Component.PENDING_STATUS);

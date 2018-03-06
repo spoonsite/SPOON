@@ -45,19 +45,19 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function() {
 
-			Ext.require('OSF.form.Attributes');
-			Ext.require('OSF.form.Contacts');
-			Ext.require('OSF.form.Dependencies');
-			Ext.require('OSF.form.Media');			
-			Ext.require('OSF.form.Relationships');
-			Ext.require('OSF.form.Resources');
-			Ext.require('OSF.form.EntryQuestions');
-			Ext.require('OSF.form.EntryReviews');
-			Ext.require('OSF.form.OldEvaluationSummary');
-			Ext.require('OSF.form.Tags');
+				Ext.require('OSF.form.Attributes');
+				Ext.require('OSF.form.Contacts');
+				Ext.require('OSF.form.Dependencies');
+				Ext.require('OSF.form.Media');			
+				Ext.require('OSF.form.Relationships');
+				Ext.require('OSF.form.Resources');
+				Ext.require('OSF.form.EntryQuestions');
+				Ext.require('OSF.form.EntryReviews');
+				Ext.require('OSF.form.OldEvaluationSummary');
+				Ext.require('OSF.form.Tags');
 
 
-			//Add/Edit forms ------>
+				//Add/Edit forms ------>
 
 				//External Windows
 				var importWindow = Ext.create('OSF.component.ImportWindow', {
@@ -1188,7 +1188,7 @@
 									typeAhead: true,
 									editable: true,
 									allowBlank: false,
-									name: 'createUser',
+									name: 'currentDataOwner',
 									width: '100%',
 									valueField: 'username',
 									forceSelection: false,
@@ -1232,7 +1232,7 @@
 												var form = this.up('form');
 
 												// Get Chosen Username
-												var username = form.getForm().findField('createUser').getValue();
+												var username = form.getForm().findField('currentDataOwner').getValue();
 
 												// Inform User Of Update Process
 												componentGrid.mask('Updating Owner(s)...');
@@ -1516,7 +1516,10 @@
 						}},
 						{name: 'notifyOfApprovalEmail', mapping: function(data){
 							return data.component.notifyOfApprovalEmail;
-						}},
+						}},					
+						{name: 'currentDataOwner', mapping: function(data){
+							return data.component.currentDataOwner;
+						}},					
 						{name: 'dataSource', mapping: function(data){
 							return data.component.dataSource;
 						}},
@@ -1719,10 +1722,11 @@
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
 						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
+						{ text: 'Curent Owner', dataIndex: 'currentDataOwner', width: 175, sortable: false },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
+						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
 						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
 					],
