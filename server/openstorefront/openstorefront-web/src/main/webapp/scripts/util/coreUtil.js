@@ -777,6 +777,8 @@ var CoreUtil = {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					privateFlag: item.privateFlag,
+					comment: item.comment,
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
