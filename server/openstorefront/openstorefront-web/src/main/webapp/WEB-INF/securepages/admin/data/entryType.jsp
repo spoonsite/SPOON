@@ -23,7 +23,9 @@
 	<stripes:layout-component name="contents">
 		
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
+		</stripes:layout-render>	
+
+		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>		
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -105,7 +107,8 @@
 									}
 								}),
 								{
-									xtype: 'panel',
+									xtype: 'container',
+									width: '100%',
 									html: '<b>Data Entry</b>'
 								},
 								{
@@ -118,7 +121,7 @@
 											items: [
 												{
 													xtype: 'checkbox',
-													boxLabel: '<b>Allow On Submission Form</b>',
+													boxLabel: 'Allow On Submission Form',
 													name: 'allowOnSubmission',
 													id: 'entryForm-radio-allow-on-sub'
 												},								
@@ -284,41 +287,182 @@
 					]
 				});
 				
-				var entryGrid = Ext.create('Ext.grid.Panel', {
+				var entryGrid = Ext.create('Ext.tree.Panel', {
+					// xtype: 'tree-grid',
 					id: 'entryGrid',
 					title: 'Entry Types <i class="fa fa-question-circle"  data-qtip="Allows for defining entry types" ></i>',
-					store: Ext.create('Ext.data.Store', {
-						fields: [
-							'componentType',
-							'updateUser',							
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							},							
-							'activeStatus',
-							'label',
-							'description',
-							'componentTypeTemplate'
-						],
-						autoLoad: true,
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/componenttypes',
-							extraParams: {
-								all: true
+					// viewConfig: {
+					// 	plugins: {
+			  //               ptype: 'gridviewdragdrop',
+			  //               dragGroup: 'firstGridDDGroup',
+			  //               dropGroup: 'firstGridDDGroup'
+			  //           },
+			  //           listeners: {
+			  //           	drop: function (node, data, dropRec, dropPos) {
+			  //           		console.log("DROPPING!");
+			  //           		return false;
+			  //           	}
+			  //           }
+					// },
+					viewConfig: {
+						plugins: {
+							ddGroup: 'relationship',
+							ptype: 'celltocelldragdrop',
+							enableDrop: true,
+							onEnter: function (target, dd, e, dragData) {
+							},
+							onOut: function(target, dd, e, dragData) {
+								var originName = dragData.record.data.name; 
+								dd.ddel.innerText = originName;
+							},
+							onDrop: function (target, dd, e, dragData) {
+
+								// recursively checks to see if the target record is valid
+								var checkIfTargetValid = function (currentRecord, targetRecord) {
+
+									if (currentRecord.childNodes.indexOf(targetRecord) !== -1) {
+										return false;
+									}
+									if (currentRecord.childNodes.length === 0) {
+										return true;
+									}
+
+									var valid = true;
+
+									for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
+										if (valid === false) {
+											break;
+										}
+										valid = valid && checkIfTargetValid(currentRecord.childNodes[ii], targetRecord);
+									}
+
+									if (!valid) {
+										console.log("FAIL!");
+									}
+									return valid;
+								};
+
+								if (target.record !== dragData.record && checkIfTargetValid(dragData.record, target.record)) {
+									target.record.insertChild(0, dragData.record);
+								}
 							}
 						}
-					}),
+					},
+					// store: Ext.create('Ext.data.Store', {
+					// 	fields: [
+					// 		'componentType',
+					// 		'updateUser',							
+					// 		{
+					// 			name: 'updateDts',
+					// 			type:	'date',
+					// 			dateFormat: 'c'
+					// 		},							
+					// 		'activeStatus',
+					// 		'label',
+					// 		'description',
+					// 		'componentTypeTemplate'
+					// 	],
+					// 	autoLoad: true,
+					// 	proxy: {
+					// 		type: 'ajax',
+					// 		url: 'api/v1/resource/componenttypes',
+					// 		extraParams: {
+					// 			all: true
+					// 		}
+					// 	}
+					// }),
+					rootVisible: false,
+					store: {
+						type: 'tree',
+						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
+						listeners: {
+							update: function (self, record, operation) {
+
+								if (record.childNodes.length === 0) {
+									record.data.leaf = true;
+								}
+								else {
+									record.data.leaf = false;
+								}
+							}
+						},
+						root: {
+							text: '.',
+							children: [
+								{
+									componentType: 'parent 1',
+									label: 'parent 1',
+									description: 'parent 1',
+									templateName: 'parent 1',
+									activeStatus: 'parent 1',
+									updateUser: 'parent 1',
+									updateDts: 'parent 1',
+									expanded: true,
+									children: [
+										{
+											componentType: 'sub 1',
+											label: 'sub 1',
+											description: 'sub 1',
+											templateName: 'sub 1',
+											activeStatus: 'sub 1',
+											updateUser: 'sub 1',
+											updateDts: 'sub 1',
+											expanded: true
+										},
+										{
+											componentType: 'sub 2',
+											label: 'sub 2',
+											description: 'sub 2',
+											templateName: 'sub 2',
+											activeStatus: 'sub 2',
+											updateUser: 'sub 2',
+											updateDts: 'sub 2',
+											expanded: true
+										},
+										{
+											componentType: 'sub 3',
+											label: 'sub 3',
+											description: 'sub 3',
+											templateName: 'sub 3',
+											activeStatus: 'sub 3',
+											updateUser: 'sub 3',
+											updateDts: 'sub 3',
+											expanded: true
+										}
+									]
+								},
+								{
+									componentType: 'parent 2',
+									label: 'parent 2',
+									description: 'parent 2',
+									templateName: 'parent 2',
+									activeStatus: 'parent 2',
+									updateUser: 'parent 2',
+									updateDts: 'parent 2',
+									expanded: true
+								},
+								{
+									componentType: 'parent 3',
+									label: 'parent 3',
+									description: 'parent 3',
+									templateName: 'parent 3',
+									activeStatus: 'parent 3',
+									updateUser: 'parent 3',
+									updateDts: 'parent 3',
+									expanded: true
+								}
+							]
+						}
+					},
 					columnLines: true,
 					columns: [						
-						{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
-						{ text: 'Label', dataIndex: 'label', width: 200 },
-						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Template Override', dataIndex: 'templateName', width: 150 },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Type Code', dataIndex: 'componentType', xtype: 'treecolumn', flex: 20, draggable: true },
+						{ text: 'Label', dataIndex: 'label', flex: 10 },
+						{ text: 'Description', dataIndex: 'description', flex: 30 },
+						{ text: 'Template Override', dataIndex: 'templateName', flex: 10 },
+						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', flex: 10 },
+						{ text: 'Update User', dataIndex: 'updateUser', flex: 10 },
+						{ text: 'Update Date', dataIndex: 'updateDts', flex: 10, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
