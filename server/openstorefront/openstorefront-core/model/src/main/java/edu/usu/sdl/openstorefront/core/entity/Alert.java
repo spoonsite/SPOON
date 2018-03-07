@@ -78,9 +78,15 @@ public class Alert
 	@OneToOne(orphanRemoval = true)
 	private UserManagementAlertOption userManagementAlertOption;
 
+	@ConsumeField
+	@Embedded
+	@OneToOne(orphanRemoval = true)
+	private List<ComponentTypeAlertOption> componentTypeAlertOptions;
+
 	public Alert()
 	{
 	}
+
 
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
@@ -93,6 +99,7 @@ public class Alert
 		this.setName(alertUpdate.getName());
 		this.setSystemErrorAlertOption(alertUpdate.getSystemErrorAlertOption());
 		this.setUserDataAlertOption(alertUpdate.getUserDataAlertOption());
+		this.setComponentTypeAlertOptions(alertUpdate.getComponentTypeAlertOptions());
 	}
 
 	public String getAlertId()
@@ -163,6 +170,16 @@ public class Alert
 	public void setUserManagementAlertOption(UserManagementAlertOption userManagementAlertOption)
 	{
 		this.userManagementAlertOption = userManagementAlertOption;
+	}
+
+	public void setComponentTypeAlertOptions(List<ComponentTypeAlertOption> componentTypeAlertOptions)
+	{
+		this.componentTypeAlertOptions = componentTypeAlertOptions;
+	}
+
+	public List<ComponentTypeAlertOption> getComponentTypeAlertOptions()
+	{
+		return componentTypeAlertOptions;
 	}
 
 }

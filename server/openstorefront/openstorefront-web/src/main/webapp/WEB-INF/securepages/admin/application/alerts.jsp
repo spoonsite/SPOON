@@ -343,6 +343,8 @@
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
 											Ext.getCmp('userManagementOptions').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').allowBlank = true;
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -370,11 +372,28 @@
 									}
 								},
 								{
+									xtype: 'tagfield',
+									fieldLabel: 'Select a Component Type<span class="field-required" />',
+									id: 'alertEntryForm-entryTypes',
+									name: 'entryTypeAlertOption',
+									valueField: 'componentType',
+									displayField: 'label',
+									allowBlank: false,
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/componenttypes'
+										}
+									}
+								},
+								{
 									xtype: 'textfield',
 									fieldLabel: 'Email Addresses<span class="field-required"></span>',
 									// id is 'email' for validation purposes.
 									id: 'email',
-									name: 'emailAddresses'
+									name: 'emailAddresses',
+									allowBlank: false
 								},
 								{
 									xtype: 'fieldcontainer',
