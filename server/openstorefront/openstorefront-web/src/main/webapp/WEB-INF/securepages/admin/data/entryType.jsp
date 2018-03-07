@@ -286,63 +286,40 @@
 						}
 					]
 				});
+
+				// recursively gets a list of target nodes/records that can't be dragged to
+				var getInvalidNodes = function (currentRecord) {
+					invalidNodes = [];
+
+					invalidNodes.push(currentRecord);
+
+					for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
+						invalidNodes = invalidNodes.concat(getInvalidNodes(currentRecord.childNodes[ii]));
+					}
+
+					return invalidNodes;
+				};
 				
 				var entryGrid = Ext.create('Ext.tree.Panel', {
-					// xtype: 'tree-grid',
 					id: 'entryGrid',
 					title: 'Entry Types <i class="fa fa-question-circle"  data-qtip="Allows for defining entry types" ></i>',
-					// viewConfig: {
-					// 	plugins: {
-			  //               ptype: 'gridviewdragdrop',
-			  //               dragGroup: 'firstGridDDGroup',
-			  //               dropGroup: 'firstGridDDGroup'
-			  //           },
-			  //           listeners: {
-			  //           	drop: function (node, data, dropRec, dropPos) {
-			  //           		console.log("DROPPING!");
-			  //           		return false;
-			  //           	}
-			  //           }
-					// },
 					viewConfig: {
 						plugins: {
-							ddGroup: 'relationship',
 							ptype: 'celltocelldragdrop',
 							enableDrop: true,
+							rowFocus: true,
 							onEnter: function (target, dd, e, dragData) {
+
+								dragData.invalidNodes = getInvalidNodes(dragData.record, []);
 							},
 							onOut: function(target, dd, e, dragData) {
-								var originName = dragData.record.data.name; 
+
+								var originName = dragData.record.data.componentType; 
 								dd.ddel.innerText = originName;
 							},
 							onDrop: function (target, dd, e, dragData) {
 
-								// recursively checks to see if the target record is valid
-								var checkIfTargetValid = function (currentRecord, targetRecord) {
-
-									if (currentRecord.childNodes.indexOf(targetRecord) !== -1) {
-										return false;
-									}
-									if (currentRecord.childNodes.length === 0) {
-										return true;
-									}
-
-									var valid = true;
-
-									for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
-										if (valid === false) {
-											break;
-										}
-										valid = valid && checkIfTargetValid(currentRecord.childNodes[ii], targetRecord);
-									}
-
-									if (!valid) {
-										console.log("FAIL!");
-									}
-									return valid;
-								};
-
-								if (target.record !== dragData.record && checkIfTargetValid(dragData.record, target.record)) {
+								if (target.record !== dragData.record && getInvalidNodes(dragData.record).indexOf(target.record) === -1) {
 									target.record.insertChild(0, dragData.record);
 								}
 							}
@@ -449,14 +426,30 @@
 									activeStatus: 'parent 3',
 									updateUser: 'parent 3',
 									updateDts: 'parent 3',
-									expanded: true
+									expanded: true,
+									children: (function () {
+										var childArr = [];
+										for (var ii = 0; ii < 10; ii += 1) {
+											childArr.push({
+												componentType: 'EXTRA',
+												label: 'EXTRA',
+												description: 'EXTRA',
+												templateName: 'EXTRA',
+												activeStatus: 'EXTRA',
+												updateUser: 'EXTRA',
+												updateDts: 'EXTRA',
+												expanded: true
+											});
+										}
+										return childArr;
+									}())
 								}
 							]
 						}
 					},
 					columnLines: true,
 					columns: [						
-						{ text: 'Type Code', dataIndex: 'componentType', xtype: 'treecolumn', flex: 20, draggable: true },
+						{ text: 'Type Code', dataIndex: 'componentType', xtype: 'treecolumn', flex: 20 },
 						{ text: 'Label', dataIndex: 'label', flex: 10 },
 						{ text: 'Description', dataIndex: 'description', flex: 30 },
 						{ text: 'Template Override', dataIndex: 'templateName', flex: 10 },
