@@ -25,9 +25,34 @@
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
 		
+		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>
+		
 		<script type="text/javascript">
+			
+			Ext.require('OSF.entryType.EntryType');
+			
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
+				
+				var entryTypeWindow = Ext.create('Ext.window.Window',{
+					id: 'entryTypeWindow',
+					iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+					title: 'Entry Assignment',
+					modal: true,
+					width: '60%',
+					height: '90%',
+					layout: 'fit',
+					items: [
+							{
+									xtype: 'entryType.EntryType'									
+								}
+//						Ext.create('OSF.entryType.EntryType', {
+//							
+//						})
+					]
+				});
+				
+				console.log(entryTypeWindow.items.items[0]);
 				
 				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
 
@@ -374,7 +399,10 @@
 										},
 										{
 											text: 'Entry Assignment',
-											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
+											iconCls: 'fa fa-exchange fa-2x icon-button-color-default',
+											handler: function() {
+												entryTypeWindow.show();
+											}
 										},
 										{
 											xtype: 'menuseparator'
