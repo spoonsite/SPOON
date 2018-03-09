@@ -46,6 +46,11 @@ import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -201,7 +206,7 @@ public class ComponentServiceImpl
 	{
 		return core.getComponentDetails(componentId);
 	}
-	
+
 	@Override
 	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
 	{
@@ -387,7 +392,7 @@ public class ComponentServiceImpl
 	{
 		return sub.saveResourceFile(resource, fileInput, mimeType, originalFileName);
 	}
-	
+
 	@Override
 	public Boolean setLastViewDts(String componentId, String userId)
 	{
@@ -686,9 +691,45 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public String getComponentType(String componentId)
+	public String getComponentTypeForComponent(String componentId)
 	{
-		return core.getComponentType(componentId);
+		return core.getComponentTypeForComponent(componentId);
+	}
+
+	@Override
+	public ComponentTypeNestedModel getComponentType(ComponentTypeOptions componentTypeOptions)
+	{
+		return core.getComponentType(componentTypeOptions);
+	}
+
+	@Override
+	public void removeRoleFromComponentType(String roleName)
+	{
+		core.removeRoleFromComponentType(roleName);
+	}
+
+	@Override
+	public void removeUserFromComponentType(String username)
+	{
+		core.removeUserFromComponentType(username);
+	}
+
+	@Override
+	public ComponentTypeTemplateResolution findTemplateForComponentType(String componentType)
+	{
+		return core.findTemplateForComponentType(componentType);
+	}
+
+	@Override
+	public ComponentTypeRoleResolution findRoleGroupsForComponentType(String componentType)
+	{
+		return core.findRoleGroupsForComponentType(componentType);
+	}
+
+	@Override
+	public ComponentTypeUserResolution findUserForComponentType(String componentType)
+	{
+		return core.findUserForComponentType(componentType);
 	}
 
 }
