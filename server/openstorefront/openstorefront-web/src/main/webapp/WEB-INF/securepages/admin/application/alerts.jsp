@@ -353,6 +353,11 @@
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
 													break;
+												case 'CHGREQ':
+												case 'CMPSUB':
+													Ext.getCmp('alertEntryForm-entryTypes').allowBlank = false;
+													Ext.getCmp('alertEntryForm-entryTypes').show();
+													break;
 											}
 										}
 									},
@@ -519,6 +524,15 @@
 														alertOnUserRegistration: flatData.alertOnUserRegistration,
 														alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
 													};
+												}
+
+												if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
+													var compIDs = flatData.entryTypeAlertOption;
+													var componentTypes = [];
+													Ext.Array.forEach(compIDs, function(el) {
+														componentTypes.push({"componentType": el});
+													});
+													data.componentTypeAlertOptions = componentTypes;
 												}
 
 

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeAlertOption;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ public class AlertView
 
 	private String alertTypeDescription;
 
+	private List<String> componentTypeAlertOptionLabels = new ArrayList<>();
+
 	public AlertView()
 	{
 	}
@@ -47,6 +50,12 @@ public class AlertView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		alertView.setAlertTypeDescription(TranslateUtil.translate(AlertType.class, alert.getAlertType()));
+		//get labels from component codes
+		if (alert.getComponentTypeAlertOptions() != null) {
+			for (ComponentTypeAlertOption compType : alert.getComponentTypeAlertOptions()) {
+				alertView.getComponentTypeAlertOptionLabels().add(TranslateUtil.translateComponentType(compType.getComponentType()));
+			}
+		}
 		return alertView;
 	}
 
@@ -67,6 +76,16 @@ public class AlertView
 	public void setAlertTypeDescription(String alertTypeDescription)
 	{
 		this.alertTypeDescription = alertTypeDescription;
+	}
+
+	public List<String> getComponentTypeAlertOptionLabels()
+	{
+		return componentTypeAlertOptionLabels;
+	}
+
+	public void setComponentTypeAlertOptionLabels(List<String> componentTypeAlertOptionLabels)
+	{
+		this.componentTypeAlertOptionLabels = componentTypeAlertOptionLabels;
 	}
 
 }
