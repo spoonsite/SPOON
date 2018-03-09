@@ -133,6 +133,13 @@
 									if (option.alertOnUserNeedsApproval) {
 										listOfOptions.push('<span class="alerts-option-items"> User Need Approval </span>');
 									}
+								} else if (record.get('componentTypeAlertOptions')) {
+									labels = record.get('componentTypeAlertOptionLabels')
+									if (labels) {
+										Ext.Array.forEach(labels, function(element) {
+											listOfOptions.push('<span class="alerts-option-items"> ' + element + ' </span>');
+										})
+									}
 								}
 								return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
 							}
