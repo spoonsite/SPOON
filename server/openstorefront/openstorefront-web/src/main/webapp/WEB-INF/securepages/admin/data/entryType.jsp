@@ -24,9 +24,9 @@
 		
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
-		
+			
 		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>
-		
+			
 		<script type="text/javascript">
 			
 			Ext.require('OSF.entryType.EntryType');
@@ -43,19 +43,30 @@
 					height: '90%',
 					layout: 'fit',
 					items: [
-							{
-									xtype: 'entryType.EntryType'									
-								}
-//						Ext.create('OSF.entryType.EntryType', {
-//							
-//						})
-					]
+						{
+							xtype: 'entryType.EntryType'									
+						}
+					],
+					
+					// Override the show function to refresh the
+					// grids' data stores every time the window is shown.
+					show: function() {
+						// Call the original function
+						Ext.Window.prototype.show.apply(this);
+						
+						// Reload the stores. Don't change filtrs or anything;
+						// the comboboxes with each grid should have the same values
+						// as when the window was closed/created, so let
+						// the comboboxes control all the filtering.
+						Ext.getCmp('entryTypeOrigin').store.reload();
+						Ext.getCmp('entryTypeTarget').store.reload();
+					}
 				});
 				
 				console.log(entryTypeWindow.items.items[0]);
 				
 				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
-
+					
 					isEditor: false,
 					mediaSelectionUrl: 'api/v1/resource/generalmedia',
 					closeAction: 'hide',
@@ -255,7 +266,7 @@
 											text: 'Insert Media',
 											flex: 1,
 											handler: function() {
-
+												
 												mediaWindow.show();
 											}
 										}
@@ -276,7 +287,7 @@
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
 												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/componenttypes/' + data.componentType : 'api/v1/resource/componenttypes';       
-
+												
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
@@ -581,9 +592,9 @@
 										store: {
 											autoLoad: true,
 											sorters: [{
-												property: 'description',
-												direction: 'ASC'													
-											}],
+													property: 'description',
+													direction: 'ASC'													
+												}],
 											proxy: {
 												type: 'ajax',
 												url: 'api/v1/resource/componenttypes/lookup'
@@ -612,6 +623,6 @@
 				
 			});
 		</script>	
-		
+			
 	</stripes:layout-component>
 </stripes:layout-render>
