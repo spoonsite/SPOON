@@ -63,8 +63,6 @@
 					}
 				});
 				
-				console.log(entryTypeWindow.items.items[0]);
-				
 				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
 					
 					isEditor: false,

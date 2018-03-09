@@ -17,17 +17,6 @@
  */
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
-var actionRefreshOrigin = function() {
-	Ext.getCmp('entryTypeOrigin').getStore().load({
-		url: 'api/v1/resource/componenttypes'
-	});					
-};
-var actionRefreshTarget = function() {
-	Ext.getCmp('entryTypeTarget').getStore().load({
-		url: 'api/v1/resource/componenttypes'
-	});
-};
-
 
 Ext.define('OSF.entryType.EntryType', {
 	extend: 'Ext.form.Panel',
@@ -49,11 +38,8 @@ Ext.define('OSF.entryType.EntryType', {
 			// TODO: Better title? Or a textbox telling the user how to use this?
 			title: 'Entry _ Is',
 			columnWidth: .5,
-			bodyStyle: 'padding: 10px;margin: 10px',
-			
-			//TODO Filter this store by the drop down menu value
-			//See contacts.jsp for an example
-			
+			bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
+						
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					'componentType',
@@ -81,7 +67,7 @@ Ext.define('OSF.entryType.EntryType', {
 			columns: [						
 				{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
 				{ text: 'Label', dataIndex: 'label', width: 200 },
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 100 }
+				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus' }
 			],
 			// TODO: These are copypasta from the main Entry Types window.
 			// Do we want them in the popup?
@@ -113,17 +99,15 @@ Ext.define('OSF.entryType.EntryType', {
 							id: 'filterActiveStatusOrigin',
 							emptyText: '(Show All)',
 							value: 'All',
-							fieldLabel: 'Entry Type',
+							fieldLabel: 'Filter by Active Status',
 							name: 'activeStatus',									
 							typeAhead: false,
 							editable: false,
-							width: 200,							
+							width: 200,
 							listeners: {
 								change: function(filter, newValue, oldValue, opts){
 									// Clear any existing filter
 									Ext.getCmp('entryTypeOrigin').store.clearFilter(true);
-									
-									console.log("Origin from " + oldValue + " to " + newValue);
 									
 									if (newValue !== ('All')) {
 										// Apply new filter							
@@ -171,7 +155,9 @@ Ext.define('OSF.entryType.EntryType', {
 			// TODO: Better title? Or a textbox telling the user how to use this?
 			title: 'Type Of _',
 			columnWidth: .5,
-			bodyStyle: 'padding: 10px;margin: 10px',
+			height: '100%',
+			layout: 'fit',
+			bodyStyle: 'padding: 10px;margin: 10px;',
 			
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -200,7 +186,7 @@ Ext.define('OSF.entryType.EntryType', {
 			columns: [
 				{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
 				{ text: 'Label', dataIndex: 'label', width: 200 },
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 100 }
+				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus' }
 			],
 			listeners: {
 				// TODO: These are copypasta from the main Entry Types window.
@@ -223,7 +209,14 @@ Ext.define('OSF.entryType.EntryType', {
 						enableDrag: false,
 						onDrop: function onDrop(target, dd, e, dragData) {
 							alert('Create Relationship');
-							//TODO Create the type-of relationship here
+							// TODO: Create the type-of relationship here
+							
+							// TODO: Ext is throwing an exception after this method returns.
+							// It might have something to do with how/whether the model
+							// on the target is defined:
+							// 
+							// Uncaught TypeError: Cannot read property 'isModel' of null
+							//
 						},
 						onEnter: function(target, dd, e, dragData) {
 							var originName = dragData.record.data.label; 
@@ -233,6 +226,7 @@ Ext.define('OSF.entryType.EntryType', {
 							text += 'is type of ';
 							text += targetName;
 							dd.ddel.innerText = text;
+							
 						},
 						onOut: function(target, dd, e, dragData) {
 							var originName = dragData.record.data.label; 
@@ -251,7 +245,7 @@ Ext.define('OSF.entryType.EntryType', {
 							id: 'filterActiveStatusTarget',
 							emptyText: '(Show All)',
 							value: 'All',
-							fieldLabel: 'Entry Type',
+							fieldLabel: 'Filter by Active Status',
 							name: 'activeStatus',									
 							typeAhead: false,
 							editable: false,
@@ -260,8 +254,6 @@ Ext.define('OSF.entryType.EntryType', {
 								change: function(filter, newValue, oldValue, opts){
 									// Clear any existing filter
 									Ext.getCmp('entryTypeTarget').store.clearFilter(true);
-									
-									console.log("Target from " + oldValue + " to " + newValue);
 									
 									if (newValue !== ('All')) {
 										// Apply new filter							
@@ -299,5 +291,35 @@ Ext.define('OSF.entryType.EntryType', {
 				}
 			]
 		})
+	],
+	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					xtype: 'button',
+					text: 'Save',
+					formBind: true,
+					margin: '0 20 0 0',
+					iconCls: 'fa fa-lg fa-save',
+					handler: function(){	
+						// TODO: Make this save the changes and close the window
+						alert("This doesn't do anything yet.");
+					}
+				},
+				{
+					xtype: 'button',
+					text: 'Cancel',										
+					iconCls: 'fa fa-lg fa-close',
+					dock: 'right',
+					handler: function(){
+						// TODO: Make this cancel changes and close the window
+						alert("This doesn't do anything yet.")
+					}
+				}
+			]
+		}		
 	]
 });
