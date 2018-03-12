@@ -67,9 +67,11 @@ import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.core.entity.RoleLink;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.entity.UserLink;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
@@ -78,6 +80,11 @@ import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
@@ -105,6 +112,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
+import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -229,7 +237,7 @@ public class CoreComponentServiceImpl
 		return componentName;
 	}
 
-	public String getComponentType(String componentId)
+	public String getComponentTypeForComponent(String componentId)
 	{
 		String componentType = null;
 		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
@@ -247,6 +255,91 @@ public class CoreComponentServiceImpl
 			}
 		}
 		return componentType;
+	}
+
+	public ComponentTypeNestedModel getComponentType(ComponentTypeOptions componentTypeOptions)
+	{
+		Objects.requireNonNull(componentTypeOptions);
+
+		ComponentTypeNestedModel typeModel = null;
+
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		if (componentTypeOptions.getComponentType() == null) {
+			typeModel = new ComponentTypeNestedModel();
+
+			List<ComponentType> roots = new ArrayList<>();
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getParentComponentType() == null) {
+					roots.add(componentType);
+				}
+			}
+			for (ComponentType componentType : roots) {
+				ComponentTypeNestedModel rootModel = new ComponentTypeNestedModel();
+				rootModel.setComponentType(ComponentTypeView.toView(componentType));
+				rootModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, componentType));
+				typeModel.getChildren().add(rootModel);
+			}
+		} else {
+			ComponentType found = null;
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(componentTypeOptions.getComponentType())) {
+					found = componentType;
+				}
+			}
+			if (found != null) {
+				typeModel = new ComponentTypeNestedModel();
+				if (componentTypeOptions.getPullParents() && found.getParentComponentType() != null) {
+					found = findTopParentComponentType(componentTypes, found);
+				}
+				typeModel.setComponentType(ComponentTypeView.toView(found));
+
+				if (componentTypeOptions.getPullChildren()) {
+					typeModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, found));
+				}
+			}
+		}
+		return typeModel;
+	}
+
+	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId)
+	{
+		ComponentType found = null;
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getComponentType().equals(componentTypeId)) {
+				found = componentType;
+				break;
+			}
+		}
+		return found;
+	}
+
+	private ComponentType findTopParentComponentType(List<ComponentType> componentTypes, ComponentType child)
+	{
+		if (child.getParentComponentType() != null) {
+			ComponentType parent = null;
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					parent = findTopParentComponentType(componentTypes, componentType);
+				}
+			}
+			return parent;
+		} else {
+			return child;
+		}
+	}
+
+	private List<ComponentTypeNestedModel> getChildrenComponentTypes(List<ComponentType> componentTypes, ComponentType parentComponentType)
+	{
+		List<ComponentTypeNestedModel> childModels = new ArrayList<>();
+		for (ComponentType componentType : componentTypes) {
+			if (parentComponentType.getComponentType().equals(componentType.getParentComponentType())) {
+				ComponentTypeNestedModel childModel = new ComponentTypeNestedModel();
+				childModel.setComponentType(ComponentTypeView.toView(componentType));
+				childModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, componentType));
+				childModels.add(childModel);
+			}
+		}
+		return childModels;
 	}
 
 	public List<ComponentSearchView> getComponents()
@@ -329,7 +422,7 @@ public class CoreComponentServiceImpl
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
@@ -378,7 +471,7 @@ public class CoreComponentServiceImpl
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
-		List<ComponentReview> tempReviews = new ArrayList();
+		List<ComponentReview> tempReviews = new ArrayList<>();
 		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
 		String currentUser = SecurityUtil.getCurrentUserName();
@@ -388,7 +481,7 @@ public class CoreComponentServiceImpl
 			}
 		}
 		tempReviews.addAll(tempApprovedReviews);
-		List<ComponentReviewView> reviews = new ArrayList();
+		List<ComponentReviewView> reviews = new ArrayList<>();
 		tempReviews = filterEngine.filter(tempReviews);
 
 		tempReviews.forEach(review
@@ -406,8 +499,8 @@ public class CoreComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
 
 			reviews.add(tempView);
 		});
@@ -985,6 +1078,7 @@ public class CoreComponentServiceImpl
 		return componentAll;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends BaseComponent> boolean handleBaseComponentSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
 	{
 		boolean changed = false;
@@ -1164,11 +1258,13 @@ public class CoreComponentServiceImpl
 	{
 		example.setComponentId(componentId);
 		if (example instanceof ComponentResource) {
+			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
 				sub.removeLocalResource((ComponentResource) found);
 			}
 		} else if (example instanceof ComponentMedia) {
+			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
 				sub.removeLocalMedia((ComponentMedia) found);
@@ -1183,7 +1279,7 @@ public class CoreComponentServiceImpl
 		UserWatch example = new UserWatch();
 		example.setComponentId(componentId);
 		example.setUsername(userId);
-		example = persistenceService.queryOneByExample(new QueryByExample(example));
+		example = persistenceService.queryOneByExample(new QueryByExample<>(example));
 		if (example != null) {
 			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
 			watch.setLastViewDts(TimeUtil.currentDate());
@@ -1510,7 +1606,7 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
 
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getComponentName())) {
@@ -1523,7 +1619,7 @@ public class CoreComponentServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 		}
 
-		QueryByExample queryByExample = new QueryByExample(componentExample);
+		QueryByExample<Component> queryByExample = new QueryByExample<>(componentExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		//TODO: consider moving the filtering work to the DB
@@ -1555,9 +1651,9 @@ public class CoreComponentServiceImpl
 		Component pendingChangeExample = new Component();
 		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
 
-		QueryByExample queryPendingChanges = new QueryByExample(new Component());
+		QueryByExample<Component> queryPendingChanges = new QueryByExample<>(new Component());
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(pendingChangeExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
@@ -1886,7 +1982,7 @@ public class CoreComponentServiceImpl
 					Component componentSearch = new Component();
 					componentSearch.setName(validNewName.toLowerCase());
 
-					QueryByExample queryByExample = new QueryByExample(componentSearch);
+					QueryByExample<Component> queryByExample = new QueryByExample<>(componentSearch);
 					queryByExample.getFieldOptions().put(Component.FIELD_NAME,
 							new GenerateStatementOptionBuilder()
 									.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
@@ -2412,6 +2508,7 @@ public class CoreComponentServiceImpl
 		return recordStatistics;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<ComponentType> getAllComponentTypes()
 	{
 		List<ComponentType> componentTypes;
@@ -2719,13 +2816,297 @@ public class CoreComponentServiceImpl
 	{
 		String typeIcon = null;
 		List<ComponentType> componentTypes = getAllComponentTypes();
+
 		for (ComponentType componentTypeLocal : componentTypes) {
 			if (componentTypeLocal.getComponentType().equals(componentType)) {
-				typeIcon = componentTypeLocal.getIconUrl();
+				if (StringUtils.isNotBlank(componentTypeLocal.getIconUrl())) {
+					typeIcon = componentTypeLocal.getIconUrl();
+				} else {
+					typeIcon = findFirstParentWithIcon(componentTypes, componentTypeLocal);
+				}
 			}
 		}
 
 		return typeIcon;
+	}
+
+	private String findFirstParentWithIcon(List<ComponentType> componentTypes, ComponentType child)
+	{
+		String iconUrl = null;
+
+		if (child.getParentComponentType() != null) {
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					if (StringUtils.isNotBlank(componentType.getIconUrl())) {
+						iconUrl = componentType.getIconUrl();
+						break;
+					} else {
+						iconUrl = findFirstParentWithIcon(componentTypes, componentType);
+					}
+				}
+			}
+		}
+		return iconUrl;
+	}
+
+	public void removeRoleFromComponentType(String roleName)
+	{
+		if (StringUtils.isNotBlank(roleName)) {
+			boolean clearCache = false;
+
+			List<ComponentType> componentTypes = getAllComponentTypes();
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getAssignedGroups() != null) {
+					for (RoleLink roleLink : componentType.getAssignedGroups()) {
+						if (roleLink.getRoleName().equals(roleName)) {
+							boolean removeItem = performRemoveRoleFromType(componentType.getComponentType(), roleName);
+							if (removeItem) {
+								clearCache = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (clearCache) {
+				OSFCacheManager.getComponentTypeCache().removeAll();
+			}
+		}
+	}
+
+	private boolean performRemoveRoleFromType(String componentType, String roleName)
+	{
+		boolean removedItem = false;
+		ComponentType componentTypeProxy = persistenceService.findById(ComponentType.class, componentType);
+		if (componentTypeProxy != null) {
+
+			if (componentTypeProxy.getAssignedGroups() != null) {
+				componentTypeProxy.getAssignedGroups().removeIf((role) -> {
+					return roleName.equals(role.getRoleName());
+				});
+				componentTypeProxy.populateBaseUpdateFields();
+				persistenceService.persist(componentTypeProxy);
+
+				removedItem = true;
+			}
+		} else {
+			LOG.log(Level.FINEST, ()
+					-> "Unable to find component type: " + componentType + " stale cache?"
+			);
+		}
+		return removedItem;
+	}
+
+	public void removeUserFromComponentType(String username)
+	{
+		if (StringUtils.isNotBlank(username)) {
+			boolean clearCache = false;
+
+			List<ComponentType> componentTypes = getAllComponentTypes();
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getAssignedUsers() != null) {
+					for (UserLink userLink : componentType.getAssignedUsers()) {
+						if (userLink.getUsername().equals(username)) {
+							boolean removeItem = performRemoveUserFromType(componentType.getComponentType(), username);
+							if (removeItem) {
+								clearCache = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (clearCache) {
+				OSFCacheManager.getComponentTypeCache().removeAll();
+			}
+		}
+	}
+
+	private boolean performRemoveUserFromType(String componentType, String username)
+	{
+		boolean removedItem = false;
+		ComponentType componentTypeProxy = persistenceService.findById(ComponentType.class, componentType);
+		if (componentTypeProxy != null) {
+
+			if (componentTypeProxy.getAssignedUsers() != null) {
+				componentTypeProxy.getAssignedUsers().removeIf((role) -> {
+					return username.equals(role.getUsername());
+				});
+				componentTypeProxy.populateBaseUpdateFields();
+				persistenceService.persist(componentTypeProxy);
+
+				removedItem = true;
+			}
+		} else {
+			LOG.log(Level.FINEST, ()
+					-> "Unable to find component type: " + componentType + " stale cache?"
+			);
+		}
+		return removedItem;
+	}
+
+	public ComponentTypeTemplate getComponentTypeTemplate(String templateId)
+	{
+		ComponentTypeTemplate template = new ComponentTypeTemplate();
+		template.setTemplateId(templateId);
+		template = template.find();
+		return template;
+	}
+
+	public ComponentTypeTemplateResolution findTemplateForComponentType(String componentType)
+	{
+		ComponentTypeTemplateResolution templateResolution;
+
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+
+		if (componentTypeFull.getComponentTypeTemplate() != null) {
+
+			templateResolution = new ComponentTypeTemplateResolution();
+
+			ComponentTypeTemplate template = getComponentTypeTemplate(componentTypeFull.getComponentTypeTemplate());
+			if (template != null) {
+				templateResolution.setTemplateId(componentTypeFull.getComponentTypeTemplate());
+				templateResolution.setTemplateName(template.getName());
+			} else {
+				LOG.log(Level.WARNING, () -> "Override Template not found for: " + componentType);
+				templateResolution = null;
+			}
+
+		} else {
+			templateResolution = findFirstParentWithTemplate(componentTypes, componentTypeFull);
+		}
+
+		return templateResolution;
+	}
+
+	private ComponentTypeTemplateResolution findFirstParentWithTemplate(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeTemplateResolution resolution = null;
+
+		if (child.getParentComponentType() != null) {
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					if (componentType.getComponentTypeTemplate() != null) {
+						resolution = new ComponentTypeTemplateResolution();
+						resolution.setCameFromAncestor(true);
+						resolution.setAncestorComponentType(componentType.getComponentType());
+						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+
+						ComponentTypeTemplate template = getComponentTypeTemplate(componentType.getComponentTypeTemplate());
+						if (template != null) {
+							resolution.setTemplateId(componentType.getComponentTypeTemplate());
+							resolution.setTemplateName(template.getName());
+						} else {
+							LOG.log(Level.WARNING, () -> "Override Template not found for: " + componentType);
+							resolution = null;
+						}
+						break;
+					} else {
+						resolution = findFirstParentWithTemplate(componentTypes, componentType);
+					}
+				}
+			}
+		}
+		return resolution;
+	}
+
+	public ComponentTypeRoleResolution findRoleGroupsForComponentType(String componentType)
+	{
+		ComponentTypeRoleResolution roleResolution;
+
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+
+		if (componentTypeFull.getAssignedGroups() != null
+				&& !componentTypeFull.getAssignedGroups().isEmpty()) {
+
+			roleResolution = new ComponentTypeRoleResolution();
+			for (RoleLink link : componentTypeFull.getAssignedGroups()) {
+				roleResolution.getRoles().add(link.getRoleName());
+			}
+
+		} else {
+			roleResolution = findFirstParentWithRoles(componentTypes, componentTypeFull);
+		}
+		return roleResolution;
+	}
+
+	private ComponentTypeRoleResolution findFirstParentWithRoles(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeRoleResolution resolution = null;
+
+		if (child.getParentComponentType() != null) {
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					if (componentType.getAssignedGroups() != null
+							&& !componentType.getAssignedGroups().isEmpty()) {
+
+						resolution = new ComponentTypeRoleResolution();
+						resolution.setCameFromAncestor(true);
+						resolution.setAncestorComponentType(componentType.getComponentType());
+						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+
+						for (RoleLink link : componentType.getAssignedGroups()) {
+							resolution.getRoles().add(link.getRoleName());
+						}
+						break;
+					} else {
+						resolution = findFirstParentWithRoles(componentTypes, componentType);
+					}
+				}
+			}
+		}
+		return resolution;
+	}
+
+	public ComponentTypeUserResolution findUserForComponentType(String componentType)
+	{
+		ComponentTypeUserResolution resolution;
+
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+
+		if (componentTypeFull.getAssignedUsers() != null
+				&& !componentTypeFull.getAssignedUsers().isEmpty()) {
+
+			resolution = new ComponentTypeUserResolution();
+			for (UserLink link : componentTypeFull.getAssignedUsers()) {
+				resolution.getUsernames().add(link.getUsername());
+			}
+
+		} else {
+			resolution = findFirstParentWithUser(componentTypes, componentTypeFull);
+		}
+		return resolution;
+	}
+
+	private ComponentTypeUserResolution findFirstParentWithUser(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeUserResolution resolution = null;
+
+		if (child.getParentComponentType() != null) {
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					if (componentType.getAssignedUsers() != null
+							&& !componentType.getAssignedUsers().isEmpty()) {
+
+						resolution = new ComponentTypeUserResolution();
+						resolution.setCameFromAncestor(true);
+						resolution.setAncestorComponentType(componentType.getComponentType());
+						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+
+						for (UserLink link : componentType.getAssignedUsers()) {
+							resolution.getUsernames().add(link.getUsername());
+						}
+						break;
+					} else {
+						resolution = findFirstParentWithUser(componentTypes, componentType);
+					}
+				}
+			}
+		}
+		return resolution;
 	}
 
 }

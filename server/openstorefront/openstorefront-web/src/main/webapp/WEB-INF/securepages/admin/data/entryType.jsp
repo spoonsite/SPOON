@@ -23,7 +23,9 @@
 	<stripes:layout-component name="contents">
 		
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
+		</stripes:layout-render>	
+
+		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>		
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -86,77 +88,115 @@
 									allowBlank: false,
 									width: '100%',
 									fieldBodyCls: 'form-comp-htmleditor-border',
-									maxLength: 65536,
-									margin: '0 0 30 0'
+									maxLength: 65536
 								},																
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'componentParentType',																		
+									width: '100%',
+									margin: '0 0 20 0',
+									fieldLabel: 'Parent Type',
+									emptyText: 'None',
+									storeConfig: {
+										url: 'api/v1/resource/componenttypes/lookup',
+										addRecords: [
+											{
+												code: null,
+												description: 'None'
+											} 
+										]
+									}
+								}),
 								{
-									xtype: 'panel',
+									xtype: 'container',
+									width: '100%',
 									html: '<b>Data Entry</b>'
 								},
 								{
-									xtype: 'checkbox',
-									boxLabel: '<b>Allow On Submission Form</b>',
-									name: 'allowOnSubmission',
-									id: 'entryForm-radio-allow-on-sub'
-								},								
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Attributes',
-									name: 'dataEntryAttributes',
-									id: 'entryForm-radio-attributes'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Relationships ',
-									name: 'dataEntryRelationships',
-									id: 'entryForm-radio-relationships'									
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Contacts',
-									name: 'dataEntryContacts',
-									id: 'entryForm-radio-contacts'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Resources',
-									name: 'dataEntryResources',
-									id: 'entryForm-radio-resources'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Media',
-									name: 'dataEntryMedia',
-									id: 'entryForm-radio-media'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Dependencies',
-									name: 'dataEntryDependencies',
-									id: 'entryForm-radio-dependencies'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Evaluation Information',
-									name: 'dataEntryEvaluationInformation',
-									id: 'entryForm-radio-eval-info'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Reviews',
-									name: 'dataEntryReviews',
-									id: 'entryForm-radio-reviews'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Questions',
-									name: 'dataEntryQuestions',
-									id: 'entryForm-radio-questions'
+									xtype: 'container',
+									layout: 'column',
+									width: '100%',
+									items: [
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Allow On Submission Form',
+													name: 'allowOnSubmission',
+													id: 'entryForm-radio-allow-on-sub'
+												},								
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Attributes',
+													name: 'dataEntryAttributes',
+													id: 'entryForm-radio-attributes'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Relationships ',
+													name: 'dataEntryRelationships',
+													id: 'entryForm-radio-relationships'									
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Contacts',
+													name: 'dataEntryContacts',
+													id: 'entryForm-radio-contacts'
+												}
+											]
+										},
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Resources',
+													name: 'dataEntryResources',
+													id: 'entryForm-radio-resources'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Media',
+													name: 'dataEntryMedia',
+													id: 'entryForm-radio-media'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Dependencies',
+													name: 'dataEntryDependencies',
+													id: 'entryForm-radio-dependencies'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Evaluation Information',
+													name: 'dataEntryEvaluationInformation',
+													id: 'entryForm-radio-eval-info'
+												}
+											]
+										},
+										{
+											columnWidth: 0.33,
+											items: [
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Reviews',
+													name: 'dataEntryReviews',
+													id: 'entryForm-radio-reviews'
+												},
+												{
+													xtype: 'checkbox',
+													boxLabel: 'Questions',
+													name: 'dataEntryQuestions',
+													id: 'entryForm-radio-questions'
+												}
+											]
+										}
+									]
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'componentTypeTemplate',																		
 									width: '100%',
-									margin: '0 0 0 0',
+									margin: '0 0 20 0',
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
@@ -246,42 +286,176 @@
 						}
 					]
 				});
+
+				// recursively gets a list of target nodes/records that can't be dragged to
+				var getInvalidNodes = function (currentRecord) {
+					invalidNodes = [];
+
+					invalidNodes.push(currentRecord);
+
+					for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
+						invalidNodes = invalidNodes.concat(getInvalidNodes(currentRecord.childNodes[ii]));
+					}
+
+					return invalidNodes;
+				};
 				
-				var entryGrid = Ext.create('Ext.grid.Panel', {
+				var entryGrid = Ext.create('Ext.tree.Panel', {
 					id: 'entryGrid',
 					title: 'Entry Types <i class="fa fa-question-circle"  data-qtip="Allows for defining entry types" ></i>',
-					store: Ext.create('Ext.data.Store', {
-						fields: [
-							'componentType',
-							'updateUser',							
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							},							
-							'activeStatus',
-							'label',
-							'description',
-							'componentTypeTemplate'
-						],
-						autoLoad: true,
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/componenttypes',
-							extraParams: {
-								all: true
+					viewConfig: {
+						plugins: {
+							ptype: 'celltocelldragdrop',
+							enableDrop: true,
+							rowFocus: true,
+							onEnter: function (target, dd, e, dragData) {
+
+								dragData.invalidNodes = getInvalidNodes(dragData.record, []);
+							},
+							onOut: function(target, dd, e, dragData) {
+
+								var originName = dragData.record.data.componentType; 
+								dd.ddel.innerText = originName;
+							},
+							onDrop: function (target, dd, e, dragData) {
+
+								if (target.record !== dragData.record && getInvalidNodes(dragData.record).indexOf(target.record) === -1) {
+									target.record.insertChild(0, dragData.record);
+								}
 							}
 						}
-					}),
+					},
+					// store: Ext.create('Ext.data.Store', {
+					// 	fields: [
+					// 		'componentType',
+					// 		'updateUser',							
+					// 		{
+					// 			name: 'updateDts',
+					// 			type:	'date',
+					// 			dateFormat: 'c'
+					// 		},							
+					// 		'activeStatus',
+					// 		'label',
+					// 		'description',
+					// 		'componentTypeTemplate'
+					// 	],
+					// 	autoLoad: true,
+					// 	proxy: {
+					// 		type: 'ajax',
+					// 		url: 'api/v1/resource/componenttypes',
+					// 		extraParams: {
+					// 			all: true
+					// 		}
+					// 	}
+					// }),
+					rootVisible: false,
+					store: {
+						type: 'tree',
+						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
+						listeners: {
+							update: function (self, record, operation) {
+
+								if (record.childNodes.length === 0) {
+									record.data.leaf = true;
+								}
+								else {
+									record.data.leaf = false;
+								}
+							}
+						},
+						root: {
+							text: '.',
+							children: [
+								{
+									componentType: 'parent 1',
+									label: 'parent 1',
+									description: 'parent 1',
+									templateName: 'parent 1',
+									activeStatus: 'parent 1',
+									updateUser: 'parent 1',
+									updateDts: 'parent 1',
+									expanded: true,
+									children: [
+										{
+											componentType: 'sub 1',
+											label: 'sub 1',
+											description: 'sub 1',
+											templateName: 'sub 1',
+											activeStatus: 'sub 1',
+											updateUser: 'sub 1',
+											updateDts: 'sub 1',
+											expanded: true
+										},
+										{
+											componentType: 'sub 2',
+											label: 'sub 2',
+											description: 'sub 2',
+											templateName: 'sub 2',
+											activeStatus: 'sub 2',
+											updateUser: 'sub 2',
+											updateDts: 'sub 2',
+											expanded: true
+										},
+										{
+											componentType: 'sub 3',
+											label: 'sub 3',
+											description: 'sub 3',
+											templateName: 'sub 3',
+											activeStatus: 'sub 3',
+											updateUser: 'sub 3',
+											updateDts: 'sub 3',
+											expanded: true
+										}
+									]
+								},
+								{
+									componentType: 'parent 2',
+									label: 'parent 2',
+									description: 'parent 2',
+									templateName: 'parent 2',
+									activeStatus: 'parent 2',
+									updateUser: 'parent 2',
+									updateDts: 'parent 2',
+									expanded: true
+								},
+								{
+									componentType: 'parent 3',
+									label: 'parent 3',
+									description: 'parent 3',
+									templateName: 'parent 3',
+									activeStatus: 'parent 3',
+									updateUser: 'parent 3',
+									updateDts: 'parent 3',
+									expanded: true,
+									children: (function () {
+										var childArr = [];
+										for (var ii = 0; ii < 10; ii += 1) {
+											childArr.push({
+												componentType: 'EXTRA',
+												label: 'EXTRA',
+												description: 'EXTRA',
+												templateName: 'EXTRA',
+												activeStatus: 'EXTRA',
+												updateUser: 'EXTRA',
+												updateDts: 'EXTRA',
+												expanded: true
+											});
+										}
+										return childArr;
+									}())
+								}
+							]
+						}
+					},
 					columnLines: true,
 					columns: [						
-						{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
-						{ text: 'Label', dataIndex: 'label', width: 200 },
-						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Template Override', dataIndex: 'templateName', width: 150 },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Type Code', dataIndex: 'componentType', xtype: 'treecolumn', flex: 20 },
+						{ text: 'Label', dataIndex: 'label', flex: 10 },
+						{ text: 'Description', dataIndex: 'description', flex: 30 },
+						{ text: 'Template Override', dataIndex: 'templateName', flex: 10 },
+						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', flex: 10 },
+						{ text: 'Update User', dataIndex: 'updateUser', flex: 10 },
+						{ text: 'Update Date', dataIndex: 'updateDts', flex: 10, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -325,14 +499,39 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Toggle Status',
-									id: 'lookupGrid-tools-status',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									disabled: true,
-									handler: function () {
-										actionToggleStatus();
-									}								
+									text: 'Action',
+									scale: 'medium',
+									menu: [
+										{
+											text: 'Entry Assignment',
+											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
+										},
+										{
+											xtype: 'menuseparator'
+										},
+										{
+											text: 'Move to Top',
+											id: 'moveToTopBtn',
+											disabled: true,
+											iconCls: 'fa fa-level-up fa-2x icon-button-color-default',
+											tooltip: 'Moves the selected record to the top-most level',
+											handler: function () {
+												actionMoveToTop();
+											}
+										},
+										{
+											xtype: 'menuseparator'
+										},
+										{
+											text: 'Toggle Status',
+											id: 'lookupGrid-tools-status',
+											disabled: true,
+											iconCls: 'fa fa-power-off fa-2x icon-button-color-default',
+											handler: function () {
+												actionToggleStatus();
+											}	
+										}
+									]
 								},
 								{
 									xtype: 'tbfill'
@@ -367,10 +566,12 @@
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-remove').setDisabled(false);						
+						Ext.getCmp('moveToTopBtn').setDisabled(false);
 					} else {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-remove').setDisabled(true);
+						Ext.getCmp('moveToTopBtn').setDisabled(true);
 					}
 				};
 				
@@ -419,6 +620,14 @@
 							actionRefreshEntryGrid();
 						}
 					});
+				};
+
+				var actionMoveToTop = function () {
+					
+					var gridStore = Ext.getCmp('entryGrid').getStore();
+					var selectedRecord = Ext.getCmp('entryGrid').getSelection()[0]
+
+					gridStore.getRoot().insertChild(0, selectedRecord);
 				};
 				
 				var actionRemoveType = function() {
