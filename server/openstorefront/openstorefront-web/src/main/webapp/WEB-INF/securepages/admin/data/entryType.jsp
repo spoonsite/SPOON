@@ -503,15 +503,21 @@
 									scale: 'medium',
 									menu: [
 										{
-											text: 'Hierarchy Tool',
-											iconCls: 'fa fa-sitemap fa-2x icon-button-color-default'
+											text: 'Entry Assignment',
+											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
 										},
 										{
 											xtype: 'menuseparator'
 										},
 										{
-											text: 'Entry Assignment',
-											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
+											text: 'Move to Top',
+											id: 'moveToTopBtn',
+											disabled: true,
+											iconCls: 'fa fa-level-up fa-2x icon-button-color-default',
+											tooltip: 'Moves the selected record to the top-most level',
+											handler: function () {
+												actionMoveToTop();
+											}
 										},
 										{
 											xtype: 'menuseparator'
@@ -560,10 +566,12 @@
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-remove').setDisabled(false);						
+						Ext.getCmp('moveToTopBtn').setDisabled(false);
 					} else {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-remove').setDisabled(true);
+						Ext.getCmp('moveToTopBtn').setDisabled(true);
 					}
 				};
 				
@@ -612,6 +620,14 @@
 							actionRefreshEntryGrid();
 						}
 					});
+				};
+
+				var actionMoveToTop = function () {
+					
+					var gridStore = Ext.getCmp('entryGrid').getStore();
+					var selectedRecord = Ext.getCmp('entryGrid').getSelection()[0]
+
+					gridStore.getRoot().insertChild(0, selectedRecord);
 				};
 				
 				var actionRemoveType = function() {
