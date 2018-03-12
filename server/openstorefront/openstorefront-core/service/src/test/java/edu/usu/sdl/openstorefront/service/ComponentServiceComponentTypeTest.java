@@ -47,18 +47,8 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_All()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		CoreComponentServiceImpl mockCore = setupBaseMock();
 
-		Service service = Mockito.mock(Service.class);
-		ComponentService componentService = Mockito.mock(ComponentService.class);
-		Mockito.when(service.getComponentService()).thenReturn(componentService);
-
-		ServiceProxyFactory.setTestService(service);
-
-		List<ComponentType> componentTypes = getMockData();
-		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
-
-		//mock the component service
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		Mockito.when(mockCore.getComponentType(options)).thenCallRealMethod();
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
@@ -71,8 +61,7 @@ public class ComponentServiceComponentTypeTest
 				.get(0).getChildren().size(), 1);
 	}
 
-	@Test
-	public void getComponentType_SubChild()
+	private CoreComponentServiceImpl setupBaseMock()
 	{
 		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
 
@@ -85,7 +74,14 @@ public class ComponentServiceComponentTypeTest
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
 
-		//mock the component service
+		return mockCore;
+	}
+
+	@Test
+	public void getComponentType_SubChild()
+	{
+		CoreComponentServiceImpl mockCore = setupBaseMock();
+
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("B");
 		Mockito.when(mockCore.getComponentType(options)).thenCallRealMethod();
@@ -98,19 +94,8 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		CoreComponentServiceImpl mockCore = setupBaseMock();
 
-		Service service = Mockito.mock(Service.class);
-		ComponentService componentService = Mockito.mock(ComponentService.class);
-		Mockito.when(service.getComponentService()).thenReturn(componentService);
-		//Mockito.when(componentService.findTemplateForComponentType(Mockito.any())).thenReturn(null);
-
-		ServiceProxyFactory.setTestService(service);
-
-		List<ComponentType> componentTypes = getMockData();
-		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
-
-		//mock the component service
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("C");
 		options.setPullParents(true);
@@ -123,18 +108,43 @@ public class ComponentServiceComponentTypeTest
 	}
 
 	@Test
+	public void getComponentType_Top_Parent_Only()
+	{
+		CoreComponentServiceImpl mockCore = setupBaseMock();
+
+		ComponentTypeOptions options = new ComponentTypeOptions();
+		options.setComponentType("C");
+		options.setPullParents(true);
+		options.setPullChildren(false);
+		Mockito.when(mockCore.getComponentType(options)).thenCallRealMethod();
+		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
+		LOG.info(nestedModel.toString());
+
+		assertEquals(nestedModel.getComponentType().getLabel(), "Fruit");
+		assertEquals(nestedModel.getChildren().size(), 0);
+	}
+
+	@Test
+	public void getComponentType_Self()
+	{
+		CoreComponentServiceImpl mockCore = setupBaseMock();
+
+		ComponentTypeOptions options = new ComponentTypeOptions();
+		options.setComponentType("C");
+		options.setPullParents(false);
+		options.setPullChildren(false);
+		Mockito.when(mockCore.getComponentType(options)).thenCallRealMethod();
+		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
+		LOG.info(nestedModel.getComponentType().getLabel());
+
+		assertEquals(nestedModel.getComponentType().getLabel(), "Gala");
+		assertEquals(nestedModel.getChildren().size(), 0);
+	}
+
+	@Test
 	public void findTemplateForComponentType_Direct()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
-
-		Service service = Mockito.mock(Service.class);
-		ComponentService componentService = Mockito.mock(ComponentService.class);
-		Mockito.when(service.getComponentService()).thenReturn(componentService);
-
-		ServiceProxyFactory.setTestService(service);
-
-		List<ComponentType> componentTypes = getMockData();
-		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+		CoreComponentServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeTemplate template = new ComponentTypeTemplate();
 		template.setName("test");
@@ -150,16 +160,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findTemplateForComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
-
-		Service service = Mockito.mock(Service.class);
-		ComponentService componentService = Mockito.mock(ComponentService.class);
-		Mockito.when(service.getComponentService()).thenReturn(componentService);
-
-		ServiceProxyFactory.setTestService(service);
-
-		List<ComponentType> componentTypes = getMockData();
-		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+		CoreComponentServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeTemplate template = new ComponentTypeTemplate();
 		template.setName("test");
@@ -233,6 +234,36 @@ public class ComponentServiceComponentTypeTest
 		assertEquals(resolution.getUsernames().size(), 1);
 	}
 
+	@Test
+	public void findIconForComponentType_Direct()
+	{
+		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.resolveComponentTypeIcon("B")).thenCallRealMethod();
+
+		String url = mockCore.resolveComponentTypeIcon("B");
+
+		assertEquals(url, "test.png");
+	}
+
+	@Test
+	public void findIconForComponentType_Parent()
+	{
+		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.resolveComponentTypeIcon("C")).thenCallRealMethod();
+
+		String url = mockCore.resolveComponentTypeIcon("C");
+
+		assertEquals(url, "test.png");
+	}
+
 	private List<ComponentType> getMockData()
 	{
 		List<ComponentType> componentTypes = new ArrayList<>();
@@ -245,6 +276,7 @@ public class ComponentServiceComponentTypeTest
 		aType = new ComponentType();
 		aType.setComponentType("B");
 		aType.setLabel("Apple");
+		aType.setIconUrl("test.png");
 		aType.setParentComponentType("A");
 
 		RoleLink roleLink = new RoleLink();
@@ -263,6 +295,12 @@ public class ComponentServiceComponentTypeTest
 		aType.setComponentType("C");
 		aType.setLabel("Gala");
 		aType.setParentComponentType("B");
+		componentTypes.add(aType);
+
+		aType = new ComponentType();
+		aType.setComponentType("C-Child");
+		aType.setLabel("Washington Gala");
+		aType.setParentComponentType("C");
 		componentTypes.add(aType);
 
 		aType = new ComponentType();

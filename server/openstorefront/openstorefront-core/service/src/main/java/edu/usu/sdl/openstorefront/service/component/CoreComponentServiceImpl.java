@@ -2816,13 +2816,37 @@ public class CoreComponentServiceImpl
 	{
 		String typeIcon = null;
 		List<ComponentType> componentTypes = getAllComponentTypes();
+
 		for (ComponentType componentTypeLocal : componentTypes) {
 			if (componentTypeLocal.getComponentType().equals(componentType)) {
-				typeIcon = componentTypeLocal.getIconUrl();
+				if (StringUtils.isNotBlank(componentTypeLocal.getIconUrl())) {
+					typeIcon = componentTypeLocal.getIconUrl();
+				} else {
+					typeIcon = findFirstParentWithIcon(componentTypes, componentTypeLocal);
+				}
 			}
 		}
 
 		return typeIcon;
+	}
+
+	private String findFirstParentWithIcon(List<ComponentType> componentTypes, ComponentType child)
+	{
+		String iconUrl = null;
+
+		if (child.getParentComponentType() != null) {
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(child.getParentComponentType())) {
+					if (StringUtils.isNotBlank(componentType.getIconUrl())) {
+						iconUrl = componentType.getIconUrl();
+						break;
+					} else {
+						iconUrl = findFirstParentWithIcon(componentTypes, componentType);
+					}
+				}
+			}
+		}
+		return iconUrl;
 	}
 
 	public void removeRoleFromComponentType(String roleName)

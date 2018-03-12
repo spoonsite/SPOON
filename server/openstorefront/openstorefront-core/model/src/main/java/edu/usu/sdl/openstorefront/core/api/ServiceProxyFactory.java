@@ -38,7 +38,7 @@ public class ServiceProxyFactory
 	public static Service getServiceProxy()
 	{
 		if (testService != null) {
-			LOG.log(Level.INFO, "Using test Service");
+			LOG.log(Level.FINEST, "Using test Service");
 			return testService;
 		} else {
 			if (context == null) {
