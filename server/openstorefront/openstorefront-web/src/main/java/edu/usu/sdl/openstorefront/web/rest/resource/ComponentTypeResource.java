@@ -89,6 +89,7 @@ public class ComponentTypeResource
 		MediaType.APPLICATION_JSON
 	})
 	@DataType(ComponentTypeNestedModel.class)
+	@Path("/nested")
 	public Response getNestedComponentType(
 			@QueryParam("componentType") String componentType,
 			@QueryParam("pullParents") boolean pullParents

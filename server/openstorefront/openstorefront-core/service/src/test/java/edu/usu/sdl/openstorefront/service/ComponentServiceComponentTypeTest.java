@@ -19,11 +19,13 @@ import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.RoleLink;
 import edu.usu.sdl.openstorefront.core.entity.UserLink;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
 import java.util.ArrayList;
@@ -50,7 +52,6 @@ public class ComponentServiceComponentTypeTest
 		Service service = Mockito.mock(Service.class);
 		ComponentService componentService = Mockito.mock(ComponentService.class);
 		Mockito.when(service.getComponentService()).thenReturn(componentService);
-		//Mockito.when(componentService.findTemplateForComponentType(Mockito.any())).thenReturn(null);
 
 		ServiceProxyFactory.setTestService(service);
 
@@ -78,7 +79,6 @@ public class ComponentServiceComponentTypeTest
 		Service service = Mockito.mock(Service.class);
 		ComponentService componentService = Mockito.mock(ComponentService.class);
 		Mockito.when(service.getComponentService()).thenReturn(componentService);
-		//Mockito.when(componentService.findTemplateForComponentType(Mockito.any())).thenReturn(null);
 
 		ServiceProxyFactory.setTestService(service);
 
@@ -122,17 +122,56 @@ public class ComponentServiceComponentTypeTest
 		assertEquals(nestedModel.getChildren().get(0).getChildren().size(), 1);
 	}
 
-//	@Test
-//	public void findTemplateForComponentType_Direct()
-//	{
-//
-//	}
-//
-//	@Test
-//	public void findTemplateForComponentType_Parent()
-//	{
-//
-//	}
+	@Test
+	public void findTemplateForComponentType_Direct()
+	{
+		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+
+		Service service = Mockito.mock(Service.class);
+		ComponentService componentService = Mockito.mock(ComponentService.class);
+		Mockito.when(service.getComponentService()).thenReturn(componentService);
+
+		ServiceProxyFactory.setTestService(service);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		ComponentTypeTemplate template = new ComponentTypeTemplate();
+		template.setName("test");
+		Mockito.when(mockCore.getComponentTypeTemplate("test")).thenReturn(template);
+
+		Mockito.when(mockCore.findTemplateForComponentType("A")).thenCallRealMethod();
+		ComponentTypeTemplateResolution templateResolution = mockCore.findTemplateForComponentType("A");
+		LOG.info(templateResolution.toString());
+
+		assertEquals(templateResolution.getTemplateName(), "test");
+	}
+
+	@Test
+	public void findTemplateForComponentType_Parent()
+	{
+		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+
+		Service service = Mockito.mock(Service.class);
+		ComponentService componentService = Mockito.mock(ComponentService.class);
+		Mockito.when(service.getComponentService()).thenReturn(componentService);
+
+		ServiceProxyFactory.setTestService(service);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		ComponentTypeTemplate template = new ComponentTypeTemplate();
+		template.setName("test");
+		Mockito.when(mockCore.getComponentTypeTemplate("test")).thenReturn(template);
+
+		Mockito.when(mockCore.findTemplateForComponentType("B")).thenCallRealMethod();
+		ComponentTypeTemplateResolution templateResolution = mockCore.findTemplateForComponentType("B");
+		LOG.info(templateResolution.toString());
+
+		assertEquals(templateResolution.getTemplateName(), "test");
+	}
+
 	@Test
 	public void findRoleGroupsForComponentType_Direct()
 	{
