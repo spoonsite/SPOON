@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
@@ -108,6 +110,7 @@ public class ComponentDetailView
 	private String approvalStateLabel;
 	private String componentIconId;
 	private String componentTypeIconUrl;
+	private ComponentTypeNestedModel componentTypeNestedModel;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
@@ -173,6 +176,7 @@ public class ComponentDetailView
 		return detailView;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setComponentDetails(Component component)
 	{
 		name = component.getName();
@@ -203,6 +207,7 @@ public class ComponentDetailView
 		Service service = ServiceProxyFactory.getServiceProxy();
 		componentIconId = service.getComponentService().resolveComponentIcon(componentId);
 		componentTypeIconUrl = service.getComponentService().resolveComponentTypeIcon(componentType);
+		componentTypeNestedModel = service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType()));
 
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
@@ -707,5 +712,15 @@ public class ComponentDetailView
 	public void setDataSensitivityDescription(String dataSensitivityDescription)
 	{
 		setDataSensitivityDescriptionMapFromString(dataSensitivityDescription);
+	}
+
+	public ComponentTypeNestedModel getComponentTypeNestedModel()
+	{
+		return componentTypeNestedModel;
+	}
+
+	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
+	{
+		this.componentTypeNestedModel = componentTypeNestedModel;
 	}
 }

@@ -86,7 +86,7 @@ public class ComponentAttributeResource
 			ComponentSimpleAttributeView view = new ComponentSimpleAttributeView();
 			view.setComponentId(attributeComponent.getComponentId());
 			view.setName(service.getComponentService().getComponentName(attributeComponent.getComponentId()));
-			view.setComponentType(service.getComponentService().getComponentType(attributeComponent.getComponentId()));
+			view.setComponentType(service.getComponentService().getComponentTypeForComponent(attributeComponent.getComponentId()));
 			components.add(view);
 		}
 		int totalResults = 0;
