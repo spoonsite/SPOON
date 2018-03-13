@@ -412,19 +412,35 @@
 
 								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
 
-								if (typeof componentType.template === 'undefined') {
-									return '<i style="color: #ccc;">Default</i>';
-								}
-								else if (componentType.template.cameFromAncestor) {
+								// recusively find the parent (or self) that has the template.
+								// NOTE: we cannot simply do this thorugh rowRecord.getData().componentType.template because
+								//	we do not want to have to save the record, retrieve the new data, and refresh the grid every
+								//	time we drag a record.
+								var getTemplateLabel = function (node, inherited) {
 
+									if (node.parentNode === null) {
+										return {label: '<i style="color: #ccc;">Default</i>', cameFromAncestor: false, rootNode: null};
+									}
+									if (node.getData().componentType.template && !node.getData().componentType.template.cameFromAncestor) {
+										return {label: node.getData().componentType.template.templateName, cameFromAncestor: inherited, rootNode: node};
+									}
+
+									return getTemplateLabel(node.parentNode, true);
+								};
+
+								var templateData = getTemplateLabel(rowRecord, false);
+
+								if (templateData.cameFromAncestor) {
+
+									var rootComponentType = templateData.rootNode.getData().componentType;
 									var iconStyle = 'style="padding: 2px; border-radius: 10px; background: #777; color: #fff;"';
 									var iconCls = 'fa fa-sitemap';
-									var tip = 'Template inherited from \'<b>' + componentType.template.ancestorComponentTypeLabel + '</b>\''
+									var tip = 'Template inherited from \'<b>' + rootComponentType.componentType + '</b>\''
 
-									return '<i aria-hidden="true" data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + componentType.template.templateName + '</i>';
+									return '<i aria-hidden="true" data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + rootComponentType.template.templateName + '</i>';
 								}
 								else {
-									return componentType.template.templateName;
+									return templateData.label;
 								}
 							}
 						},
