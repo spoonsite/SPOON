@@ -91,7 +91,7 @@
 									maxLength: 65536
 								},																
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'componentParentType',																		
+									name: 'parentComponentType',																		
 									width: '100%',
 									margin: '0 0 20 0',
 									fieldLabel: 'Parent Type',
@@ -301,6 +301,8 @@
 				};
 				
 				var entryGrid = Ext.create('Ext.tree.Panel', {
+					rowLines: true,
+					columnsLines: true,
 					id: 'entryGrid',
 					title: 'Entry Types <i class="fa fa-question-circle"  data-qtip="Allows for defining entry types" ></i>',
 					viewConfig: {
@@ -320,34 +322,17 @@
 							onDrop: function (target, dd, e, dragData) {
 
 								if (target.record !== dragData.record && getInvalidNodes(dragData.record).indexOf(target.record) === -1) {
+
+									if (dragData.record.parentNode.childNodes.length === 1) {
+										dragData.record.parentNode.data.leaf = true;
+									}
+
 									target.record.insertChild(0, dragData.record);
+									target.record.expand();
 								}
 							}
 						}
 					},
-					// store: Ext.create('Ext.data.Store', {
-					// 	fields: [
-					// 		'componentType',
-					// 		'updateUser',							
-					// 		{
-					// 			name: 'updateDts',
-					// 			type:	'date',
-					// 			dateFormat: 'c'
-					// 		},							
-					// 		'activeStatus',
-					// 		'label',
-					// 		'description',
-					// 		'componentTypeTemplate'
-					// 	],
-					// 	autoLoad: true,
-					// 	proxy: {
-					// 		type: 'ajax',
-					// 		url: 'api/v1/resource/componenttypes',
-					// 		extraParams: {
-					// 			all: true
-					// 		}
-					// 	}
-					// }),
 					rootVisible: false,
 					store: {
 						type: 'tree',
@@ -355,107 +340,137 @@
 						listeners: {
 							update: function (self, record, operation) {
 
-								if (record.childNodes.length === 0) {
-									record.data.leaf = true;
-								}
-								else {
-									record.data.leaf = false;
-								}
+								Ext.Array.forEach(record.childNodes, function (record) {
+
+									if (record.childNodes.length === 0) {
+										record.data.leaf = true;
+									}
+									else {
+										record.data.leaf = false;
+									}
+
+								});
+							},
+
+							load: function (self, records) {
+
+								var expandChildren = function (children, levelDeep) {
+									if (children.length === 0) {
+										return;
+									}
+
+									Ext.Array.forEach(children, function (child) {
+										child.expand();
+										expandChildren(child.childNodes, levelDeep + 1);
+									});
+								};
+
+								expandChildren(records, 0);
 							}
 						},
-						root: {
-							text: '.',
-							children: [
-								{
-									componentType: 'parent 1',
-									label: 'parent 1',
-									description: 'parent 1',
-									templateName: 'parent 1',
-									activeStatus: 'parent 1',
-									updateUser: 'parent 1',
-									updateDts: 'parent 1',
-									expanded: true,
-									children: [
-										{
-											componentType: 'sub 1',
-											label: 'sub 1',
-											description: 'sub 1',
-											templateName: 'sub 1',
-											activeStatus: 'sub 1',
-											updateUser: 'sub 1',
-											updateDts: 'sub 1',
-											expanded: true
-										},
-										{
-											componentType: 'sub 2',
-											label: 'sub 2',
-											description: 'sub 2',
-											templateName: 'sub 2',
-											activeStatus: 'sub 2',
-											updateUser: 'sub 2',
-											updateDts: 'sub 2',
-											expanded: true
-										},
-										{
-											componentType: 'sub 3',
-											label: 'sub 3',
-											description: 'sub 3',
-											templateName: 'sub 3',
-											activeStatus: 'sub 3',
-											updateUser: 'sub 3',
-											updateDts: 'sub 3',
-											expanded: true
-										}
-									]
-								},
-								{
-									componentType: 'parent 2',
-									label: 'parent 2',
-									description: 'parent 2',
-									templateName: 'parent 2',
-									activeStatus: 'parent 2',
-									updateUser: 'parent 2',
-									updateDts: 'parent 2',
-									expanded: true
-								},
-								{
-									componentType: 'parent 3',
-									label: 'parent 3',
-									description: 'parent 3',
-									templateName: 'parent 3',
-									activeStatus: 'parent 3',
-									updateUser: 'parent 3',
-									updateDts: 'parent 3',
-									expanded: true,
-									children: (function () {
-										var childArr = [];
-										for (var ii = 0; ii < 10; ii += 1) {
-											childArr.push({
-												componentType: 'EXTRA',
-												label: 'EXTRA',
-												description: 'EXTRA',
-												templateName: 'EXTRA',
-												activeStatus: 'EXTRA',
-												updateUser: 'EXTRA',
-												updateDts: 'EXTRA',
-												expanded: true
-											});
-										}
-										return childArr;
-									}())
-								}
-							]
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/componenttypes/nested',
+							extraParams: {
+								all: true
+							}
 						}
 					},
 					columnLines: true,
 					columns: [						
-						{ text: 'Type Code', dataIndex: 'componentType', xtype: 'treecolumn', flex: 20 },
-						{ text: 'Label', dataIndex: 'label', flex: 10 },
-						{ text: 'Description', dataIndex: 'description', flex: 30 },
-						{ text: 'Template Override', dataIndex: 'templateName', flex: 10 },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', flex: 10 },
-						{ text: 'Update User', dataIndex: 'updateUser', flex: 10 },
-						{ text: 'Update Date', dataIndex: 'updateDts', flex: 10, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ 
+							text: 'Type Code',
+							dataIndex: 'componentType',
+							xtype: 'treecolumn',
+							flex: 20,
+							renderer: function (componentType) {
+								return componentType.componentType;
+							}
+						},
+						{ 
+							text: 'Label',
+							dataIndex: 'componentType',
+							flex: 10,
+							renderer: function (componentType) {
+								return componentType.label;
+							}
+						},
+						{ 
+							text: 'Description',
+							dataIndex: 'componentType',
+							flex: 30,
+							hidden: true,
+							renderer: function (componentType) {
+								return componentType.description;
+							}
+						},
+						{ 
+							text: 'Template Override',
+							dataIndex: 'componentType',
+							flex: 10,
+							renderer: function (componentType, rowData) {
+
+								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
+
+								// recusively find the parent (or self) that has the template.
+								// NOTE: we cannot simply do this thorugh rowRecord.getData().componentType.template because
+								//	we do not want to have to save the record, retrieve the new data, and refresh the grid every
+								//	time we drag a record.
+								var getTemplateLabel = function (node, inherited) {
+
+									if (node.parentNode === null) {
+										return {label: '<i style="color: #ccc;">Default</i>', cameFromAncestor: false, rootNode: null};
+									}
+									if (node.getData().componentType.template && !node.getData().componentType.template.cameFromAncestor) {
+										return {label: node.getData().componentType.template.templateName, cameFromAncestor: inherited, rootNode: node};
+									}
+
+									return getTemplateLabel(node.parentNode, true);
+								};
+
+								var templateData = getTemplateLabel(rowRecord, false);
+
+								if (templateData.cameFromAncestor) {
+
+									var rootComponentType = templateData.rootNode.getData().componentType;
+									var iconStyle = 'style="padding: 2px; border-radius: 10px; background: #777; color: #fff;"';
+									var iconCls = 'fa fa-sitemap';
+									var tip = 'Template inherited from \'<b>' + rootComponentType.componentType + '</b>\''
+
+									return '<i aria-hidden="true" data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + rootComponentType.template.templateName + '</i>';
+								}
+								else {
+									return templateData.label;
+								}
+							}
+						},
+						{ 
+							text: 'Active Status',
+							align: 'center',
+							dataIndex: 'componentType',
+							flex: 10,
+							renderer: function (componentType) {
+								return componentType.activeStatus;
+							}
+						},
+						{ 
+							text: 'Update User',
+							dataIndex: 'componentType',
+							flex: 10,
+							renderer: function (componentType) {
+								return componentType.updateUser;
+							}
+						},
+						{ 
+							text: 'Update Date',
+							dataIndex: 'componentType',
+							flex: 10,
+							xtype: 'datecolumn',
+							format:'m/d/y H:i:s',
+							renderer: function (componentType) {
+								return componentType.updateDts;
+							}
+						}
 					],
 					dockedItems: [
 						{
@@ -589,6 +604,9 @@
 				};
 				
 				var actionEditEntry = function(record) {
+
+					record.data = record.getData().componentType;
+
 					addEditWin.show();
 					
 					Ext.getCmp('entryForm').reset(true);
@@ -600,9 +618,10 @@
 				};
 				
 				var actionToggleStatus = function() {
+
 					Ext.getCmp('entryGrid').setLoading("Updating Status...");
-					var type = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
-					var currentStatus = Ext.getCmp('entryGrid').getSelection()[0].get('activeStatus');
+					var type = Ext.getCmp('entryGrid').getSelection()[0].get('componentType').componentType;
+					var currentStatus = Ext.getCmp('entryGrid').getSelection()[0].get('componentType').activeStatus;
 					
 					var method = 'PUT';
 					var urlEnd = '/activate';
@@ -624,15 +643,15 @@
 
 				var actionMoveToTop = function () {
 					
-					var gridStore = Ext.getCmp('entryGrid').getStore();
-					var selectedRecord = Ext.getCmp('entryGrid').getSelection()[0]
+					var entryGrid = Ext.getCmp('entryGrid');
+					var selectedRecord = entryGrid.getSelection()[0];
 
-					gridStore.getRoot().insertChild(0, selectedRecord);
+					entryGrid.getStore().getRoot().insertChild(0, selectedRecord);
 				};
 				
 				var actionRemoveType = function() {
-					var typeToRemove = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
-					
+					var typeToRemove = Ext.getCmp('entryGrid').getSelection()[0].get('componentType').componentType;
+
 					var promptWindow = Ext.create('Ext.window.Window', {
 						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 						title: 'Delete Entry Type?',
