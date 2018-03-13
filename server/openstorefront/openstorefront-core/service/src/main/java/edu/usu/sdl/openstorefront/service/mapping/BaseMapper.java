@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 
 /**
@@ -46,5 +47,5 @@ public abstract class BaseMapper
 	 * @param userSubmission
 	 * @return new child component or null if no child was created.
 	 */
-	public abstract ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission);
+	public abstract ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField);
 }

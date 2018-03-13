@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormStep;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -62,9 +63,9 @@ public class MappingControllerTest
 				return new BaseMapper()
 				{
 					@Override
-					public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
+					public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 					{
-						return null;
+						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}
 				};
 			}

@@ -92,5 +92,6 @@ public class MappingController
 	}
 
 	//Add Map to User Submission
+	//public UserSubmission
 	//Add Entry to User Submission
 }

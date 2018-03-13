@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 
 /**
@@ -27,7 +28,7 @@ public class ComplexMapper
 {
 
 	@Override
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
+	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
