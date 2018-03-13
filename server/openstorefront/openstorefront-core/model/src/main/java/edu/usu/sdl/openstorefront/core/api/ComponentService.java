@@ -197,6 +197,14 @@ public interface ComponentService
 	public ComponentTypeNestedModel getComponentType(ComponentTypeOptions componentTypeOptions);
 
 	/**
+	 * Activates a component; if needed.
+	 *
+	 * @param componentTypeId
+	 * @return Component Type changed or null if not found.
+	 */
+	public ComponentType activateComponentType(String componentTypeId);
+
+	/**
 	 * Resolves the template for a given type
 	 *
 	 * @param componentType

@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -250,17 +249,8 @@ public class ComponentTypeResource
 			@PathParam("type") String type
 	)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-
-		ComponentType found = new ComponentType();
-		found.setComponentType(type);
-		found = found.find();
-		if (found != null) {
-			service.getPersistenceService().setStatusOnEntity(ComponentType.class, type, StandardEntity.ACTIVE_STATUS);
-			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
-			response = sendSingleEntityResponse(found);
-		}
-		return response;
+		ComponentType changed = service.getComponentService().activateComponentType(type);
+		return sendSingleEntityResponse(changed);
 	}
 
 	@DELETE

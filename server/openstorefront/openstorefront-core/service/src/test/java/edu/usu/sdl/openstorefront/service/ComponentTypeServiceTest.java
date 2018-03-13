@@ -27,7 +27,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
-import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
+import edu.usu.sdl.openstorefront.service.component.ComponentTypeServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -39,15 +39,15 @@ import org.mockito.Mockito;
  *
  * @author dshurtleff
  */
-public class ComponentServiceComponentTypeTest
+public class ComponentTypeServiceTest
 {
 
-	private static final Logger LOG = Logger.getLogger(ComponentServiceComponentTypeTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentTypeServiceTest.class.getName());
 
 	@Test
 	public void getComponentType_All()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		Mockito.when(mockCore.getComponentType(options)).thenCallRealMethod();
@@ -61,9 +61,9 @@ public class ComponentServiceComponentTypeTest
 				.get(0).getChildren().size(), 1);
 	}
 
-	private CoreComponentServiceImpl setupBaseMock()
+	private ComponentTypeServiceImpl setupBaseMock()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		Service service = Mockito.mock(Service.class);
 		ComponentService componentService = Mockito.mock(ComponentService.class);
@@ -80,7 +80,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_SubChild()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("B");
@@ -94,7 +94,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("C");
@@ -110,7 +110,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_Top_Parent_Only()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("C");
@@ -127,7 +127,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void getComponentType_Self()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeOptions options = new ComponentTypeOptions();
 		options.setComponentType("C");
@@ -144,7 +144,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findTemplateForComponentType_Direct()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeTemplate template = new ComponentTypeTemplate();
 		template.setName("test");
@@ -160,7 +160,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findTemplateForComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = setupBaseMock();
+		ComponentTypeServiceImpl mockCore = setupBaseMock();
 
 		ComponentTypeTemplate template = new ComponentTypeTemplate();
 		template.setName("test");
@@ -176,7 +176,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findRoleGroupsForComponentType_Direct()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
@@ -190,7 +190,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findRoleGroupsForComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
@@ -207,7 +207,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findUserForComponentType_Direct()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
@@ -221,7 +221,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findUserForComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
@@ -237,7 +237,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findIconForComponentType_Direct()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
@@ -252,7 +252,7 @@ public class ComponentServiceComponentTypeTest
 	@Test
 	public void findIconForComponentType_Parent()
 	{
-		CoreComponentServiceImpl mockCore = Mockito.mock(CoreComponentServiceImpl.class);
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
 
 		List<ComponentType> componentTypes = getMockData();
 		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);

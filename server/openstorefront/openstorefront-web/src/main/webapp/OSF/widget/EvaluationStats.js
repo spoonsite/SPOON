@@ -35,32 +35,14 @@ Ext.define('OSF.widget.EvaluationStats', {
 				dock: 'top',
 				items: [
 					{
-						xtype: 'combobox',
+						xtype: 'UserSingleSelectComboBox',
 						itemId: 'filterAssignedUser',
 						name: 'assignedUser',
-						fieldLabel: 'Assigned User',
-						displayField: 'description',
-						valueField: 'code',								
+						fieldLabel: 'Assigned User',														
+						labelAlign: 'left',
 						emptyText: 'All',						
-						width: 350,
-						typeAhead: true,
-						editable: true,
-						forceSelection: true,
-						store: {									
-							autoLoad: true,
-							proxy: {
-								type: 'ajax',
-								url: 'api/v1/resource/userprofiles/lookup'
-							},
-							listeners: {
-								load: function(store, records, opts) {
-									store.add({
-										code: null,
-										description: 'All'
-									});
-								}
-							}									
-						},
+						width: 350,					
+						addAll: true,						
 						listeners: {
 							change: function(filter, newValue, oldValue, opts){
 								statPanel.refresh();
@@ -68,32 +50,18 @@ Ext.define('OSF.widget.EvaluationStats', {
 						}										
 					},
 					{
-						xtype: 'combobox',
+						xtype: 'RoleGroupSingleSelectComboBox',
 						itemId: 'filterAssignedGroup',
 						name: 'assignedGroup',
 						fieldLabel: 'Assigned Group',
-						displayField: 'description',
-						valueField: 'code',								
-						emptyText: 'All',					
+						emptyText: 'All',	
+						labelAlign: 'left',
 						width: 370,	
 						labelWidth: 120,
+						typeAhead: false,
 						editable: false,
-						forceSelection: true,
-						store: {									
-							autoLoad: true,
-							proxy: {
-								type: 'ajax',
-								url: 'api/v1/resource/securityroles/lookup'
-							},
-							listeners: {
-								load: function(store, records, opts) {
-									store.add({
-										code: null,
-										description: 'All'
-									});
-								}
-							}
-						},
+						forceSelection: true,						
+						addAll: true,
 						listeners: {
 							change: function(filter, newValue, oldValue, opts){
 								statPanel.refresh();
@@ -105,10 +73,10 @@ Ext.define('OSF.widget.EvaluationStats', {
 		);
 		
 		//two graphs horizonal	
-		statPanel.publishStore = Ext.create('Ext.data.Store', {			
+		statPanel.publishStore = Ext.create('Ext.data.Store', {	
 		});
 		
-		statPanel.statusStore = Ext.create('Ext.data.Store', {			
+		statPanel.statusStore = Ext.create('Ext.data.Store', {				
 		});
 				
 		var container = Ext.create('Ext.panel.Panel', {
@@ -117,6 +85,14 @@ Ext.define('OSF.widget.EvaluationStats', {
 				align: 'stretch'
 			},
 			items: [
+				{
+					xtype: 'panel',
+					itemId: 'message',
+					hidden: true,
+					titleAlign: 'center',
+					title: 'No Evaluations Found',
+					width: '50%'
+				},
 				{
 					xtype: 'polar',
 					itemId: 'publishedChart',
@@ -254,9 +230,12 @@ Ext.define('OSF.widget.EvaluationStats', {
 				statPanel.publishStore.loadData(publishData);
 				
 				if (totalRecords === 0) {
-					statPanel.queryById('publishedChart').setTitle("No Evaluations Found");
+					statPanel.queryById('publishedChart').setHidden(true);
+					statPanel.queryById('message').setHidden(false);
 				} else {
+					statPanel.queryById('message').setHidden(true);
 					statPanel.queryById('publishedChart').setTitle(totalRecords + " Evaluation(s)");
+					statPanel.queryById('publishedChart').setHidden(false);					
 				}
 				
 				statPanel.statusStore.loadData(data.statusStats);

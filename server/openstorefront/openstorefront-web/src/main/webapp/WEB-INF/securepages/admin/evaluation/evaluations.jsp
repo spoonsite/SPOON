@@ -182,18 +182,13 @@
 								typeAhead: true,
 								forceSelection: true,
 								editable: true,
+								anyMatch: true,
 								store: {									
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/userprofiles/lookup'
-									},
-									sorters: [
-										new Ext.util.Sorter({
-											property: 'description',
-											direction: 'ASC'
-										})
-									],
+									},									
 									listeners: {
 										load: function(store, records, opts) {
 											store.add({
@@ -650,7 +645,7 @@
 									labelAlign: 'top',
 									width: '100%',
 									editable: false,
-									forceSelection: true,
+									forceSelection: true,									
 									store: {									
 										autoLoad: true,
 										proxy: {
@@ -748,18 +743,13 @@
 									typeAhead: true,
 									editable: true,
 									forceSelection: true,
+									anyMatch: true,
 									store: {									
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
-										},
-										sorters: [
-											new Ext.util.Sorter({
-												property: 'description',
-												direction: 'ASC'
-											})
-										],
+										},										
 										listeners: {
 											load: function(store, records, opts) {
 												store.add({
