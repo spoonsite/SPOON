@@ -39,33 +39,29 @@ Ext.define('OSF.entryType.EntryType', {
 			title: 'Entry _ Is',
 			columnWidth: .5,
 			bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
-						
-			store: Ext.create('Ext.data.Store', {
-				fields: [
-					'componentType',
-					'updateUser',							
-					{
-						name: 'updateDts',
-						type:	'date',
-						dateFormat: 'c'
-					},							
-					'activeStatus',
-					'label',
-					'description',
-					'componentTypeTemplate'
+			
+			store: {
+				autoLoad: false,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'qid',
+						direction: 'ASC'
+					})
 				],
-				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: 'api/v1/resource/componenttypes',
-					extraParams: {
-						all: true
-					}
+					url: 'api/v1/resource/components/lookup?componentType=' + 'ALL' /* TODO: Concatenate the component type in the filter here instead of ALL*/,
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}												
 				}
-			}),
+			},
 			columnLines: true,
-			columns: [						
-				{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
+			// TODO: Change this property to only show the names of entries in the grid. The dataIndex is 'description'.
+			columns: [										
+				{ text: 'Entry', dataIndex: 'componentType', width: 125 },
 				{ text: 'Label', dataIndex: 'label', width: 200 },
 				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus' }
 			],
@@ -85,7 +81,7 @@ Ext.define('OSF.entryType.EntryType', {
 				plugins: {
 					ddGroup: 'typeof',
 					ptype: 'celltocelldragdrop',
-					enableDrop: false,
+					enableDrop: true,
 					enableDrag: true
 				}
 			},
@@ -206,7 +202,7 @@ Ext.define('OSF.entryType.EntryType', {
 						id: 'celltocell',
 						ddGroup: 'typeof',
 						enableDrop: true,
-						enableDrag: false,
+						enableDrag: true,
 						onDrop: function onDrop(target, dd, e, dragData) {
 							alert('Create Relationship');
 							// TODO: Create the type-of relationship here
@@ -225,8 +221,7 @@ Ext.define('OSF.entryType.EntryType', {
 							var text = originName + ' ';
 							text += 'is type of ';
 							text += targetName;
-							dd.ddel.innerText = text;
-							
+							dd.ddel.innerText = text;							
 						},
 						onOut: function(target, dd, e, dragData) {
 							var originName = dragData.record.data.label; 
