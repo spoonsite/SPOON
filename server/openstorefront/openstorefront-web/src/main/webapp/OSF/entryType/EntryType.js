@@ -17,18 +17,138 @@
  */
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
+/*
+ * Create a store full of all the entry types, which the left combobox and the
+ * right combobox can both use.
+*/
 var entryTypeStore = Ext.create('Ext.data.Store', {
-	autoLoad: false,
+	fields: [
+		'componentType',
+		'updateUser',							
+		{
+			name: 'updateDts',
+			type:	'date',
+			dateFormat: 'c'
+		},							
+		'activeStatus',
+		'label',
+		'description',
+		'componentTypeTemplate'
+	],
+	autoLoad: true,
 	proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/componenttypes',
-					reader: {
-						type: 'json',
-						rootProperty: 'data',
-						totalProperty: 'totalNumber'
-					}
-				}
+		type: 'ajax',
+		url: 'api/v1/resource/componenttypes/lookup',
+		extraParams: {
+			all: true
+		}
+	},
+	listeners: {
+		// Add the "No entry type" item at load time, because inserting
+		// into the store after Ext factories it doesn't change it and/or breaks it.
+		// Factory pattern FTW?
+		load : function(store, records) {
+//			console.log("loaded");
+//			// Log the first entry for debugging. Then copy the values from the
+//			// console into noEntry below and modify them.
+//			console.log(store.getAt(1));
+			
+			var noEntry = {
+				code : "NONE",
+				description : "(No entry type)",
+				id : "extModel56-24",
+				updateDts : null
+			};
+			store.insert(0, noEntry);
+		}
+	}
 });
+
+// Insert a "No entry type" item into the store.
+var NETText = 'No entry type';
+
+
+var leftEntryGridPanel = Ext.create('Ext.grid.Panel', {
+	id: 'entryTypeOrigin',
+	// TODO: Better title? Or a textbox telling the user how to use this?
+	title: 'Entry _ Is',
+	columnWidth: .5,
+	bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
+	
+	store: {
+		autoLoad: false,
+		sorters: [
+			new Ext.util.Sorter({
+				property: 'qid',
+				direction: 'ASC'
+			})
+		],
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/components/lookup?componentType=' + 'ALL' /* TODO: Concatenate the component type in the filter here instead of ALL*/,
+			reader: {
+				type: 'json',
+				rootProperty: 'data',
+				totalProperty: 'totalNumber'
+			}
+		}
+	},
+	columnLines: true,
+	
+	columns: [
+		{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
+		{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
+	],
+	viewConfig: {
+		plugins: {
+			ptype: 'gridviewdragdrop',
+			// TODO: Is this copypasta or intentional?
+			dragText: 'Drag and drop to Add to template'
+		}
+	},
+	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'top',
+			items: [
+				Ext.create('OSF.component.StandardComboBox', {
+					id: 'leftEntryTypeFilter',
+					emptyText: '(No entry type)',
+					value: 'NONE',
+					fieldLabel: 'Filter by Entry Type',
+					name: 'leftEntryTypeFilter',
+					typeAhead: false,
+					editable: false,
+					width: 200,
+					listeners: {
+						change: function (filter, newValue, oldValue, opts) {
+							// TODO: Make the grid show entries, and make this function
+							// update its filter correctly.
+							
+							// Clear any existing filter
+							Ext.getCmp('entryTypeOrigin').store.clearFilter(true);
+							
+							if (newValue !== ('All')) {
+								// Apply new filter
+								Ext.getCmp('entryTypeOrigin').store.filter('activeStatus', newValue);
+							}
+							
+							// Reload the store to apply the new filter.
+							Ext.getCmp('entryTypeOrigin').store.reload();
+						}
+					},
+					emptyOptionAdded: true,
+					
+					store: entryTypeStore
+				})
+			]
+		}
+	]
+});
+
+// TODO: Make the right grid panel and use it in the definition below.
+var rightEntryGridPanel = null;
 
 Ext.define('OSF.entryType.EntryType', {
 	extend: 'Ext.form.Panel',
@@ -40,122 +160,8 @@ Ext.define('OSF.entryType.EntryType', {
 	bodyStyle: 'padding: 10px;margin: 10px',
 
 	items: [
-
-		//**************************
-		// Origin panel
-		//***************************
-
-		Ext.create('Ext.grid.Panel', {
-			id: 'entryTypeOrigin',
-			// TODO: Better title? Or a textbox telling the user how to use this?
-			title: 'Entry _ Is',
-			columnWidth: .5,
-			bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
-
-			store: {
-				autoLoad: false,
-				sorters: [
-					new Ext.util.Sorter({
-						property: 'qid',
-						direction: 'ASC'
-					})
-				],
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/components/lookup?componentType=' + 'ALL' /* TODO: Concatenate the component type in the filter here instead of ALL*/,
-					reader: {
-						type: 'json',
-						rootProperty: 'data',
-						totalProperty: 'totalNumber'
-					}
-				}
-			},
-			columnLines: true,
-
-			columns: [
-				{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
-				{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
-			],
-			// TODO: These are copypasta from the main Entry Types window.
-			// Do we want them in the popup?
-			// I don't like being able to edit things in a popup window created by a popup window.
-			// It seems messy. - Michael
-			//			listeners: {
-			//				itemdblclick: function(grid, record, item, index, e, opts){
-			//					actionEditEntry(record);
-			//				},
-			//				selectionchange: function(grid, record, index, opts){
-			//					checkEntryGridTools();
-			//				}
-			//			},
-			viewConfig: {
-				plugins: {
-					ptype: 'gridviewdragdrop',
-					dragText: 'Drag and drop to Add to template'
-				}
-			},
-
-			dockedItems: [
-				{
-					xtype: 'toolbar',
-					dock: 'top',
-					items: [
-						Ext.create('OSF.component.StandardComboBox', {
-							id: 'filterActiveStatusOrigin',
-							emptyText: '(Show All)',
-							value: 'All',
-							fieldLabel: 'Filter by Active Status',
-							name: 'activeStatus',
-							typeAhead: false,
-							editable: false,
-							width: 200,
-							listeners: {
-								change: function (filter, newValue, oldValue, opts) {
-									// Clear any existing filter
-									Ext.getCmp('entryTypeOrigin').store.clearFilter(true);
-
-									if (newValue !== ('All')) {
-										// Apply new filter
-										Ext.getCmp('entryTypeOrigin').store.filter('activeStatus', newValue);
-									}
-
-									// Reload the store to apply the new filter.
-									Ext.getCmp('entryTypeOrigin').store.reload();
-								},
-							},
-							emptyOptionAdded: false,
-							
-							// TODO: Get a "No entry type" option in the store somehow. I was going to try
-							// to add it when a load event or something is invoked:
-							// this.store.push({<correctly-formatted entry with the text 'No entry type'>})
-							store: Ext.create('Ext.data.Store', {
-								fields: [
-									'componentType',
-									'updateUser',							
-									{
-										name: 'updateDts',
-										type:	'date',
-										dateFormat: 'c'
-									},							
-									'activeStatus',
-									'label',
-									'description',
-									'componentTypeTemplate'
-								],
-								autoLoad: true,
-								proxy: {
-									type: 'ajax',
-									url: 'api/v1/resource/componenttypes/lookup',
-									extraParams: {
-										all: true
-									}
-								}
-							})
-						})
-					]
-				}
-			]
-		}),
+		
+		leftEntryGridPanel,
 
 		//**************************
 		// Target panel
