@@ -303,7 +303,7 @@
 							},
 							onOut: function(target, dd, e, dragData) {
 
-								var originName = dragData.record.data.componentType; 
+								var originName = dragData.record.getData().componentType.componentType; 
 								dd.ddel.innerText = originName;
 							},
 							onDrop: function (target, dd, e, dragData) {
@@ -327,6 +327,7 @@
 					rootVisible: false,
 					store: {
 						type: 'tree',
+						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
 						listeners: {
 
 							load: function (self, records) {
