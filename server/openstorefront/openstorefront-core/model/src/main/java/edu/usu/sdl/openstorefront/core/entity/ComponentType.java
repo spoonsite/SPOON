@@ -155,7 +155,7 @@ public class ComponentType
 		this.setIconUrl(componentTypeLocal.getIconUrl());
 		this.setAssignedGroups(componentTypeLocal.getAssignedGroups());
 		this.setAssignedUsers(componentTypeLocal.getAssignedUsers());
-
+		this.setParentComponentType(componentTypeLocal.getParentComponentType());
 	}
 
 	public String getComponentType()

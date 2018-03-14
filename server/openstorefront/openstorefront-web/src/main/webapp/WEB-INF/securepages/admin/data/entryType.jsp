@@ -287,19 +287,6 @@
 					]
 				});
 
-				// recursively gets a list of target nodes/records that can't be dragged to
-				var getInvalidNodes = function (currentRecord) {
-					invalidNodes = [];
-
-					invalidNodes.push(currentRecord);
-
-					for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
-						invalidNodes = invalidNodes.concat(getInvalidNodes(currentRecord.childNodes[ii]));
-					}
-
-					return invalidNodes;
-				};
-				
 				var entryGrid = Ext.create('Ext.tree.Panel', {
 					rowLines: true,
 					columnsLines: true,
@@ -329,6 +316,10 @@
 
 									target.record.insertChild(0, dragData.record);
 									target.record.expand();
+
+									// save the record
+									dragData.record.getData().componentType.parentComponentType = target.record.getData().componentType.componentType;
+									saveEntryTypeRecord(dragData.record);
 								}
 							}
 						}
@@ -338,34 +329,10 @@
 						type: 'tree',
 						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
 						listeners: {
-							update: function (self, record, operation) {
-
-								Ext.Array.forEach(record.childNodes, function (record) {
-
-									if (record.childNodes.length === 0) {
-										record.data.leaf = true;
-									}
-									else {
-										record.data.leaf = false;
-									}
-
-								});
-							},
 
 							load: function (self, records) {
 
-								var expandChildren = function (children, levelDeep) {
-									if (children.length === 0) {
-										return;
-									}
-
-									Ext.Array.forEach(children, function (child) {
-										child.expand();
-										expandChildren(child.childNodes, levelDeep + 1);
-									});
-								};
-
-								expandChildren(records, 0);
+								setChildrenLayout(records, 0);
 							}
 						},
 						proxy: {
@@ -382,6 +349,7 @@
 							text: 'Type Code',
 							dataIndex: 'componentType',
 							xtype: 'treecolumn',
+							sortable: false,
 							flex: 20,
 							renderer: function (componentType) {
 								return componentType.componentType;
@@ -390,6 +358,7 @@
 						{ 
 							text: 'Label',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 10,
 							renderer: function (componentType) {
 								return componentType.label;
@@ -398,6 +367,7 @@
 						{ 
 							text: 'Description',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 30,
 							hidden: true,
 							renderer: function (componentType) {
@@ -407,28 +377,13 @@
 						{ 
 							text: 'Template Override',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 10,
 							renderer: function (componentType, rowData) {
 
 								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
 
-								// recusively find the parent (or self) that has the template.
-								// NOTE: we cannot simply do this thorugh rowRecord.getData().componentType.template because
-								//	we do not want to have to save the record, retrieve the new data, and refresh the grid every
-								//	time we drag a record.
-								var getTemplateLabel = function (node, inherited) {
-
-									if (node.parentNode === null) {
-										return {label: '<i style="color: #ccc;">Default</i>', cameFromAncestor: false, rootNode: null};
-									}
-									if (node.getData().componentType.template && !node.getData().componentType.template.cameFromAncestor) {
-										return {label: node.getData().componentType.template.templateName, cameFromAncestor: inherited, rootNode: node};
-									}
-
-									return getTemplateLabel(node.parentNode, true);
-								};
-
-								var templateData = getTemplateLabel(rowRecord, false);
+								var templateData = getTemplateData(rowRecord, false);
 
 								if (templateData.cameFromAncestor) {
 
@@ -437,7 +392,7 @@
 									var iconCls = 'fa fa-sitemap';
 									var tip = 'Template inherited from \'<b>' + rootComponentType.componentType + '</b>\''
 
-									return '<i aria-hidden="true" data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + rootComponentType.template.templateName + '</i>';
+									return '<i data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + rootComponentType.template.templateName + '</i>';
 								}
 								else {
 									return templateData.label;
@@ -448,6 +403,7 @@
 							text: 'Active Status',
 							align: 'center',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 10,
 							renderer: function (componentType) {
 								return componentType.activeStatus;
@@ -456,6 +412,7 @@
 						{ 
 							text: 'Update User',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 10,
 							renderer: function (componentType) {
 								return componentType.updateUser;
@@ -464,6 +421,7 @@
 						{ 
 							text: 'Update Date',
 							dataIndex: 'componentType',
+							sortable: false,
 							flex: 10,
 							xtype: 'datecolumn',
 							format:'m/d/y H:i:s',
@@ -575,6 +533,64 @@
 				});
 				
 				addComponentToMainViewPort(entryGrid);
+
+				// recursively gets a list of target nodes/records that can't be dragged to
+				var getInvalidNodes = function (currentRecord) {
+					invalidNodes = [];
+
+					invalidNodes.push(currentRecord);
+
+					for (var ii = 0; ii < currentRecord.childNodes.length; ii += 1) {
+						invalidNodes = invalidNodes.concat(getInvalidNodes(currentRecord.childNodes[ii]));
+					}
+
+					return invalidNodes;
+				};
+
+				// saves and entry type record, generally this should only be used when saving a record
+				//	in a less standard way (e.g. not via a form)
+				var saveEntryTypeRecord = function (record) {
+
+					Ext.Ajax.request({
+						url: 'api/v1/resource/componenttypes/' + record.getData().componentType.componentType,
+						method: 'PUT',
+						jsonData: record.getData().componentType
+					});
+				};
+
+				// formats children tree layout (expands items, and sets items as leafs)
+				var setChildrenLayout = function (children) {
+
+					if (children.length === 0) {
+						return;
+					}
+
+					Ext.Array.forEach(children, function (child) {
+
+						if (child.childNodes.length === 0) {
+							child.data.leaf = true;
+							child.triggerUIUpdate();
+						}
+						child.expand();
+						setChildrenLayout(child.childNodes);
+					});
+				};
+
+				// recusively find the parent (or self) that has the root template.
+				// NOTE: we cannot simply do this thorugh rowRecord.getData().componentType.template because
+				//	we do not want to have to save the record, retrieve the new data, and refresh the grid every
+				//	time we drag a record.
+				var getTemplateData = function (node, inherited) {
+
+					if (node.parentNode === null) {
+						return {label: '<i style="color: #ccc;">Default</i>', cameFromAncestor: false, rootNode: null};
+					}
+					if (node.getData().componentType.template && !node.getData().componentType.template.cameFromAncestor) {
+						return {label: node.getData().componentType.template.templateName, cameFromAncestor: inherited, rootNode: node};
+					}
+
+					return getTemplateData(node.parentNode, true);
+				};
 				
 				var checkEntryGridTools = function() {
 					if (Ext.getCmp('entryGrid').getSelectionModel().getCount() === 1) {
@@ -605,7 +621,8 @@
 				
 				var actionEditEntry = function(record) {
 
-					record.data = record.getData().componentType;
+					var tempDataModel = Ext.create('Ext.data.Model');
+					tempDataModel.data = Ext.apply(record.getData().componentType, tempDataModel.data);
 
 					addEditWin.show();
 					
@@ -613,7 +630,7 @@
 					Ext.getCmp('entryForm').edit = true;
 					
 					//load form
-					Ext.getCmp('entryForm').loadRecord(record);
+					Ext.getCmp('entryForm').loadRecord(tempDataModel);
 					Ext.getCmp('entryForm-type').setReadOnly(true);
 				};
 				
@@ -646,6 +663,12 @@
 					var entryGrid = Ext.getCmp('entryGrid');
 					var selectedRecord = entryGrid.getSelection()[0];
 
+					selectedRecord.getData().componentType.parentComponentType = null;
+					saveEntryTypeRecord(selectedRecord);
+
+					if (selectedRecord.parentNode.childNodes.length === 1) {
+						selectedRecord.parentNode.data.leaf = true;
+					}
 					entryGrid.getStore().getRoot().insertChild(0, selectedRecord);
 				};
 				
