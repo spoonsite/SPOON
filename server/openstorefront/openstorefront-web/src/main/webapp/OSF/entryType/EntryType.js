@@ -17,11 +17,11 @@
  */
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
-var entryTypeStore = new Ext.data.Store({
-	autoLoad: true,
+var entryTypeStore = Ext.create('Ext.data.Store', {
+	autoLoad: false,
 	proxy: {
 					type: 'ajax',
-					url: 'api/v1/resource/componenttypes/lookup',
+					url: 'api/v1/resource/componenttypes',
 					reader: {
 						type: 'json',
 						rootProperty: 'data',
@@ -121,30 +121,36 @@ Ext.define('OSF.entryType.EntryType', {
 
 									// Reload the store to apply the new filter.
 									Ext.getCmp('entryTypeOrigin').store.reload();
-								}
+								},
 							},
-							storeConfig: {
-								customStore: {
-									fields: [
-										'code',
-										'description'
-									],
-									data: [
-										{
-											code: 'All',
-											description: '(Show All)'
-										},
-										{
-											code: 'A',
-											description: 'Active'
-										},
-										{
-											code: 'I',
-											description: 'Inactive'
-										}
-									]
+							emptyOptionAdded: false,
+							
+							// TODO: Get a "No entry type" option in the store somehow. I was going to try
+							// to add it when a load event or something is invoked:
+							// this.store.push({<correctly-formatted entry with the text 'No entry type'>})
+							store: Ext.create('Ext.data.Store', {
+								fields: [
+									'componentType',
+									'updateUser',							
+									{
+										name: 'updateDts',
+										type:	'date',
+										dateFormat: 'c'
+									},							
+									'activeStatus',
+									'label',
+									'description',
+									'componentTypeTemplate'
+								],
+								autoLoad: true,
+								proxy: {
+									type: 'ajax',
+									url: 'api/v1/resource/componenttypes/lookup',
+									extraParams: {
+										all: true
+									}
 								}
-							}
+							})
 						})
 					]
 				}
@@ -235,29 +241,29 @@ Ext.define('OSF.entryType.EntryType', {
 									Ext.getCmp('entryTypeTarget').store.reload();
 								}
 							},
-							storeConfig: {
-								customStore: {
-									fields: [
-										'code',
-										'description'
-									],
-									data: [
-										entryTypeStore.data.items //TODO make this work!
-//										{
-//											code: 'All',
-//											description: '(Show All)'
-//										},
-//										{
-//											code: 'ARTICLE',
-//											description: 'Article'
-//										},
-//										{
-//											code: 'COMP',
-//											description: 'Component'
-//										}
-									]
+							store: Ext.create('Ext.data.Store', {
+								fields: [
+									'componentType',
+									'updateUser',							
+									{
+										name: 'updateDts',
+										type:	'date',
+										dateFormat: 'c'
+									},							
+									'activeStatus',
+									'label',
+									'description',
+									'componentTypeTemplate'
+								],
+								autoLoad: true,
+								proxy: {
+									type: 'ajax',
+									url: 'api/v1/resource/componenttypes/lookup',
+									extraParams: {
+										all: true
+									}
 								}
-							}
+							})
 						})
 					]
 				}
