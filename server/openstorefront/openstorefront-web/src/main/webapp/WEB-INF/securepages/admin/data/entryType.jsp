@@ -62,7 +62,7 @@
 						Ext.getCmp('entryTypeTarget').store.reload();
 					}
 				});
-				
+
 				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
 					
 					isEditor: false,

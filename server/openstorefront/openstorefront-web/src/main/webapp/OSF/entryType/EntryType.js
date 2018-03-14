@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,29 +17,41 @@
  */
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
+var entryTypeStore = new Ext.data.Store({
+	autoLoad: true,
+	proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/componenttypes/lookup',
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}
+});
 
 Ext.define('OSF.entryType.EntryType', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.entryType.EntryType',
-	
-	title:'Entry Type',
-	
+
+	title: 'Entry Type',
+
 	layout: 'column',
 	bodyStyle: 'padding: 10px;margin: 10px',
-	
+
 	items: [
-		
+
 		//**************************
 		// Origin panel
 		//***************************
-		
+
 		Ext.create('Ext.grid.Panel', {
 			id: 'entryTypeOrigin',
 			// TODO: Better title? Or a textbox telling the user how to use this?
 			title: 'Entry _ Is',
 			columnWidth: .5,
 			bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
-			
+
 			store: {
 				autoLoad: false,
 				sorters: [
@@ -55,15 +67,14 @@ Ext.define('OSF.entryType.EntryType', {
 						type: 'json',
 						rootProperty: 'data',
 						totalProperty: 'totalNumber'
-					}												
+					}
 				}
 			},
 			columnLines: true,
-			// TODO: Change this property to only show the names of entries in the grid. The dataIndex is 'description'.
-			columns: [										
-				{ text: 'Entry', dataIndex: 'componentType', width: 125 },
-				{ text: 'Label', dataIndex: 'label', width: 200 },
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus' }
+
+			columns: [
+				{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
+				{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
 			],
 			// TODO: These are copypasta from the main Entry Types window.
 			// Do we want them in the popup?
@@ -79,13 +90,11 @@ Ext.define('OSF.entryType.EntryType', {
 			//			},
 			viewConfig: {
 				plugins: {
-					ddGroup: 'typeof',
-					ptype: 'celltocelldragdrop',
-					enableDrop: true,
-					enableDrag: true
+					ptype: 'gridviewdragdrop',
+					dragText: 'Drag and drop to Add to template'
 				}
 			},
-			
+
 			dockedItems: [
 				{
 					xtype: 'toolbar',
@@ -96,20 +105,20 @@ Ext.define('OSF.entryType.EntryType', {
 							emptyText: '(Show All)',
 							value: 'All',
 							fieldLabel: 'Filter by Active Status',
-							name: 'activeStatus',									
+							name: 'activeStatus',
 							typeAhead: false,
 							editable: false,
 							width: 200,
 							listeners: {
-								change: function(filter, newValue, oldValue, opts){
+								change: function (filter, newValue, oldValue, opts) {
 									// Clear any existing filter
 									Ext.getCmp('entryTypeOrigin').store.clearFilter(true);
-									
+
 									if (newValue !== ('All')) {
-										// Apply new filter							
+										// Apply new filter
 										Ext.getCmp('entryTypeOrigin').store.filter('activeStatus', newValue);
 									}
-									
+
 									// Reload the store to apply the new filter.
 									Ext.getCmp('entryTypeOrigin').store.reload();
 								}
@@ -120,9 +129,9 @@ Ext.define('OSF.entryType.EntryType', {
 										'code',
 										'description'
 									],
-									data: [												
+									data: [
 										{
-											code: 'All',									
+											code: 'All',
 											description: '(Show All)'
 										},
 										{
@@ -140,12 +149,12 @@ Ext.define('OSF.entryType.EntryType', {
 					]
 				}
 			]
-		}), 
-		
+		}),
+
 		//**************************
 		// Target panel
 		//***************************
-		
+
 		Ext.create('Ext.grid.Panel', {
 			id: 'entryTypeTarget',
 			// TODO: Better title? Or a textbox telling the user how to use this?
@@ -154,42 +163,37 @@ Ext.define('OSF.entryType.EntryType', {
 			height: '100%',
 			layout: 'fit',
 			bodyStyle: 'padding: 10px;margin: 10px;',
-			
-			store: Ext.create('Ext.data.Store', {
-				fields: [
-					'componentType',
-					'updateUser',
-					{
-						name: 'updateDts',
-						type:	'date',
-						dateFormat: 'c'
-					},
-					'activeStatus',
-					'label',
-					'description',
-					'componentTypeTemplate'
+
+			store: {
+				autoLoad: false,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'qid',
+						direction: 'ASC'
+					})
 				],
-				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: 'api/v1/resource/componenttypes',
-					extraParams: {
-						all: true
+					url: 'api/v1/resource/components/lookup?componentType=' + 'ALL' /* TODO: Concatenate the component type in the filter here instead of ALL*/,
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
 					}
 				}
-			}),
+			},
 			columnLines: true,
+
 			columns: [
-				{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
-				{ text: 'Label', dataIndex: 'label', width: 200 },
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus' }
+				{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
+				{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
 			],
 			listeners: {
 				// TODO: These are copypasta from the main Entry Types window.
 				// Do we want them in the popup?
 				// I don't like being able to edit things in a popup window created by a popup window.
 				// It seems messy. - Michael
-				//				itemdblclick: function(grid, record, item, index, e, opts){				
+				//				itemdblclick: function(grid, record, item, index, e, opts){
 				//					// actionEditEntry(record);
 				//				},
 				//				selectionchange: function(grid, record, index, opts){
@@ -197,64 +201,36 @@ Ext.define('OSF.entryType.EntryType', {
 				//				}
 			},
 			viewConfig: {
-				plugins: [
-					Ext.create('OSF.plugin.CellToCellDragDrop', {
-						id: 'celltocell',
-						ddGroup: 'typeof',
-						enableDrop: true,
-						enableDrag: true,
-						onDrop: function onDrop(target, dd, e, dragData) {
-							alert('Create Relationship');
-							// TODO: Create the type-of relationship here
-							
-							// TODO: Ext is throwing an exception after this method returns.
-							// It might have something to do with how/whether the model
-							// on the target is defined:
-							// 
-							// Uncaught TypeError: Cannot read property 'isModel' of null
-							//
-						},
-						onEnter: function(target, dd, e, dragData) {
-							var originName = dragData.record.data.label; 
-							var targetName = target.record.data.label;
-							
-							var text = originName + ' ';
-							text += 'is type of ';
-							text += targetName;
-							dd.ddel.innerText = text;							
-						},
-						onOut: function(target, dd, e, dragData) {
-							var originName = dragData.record.data.label; 
-							dd.ddel.innerText = originName;
-						}
-					})
-				]
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					dragText: 'Drag and drop to Add to template'
+				}
 			},
-			
+
 			dockedItems: [
 				{
 					xtype: 'toolbar',
 					dock: 'top',
 					items: [
 						Ext.create('OSF.component.StandardComboBox', {
-							id: 'filterActiveStatusTarget',
+							id: 'filterEntryTypeTarget',
 							emptyText: '(Show All)',
 							value: 'All',
-							fieldLabel: 'Filter by Active Status',
-							name: 'activeStatus',									
+							fieldLabel: 'Filter by Entry Type',
+							name: 'componentType',
 							typeAhead: false,
 							editable: false,
-							width: 200,							
+							width: 200,
 							listeners: {
-								change: function(filter, newValue, oldValue, opts){
+								change: function (filter, newValue, oldValue, opts) {
 									// Clear any existing filter
 									Ext.getCmp('entryTypeTarget').store.clearFilter(true);
-									
+
 									if (newValue !== ('All')) {
-										// Apply new filter							
-										Ext.getCmp('entryTypeTarget').store.filter('activeStatus', newValue);
+										// Apply new filter
+										Ext.getCmp('entryTypeTarget').store.filter('componentType', newValue);
 									}
-									
+
 									// Reload the store to apply the new filter.
 									Ext.getCmp('entryTypeTarget').store.reload();
 								}
@@ -265,19 +241,20 @@ Ext.define('OSF.entryType.EntryType', {
 										'code',
 										'description'
 									],
-									data: [												
-										{
-											code: 'All',									
-											description: '(Show All)'
-										},
-										{
-											code: 'A',
-											description: 'Active'
-										},
-										{
-											code: 'I',
-											description: 'Inactive'
-										}
+									data: [
+										entryTypeStore.data.items //TODO make this work!
+//										{
+//											code: 'All',
+//											description: '(Show All)'
+//										},
+//										{
+//											code: 'ARTICLE',
+//											description: 'Article'
+//										},
+//										{
+//											code: 'COMP',
+//											description: 'Component'
+//										}
 									]
 								}
 							}
@@ -287,7 +264,7 @@ Ext.define('OSF.entryType.EntryType', {
 			]
 		})
 	],
-	
+
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -299,22 +276,22 @@ Ext.define('OSF.entryType.EntryType', {
 					formBind: true,
 					margin: '0 20 0 0',
 					iconCls: 'fa fa-lg fa-save',
-					handler: function(){	
+					handler: function () {
 						// TODO: Make this save the changes and close the window
 						alert("This doesn't do anything yet.");
 					}
 				},
 				{
 					xtype: 'button',
-					text: 'Cancel',										
+					text: 'Cancel',
 					iconCls: 'fa fa-lg fa-close',
 					dock: 'right',
-					handler: function(){
+					handler: function () {
 						// TODO: Make this cancel changes and close the window
-						alert("This doesn't do anything yet.")
+						alert("This doesn't do anything yet.");
 					}
 				}
 			]
-		}		
+		}
 	]
 });
