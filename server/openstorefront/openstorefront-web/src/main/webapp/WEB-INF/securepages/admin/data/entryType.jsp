@@ -327,7 +327,6 @@
 					rootVisible: false,
 					store: {
 						type: 'tree',
-						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
 						listeners: {
 
 							load: function (self, records) {
