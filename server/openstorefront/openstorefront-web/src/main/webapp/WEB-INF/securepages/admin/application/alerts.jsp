@@ -372,18 +372,42 @@
 									}
 								},
 								{
-									xtype: 'tagfield',
-									fieldLabel: 'Select a Component Type<span class="field-required" />',
+									xtype: 'treepanel',
+									fieldLabel: 'Select Component Types<span class="field-required" />',
 									id: 'alertEntryForm-entryTypes',
 									name: 'entryTypeAlertOption',
-									valueField: 'componentType',
-									displayField: 'label',
+									displayField: 'text',
 									allowBlank: false,
+									rootVisible: false,
+									checkPropagation: 'both',
 									store: {
 										autoLoad: true,
+										type: 'tree',
+										fields: [{
+											name: 'text',
+											mapping: function(data) {
+											return data.componentType.label;
+										} }],
+										listeners: {
+											load: function(store, records, options) {
+												function traverse(node) {
+													node.set({checked: false});
+													if (node.childNodes.length === 0) {
+														node.set({leaf: true});
+														return;
+													}
+													Ext.Array.forEach(node.childNodes, function(element) {
+														traverse(element);
+													});
+												}
+												store.each(function(record) {
+													traverse(record);
+												});
+											}
+										},
 										proxy: {
 											type: 'ajax',
-											url: 'api/v1/resource/componenttypes'
+											url: 'api/v1/resource/componenttypes/nested',
 										}
 									}
 								},
