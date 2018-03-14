@@ -254,6 +254,16 @@ public class ComponentTypeServiceImpl
 						for (AttributeType attributeTypeUpdated : updateAttributes) {
 							componentService.getAttributeService().saveAttributeType(attributeTypeUpdated, false);
 						}
+						
+						// Update children
+						ComponentType ctExample = new ComponentType();
+						ctExample.setParentComponentType(componentTypeFound.getComponentType());
+						List<ComponentType> ctChildren = ctExample.findByExampleProxy();
+						
+						ctChildren.forEach(child -> {
+							child.setParentComponentType(newComponentType);
+							persistenceService.persist(child);
+						});
 					}
 
 					//remove

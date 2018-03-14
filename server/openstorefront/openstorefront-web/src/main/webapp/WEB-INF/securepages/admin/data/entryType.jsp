@@ -359,7 +359,7 @@
 							text: 'Label',
 							dataIndex: 'componentType',
 							sortable: false,
-							flex: 10,
+							flex: 20,
 							renderer: function (componentType) {
 								return componentType.label;
 							}
@@ -400,11 +400,25 @@
 							}
 						},
 						{ 
+							text: 'Assigned User',
+							align: 'center',
+							dataIndex: 'assignedUser',
+							sortable: false,
+							flex: 10
+						},
+						{ 
+							text: 'Assigned Group',
+							align: 'center',
+							dataIndex: 'assignedGroup',
+							sortable: false,
+							flex: 10
+						},
+						{ 
 							text: 'Active Status',
 							align: 'center',
 							dataIndex: 'componentType',
 							sortable: false,
-							flex: 10,
+							flex: 5,
 							renderer: function (componentType) {
 								return componentType.activeStatus;
 							}
@@ -413,7 +427,7 @@
 							text: 'Update User',
 							dataIndex: 'componentType',
 							sortable: false,
-							flex: 10,
+							flex: 5,
 							renderer: function (componentType) {
 								return componentType.updateUser;
 							}
