@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.text.MessageFormat;
@@ -215,7 +216,11 @@ public class SecurityUtil
 	public static boolean isCurrentUserTheOwner(StandardEntity entity)
 	{
 		if (entity != null) {
-			return getCurrentUserName().equals(entity.getCreateUser());
+			if (entity instanceof Component) {
+				return getCurrentUserName().equals(((Component) entity).findOwnerUsername());
+			} else {
+				return getCurrentUserName().equals(entity.getCreateUser());
+			}
 		} else {
 			return false;
 		}

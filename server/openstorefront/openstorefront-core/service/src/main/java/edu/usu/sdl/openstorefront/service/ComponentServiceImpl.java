@@ -697,4 +697,10 @@ public class ComponentServiceImpl
 		return core.getComponentType(componentId);
 	}
 
+	@Override
+	public Component assignLibrarian(String componentId, String librarianUsername)
+	{
+		return core.assignLibrarian(componentId, librarianUsername);
+	}
+
 }

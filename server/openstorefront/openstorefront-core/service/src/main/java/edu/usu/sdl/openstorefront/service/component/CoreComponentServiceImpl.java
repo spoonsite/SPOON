@@ -621,6 +621,7 @@ public class CoreComponentServiceImpl
 					component.getComponent().setComponentId(persistenceService.generateId());
 				}
 				component.getComponent().populateBaseCreateFields();
+				component.getComponent().setOwnerUser(SecurityUtil.getCurrentUserName());
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 				if (component.getComponent().getRecordVersion() == null) {
 					component.getComponent().setRecordVersion(1);
@@ -1654,6 +1655,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				persistenceService.persist(component);
@@ -1678,6 +1680,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				component.setActiveStatus(Component.PENDING_STATUS);
@@ -2607,7 +2610,21 @@ public class CoreComponentServiceImpl
 	{
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
-			component.setCreateUser(newOwner);
+			component.setOwnerUser(newOwner);
+			component.populateBaseUpdateFields();
+			persistenceService.persist(component);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
+		}
+		return component;
+	}
+
+	public Component assignLibrarian(String componentId, String librarianUsername)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setAssignedLibrarian(librarianUsername);
+			component.setAssignedLibrarianDts(TimeUtil.currentDate());
 			component.populateBaseUpdateFields();
 			persistenceService.persist(component);
 		} else {

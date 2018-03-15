@@ -78,19 +78,29 @@ public class ComponentSubmissionResource
 	{
 		if (SecurityUtil.isLoggedIn()) {
 			Component componentExample = new Component();
-			componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			componentExample.setOwnerUser(SecurityUtil.getCurrentUserName());
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+
+			//we then need to pull all the created user
+			componentExample.setOwnerUser(null);
+			componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
+			List<Component> createComponents = service.getPersistenceService().queryByExample(componentExample);
+			for (Component createComponent : createComponents) {
+				if (createComponent.getOwnerUser() == null) {
+					components.add(createComponent);
+				}
+			}
 
 			List<ComponentView> views = ComponentView.toViewList(components);
 
 			Component pendingChangeExample = new Component();
 			pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
 
-			QueryByExample queryPendingChanges = new QueryByExample(new Component());
+			QueryByExample<Component> queryPendingChanges = new QueryByExample<>(new Component());
 
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
 			specialOperatorModel.setExample(pendingChangeExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
