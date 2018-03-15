@@ -15,17 +15,21 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +93,7 @@ public class SecurityRoleResource
 			lookup.setDescription(role.getRoleName());
 			roles.add(lookup);
 		}
+		roles.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		return roles;
 	}
@@ -117,7 +122,7 @@ public class SecurityRoleResource
 	@DataType(UserRole.class)
 	public Response createRole(
 			SecurityRole securityRole
-	)
+	) throws UnsupportedEncodingException
 	{
 		return handleSaveRole(securityRole, true);
 	}
@@ -132,7 +137,7 @@ public class SecurityRoleResource
 	public Response createRole(
 			@PathParam("rolename") String rolename,
 			SecurityRole securityRole
-	)
+	) throws UnsupportedEncodingException
 	{
 		SecurityRole existing = new SecurityRole();
 		existing.setRoleName(rolename);
@@ -144,7 +149,7 @@ public class SecurityRoleResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
-	private Response handleSaveRole(SecurityRole securityRole, boolean post)
+	private Response handleSaveRole(SecurityRole securityRole, boolean post) throws UnsupportedEncodingException
 	{
 		ValidationResult validationResult = securityRole.validate();
 		if (post) {
@@ -155,7 +160,7 @@ public class SecurityRoleResource
 			SecurityRole savedRole = service.getSecurityService().saveSecurityRole(securityRole);
 
 			if (post) {
-				return Response.created(URI.create("v1/resource/securityroles/" + URLEncoder.encode(savedRole.getRoleName()))).entity(savedRole).build();
+				return Response.created(URI.create("v1/resource/securityroles/" + URLEncoder.encode(savedRole.getRoleName(), StandardCharsets.UTF_8.name()))).entity(savedRole).build();
 			} else {
 				return Response.ok(savedRole).build();
 			}
