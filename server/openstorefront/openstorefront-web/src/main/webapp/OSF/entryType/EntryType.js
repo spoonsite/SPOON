@@ -17,7 +17,8 @@
  */
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
-function makeEntryGridPanel(name, title) {
+
+var makeEntryGridPanel = function(name, title) {
 	/*
 	 * Make a store of entries. This needs to be done for each grid panel,
 	 * because if grids share a store they'll also share a filter.
@@ -40,22 +41,11 @@ function makeEntryGridPanel(name, title) {
 			type: 'ajax',
 			url: 'api/v1/resource/components/lookup'
 		},
-		autoLoad: true,
-		listeners: {
-			load(store) {
-				console.log(store);
-				store.clearFilter(true);
-				
-				// Get the combobox for the current grid
-				var combobox = Ext.getCmp(name + 'EntryTypeFilter');
-				console.log(combobox.getRawValue());
-			}
-		}
+		autoLoad: true
 	});
 	
 	/*
-	 * Create a store full of all the entry types, which the left combobox and the
-	 * right combobox can both use.
+	 * Create a store full of all the entry types.
 	 */
 	var entryTypeStore = Ext.create('Ext.data.Store', {
 		fields: [
@@ -65,7 +55,7 @@ function makeEntryGridPanel(name, title) {
 				name: 'updateDts',
 				type:	'date',
 				dateFormat: 'c'
-			},							
+			},	
 			'activeStatus',
 			'label',
 			'description',
@@ -87,22 +77,24 @@ function makeEntryGridPanel(name, title) {
 				var noEntryType = {
 					code : "NONE",
 					description : "(No entry type)",
-					id : "extModel56-24",
+					id : "extModel56-999",
 					updateDts : null
 				};
 				var allEntries = {
 					code : "ALL",
 					description : "(Show all)",
-					id : "extModel56-24",
+					id : "extModel56-9999",
 					updateDts : null
 				};
-				store.insert(0, [noEntryType, allEntries]);				
+				store.insert(0, noEntryType);
+				store.insert(0, allEntries);
 			}
 		}
 	});
 
 	
 	return Ext.create('Ext.grid.Panel', {
+		
 		id: name,
 		// TODO: Better title? Or a textbox telling the user how to use this?
 		title: title,
@@ -132,7 +124,7 @@ function makeEntryGridPanel(name, title) {
 					Ext.create('OSF.component.StandardComboBox', {
 						id: name + 'EntryTypeFilter',
 						emptyText: '(Show all)',
-						value: 'NONE',
+						value: 'ALL',
 						fieldLabel: 'Filter by Entry Type',
 						name: name + 'EntryTypeFilter',
 						typeAhead: false,
@@ -144,16 +136,40 @@ function makeEntryGridPanel(name, title) {
 								// The store's filter is getting cleared somewhere, when it shouldn't be.
 								console.log("From " + oldValue + " to " + newValue);
 								
+								var grid = Ext.getCmp(name);
+								
 								// Clear any existing filter
-								Ext.getCmp(name).store.clearFilter(true);
+								grid.store.clearFilter(true);
 								
 								if (newValue !== ('ALL')) {
 									// Apply new filter
-									Ext.getCmp(name).store.filter('componentType', newValue);
+									grid.store.filter('componentType', newValue);
 								}
 								
-								// Reload the store to apply the new filter.
-								Ext.getCmp(name).store.reload();
+								// Reload the store to apply the new filtering.
+								grid.store.reload();
+								
+								// Add an item with a message if the store is empty
+								// after filtering, so the user can actually drop
+								// thing on it. Ext doesn't let the user drag and drop things
+								// onto empty grids, probably because the grids resize to
+								// fit their items so they don't have mouseable areas when empty.
+								console.log(grid.store.getCount() + ": " + (grid.store.getCount() === 0))
+								if (grid.store.getCount() === 0) {
+									var noEntriesLabel = "(No Entries of type " + Ext.getCmp(name + 'EntryTypeFilter').getRawValue() + ")";
+									var noEntriesRecord = {
+										code : "57445802-6cb7-4c7c-bbf7-d8f62e2c7ac6",
+										componentType : newValue,
+										componentTypeLabel : noEntriesLabel,
+										description : noEntriesLabel,
+										id : "extModel56-9",
+										name : noEntriesLabel,
+										type : "componentLookupModel"
+									};
+									
+									grid.store.add(noEntriesRecord);
+								}
+								else console.log(grid.store.getAt(0));
 							}
 						},
 						emptyOptionAdded: true,
@@ -162,10 +178,38 @@ function makeEntryGridPanel(name, title) {
 					})
 				]
 			}
-		]
+		],
+		
+		listeners: {
+			beforedrop: function(node, data, overModel, dropPosition, dropHandlers) {
+				// Don't do anything if the drop isn't over a node in the grid
+				if (node == null)
+					dropHandlers.processDrop();
+				
+				var filterBox = Ext.getCmp(name + 'EntryTypeFilter');
+				
+				var code = filterBox.getValue();
+								
+								console.log(data.records[0].data);
+								
+				// Don't let the user try to assign 'All' to an entry's type.
+				if (code === 'ALL') {
+					dropHandlers.cancelDrop();
+					Ext.toast("Cannot assign entry type while filter is set to Show All");
+				}
+				// Cancel the drop if the dragged entry
+				// is already of the entry type in the target grid
+				else if (data.records[0].data.componentType === code) {
+					dropHandlers.cancelDrop();
+					Ext.toast("Entry is already assigned to this type")
+				}
+			}
+		}
 	});
 }
 
+
+// Use the huge function above to make 2 panels: one right, and one left.
 
 
 var leftEntryGridPanel = makeEntryGridPanel('entryTypeLeftGrid', 'Entry _ Is');
@@ -184,35 +228,5 @@ Ext.define('OSF.entryType.EntryType', {
 	items: [		
 		leftEntryGridPanel,
 		rightEntryGridPanel
-	],
-
-	dockedItems: [
-		{
-			xtype: 'toolbar',
-			dock: 'bottom',
-			items: [
-				{
-					xtype: 'button',
-					text: 'Save',
-					formBind: true,
-					margin: '0 20 0 0',
-					iconCls: 'fa fa-lg fa-save',
-					handler: function () {
-						// TODO: Make this save the changes and close the window
-						alert("This doesn't do anything yet.");
-					}
-				},
-				{
-					xtype: 'button',
-					text: 'Cancel',
-					iconCls: 'fa fa-lg fa-close',
-					dock: 'right',
-					handler: function () {
-						// TODO: Make this cancel changes and close the window
-						alert("This doesn't do anything yet.");
-					}
-				}
-			]
-		}
 	]
 });
