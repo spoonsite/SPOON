@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
@@ -31,7 +33,7 @@ import javax.ws.rs.core.Response;
 public abstract class BaseResource
 {
 
-	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
+	protected final Service service = ServiceProxyFactory.getServiceProxy();
 
 	protected final FilterEngine filterEngine = new FilterEngine();
 

@@ -245,7 +245,7 @@ Ext.define('OSF.form.Attributes', {
 							handler: function () {
 								this.up('form').reset();
 							}
-						},
+						}
 					],
 					items: [
 						{
@@ -280,43 +280,6 @@ Ext.define('OSF.form.Attributes', {
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/attributes'
-										},
-										listeners: {
-											load: function (store, records, opts) {
-												store.filterBy(function (attribute) {
-													if (attribute.data.associatedComponentTypes) {
-														var optFound = Ext.Array.findBy(attribute.data.associatedComponentTypes, function (item) {
-															if (item.componentType === attributePanel.component.componentType) {
-																return true;
-															} else {
-																return false;
-															}
-														});
-														if (optFound) {
-															return true;
-														} else {
-															return false;
-														}
-													} else {
-												if (attribute.data.requiredRestrictions) {
-													var optFound = Ext.Array.findBy(attribute.data.requiredRestrictions, function (item) {
-														if (item.componentType === attributePanel.component.componentType) {
-															return true;
-														} else {
-															return false;
-														}
-													});
-													if (optFound) {
-														return false;
-													} else {
-														return true;
-													}
-												} else {
-													return true;
-												} 
-													}
-												});
-											}
 										}
 									},
 									listeners: {
@@ -559,7 +522,9 @@ Ext.define('OSF.form.Attributes', {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
 				attributePanel.loadComponentAttributes();
-				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
+				attributePanel.attributeGrid.queryById('attributeTypeCB').getStore().load({
+					url: 'api/v1/resource/attributes/optional?componentType=' + component.componentType 
+				});
 			}
 		});
 

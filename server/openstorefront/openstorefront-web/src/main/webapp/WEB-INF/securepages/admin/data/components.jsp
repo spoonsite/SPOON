@@ -89,88 +89,20 @@
 
 
 				var handleAttributes = function(componentType) {
-
-					var requiredAttributes = [];
-					var optionalAttributes = [];
-					// This is slightly difficult to follow,
-					// but the basic gist is that we must check two lists to decide which attributes to show -
-					// requiredRestrictions is a list of types for which the attribute is required
-					// associatedComponentTypes is a list of types for which the attribute is optional
-					// but if associatedComponentTypes is empty, it is optional for all.
-					Ext.Array.each(allAttributes, function(attribute){
-						if (attribute.requiredFlg) {
-							if (attribute.requiredRestrictions) {
-								var found = Ext.Array.findBy(attribute.requiredRestrictions, function(item){
-									if (item.componentType === componentType) {
-										return true;
-									} else {
-										return false;
-									}
-								});
-								if (found) {
-									// The required flag is set and this entry type is one which requires this attribute.
-									requiredAttributes.push(attribute);
-								}
-								else {
-									// --- Checking for Optional
-									//
-									// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
-									// type listed in the requiredRestrictions, i.e. not required for this entry type.
-									// As a result, we need to check if it's allowed as an optional and then add it.
-									// This is the same logic as seen below when the 'Required' flag is off.
-									if (attribute.associatedComponentTypes) {
-										var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
-											if (item.componentType === componentType) {
-												return true;
-											} else {
-												return false;
-											}
-										});
-										if (reqOptFound) {
-											optionalAttributes.push(attribute);
-										}
-									}
-									else {
-										// We have an empty list of associatedComponentTypes, therefore this attribute is
-										// allowed for all entry types.
-										optionalAttributes.push(attribute);
-									}
-									//
-									// --- End Checking for Optional
-								}
-							} else {
-								// No list of types required for, so it's required for all. Add it.
-								requiredAttributes.push(attribute);
-							}
-						} else {
-							if (attribute.associatedComponentTypes) {
-								var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
-									if (item.componentType === componentType) {
-										return true;
-									} else {
-										return false;
-									}
-								});
-								if (optFound) {
-									// This entry type allows this attribute.
-									optionalAttributes.push(attribute);
-								}
-							}
-							else {
-								// We have an empty list of associatedComponentTypes, therefore this attribute is
-								// allowed for all entry types.
-								optionalAttributes.push(attribute);
-							}
+					
+					Ext.Ajax.request({
+						url: 'api/v1/resource/attributes/required?componentType=' + componentType,
+						success: function(response, opt) {
+							var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
+							var data = Ext.decode(response.responseText);
+							
+							Ext.Array.sort(data, function(a, b) {
+								return a.description.localeCompare(b.description);								
+							});
+							
+							requiredStore.loadData(data);
 						}
-					});
-
-					var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
-
-					requiredAttributes.reverse();
-					requiredStore.loadData(requiredAttributes);
-
-					//Ext.getCmp('attributeGrid').down('form').getComponent('attributeTypeCB').getStore().loadData(optionalAttributes);
-					//loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+					});					
 				};
 
 
@@ -182,18 +114,6 @@
 						allComponentTypes = Ext.decode(response.responseText);
 					}
 				});
-
-
-				var allAttributes = [];
-				var loadAllAttributes = function(){
-					Ext.Ajax.request({
-						url: 'api/v1/resource/attributes',
-						success: function(response, opts){
-							allAttributes = Ext.decode(response.responseText);
-						}
-					});
-				};
-				loadAllAttributes();
 
 				var createAddEditWin = function () {
 

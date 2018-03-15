@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -33,11 +34,14 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
@@ -142,7 +146,8 @@ public class AttributeResource
 	@DataType(AttributeType.class)
 	@Path("/optional")
 	public List<AttributeTypeView> getOptionalAttributeView(
-			@QueryParam("componentType") String componentType
+			@QueryParam("componentType") String componentType,
+			@QueryParam("submissionOnly") boolean submissionOnly
 	)
 	{
 		List<AttributeType> optionalAttributes = new ArrayList<>();
@@ -151,6 +156,7 @@ public class AttributeResource
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		Set<String> typeSet = componentTypesToCheck(componentType);
 		attributeTypes.forEach((attributeType) -> {
 			boolean keep = true;
 			boolean required = false;
@@ -158,17 +164,17 @@ public class AttributeResource
 			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
 				keep = false;
 				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
-					if (restriction.getComponentType().equals(componentType)) {
+					if (typeSet.contains(restriction.getComponentType())) {
 						keep = true;
 					}
 				}
 			}
-			//check required
+
 			if (keep) {
 				if (attributeType.getRequiredFlg()) {
 					if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 						for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
-							if (restriction.getComponentType().equals(componentType)) {
+							if (typeSet.contains(restriction.getComponentType())) {
 								required = true;
 							}
 						}
@@ -182,9 +188,28 @@ public class AttributeResource
 			}
 		});
 
+		if (submissionOnly) {
+			optionalAttributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getHideOnSubmission());
+			});
+		}
+
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 
 		return createAttributeTypeViews(attributeCodesAll, optionalAttributes);
+	}
+
+	private Set<String> componentTypesToCheck(String componentType)
+	{
+		ComponentTypeOptions options = new ComponentTypeOptions(componentType);
+		options.setPullParents(true);
+		ComponentTypeNestedModel nestedModel = service.getComponentService().getComponentType(options);
+		if (nestedModel != null) {
+			Map<String, ComponentType> typeMap = nestedModel.findParents(nestedModel, componentType);
+			return typeMap.keySet();
+		} else {
+			return new HashSet<>();
+		}
 	}
 
 	private List<AttributeTypeView> createAttributeTypeViews(List<AttributeCode> attributeCodesAll, List<AttributeType> attributeTypes)
@@ -220,8 +245,65 @@ public class AttributeResource
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
+		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
 
 		return attributeTypeViews;
+	}
+
+	@GET
+	@APIDescription("Gets required attribute types based on filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeTypeView.class)
+	@Path("/required")
+	public List<AttributeTypeView> getRequiredAttributeTypes(
+			@QueryParam("componentType") String componentType,
+			@QueryParam("submissionOnly") boolean submissionOnly
+	)
+	{
+		List<AttributeType> requiredAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
+
+		Set<String> typeSet = componentTypesToCheck(componentType);
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		for (AttributeType attributeType : attributeTypes) {
+
+			boolean keep = true;
+			//check if attribute type is allowed for this component
+			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
+				keep = false;
+				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
+					if (typeSet.contains(restriction.getComponentType())) {
+						keep = true;
+					}
+				}
+			}
+
+			//check required
+			if (keep) {
+				if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+						if (typeSet.contains(restriction.getComponentType())) {
+							requiredAttributes.add(attributeType);
+						}
+					}
+				} else {
+					requiredAttributes.add(attributeType);
+				}
+			}
+
+		}
+
+		if (submissionOnly) {
+			requiredAttributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getHideOnSubmission());
+			});
+		}
+
+		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
+		return createAttributeTypeViews(attributeCodesAll, requiredAttributes);
 	}
 
 	@GET
@@ -313,7 +395,7 @@ public class AttributeResource
 			typeSet.addAll(types);
 		}
 
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(new QueryByExample(attributeTypeExample));
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(new QueryByExample<>(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
 				AttributeAll attributeAll = new AttributeAll();
@@ -360,56 +442,6 @@ public class AttributeResource
 		}
 
 		AttributeTypeWrapper entity = service.getAttributeService().getFilteredTypes(filterQueryParams);
-		return sendSingleEntityResponse(entity);
-	}
-
-	@GET
-	@APIDescription("Gets required attribute types based on filter")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(AttributeType.class)
-	@Path("/attributetypes/required")
-	public Response getRequiredAttributeTypes(
-			@QueryParam("componentType") String componentType
-	)
-	{
-		List<AttributeType> requiredAttributes = new ArrayList<>();
-
-		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
-
-		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
-		for (AttributeType attributeType : attributeTypes) {
-
-			boolean keep = true;
-			//check if attribute type is allowed for this component
-			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
-				keep = false;
-				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
-					if (restriction.getComponentType().equals(componentType)) {
-						keep = true;
-					}
-				}
-			}
-
-			//check required
-			if (keep) {
-				if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
-						if (restriction.getComponentType().equals(componentType)) {
-							requiredAttributes.add(attributeType);
-						}
-					}
-				} else {
-					requiredAttributes.add(attributeType);
-				}
-			}
-
-		}
-
-		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(requiredAttributes)
-		{
-		};
 		return sendSingleEntityResponse(entity);
 	}
 
@@ -550,7 +582,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		attributeCodeExample.setAttributeCodePk(attributeCodePk);
 
-		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(new QueryByExample(attributeCodeExample));
+		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(new QueryByExample<>(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
 		return attributeCodes;
@@ -1171,7 +1203,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample<>(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();
@@ -1205,7 +1237,7 @@ public class AttributeResource
 
 		AttributeXRefType example = new AttributeXRefType();
 		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample(example));
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(new QueryByExample<>(example));
 
 		for (AttributeXRefType type : types) {
 			AttributeXrefMapView model = new AttributeXrefMapView();

@@ -232,19 +232,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 			]
 		});
 
-		var allAttributes = [];
-		var loadAllAttributes = function (callback) {
-			Ext.Ajax.request({
-				url: 'api/v1/resource/attributes',
-				success: function (response, opts) {
-					allAttributes = Ext.decode(response.responseText);
-					if (callback) {
-						callback();
-					}
-				}
-			});
-		};
-		loadAllAttributes();
 
 		submissionPanel.loadComponentAttributes = function () {
 			if (submissionPanel.componentId) {
@@ -295,84 +282,24 @@ Ext.define('OSF.component.SubmissionPanel', {
 				componentType = submissionPanel.componentTypeSelected;
 			}
 
-			var requiredAttributes = [];
-			var optionalAttributes = [];
-			Ext.Array.each(allAttributes, function (attribute) {
-				if (!attribute.hideOnSubmission) {
-					// This is slightly difficult to follow,
-					// but the basic gist is that we must check two lists to decide which attributes to show -
-					// requiredRestrictions is a list of types for which the attribute is required
-					// associatedComponentTypes is a list of types for which the attribute is optional
-					// but if associatedComponentTypes is empty, it is optional for all.
-					if (attribute.requiredFlg) {
-						if (attribute.requiredRestrictions) {
-							var found = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
-								if (item.componentType === componentType) {
-									return true;
-								} else {
-									return false;
-								}
-							});
-							if (found) {
-								requiredAttributes.push(attribute);
-							} else {
-								// --- Checking for Optional
-								//
-								// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
-								// type listed in the requiredRestrictions, i.e. not required for this entry type.
-								// As a result, we need to check if it's allowed as an optional and then add it.
-								// This is the same logic as seen below when the 'Required' flag is off.
-								if (attribute.associatedComponentTypes) {
-									var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
-										if (item.componentType === componentType) {
-											return true;
-										} else {
-											return false;
-										}
-									});
-									if (reqOptFound) {
-										optionalAttributes.push(attribute);
-									}
-								} else {
-									// We have an empty list of associatedComponentTypes, therefore this attribute is
-									// allowed for all entry types.
-									optionalAttributes.push(attribute);
-								}
-								// 
-								// --- End Checking for Optional
-							}
-						} else {
-							// No list of types required for, so it's required for all. Add it.
-							requiredAttributes.push(attribute);
-						}
-					} else {
-						if (attribute.associatedComponentTypes) {
-							var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
-								if (item.componentType === componentType) {
-									return true;
-								} else {
-									return false;
-								}
-							});
-							if (optFound) {
-								// This entry type allows this attribute.
-								optionalAttributes.push(attribute);
-							}
-						} else {
-							// We have an empty list of associatedComponentTypes, therefore this attribute is
-							// allowed for all entry types.
-							optionalAttributes.push(attribute);
-						}
-					}
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/required?componentType=' + componentType + '&submissionOnly=true',
+				success: function(response, opt) {
+					var requiredStore = submissionPanel.requiredAttributeStore;
+					var data = Ext.decode(response.responseText);
+	
+					requiredStore.loadData(data);
+				}
+			});
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/optional?componentType=' + componentType + '&submissionOnly=true',
+				success: function(response, opt) {					
+					var data = Ext.decode(response.responseText);
+	
+					submissionPanel.optionalAttributes = data;
 				}
 			});
 
-			var requiredStore = submissionPanel.requiredAttributeStore;
-
-			requiredAttributes.reverse();
-			requiredStore.loadData(requiredAttributes);
-
-			submissionPanel.optionalAttributes = optionalAttributes;
 		};
 
 		submissionPanel.requiredAttributeStore = Ext.create('Ext.data.Store', {
@@ -869,10 +796,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 																				data: data,
 																				form: form,
 																				success: function (response, opts) {
-																					loadAllAttributes(function () {
-																						handleAttributes();
-																					});
-
+																					handleAttributes();
+																				
 																					var newAttribute = Ext.decode(response.responseText);
 																					attributeTypeCb.getStore().add(newAttribute);
 																					addTypeWin.close();
@@ -1067,8 +992,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 															success: function (response, opts) {
 																Ext.toast('Successfully added user attribute code.', '', 'tr');
 																CoreService.attributeservice.labelToCode(label).then(function (response, opts) {
-																	handleSaveAttribute(response.responseText);
-																	loadAllAttributes();
+																	handleSaveAttribute(response.responseText);	
+																	handleAttributes();
 																});
 															},
 															failure: function (response, opts) {
@@ -2819,7 +2744,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					var templateStateCheckInterval = setInterval(function () {
 
 						// the template has refreshed
-						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
+						if (initialToggleElement !== document.querySelectorAll('.toggle-collapse')[0]) {
 							clearInterval(templateStateCheckInterval);
 							var toggleElements = document.querySelectorAll('.toggle-collapse');
 							for (var ii = 0; ii < toggleElements.length; ii += 1) {
@@ -3553,7 +3478,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									});
 
 									handleMainFormSave();
-									loadAllAttributes();
+									handleAttributes();
 								},
 								failure: function (response, opts) {
 									submissionPanel.saveReady = true;

@@ -15,9 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Holds the hierarchy of component types.
@@ -32,6 +35,69 @@ public class ComponentTypeNestedModel
 
 	public ComponentTypeNestedModel()
 	{
+	}
+
+	/**
+	 * This will put on the parents and the requested componentType Keep mind
+	 * the order is not maintained. The map would just contain the component
+	 * type and it's ancestors.
+	 *
+	 * @param nestedModel
+	 * @param componentTypeId
+	 * @return
+	 */
+	public Map<String, ComponentType> findParents(ComponentTypeNestedModel nestedModel, String componentTypeId)
+	{
+		Map<String, ComponentType> componentMap = new HashMap<>();
+
+		if (nestedModel.getComponentType() != null
+				&& nestedModel.getComponentType().getComponentType().equals(componentTypeId)) {
+			componentMap.put(nestedModel.getComponentType().getComponentType(), nestedModel.getComponentType());
+		} else {
+			boolean found = false;
+
+			if (nestedModel.getComponentType() != null) {
+				//put on parent
+				componentMap.put(nestedModel.getComponentType().getComponentType(), nestedModel.getComponentType());
+			}
+			for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+				if (child.getComponentType() != null
+						&& child.getComponentType().getComponentType().equals(componentTypeId)) {
+					componentMap.put(child.getComponentType().getComponentType(), child.getComponentType());
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				//check children
+				for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+					//make sure it is a child
+					if (childOfType(child, componentTypeId)) {
+						Map<String, ComponentType> childMap = findParents(child, componentTypeId);
+						componentMap.putAll(childMap);
+					}
+				}
+			}
+		}
+
+		return componentMap;
+	}
+
+	private boolean childOfType(ComponentTypeNestedModel parent, String componentTypeId)
+	{
+		boolean childFound = false;
+
+		for (ComponentTypeNestedModel child : parent.getChildren()) {
+			if (child.getComponentType().getComponentType().equals(componentTypeId)) {
+				childFound = true;
+			} else {
+				if (childOfType(child, componentTypeId)) {
+					childFound = true;
+				}
+			}
+		}
+
+		return childFound;
 	}
 
 	@Override
@@ -54,7 +120,7 @@ public class ComponentTypeNestedModel
 		}
 
 		for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
-			sb.append(root).append("->");
+			sb.append(root).append("<-");
 			sb.append(child.getComponentType().getLabel());
 			sb.append("\n");
 		}

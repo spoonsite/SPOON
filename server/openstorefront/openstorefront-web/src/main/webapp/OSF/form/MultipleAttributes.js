@@ -136,10 +136,10 @@ Ext.define('OSF.form.MultipleAttributes', {
 		attrForm.callParent();
 
 		if (!attrForm.componentId) {
-			console.error("OSF.form.MultipleAttributes : You must specific a component id (componentId)!")
+			console.error("OSF.form.MultipleAttributes : You must specific a component id (componentId)!");
 		}
 		if (!attrForm.componentType) {
-			console.error("OSF.form.MultipleAttributes : You must specific a component type (componentType)!")
+			console.error("OSF.form.MultipleAttributes : You must specific a component type (componentType)!");
 		}
 
 		attrForm.setLoading(true);

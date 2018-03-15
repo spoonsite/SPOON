@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,6 +37,22 @@ public class ComponentTypeNestedModelTest
 	}
 
 	/**
+	 * Test Find Parents
+	 */
+	@Test
+	public void testfindParents()
+	{
+		System.out.println("findParents");
+
+		ComponentTypeNestedModel instance = getData();
+		Map<String, ComponentType> typeMap = instance.findParents(instance, "C");
+
+		assertEquals(typeMap.keySet().contains("A"), true);
+		assertEquals(typeMap.keySet().contains("B"), true);
+		assertEquals(typeMap.keySet().contains("C"), true);
+	}
+
+	/**
 	 * Test of toString method, of class ComponentTypeNestedModel.
 	 */
 	@Test
@@ -45,11 +62,11 @@ public class ComponentTypeNestedModelTest
 
 		ComponentTypeNestedModel instance = getData();
 
-		String expResult = "root->Fruit\n"
-				+ "root->Table\n"
-				+ "Fruit->Apple\n"
-				+ "Fruit->Orange\n"
-				+ "Apple->Gala\n";
+		String expResult = "root<-Fruit\n"
+				+ "root<-Table\n"
+				+ "Fruit<-Apple\n"
+				+ "Fruit<-Orange\n"
+				+ "Apple<-Gala\n";
 
 		String result = instance.toString();
 
