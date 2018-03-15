@@ -376,18 +376,23 @@
 									fieldLabel: 'Select Component Types<span class="field-required" />',
 									id: 'alertEntryForm-entryTypes',
 									name: 'entryTypeAlertOption',
-									displayField: 'text',
 									allowBlank: false,
 									rootVisible: false,
 									checkPropagation: 'both',
+									useArrows: true,
 									store: {
 										autoLoad: true,
 										type: 'tree',
 										fields: [{
 											name: 'text',
 											mapping: function(data) {
-											return data.componentType.label;
-										} }],
+												return data.componentType.label;
+												}
+										}],
+										sorters: [{
+											property: 'text',
+											direction: 'ASC'
+										}],
 										listeners: {
 											load: function(store, records, options) {
 												function traverse(node) {
@@ -570,10 +575,11 @@
 												}
 
 												if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
-													var compIDs = flatData.entryTypeAlertOption;
+													checkedComponents = Ext.getCmp("alertEntryForm-entryTypes").getChecked()
 													var componentTypes = [];
-													Ext.Array.forEach(compIDs, function(el) {
-														componentTypes.push({"componentType": el});
+													Ext.Array.forEach(checkedComponents, function(el) {
+														compID = el.data.componentType.componentType
+														componentTypes.push({"componentType": compID});
 													});
 													data.componentTypeAlertOptions = componentTypes;
 												}
