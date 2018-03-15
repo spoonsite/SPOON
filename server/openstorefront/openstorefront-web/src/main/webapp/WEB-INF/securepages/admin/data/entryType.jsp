@@ -58,8 +58,8 @@
 						// the comboboxes with each grid should have the same values
 						// as when the window was closed/created, so let
 						// the comboboxes control all the filtering.
-						Ext.getCmp('entryTypeOrigin').store.reload();
-						Ext.getCmp('entryTypeTarget').store.reload();
+						Ext.getCmp('entryTypeLeftGrid').store.reload();
+						Ext.getCmp('entryTypeRightGrid').store.reload();
 					}
 				});
 

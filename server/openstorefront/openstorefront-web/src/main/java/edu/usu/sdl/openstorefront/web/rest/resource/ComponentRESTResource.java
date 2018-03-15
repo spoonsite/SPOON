@@ -167,7 +167,7 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="COMPONENT GENERAL FUNCTIONS">
 	@GET
-	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@APIDescription("Get a list of components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentSearchView.class)
 	public List<ComponentSearchView> getComponents()
@@ -295,7 +295,7 @@ public class ComponentRESTResource
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@APIDescription("Get a list of all components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
 	@Path("/filterable")
@@ -351,7 +351,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@APIDescription("Gets a component <br>(Note: this is only the top level component object)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@Path("/{id}")
