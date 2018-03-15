@@ -18,7 +18,7 @@
 Ext.require('OSF.plugin.CellToCellDragDrop');
 
 
-var makeEntryGridPanel = function(name, title) {
+var makeEntryGridPanel = function (name, title) {
 	/*
 	 * Make a store of entries. This needs to be done for each grid panel,
 	 * because if grids share a store they'll also share a filter.
@@ -43,19 +43,19 @@ var makeEntryGridPanel = function(name, title) {
 		},
 		autoLoad: true
 	});
-	
+
 	/*
 	 * Create a store full of all the entry types.
 	 */
 	var entryTypeStore = Ext.create('Ext.data.Store', {
 		fields: [
 			'componentType',
-			'updateUser',							
+			'updateUser',
 			{
 				name: 'updateDts',
-				type:	'date',
+				type: 'date',
 				dateFormat: 'c'
-			},	
+			},
 			'activeStatus',
 			'label',
 			'description',
@@ -73,18 +73,18 @@ var makeEntryGridPanel = function(name, title) {
 			// Add the "No entry type" and "All entries" items at load time, because inserting
 			// into a store after Ext factories it doesn't change it and/or breaks it.
 			// Factory pattern FTW?
-			load : function(store, records) {			
+			load: function (store, records) {
 				var noEntryType = {
-					code : "NONE",
-					description : "(No entry type)",
-					id : "extModel56-999",
-					updateDts : null
+					code: "NONE",
+					description: "(No entry type)",
+					id: "extModel56-999",
+					updateDts: null
 				};
 				var allEntries = {
-					code : "ALL",
-					description : "(Show all)",
-					id : "extModel56-9999",
-					updateDts : null
+					code: "ALL",
+					description: "(Show all)",
+					id: "extModel56-9999",
+					updateDts: null
 				};
 				store.insert(0, noEntryType);
 				store.insert(0, allEntries);
@@ -92,18 +92,18 @@ var makeEntryGridPanel = function(name, title) {
 		}
 	});
 
-	
+
 	return Ext.create('Ext.grid.Panel', {
-		
+
 		id: name,
 		// TODO: Better title? Or a textbox telling the user how to use this?
 		title: title,
 		columnWidth: .5,
 		bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
-		
+
 		store: entryStore,
 		columnLines: true,
-		
+
 		columns: [
 			{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
 			{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
@@ -111,11 +111,11 @@ var makeEntryGridPanel = function(name, title) {
 		viewConfig: {
 			plugins: {
 				ptype: 'gridviewdragdrop',
-				// TODO: Is this copypasta or intentional?
-				dragText: 'Drag and drop to Add to template'
+				// Intentional
+				dragText: 'Drag and drop to change entry type'
 			}
 		},
-		
+
 		dockedItems: [
 			{
 				xtype: 'toolbar',
@@ -135,20 +135,20 @@ var makeEntryGridPanel = function(name, title) {
 								// TODO: Make the grid's filter persist after the window is closed.
 								// The store's filter is getting cleared somewhere, when it shouldn't be.
 								console.log("From " + oldValue + " to " + newValue);
-								
+
 								var grid = Ext.getCmp(name);
-								
+
 								// Clear any existing filter
 								grid.store.clearFilter(true);
-								
+
 								if (newValue !== ('ALL')) {
 									// Apply new filter
 									grid.store.filter('componentType', newValue);
 								}
-								
+
 								// Reload the store to apply the new filtering.
 								grid.store.reload();
-								
+
 								// Add an item with a message if the store is empty
 								// after filtering, so the user can actually drop
 								// thing on it. Ext doesn't let the user drag and drop things
@@ -158,40 +158,40 @@ var makeEntryGridPanel = function(name, title) {
 								if (grid.store.getCount() === 0) {
 									var noEntriesLabel = "(No Entries of type " + Ext.getCmp(name + 'EntryTypeFilter').getRawValue() + ")";
 									var noEntriesRecord = {
-										code : "57445802-6cb7-4c7c-bbf7-d8f62e2c7ac6",
-										componentType : newValue,
-										componentTypeLabel : noEntriesLabel,
-										description : noEntriesLabel,
-										id : "extModel56-9",
-										name : noEntriesLabel,
-										type : "componentLookupModel"
+										code: "57445802-6cb7-4c7c-bbf7-d8f62e2c7ac6",
+										componentType: newValue,
+										componentTypeLabel: noEntriesLabel,
+										description: noEntriesLabel,
+										id: "extModel56-9",
+										name: noEntriesLabel,
+										type: "componentLookupModel"
 									};
-									
+
 									grid.store.add(noEntriesRecord);
-								}
-								else console.log(grid.store.getAt(0));
+								} else
+									console.log(grid.store.getAt(0));
 							}
 						},
 						emptyOptionAdded: true,
-						
+
 						store: entryTypeStore
 					})
 				]
 			}
 		],
-		
+
 		listeners: {
-			beforedrop: function(node, data, overModel, dropPosition, dropHandlers) {
+			beforedrop: function (node, data, overModel, dropPosition, dropHandlers) {
 				// Don't do anything if the drop isn't over a node in the grid
 				if (node == null)
 					dropHandlers.processDrop();
-				
+
 				var filterBox = Ext.getCmp(name + 'EntryTypeFilter');
-				
+
 				var code = filterBox.getValue();
-								
-								console.log(data.records[0].data);
-								
+
+				console.log(data.records[0].data);
+
 				// Don't let the user try to assign 'All' to an entry's type.
 				if (code === 'ALL') {
 					dropHandlers.cancelDrop();
@@ -203,6 +203,32 @@ var makeEntryGridPanel = function(name, title) {
 					dropHandlers.cancelDrop();
 					Ext.toast("Entry is already assigned to this type")
 				}
+
+				var compID = data.records[0].data.code;
+
+				console.log("Changing " + compID + " to " + code)
+
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + compID + "/changeComponentType",
+					method: 'PUT',
+					data: {newType: code},
+
+					headers: {
+						'Accept': 'application/json'
+					},
+					success: function (response, opts) {
+						var obj = Ext.decode(response.responseText);
+						console.dir(obj);
+					},
+
+					failure: function (response, opts) {
+						console.log('server-side failure with status code ' + response.status);
+					}
+
+				});
+			},
+			drop: function (node, overModel, dropPosisiont) {
+
 			}
 		}
 	});
@@ -225,7 +251,7 @@ Ext.define('OSF.entryType.EntryType', {
 	layout: 'column',
 	bodyStyle: 'padding: 10px;margin: 10px',
 
-	items: [		
+	items: [
 		leftEntryGridPanel,
 		rightEntryGridPanel
 	]

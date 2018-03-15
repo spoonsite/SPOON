@@ -230,6 +230,11 @@ public class ComponentRESTClient
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
+        
+        public Response changeType(String componentId, String newType)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 	public Response copyComponent(String componentId)
 	{

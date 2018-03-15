@@ -851,6 +851,38 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(component);
 	}
 
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription(
+			"Changes the Entry Type of an existing component to another existing Entry Type"
+			+ "\nNOTE: This operation flushes the component cache, triggers a re-index for the component (at a later time via standard job scripts),"
+			+ "and sends a notification to any watchers of the component or changed component types"
+	)
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Path("/{id}/changeComponentType")
+	public Response changeType(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			String newType)
+	{
+		System.out.println("Component Id: " + componentId + "\nComponent New Type: " + newType);
+		// Search to see that the ID is valid
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			// Search to see if the newType is valid
+			ComponentType found = new ComponentType();
+			found.setComponentType(newType);
+			found = found.find();
+			if (found != null) {
+				// Update the database and in memory component
+				component = service.getComponentService().changeComponentType(componentId, newType);				
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		}
+		return sendSingleEntityResponse(component);
+	}
+
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
