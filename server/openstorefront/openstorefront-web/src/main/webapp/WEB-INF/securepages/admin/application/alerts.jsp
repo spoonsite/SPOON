@@ -379,6 +379,7 @@
 									allowBlank: false,
 									rootVisible: false,
 									checkPropagation: 'both',
+
 									useArrows: true,
 									store: {
 										autoLoad: true,
@@ -655,6 +656,26 @@
 					alertAddEditWin.show();
 					Ext.getCmp('editAlertForm').edit = false;
 					Ext.getCmp('editAlertForm').reset(true);
+					/**
+					 * Traverse the check tree and check/uncheck the boxes
+					 * if no option then it will uncheck all boxes
+					 * @param {item in Store.getData().items} node - parent nodes in the tree
+					 * @param {Object{option string: true}} optionHash - the option string to compare
+					 */
+					function traverse(node, optionsHash) {
+						if (!optionsHash) {
+							node.set({checked: false});
+						} else if (optionsHash[node.data.text]) {
+							node.set({checked: true});
+						}
+						if (node.childNodes.length === 0) {
+							return;
+						}
+						Ext.Array.forEach(node.childNodes, function(element) {
+							traverse(element, optionsHash);
+						});
+					}
+
 					if (record) {
 						// This is an edit form.
 						alertAddEditWin.setTitle('<i class="fa fa-lg fa-edit"></i>' + '<span class="shift-window-text-right">Edit Attribute</span>');
@@ -690,11 +711,38 @@
 							});
 						}
 
+						// Process Check Tree
+						if (record.data.componentTypeAlertOptions) {
+							var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+							var items = treeView.store.getData().items;
 
+							//clear out the old check boxes
+							Ext.each(items, function(item){
+								traverse(item);
+							});
+
+							var alertOptions = record.data.componentTypeAlertOptionLabels;
+							//create hash of options
+							var hash = {};
+							Ext.each(alertOptions, function(option){
+								hash[option] = true;
+							})
+							//compare all the options and recursively check the boxes
+							Ext.each(items, function(item) {
+								traverse(item, hash);
+							});
+						}
 
 					} else {
 						// This is an add form.
 						alertAddEditWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Alert</span>');
+
+						//clear the check tree
+						var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+						var items = treeView.store.getData().items;
+						Ext.each(items, function(item){
+							traverse(item);
+						});
 					}
 				};
 
