@@ -277,7 +277,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			}
 		};
 
-		var handleAttributes = function (componentType) {
+		submissionPanel.handleAttributes = function (componentType, afterLoadCallback) {
 			if (!componentType) {
 				componentType = submissionPanel.componentTypeSelected;
 			}
@@ -286,21 +286,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 				url: 'api/v1/resource/attributes/required?componentType=' + componentType + '&submissionOnly=true',
 				success: function(response, opt) {
 					var requiredStore = submissionPanel.requiredAttributeStore;
-					var data = Ext.decode(response.responseText);
-	
-					requiredStore.loadData(data);
+					var data = Ext.decode(response.responseText);	
+					requiredStore.loadData(data);	
+					if (afterLoadCallback) {
+						afterLoadCallback();
+					}
 				}
 			});
 			Ext.Ajax.request({
 				url: 'api/v1/resource/attributes/optional?componentType=' + componentType + '&submissionOnly=true',
 				success: function(response, opt) {					
-					var data = Ext.decode(response.responseText);
-	
+					var data = Ext.decode(response.responseText);	
 					submissionPanel.optionalAttributes = data;
 				}
 			});
 
 		};
+		
 
 		submissionPanel.requiredAttributeStore = Ext.create('Ext.data.Store', {
 			fields: [
@@ -387,7 +389,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
 							if (newValue) {
-								handleAttributes(newValue);
+								submissionPanel.handleAttributes(newValue);
 								submissionPanel.componentTypeSelected = newValue;
 
 								var sectionPanel = submissionPanel.detailsPanel.getComponent('detailSections');
@@ -796,7 +798,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																				data: data,
 																				form: form,
 																				success: function (response, opts) {
-																					handleAttributes();
+																					submissionPanel.handleAttributes();
 																				
 																					var newAttribute = Ext.decode(response.responseText);
 																					attributeTypeCb.getStore().add(newAttribute);
@@ -993,7 +995,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 																Ext.toast('Successfully added user attribute code.', '', 'tr');
 																CoreService.attributeservice.labelToCode(label).then(function (response, opts) {
 																	handleSaveAttribute(response.responseText);	
-																	handleAttributes();
+																	submissionPanel.handleAttributes(null, function(){
+																		submissionPanel.loadComponentAttributes();
+																	});
 																});
 															},
 															failure: function (response, opts) {
@@ -3478,7 +3482,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									});
 
 									handleMainFormSave();
-									handleAttributes();
+									submissionPanel.handleAttributes();
 								},
 								failure: function (response, opts) {
 									submissionPanel.saveReady = true;
@@ -3543,7 +3547,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 				} else {
 					submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(true);
 				}
-
+				
+				submissionPanel.handleAttributes(data.componentType, function(){
+					submissionPanel.loadComponentAttributes();
+				});
 			}
 		});
 
@@ -3567,8 +3574,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('contactGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
 		});
-
-		submissionPanel.loadComponentAttributes();
+		
 	},
 
 	resetSubmission: function (editMode) {
