@@ -211,7 +211,7 @@ var makeEntryGridPanel = function (name, title) {
 				Ext.Ajax.request({
 					url: 'api/v1/resource/components/' + compID + "/changeComponentType",
 					method: 'PUT',
-					data: {newType: code},
+					params: {newType: code},
 
 					headers: {
 						'Accept': 'application/json'

@@ -862,9 +862,12 @@ public class ComponentRESTResource
 	@Path("/{id}/changeComponentType")
 	public Response changeType(
 			@PathParam("id")
-			@RequiredParam String componentId,
+			@RequiredParam String componentId,			
+			@QueryParam("newType")
 			String newType)
 	{
+		if (newType == null)
+			System.out.println("newType is null");
 		System.out.println("Component Id: " + componentId + "\nComponent New Type: " + newType);
 		// Search to see that the ID is valid
 		Component component = service.getPersistenceService().findById(Component.class, componentId);
@@ -880,6 +883,7 @@ public class ComponentRESTResource
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 		}
+		System.out.println("End of change Type function");
 		return sendSingleEntityResponse(component);
 	}
 
