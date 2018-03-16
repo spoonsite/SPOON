@@ -190,7 +190,7 @@ var makeEntryGridPanel = function (name, title) {
 
 				var code = filterBox.getValue();
 
-				console.log(data.records[0].data);
+				console.log(data);
 
 				// Don't let the user try to assign 'All' to an entry's type.
 				if (code === 'ALL') {
@@ -209,10 +209,8 @@ var makeEntryGridPanel = function (name, title) {
 				console.log("Changing " + compID + " to " + code)
 
 				Ext.Ajax.request({
-					url: 'api/v1/resource/components/' + compID + "/changeComponentType",
+					url: 'api/v1/resource/components/' + compID + "/changeComponentType?newType=" + code,
 					method: 'PUT',
-					params: {newType: code},
-
 					headers: {
 						'Accept': 'application/json'
 					},
@@ -222,6 +220,7 @@ var makeEntryGridPanel = function (name, title) {
 					},
 
 					failure: function (response, opts) {
+						console.log("Failed to change " + compID + " to type " + code)
 						console.log('server-side failure with status code ' + response.status);
 					}
 
