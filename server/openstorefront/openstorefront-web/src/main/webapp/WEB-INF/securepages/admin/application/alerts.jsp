@@ -355,8 +355,7 @@
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
 													break;
-												case 'CHGREQ':
-												case 'CMPSUB':
+												case 'CHGREQ': case 'CMPSUB':
 													Ext.getCmp('alertEntryForm-entryTypes').allowBlank = false;
 													Ext.getCmp('alertEntryForm-entryTypes').show();
 													break;
