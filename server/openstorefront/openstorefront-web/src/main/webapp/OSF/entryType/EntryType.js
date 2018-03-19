@@ -74,19 +74,20 @@ var makeEntryGridPanel = function (name, title) {
 			// into a store after Ext factories it doesn't change it and/or breaks it.
 			// Factory pattern FTW?
 			load: function (store, records) {
-				var noEntryType = {
-					code: "NONE",
-					description: "(No entry type)",
-					id: "extModel56-999",
-					updateDts: null
-				};
+				//Entry type required so no "NONE" field is necessary
+//				var noEntryType = {
+//					code: "NONE",
+//					description: "(No entry type)",
+//					id: "extModel56-999",
+//					updateDts: null
+//				};
 				var allEntries = {
 					code: "ALL",
 					description: "(Show all)",
 					id: "extModel56-9999",
 					updateDts: null
 				};
-				store.insert(0, noEntryType);
+//				store.insert(0, noEntryType);
 				store.insert(0, allEntries);
 			}
 		}
@@ -96,7 +97,7 @@ var makeEntryGridPanel = function (name, title) {
 	return Ext.create('Ext.grid.Panel', {
 
 		id: name,
-		// TODO: Better title? Or a textbox telling the user how to use this?
+		height: 600,
 		title: title,
 		columnWidth: .5,
 		bodyStyle: 'padding: 10px;margin: 10px; border: solid black 2px',
@@ -106,7 +107,7 @@ var makeEntryGridPanel = function (name, title) {
 
 		columns: [
 			{text: 'Name', dataIndex: 'description', width: 275, flex: 1},
-			{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125},
+			{text: 'Type', align: 'center', dataIndex: 'componentType', width: 125}
 		],
 		viewConfig: {
 			plugins: {
@@ -131,10 +132,13 @@ var makeEntryGridPanel = function (name, title) {
 						editable: false,
 						width: 200,
 						listeners: {
+							expand: function(e, opts){
+								//Reload to catch newly created types
+								entryTypeStore.reload();
+							},
 							change: function (filter, newValue, oldValue, opts) {
-								// TODO: Make the grid's filter persist after the window is closed.
-								// The store's filter is getting cleared somewhere, when it shouldn't be.
-								console.log("From " + oldValue + " to " + newValue);
+								
+								//console.log("From " + oldValue + " to " + newValue);
 
 								var grid = Ext.getCmp(name);
 
@@ -154,7 +158,7 @@ var makeEntryGridPanel = function (name, title) {
 								// thing on it. Ext doesn't let the user drag and drop things
 								// onto empty grids, probably because the grids resize to
 								// fit their items so they don't have mouseable areas when empty.
-								console.log(grid.store.getCount() + ": " + (grid.store.getCount() === 0))
+								//console.log(grid.store.getCount() + ": " + (grid.store.getCount() === 0))
 								if (grid.store.getCount() === 0) {
 									var noEntriesLabel = "(No Entries of type " + Ext.getCmp(name + 'EntryTypeFilter').getRawValue() + ")";
 									var noEntriesRecord = {
@@ -168,8 +172,9 @@ var makeEntryGridPanel = function (name, title) {
 									};
 
 									grid.store.add(noEntriesRecord);
-								} else
-									console.log(grid.store.getAt(0));
+								} else {
+									//console.log(grid.store.getAt(0));
+								}
 							}
 						},
 						emptyOptionAdded: true,
@@ -190,7 +195,7 @@ var makeEntryGridPanel = function (name, title) {
 
 				var code = filterBox.getValue();
 
-				console.log(data);
+				//console.log(data.records[0].data.componentType);
 
 				// Don't let the user try to assign 'All' to an entry's type.
 				if (code === 'ALL') {
@@ -204,9 +209,23 @@ var makeEntryGridPanel = function (name, title) {
 					Ext.toast("Entry is already assigned to this type")
 				}
 
-				var compID = data.records[0].data.code;
+				
+			},
+			drop: function (node, overModel, dropPosisiont) {
+				//console.log("NODE:");
+				//console.log(node);
+				console.log("overModel:");
+				console.log(overModel);
+				//console.log("dropPosisiont:");
+				//console.log( dropPosisiont);
+				
+				var filterBox = Ext.getCmp(name + 'EntryTypeFilter');
 
-				console.log("Changing " + compID + " to " + code)
+				var code = filterBox.getValue();
+				
+				var compID = overModel.records[0].data.code;
+
+				console.log("Changing " + compID + " to " + code);
 
 				Ext.Ajax.request({
 					url: 'api/v1/resource/components/' + compID + "/changeComponentType?newType=" + code,
@@ -220,14 +239,15 @@ var makeEntryGridPanel = function (name, title) {
 					},
 
 					failure: function (response, opts) {
-						console.log("Failed to change " + compID + " to type " + code)
+						console.log("Failed to change " + compID + " to type " + code);
 						console.log('server-side failure with status code ' + response.status);
 					}
 
 				});
-			},
-			drop: function (node, overModel, dropPosisiont) {
-
+				
+				var grid = Ext.getCmp(name);
+				
+				grid.store.reload();
 			}
 		}
 	});
@@ -236,7 +256,7 @@ var makeEntryGridPanel = function (name, title) {
 
 // Use the huge function above to make 2 panels: one right, and one left.
 
-
+//TODO Give these better titles
 var leftEntryGridPanel = makeEntryGridPanel('entryTypeLeftGrid', 'Entry _ Is');
 var rightEntryGridPanel = makeEntryGridPanel('entryTypeRightGrid', 'Type Of _');
 
