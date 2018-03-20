@@ -24,9 +24,7 @@
 		
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
-			
-		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>
-			
+		
 		<script type="text/javascript">
 			
 			Ext.require('OSF.entryType.EntryType');
@@ -41,11 +39,14 @@
 					modal: true,
 					width: '60%',
 					height: '90%',
-					layout: 'fit',
+					layout: 'hbox',
+					bodyStyle: 'padding: 10px;',
 					items: [
-						{
-							xtype: 'entryType.EntryType'									
-						}
+//						{
+//							xtype: 'entryType.EntryType'
+//						},
+						makeEntryGridPanel('entryTypeLeftGrid', ''),
+						makeEntryGridPanel('entryTypeRightGrid', '')
 					],
 					
 					// Override the show function to refresh the
