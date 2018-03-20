@@ -42,11 +42,13 @@
 					layout: 'hbox',
 					bodyStyle: 'padding: 10px;',
 					items: [
-//						{
-//							xtype: 'entryType.EntryType'
-//						},
-						makeEntryGridPanel('entryTypeLeftGrid', ''),
-						makeEntryGridPanel('entryTypeRightGrid', '')
+						{
+							xtype: 'entryType.LeftEntryType'	
+						},
+						{
+							xtype: 'entryType.RightEntryType'
+							
+						},
 					],
 					
 					// Override the show function to refresh the
@@ -59,8 +61,8 @@
 						// the comboboxes with each grid should have the same values
 						// as when the window was closed/created, so let
 						// the comboboxes control all the filtering.
-						Ext.getCmp('entryTypeLeftGrid').store.reload();
-						Ext.getCmp('entryTypeRightGrid').store.reload();
+						Ext.getCmp('RightEntryAssignment').store.reload();
+						Ext.getCmp('LeftEntryAssignment').store.reload();
 					}
 				});
 
