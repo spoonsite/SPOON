@@ -21,6 +21,9 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
+	requires: [
+		'OSF.common.AttributeCodeSelect'
+	],
 	layout: 'border',
 	formWarningMessage: '',
 
@@ -244,17 +247,38 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 						var requiredStore = submissionPanel.requiredAttributeStore;
 						
+						var attributeTypeToValue = {										
+						};
+						Ext.Array.each(data, function(attribute) {										
+							if (attributeTypeToValue[attribute.type]) {
+								attributeTypeToValue[attribute.type].push(attribute.code);
+							} else {
+								var values = [];
+								values.push(attribute.code);
+								attributeTypeToValue[attribute.type] = values;
+							}
+						});
+						
 						var optionalAttributes = [];
 						Ext.Array.each(data, function (attribute) {
 							if (!attribute.hideOnSubmission) {
 								if (attribute.requiredFlg) {
 									var found = false;
+									
+									//group values of same type
+									var value = attribute.code;
+									if (attributeTypeToValue[attribute.type] && 
+										attributeTypeToValue[attribute.type].length > 1) {
+										value = attributeTypeToValue[attribute.type];
+									}
+									
 									requiredStore.each(function (record) {
 										if (record.get('attributeType') === attribute.type) {
-											record.set('attributeCode', attribute.code, {dirty: false});
+											record.set('attributeCode', value, {dirty: false});
 											found = true;
 										}
 									});
+									
 									if (!found) {
 										//the component type  may not require this
 										optionalAttributes.push(attribute);
@@ -320,34 +344,20 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 					store.each(function (record) {
 
-						var field = Ext.create('Ext.form.field.ComboBox', {
-							record: record,
-							fieldLabel: record.get('description') + ' <span class="field-required" />',
-							queryMode: 'local',
-							editable: record.get('allowUserGeneratedCodes'),
-							typeAhead: record.get('allowUserGeneratedCodes'),
-							allowBlank: false,
-							width: '100%',
-							labelWidth: 300,
-							labelSepartor: '',
-							valueField: 'code',
-							displayField: 'label',
-							store: Ext.create('Ext.data.Store', {
-								data: record.data.codes
-							}),
-							listConfig: {
-								getInnerTpl: function () {
-									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
-								}
-							},
-							listeners: {
-								change: function (fieldLocal, newValue, oldValue, opts) {
-									var recordLocal = fieldLocal.record;
-									if (recordLocal) {
-										recordLocal.set('attributeCode', newValue);
+						var field = Ext.create('OSF.common.AttributeCodeSelect', {
+								fieldConfig: {	
+									record: record,
+									listeners: {
+										change: function(fieldLocal, newValue, oldValue, opts) {
+											var recordLocal = fieldLocal.record;
+											if (recordLocal) {
+												recordLocal.set('attributeCode', newValue);
+											}
+										}
 									}
-								}
-							}
+								},
+								attributeTypeView: record.data,											
+								record: record
 						});
 						record.formField = field;
 						panel.add(field);
@@ -3295,12 +3305,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 				submissionPanel.requiredAttributeStore.each(function (record) {
 
-					requireComponent.attributes.push({
-						componentAttributePk: {
-							attributeType: record.get('attributeType'),
-							attributeCode: record.get('attributeCode')
-						}
-					});
+					if (Ext.isArray(record.get('attributeCode'))) {
+						Ext.Array.each(record.get('attributeCode'), function(code) {
+							requireComponent.attributes.push({
+								componentAttributePk: {
+									attributeType: record.get('attributeType'),
+									attributeCode: code
+								}
+							});
+						});
+					} else {
+						requireComponent.attributes.push({
+							componentAttributePk: {
+								attributeType: record.get('attributeType'),
+								attributeCode: record.get('attributeCode')
+							}
+						});
+					}
 				});
 
 				if (!data.description) {
@@ -3449,10 +3470,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 								} else {
 									codeLabel = record.formField.getValue();
 								}
-								userCodesToSave.push({
-									attributeCodeLabel: codeLabel,
-									attributeType: record.get('attributeType')
-								});
+								
+								if (Ext.isArray(codeLabel)) {
+									Ext.Array.each(record.get('attributeCode'), function(code) {
+										userCodesToSave.push({
+											attributeCodeLabel: code,
+											attributeType: record.get('attributeType')
+										});
+									});
+								} else {
+									userCodesToSave.push({
+										attributeCodeLabel: codeLabel,
+										attributeType: record.get('attributeType')
+									});
+								}								
+								
+								
 							}
 						});
 

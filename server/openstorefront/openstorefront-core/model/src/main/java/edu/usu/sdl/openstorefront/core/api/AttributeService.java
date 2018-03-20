@@ -131,7 +131,7 @@ public interface AttributeService
 	 * Saves code
 	 *
 	 * @param attributeCode
-	 * @return 
+	 * @return
 	 */
 	public ValidationResult saveAttributeCode(AttributeCode attributeCode);
 
@@ -140,7 +140,7 @@ public interface AttributeService
 	 *
 	 * @param attributeCode
 	 * @param updateIndexes (For Searching)
-	 * @return 
+	 * @return
 	 */
 	public ValidationResult saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
@@ -208,6 +208,7 @@ public interface AttributeService
 	 * because of the multiple file imports It will remove/inactivate codes.
 	 *
 	 * @param attributeMap
+	 * @return validation results
 	 */
 	public ValidationResult syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
@@ -274,6 +275,7 @@ public interface AttributeService
 	 *
 	 * @param attributes
 	 * @param options
+	 * @return validation results
 	 */
 	public ValidationResult importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
 
@@ -291,4 +293,23 @@ public interface AttributeService
 	 * @param attributeCode
 	 */
 	public void removeAttributeCodeAttachment(AttributeCode attributeCode);
+
+	/**
+	 * gets the required attributes giving a component type
+	 *
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @return
+	 */
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly);
+
+	/**
+	 * gets the optional attributes giving a component type
+	 *
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @return
+	 */
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly);
+
 }

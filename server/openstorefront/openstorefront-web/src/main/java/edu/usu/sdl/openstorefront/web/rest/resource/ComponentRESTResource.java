@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -715,6 +716,11 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
+			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(existingRecord.getComponentType(), false);
+			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
+					.map(AttributeType::getAttributeType)
+					.collect(Collectors.toSet());
+
 			//pick up all existing active attributes not already in the update
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -722,7 +728,14 @@ public class ComponentRESTResource
 			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
-					component.getAttributes().add(componentAttribute);
+
+					//don't add required for the type; if missing (Allow the multiple requires to be removed)
+					AttributeType attributeType = service.getAttributeService().findType(componentAttribute.getComponentAttributePk().getAttributeType());
+					if (!(attributeType != null
+							&& attributeType.getRequiredFlg()
+							&& requiredTypeSet.contains(componentAttribute.getComponentAttributePk().getAttributeType()))) {
+						component.getAttributes().add(componentAttribute);
+					}
 				}
 			}
 

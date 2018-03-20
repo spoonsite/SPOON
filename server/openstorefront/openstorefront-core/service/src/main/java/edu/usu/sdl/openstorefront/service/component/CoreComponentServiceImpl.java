@@ -63,6 +63,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -650,13 +651,13 @@ public class CoreComponentServiceImpl
 							String mediaTypeCode;
 							String mimeType = existingTemporaryMedia.getMimeType();
 							if (mimeType.contains("image")) {
-								mediaTypeCode = "IMG";
+								mediaTypeCode = MediaType.IMAGE;
 							} else if (mimeType.contains("video")) {
-								mediaTypeCode = "VID";
+								mediaTypeCode = MediaType.VIDEO;
 							} else if (mimeType.contains("audio")) {
-								mediaTypeCode = "AUD";
+								mediaTypeCode = MediaType.AUDIO;
 							} else {
-								mediaTypeCode = "OTH";
+								mediaTypeCode = MediaType.OTHER;
 							}
 
 							componentMedia.setMediaTypeCode(mediaTypeCode);

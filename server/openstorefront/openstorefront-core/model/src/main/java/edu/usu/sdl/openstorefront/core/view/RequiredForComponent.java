@@ -110,17 +110,15 @@ public class RequiredForComponent
 					componentAttributePk.setAttributeCode(attributeType.getDefaultAttributeCode());
 					componentAttribute.setComponentAttributePk(componentAttributePk);
 					attributes.add(componentAttribute);
+					inSetAttributeType.add(componentAttribute.getComponentAttributePk().getAttributeType());
 				}
 			}
 		}
 
-		Set<String> matchedAttributes = new HashSet<>();
 		Set<String> missingAttributes = new HashSet<>();
-		for (AttributeType attribute : requireds) {
+		for (AttributeType attribute : requiredTypeMap.values()) {
 			String type = attribute.getAttributeType();
-			if (inSetAttributeType.contains(type)) {
-				matchedAttributes.add(type);
-			} else {
+			if (!inSetAttributeType.contains(type)) {
 				missingAttributes.add(type);
 			}
 		}

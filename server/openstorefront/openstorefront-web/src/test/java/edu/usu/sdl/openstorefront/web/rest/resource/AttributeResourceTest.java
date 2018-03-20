@@ -17,7 +17,6 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
@@ -32,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
+import edu.usu.sdl.openstorefront.service.AttributeServiceImpl;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
@@ -84,9 +84,12 @@ public class AttributeResourceTest extends JerseyShiroTest
 		Mockito.when(service.getLookupService()).thenReturn(lookupService);
 		Mockito.when(lookupService.getLookupEnity(SecurityMarkingType.class, null)).thenReturn(null);
 
-		AttributeService attributeService = Mockito.mock(AttributeService.class);
+		AttributeServiceImpl attributeService = Mockito.mock(AttributeServiceImpl.class);
 		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(new ArrayList<>());
+		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false)).thenCallRealMethod();
+
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
 
 		ServiceProxyFactory.setTestService(service);
 
@@ -337,15 +340,18 @@ public class AttributeResourceTest extends JerseyShiroTest
 		code4.getAttributeCodePk().setAttributeCode("CODE4");
 		code4.getAttributeCodePk().setAttributeType("TESTATT1");
 
-		List<AttributeCode> attributeCode = new ArrayList<>();
-		attributeCode.add(code1);
-		attributeCode.add(code2);
-		attributeCode.add(code3);
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		attributeCodes.add(code1);
+		attributeCodes.add(code2);
+		attributeCodes.add(code3);
 
-		AttributeService attributeService = Mockito.mock(AttributeService.class);
+		AttributeServiceImpl attributeService = Mockito.mock(AttributeServiceImpl.class);
 
-		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(attributeCode);
+		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(attributeCodes);
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+
+		Mockito.when(attributeService.findOptionalAttributes("ARTICLE", false)).thenCallRealMethod();
+		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
 
 		//	persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1, code2, code3, code4));
 		AttributeTypeView expectedView1 = new AttributeTypeView();
