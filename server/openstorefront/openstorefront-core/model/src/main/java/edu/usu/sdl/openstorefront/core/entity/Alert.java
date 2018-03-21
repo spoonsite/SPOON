@@ -80,7 +80,7 @@ public class Alert
 
 	@ConsumeField
 	@Embedded
-	@OneToOne(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true)
 	private List<ComponentTypeAlertOption> componentTypeAlertOptions;
 
 	public Alert()
