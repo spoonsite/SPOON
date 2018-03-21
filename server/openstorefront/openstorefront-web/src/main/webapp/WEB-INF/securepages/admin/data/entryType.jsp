@@ -30,7 +30,19 @@
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
-				
+				var entryTypeAssignedCellTemplate = new Ext.XTemplate(						
+				);
+
+				// load template for assigned group and assigned user cells in the entryGrid...
+				//	then add the grid to the view port
+				Ext.Ajax.request({
+					url: 'Router.action?page=shared/entryTypeAssignedCellTemplate.jsp',
+					success: function(response, opts){
+						entryTypeAssignedCellTemplate.set(response.responseText, true);
+						addComponentToMainViewPort(entryGrid);
+					}
+				});	
+
 				var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
 
 					isEditor: false,
@@ -93,7 +105,7 @@
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'parentComponentType',																		
 									width: '100%',
-									margin: '0 0 20 0',
+									margin: '0 0 15 0',
 									fieldLabel: 'Parent Type',
 									emptyText: 'None',
 									storeConfig: {
@@ -106,6 +118,20 @@
 										]
 									}
 								}),
+								{
+									fieldLabel: 'Assigned User(s)',
+									xtype: 'UserMultiSelectComboBox',
+									width: '100%',
+									name: 'assignedUsers',
+									queryMode: 'local'
+								},
+								{
+									fieldLabel: 'Assigned Group(s)',
+									xtype: 'RoleGroupMultiSelectComboBox',
+									width: '100%',
+									margin: '0 0 15 0',
+									name: 'assignedGroups'
+								},
 								{
 									xtype: 'container',
 									width: '100%',
@@ -255,6 +281,18 @@
 												var data = Ext.getCmp('entryForm').getValues();
 												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/componenttypes/' + data.componentType : 'api/v1/resource/componenttypes';       
 
+												// reformat data for roleLink and userLink
+												if (data.assignedUsers) {
+													Ext.Array.forEach(data.assignedUsers, function (el, index) {
+														data.assignedUsers[index] = {username: el};
+													});
+												}
+												if (data.assignedGroups) {
+													Ext.Array.forEach(data.assignedGroups, function (el, index) {
+														data.assignedGroups[index] = {roleName: el};
+													});
+												}
+
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
@@ -303,7 +341,7 @@
 							},
 							onOut: function(target, dd, e, dragData) {
 
-								var originName = dragData.record.data.componentType; 
+								var originName = dragData.record.getData().componentType.componentType; 
 								dd.ddel.innerText = originName;
 							},
 							onDrop: function (target, dd, e, dragData) {
@@ -359,7 +397,7 @@
 							text: 'Label',
 							dataIndex: 'componentType',
 							sortable: false,
-							flex: 10,
+							flex: 20,
 							renderer: function (componentType) {
 								return componentType.label;
 							}
@@ -400,6 +438,41 @@
 							}
 						},
 						{ 
+							text: 'Assigned User',
+							align: 'center',
+							dataIndex: 'componentType',
+							sortable: false,
+							flex: 15,
+							renderer: function (componentType, rowData, dataIndex, cell) {
+
+								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
+
+								var userData = getAssignedData(rowRecord, false, 'users');
+
+								userData.type = 'users';
+
+								return entryTypeAssignedCellTemplate.apply(userData);
+							}
+						},
+						{ 
+							text: 'Assigned Group',
+							align: 'center',
+							dataIndex: 'componentType',
+							sortable: false,
+							flex: 15,
+							renderer: function (componentType, rowData) {
+
+								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
+
+								var groupData = getAssignedData(rowRecord, false, 'roles');
+
+								groupData.type = 'roles';
+
+								return entryTypeAssignedCellTemplate.apply(groupData);
+
+							}
+						},
+						{ 
 							text: 'Active Status',
 							align: 'center',
 							dataIndex: 'componentType',
@@ -423,6 +496,7 @@
 							dataIndex: 'componentType',
 							sortable: false,
 							flex: 10,
+							hidden: true,
 							xtype: 'datecolumn',
 							format:'m/d/y H:i:s',
 							renderer: function (componentType) {
@@ -523,8 +597,9 @@
 						}
 					],
 					listeners: {
-						itemdblclick: function(grid, record, item, index, e, opts){
+						beforeitemdblclick: function (grid, record) {
 							actionEditEntry(record);
+							return false;
 						},
 						selectionchange: function(grid, record, index, opts){
 							checkEntryGridTools();
@@ -532,8 +607,6 @@
 					}
 				});
 				
-				addComponentToMainViewPort(entryGrid);
-
 				// recursively gets a list of target nodes/records that can't be dragged to
 				var getInvalidNodes = function (currentRecord) {
 					invalidNodes = [];
@@ -580,6 +653,7 @@
 				// NOTE: we cannot simply do this thorugh rowRecord.getData().componentType.template because
 				//	we do not want to have to save the record, retrieve the new data, and refresh the grid every
 				//	time we drag a record.
+				// @returns String
 				var getTemplateData = function (node, inherited) {
 
 					if (node.parentNode === null) {
@@ -590,6 +664,24 @@
 					}
 
 					return getTemplateData(node.parentNode, true);
+				};
+
+				// Factory for finding the parent (or self) that has the root assigned group or assigned user group.
+				// NOTE: "
+				// @returns [String]
+				var getAssignedData = function (node, inherited, assignedType) {
+
+					var typeGroup = assignedType === 'roles' ? 'roles' : 'users';
+					var dataGroup = assignedType === 'roles' ? 'roles' : 'usernames';
+
+					if (node.parentNode === null) {
+						return {data: ['<i style="color: #ccc;">Not assigned</i>'], cameFromAncestor: false, rootNode: null, isAssigned: false};
+					}
+					if (node.getData().componentType[typeGroup] && !node.getData().componentType[typeGroup].cameFromAncestor) {
+						return {data: node.getData().componentType[typeGroup][dataGroup], cameFromAncestor: inherited, rootNode: node, isAssigned: true};
+					}
+
+					return getAssignedData(node.parentNode, true, assignedType);
 				};
 				
 				var checkEntryGridTools = function() {
@@ -621,8 +713,23 @@
 				
 				var actionEditEntry = function(record) {
 
-					var tempDataModel = Ext.create('Ext.data.Model');
-					tempDataModel.data = Ext.apply(record.getData().componentType, tempDataModel.data);
+					var formattedDataModel = Ext.create('Ext.data.Model');
+					Ext.apply(formattedDataModel.data, record.data.componentType);
+
+					formattedDataModel.data.assignedUsers = [];
+					formattedDataModel.data.assignedGroups = [];
+
+					if (record.getData().componentType.assignedUsers) {
+						Ext.Array.forEach(record.getData().componentType.assignedUsers, function (userObj, index) {
+							formattedDataModel.data.assignedUsers[index] = userObj.username;
+						});
+					}
+
+					if (record.getData().componentType.assignedGroups) {
+						Ext.Array.forEach(record.getData().componentType.assignedGroups, function (groupObj, index) {
+							formattedDataModel.data.assignedGroups[index] = groupObj.roleName;
+						});
+					}
 
 					addEditWin.show();
 					
@@ -630,7 +737,7 @@
 					Ext.getCmp('entryForm').edit = true;
 					
 					//load form
-					Ext.getCmp('entryForm').loadRecord(tempDataModel);
+					Ext.getCmp('entryForm').loadRecord(formattedDataModel);
 					Ext.getCmp('entryForm-type').setReadOnly(true);
 				};
 				
