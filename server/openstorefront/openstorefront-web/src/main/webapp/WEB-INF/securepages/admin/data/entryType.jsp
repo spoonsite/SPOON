@@ -28,7 +28,9 @@
 		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>		
 		
 		<script type="text/javascript">
-			/* global Ext, CoreUtil */
+			/* global Ext, CoreUtil */			
+			Ext.require('OSF.tool.EntryTypeAttributes');
+			
 			Ext.onReady(function(){	
 				var entryTypeAssignedCellTemplate = new Ext.XTemplate(						
 				);
@@ -551,8 +553,18 @@
 									menu: [
 										{
 											text: 'Entry Assignment',
-											iconCls: 'fa fa-exchange fa-2x icon-button-color-default'
+											iconCls: 'fa fa-exchange fa-2x icon-button-color-default',
+											handler: function() {												
+												actionEntryAssignment();
+											}
 										},
+										{
+											text: 'Attribute Assignment',
+											iconCls: 'fa fa-list-alt fa-2x icon-button-color-default',
+											handler: function() {												
+												actionAttributeAssignment();
+											}											
+										},										
 										{
 											xtype: 'menuseparator'
 										},
@@ -764,6 +776,20 @@
 						}
 					});
 				};
+				
+				var actionEntryAssignment = function() {
+					
+		
+				};
+				
+				var actionAttributeAssignment = function() {
+					
+					var attributeWin = Ext.create('OSF.tool.EntryTypeAttributes', {
+						
+						
+					});
+					attributeWin.show();		
+				};				
 
 				var actionMoveToTop = function () {
 					
