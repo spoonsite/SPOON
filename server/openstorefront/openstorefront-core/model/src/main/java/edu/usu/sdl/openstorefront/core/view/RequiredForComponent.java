@@ -22,10 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
-import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
-import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -65,32 +61,11 @@ public class RequiredForComponent
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().getRequiredAttributes();
-
-		Set<String> typeSet = componentTypesToCheck(component.getComponentType());
-
-		requireds.removeIf(attributeType -> checkAttributeAssociation(attributeType, typeSet));
+		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(component.getComponentType(), false);
 
 		Map<String, AttributeType> requiredTypeMap = new HashMap<>();
 		for (AttributeType attributeType : requireds) {
-			boolean add = true;
-			if (attributeType.getRequiredRestrictions() != null
-					&& !attributeType.getRequiredRestrictions().isEmpty()) {
-
-				boolean found = false;
-				for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions()) {
-					if (typeSet.contains(componentTypeRestriction.getComponentType())) {
-						found = true;
-					}
-				}
-				if (!found) {
-					add = false;
-				}
-
-			}
-			if (add) {
-				requiredTypeMap.put(attributeType.getAttributeType(), attributeType);
-			}
+			requiredTypeMap.put(attributeType.getAttributeType(), attributeType);
 		}
 
 		Set<String> inSetAttributeType = new HashSet<>();
@@ -131,45 +106,6 @@ public class RequiredForComponent
 			validationResult.getRuleResults().add(ruleResult);
 		}
 		return validationResult;
-	}
-
-	private boolean checkAttributeAssociation(AttributeType attributeType, Set<String> typeSet)
-	{
-		boolean remove = false;
-
-		if (attributeType.getAssociatedComponentTypes() != null
-				&& !attributeType.getAssociatedComponentTypes().isEmpty()) {
-
-			boolean found = false;
-			for (ComponentTypeRestriction componentTypeRestriction : attributeType.getAssociatedComponentTypes()) {
-				if (typeSet.contains(componentTypeRestriction.getComponentType())) {
-					found = true;
-				}
-			}
-			if (!found) {
-				remove = true;
-			}
-
-		}
-
-		return remove;
-	}
-
-	private Set<String> componentTypesToCheck(String componentType)
-	{
-		if (StringUtils.isBlank(componentType)) {
-			return new HashSet<>();
-		} else {
-			ComponentTypeOptions options = new ComponentTypeOptions(componentType);
-			options.setPullParents(true);
-			ComponentTypeNestedModel nestedModel = ServiceProxyFactory.getServiceProxy().getComponentService().getComponentType(options);
-			if (nestedModel != null) {
-				Map<String, ComponentType> typeMap = nestedModel.findParents(nestedModel, componentType);
-				return typeMap.keySet();
-			} else {
-				return new HashSet<>();
-			}
-		}
 	}
 
 	public Component getComponent()

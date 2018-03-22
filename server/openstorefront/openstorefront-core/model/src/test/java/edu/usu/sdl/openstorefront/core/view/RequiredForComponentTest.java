@@ -69,34 +69,6 @@ public class RequiredForComponentTest
 	}
 
 	@Test
-	public void checkForComplete_ValidWithParent()
-	{
-		System.out.println("checkForComplete_ValidWithParent");
-		setupMocksforAttributeCheck();
-
-		RequiredForComponent requiredForComponent = new RequiredForComponent();
-		Component component = new Component();
-		component.setComponentType("C");
-		requiredForComponent.setComponent(component);
-
-		ComponentAttribute componentAttribute = new ComponentAttribute();
-		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType("O");
-		componentAttribute.setComponentAttributePk(componentAttributePk);
-		requiredForComponent.getAttributes().add(componentAttribute);
-
-		componentAttribute = new ComponentAttribute();
-		componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType("R");
-		componentAttribute.setComponentAttributePk(componentAttributePk);
-		requiredForComponent.getAttributes().add(componentAttribute);
-
-		ValidationResult result = requiredForComponent.checkForComplete();
-		Assert.assertEquals(true, result.valid());
-
-	}
-
-	@Test
 	public void checkForComplete_InValid()
 	{
 		System.out.println("checkForComplete_InValid");
@@ -111,28 +83,6 @@ public class RequiredForComponentTest
 		ValidationResult result = requiredForComponent.checkForComplete();
 		Assert.assertEquals(false, result.valid());
 
-	}
-
-	@Test
-	public void checkForComplete_InValidWithParent()
-	{
-		System.out.println("checkForComplete_InValidWithParent");
-		setupMocksforAttributeCheck();
-
-		RequiredForComponent requiredForComponent = new RequiredForComponent();
-		Component component = new Component();
-		component.setComponentType("C");
-		requiredForComponent.setComponent(component);
-
-		ComponentAttribute componentAttribute = new ComponentAttribute();
-		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType("O");
-		componentAttribute.setComponentAttributePk(componentAttributePk);
-		requiredForComponent.getAttributes().add(componentAttribute);
-
-		//missing restricted attribute
-		ValidationResult result = requiredForComponent.checkForComplete();
-		Assert.assertEquals(false, result.valid());
 	}
 
 	@Test
@@ -166,28 +116,32 @@ public class RequiredForComponentTest
 		Mockito.when(service.getComponentService()).thenReturn(componentService);
 		ServiceProxyFactory.setTestService(service);
 
-		List<AttributeType> attributeTypeRequired = new ArrayList<>();
+//		List<AttributeType> attributeTypeRequired = new ArrayList<>();
+//		AttributeType attributeType = new AttributeType();
+//		attributeType.setAttributeType("O");
+//		attributeType.setDescription("Open");
+//		attributeTypeRequired.add(attributeType);
 		AttributeType attributeType = new AttributeType();
-		attributeType.setRequiredFlg(Boolean.TRUE);
-		attributeType.setAttributeType("O");
-		attributeType.setDescription("Open");
-		attributeTypeRequired.add(attributeType);
-
-		attributeType = new AttributeType();
 		attributeType.setRequiredFlg(Boolean.TRUE);
 		attributeType.setAttributeType("R");
 		attributeType.setDescription("Restricted");
 
-		List<ComponentTypeRestriction> associatedRestrictions = new ArrayList<>();
-		associatedRestrictions.add(new ComponentTypeRestriction("B"));
+		List<ComponentTypeRestriction> optionalRestrictions = new ArrayList<>();
+		optionalRestrictions.add(new ComponentTypeRestriction("D"));
 
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		requiredRestrictions.add(new ComponentTypeRestriction("B"));
-		attributeType.setAssociatedComponentTypes(associatedRestrictions);
-		attributeType.setRequiredRestrictions(requiredRestrictions);
-		attributeTypeRequired.add(attributeType);
+		requiredRestrictions.add(new ComponentTypeRestriction("C"));
 
-		Mockito.when(attributeService.getRequiredAttributes()).thenReturn(attributeTypeRequired);
+		attributeType.setOptionalRestrictions(optionalRestrictions);
+		attributeType.setRequiredRestrictions(requiredRestrictions);
+		//	attributeTypeRequired.add(attributeType);
+
+		List<AttributeType> requiredAttributes = new ArrayList<>();
+		requiredAttributes.add(attributeType);
+		Mockito.when(attributeService.findRequiredAttributes("B", false)).thenReturn(requiredAttributes);
+		Mockito.when(attributeService.findRequiredAttributes("C", false)).thenReturn(requiredAttributes);
+		Mockito.when(attributeService.findRequiredAttributes("A", false)).thenReturn(new ArrayList<>());
 
 		ComponentTypeNestedModel nestedModel = new ComponentTypeNestedModel();
 

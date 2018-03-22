@@ -34,7 +34,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
@@ -45,8 +44,6 @@ import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
-import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
-import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
@@ -95,16 +92,6 @@ public class AttributeServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(AttributeServiceImpl.class.getName());
-
-	@Override
-	public List<AttributeType> getRequiredAttributes()
-	{
-		AttributeType example = new AttributeType();
-		example.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		example.setRequiredFlg(Boolean.TRUE);
-		List<AttributeType> required = persistenceService.queryByExample(new QueryByExample<>(example));
-		return required;
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -1117,36 +1104,17 @@ public class AttributeServiceImpl
 
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
 
-		Set<String> typeSet = componentTypesToCheck(componentType);
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
 		for (AttributeType attributeType : attributeTypes) {
 
-			boolean keep = true;
-			//check if attribute type is allowed for this component
-			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
-				keep = false;
-				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
-					if (typeSet.contains(restriction.getComponentType())) {
-						keep = true;
+			if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						requiredAttributes.add(attributeType);
 					}
 				}
 			}
-
-			//check required
-			if (keep) {
-				if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-					for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
-						if (typeSet.contains(restriction.getComponentType())) {
-							requiredAttributes.add(attributeType);
-						}
-					}
-				} else {
-					requiredAttributes.add(attributeType);
-				}
-			}
-
 		}
 
 		if (submissionTypesOnly) {
@@ -1166,36 +1134,17 @@ public class AttributeServiceImpl
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
-		Set<String> typeSet = componentTypesToCheck(componentType);
+
 		attributeTypes.forEach((attributeType) -> {
-			boolean keep = true;
-			boolean required = false;
-			//check if attribute type is allowed for this component
-			if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
-				keep = false;
-				for (ComponentTypeRestriction restriction : attributeType.getAssociatedComponentTypes()) {
-					if (typeSet.contains(restriction.getComponentType())) {
-						keep = true;
+
+			if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
+				for (ComponentTypeRestriction restriction : attributeType.getOptionalRestrictions()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						optionalAttributes.add(attributeType);
 					}
 				}
 			}
 
-			if (keep) {
-				if (attributeType.getRequiredFlg()) {
-					if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-						for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
-							if (typeSet.contains(restriction.getComponentType())) {
-								required = true;
-							}
-						}
-					} else {
-						required = true;
-					}
-				}
-				if (!required) {
-					optionalAttributes.add(attributeType);
-				}
-			}
 		});
 
 		if (submissionTypesOnly) {
@@ -1204,19 +1153,6 @@ public class AttributeServiceImpl
 			});
 		}
 		return optionalAttributes;
-	}
-
-	private Set<String> componentTypesToCheck(String componentType)
-	{
-		ComponentTypeOptions options = new ComponentTypeOptions(componentType);
-		options.setPullParents(true);
-		ComponentTypeNestedModel nestedModel = getComponentService().getComponentType(options);
-		if (nestedModel != null) {
-			Map<String, ComponentType> typeMap = nestedModel.findParents(nestedModel, componentType);
-			return typeMap.keySet();
-		} else {
-			return new HashSet<>();
-		}
 	}
 
 }

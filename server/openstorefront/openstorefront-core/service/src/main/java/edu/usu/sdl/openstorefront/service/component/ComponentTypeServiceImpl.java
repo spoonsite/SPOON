@@ -237,11 +237,11 @@ public class ComponentTypeServiceImpl
 							}
 						}
 
-						if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
-							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
-								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
+						if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
+							for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
+								String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
 								if (checkType.equals(componentType)) {
-									attributeType.getAssociatedComponentTypes().remove(i);
+									attributeType.getOptionalRestrictions().remove(i);
 									addToUpdate = true;
 								}
 							}
@@ -254,12 +254,12 @@ public class ComponentTypeServiceImpl
 						for (AttributeType attributeTypeUpdated : updateAttributes) {
 							componentService.getAttributeService().saveAttributeType(attributeTypeUpdated, false);
 						}
-						
+
 						// Update children
 						ComponentType ctExample = new ComponentType();
 						ctExample.setParentComponentType(componentTypeFound.getComponentType());
 						List<ComponentType> ctChildren = ctExample.findByExampleProxy();
-						
+
 						ctChildren.forEach(child -> {
 							child.setParentComponentType(newComponentType);
 							persistenceService.persist(child);

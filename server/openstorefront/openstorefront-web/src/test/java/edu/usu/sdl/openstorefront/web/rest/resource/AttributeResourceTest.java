@@ -96,14 +96,13 @@ public class AttributeResourceTest extends JerseyShiroTest
 		//Arrange
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();
-		comp.setComponentType("COMP");
+		comp.setComponentType("ARTICLE");
 		comp.setStorageVersion("1");
 		requiredRestrictions.add(comp);
 
 		AttributeType type1 = new AttributeType();
 		type1.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type1.setAttributeType("TEST1");
-		type1.setRequiredFlg(Boolean.TRUE);
 
 		AttributeType type2 = new AttributeType();
 		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
@@ -124,7 +123,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 		List<AttributeTypeView> expected = new ArrayList<>();
 		AttributeTypeView expectedType = new AttributeTypeView();
 		expectedType.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		expectedType.setAttributeType("TEST1");
+		expectedType.setAttributeType("TEST2");
 		expected.add(expectedType);
 
 		//Act
@@ -292,11 +291,24 @@ public class AttributeResourceTest extends JerseyShiroTest
 		type1.setRequiredFlg(Boolean.FALSE);
 		type1.setAttributeType("TESTATT1");
 
+		List<ComponentTypeRestriction> optional = new ArrayList<>();
+		comp = new ComponentTypeRestriction();
+		comp.setComponentType("ARTICLE");
+		comp.setStorageVersion("1");
+		optional.add(comp);
+		type1.setOptionalRestrictions(optional);
+
 		AttributeType type2 = new AttributeType();
 		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type2.setRequiredFlg(Boolean.TRUE);
 		type2.setAttributeType("TESTATT2");
 		type2.setRequiredRestrictions(requiredRestrictions);
+		optional = new ArrayList<>();
+		comp = new ComponentTypeRestriction();
+		comp.setComponentType("ARTICLE");
+		comp.setStorageVersion("1");
+		optional.add(comp);
+		type2.setOptionalRestrictions(optional);
 
 		AttributeType type3 = new AttributeType();
 		type3.setActiveStatus(AttributeType.ACTIVE_STATUS);

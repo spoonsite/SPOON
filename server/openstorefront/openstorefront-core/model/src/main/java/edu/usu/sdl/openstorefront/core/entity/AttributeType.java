@@ -42,6 +42,7 @@ public class AttributeType
 {
 
 	public static final String FIELD_ATTRIBUTE_TYPE = "attributeType";
+	private static final long serialVersionUID = 1L;
 
 	@PK
 	@NotNull
@@ -68,7 +69,7 @@ public class AttributeType
 
 	@NotNull
 	@ConsumeField
-	@APIDescription("A component is required to have this attribute")
+	@APIDescription("(Depreciated) A component is required to have this attribute; see requiredRestrictions")
 	private Boolean requiredFlg;
 
 	@DataType(ComponentTypeRestriction.class)
@@ -78,9 +79,15 @@ public class AttributeType
 
 	@DataType(ComponentTypeRestriction.class)
 	@ConsumeField
-	@APIDescription("The component/entry types for which this attribute is available")
+	@APIDescription("(Depreciated) The component/entry types for which this attribute is available; see optionalRestrictions")
 	@OneToMany(orphanRemoval = true)
 	private List<ComponentTypeRestriction> associatedComponentTypes;
+
+	@DataType(ComponentTypeRestriction.class)
+	@ConsumeField
+	@APIDescription("The component/entry types for which this attribute is available")
+	@OneToMany(orphanRemoval = true)
+	private List<ComponentTypeRestriction> optionalRestrictions;
 
 	@NotNull
 	@ConsumeField
@@ -170,6 +177,7 @@ public class AttributeType
 		setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
 		setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
 		setAttributeValueType(attributeTypeUpdate.getAttributeValueType());
+		setOptionalRestrictions(attributeTypeUpdate.getOptionalRestrictions());
 
 	}
 
@@ -354,6 +362,16 @@ public class AttributeType
 	public void setAttributeValueType(String attributeValueType)
 	{
 		this.attributeValueType = attributeValueType;
+	}
+
+	public List<ComponentTypeRestriction> getOptionalRestrictions()
+	{
+		return optionalRestrictions;
+	}
+
+	public void setOptionalRestrictions(List<ComponentTypeRestriction> optionalRestrictions)
+	{
+		this.optionalRestrictions = optionalRestrictions;
 	}
 
 }

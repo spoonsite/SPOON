@@ -38,13 +38,6 @@ public interface AttributeService
 {
 
 	/**
-	 * Finds all Required Attributes
-	 *
-	 * @return
-	 */
-	public List<AttributeType> getRequiredAttributes();
-
-	/**
 	 * This is cached set of codes (post filters the status) This will be clear
 	 * upon data modification
 	 *
