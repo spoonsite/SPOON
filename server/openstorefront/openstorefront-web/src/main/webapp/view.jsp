@@ -112,35 +112,6 @@
 				store.loadPage(1);				
 			}
 		};
-		
-		var saveComponentSearch = function(componentId) {
-			var searchObj = {
-				"sortField": null,
-				"sortDirection": "ASC",
-				"startOffset": 0,
-				"max": 2147483647,
-				"searchElements": [{
-						"searchType": "COMPONENT",
-						"field": "componentType",
-						"value": componentId,
-						"keyField": null,
-						"keyValue": null,
-						"startDate": null,
-						"endDate": null,
-						"caseInsensitive": false,
-						"numberOperation": "EQUALS",
-						"stringOperation": "EQUALS",
-						"mergeCondition": "OR"  //OR.. NOT.. AND..
-					}]
-			};
-
-			var searchRequest = {
-				type: 'Advance',
-				query: searchObj
-			};
-
-			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-		}
 
 		Ext.onReady(function(){		
 
@@ -249,7 +220,7 @@
 							'<div class="details-title-name">{name}</div>',
 							'<div class="breadcrumbs" style="display: block; font-size: 14px; margin: 8px 0;">',
 							'<tpl for="parents" between="&nbsp; &gt; &nbsp;">',
-								'<a class="a.details-table" target="_parent" onclick="saveComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+								'<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
 							'</tpl>',
 							'</div>',
 							'<div class="details-title-info">',							
@@ -626,31 +597,9 @@
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
 							componentId = entry.componentId;
-							console.log(entry);
 
-							node = entry.componentTypeNestedModel;
-							entry.parents = []
-							//DFS -- find the entry.componentType
-							function traverse(node, parents) {
-								if (entry.componentType === node.componentType.componentType) {
-									entry.parents = parents;
-									return;
-								}
-								if (node.children.length > 0) {
-									parents.push({
-										'label': node.componentType.label,
-										'componentType': node.componentType.componentType
-									});
-									Ext.Array.forEach(node.children, function(node) {
-										//deep copy of parents for recursive call
-										traverse(node, JSON.parse(JSON.stringify(parents)));
-									})
-								}
-							}
-							traverse(node, [{
-								'label': entry.componentType,
-								'componentType': entry.componentTypeLabel
-							}]);
+							 root = entry.componentTypeNestedModel;
+							CoreUtil.traverseNestedModel(root, [], entry);
 
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){

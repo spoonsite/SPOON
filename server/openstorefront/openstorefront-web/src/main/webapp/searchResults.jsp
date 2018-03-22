@@ -272,6 +272,7 @@
 												success: function(response, opts) {
 													var data = Ext.decode(response.responseText);
 													data = CoreUtil.processEntry(data);
+													console.log('line 276', data);
 
 													CoreUtil.calculateEvalutationScore({
 														fullEvaluations: data.fullEvaluations,
@@ -307,7 +308,7 @@
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
 						
-						
+
 						var visible = [];
 						var nonvisible = [];
 						Ext.Array.each(data.data, function(item){
@@ -319,8 +320,8 @@
 								margin: '0 0 1 0',
 								titleCollapse: true,
 								animCollapse: false,
-								html: '&nbsp;',								
-								listeners: {									
+								html: '&nbsp;',
+								listeners: {
 									expand: function(panel, opts){
 										if (!panel.loadedCodes) {
 											panel.loadedCodes = true;
@@ -852,6 +853,9 @@
 					} else {
 						result.logo = null;
 					}
+					//get all parent component types
+					root = result.componentTypeNestedModel;
+					CoreUtil.traverseNestedModel(root, [], result);
 				});
 				
 				currentDataSet = data;
@@ -1131,7 +1135,12 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'   ({componentTypeDescription}) <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <div style="display:block; font-size:14px; margin-top: 4px;">',
+				'    <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
+				'       <a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+				'    </tpl>',
+				'  </div>',
 				' </div>',
 				'</tpl>',
 				{
@@ -1179,7 +1188,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						items: [				
+						items: [
 							{
 								xtype: 'combobox',
 								id: 'sortByCB',
@@ -1488,7 +1497,7 @@
 									}
 								}
 							})
-						]						
+						]
 					}
 				],
 				items: [

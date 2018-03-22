@@ -1026,6 +1026,53 @@ var CoreUtil = {
 			return true;
 		}      
 		return false;		
-	} 
+	},
+	traverseNestedModel: function(node, parents, target) {
+		if (target.componentType === node.componentType.componentType) {
+			parents.push({
+				'label': node.componentType.label,
+				'componentType': node.componentType.componentType
+			});
+			target.parents = parents;
+			return;
+		}
+		if (node.children.length > 0) {
+			parents.push({
+				'label': node.componentType.label,
+				'componentType': node.componentType.componentType
+			});
+			Ext.Array.forEach(node.children, function(node) {
+				//deep copy of parents for recursive call
+				CoreUtil.traverseNestedModel(node, JSON.parse(JSON.stringify(parents)), target);
+			})
+		}
+	},
+	saveAdvancedComponentSearch: function(componentId) {
+		var searchObj = {
+			"sortField": null,
+			"sortDirection": "ASC",
+			"startOffset": 0,
+			"max": 2147483647,
+			"searchElements": [{
+					"searchType": "COMPONENT",
+					"field": "componentType",
+					"value": componentId,
+					"keyField": null,
+					"keyValue": null,
+					"startDate": null,
+					"endDate": null,
+					"caseInsensitive": false,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR"  //OR.. NOT.. AND..
+				}]
+		};
 
+		var searchRequest = {
+			type: 'Advance',
+			query: searchObj
+		};
+
+		CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+	}
 };
