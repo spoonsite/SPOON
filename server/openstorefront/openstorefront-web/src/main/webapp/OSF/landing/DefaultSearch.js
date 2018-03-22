@@ -70,7 +70,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 						"searchType": 'INDEX',
 						"field": null,
 						"value": query,
-						"mergeCondition": "OR"
+						"mergeCondition": "AND"
 					}
 				];
 
@@ -93,9 +93,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 						"sortDirection": "ASC",
 						"startOffset": 0,
 						"max": 2147483647,
-						"searchElements": [
-							searchElements
-						]
+						"searchElements": searchElements
 					};
 
 					searchRequest = {
