@@ -139,7 +139,91 @@
 					compareViewTemplate.set(response.responseText, true);
 				}
 			});			
-									
+
+			var changeComparePanelListenerGenerator = function(name) {
+				return function(cb, newValue, oldValue, opts) {
+					var comparePanel = this.up('panel');
+					if (newValue) {	
+						var otherStore = comparePanel.up('panel').getComponent(name).getComponent("cb").getStore();
+						otherStore.clearFilter();
+						otherStore.filterBy(function(record){
+							if (record.get('componentId') === newValue) {
+								return false;
+							} else {
+								return true;
+							}
+						});
+
+						comparePanel.setLoading(true);
+						Ext.Ajax.request({
+							url: 'api/v1/resource/components/' + newValue + '/detail',
+							callback: function(){
+								comparePanel.setLoading(false);
+							}, 
+							success: function(response, opts) {
+								var data = Ext.decode(response.responseText);
+								data = CoreUtil.processEntry(data);
+
+								CoreUtil.calculateEvalutationScore({
+									fullEvaluations: data.fullEvaluations,
+									evaluation: data.fullEvaluations,
+									success: function (newData) {
+										data.fullEvaluations = newData.fullEvaluations;
+										comparePanel.update(data);
+
+										// Add event listeners for toggle-able containers
+										var toggleElements = document.querySelectorAll('.toggle-collapse');
+										for (ii = 0; ii < toggleElements.length; ii += 1) {
+											toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+											toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+										}
+									}
+								});
+							}
+						});	
+					} else {
+						comparePanel.update(null);
+					}
+				}
+			}
+			var comparePanelItemGenerator = function(itemId, name, side) {
+				result = {
+					xtype: 'panel',
+					itemId: itemId,
+					split: true,
+					scrollable: true,
+					tpl: compareViewTemplate,
+					dockedItems: [
+						{
+							xtype: 'combobox',
+							itemId: 'cb',
+							fieldLabel: '',								
+							queryMode: 'local',
+							name: name,
+							valueField: 'componentId',
+							displayField: 'name',
+							emptyText: 'Select Entry',
+							store: {									
+							},
+							flex: 1,
+							editable: false,
+							typeAhead: false,								
+							listeners: {
+								change: changeComparePanelListenerGenerator(itemId) 
+							}
+						}
+					]
+				}
+				if (side === 'left') {
+					result.width = '50%';
+					result.bodyStyle = 'padding: 10px';
+				} else if (side === 'right') {
+					result.flex = 1;
+					result.bodyStyle = 'padding: 20px';
+				}
+				return result;
+			}
+
 			var compareWin = Ext.create('Ext.window.Window', {
 				title: 'Compare',
 				iconCls: 'fa fa-columns',
@@ -152,153 +236,8 @@
 					align: 'stretch'
 				},				
 				items: [	
-					{
-						xtype: 'panel',
-						itemId: 'compareAPanel',
-						width: '50%',
-						split: true,
-						scrollable: true,
-						bodyStyle: 'padding: 10px;',
-						tpl: compareViewTemplate,
-						dockedItems: [
-							{
-								xtype: 'combobox',
-								itemId: 'cb',
-								fieldLabel: '',								
-								queryMode: 'local',
-								name: 'componentA',
-								valueField: 'componentId',
-								displayField: 'name',
-								emptyText: 'Select Entry',
-								store: {									
-								},
-								flex: 1,
-								editable: false,
-								typeAhead: false,								
-								listeners: {
-									change: function(cb, newValue, oldValue, opts) {
-										var comparePanel = this.up('panel');
-										if (newValue) {										
-											//remove selection from other cb
-											var otherStore = comparePanel.up('panel').getComponent('compareBPanel').getComponent("cb").getStore();
-											otherStore.clearFilter();
-											otherStore.filterBy(function(record){
-												if (record.get('componentId') === newValue) {
-													return false;
-												} else {
-													return true;
-												}
-											});
-
-											comparePanel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/components/' + newValue + '/detail',
-												callback: function(){
-													comparePanel.setLoading(false);
-												}, 
-												success: function(response, opts) {
-													var data = Ext.decode(response.responseText);
-													data = CoreUtil.processEntry(data);
-													
-													CoreUtil.calculateEvalutationScore({
-														fullEvaluations: data.fullEvaluations,
-														evaluation: data.fullEvaluations,
-														success: function (newData) {
-															data.fullEvaluations = newData.fullEvaluations;
-															comparePanel.update(data);
-
-															// Add event listeners for toggle-able containers
-															var toggleElements = document.querySelectorAll('.toggle-collapse');
-															for (ii = 0; ii < toggleElements.length; ii += 1) {
-																toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
-																toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
-															}
-														}
-													});
-												}
-											});
-										} else {
-											comparePanel.update(null);
-										}
-									}
-								}
-							}
-						]
-					},
-					{
-						xtype: 'panel',
-						itemId: 'compareBPanel',
-						flex: 1,
-						split: true,
-						scrollable: true,
-						bodyStyle: 'padding: 20px;',
-						tpl: compareViewTemplate,
-						dockedItems: [
-							{
-								xtype: 'combobox',
-								itemId: 'cb',
-								fieldLabel: '',								
-								queryMode: 'local',
-								name: 'componentB',
-								valueField: 'componentId',
-								displayField: 'name',
-								emptyText: 'Select Entry',
-								flex: 1,
-								store: {									
-								},								
-								editable: false,
-								typeAhead: false,								
-								listeners: {
-									change: function(cb, newValue, oldValue, opts) {
-										var comparePanel = this.up('panel');
-										
-										if (newValue) {	
-											var otherStore = comparePanel.up('panel').getComponent('compareAPanel').getComponent("cb").getStore();
-											otherStore.clearFilter();
-											otherStore.filterBy(function(record){
-												if (record.get('componentId') === newValue) {
-													return false;
-												} else {
-													return true;
-												}
-											});
-
-											comparePanel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/components/' + newValue + '/detail',
-												callback: function(){
-													comparePanel.setLoading(false);
-												}, 
-												success: function(response, opts) {
-													var data = Ext.decode(response.responseText);
-													data = CoreUtil.processEntry(data);
-													console.log('line 276', data);
-
-													CoreUtil.calculateEvalutationScore({
-														fullEvaluations: data.fullEvaluations,
-														evaluation: data.fullEvaluations,
-														success: function (newData) {
-															data.fullEvaluations = newData.fullEvaluations;
-															comparePanel.update(data);
-
-															// Add event listeners for toggle-able containers
-															var toggleElements = document.querySelectorAll('.toggle-collapse');
-															for (ii = 0; ii < toggleElements.length; ii += 1) {
-																toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
-																toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
-															}
-														}
-													});
-												}
-											});	
-										} else {
-											comparePanel.update(null);
-										}
-									}
-								}
-							}							
-						]						
-					}
+					comparePanelItemGenerator('compareAPanel', 'componentA','left'),
+					comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
 				]
 			});
 			
