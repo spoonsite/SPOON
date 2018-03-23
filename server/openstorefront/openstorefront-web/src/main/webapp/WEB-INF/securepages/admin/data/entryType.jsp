@@ -32,6 +32,49 @@
 			Ext.require('OSF.tool.EntryTypeAttributes');
 			
 			Ext.onReady(function(){	
+				
+				window.entryTypeAssignedRender = function (data, type) {
+					data = data.split(',');
+					var windowConfig = {
+						modal: true,
+						minWidth: 200,
+						closeAction: 'destroy',
+						listeners:	{
+							show: function() {        
+								this.removeCls("x-unselectable");    
+							}
+						},
+						title: type === 'roles' ? 'Assigned Groups' : 'Assigned Users'
+					};
+
+					if (type === 'roles') {
+						Ext.Array.forEach(data, function (el, index) {
+							data[index] = {html: el, xtype: 'container', padding: 15};
+						});
+						Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
+					}
+					else {
+
+						Ext.Ajax.request({
+							url: 'api/v1/resource/userprofiles/lookup',
+							success: function (response) {
+
+								var allUsers = Ext.decode(response.responseText);
+								for (var i = 0; i < allUsers.length; i += 1) {
+									for (var j = 0; j < data.length; j += 1) {
+
+										if (allUsers[i].code === data[j]) {
+											data[j] = {html: allUsers[i].description, padding: 15};
+										}
+									}
+								}
+
+								Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
+							}
+						});
+					}
+				};				
+				
 				var entryTypeAssignedCellTemplate = new Ext.XTemplate(						
 				);
 

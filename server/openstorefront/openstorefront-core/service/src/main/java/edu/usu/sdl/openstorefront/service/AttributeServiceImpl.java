@@ -1111,7 +1111,11 @@ public class AttributeServiceImpl
 			if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 					if (restriction.getComponentType().equals(componentType)) {
-						requiredAttributes.add(attributeType);
+
+						List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
+						if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+							requiredAttributes.add(attributeType);
+						}
 					}
 				}
 			}

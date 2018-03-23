@@ -801,9 +801,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 																			var form = this.up('form');
 																			var data = form.getValues();
 																			var addTypeWin = this.up('window');
-
+																			
+																			var componentType = submissionPanel.componentType;
+																			if (componentType) {
+																				componentType = encodeURIComponent(componentType);
+																			} else {
+																				componentType = '';
+																			}
+																			
 																			CoreUtil.submitForm({
-																				url: 'api/v1/resource/attributes/attributetypes/metadata',
+																				url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + componentType,
 																				method: 'POST',
 																				data: data,
 																				form: form,
@@ -3375,6 +3382,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 									} else {
 										submissionPanel.componentId = data.component.componentId;
 									}
+									
+									if (data.componentType) {
+										submissionPanel.componentType = data.componentType;
+									} else {
+										submissionPanel.componentType = data.component.componentType;
+									}
 
 									//save profile updates
 									submissionPanel.setLoading('Updating Profile...');
@@ -3568,6 +3581,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			},
 			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
+				submissionPanel.componentType = data.componentType;
 
 				//load required form				
 				var componentModel = Ext.create('Ext.data.Model', {});

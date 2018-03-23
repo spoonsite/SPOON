@@ -529,20 +529,8 @@ public class AttributeResource
 	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
 		AttributeType attributeType = attributeTypeSave.getAttributeType();
-		if (attributeTypeSave.getComponentTypeRestrictions() != null
-				&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
-			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
-		} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
-			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
-		}
-
-		if (attributeTypeSave.getAssociatedComponentTypes() != null
-				&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
-			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-		} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
-			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-		}
-
+		attributeType.setRequiredRestrictions(attributeTypeSave.getRequiredComponentType());
+		attributeType.setOptionalRestrictions(attributeTypeSave.getOptionalComponentTypes());
 		return handleAttributePostPutType(attributeType, true);
 	}
 
@@ -553,7 +541,11 @@ public class AttributeResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes/metadata")
-	public Response createMetaDataAttributeType(AttributeTypeMetadata attributeTypeMetadata)
+	public Response createMetaDataAttributeType(
+			@APIDescription("Set component type to make this optional for. If not set then it will be optional for all types")
+			@QueryParam("componentType") String componentType,
+			AttributeTypeMetadata attributeTypeMetadata
+	)
 	{
 		ValidationModel validationModel = new ValidationModel(attributeTypeMetadata);
 		validationModel.setConsumeFieldsOnly(true);
@@ -574,6 +566,7 @@ public class AttributeResource
 			attributeType.setImportantFlg(Boolean.FALSE);
 			attributeType.setRequiredFlg(Boolean.FALSE);
 			attributeType.setVisibleFlg(Boolean.FALSE);
+			attributeType.addOptionalComponentType(componentType);
 
 			service.getAttributeService().saveAttributeType(attributeType);
 
@@ -620,18 +613,8 @@ public class AttributeResource
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);
 		if (existing != null) {
 			AttributeType attributeType = attributeTypeSave.getAttributeType();
-			if (attributeTypeSave.getComponentTypeRestrictions() != null
-					&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
-				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
-			} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
-				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
-			}
-			if (attributeTypeSave.getAssociatedComponentTypes() != null
-					&& !attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
-				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-			} else if (attributeTypeSave.getAssociatedComponentTypes() == null && attributeTypeSave.getAssociatedComponentTypes().isEmpty()) {
-				attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
-			}
+			attributeType.setRequiredRestrictions(attributeTypeSave.getRequiredComponentType());
+			attributeType.setOptionalRestrictions(attributeTypeSave.getOptionalComponentTypes());
 			attributeType.setAttributeType(type);
 			return handleAttributePostPutType(attributeType, true);
 		} else {

@@ -126,22 +126,34 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 								Ext.Array.each(data.records, function(record) {
 									var saveAttribute = {
 										attributeType: record.data,
-										componentTypeRestrictions: [										
+										requiredComponentType: [										
 										],
-										associatedComponentTypes: [										
+										optionalComponentTypes: [										
 										]
 									};
 									delete saveAttribute.attributeType.type;
-									Ext.Array.each(allComponentTypes, function(componentType) {
-										if (attributePanel.selectedComponentType !== componentType.code) {
-											saveAttribute.componentTypeRestrictions.push({
-												componentType: componentType.code
-											});
-											saveAttribute.associatedComponentTypes.push({
-												componentType: componentType.code
-											});										
-										}
-									});								
+									
+									//just remove required and optional
+									if (saveAttribute.attributeType.requiredRestrictions) {
+										Ext.Array.each(saveAttribute.attributeType.requiredRestrictions, function(existing) {
+											if (existing.componentType !== attributePanel.selectedComponentType) {												
+												saveAttribute.requiredComponentType.push({
+													componentType: existing.componentType
+												});
+											}
+										});	
+									}
+									
+									if (saveAttribute.attributeType.optionalRestrictions) {
+										Ext.Array.each(saveAttribute.attributeType.optionalRestrictions, function(existing) {
+											if (existing.componentType !== attributePanel.selectedComponentType) {												
+												saveAttribute.optionalComponentTypes.push({
+													componentType: existing.componentType
+												});
+											}
+										});	
+									}
+									
 									attributesToSave.push(saveAttribute);
 								});
 								saveAttributes(attributesToSave);							
@@ -213,16 +225,16 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 								Ext.Array.each(data.records, function(record) {
 									var saveAttribute = {
 										attributeType: record.data,
-										componentTypeRestrictions: [										
+										requiredComponentType: [										
 										],
-										associatedComponentTypes: [										
+										optionalComponentTypes: [										
 										]
 									};
 									delete saveAttribute.attributeType.type;									
-									saveAttribute.attributeType.requiredFlg = true;
-
+									
+									//add to required
 									if (saveAttribute.attributeType.requiredRestrictions) {
-										var foundExisting = Ext.Array.findby(saveAttribute.attributeType.requiredRestrictions, function(existing) {
+										var foundExisting = Ext.Array.findBy(saveAttribute.attributeType.requiredRestrictions, function(existing) {
 											if (existing.componentType === attributePanel.selectedComponentType) {
 												return existing;
 											}
@@ -232,49 +244,23 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 												componentType: attributePanel.selectedComponentType
 											});
 										}
-										saveAttribute.componentTypeRestrictions.concat(saveAttribute.attributeType.requiredRestrictions);
+										saveAttribute.requiredComponentType = saveAttribute.requiredComponentType.concat(saveAttribute.attributeType.requiredRestrictions);
+									} else {
+										saveAttribute.requiredComponentType.push({
+												componentType: attributePanel.selectedComponentType
+										});
 									}
 									
-									if (saveAttribute.attributeType.associatedComponentTypes) {
-										var foundExisting = Ext.Array.findby(saveAttribute.attributeType.associatedComponentTypes, function(existing) {
-											if (existing.componentType === attributePanel.selectedComponentType) {
-												return existing;
+									//remove from optional
+									if (saveAttribute.attributeType.optionalRestrictions) {
+										Ext.Array.each(saveAttribute.attributeType.optionalRestrictions, function(existing) {
+											if (existing.componentType !== attributePanel.selectedComponentType) {												
+												saveAttribute.optionalComponentTypes.push({
+													componentType: existing.componentType
+												});
 											}
 										});	
-										if (!foundExisting) {
-											saveAttribute.attributeType.associatedComponentTypes.push({
-												componentType: attributePanel.selectedComponentType
-											});
-										}
-										saveAttribute.associatedComponentTypes.concat(saveAttribute.attributeType.associatedComponentTypes);
-									}	
-									
-									if (!saveAttribute.attributeType.requiredRestrictions ||
-											saveAttribute.attributeType.requiredRestrictions.length === 0)
-									{
-										//add selected
-										Ext.Array.each(allComponentTypes, function(componentType) {																				
-											if (attributePanel.selectedComponentType === componentType.code) {
-												saveAttribute.componentTypeRestrictions.push({
-													componentType: componentType.code
-												});																					
-											}
-										});
-									}
-									
-									if (!saveAttribute.attributeType.associatedComponentTypes ||
-											saveAttribute.attributeType.associatedComponentTypes.length === 0)
-									{
-										//add selected
-										Ext.Array.each(allComponentTypes, function(componentType) {																				
-											if (attributePanel.selectedComponentType === componentType.code) {
-												saveAttribute.associatedComponentTypes.push({
-													componentType: componentType.code
-												});																					
-											}
-										});
 									}									
-									
 									
 									attributesToSave.push(saveAttribute);
 								});
@@ -337,75 +323,41 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 								Ext.Array.each(data.records, function(record) {
 									var saveAttribute = {
 										attributeType: record.data,
-										componentTypeRestrictions: [										
+										requiredComponentType: [										
 										],
-										associatedComponentTypes: [										
+										optionalComponentTypes: [										
 										]
 									};
 									delete saveAttribute.attributeType.type;
-																		
-									if (saveAttribute.attributeType.requiredRestrictions &&
-											saveAttribute.attributeType.requiredRestrictions.length > 0
-										) {
 									
-										//remove from existing
-										var newList = [];
-										Ext.Array.each(saveAttribute.attributeType.requiredRestrictions, function(existing) {
-											if (existing.componentType !== attributePanel.selectedComponentType) {
-												newList.push(existing);
-											}
-										});	
-										if (newList.length === 0) {
-											saveAttribute.attributeType.requiredFlg = false;
-											saveAttribute.componentTypeRestrictions = [];
-										} else {
-											saveAttribute.attributeType.requiredRestrictions = newList;
-											saveAttribute.componentTypeRestrictions.concat(newList);
-										}										
-									}
-									
-									if (saveAttribute.attributeType.associatedComponentTypes &&
-											saveAttribute.attributeType.associatedComponentTypes.length > 0) {
-										
-										///Add from existing										
-										var newList = [];
-										var found = Ext.Array.findBy(saveAttribute.attributeType.associatedComponentTypes, function(existing) {
+									//add to optional
+									if (saveAttribute.attributeType.optionalRestrictions) {
+										var foundExisting = Ext.Array.findBy(saveAttribute.attributeType.optionalRestrictions, function(existing) {
 											if (existing.componentType === attributePanel.selectedComponentType) {
 												return existing;
 											}
 										});	
-										if (!found) {
-											saveAttribute.attributeType.associatedComponentTypes.push({
-												componentType: attributePanel.selectedComponentType 
+										if (!foundExisting) {
+											saveAttribute.attributeType.optionalRestrictions.push({
+												componentType: attributePanel.selectedComponentType
 											});
-										}										
-										saveAttribute.associatedComponentTypes = saveAttribute.associatedComponentTypes.concat(saveAttribute.attributeType.associatedComponentTypes);
-									}						
-									
-									if (!saveAttribute.attributeType.requiredRestrictions ||
-											saveAttribute.attributeType.requiredRestrictions.length === 0)
-									{
-										//add all but selected
-										Ext.Array.each(allComponentTypes, function(componentType) {																				
-											if (attributePanel.selectedComponentType !== componentType.code) {
-												saveAttribute.componentTypeRestrictions.push({
-													componentType: componentType.code
-												});																					
-											}
+										}
+										saveAttribute.optionalComponentTypes = saveAttribute.optionalComponentTypes.concat(saveAttribute.attributeType.optionalRestrictions);
+									} else {
+										saveAttribute.optionalComponentTypes.push({
+											componentType: attributePanel.selectedComponentType
 										});
 									}
 									
-									if (!saveAttribute.attributeType.associatedComponentTypes ||
-											saveAttribute.attributeType.associatedComponentTypes.length === 0)
-									{
-										//add all but selected
-										Ext.Array.each(allComponentTypes, function(componentType) {																				
-											if (attributePanel.selectedComponentType === componentType.code) {
-												saveAttribute.associatedComponentTypes.push({
-													componentType: componentType.code
-												});																					
+									//remove from required
+									if (saveAttribute.attributeType.requiredRestrictions) {
+										Ext.Array.each(saveAttribute.attributeType.requiredRestrictions, function(existing) {
+											if (existing.componentType !== attributePanel.selectedComponentType) {												
+												saveAttribute.requiredComponentType.push({
+													componentType: existing.componentType
+												});
 											}
-										});
+										});	
 									}
 									
 									attributesToSave.push(saveAttribute);
@@ -542,22 +494,20 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 		};
 		
 		var saveAttributes = function(attributeTypes) {
-			if (attributeTypes.length > 0) {
-				
-				console.log('save', attributeTypes);
-				
-//				attributePanel.setLoading('Saving Changes...');
-//				Ext.Ajax.request({
-//					url: 'api/v1/resource/attributes/attributetypes/types',
-//					method: 'PUT',
-//					jsonData: attributeTypes,
-//					callback: function() {
-//						attributePanel.setLoading(false);
-//					},
-//					success: function(response, opts) {
-//						Ext.toast('Saved changes');
-//					}
-//				});
+			if (attributeTypes.length > 0) {				
+						
+				attributePanel.setLoading('Saving Changes...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/attributes/attributetypes/types',
+					method: 'PUT',
+					jsonData: attributeTypes,
+					callback: function() {
+						attributePanel.setLoading(false);
+					},
+					success: function(response, opts) {
+						Ext.toast('Saved changes');
+					}
+				});
 				
 			}
 		};

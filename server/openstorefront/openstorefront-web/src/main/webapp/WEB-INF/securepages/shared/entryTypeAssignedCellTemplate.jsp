@@ -35,57 +35,42 @@
 	<div class="sub-cell-status cell">
 		<tpl if="cameFromAncestor">
 			<div>
+				<tpl if='data.length &gt; 1'>
 				<i class="fa fa-sitemap inherit-symbol" 
-					style="margin-top: <tpl if='data.length &gt; 1'>1<tpl else>0</tpl>em;"
-					data-qtip="<tpl if="type=='roles'">Group(s)<tpl else>User(s)</tpl> inherited from '<b>{rootNode.data.componentType.componentType}</b>'"
-				></i>
+					style="margin-top: 1em;"
+					data-qtip="<tpl if="type=='roles'">Group(s)<tpl else>User(s)</tpl> inherited from '<b>{rootNode.data.componentType.componentType}</b>'">
+				</i>
+				<tpl else>
+					<i class="fa fa-sitemap inherit-symbol" 
+						style="margin-top: 0em;"
+						data-qtip="<tpl if="type=='roles'">Group(s)<tpl else>User(s)</tpl> inherited from '<b>{rootNode.data.componentType.componentType}</b>'">
+					</i>
+				</tpl>	
 			</div>
 		</tpl>
 		<tpl if="!cameFromAncestor">
 			<div>
-				<button class="cell-button" style="margin-top: <tpl if='data.length &gt; 1 && !cameFromAncestor'>1<tpl else>0</tpl>em;" onclick="
-					(function (data, type) {
-						data = data.split(',');
-						var windowConfig = {
-							modal: true,
-							minWidth: 200,
-							title: type === 'roles' ? 'Assigned Groups' : 'Assigned Users'
-						};
-
-						if (type === 'roles') {
-							Ext.Array.forEach(data, function (el, index) {
-								data[index] = {html: el, xtype: 'container', padding: 15};
-							});
-							Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
-						}
-						else {
-
-							Ext.Ajax.request({
-								url: 'api/v1/resource/userprofiles/lookup',
-								success: function (response) {
-
-									var allUsers = Ext.decode(response.responseText);
-									for (var i = 0; i < allUsers.length; i += 1) {
-										for (var j = 0; j < data.length; j += 1) {
-
-											if (allUsers[i].code === data[j]) {
-												data[j] = {html: allUsers[i].description, padding: 15};
-											}
-										}
-									}
-
-									Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
-								}
-							})
-						}
-					}('{data}', '{type}'));
-				">
+				<tpl if='data.length &gt; 1 && !cameFromAncestor'>
+				<button class="cell-button" style="margin-top: 1em;" onclick="
+					window.entryTypeAssignedRender('{data}', '{type}');
+				">					
 					<tpl if="type == 'roles'">
 						View Groups
 					<tpl else>
 						View Users
 					</tpl>
 				</button>
+				<tpl else>
+					<button class="cell-button" style="margin-top: 0em;" onclick="
+					window.entryTypeAssignedRender('{data}', '{type}');
+					">					
+						<tpl if="type == 'roles'">
+							View Groups
+						<tpl else>
+							View Users
+						</tpl>
+					</button>
+				</tpl>	
 			</div>
 		</tpl>
 	</div>

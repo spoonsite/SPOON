@@ -288,7 +288,9 @@ public interface AttributeService
 	public void removeAttributeCodeAttachment(AttributeCode attributeCode);
 
 	/**
-	 * gets the required attributes giving a component type
+	 * gets the required attributes giving a component type The Attribute Type
+	 * must have codes or allow user generated code for this return the
+	 * attribute type.
 	 *
 	 * @param componentType
 	 * @param submissionTypesOnly

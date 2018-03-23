@@ -37,14 +37,6 @@ public class FindAttributeTest
 	@Override
 	protected void runInternalTest()
 	{
-		results.append("Required Types (Existing)").append("<br>");
-		List<AttributeType> attributeTypes = service.getAttributeService().getRequiredAttributes();
-		attributeTypes.forEach(type -> {
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(type.getAttributeType());
-			attributeCodes.forEach(code -> {
-				results.append(type.getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
-			});
-		});
 
 		results.append("<br>Save attribute type").append("<br>");
 		attributeType = new AttributeType();

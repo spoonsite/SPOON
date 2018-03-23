@@ -377,7 +377,7 @@ Ext.define('OSF.form.Attributes', {
 																		var addTypeWin = this.up('window');
 
 																		CoreUtil.submitForm({
-																			url: 'api/v1/resource/attributes/attributetypes/metadata',
+																			url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + encodeURIComponent(attributePanel.component.componentType),
 																			method: 'POST',
 																			data: data,
 																			form: form,

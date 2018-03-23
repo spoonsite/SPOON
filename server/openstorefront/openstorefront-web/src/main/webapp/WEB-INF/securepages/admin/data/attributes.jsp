@@ -17,8 +17,8 @@
  * See NOTICE.txt for more information.
  */
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
+<%@ include file="../../../../layout/includes.jsp" %>
+
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
@@ -110,7 +110,7 @@
 				
 			var attributes = document.getElementById(listId);
 
-			if (button.className != "attribute-button-active")  {
+			if (button.className !== "attribute-button-active")  {
 
 				button.className = "attribute-button-active";
 
@@ -283,38 +283,38 @@
 			///////////////
 
 			Ext.override(Ext.view.DragZone, {
-			Â  Â  getDragText: function() {
-			Â  Â  Â  Â  if (this.dragTextField) {
-			Â  Â  Â  Â  Â  Â  var fieldValue = this.dragData.records[0].get(this.dragTextField);
-			Â  Â  Â  Â  Â  Â  return Ext.String.format(this.dragText, fieldValue);
-			Â  Â  Â  Â  } else {
-			Â  Â  Â  Â  Â  Â  var count = this.dragData.records.length;
-			Â  Â  Â  Â  Â  Â  return Ext.String.format(this.dragText, count, count == 1 ? '' : 's');
-			Â  Â  Â  Â  }
-			Â  Â  }
+			    getDragText: function() {
+			        if (this.dragTextField) {
+			            var fieldValue = this.dragData.records[0].get(this.dragTextField);
+			            return Ext.String.format(this.dragText, fieldValue);
+			        } else {
+			            var count = this.dragData.records.length;
+			            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
+			        }
+			    }
 			});
 
 
 			Ext.override(Ext.grid.plugin.DragDrop, {
-			Â  Â  onViewRender : function(view) {
-			Â  Â  Â  Â  var me = this;
+			    onViewRender : function(view) {
+			        var me = this;
 
-			Â  Â  Â  Â  if (me.enableDrag) {
-			Â  Â  Â  Â  Â  Â  me.dragZone = Ext.create('Ext.view.DragZone', {
-			Â  Â  Â  Â  Â  Â  Â  Â  view: view,
-			Â  Â  Â  Â  Â  Â  Â  Â  ddGroup: me.dragGroup || me.ddGroup,
-			Â  Â  Â  Â  Â  Â  Â  Â  dragText: me.dragText,
-			Â  Â  Â  Â  Â  Â  Â  Â  dragTextField: me.dragTextField
-			Â  Â  Â  Â  Â  Â  });
-			Â  Â  Â  Â  }
+			        if (me.enableDrag) {
+			            me.dragZone = Ext.create('Ext.view.DragZone', {
+			                view: view,
+			                ddGroup: me.dragGroup || me.ddGroup,
+			                dragText: me.dragText,
+			                dragTextField: me.dragTextField
+			            });
+			        }
 
-			Â  Â  Â  Â  if (me.enableDrop) {
-			Â  Â  Â  Â  Â  Â  me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
-			Â  Â  Â  Â  Â  Â  Â  Â  view: view,
-			Â  Â  Â  Â  Â  Â  Â  Â  ddGroup: me.dropGroup || me.ddGroup
-			Â  Â  Â  Â  Â  Â  });
-			Â  Â  Â  Â  }
-			Â  Â  }
+			        if (me.enableDrop) {
+			            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
+			                view: view,
+			                ddGroup: me.dropGroup || me.ddGroup
+			            });
+			        }
+			    }
 			});
 
 			///////////////////
@@ -388,7 +388,20 @@
 						flex: 1, 
 						tooltip: 'Is the attribute required upon adding a new component?',
 						align: 'center',
-						renderer: CoreUtil.renderer.booleanRenderer
+						renderer: function(value, meta, record) {							
+							var restricted = false;
+							if (record.get('requiredRestrictions') && 
+								record.get('requiredRestrictions').length > 0) {
+								restricted = true;
+							}
+							if (restricted) {
+								meta.tdCls = 'alert-success';
+								return '<i class="fa fa-check"></i>';
+							} else {
+								meta.tdCls = 'alert-danger';
+								return '<i class="fa fa-close"></i>';
+							}
+						}
 					},
 					{
 						text: 'Visible', 
@@ -669,79 +682,28 @@
 					Ext.getCmp('attributeGrid-tools-export').setHidden(false);
 				}				
 			});			
-			
 
 			var actionAddAttribute = function() {				
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
-				Ext.getCmp('editAttributeForm-defaultCode').hide();
-				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
+				Ext.getCmp('editAttributeForm-defaultCode').show();			
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
-			
-			
-			var actionManageAssignments = function() {
-				
-				// Display Assignment Management Window
-				manageAssignmentsWin.show();
-			};
-
 
 			var actionEditAttribute = function(record) {
-				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType);
+				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
 				
-				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
-				Ext.getCmp('allEntryTypes').setValue(true);
-				Ext.getCmp('requiredFlagCheckBox').setValue(false);
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);				
 				//Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				//Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 				//Ext.getCmp('editAttributeForm').reset();
 				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
-				Ext.getCmp('editAttributeForm').setLoading(true);				
-				Ext.Ajax.request({
-					url: 'api/v1/resource/componenttypes/lookup',
-					callback: function() {
-						Ext.getCmp('editAttributeForm').setLoading(false);
-					},
-					success: function(response, opt) {
-						var componentTypes = Ext.decode(response.responseText);
-						
-						var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
-						// Search the searchStore for the record matching the given code,
-						// that way we can display the name of the entry type rather than
-						// just the code.
-						if (record.getData().requiredRestrictions) {
-							Ext.getCmp('requiredFlagCheckBox').setValue(true);					
-							Ext.Array.each(record.getData().requiredRestrictions, function(type) {
-								var componentTypeData = Ext.Array.findBy(componentTypes, function(item){
-									return item.code === type.componentType;
-								});							
-								requiredEntryTypes.add(componentTypeData);						
-							});
-						}
 
-						// And the same for the associated component types, as well as disabling the 'All' checkbox.
-						if (record.getData().associatedComponentTypes) {
-							Ext.getCmp('allEntryTypes').setValue(false);
-							var associatedComponentTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore();					
-							Ext.Array.each(record.getData().associatedComponentTypes , function(type) {
-								var componentTypeData = Ext.Array.findBy(componentTypes, function(item){
-									return item.code === type.componentType;
-								});							
-								associatedComponentTypes.add(componentTypeData);
-							});
-						} 						
-						
-					}
-				});
-				
-
-				Ext.getCmp('editAttributeForm-defaultCode').show();
-				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
+				Ext.getCmp('editAttributeForm-defaultCode').show();				
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retreive codes to populate form options
 				var url = 'api/v1/resource/attributes/attributetypes/';
@@ -780,11 +742,6 @@
 					// Enable Update Button
 					enable = true;
 				}
-//				else if (Ext.getCmp('set-flags-required-group').getValue().required !== null) {
-//					
-//					// Enable Update Button
-//					enable = true;
-//				}
 				else if (Ext.getCmp('set-flags-important-group').getValue().important !== null) {
 					
 					// Enable Update Button
@@ -838,8 +795,7 @@
 						xtype: 'form',
 						itemId: 'setFlagsForm',
 						bodyStyle: 'padding: 10px',
-						items: [
-							
+						items: [							
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-visible-group',
@@ -856,29 +812,10 @@
 									{boxLabel: 'False', name: 'visible', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'visible', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {
-									
+								listeners: {									
 									change: setFlagsWin_DisableUpdate
 								}
 							},
-//							{
-//								xtype: 'radiogroup',
-//								id: 'set-flags-required-group',
-//								fieldLabel: 'Required',
-//								labelAlign: 'top',
-//								width: '100%',
-//								columns: 3,
-//								margin: '0 0 10 0',
-//								items: [
-//									{boxLabel: 'True', name: 'required', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
-//									{boxLabel: 'False', name: 'required', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
-//									{boxLabel: 'No Change', name: 'required', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
-//								],
-//								listeners: {
-//									
-//									change: setFlagsWin_DisableUpdate
-//								}
-//							},
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-important-group',
@@ -892,8 +829,7 @@
 									{boxLabel: 'False', name: 'important', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'important', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {
-									
+								listeners: {									
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -910,15 +846,14 @@
 									{boxLabel: 'False', name: 'architecture', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'architecture', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {
-									
+								listeners: {									
 									change: setFlagsWin_DisableUpdate
 								}
 							},
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-multiples-group',
-								fieldLabel: 'Allow Multiples <i class="fa fa-lg fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Delete the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
+								fieldLabel: 'Allow Multiples',
 								labelAlign: 'top',
 								width: '100%',
 								columns: 3,
@@ -928,8 +863,7 @@
 									{boxLabel: 'False', id: 'set-flags-multiples-group-false', name: 'multiples', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', id: 'set-flags-multiples-group-none', name: 'multiples', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {
-									
+								listeners: {									
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -1105,37 +1039,6 @@
 						// Get Number Selected
 						var selected = attributeGrid.getSelectionModel().getCount();
 						
-						// Loop Through Selected
-						for (i = 0; i < selected; i++) {
-							
-							// Check For Required
-							if (selection[i].getData().requiredFlg) {
-								
-								// Disable Allow Multiples
-								Ext.getCmp('set-flags-multiples-group-true').disable();
-								Ext.getCmp('set-flags-multiples-group-false').disable();
-								Ext.getCmp('set-flags-multiples-group-none').disable();
-								
-								// Mask Fields
-								Ext.getCmp('set-flags-multiples-group-true').mask();
-								Ext.getCmp('set-flags-multiples-group-false').mask();
-								Ext.getCmp('set-flags-multiples-group-none').mask();
-								
-								// Stop Looping
-								return;
-							}
-						}
-						
-						// Enable Allow Multiples
-						// (Loop Didn't Prematurely End)
-						Ext.getCmp('set-flags-multiples-group-true').enable();
-						Ext.getCmp('set-flags-multiples-group-false').enable();
-						Ext.getCmp('set-flags-multiples-group-none').enable();
-						
-						// Unmask Fields
-						Ext.getCmp('set-flags-multiples-group-true').unmask();
-						Ext.getCmp('set-flags-multiples-group-false').unmask();
-						Ext.getCmp('set-flags-multiples-group-none').unmask();
 					},
 					show: function (me) {
 						var selection = Ext.getCmp('attributeGrid').getSelection();
@@ -2159,10 +2062,8 @@
 
 			};
 
-
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
-				iconCls: 'fa fa-2x fa-list-alt',
 				title: 'Manage Codes',
 				iconCls: 'fa fa-lg fa-list-alt icon-small-vertical-correction',
 				modal: true,
@@ -2180,7 +2081,7 @@
 						dock: 'bottom',
 						items: [
 							{
-								xtype: 'tbfill',
+								xtype: 'tbfill'
 							},
 							{
 								text: 'Close',
@@ -2197,7 +2098,7 @@
 				]
 			});
 
-			var showAttributeWin = function(edit, title) {
+			var showAttributeWin = function(edit, title, record) {
 				
 				var formChange = {
 					change: function () {
@@ -2291,48 +2192,6 @@
 											url: 'api/v1/resource/lookuptypes/AttributeValueType'
 										}
 									}
-								},	
-								{
-									xtype: 'panel',
-									html: '<b>Associated Entry Types:</b>'
-								},
-								{
-									xtype: 'checkboxfield',
-									id: 'allEntryTypes',
-									boxLabel: 'Allow For All Entry Types',
-									value: true,
-									handler: function(box, value) {
-										if (value) {
-											Ext.getCmp('editAttributeForm-associatedComponentTypes').hide();
-										} else {
-											Ext.getCmp('editAttributeForm-associatedComponentTypes').show();
-										}
-									}
-								},
-								{
-									xtype: 'multiselector',
-									id: 'editAttributeForm-associatedComponentTypes',
-									hidden: true,
-									title: 'Allow this attribute for these entry types: (click plus icon to add)',
-									name: 'associatedComponentTypes',
-									fieldName: 'description',
-									fieldTitle: 'Entry Type',
-									viewConfig: {
-										deferEmptyText: false,
-										emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
-									},
-									search: {
-										id: 'allowForTypesSearch',
-										field: 'description',
-										bodyStyle: 'background: white;',
-										store: Ext.create('Ext.data.Store', {											
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/componenttypes/lookup'												
-											},
-											autoLoad: true
-										})
-									}
 								},
 								{
 									xtype: 'panel',
@@ -2346,39 +2205,7 @@
 									defaults: {
 										flex: 1
 									},
-									items: [
-										{
-											name: 'requiredFlg',
-											id: 'requiredFlagCheckBox',
-											boxLabel: 'Required',
-											listeners: {
-												change: function(reqBox, newValue) {
-													if (newValue)
-														{
-															Ext.getCmp('editAttributeForm-typesRequiredFor').show();
-
-															var select = Ext.getCmp('editAttributeForm-defaultCode');
-															if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
-																select.setFieldLabel('Default Code<span class="field-required" />');
-																select.allowBlank = false;
-															} else {
-																select.setFieldLabel('Default Code');
-																select.allowBlank = true;
-																select.clearInvalid();
-															}
-
-														}
-														else {
-															Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
-															var select = Ext.getCmp('editAttributeForm-defaultCode');
-															select.setFieldLabel('Default Code');
-															select.allowBlank = true;
-															select.clearInvalid();
-														}
-													formChange.change();
-												}
-											}
-										},
+									items: [										
 										{
 											name: 'visibleFlg',
 											boxLabel: 'Visible',
@@ -2413,7 +2240,7 @@
 											listeners: {
 												change: function(box, newValue) {
 													var select = Ext.getCmp('editAttributeForm-defaultCode');
-													if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
+													if (newValue === true) {
 														select.setFieldLabel('Default Code<span class="field-required" />');
 														select.allowBlank = false;
 													}
@@ -2429,33 +2256,83 @@
 									]
 								},
 								{
-									xtype: 'multiselector',
-									id: 'editAttributeForm-typesRequiredFor',
-									hidden: true,
-									title: 'Require this attribute for these entry types: (click plus icon to add)',
-									name: 'typesRequiredFor',
-									fieldName: 'description',
-									fieldTitle: 'Entry Type',
-									viewConfig: {
-										deferEmptyText: false,
-										emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
+									xtype: 'panel',
+									layout: {
+										type: 'hbox',
+										align: 'stretch'
 									},
-									search: {									
-										field: 'description',
-										autoEl: {
-											"data-test": "reqAttrList"
-										},
-										bodyStyle: 'background: white;',
-										store: Ext.create('Ext.data.Store', {											
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/componenttypes/lookup'												
+									height: 200,
+									items: [
+										{
+											xtype: 'grid',
+											itemId: 'unassociatedGrid',
+											title: 'Unassociated',
+											selModel: {
+												selType: 'rowmodel', 
+												mode: 'MULTI'
 											},
-											autoLoad: true
-										})
-									},
-									listeners: formChange
-								},
+											viewConfig: {
+												plugins: {
+													ptype: 'gridviewdragdrop',
+													dragText: 'Drag and drop to Add to template'
+												}
+											},											
+											border: true,
+											width: '33%',
+											margin: '0 20 0 0',
+											store: {
+											},
+											columns: [
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
+											]
+										},
+										{
+											xtype: 'grid',
+											itemId: 'optionalGrid',
+											title: 'Optional',
+											selModel: {
+												selType: 'rowmodel', 
+												mode: 'MULTI'
+											},
+											viewConfig: {
+												plugins: {
+													ptype: 'gridviewdragdrop',
+													dragText: 'Drag and drop to Add to template'
+												}
+											},											
+											border: true,
+											width: '33%',
+											margin: '0 20 0 0',
+											store: {
+											},
+											columns: [
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
+											]											
+										},
+										{
+											xtype: 'grid',
+											itemId: 'requiredGrid',
+											title: 'Required',
+											selModel: {
+												selType: 'rowmodel', 
+												mode: 'MULTI'
+											},
+											viewConfig: {
+												plugins: {
+													ptype: 'gridviewdragdrop',
+													dragText: 'Drag and drop to Add to template'
+												}
+											},											
+											border: true,
+											width: '33%',
+											store: {
+											},
+											columns: [
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
+											]											
+										}
+									]
+								}
 							],
 							dockedItems: [
 								{
@@ -2488,34 +2365,20 @@
 													var data = {};
 													data.attributeType = formData;
 
-													// If we have a set of entry types for which this attribute is associated,
-													// compile them into the consumption format.
-													if (!Ext.getCmp('allEntryTypes').getValue()) { // If box is NOT checked, include the entry type associations.
-														var associatedTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().getData().getValues('code','data');
-
-														data.associatedComponentTypes = [];
-
-														Ext.Array.each(associatedTypes, function(type) {
-															data.associatedComponentTypes.push({
-																componentType: type
-															});		
+													data.requiredComponentType = [];
+													data.optionalComponentTypes = [];
+													
+													editAttributeWin.queryById('requiredGrid').getStore().each(function(typeRecord){
+														data.requiredComponentType.push({
+															componentType: typeRecord.get('code')
 														});
-													}
-
-
-													// If we have a set of entry types for which this attribute is required,
-													// compile them into the consumption format.
-													if (formData.requiredFlg) {
-														var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
-
-														data.componentTypeRestrictions = [];
-
-														Ext.Array.each(restrictedTypes, function(type) {
-															data.componentTypeRestrictions.push({
-																componentType: type
-															});		
+													});
+													
+													editAttributeWin.queryById('optionalGrid').getStore().each(function(typeRecord){
+														data.optionalComponentTypes.push({
+															componentType: typeRecord.get('code')
 														});
-													}
+													});													
 
 													CoreUtil.submitForm({
 														url: url,
@@ -2556,10 +2419,67 @@
 				});
 				editAttributeWin.show();
 				
+				if (record) {
+										
+					editAttributeWin.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/componenttypes/lookup?all=true',
+						callback: function() {
+							editAttributeWin.setLoading(false);
+						},
+						success: function(responseCT, opts) {
+							var componentTypeData = Ext.decode(responseCT.responseText);
+
+							Ext.Array.sort(componentTypeData, function(a, b) {
+								return a.description.localeCompare(b.description);								
+							});
+							
+							var unassociated = [];
+							var optional = [];
+							var required = [];
+							
+							if (!record.data.requiredRestrictions) {
+								record.data.requiredRestrictions = [];
+							}
+							
+							if (!record.data.optionalRestrictions) {
+								record.data.optionalRestrictions = [];
+							}
+							
+							Ext.Array.each(componentTypeData, function(type) {
+								
+								var foundRequired = Ext.Array.findBy(record.data.requiredRestrictions, function(item){
+									if (item.componentType === type.code) {
+										return item;
+									}
+								});
+								
+								var foundOptional = Ext.Array.findBy(record.data.optionalRestrictions, function(item){
+									if (item.componentType === type.code) {
+										return item;
+									}
+								});
+								
+								if (foundRequired) {
+									required.push(type);
+								} else if (foundOptional) {
+									optional.push(type);
+								} else {
+									unassociated.push(type);
+								}
+							});
+							editAttributeWin.queryById('unassociatedGrid').getStore().loadData(unassociated);
+							editAttributeWin.queryById('optionalGrid').getStore().loadData(optional);
+							editAttributeWin.queryById('requiredGrid').getStore().loadData(required);
+							
+							
+						}
+					});
+					
+				}	
+				
+				
 			};
-			
-
-
 		
 			
 			addComponentToMainViewPort(attributeGrid);

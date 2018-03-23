@@ -24,13 +24,17 @@ import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -198,6 +202,69 @@ public class AttributeType
 			}
 		}
 		return validationResult;
+	}
+
+	public void addOptionalComponentType(String componentType)
+	{
+		List<ComponentTypeRestriction> componentTypeRestrictions = new ArrayList<>();
+		boolean addAll = true;
+		List<ComponentType> componentTypes = ServiceProxyFactory.getServiceProxy().getComponentService().getAllComponentTypes();
+		Set<String> componentTypeSet = componentTypes.stream()
+				.map(ComponentType::getComponentType)
+				.collect(Collectors.toSet());
+		if (StringUtils.isNotBlank(componentType)
+				&& componentTypeSet.contains(componentType)) {
+			componentTypeRestrictions.add(new ComponentTypeRestriction(componentType));
+			addAll = false;
+		}
+
+		if (addAll) {
+			for (ComponentType componentTypeFull : componentTypes) {
+				componentTypeRestrictions.add(new ComponentTypeRestriction(componentTypeFull.getComponentType()));
+			}
+		}
+		if (getOptionalRestrictions() == null) {
+			setOptionalRestrictions(componentTypeRestrictions);
+		} else {
+			//merge
+			Set<String> existingSet = getOptionalRestrictions().stream()
+					.map(ComponentTypeRestriction::getComponentType)
+					.collect(Collectors.toSet());
+			for (ComponentTypeRestriction restriction : componentTypeRestrictions) {
+				if (!existingSet.contains(restriction.getComponentType())) {
+					getOptionalRestrictions().add(restriction);
+				}
+			}
+		}
+	}
+
+	public void addRequiredComponentType(String componentType)
+	{
+		List<ComponentTypeRestriction> componentTypeRestrictions = new ArrayList<>();
+		List<ComponentType> componentTypes = ServiceProxyFactory.getServiceProxy().getComponentService().getAllComponentTypes();
+		Set<String> componentTypeSet = componentTypes.stream()
+				.map(ComponentType::getComponentType)
+				.collect(Collectors.toSet());
+		if (StringUtils.isNotBlank(componentType)
+				&& componentTypeSet.contains(componentType)) {
+			componentTypeRestrictions.add(new ComponentTypeRestriction(componentType));
+		}
+
+		if (!componentTypeRestrictions.isEmpty()) {
+			if (getRequiredRestrictions() == null) {
+				setRequiredRestrictions(componentTypeRestrictions);
+			} else {
+				//merge
+				Set<String> existingSet = getRequiredRestrictions().stream()
+						.map(ComponentTypeRestriction::getComponentType)
+						.collect(Collectors.toSet());
+				for (ComponentTypeRestriction restriction : componentTypeRestrictions) {
+					if (!existingSet.contains(restriction.getComponentType())) {
+						getRequiredRestrictions().add(restriction);
+					}
+				}
+			}
+		}
 	}
 
 	@Override

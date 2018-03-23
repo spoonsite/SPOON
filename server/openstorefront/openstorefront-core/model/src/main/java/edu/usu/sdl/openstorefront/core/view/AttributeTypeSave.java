@@ -34,11 +34,11 @@ public class AttributeTypeSave
 
 	@DataType(ComponentTypeRestriction.class)
 	@ConsumeField
-	private List<ComponentTypeRestriction> componentTypeRestrictions = new ArrayList<>();
+	private List<ComponentTypeRestriction> requiredComponentType = new ArrayList<>();
 
 	@DataType(ComponentTypeRestriction.class)
 	@ConsumeField
-	private List<ComponentTypeRestriction> associatedComponentTypes = new ArrayList<>();
+	private List<ComponentTypeRestriction> optionalComponentTypes = new ArrayList<>();
 
 	public AttributeTypeSave()
 	{
@@ -54,24 +54,24 @@ public class AttributeTypeSave
 		this.attributeType = attributeType;
 	}
 
-	public List<ComponentTypeRestriction> getComponentTypeRestrictions()
+	public List<ComponentTypeRestriction> getRequiredComponentType()
 	{
-		return componentTypeRestrictions;
+		return requiredComponentType;
 	}
 
-	public void setComponentTypeRestrictions(List<ComponentTypeRestriction> componentTypeRestrictions)
+	public void setRequiredComponentType(List<ComponentTypeRestriction> requiredComponentType)
 	{
-		this.componentTypeRestrictions = componentTypeRestrictions;
+		this.requiredComponentType = requiredComponentType;
 	}
 
-	public List<ComponentTypeRestriction> getAssociatedComponentTypes()
+	public List<ComponentTypeRestriction> getOptionalComponentTypes()
 	{
-		return associatedComponentTypes;
+		return optionalComponentTypes;
 	}
 
-	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
+	public void setOptionalComponentTypes(List<ComponentTypeRestriction> optionalComponentTypes)
 	{
-		this.associatedComponentTypes = associatedComponentTypes;
+		this.optionalComponentTypes = optionalComponentTypes;
 	}
 
 }

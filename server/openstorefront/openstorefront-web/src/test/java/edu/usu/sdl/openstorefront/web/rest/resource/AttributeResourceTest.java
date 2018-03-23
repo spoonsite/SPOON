@@ -86,6 +86,16 @@ public class AttributeResourceTest extends JerseyShiroTest
 
 		AttributeServiceImpl attributeService = Mockito.mock(AttributeServiceImpl.class);
 		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(new ArrayList<>());
+
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		AttributeCode code = new AttributeCode();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("A");
+		attributeCodePk.setAttributeType("B");
+		code.setAttributeCodePk(attributeCodePk);
+		attributeCodes.add(code);
+
+		Mockito.when(attributeService.findCodesForType(Mockito.anyString())).thenReturn(attributeCodes);
 		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false)).thenCallRealMethod();
 
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
