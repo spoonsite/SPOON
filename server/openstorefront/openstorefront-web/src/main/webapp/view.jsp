@@ -598,7 +598,7 @@
 							entry = Ext.decode(response.responseText);
 							componentId = entry.componentId;
 
-							 root = entry.componentTypeNestedModel;
+							root = entry.componentTypeNestedModel;
 							CoreUtil.traverseNestedModel(root, [], entry);
 
 							Ext.getCmp('titlePanel').update(entry);

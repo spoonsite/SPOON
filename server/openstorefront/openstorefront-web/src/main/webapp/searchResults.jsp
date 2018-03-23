@@ -164,6 +164,9 @@
 								var data = Ext.decode(response.responseText);
 								data = CoreUtil.processEntry(data);
 
+								root = data.componentTypeNestedModel;
+								CoreUtil.traverseNestedModel(root, [], data);
+
 								CoreUtil.calculateEvalutationScore({
 									fullEvaluations: data.fullEvaluations,
 									evaluation: data.fullEvaluations,
