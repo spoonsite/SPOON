@@ -197,6 +197,14 @@ public interface ComponentService
 	public ComponentTypeNestedModel getComponentType(ComponentTypeOptions componentTypeOptions);
 
 	/**
+	* This will pull all children component types given some nested model
+	*
+	* @param ComponentTypeNestedModel
+	* @return List of componentType strings
+	*/
+	public List<String> getComponentTypeChildren(ComponentTypeNestedModel nestedModel);
+
+	/**
 	 * Activates a component; if needed.
 	 *
 	 * @param componentTypeId

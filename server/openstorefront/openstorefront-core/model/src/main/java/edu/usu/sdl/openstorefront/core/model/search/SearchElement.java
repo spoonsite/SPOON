@@ -81,6 +81,10 @@ public class SearchElement
 	@ValidValueType(value = {}, enumClass = MergeCondition.class)
 	@ConsumeField
 	private MergeCondition mergeCondition = MergeCondition.OR;
+	
+	@APIDescription("Used to indicate whether or not to query all children")
+	@ConsumeField
+	private boolean searchChildren;
 
 	public SearchElement()
 	{
@@ -200,5 +204,15 @@ public class SearchElement
 	public void setMergeCondition(SearchOperation.MergeCondition mergeCondition)
 	{
 		this.mergeCondition = mergeCondition;
+	}
+
+	public void setSearchChildren(boolean searchChildren) 
+	{
+		this.searchChildren = searchChildren;
+	}
+
+	public boolean getSearchChildren()
+	{
+		return searchChildren;
 	}
 }
