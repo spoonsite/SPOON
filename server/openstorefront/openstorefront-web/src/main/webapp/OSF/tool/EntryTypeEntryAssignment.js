@@ -63,7 +63,16 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 				}
 			},
 			listeners: {
-				drop: function(node, data, overModel, dropPosition, eOpts) {			
+				beforedrop: function ( node, data, overModel, dropPosition, dropHandlers, eOpts ) {					
+					if (entryAssignmentPanel.leftGridEntryType) {
+						dropHandlers.processDrop();
+					} else {
+						Ext.toast('Select Entry Type First');
+						dropHandlers.cancelDrop();
+					}
+				},
+				drop: function(node, data, overModel, dropPosition, eOpts) {					
+					
 					if (data.view === entryAssignmentPanel.queryById('leftGrid').getView()) {
 						//internal move
 						return;
@@ -98,6 +107,7 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 					listeners: {
 						change: function (filter, newValue, oldValue, opts) {
 							entryAssignmentPanel.leftGridEntryType = newValue;
+														
 							if (newValue) {										
 								filter.up('grid').getStore().load({
 									url: 'api/v1/resource/components/lookup?componentType=' +  encodeURIComponent(newValue)
@@ -176,14 +186,23 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 				}
 			},
 			listeners: {
-				drop: function(node, data, overModel, dropPosition, eOpts) {			
+				beforedrop: function ( node, data, overModel, dropPosition, dropHandlers, eOpts ) {					
+					if (entryAssignmentPanel.rightGridEntryType) {
+						dropHandlers.processDrop();
+					} else {
+						Ext.toast('Select Entry Type First'); 
+						dropHandlers.cancelDrop();
+					}
+				},				
+				drop: function(node, data, overModel, dropPosition, eOpts) {							
+					
 					if (data.view === entryAssignmentPanel.queryById('rightGrid').getView()) {
 						//internal move
 						return;
-					} else {
+					} else {						
 						
 						if (data.records.length > 0 ) {
-							saveChanges(data, entryAssignmentPanel.leftGridEntryType);
+							saveChanges(data, entryAssignmentPanel.rightGridEntryType);
 						}
 					}
 				}
@@ -210,7 +229,8 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 					},
 					listeners: {
 						change: function (filter, newValue, oldValue, opts) {
-							entryAssignmentPanel.rightGridEntryType = newValue;
+							entryAssignmentPanel.rightGridEntryType = newValue;												
+							
 							filter.up('grid').getStore().load({
 								url: 'api/v1/resource/components/lookup?componentType=' +  encodeURIComponent(newValue)
 							});						
