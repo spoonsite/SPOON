@@ -153,6 +153,7 @@ public class ComponentTypeResource
 			lookupModel.setDescription(type.getLabel());
 			lookups.add(lookupModel);
 		});
+		lookups.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookups)
 		{

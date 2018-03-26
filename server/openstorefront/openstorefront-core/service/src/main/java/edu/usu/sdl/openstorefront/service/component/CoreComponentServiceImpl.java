@@ -2423,6 +2423,31 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
+	public Component changeComponentType(String componentId, String newType)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			ComponentType found = persistenceService.findById(ComponentType.class, newType);
+			if (found != null) {
+
+				if (!newType.equals(component.getComponentType())) {
+
+					component.setComponentType(newType);
+					component.populateBaseUpdateFields();
+					persistenceService.persist(component);
+
+					updateComponentLastActivity(componentId);
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find component type.", "Check name of type: " + newType);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
+		}
+		return component;
+	}
+
 	public Component createPendingChangeComponent(String parentComponentId)
 	{
 		//copy (this is a seperate transaction)

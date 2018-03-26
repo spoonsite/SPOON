@@ -634,6 +634,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public Component changeComponentType(String componentId, String newType)
+	{
+		return core.changeComponentType(componentId, newType);
+	}
+
+	@Override
 	public Component createPendingChangeComponent(String parentComponentId)
 	{
 		return core.createPendingChangeComponent(parentComponentId);

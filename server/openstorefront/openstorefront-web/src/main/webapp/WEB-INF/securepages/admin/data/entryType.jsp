@@ -30,6 +30,7 @@
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */			
 			Ext.require('OSF.tool.EntryTypeAttributes');
+			Ext.require('OSF.tool.EntryTypeEntryAssignment');
 			
 			Ext.onReady(function(){	
 				
@@ -473,7 +474,7 @@
 									var rootComponentType = templateData.rootNode.getData().componentType;
 									var iconStyle = 'style="padding: 2px; border-radius: 10px; background: #777; color: #fff;"';
 									var iconCls = 'fa fa-sitemap';
-									var tip = 'Template inherited from \'<b>' + rootComponentType.componentType + '</b>\''
+									var tip = 'Template inherited from \'<b>' + rootComponentType.componentType + '</b>\'';
 
 									return '<i data-qtip="' + tip + '"><i class="' + iconCls + '" ' + iconStyle + '></i> ' + rootComponentType.template.templateName + '</i>';
 								}
@@ -821,15 +822,14 @@
 				};
 				
 				var actionEntryAssignment = function() {
-					
-		
+					var attributeWin = Ext.create('OSF.tool.EntryTypeEntryAssignment', {
+					});
+					attributeWin.show();
 				};
 				
 				var actionAttributeAssignment = function() {
 					
 					var attributeWin = Ext.create('OSF.tool.EntryTypeAttributes', {
-						
-						
 					});
 					attributeWin.show();		
 				};				
