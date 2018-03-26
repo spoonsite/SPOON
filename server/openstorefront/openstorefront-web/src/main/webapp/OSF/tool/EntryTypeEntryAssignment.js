@@ -111,8 +111,16 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 					width: '100%',
 					dock: 'top',
 					emptyText: 'Search',
-					change: function (filter, newValue, oldValue, opts) {
-						
+					listeners: {
+						change: function (filter, newValue, oldValue, opts) {
+							var grid = filter.up('grid');
+							grid.getStore().clearFilter();
+							if (newValue) {
+								grid.getStore().filterBy(function(record){											
+									return record.get('description').toLowerCase().includes(newValue.toLowerCase());
+								});
+							}						
+						}
 					}
 				}
 			]
@@ -214,9 +222,17 @@ Ext.define('OSF.tool.EntryTypeEntryAssignment', {
 					width: '100%',
 					dock: 'top',
 					emptyText: 'Search',
-					change: function (filter, newValue, oldValue, opts) {
-						
-					}
+					listeners: {
+						change: function (filter, newValue, oldValue, opts) {
+							var grid = filter.up('grid');
+							grid.getStore().clearFilter();
+							if (newValue) {
+								grid.getStore().filterBy(function(record){											
+									return record.get('description').toLowerCase().includes(newValue.toLowerCase());
+								});
+							}						
+						}
+					}	
 				}
 			]
 		};
