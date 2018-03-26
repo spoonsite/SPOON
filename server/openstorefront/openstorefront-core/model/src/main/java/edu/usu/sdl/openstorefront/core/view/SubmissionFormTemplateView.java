@@ -25,16 +25,17 @@ import java.util.List;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SubmissionFormTemplateView
 {
 
-	private String templateId;
+	private String submissionTemplateId;
 	private String name;
 	private String description;
 	private String templateStatus;
 	private String templateStatusLabel;
 
-	private List<SubmissionFormStepView> steps = new ArrayList<>();
+	private List<SubmissionFormSectionView> sections = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormTemplateView()
@@ -44,15 +45,15 @@ public class SubmissionFormTemplateView
 	public static SubmissionFormTemplateView toView(SubmissionFormTemplate template)
 	{
 		SubmissionFormTemplateView view = new SubmissionFormTemplateView();
-		view.setTemplateId(template.getTemplateId());
+		view.setSubmissionTemplateId(template.getSubmissionTemplateId());
 		view.setName(template.getName());
 		view.setDescription(template.getDescription());
 		view.setTemplateStatus(template.getTemplateStatus());
 		view.setTemplateStatusLabel(TranslateUtil.translate(SubmissionTemplateStatus.class, template.getTemplateStatus()));
 
-		if (template.getSteps() != null) {
-			template.getSteps().forEach(step -> {
-				view.getSteps().add(SubmissionFormStepView.toView(step));
+		if (template.getSections() != null) {
+			template.getSections().forEach(section -> {
+				view.getSections().add(SubmissionFormSectionView.toView(section));
 			});
 		}
 
@@ -68,24 +69,24 @@ public class SubmissionFormTemplateView
 		return views;
 	}
 
-	public List<SubmissionFormStepView> getSteps()
+	public List<SubmissionFormSectionView> getSections()
 	{
-		return steps;
+		return sections;
 	}
 
-	public void setSteps(List<SubmissionFormStepView> steps)
+	public void setSections(List<SubmissionFormSectionView> sections)
 	{
-		this.steps = steps;
+		this.sections = sections;
 	}
 
-	public String getTemplateId()
+	public String getSubmissionTemplateId()
 	{
-		return templateId;
+		return submissionTemplateId;
 	}
 
-	public void setTemplateId(String templateId)
+	public void setSubmissionTemplateId(String submissionTemplateId)
 	{
-		this.templateId = templateId;
+		this.submissionTemplateId = submissionTemplateId;
 	}
 
 	public String getName()

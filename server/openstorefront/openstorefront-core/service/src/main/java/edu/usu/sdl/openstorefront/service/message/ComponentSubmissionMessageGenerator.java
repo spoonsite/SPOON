@@ -37,6 +37,7 @@ import org.codemonkey.simplejavamail.email.Email;
 public class ComponentSubmissionMessageGenerator
 		extends BaseMessageGenerator
 {
+
 	private static final Logger LOG = Logger.getLogger(ComponentSubmissionMessageGenerator.class.getName());
 
 	public ComponentSubmissionMessageGenerator(MessageContext messageContext)
@@ -84,7 +85,7 @@ public class ComponentSubmissionMessageGenerator
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
-						.append("  submitted by:  ").append(component.getCreateUser())
+						.append("  submitted by:  ").append(component.getSubmissionUser())
 						.append(" at ").append(sdf.format(component.getSubmittedDts()))
 						.append("</li>");
 			}
@@ -104,9 +105,9 @@ public class ComponentSubmissionMessageGenerator
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
-						.append("  originally submitted by:  ").append(component.getCreateUser());					
-				if (component.getSubmittedDts() != null){
-						message.append(" at ").append(sdf.format(component.getSubmittedDts()));
+						.append("  originally submitted by:  ").append(component.getSubmissionUser());
+				if (component.getSubmittedDts() != null) {
+					message.append(" at ").append(sdf.format(component.getSubmittedDts()));
 				}
 				message.append("</li>");
 			}

@@ -48,6 +48,7 @@ public class ComponentView
 	private String securityMarkingDescription;
 	private String componentIconId;
 	private String componentTypeIconUrl;
+	private String currentDataOwner;
 
 	public ComponentView()
 	{
@@ -57,7 +58,7 @@ public class ComponentView
 	{
 		ComponentView componentView = toView(component);
 		if (populateOwnerInfo) {
-			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.getCreateUser());
+			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.findOwnerUsername());
 			if (userProfile != null) {
 				componentView.setOwnerEmail(userProfile.getEmail());
 			}
@@ -74,6 +75,8 @@ public class ComponentView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
+		componentView.setCurrentDataOwner(component.findOwnerUsername());
+
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
 		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));
 		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
@@ -211,6 +214,16 @@ public class ComponentView
 	public void setComponentTypeIconUrl(String componentTypeIconUrl)
 	{
 		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
+	public String getCurrentDataOwner()
+	{
+		return currentDataOwner;
+	}
+
+	public void setCurrentDataOwner(String currentDataOwner)
+	{
+		this.currentDataOwner = currentDataOwner;
 	}
 
 }

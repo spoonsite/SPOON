@@ -201,11 +201,17 @@ public class ComponentServiceImpl
 	{
 		return core.getComponentDetails(componentId);
 	}
-	
+
 	@Override
 	public ComponentDetailView getComponentDetails(String componentId, String evaluationId)
 	{
 		return core.getComponentDetails(componentId, evaluationId);
+	}
+
+	@Override
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation)
+	{
+		return core.getComponentDetails(componentId, showPrivateInformation);
 	}
 
 	@Override
@@ -387,7 +393,7 @@ public class ComponentServiceImpl
 	{
 		return sub.saveResourceFile(resource, fileInput, mimeType, originalFileName);
 	}
-	
+
 	@Override
 	public Boolean setLastViewDts(String componentId, String userId)
 	{
@@ -689,6 +695,12 @@ public class ComponentServiceImpl
 	public String getComponentType(String componentId)
 	{
 		return core.getComponentType(componentId);
+	}
+
+	@Override
+	public Component assignLibrarian(String componentId, String librarianUsername)
+	{
+		return core.assignLibrarian(componentId, librarianUsername);
 	}
 
 }

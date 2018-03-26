@@ -63,6 +63,8 @@ public class ComponentAttributeView
 	private String badgeUrl;
 	private String highlightStyle;
 	private List<ComponentTypeRestriction> requiredRestrictions;
+	private boolean privateFlag;
+	private String comment;
 
 	public ComponentAttributeView()
 	{
@@ -71,6 +73,7 @@ public class ComponentAttributeView
 	public static ComponentAttributeView toView(ComponentAttribute attribute)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
+
 		ComponentAttributeView view = new ComponentAttributeView();
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
@@ -85,6 +88,9 @@ public class ComponentAttributeView
 			view.setOrphan(true);
 			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		}
+
+		view.setPrivateFlag(Convert.toBoolean(attribute.getPrivateFlag()));
+		view.setComment(attribute.getComment());
 
 		if (code != null && type != null) {
 			view.setRequiredRestrictions(type.getRequiredRestrictions());
@@ -427,6 +433,26 @@ public class ComponentAttributeView
 	public void setAllowUserCodes(boolean allowUserCodes)
 	{
 		this.allowUserCodes = allowUserCodes;
+	}
+
+	public boolean getPrivateFlag()
+	{
+		return privateFlag;
+	}
+
+	public void setPrivateFlag(boolean privateFlag)
+	{
+		this.privateFlag = privateFlag;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
 	}
 
 }

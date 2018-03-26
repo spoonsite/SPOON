@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SubmissionFormTemplate
 		extends StandardEntity<SubmissionFormTemplate>
 {
@@ -41,7 +42,7 @@ public class SubmissionFormTemplate
 
 	@PK(generated = true)
 	@NotNull
-	private String templateId;
+	private String submissionTemplateId;
 
 	@NotNull
 	@ConsumeField
@@ -63,10 +64,10 @@ public class SubmissionFormTemplate
 	private String templateStatus;
 
 	@ConsumeField
-	@DataType(SubmissionFormStep.class)
+	@DataType(SubmissionFormSection.class)
 	@Embedded
 	@OneToMany(orphanRemoval = true)
-	private List<SubmissionFormStep> steps;
+	private List<SubmissionFormSection> sections;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormTemplate()
@@ -83,18 +84,18 @@ public class SubmissionFormTemplate
 		this.setName(template.getName());
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
-		this.setSteps(template.getSteps());
+		this.setSections(template.getSections());
 
 	}
 
-	public String getTemplateId()
+	public String getSubmissionTemplateId()
 	{
-		return templateId;
+		return submissionTemplateId;
 	}
 
-	public void setTemplateId(String templateId)
+	public void setSubmissionTemplateId(String submissionTemplateId)
 	{
-		this.templateId = templateId;
+		this.submissionTemplateId = submissionTemplateId;
 	}
 
 	public String getName()
@@ -127,14 +128,14 @@ public class SubmissionFormTemplate
 		this.templateStatus = templateStatus;
 	}
 
-	public List<SubmissionFormStep> getSteps()
+	public List<SubmissionFormSection> getSections()
 	{
-		return steps;
+		return sections;
 	}
 
-	public void setSteps(List<SubmissionFormStep> steps)
+	public void setSections(List<SubmissionFormSection> sections)
 	{
-		this.steps = steps;
+		this.sections = sections;
 	}
 
 }

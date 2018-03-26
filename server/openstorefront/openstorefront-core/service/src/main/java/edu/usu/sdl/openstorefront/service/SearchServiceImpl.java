@@ -374,21 +374,27 @@ public class SearchServiceImpl
 				}
 
 				List<String> idsToResolve = new ArrayList<>();
-				if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
-					int count = 0;
-					for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
-						idsToResolve.add(intermediateViews.get(i).getComponentId());
-						count++;
-						if (count >= searchModel.getMax()) {
-							break;
+				if (indexSearches.isEmpty()) {
+					if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
+						int count = 0;
+						for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
+							idsToResolve.add(intermediateViews.get(i).getComponentId());
+							count++;
+							if (count >= searchModel.getMax()) {
+								break;
+							}
 						}
+					}
+				} else {
+					for (ComponentSearchView view : intermediateViews) {
+						idsToResolve.add(view.getComponentId());
 					}
 				}
 
 				//resolve results
 				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
 
-				if (indexSearches.isEmpty() == false) {
+				if (!indexSearches.isEmpty()) {
 					//only the first one counts
 					String indexQuery = indexSearches.get(0).getValue();
 					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
@@ -401,6 +407,10 @@ public class SearchServiceImpl
 				//	Order by relevance then name
 				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
 					Collections.sort(views, new RelevanceComparator<>());
+				}
+
+				if (!indexSearches.isEmpty()) {
+					views = windowData(views, searchModel.getStartOffset(), searchModel.getMax());
 				}
 
 				//trim descriptions to max length
@@ -419,6 +429,24 @@ public class SearchServiceImpl
 			OSFCacheManager.getSearchCache().put(element);
 		}
 		return searchResult;
+	}
+
+	private List<ComponentSearchView> windowData(List<ComponentSearchView> data, int offset, int max)
+	{
+		List<ComponentSearchView> results = new ArrayList<>();
+
+		//window
+		if (offset < data.size() && max > 0) {
+			int count = 0;
+			for (int i = offset; i < data.size(); i++) {
+				results.add(data.get(i));
+				count++;
+				if (count >= max) {
+					break;
+				}
+			}
+		}
+		return results;
 	}
 
 	@Override

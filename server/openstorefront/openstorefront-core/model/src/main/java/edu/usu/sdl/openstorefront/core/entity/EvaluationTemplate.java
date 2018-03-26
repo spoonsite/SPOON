@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("This holds a template for an evaluation")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class EvaluationTemplate
 		extends StandardEntity<EvaluationTemplate>
 {

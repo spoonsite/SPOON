@@ -141,21 +141,6 @@ public class UserAnswerQuestionIT
 		Assert.assertTrue(isFound);
 	}
 
-	private WebElement findElementByString(WebDriver driver, String selector, String text)
-	{
-		WebDriverWait wait = new WebDriverWait(driver, 8);
-		List<WebElement> els = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(selector)));
-		WebElement element = null;
-
-		for (WebElement el : els) {
-			if (el.getText().equals(text)) {
-				element = el;
-				break;
-			}
-		}
-		return element;
-	}
-
 	@After
 	public void cleanupTest() throws AttachedReferencesException
 	{

@@ -159,7 +159,7 @@ public class GeneralMediaExporter
 			if (media != null) {
 				for (TFile mediaFile : media) {
 					try {
-						Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.getInstance().GENERAL_MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+						Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.GENERAL_MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 
 						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 						archive.save();

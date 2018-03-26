@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormStep;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -60,9 +60,9 @@ public class MappingController
 
 	private void verifySteps(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents)
 	{
-		if (template.getSteps() != null) {
-			for (SubmissionFormStep step : template.getSteps()) {
-				verifyFields(step.getFields(), mainComponent, allComponents);
+		if (template.getSections() != null) {
+			for (SubmissionFormSection section : template.getSections()) {
+				verifyFields(section.getFields(), mainComponent, allComponents);
 			}
 		}
 	}

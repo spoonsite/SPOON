@@ -216,16 +216,26 @@ public interface ComponentService
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
-	 * full view)
+	 * full view) Only Public information is returned
 	 *
 	 * @param componentId
 	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
-	
+
 	/**
-	 * Return the details object of the component attached to the given componentId and evaluationId. (the
+	 * Return the details object of the component attached to the given id. (the
 	 * full view)
+	 *
+	 * @param componentId
+	 * @param showPrivateInformation if true it will pull private information
+	 * @return details or null if not found
+	 */
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation);
+
+	/**
+	 * Return the details object of the component attached to the given
+	 * componentId and evaluationId. (the full view)
 	 *
 	 * @param componentId
 	 * @param evaluationId
@@ -496,7 +506,7 @@ public interface ComponentService
 	 * @param fileInput
 	 * @param mimeType
 	 * @param originalFileName
-	 * @return 
+	 * @return
 	 */
 	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, String mimeType, String originalFileName);
 
@@ -507,7 +517,7 @@ public interface ComponentService
 	 * @param fileInput
 	 * @param mimeType
 	 * @param originalFileName
-	 * @return 
+	 * @return
 	 */
 	public ComponentResource saveResourceFile(ComponentResource resource, InputStream fileInput, String mimeType, String originalFileName);
 
@@ -804,6 +814,16 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component changeOwner(String componentId, String newOwner);
+
+	/**
+	 * Assign a user in charge of validating data
+	 *
+	 * @param componentId
+	 * @param librarianUsername
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component assignLibrarian(String componentId, String librarianUsername);
 
 	/**
 	 * Creates a pending component record for the given component Id

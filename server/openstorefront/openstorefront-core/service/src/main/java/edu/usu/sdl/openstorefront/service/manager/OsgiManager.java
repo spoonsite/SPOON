@@ -40,6 +40,7 @@ import org.osgi.framework.FrameworkEvent;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class OsgiManager
 		implements Initializable
 {
@@ -113,7 +114,6 @@ public class OsgiManager
 				+ "edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.security; version=" + moduleVersion
 		);
-		//configMap.put(FelixConstants, list);
 		try {
 			felix = new Felix(configMap);
 			felix.start();

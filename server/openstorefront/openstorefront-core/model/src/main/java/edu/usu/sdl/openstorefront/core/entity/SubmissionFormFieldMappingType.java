@@ -37,6 +37,7 @@ public class SubmissionFormFieldMappingType
 	public static final String COMPLEX = "COMPLEX";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String SUBMISSION = "SUBMISSION";
+	public static final String NONE = "NONE";
 
 	@SuppressWarnings({"squid:S1186"})
 	public SubmissionFormFieldMappingType()
@@ -51,6 +52,7 @@ public class SubmissionFormFieldMappingType
 		codeMap.put(COMPLEX, newLookup(SubmissionFormFieldType.class, COMPLEX, "Complex"));
 		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(SUBMISSION, newLookup(SubmissionFormFieldType.class, SUBMISSION, "Submission"));
+		codeMap.put(NONE, newLookup(SubmissionFormFieldType.class, NONE, "None"));
 		return codeMap;
 	}
 

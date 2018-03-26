@@ -73,12 +73,12 @@ public class SubmissionFormServiceImpl
 			template.setTemplateStatus(SubmissionTemplateStatus.INCOMPLETE);
 		}
 
-		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, template.getTemplateId());
+		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
 		if (existing != null) {
 			existing.updateFields(template);
 			template = persistenceService.persist(existing);
 		} else {
-			template.setTemplateId(persistenceService.generateId());
+			template.setSubmissionTemplateId(persistenceService.generateId());
 			template.populateBaseCreateFields();
 			template = persistenceService.persist(template);
 		}

@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormStep;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,8 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class SubmissionFormStepView
+@SuppressWarnings("common-java:DuplicatedBlocks")
+public class SubmissionFormSectionView
 {
 
 	private String stepId;
@@ -34,13 +35,13 @@ public class SubmissionFormStepView
 	private List<SubmissionFormFieldView> fields = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})
-	public SubmissionFormStepView()
+	public SubmissionFormSectionView()
 	{
 	}
 
-	public static SubmissionFormStepView toView(SubmissionFormStep step)
+	public static SubmissionFormSectionView toView(SubmissionFormSection step)
 	{
-		SubmissionFormStepView view = new SubmissionFormStepView();
+		SubmissionFormSectionView view = new SubmissionFormSectionView();
 		view.setStepId(step.getStepId());
 		view.setTemplateId(step.getTemplateId());
 		view.setName(step.getName());
@@ -56,9 +57,9 @@ public class SubmissionFormStepView
 		return view;
 	}
 
-	public static List<SubmissionFormStepView> toView(List<SubmissionFormStep> steps)
+	public static List<SubmissionFormSectionView> toView(List<SubmissionFormSection> steps)
 	{
-		List<SubmissionFormStepView> views = new ArrayList<>();
+		List<SubmissionFormSectionView> views = new ArrayList<>();
 		steps.forEach(step -> {
 			views.add(toView(step));
 		});
