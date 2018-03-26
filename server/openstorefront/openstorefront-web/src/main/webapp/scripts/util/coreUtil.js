@@ -1054,9 +1054,10 @@ var CoreUtil = {
 			"startOffset": 0,
 			"max": 2147483647,
 			"searchElements": [{
-					"searchType": "COMPONENT",
+					"searchType": "ENTRYTYPE",
 					"field": "componentType",
 					"value": componentId,
+					"searchChildren": true,
 					"keyField": null,
 					"keyValue": null,
 					"startDate": null,
