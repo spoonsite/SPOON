@@ -741,4 +741,9 @@ public class ComponentServiceImpl
 		return type.activateComponentType(componentTypeId);
 	}
 
+	@Override
+	public List<String> getComponentTypeChildren(ComponentTypeNestedModel nestedModel) {
+		return type.getComponentTypeChildren(nestedModel);
+	}
+
 }
