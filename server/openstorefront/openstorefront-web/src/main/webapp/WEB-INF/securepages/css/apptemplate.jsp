@@ -1749,3 +1749,19 @@ table.confluenceTable td.numberingColumn {
 .support-media-description {
 	font-size: 14px;
 }
+
+.entry-type-search-button span::after {
+	display: none;
+}
+.entry-type-tree-panel-menu .x-tree-elbow-img.x-tree-elbow-end-plus.x-tree-expander {
+	display: none;
+}
+.entry-type-tree-panel-menu .x-tree-elbow-img.x-tree-elbow {
+	display: none;
+}
+.entry-type-tree-panel-menu .x-tree-icon.x-tree-icon-leaf  {
+	display: none;
+}
+.entry-type-tree-panel-menu .x-tree-elbow-img.x-tree-elbow-end  {
+	display: none;
+}

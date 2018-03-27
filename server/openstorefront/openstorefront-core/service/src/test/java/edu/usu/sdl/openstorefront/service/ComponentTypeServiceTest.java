@@ -27,8 +27,10 @@ import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
+import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import edu.usu.sdl.openstorefront.service.component.ComponentTypeServiceImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
@@ -262,6 +264,68 @@ public class ComponentTypeServiceTest
 		String url = mockCore.resolveComponentTypeIcon("C");
 
 		assertEquals(url, "test.png");
+	}
+
+	@Test
+	public void getComponentTypeChildren()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		// Assemble
+		List<ComponentTypeNestedModel> nm1Children = new ArrayList<>();
+		ComponentTypeNestedModel nm1 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View = new ComponentTypeView();
+		nm1View.setComponentType("A1");
+		nm1View.setLabel("Fruit");
+		nm1View.setComponentTypeTemplate("test");
+		nm1.setComponentType(nm1View);
+
+		ComponentTypeNestedModel nm1_1 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View_1 = new ComponentTypeView();
+		nm1View_1.setComponentType("A2");
+		nm1View_1.setLabel("Apple");
+		nm1View_1.setComponentTypeTemplate("test");
+		nm1_1.setComponentType(nm1View_1);
+		nm1Children.add(nm1_1);
+
+		ComponentTypeNestedModel nm1_2 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View_2 = new ComponentTypeView();
+		nm1View_2.setComponentType("A3");
+		nm1View_2.setLabel("Orange");
+		nm1View_2.setComponentTypeTemplate("test");
+		nm1_2.setComponentType(nm1View_2);
+		nm1Children.add(nm1_2);
+
+		ComponentTypeNestedModel nm2 = new ComponentTypeNestedModel();
+		ComponentTypeView nm2View = new ComponentTypeView();
+		nm2View.setComponentType("B");
+		nm2View.setLabel("Veggie");
+		nm2View.setComponentTypeTemplate("test");
+		nm2.setComponentType(nm2View);
+
+		nm1_2.setChildren(Arrays.asList(nm2));
+
+		nm1.setChildren(nm1Children);
+
+		// Act
+		Mockito.when(mockCore.getComponentTypeChildren(nm1)).thenCallRealMethod();
+		List<String> entryTypeChildren = mockCore.getComponentTypeChildren(nm1);
+
+		// Assert
+		assertEquals(Arrays.asList("A1", "A2", "A3", "B"), entryTypeChildren);
+	}
+	
+	@Test
+	public void getComponentTypeChildrenEmptyNestedModel()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+		
+		// Act
+		Mockito.when(mockCore.getComponentTypeChildren(null)).thenCallRealMethod();
+		List<String> entryTypeChildren = mockCore.getComponentTypeChildren(null);
+		
+		// Assert
+		assertEquals(new ArrayList<>(), entryTypeChildren);
 	}
 
 	private List<ComponentType> getMockData()

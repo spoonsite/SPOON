@@ -37,6 +37,33 @@ public class ComponentTypeNestedModel
 	{
 	}
 
+	public List<String> getComponentTypeChildren()
+	{
+		return findChildrenTypes(this, new ArrayList<>());
+	}
+
+	private List<String> findChildrenTypes(ComponentTypeNestedModel nestedModel, List<String> childrenTypes)
+	{
+		if (nestedModel != null) {
+			if (nestedModel.getComponentType() != null) {
+				childrenTypes.add(nestedModel.getComponentType().getComponentType());
+			}
+		} else {
+			return new ArrayList<>();
+		}
+
+		List<ComponentTypeNestedModel> childrenLocal = nestedModel.getChildren();
+		if (childrenLocal.size() <= 0) {
+			return childrenTypes;
+		}
+
+		for (ComponentTypeNestedModel child : childrenLocal) {
+			childrenTypes.addAll(findChildrenTypes(child, new ArrayList<>()));
+		}
+
+		return childrenTypes;
+	}
+
 	/**
 	 * This will put on the parents and the requested componentType Keep mind
 	 * the order is not maintained. The map would just contain the component

@@ -81,6 +81,10 @@ public class SearchElement
 	@ValidValueType(value = {}, enumClass = MergeCondition.class)
 	@ConsumeField
 	private MergeCondition mergeCondition = MergeCondition.OR;
+	
+	@APIDescription("Used to indicate whether or not to query all children")
+	@ConsumeField
+	private boolean searchChildren;
 
 	public SearchElement()
 	{
@@ -89,7 +93,7 @@ public class SearchElement
 	@Override
 	public String toString()
 	{
-		return "SearchElement{" + "searchType=" + searchType + ", field=" + field + ", value=" + value + ", keyField=" + keyField + ", keyValue=" + keyValue + ", startDate=" + startDate + ", endDate=" + endDate + ", caseInsensitive=" + caseInsensitive + ", numberOperation=" + numberOperation + ", stringOperation=" + stringOperation + ", mergeCondition=" + mergeCondition + '}';
+		return "SearchElement{" + "searchType=" + searchType + ", field=" + field + ", value=" + value + ", keyField=" + keyField + ", keyValue=" + keyValue + ", startDate=" + startDate + ", endDate=" + endDate + ", caseInsensitive=" + caseInsensitive + ", numberOperation=" + numberOperation + ", stringOperation=" + stringOperation + ", mergeCondition=" + mergeCondition + "searchChildren=" + searchChildren + '}';
 	}
 	
 	public String getField()
@@ -200,5 +204,15 @@ public class SearchElement
 	public void setMergeCondition(SearchOperation.MergeCondition mergeCondition)
 	{
 		this.mergeCondition = mergeCondition;
+	}
+
+	public void setSearchChildren(boolean searchChildren) 
+	{
+		this.searchChildren = searchChildren;
+	}
+
+	public boolean getSearchChildren()
+	{
+		return searchChildren;
 	}
 }

@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.service.search.AttributeSetSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.EntryTypeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
@@ -282,6 +283,9 @@ public class SearchServiceImpl
 				case REVIEWCON:
 				case REVIEWPRO:
 					handlers.add(new ReviewProConSearchHandler(searchElements));
+					break;
+				case ENTRYTYPE:
+					handlers.add(new EntryTypeSearchHandler(searchElements));
 					break;
 				default:
 					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");

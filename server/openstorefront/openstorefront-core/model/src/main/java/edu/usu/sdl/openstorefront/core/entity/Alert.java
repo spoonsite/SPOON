@@ -40,6 +40,8 @@ public class Alert
 		extends StandardEntity<Alert>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = true)
 	@NotNull
 	private String alertId;
@@ -86,7 +88,6 @@ public class Alert
 	public Alert()
 	{
 	}
-
 
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)

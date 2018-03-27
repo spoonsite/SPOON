@@ -120,6 +120,34 @@ public class ComponentTypeServiceImpl
 		}
 		return typeModel;
 	}
+	
+	public List<String> getComponentTypeChildren(ComponentTypeNestedModel nestedModel)
+	{
+		List<String> childrenTypes = findChildrenTypes(nestedModel, new ArrayList<>());
+
+		return childrenTypes;
+	}
+
+	private List<String> findChildrenTypes(ComponentTypeNestedModel nestedModel, List<String> childrenTypes)
+	{
+		if (nestedModel != null) {
+			childrenTypes.add(nestedModel.getComponentType().getComponentType());
+		}
+		else {
+			return new ArrayList<>();
+		}
+		
+		List<ComponentTypeNestedModel> children = nestedModel.getChildren();
+		if (children.size() <= 0) {
+			return childrenTypes;
+		}
+
+		for (ComponentTypeNestedModel child : children) {
+			childrenTypes.addAll(findChildrenTypes(child, new ArrayList<>()));
+		}
+
+		return childrenTypes;
+	}
 
 	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId)
 	{

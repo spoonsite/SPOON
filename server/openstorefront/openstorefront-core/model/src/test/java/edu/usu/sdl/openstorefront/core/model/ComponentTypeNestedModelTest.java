@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -125,6 +128,64 @@ public class ComponentTypeNestedModelTest
 		nestedModel.getChildren().add(childModel);
 
 		return nestedModel;
+	}
+
+	@Test
+	public void getComponentTypeChildren()
+	{
+		// Assemble
+		List<ComponentTypeNestedModel> nm1Children = new ArrayList<>();
+		ComponentTypeNestedModel nm1 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View = new ComponentTypeView();
+		nm1View.setComponentType("A1");
+		nm1View.setLabel("Fruit");
+		nm1View.setComponentTypeTemplate("test");
+		nm1.setComponentType(nm1View);
+
+		ComponentTypeNestedModel nm1_1 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View_1 = new ComponentTypeView();
+		nm1View_1.setComponentType("A2");
+		nm1View_1.setLabel("Apple");
+		nm1View_1.setComponentTypeTemplate("test");
+		nm1_1.setComponentType(nm1View_1);
+		nm1Children.add(nm1_1);
+
+		ComponentTypeNestedModel nm1_2 = new ComponentTypeNestedModel();
+		ComponentTypeView nm1View_2 = new ComponentTypeView();
+		nm1View_2.setComponentType("A3");
+		nm1View_2.setLabel("Orange");
+		nm1View_2.setComponentTypeTemplate("test");
+		nm1_2.setComponentType(nm1View_2);
+		nm1Children.add(nm1_2);
+
+		ComponentTypeNestedModel nm2 = new ComponentTypeNestedModel();
+		ComponentTypeView nm2View = new ComponentTypeView();
+		nm2View.setComponentType("B");
+		nm2View.setLabel("Veggie");
+		nm2View.setComponentTypeTemplate("test");
+		nm2.setComponentType(nm2View);
+
+		nm1_2.setChildren(Arrays.asList(nm2));
+
+		nm1.setChildren(nm1Children);
+
+		// Act
+		List<String> entryTypeChildren = nm1.getComponentTypeChildren();
+
+		// Assert
+		assertEquals(Arrays.asList("A1", "A2", "A3", "B"), entryTypeChildren);
+	}
+
+	@Test
+	public void getComponentTypeChildrenEmptyNestedModel()
+	{
+		ComponentTypeNestedModel nestedModel = new ComponentTypeNestedModel();
+
+		// Act
+		List<String> entryTypeChildren = nestedModel.getComponentTypeChildren();
+
+		// Assert
+		assertEquals(new ArrayList<>(), entryTypeChildren);
 	}
 
 }

@@ -112,11 +112,9 @@
 				store.loadPage(1);				
 			}
 		};
-		
-		
-		
+
 		Ext.onReady(function(){		
-			
+
 			var componentId = '${param.id}';
 			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
@@ -203,7 +201,7 @@
 					}				
 				]			
 			});		
-		
+
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
 				id: 'topNavPanel',
@@ -219,7 +217,12 @@
 						flex: 1,
 						minHeight: 125,						
 						tpl: new Ext.XTemplate(
-							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span></div>',
+							'<div class="details-title-name">{name}</div>',
+							'<div class="breadcrumbs" style="display: block; font-size: 14px; margin: 8px 0;">',
+							'<tpl for="parents" between="&nbsp; &gt; &nbsp;">',
+								'<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+							'</tpl>',
+							'</div>',
 							'<div class="details-title-info">',							
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
@@ -594,6 +597,9 @@
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
 							componentId = entry.componentId;
+
+							root = entry.componentTypeNestedModel;
+							CoreUtil.traverseNestedModel(root, [], entry);
 
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){

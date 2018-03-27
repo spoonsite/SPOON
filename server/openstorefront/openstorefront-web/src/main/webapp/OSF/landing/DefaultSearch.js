@@ -32,6 +32,17 @@ Ext.define('OSF.landing.DefaultSearch', {
 			} else {
 				searchBar.setWidth('78%');
 			}
+		},
+		afterrender: function () {
+
+			// close entry type button on scroll
+			var entryTypeButton = Ext.ComponentQuery.query('[itemId=entryType]')[0];
+			this.up().up().body.on('scroll', function (e) {
+
+				if (!entryTypeButton.canCloseMenu) {
+					entryTypeButton.click();
+				}
+			});
 		}
 	},
 	items: [
@@ -53,32 +64,36 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 				var containerPanel = this;
 				var entryTypeCB = containerPanel.getComponent('entryType');
-				var entryType = entryTypeCB.getValue();
+
+				var searchElements = [
+					{
+						"searchType": 'INDEX',
+						"field": null,
+						"value": query,
+						"mergeCondition": "AND"
+					}
+				];
+
+				Ext.Array.forEach(entryTypeCB.selectedItems, function (entryType) {
+					searchElements.push({
+						"searchType": "COMPONENT",
+						"field": 'componentType',
+						"value": entryType,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"
+					});
+				});
 
 				var searchRequest;
-				if (entryType) {
+				if (entryTypeCB.selectedItems.length > 0) {
 					var searchObj = {
 						"sortField": null,
 						"sortDirection": "ASC",
 						"startOffset": 0,
 						"max": 2147483647,
-						"searchElements": [
-							{
-								"searchType": "COMPONENT",
-								"field": 'componentType',
-								"value": entryType,
-								"caseInsensitive": false,
-								"numberOperation": "EQUALS",
-								"stringOperation": "EQUALS",
-								"mergeCondition": "AND"
-							},
-							{
-								"searchType": 'INDEX',
-								"field": null,
-								"value": query,
-								"mergeCondition": "AND"
-							}
-						]
+						"searchElements": searchElements
 					};
 
 					searchRequest = {
@@ -91,56 +106,128 @@ Ext.define('OSF.landing.DefaultSearch', {
 						query: CoreUtil.searchQueryAdjustment(query)
 					};
 				}
+
 				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 
 				window.location.href = 'searchResults.jsp';
 			},
 			items: [
 				{
-					xtype: 'combo',
+					xtype: 'button',
+					text: 'Entry Types (All)',
 					itemId: 'entryType',
-					name: 'entryType',
-					width: 80,
-					matchFieldWidth: false,
-					valueField: 'code',
-					displayField: 'description',
-					//grow: true,
-					editable: false,
-					typeAhead: false,
-					forceSelection: true,
-					emptyText: 'All',
-					fieldCls: 'home-search-field-cat',
-					triggerCls: 'home-search-field-cat',
-					emptyCls: 'home-search-field-cat',
-					store: {
-						autoLoad: true,
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'description',
-								direction: 'ASC'
-							})
-						],
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/componenttypes/lookup'
-						},
-						listeners: {
-							load: function (store, records, successful, operations, opts) {
-								store.add({
-									code: null,
-									description: 'All'
-								});
+					margin: 0,
+					enableToggle: true,
+					iconCls: 'fa fa-chevron-down',
+					cls: 'entry-type-search-button',
+					iconAlign: 'right',
+					style: 'overflow: visible;',
+					canCloseMenu: true,
+					selectedItems: [],
+					setCheckedDisplay: function (treeStore) {
+
+						var itemsSelected = 0;
+
+						Ext.Array.forEach(treeStore.getData().items, function (item) {
+							if (item.getData().checked) {
+								itemsSelected += 1;
+							}
+						});
+
+						if (itemsSelected > 0) {
+							this.setText('Entry Types (' + itemsSelected + ' selected)');
+						}
+						else {
+							this.setText('Entry Types (All)');
+						}
+					},
+					setItemsSelected: function (treeStore) {
+
+						var selectedItems = [];
+
+						Ext.Array.forEach(treeStore.getData().items, function (item) {
+							if (item.getData().checked) {
+								selectedItems.push(item.getData().componentType.componentType);
+							}
+						});
+
+						this.selectedItems = selectedItems;
+					},
+					listeners: {
+						toggle: function (button, isPressed) {
+							if (isPressed) {
+								button.setIconCls('fa fa-chevron-up');
+								this.canCloseMenu = false;
+							}
+							else {
+								button.setIconCls('fa fa-chevron-down');	
+								this.canCloseMenu = true;
 							}
 						}
 					},
-					listeners: {
-						change: function (field, newValue, oldValue, opts) {
-							CoreUtil.tempComponentType = newValue;
-							var record = field.getSelection();
-							var textDimensions = Ext.util.TextMetrics.measure(field.inputEl, record.get('description'));
-							var triggerSize = 60;
-							field.setWidth(textDimensions.width + triggerSize);
-						}
+					menu: {
+						width: 400,
+						listeners: {
+							beforehide: function () {
+								return this.up().canCloseMenu;
+							}
+						},
+						items: [
+							{
+								xtype: 'treepanel',
+								cls: 'entry-type-tree-panel-menu',
+								maxHeight: 500,
+								scrollable: true,
+								rootVisible: false,
+								checkPropagation: 'both',
+								listeners: {
+									beforeitemcollapse: function () {
+										return false;
+									},
+									itemclick: function (item, record) {
+
+										var entryTypeButton = this.up('[itemId=entryType]');
+										entryTypeButton.setCheckedDisplay(this.getStore());
+										entryTypeButton.setItemsSelected(this.getStore());
+									}
+								},
+								store: {
+									type: 'tree',
+									fields: ['componentType'],
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/componenttypes/nested',
+										extraParams: {
+											all: true
+										}
+									},
+									listeners: {
+										load: function (self, records) {
+
+											var setChildrenLayout = function (children) {
+												if (children.length === 0) {
+													return;
+												}
+
+												Ext.Array.forEach(children, function (child) {
+
+													if (child.childNodes.length === 0) {
+														child.data.leaf = true;
+														child.triggerUIUpdate();
+													}
+													child.expand();
+													child.data.checked = false;
+													child.data.text = child.data.componentType.label;
+													setChildrenLayout(child.childNodes);
+												});
+											};
+
+											setChildrenLayout(records);
+										}
+									}
+								}
+							}
+						]
 					}
 				},
 				{
@@ -153,7 +240,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 					hideTrigger: true,
 					valueField: 'query',
 					displayField: 'name',
-					autoSelect: false,					
+					autoSelect: false,	
+					style: 'border-left: none;',
 					store: {
 						autoLoad: false,
 						proxy: {
@@ -224,10 +312,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 	initComponent: function () {
 		this.callParent();
-
-
 	}
-
-
 
 });
