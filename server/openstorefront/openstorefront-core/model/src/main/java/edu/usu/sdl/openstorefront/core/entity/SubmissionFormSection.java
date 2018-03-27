@@ -38,8 +38,8 @@ import javax.validation.constraints.Size;
  */
 @Embeddable
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class SubmissionFormStep
-		extends StandardEntity<SubmissionFormStep>
+public class SubmissionFormSection
+		extends StandardEntity<SubmissionFormSection>
 {
 
 	private static final long serialVersionUID = 1L;
@@ -76,7 +76,7 @@ public class SubmissionFormStep
 	private List<SubmissionFormField> fields;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-	public SubmissionFormStep()
+	public SubmissionFormSection()
 	{
 	}
 
@@ -85,7 +85,7 @@ public class SubmissionFormStep
 	{
 		super.updateFields(entity);
 
-		SubmissionFormStep step = (SubmissionFormStep) entity;
+		SubmissionFormSection step = (SubmissionFormSection) entity;
 		this.setName(step.getName());
 		this.setInstructions(step.getInstructions());
 		this.setStepOrder(step.getStepOrder());

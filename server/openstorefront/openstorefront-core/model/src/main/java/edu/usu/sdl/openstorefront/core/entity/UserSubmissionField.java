@@ -33,6 +33,8 @@ public class UserSubmissionField
 		implements Serializable
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = true)
 	@NotNull
 	private String fieldId;

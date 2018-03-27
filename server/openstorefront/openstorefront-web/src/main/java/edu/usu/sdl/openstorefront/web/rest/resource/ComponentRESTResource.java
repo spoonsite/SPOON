@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
@@ -741,6 +742,23 @@ public class ComponentRESTResource
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
+	@APIDescription("Approves a set components; Typically for approve related entries.")
+	@DataType(Component.class)
+	@Path("/approve")
+	public List<Component> approveComponents(
+			@DataType(String.class) List<String> componentIds)
+	{
+		List<Component> approvedComponents = new ArrayList<>();
+		for (String componentId : componentIds) {
+			Component component = service.getComponentService().approveComponent(componentId);
+			approvedComponents.add(component);
+		}
+		return approvedComponents;
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
 	@Path("/{id}/approve")
@@ -847,6 +865,24 @@ public class ComponentRESTResource
 		if (component != null) {
 			service.getComponentService().changeOwner(componentId, newOwner);
 			component.setCreateUser(newOwner);
+		}
+		return sendSingleEntityResponse(component);
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Changes owner of component")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Path("/{id}/assignLibrarian")
+	public Response assignLibrarian(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			String assignLibrarian)
+	{
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			service.getComponentService().assignLibrarian(componentId, assignLibrarian);
+			component.setAssignedLibrarian(assignLibrarian);
 		}
 		return sendSingleEntityResponse(component);
 	}
@@ -2328,6 +2364,23 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource Comment section">
+	@GET
+	@APIDescription("Gets the list of comments associated to an entity")
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
+	@DataType(ComponentComment.class)
+	@Path("/{id}/comments")
+	public List<ComponentComment> getComponentComment(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")
@@ -3814,6 +3867,7 @@ public class ComponentRESTResource
 	public Response getComponentRelationships(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@QueryParam("pullAllChildren") boolean pullAllChildren,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -3825,7 +3879,12 @@ public class ComponentRESTResource
 		componentRelationship.setComponentId(componentId);
 		componentRelationship.setActiveStatus(filterQueryParams.getStatus());
 		List<ComponentRelationship> relationships = componentRelationship.findByExample();
+
+		if (pullAllChildren) {
+			relationships.addAll(pullChildrenRelationships(relationships, filterQueryParams));
+		}
 		relationships = filterQueryParams.filter(relationships);
+
 		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
 
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
@@ -3833,6 +3892,23 @@ public class ComponentRESTResource
 		};
 
 		return sendSingleEntityResponse(entity);
+	}
+
+	private List<ComponentRelationship> pullChildrenRelationships(List<ComponentRelationship> parents, FilterQueryParams filterQueryParams)
+	{
+		List<ComponentRelationship> foundRelationships = new ArrayList<>();
+
+		for (ComponentRelationship parent : parents) {
+			ComponentRelationship componentRelationship = new ComponentRelationship();
+			componentRelationship.setComponentId(parent.getRelatedComponentId());
+			componentRelationship.setActiveStatus(filterQueryParams.getStatus());
+			List<ComponentRelationship> children = componentRelationship.findByExample();
+
+			foundRelationships.addAll(children);
+			foundRelationships.addAll(pullChildrenRelationships(children, filterQueryParams));
+		}
+
+		return foundRelationships;
 	}
 
 	@GET

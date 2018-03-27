@@ -816,6 +816,16 @@ public interface ComponentService
 	public Component changeOwner(String componentId, String newOwner);
 
 	/**
+	 * Assign a user in charge of validating data
+	 *
+	 * @param componentId
+	 * @param librarianUsername
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component assignLibrarian(String componentId, String librarianUsername);
+
+	/**
 	 * Creates a pending component record for the given component Id
 	 *
 	 * @param parentComponentId

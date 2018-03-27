@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormStep;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -44,8 +44,8 @@ public class MappingControllerTest
 	public void testVerifyTemplateWithSteps()
 	{
 		SubmissionFormTemplate template = new SubmissionFormTemplate();
-		template.setSteps(new ArrayList<>());
-		template.getSteps().add(new SubmissionFormStep());
+		template.setSections(new ArrayList<>());
+		template.getSections().add(new SubmissionFormSection());
 
 		MapperFactory mockMapperFactory = getMockMapperFactory();
 		MappingController instance = new MappingController(mockMapperFactory);
@@ -96,15 +96,15 @@ public class MappingControllerTest
 	public void testVerifyTemplateWithFields()
 	{
 		SubmissionFormTemplate template = new SubmissionFormTemplate();
-		template.setSteps(new ArrayList<>());
-		SubmissionFormStep formStep = new SubmissionFormStep();
+		template.setSections(new ArrayList<>());
+		SubmissionFormSection formStep = new SubmissionFormSection();
 		formStep.setFields(new ArrayList<>());
 
 		SubmissionFormField submissionFormField = new SubmissionFormField();
 		submissionFormField.setMappingType(SubmissionFormFieldMappingType.FIELD);
 		formStep.getFields().add(submissionFormField);
 
-		template.getSteps().add(new SubmissionFormStep());
+		template.getSections().add(new SubmissionFormSection());
 
 		MapperFactory mockMapperFactory = getMockMapperFactory();
 		MappingController instance = new MappingController(mockMapperFactory);
