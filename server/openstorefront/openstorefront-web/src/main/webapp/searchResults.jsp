@@ -847,7 +847,7 @@
 					//check entry logo first
 					if (result.componentIconId) {
 						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
-					} else if (result.componentTypeIconUrl) {
+					} else if (result.componentTypeIconUrl && result.includeIconInSearch) {
 						result.logo = result.componentTypeIconUrl;
 					} else {
 						result.logo = null;

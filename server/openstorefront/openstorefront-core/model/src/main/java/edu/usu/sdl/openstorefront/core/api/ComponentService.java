@@ -895,4 +895,12 @@ public interface ComponentService
 	 */
 	public String resolveComponentTypeIcon(String componentType);
 
+	/**
+	 * Quick look up the include entry type icon
+	 *
+	 * @param componentType
+	 * @return boolean
+	 */
+	public Boolean resolveComponentTypeIncludeIconInSearch(String componentType);
+
 }

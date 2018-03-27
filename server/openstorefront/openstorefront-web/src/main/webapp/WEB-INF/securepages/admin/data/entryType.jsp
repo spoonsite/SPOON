@@ -259,12 +259,20 @@
 											text: 'Insert Media',
 											flex: 1,
 											handler: function() {
-
+												
 												mediaWindow.show();
 											}
 										}
 									]
-								}								
+								},								
+								{
+									margin: '10 0 0 0',
+									xtype: 'checkbox',
+									width: '100%',
+									boxLabel: '<b>Include Icon in Search Results</b>',
+									value: false,
+									name: 'includeIconInSearch'
+								},
 							],
 							dockedItems: [
 								{

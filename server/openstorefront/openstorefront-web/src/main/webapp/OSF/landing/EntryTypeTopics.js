@@ -46,19 +46,6 @@ Ext.define('OSF.landing.EntryTypeTopics', {
         titleAlign: 'center'
     },
 
-    addRow: function () {
-        // add row container
-        this.add({
-            xtype: 'container',
-            width: '100%',
-            layout: {
-                type: 'hbox',
-                align: 'center',
-                pack: 'center'
-            },
-        });
-    },
-
     initComponent: function () {
 
         this.callParent(arguments);

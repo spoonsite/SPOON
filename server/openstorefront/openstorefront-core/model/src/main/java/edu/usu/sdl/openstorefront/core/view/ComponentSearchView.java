@@ -73,6 +73,7 @@ public class ComponentSearchView
 	private float searchScore;
 	private String dataSource;
 	private String dataSensitivity;
+	private boolean includeIconInSearch;
 
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -126,6 +127,7 @@ public class ComponentSearchView
 		Service service = ServiceProxyFactory.getServiceProxy();
 		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		view.setIncludeIconInSearch(service.getComponentService().resolveComponentTypeIncludeIconInSearch(component.getComponentType()));
 
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -585,6 +587,14 @@ public class ComponentSearchView
 	public void setComponentTypeIconUrl(String componentTypeIconUrl)
 	{
 		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
+	public Boolean getIncludeIconInSearch() {
+		return includeIconInSearch;
+	}
+
+	public void setIncludeIconInSearch(Boolean includeIconInSearch) {
+		this.includeIconInSearch = includeIconInSearch;
 	}
 
 }

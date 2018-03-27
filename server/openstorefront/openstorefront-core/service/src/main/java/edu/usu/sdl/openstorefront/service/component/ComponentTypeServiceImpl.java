@@ -376,6 +376,23 @@ public class ComponentTypeServiceImpl
 		return typeIcon;
 	}
 
+	public Boolean resolveComponentTypeIncludeIconInSearch(String componentType)
+	{
+		Boolean includeInSearch = Boolean.FALSE;
+		List<ComponentType> componentTypes = getAllComponentTypes();
+
+		for (ComponentType componentTypeLocal : componentTypes) {
+			if (componentTypeLocal.getComponentType().equals(componentType)) {
+				if (componentTypeLocal.getIncludeIconInSearch() != null) {
+					includeInSearch = componentTypeLocal.getIncludeIconInSearch();
+					break;
+				}
+			}
+		}
+
+		return includeInSearch;
+	}
+
 	private String findFirstParentWithIcon(List<ComponentType> componentTypes, ComponentType child)
 	{
 		String iconUrl = null;
