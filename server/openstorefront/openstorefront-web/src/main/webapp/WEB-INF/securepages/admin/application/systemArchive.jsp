@@ -308,8 +308,11 @@
 													form.queryById('options').setDisabled(true);													
 												}
 												if (!form.queryById('component').getValue()) {
-													form.queryById('entrySelectGrid').setDisabled(false);
-													form.queryById('entrySelectGrid').setDisabled(true);
+													// The Select Entries box must be toggled to get it to behave correctly
+													// This is likely due to how the data is added to the page. 
+													// See reports.jsp for another methodology if this section gets refactored
+													form.queryById('entrySelector').setDisabled(false);
+													form.queryById('entrySelector').setDisabled(true);
 												}
 												if (!form.queryById('branding').getValue()) {
 													form.queryById('brandingSelectGrid').setDisabled(false);
@@ -333,62 +336,62 @@
 													change: function(field, newValue, oldValue, opts) {
 														var form = field.up('form');
 														if (newValue) {
-															form.queryById('entrySelectGrid').setDisabled(false);		
+															form.queryById('entrySelector').setDisabled(false);		
 														} else {
-															form.queryById('entrySelectGrid').setDisabled(true);		
+															form.queryById('entrySelector').setDisabled(true);		
 														}
 													}
 												}
 											},
 											{
-												xtype: 'grid',
-												itemId: 'entrySelectGrid',
+												xtype: 'entryselect',
+												itemId: 'entrySelector',
 												title: 'Select Entries',
 												maxHeight: 250,
 												disabled: true,
-												columnLines: true,
-												selModel: {
-													selType: 'checkboxmodel'
-												},
-												store: {
-													autoLoad: true,
-													sorters: [
-														new Ext.util.Sorter({
-															property: 'description',
-															direction: 'ASC'
-														})
-													],
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/components/lookup?approvalState=ALL'							
-													}											
-												},
-												columns: [
-													{text: 'Entry Name', dataIndex: 'description', flex: 1,
-														filter: {
-															type: 'string'
-														}
-													}
-												],										
-												dockedItems: [
-													{
-														xtype: 'textfield',
-														dock: 'top',
-														name: 'filterForEntries',																					
-														emptyText: 'Filter entries by name',
-														width: '100%',
-														maxLength: 30,
-														listeners: {
-															change: function (field, newVal, oldVal, opts) {
-																var grid = field.up('grid');
-																grid.getStore().filter([{
-																		property: 'description',
-																		value: newVal
-																}]);
-															}
-														}
-													}
-												]
+//												columnLines: true,
+//												selModel: {
+//													selType: 'checkboxmodel'
+//												},
+//												store: {
+//													autoLoad: true,
+//													sorters: [
+//														new Ext.util.Sorter({
+//															property: 'description',
+//															direction: 'ASC'
+//														})
+//													],
+//													proxy: {
+//														type: 'ajax',
+//														url: 'api/v1/resource/components/lookup?approvalState=ALL'							
+//													}											
+//												},
+//												columns: [
+//													{text: 'Entry Name', dataIndex: 'description', flex: 1,
+//														filter: {
+//															type: 'string'
+//														}
+//													}
+//												],										
+//												dockedItems: [
+//													{
+//														xtype: 'textfield',
+//														dock: 'top',
+//														name: 'filterForEntries',																					
+//														emptyText: 'Filter entries by name',
+//														width: '100%',
+//														maxLength: 30,
+//														listeners: {
+//															change: function (field, newVal, oldVal, opts) {
+//																var grid = field.up('grid');
+//																grid.getStore().filter([{
+//																		property: 'description',
+//																		value: newVal
+//																}]);
+//															}
+//														}
+//													}
+//												]
 											},									
 											{
 												xtype: 'checkbox',
@@ -498,7 +501,7 @@
 													
 													var archiveOptions = [];
 													if (data.component) {
-														Ext.Array.each(generateWin.queryById('entrySelectGrid').getSelection(), function(record){
+														Ext.Array.each(generateWin.queryById('entrySelector').getSelection(), function(record){
 															archiveOptions.push({
 																primaryEntity: 'Component',
 																entityId: record.get('code')
