@@ -348,50 +348,6 @@
 												itemId: 'entrySelector',
 												title: 'Select Entries',
 												maxHeight: 250,
-												disabled: true,
-//												columnLines: true,
-//												selModel: {
-//													selType: 'checkboxmodel'
-//												},
-//												store: {
-//													autoLoad: true,
-//													sorters: [
-//														new Ext.util.Sorter({
-//															property: 'description',
-//															direction: 'ASC'
-//														})
-//													],
-//													proxy: {
-//														type: 'ajax',
-//														url: 'api/v1/resource/components/lookup?approvalState=ALL'							
-//													}											
-//												},
-//												columns: [
-//													{text: 'Entry Name', dataIndex: 'description', flex: 1,
-//														filter: {
-//															type: 'string'
-//														}
-//													}
-//												],										
-//												dockedItems: [
-//													{
-//														xtype: 'textfield',
-//														dock: 'top',
-//														name: 'filterForEntries',																					
-//														emptyText: 'Filter entries by name',
-//														width: '100%',
-//														maxLength: 30,
-//														listeners: {
-//															change: function (field, newVal, oldVal, opts) {
-//																var grid = field.up('grid');
-//																grid.getStore().filter([{
-//																		property: 'description',
-//																		value: newVal
-//																}]);
-//															}
-//														}
-//													}
-//												]
 											},									
 											{
 												xtype: 'checkbox',
@@ -501,10 +457,10 @@
 													
 													var archiveOptions = [];
 													if (data.component) {
-														Ext.Array.each(generateWin.queryById('entrySelector').getSelection(), function(record){
+														Ext.Array.each(generateWin.queryById('entrySelector').getSelected(), function(record){
 															archiveOptions.push({
 																primaryEntity: 'Component',
-																entityId: record.get('code')
+																entityId: record.componentId
 															});	
 														});
 													}
