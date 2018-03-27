@@ -3678,18 +3678,4 @@ Ext.define('OSF.component.SubmissionPanel', {
 		submissionPanel.requiredForm.body.scrollTo('Top', 0, true);
 
 	}
-
-
-});
-
-// FIXME: this is a duplicate of the VType in OSF/form/attributes.js
-Ext.define('Override.form.field.VTypes', {
-	override: 'Ext.form.field.VTypes',
-
-	AttributeNumber: function (value) {
-		return this.AttributeNumberRe.test(value);
-	},
-	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
-	AttributeNumberRe: /^\d*(\.\d{0,20})?$/,
-	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
 });
