@@ -1777,6 +1777,10 @@ table.confluenceTable td.numberingColumn {
 }
 
 .entry-topics-button:hover {
-	background: rgba(112, 125, 150, 0.8);
+	background: rgba(162, 181, 216, 0.8);
 	cursor: pointer;
+}
+
+.entry-topics-button:active {
+	background: rgba(112, 125, 150, 0.8);
 }
