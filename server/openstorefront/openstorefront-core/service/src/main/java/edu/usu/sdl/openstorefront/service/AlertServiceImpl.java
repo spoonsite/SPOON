@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeAlertOption;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
@@ -170,8 +171,17 @@ public class AlertServiceImpl
 					}
 					break;
 				case AlertType.COMPONENT_SUBMISSION:
-					userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
-					createUserMessage = true;
+					List<ComponentTypeAlertOption> options = alert.getComponentTypeAlertOptions();
+					if (options != null) {
+						Component component = (Component) alertContext.getDataTrigger();
+						for(ComponentTypeAlertOption option: options) {
+							if (option.getComponentType().equals(component.getComponentType())) {
+								userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
+								createUserMessage = true;
+								break;
+							}
+						}
+					}
 					break;
 				case AlertType.CHANGE_REQUEST:
 					userMessageType = UserMessageType.CHANGE_REQUEST_ALERT;

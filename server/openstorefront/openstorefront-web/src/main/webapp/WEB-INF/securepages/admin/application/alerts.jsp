@@ -133,6 +133,13 @@
 									if (option.alertOnUserNeedsApproval) {
 										listOfOptions.push('<span class="alerts-option-items"> User Need Approval </span>');
 									}
+								} else if (record.get('componentTypeAlertOptions')) {
+									labels = record.get('componentTypeAlertOptionLabels')
+									if (labels) {
+										Ext.Array.forEach(labels, function(element) {
+											listOfOptions.push('<span class="alerts-option-items"> ' + element + ' </span>');
+										})
+									}
 								}
 								return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
 							}
@@ -336,6 +343,8 @@
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
 											Ext.getCmp('userManagementOptions').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').allowBlank = true;
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -345,6 +354,10 @@
 													break;
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
+													break;
+												case 'CHGREQ': case 'CMPSUB':
+													Ext.getCmp('alertEntryForm-entryTypes').allowBlank = false;
+													Ext.getCmp('alertEntryForm-entryTypes').show();
 													break;
 											}
 										}
@@ -358,11 +371,58 @@
 									}
 								},
 								{
+									xtype: 'treepanel',
+									fieldLabel: 'Select Component Types<span class="field-required" />',
+									id: 'alertEntryForm-entryTypes',
+									name: 'entryTypeAlertOption',
+									allowBlank: false,
+									rootVisible: false,
+									checkPropagation: 'both',
+
+									useArrows: true,
+									store: {
+										autoLoad: true,
+										type: 'tree',
+										fields: [{
+											name: 'text',
+											mapping: function(data) {
+												return data.componentType.label;
+												}
+										}],
+										sorters: [{
+											property: 'text',
+											direction: 'ASC'
+										}],
+										listeners: {
+											load: function(store, records, options) {
+												function traverse(node) {
+													node.set({checked: false});
+													if (node.childNodes.length === 0) {
+														node.set({leaf: true});
+														return;
+													}
+													Ext.Array.forEach(node.childNodes, function(element) {
+														traverse(element);
+													});
+												}
+												store.each(function(record) {
+													traverse(record);
+												});
+											}
+										},
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/componenttypes/nested',
+										}
+									}
+								},
+								{
 									xtype: 'textfield',
 									fieldLabel: 'Email Addresses<span class="field-required"></span>',
 									// id is 'email' for validation purposes.
 									id: 'email',
-									name: 'emailAddresses'
+									name: 'emailAddresses',
+									allowBlank: false
 								},
 								{
 									xtype: 'fieldcontainer',
@@ -514,6 +574,16 @@
 													};
 												}
 
+												if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
+													checkedComponents = Ext.getCmp("alertEntryForm-entryTypes").getChecked()
+													var componentTypes = [];
+													Ext.Array.forEach(checkedComponents, function(el) {
+														compID = el.data.componentType.componentType
+														componentTypes.push({"componentType": compID});
+													});
+													data.componentTypeAlertOptions = componentTypes;
+												}
+
 
 												// Submit Data
 												var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
@@ -585,6 +655,26 @@
 					alertAddEditWin.show();
 					Ext.getCmp('editAlertForm').edit = false;
 					Ext.getCmp('editAlertForm').reset(true);
+					/**
+					 * Traverse the check tree and check/uncheck the boxes
+					 * if no option then it will uncheck all boxes
+					 * @param {item in Store.getData().items} node - parent nodes in the tree
+					 * @param {Object{option string: true}} optionHash - the option string to compare
+					 */
+					function traverse(node, optionsHash) {
+						if (!optionsHash) {
+							node.set({checked: false});
+						} else if (optionsHash[node.data.text]) {
+							node.set({checked: true});
+						}
+						if (node.childNodes.length === 0) {
+							return;
+						}
+						Ext.Array.forEach(node.childNodes, function(element) {
+							traverse(element, optionsHash);
+						});
+					}
+
 					if (record) {
 						// This is an edit form.
 						alertAddEditWin.setTitle('<i class="fa fa-lg fa-edit"></i>' + '<span class="shift-window-text-right">Edit Attribute</span>');
@@ -620,11 +710,38 @@
 							});
 						}
 
+						// Process Check Tree
+						if (record.data.componentTypeAlertOptions) {
+							var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+							var items = treeView.store.getData().items;
 
+							//clear out the old check boxes
+							Ext.each(items, function(item){
+								traverse(item);
+							});
+
+							var alertOptions = record.data.componentTypeAlertOptionLabels;
+							//create hash of options
+							var hash = {};
+							Ext.each(alertOptions, function(option){
+								hash[option] = true;
+							})
+							//compare all the options and recursively check the boxes
+							Ext.each(items, function(item) {
+								traverse(item, hash);
+							});
+						}
 
 					} else {
 						// This is an add form.
 						alertAddEditWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Alert</span>');
+
+						//clear the check tree
+						var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+						var items = treeView.store.getData().items;
+						Ext.each(items, function(item){
+							traverse(item);
+						});
 					}
 				};
 
