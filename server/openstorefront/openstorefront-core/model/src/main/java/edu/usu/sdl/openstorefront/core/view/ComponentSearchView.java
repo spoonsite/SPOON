@@ -76,8 +76,10 @@ public class ComponentSearchView
 	private float searchScore;
 	private String dataSource;
 	private String dataSensitivity;
+
 	@APIDescription("This is the whole hiearchy for the entry type")
 	private ComponentTypeNestedModel componentTypeNestedModel;
+	private boolean includeIconInSearch;
 
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -102,7 +104,7 @@ public class ComponentSearchView
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setComponentId(component.getComponentId());
 		example.setComponentAttributePk(pk);
-		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample<>(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
 		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
 		return toView(component, attributes, reviews, tags);
@@ -131,6 +133,7 @@ public class ComponentSearchView
 		Service service = ServiceProxyFactory.getServiceProxy();
 		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		view.setIncludeIconInSearch(service.getComponentService().resolveComponentTypeIncludeIconInSearch(component.getComponentType()));
 
 		ComponentTypeOptions options = new ComponentTypeOptions(component.getComponentType());
 		options.setPullParents(true);
@@ -596,20 +599,24 @@ public class ComponentSearchView
 		this.componentTypeIconUrl = componentTypeIconUrl;
 	}
 
-	/**
-	 * @return the componentTypeNestedModel
-	 */
 	public ComponentTypeNestedModel getComponentTypeNestedModel()
 	{
 		return componentTypeNestedModel;
 	}
 
-	/**
-	 * @param componentTypeNestedModel the componentTypeNestedModel to set
-	 */
 	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
 	{
 		this.componentTypeNestedModel = componentTypeNestedModel;
+	}
+
+	public Boolean getIncludeIconInSearch()
+	{
+		return includeIconInSearch;
+	}
+
+	public void setIncludeIconInSearch(Boolean includeIconInSearch)
+	{
+		this.includeIconInSearch = includeIconInSearch;
 	}
 
 }

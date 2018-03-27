@@ -700,6 +700,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public Boolean resolveComponentTypeIncludeIconInSearch(String componentType)
+	{
+		return type.resolveComponentTypeIncludeIconInSearch(componentType);
+	}
+
+	@Override
 	public String getComponentTypeForComponent(String componentId)
 	{
 		return type.getComponentTypeForComponent(componentId);

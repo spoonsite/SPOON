@@ -121,6 +121,10 @@ public class ComponentType
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String iconUrl;
 
+	@ConsumeField
+	@APIDescription("Used to indicate whether or not to display the component type icon in the search results")
+	private Boolean includeIconInSearch;
+
 	public static final String COMPONENT = "COMP";
 	public static final String ARTICLE = "ARTICLE";
 
@@ -156,6 +160,7 @@ public class ComponentType
 		this.setAssignedGroups(componentTypeLocal.getAssignedGroups());
 		this.setAssignedUsers(componentTypeLocal.getAssignedUsers());
 		this.setParentComponentType(componentTypeLocal.getParentComponentType());
+		this.setIncludeIconInSearch(componentTypeLocal.getIncludeIconInSearch());
 	}
 
 	public String getComponentType()
@@ -346,6 +351,14 @@ public class ComponentType
 	public void setAssignedUsers(List<UserLink> assignedUsers)
 	{
 		this.assignedUsers = assignedUsers;
+	}
+
+	public Boolean getIncludeIconInSearch() {
+		return includeIconInSearch;
+	}
+	
+	public void setIncludeIconInSearch(Boolean includeIconInSearch) {
+		this.includeIconInSearch = includeIconInSearch;
 	}
 
 }

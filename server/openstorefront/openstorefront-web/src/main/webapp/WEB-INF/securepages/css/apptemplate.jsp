@@ -1765,3 +1765,22 @@ table.confluenceTable td.numberingColumn {
 .entry-type-tree-panel-menu .x-tree-elbow-img.x-tree-elbow-end  {
 	display: none;
 }
+
+.entry-topics-button {
+	background: rgb(112, 125, 150);
+    display: inline-block;
+    width: 17%;
+    min-width: 100px;
+    height: 100px;
+    margin: 15px;
+    vertical-align: top;
+}
+
+.entry-topics-button:hover {
+	background: rgba(162, 181, 216, 0.8);
+	cursor: pointer;
+}
+
+.entry-topics-button:active {
+	background: rgba(112, 125, 150, 0.8);
+}
