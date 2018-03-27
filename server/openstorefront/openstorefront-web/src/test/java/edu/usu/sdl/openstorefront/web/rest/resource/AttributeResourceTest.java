@@ -17,13 +17,21 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.core.api.ComponentService;
+import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
+import edu.usu.sdl.openstorefront.service.AttributeServiceImpl;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
@@ -33,6 +41,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  *
@@ -51,21 +60,59 @@ public class AttributeResourceTest extends JerseyShiroTest
 	 * @GET @PATH("/attributetypes/required")
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getRequiredAttributeTypesTest()
 	{
-		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		//TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+
+		Service service = Mockito.mock(Service.class);
+
+		ComponentService componentService = Mockito.mock(ComponentService.class);
+
+		List<ComponentType> componentTypes = new ArrayList<>();
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType("COMP");
+		componentTypes.add(componentType);
+
+		Mockito.when(componentService.getAllComponentTypes()).thenReturn(componentTypes);
+		Mockito.when(service.getComponentService()).thenReturn(componentService);
+
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		Mockito.when(service.getPersistenceService()).thenReturn(persistenceService);
+
+		LookupService lookupService = Mockito.mock(LookupService.class);
+		Mockito.when(service.getLookupService()).thenReturn(lookupService);
+		Mockito.when(lookupService.getLookupEnity(SecurityMarkingType.class, null)).thenReturn(null);
+
+		AttributeServiceImpl attributeService = Mockito.mock(AttributeServiceImpl.class);
+		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(new ArrayList<>());
+
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		AttributeCode code = new AttributeCode();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("A");
+		attributeCodePk.setAttributeType("B");
+		code.setAttributeCodePk(attributeCodePk);
+		attributeCodes.add(code);
+
+		Mockito.when(attributeService.findCodesForType(Mockito.anyString())).thenReturn(attributeCodes);
+		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false)).thenCallRealMethod();
+
+		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
+
+		ServiceProxyFactory.setTestService(service);
+
 		//Arrange
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();
-		comp.setComponentType("COMP");
+		comp.setComponentType("ARTICLE");
 		comp.setStorageVersion("1");
 		requiredRestrictions.add(comp);
 
-		List<AttributeType> dbResults = new ArrayList<>();
 		AttributeType type1 = new AttributeType();
 		type1.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type1.setAttributeType("TEST1");
-		type1.setRequiredFlg(Boolean.TRUE);
 
 		AttributeType type2 = new AttributeType();
 		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
@@ -73,36 +120,36 @@ public class AttributeResourceTest extends JerseyShiroTest
 		type2.setRequiredFlg(Boolean.TRUE);
 		type2.setRequiredRestrictions(requiredRestrictions);
 
-		dbResults.add(type1);
-		dbResults.add(type2);
-		persistenceService.addQuery(AttributeType.class, dbResults);
+		List<AttributeType> attributes = new ArrayList<>();
+		attributes.add(type1);
+		attributes.add(type2);
 
-		List<AttributeType> expected = new ArrayList<>();
-		AttributeType expectedType = new AttributeType();
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setRequiredFlg(Boolean.TRUE);
+
+		Mockito.when(persistenceService.queryByExample(Mockito.any(BaseEntity.class))).thenReturn((List) attributes);
+
+		List<AttributeTypeView> expected = new ArrayList<>();
+		AttributeTypeView expectedType = new AttributeTypeView();
 		expectedType.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		expectedType.setAttributeType("TEST1");
+		expectedType.setAttributeType("TEST2");
 		expected.add(expectedType);
 
-		AttributeType expectedQueryExample = new AttributeType();
-		expectedQueryExample.setRequiredFlg(Boolean.TRUE);
-		expectedQueryExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-
 		//Act
-		List<AttributeType> response = target("v1/resource/attributes")
-				.path("attributetypes/required")
+		List<AttributeTypeView> response = target("v1/resource/attributes")
+				.path("required")
 				.queryParam("componentType", "ARTICLE")
 				.request()
 				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
-				.get(new GenericType<List<AttributeType>>()
+				.get(new GenericType<List<AttributeTypeView>>()
 				{
 				});
 
 		//Assert
 		Assert.assertNotNull(response);
-		Assert.assertArrayEquals(expected.toArray(), response.toArray());
+		Assert.assertEquals(expected.get(0).getAttributeType(), response.get(0).getAttributeType());
 
-		AttributeType queryExample = (AttributeType) persistenceService.getListExamples(AttributeType.class).poll();
-		Assert.assertEquals(0, expectedQueryExample.compareTo(queryExample));
 	}
 
 	/**
@@ -111,6 +158,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 	@Test
 	public void getAttributeViewTest()
 	{
+
 		//Arrange
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
@@ -215,10 +263,33 @@ public class AttributeResourceTest extends JerseyShiroTest
 	 * @GET @PATH("/optional")
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getOptionalAttributeViewTest()
 	{
 		//Arrange
-		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+		//TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+
+		Service service = Mockito.mock(Service.class);
+
+		ComponentService componentService = Mockito.mock(ComponentService.class);
+
+		List<ComponentType> componentTypes = new ArrayList<>();
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType("COMP");
+		componentTypes.add(componentType);
+
+		Mockito.when(componentService.getAllComponentTypes()).thenReturn(componentTypes);
+		Mockito.when(service.getComponentService()).thenReturn(componentService);
+
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		Mockito.when(service.getPersistenceService()).thenReturn(persistenceService);
+
+		LookupService lookupService = Mockito.mock(LookupService.class);
+		Mockito.when(service.getLookupService()).thenReturn(lookupService);
+		Mockito.when(lookupService.getLookupEnity(SecurityMarkingType.class, null)).thenReturn(null);
+
+		ServiceProxyFactory.setTestService(service);
+
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();
 		comp.setComponentType("COMP");
@@ -230,19 +301,38 @@ public class AttributeResourceTest extends JerseyShiroTest
 		type1.setRequiredFlg(Boolean.FALSE);
 		type1.setAttributeType("TESTATT1");
 
+		List<ComponentTypeRestriction> optional = new ArrayList<>();
+		comp = new ComponentTypeRestriction();
+		comp.setComponentType("ARTICLE");
+		comp.setStorageVersion("1");
+		optional.add(comp);
+		type1.setOptionalRestrictions(optional);
+
 		AttributeType type2 = new AttributeType();
 		type2.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type2.setRequiredFlg(Boolean.TRUE);
 		type2.setAttributeType("TESTATT2");
 		type2.setRequiredRestrictions(requiredRestrictions);
+		optional = new ArrayList<>();
+		comp = new ComponentTypeRestriction();
+		comp.setComponentType("ARTICLE");
+		comp.setStorageVersion("1");
+		optional.add(comp);
+		type2.setOptionalRestrictions(optional);
 
 		AttributeType type3 = new AttributeType();
 		type3.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		type3.setRequiredFlg(Boolean.TRUE);
 		type3.setAttributeType("TESTATT3");
 
-		persistenceService.addQuery(AttributeType.class, Arrays.asList(type1, type2, type3));
-		persistenceService.addQuery(AttributeType.class, Arrays.asList(type1, type2, type3)); // attribute list queried twice
+		List<AttributeType> attributes = new ArrayList<>();
+		attributes.add(type1);
+		attributes.add(type2);
+		attributes.add(type3);
+
+		Mockito.when(persistenceService.queryByExample(Mockito.any(BaseEntity.class))).thenReturn((List) attributes);
+		//persistenceService.addQuery(AttributeType.class, Arrays.asList(type1, type2, type3));
+		//persistenceService.addQuery(AttributeType.class, Arrays.asList(type1, type2, type3)); // attribute list queried twice
 
 		AttributeCode code1 = new AttributeCode();
 		code1.setActiveStatus(AttributeType.ACTIVE_STATUS);
@@ -272,8 +362,20 @@ public class AttributeResourceTest extends JerseyShiroTest
 		code4.getAttributeCodePk().setAttributeCode("CODE4");
 		code4.getAttributeCodePk().setAttributeType("TESTATT1");
 
-		persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1, code2, code3, code4));
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		attributeCodes.add(code1);
+		attributeCodes.add(code2);
+		attributeCodes.add(code3);
 
+		AttributeServiceImpl attributeService = Mockito.mock(AttributeServiceImpl.class);
+
+		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(attributeCodes);
+		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+
+		Mockito.when(attributeService.findOptionalAttributes("ARTICLE", false)).thenCallRealMethod();
+		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
+
+		//	persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1, code2, code3, code4));
 		AttributeTypeView expectedView1 = new AttributeTypeView();
 		expectedView1.setAttributeType("TESTATT1");
 		AttributeCodeView expectedView1Code1 = new AttributeCodeView();

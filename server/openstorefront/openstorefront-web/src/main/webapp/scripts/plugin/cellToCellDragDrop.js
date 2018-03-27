@@ -56,7 +56,7 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
      *
      * Defaults to green.
      */
-    dropBackgroundColor: 'green',
+    dropBackgroundColor: 'rgba(47, 255, 40, 0.5)',
  
     /**
      * @cfg {Boolean} noDropBackgroundColor
@@ -113,6 +113,7 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
     onDrop: undefined,
 	onEnter: undefined,
 	onOut: undefined,
+    rowFocus: false,
  
     init: function (view) {
         var me = this;
@@ -258,9 +259,13 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
                     delete self.dropOK;
  
                     // Return if no target node or if over the same cell as the source of the drag. 
-                    if (!target || target.node === dragData.item.parentNode) {
+
+                    var invalidNodes = dragData.invalidNodes || [];
+                    if (!target || target.node === dragData.item.parentNode || invalidNodes.indexOf(target.record) !== -1) {
                         return;
                     }
+
+                    var recordEl = me.rowFocus ? target.node.parentElement : target.node;
  
                     // Check whether the data type of the column being dropped on accepts the 
                     // dragged field type. If so, set dropOK flag, and highlight the target node. 
@@ -269,9 +274,9 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
                         self.dropOK = false;
  
                         if (me.noDropCls) {
-                            Ext.fly(target.node).addCls(me.noDropCls);
+                            Ext.fly(recordEl).addCls(me.noDropCls);
                         } else {
-                            Ext.fly(target.node).applyStyles({
+                            Ext.fly(recordEl).applyStyles({
                                 backgroundColor: me.noDropBackgroundColor
                             });
                         }
@@ -282,9 +287,9 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
                     self.dropOK = true;
  
                     if (me.dropCls) {
-                        Ext.fly(target.node).addCls(me.dropCls);
+                        Ext.fly(recordEl).addCls(me.dropCls);
                     } else {
-                        Ext.fly(target.node).applyStyles({
+                        Ext.fly(recordEl).applyStyles({
                             backgroundColor: me.dropBackgroundColor
                         });
                     }
@@ -303,12 +308,14 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
 						onOut(target, dd, e, dragData);
 					}
 
+                    var recordEl = me.rowFocus ? target.node.parentElement : target.node;
+
                     var cls = this.dropOK ? me.dropCls : me.noDropCls;
  
                     if (cls) {
-                        Ext.fly(target.node).removeCls(cls);
+                        Ext.fly(recordEl).removeCls(cls);
                     } else {
-                        Ext.fly(target.node).applyStyles({
+                        Ext.fly(recordEl).applyStyles({
                             backgroundColor: ''
                         });
                     }

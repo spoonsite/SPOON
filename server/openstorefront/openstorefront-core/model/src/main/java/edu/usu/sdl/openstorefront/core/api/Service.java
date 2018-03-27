@@ -199,4 +199,11 @@ public interface Service
 	 */
 	public HelpSupportService getHelpSupportService();
 
+	/**
+	 * Faq Support entities
+	 *
+	 * @return
+	 */
+	public FaqService getFaqService();
+
 }

@@ -17,6 +17,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest;
 
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
@@ -57,9 +58,10 @@ public abstract class JerseyShiroTest extends JerseyTest
 	private boolean userContextSet = false;
 
 	protected abstract Class<?> getRestClass();
-	
+
 	/**
 	 * sets the userContext to be retrieved from the session
+	 *
 	 * @param userContext user context to return
 	 */
 	protected void setUserContext(UserContext userContext)
@@ -71,11 +73,10 @@ public abstract class JerseyShiroTest extends JerseyTest
 		this.userContext = userContext;
 		TestRealm.setUserContext(this.userContext);
 	}
-	
+
 	protected UserContext getUserContext()
 	{
-		if(!userContextSet)
-		{
+		if (!userContextSet) {
 			createUserContext();
 		}
 		return this.userContext;
@@ -95,8 +96,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 			throw new IllegalStateException("setPermissions should only be called once per test");
 		}
 		permissionsSet = true;
-		if(!userContextSet)
-		{
+		if (!userContextSet) {
 			createUserContext();
 		}
 		TestRealm.setupRoles(ROLE, permissions);
@@ -180,7 +180,11 @@ public abstract class JerseyShiroTest extends JerseyTest
 	public void setup()
 	{
 		permissionsSet = false;
-		((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService()).clear();
+		PersistenceService persistenceService = ServiceProxyFactory.getServiceProxy().getPersistenceService();
+		if (persistenceService instanceof TestPersistenceService) {
+			((TestPersistenceService) persistenceService).clear();
+		}
+		ServiceProxyFactory.setTestService(null);
 		TestRealm.clearLogin();
 	}
 
@@ -201,7 +205,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 		UserContext context = new UserContext();
 		context.setAdmin(false);
 		context.setUserProfile(userProfile);
-		
+
 		SecurityRole role = new SecurityRole();
 		role.setActiveStatus(SecurityRole.ACTIVE_STATUS);
 		role.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);

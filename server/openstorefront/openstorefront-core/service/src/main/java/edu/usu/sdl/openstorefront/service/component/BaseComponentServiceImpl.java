@@ -39,6 +39,7 @@ public abstract class BaseComponentServiceImpl
 	protected CoreComponentServiceImpl core;
 	protected SubComponentServiceImpl sub;
 	protected IntegrationComponentServiceImpl integration;
+	protected ComponentTypeServiceImpl type;
 	protected FilterEngine filterEngine;
 
 	public BaseComponentServiceImpl(ComponentServiceImpl componentService)

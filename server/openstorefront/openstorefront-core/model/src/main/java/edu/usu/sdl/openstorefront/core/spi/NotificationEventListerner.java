@@ -26,7 +26,7 @@ public interface NotificationEventListerner
 {
 
 	/**
-	 * It called when a new event get trigger in the application
+	 * It is called when a new event get trigger in the application
 	 *
 	 * @param notificationEvent
 	 * @return success of the processing

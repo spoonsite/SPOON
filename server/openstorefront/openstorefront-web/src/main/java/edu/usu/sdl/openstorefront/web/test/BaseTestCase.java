@@ -126,17 +126,16 @@ public abstract class BaseTestCase
 			component.setActiveStatus(Component.ACTIVE_STATUS);
 
 			ComponentType componentTypeExample = new ComponentType();
-			componentTypeExample.setActiveStatus(ComponentType.ACTIVE_STATUS);
 			List<ComponentType> componentTypes = componentTypeExample.findByExample();
 			if (componentTypes.isEmpty()) {
 				//TODO: should create a test one and then remove it.
-				throw new OpenStorefrontRuntimeException("No Component type active");
+				throw new OpenStorefrontRuntimeException("No Component type exist...add one");
 			} else {
 				component.setComponentType(componentTypes.get(0).getComponentType());
 			}
 			componentAll.setComponent(component);
 
-			List<AttributeType> attributeTypes = service.getAttributeService().getRequiredAttributes();
+			List<AttributeType> attributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponentType(), false);
 			for (AttributeType type : attributeTypes) {
 				ComponentAttribute componentAttribute = new ComponentAttribute();
 				componentAttribute.setCreateUser(TEST_USER);

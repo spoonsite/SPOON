@@ -21,6 +21,9 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
+	requires: [
+		'OSF.common.AttributeCodeSelect'
+	],
 	layout: 'border',
 	formWarningMessage: '',
 
@@ -232,19 +235,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 			]
 		});
 
-		var allAttributes = [];
-		var loadAllAttributes = function (callback) {
-			Ext.Ajax.request({
-				url: 'api/v1/resource/attributes',
-				success: function (response, opts) {
-					allAttributes = Ext.decode(response.responseText);
-					if (callback) {
-						callback();
-					}
-				}
-			});
-		};
-		loadAllAttributes();
 
 		submissionPanel.loadComponentAttributes = function () {
 			if (submissionPanel.componentId) {
@@ -257,17 +247,38 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 						var requiredStore = submissionPanel.requiredAttributeStore;
 						
+						var attributeTypeToValue = {										
+						};
+						Ext.Array.each(data, function(attribute) {										
+							if (attributeTypeToValue[attribute.type]) {
+								attributeTypeToValue[attribute.type].push(attribute.code);
+							} else {
+								var values = [];
+								values.push(attribute.code);
+								attributeTypeToValue[attribute.type] = values;
+							}
+						});
+						
 						var optionalAttributes = [];
 						Ext.Array.each(data, function (attribute) {
 							if (!attribute.hideOnSubmission) {
 								if (attribute.requiredFlg) {
 									var found = false;
+									
+									//group values of same type
+									var value = attribute.code;
+									if (attributeTypeToValue[attribute.type] && 
+										attributeTypeToValue[attribute.type].length > 1) {
+										value = attributeTypeToValue[attribute.type];
+									}
+									
 									requiredStore.each(function (record) {
 										if (record.get('attributeType') === attribute.type) {
-											record.set('attributeCode', attribute.code, {dirty: false});
+											record.set('attributeCode', value, {dirty: false});
 											found = true;
 										}
 									});
+									
 									if (!found) {
 										//the component type  may not require this
 										optionalAttributes.push(attribute);
@@ -290,90 +301,32 @@ Ext.define('OSF.component.SubmissionPanel', {
 			}
 		};
 
-		var handleAttributes = function (componentType) {
+		submissionPanel.handleAttributes = function (componentType, afterLoadCallback) {
 			if (!componentType) {
 				componentType = submissionPanel.componentTypeSelected;
 			}
 
-			var requiredAttributes = [];
-			var optionalAttributes = [];
-			Ext.Array.each(allAttributes, function (attribute) {
-				if (!attribute.hideOnSubmission) {
-					// This is slightly difficult to follow,
-					// but the basic gist is that we must check two lists to decide which attributes to show -
-					// requiredRestrictions is a list of types for which the attribute is required
-					// associatedComponentTypes is a list of types for which the attribute is optional
-					// but if associatedComponentTypes is empty, it is optional for all.
-					if (attribute.requiredFlg) {
-						if (attribute.requiredRestrictions) {
-							var found = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
-								if (item.componentType === componentType) {
-									return true;
-								} else {
-									return false;
-								}
-							});
-							if (found) {
-								requiredAttributes.push(attribute);
-							} else {
-								// --- Checking for Optional
-								//
-								// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
-								// type listed in the requiredRestrictions, i.e. not required for this entry type.
-								// As a result, we need to check if it's allowed as an optional and then add it.
-								// This is the same logic as seen below when the 'Required' flag is off.
-								if (attribute.associatedComponentTypes) {
-									var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
-										if (item.componentType === componentType) {
-											return true;
-										} else {
-											return false;
-										}
-									});
-									if (reqOptFound) {
-										optionalAttributes.push(attribute);
-									}
-								} else {
-									// We have an empty list of associatedComponentTypes, therefore this attribute is
-									// allowed for all entry types.
-									optionalAttributes.push(attribute);
-								}
-								// 
-								// --- End Checking for Optional
-							}
-						} else {
-							// No list of types required for, so it's required for all. Add it.
-							requiredAttributes.push(attribute);
-						}
-					} else {
-						if (attribute.associatedComponentTypes) {
-							var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function (item) {
-								if (item.componentType === componentType) {
-									return true;
-								} else {
-									return false;
-								}
-							});
-							if (optFound) {
-								// This entry type allows this attribute.
-								optionalAttributes.push(attribute);
-							}
-						} else {
-							// We have an empty list of associatedComponentTypes, therefore this attribute is
-							// allowed for all entry types.
-							optionalAttributes.push(attribute);
-						}
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/required?componentType=' + componentType + '&submissionOnly=true',
+				success: function(response, opt) {
+					var requiredStore = submissionPanel.requiredAttributeStore;
+					var data = Ext.decode(response.responseText);	
+					requiredStore.loadData(data);	
+					if (afterLoadCallback) {
+						afterLoadCallback();
 					}
 				}
 			});
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/optional?componentType=' + componentType + '&submissionOnly=true',
+				success: function(response, opt) {					
+					var data = Ext.decode(response.responseText);	
+					submissionPanel.optionalAttributes = data;
+				}
+			});
 
-			var requiredStore = submissionPanel.requiredAttributeStore;
-
-			requiredAttributes.reverse();
-			requiredStore.loadData(requiredAttributes);
-
-			submissionPanel.optionalAttributes = optionalAttributes;
 		};
+		
 
 		submissionPanel.requiredAttributeStore = Ext.create('Ext.data.Store', {
 			fields: [
@@ -391,34 +344,20 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 					store.each(function (record) {
 
-						var field = Ext.create('Ext.form.field.ComboBox', {
-							record: record,
-							fieldLabel: record.get('description') + ' <span class="field-required" />',
-							queryMode: 'local',
-							editable: record.get('allowUserGeneratedCodes'),
-							typeAhead: record.get('allowUserGeneratedCodes'),
-							allowBlank: false,
-							width: '100%',
-							labelWidth: 300,
-							labelSepartor: '',
-							valueField: 'code',
-							displayField: 'label',
-							store: Ext.create('Ext.data.Store', {
-								data: record.data.codes
-							}),
-							listConfig: {
-								getInnerTpl: function () {
-									return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
-								}
-							},
-							listeners: {
-								change: function (fieldLocal, newValue, oldValue, opts) {
-									var recordLocal = fieldLocal.record;
-									if (recordLocal) {
-										recordLocal.set('attributeCode', newValue);
+						var field = Ext.create('OSF.common.AttributeCodeSelect', {
+								fieldConfig: {	
+									record: record,
+									listeners: {
+										change: function(fieldLocal, newValue, oldValue, opts) {
+											var recordLocal = fieldLocal.record;
+											if (recordLocal) {
+												recordLocal.set('attributeCode', newValue);
+											}
+										}
 									}
-								}
-							}
+								},
+								attributeTypeView: record.data,											
+								record: record
 						});
 						record.formField = field;
 						panel.add(field);
@@ -460,7 +399,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
 							if (newValue) {
-								handleAttributes(newValue);
+								submissionPanel.handleAttributes(newValue);
 								submissionPanel.componentTypeSelected = newValue;
 
 								var sectionPanel = submissionPanel.detailsPanel.getComponent('detailSections');
@@ -862,17 +801,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 																			var form = this.up('form');
 																			var data = form.getValues();
 																			var addTypeWin = this.up('window');
-
+																			
+																			var componentType = submissionPanel.componentType;
+																			if (componentType) {
+																				componentType = encodeURIComponent(componentType);
+																			} else {
+																				componentType = '';
+																			}
+																			
 																			CoreUtil.submitForm({
-																				url: 'api/v1/resource/attributes/attributetypes/metadata',
+																				url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + componentType,
 																				method: 'POST',
 																				data: data,
 																				form: form,
 																				success: function (response, opts) {
-																					loadAllAttributes(function () {
-																						handleAttributes();
-																					});
-
+																					submissionPanel.handleAttributes();
+																				
 																					var newAttribute = Ext.decode(response.responseText);
 																					attributeTypeCb.getStore().add(newAttribute);
 																					addTypeWin.close();
@@ -1067,8 +1011,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 															success: function (response, opts) {
 																Ext.toast('Successfully added user attribute code.', '', 'tr');
 																CoreService.attributeservice.labelToCode(label).then(function (response, opts) {
-																	handleSaveAttribute(response.responseText);
-																	loadAllAttributes();
+																	handleSaveAttribute(response.responseText);	
+																	submissionPanel.handleAttributes(null, function(){
+																		submissionPanel.loadComponentAttributes();
+																	});
 																});
 															},
 															failure: function (response, opts) {
@@ -2819,7 +2765,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					var templateStateCheckInterval = setInterval(function () {
 
 						// the template has refreshed
-						if (initialToggleElement != document.querySelectorAll('.toggle-collapse')[0]) {
+						if (initialToggleElement !== document.querySelectorAll('.toggle-collapse')[0]) {
 							clearInterval(templateStateCheckInterval);
 							var toggleElements = document.querySelectorAll('.toggle-collapse');
 							for (var ii = 0; ii < toggleElements.length; ii += 1) {
@@ -3366,12 +3312,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 				submissionPanel.requiredAttributeStore.each(function (record) {
 
-					requireComponent.attributes.push({
-						componentAttributePk: {
-							attributeType: record.get('attributeType'),
-							attributeCode: record.get('attributeCode')
-						}
-					});
+					if (Ext.isArray(record.get('attributeCode'))) {
+						Ext.Array.each(record.get('attributeCode'), function(code) {
+							requireComponent.attributes.push({
+								componentAttributePk: {
+									attributeType: record.get('attributeType'),
+									attributeCode: code
+								}
+							});
+						});
+					} else {
+						requireComponent.attributes.push({
+							componentAttributePk: {
+								attributeType: record.get('attributeType'),
+								attributeCode: record.get('attributeCode')
+							}
+						});
+					}
 				});
 
 				if (!data.description) {
@@ -3424,6 +3381,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 										submissionPanel.componentId = data.componentId;
 									} else {
 										submissionPanel.componentId = data.component.componentId;
+									}
+									
+									if (data.componentType) {
+										submissionPanel.componentType = data.componentType;
+									} else {
+										submissionPanel.componentType = data.component.componentType;
 									}
 
 									//save profile updates
@@ -3520,10 +3483,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 								} else {
 									codeLabel = record.formField.getValue();
 								}
-								userCodesToSave.push({
-									attributeCodeLabel: codeLabel,
-									attributeType: record.get('attributeType')
-								});
+								
+								if (Ext.isArray(codeLabel)) {
+									Ext.Array.each(record.get('attributeCode'), function(code) {
+										userCodesToSave.push({
+											attributeCodeLabel: code,
+											attributeType: record.get('attributeType')
+										});
+									});
+								} else {
+									userCodesToSave.push({
+										attributeCodeLabel: codeLabel,
+										attributeType: record.get('attributeType')
+									});
+								}								
+								
+								
 							}
 						});
 
@@ -3553,7 +3528,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									});
 
 									handleMainFormSave();
-									loadAllAttributes();
+									submissionPanel.handleAttributes();
 								},
 								failure: function (response, opts) {
 									submissionPanel.saveReady = true;
@@ -3606,6 +3581,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			},
 			success: function (response, opts) {
 				var data = Ext.decode(response.responseText);
+				submissionPanel.componentType = data.componentType;
 
 				//load required form				
 				var componentModel = Ext.create('Ext.data.Model', {});
@@ -3618,7 +3594,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 				} else {
 					submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(true);
 				}
-
+				
+				submissionPanel.handleAttributes(data.componentType, function(){
+					submissionPanel.loadComponentAttributes();
+				});
 			}
 		});
 
@@ -3642,8 +3621,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('contactGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
 		});
-
-		submissionPanel.loadComponentAttributes();
+		
 	},
 
 	resetSubmission: function (editMode) {

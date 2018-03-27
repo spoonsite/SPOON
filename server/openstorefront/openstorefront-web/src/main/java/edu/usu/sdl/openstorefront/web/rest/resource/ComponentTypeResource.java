@@ -20,7 +20,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -57,9 +58,9 @@ public class ComponentTypeResource
 	@GET
 	@APIDescription("Gets component types")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentTypeView.class)
 	public Response getComponentType(
 			@QueryParam("status") String status,
@@ -67,29 +68,45 @@ public class ComponentTypeResource
 	)
 	{
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false)
-		{
+		if (status == null && all == false) {
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		}
-		else if (status != null && all == false)
-		{
+		} else if (status != null && all == false) {
 			componentType.setActiveStatus(status);
 		}
 
 		List<ComponentType> componentTypes = componentType.findByExample();
-		componentTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentType.FIELD_LABEL));		
-		GenericEntity<List<ComponentTypeView>> entity = new GenericEntity<List<ComponentTypeView>>(ComponentTypeView.toTemplateView(componentTypes))
+		componentTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentType.FIELD_LABEL));
+		GenericEntity<List<ComponentTypeView>> entity = new GenericEntity<List<ComponentTypeView>>(ComponentTypeView.toView(componentTypes))
 		{
 		};
 		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
-	@APIDescription("Gets submission component types")
-	@Produces(
-	{
+	@APIDescription("Gets nested component types")
+	@Produces({
 		MediaType.APPLICATION_JSON
 	})
+	@DataType(ComponentTypeNestedModel.class)
+	@Path("/nested")
+	public Response getNestedComponentType(
+			@QueryParam("componentType") String componentType,
+			@QueryParam("pullParents") boolean pullParents
+	)
+	{
+		ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions(componentType);
+		componentTypeOptions.setPullParents(pullParents);
+
+		ComponentTypeNestedModel nestedModel = service.getComponentService().getComponentType(componentTypeOptions);
+		return sendSingleEntityResponse(nestedModel);
+	}
+
+	@GET
+	@APIDescription("Gets submission component types")
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentType.class)
 	@Path("/submission")
 	public Response getSubmissionComponentTyped()
@@ -109,9 +126,9 @@ public class ComponentTypeResource
 	@GET
 	@APIDescription("Gets component types")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
 	public Response getComponentTypeLookup(
@@ -122,23 +139,21 @@ public class ComponentTypeResource
 		List<LookupModel> lookups = new ArrayList<>();
 
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false)
-		{
+		if (status == null && all == false) {
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		}
-		else if (status != null && all == false)
-		{
+		} else if (status != null && all == false) {
 			componentType.setActiveStatus(status);
 		}
 
 		List<ComponentType> componentTypes = componentType.findByExample();
-		componentTypes.forEach(type ->
-		{
+		componentTypes.forEach(type
+				-> {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(type.getComponentType());
 			lookupModel.setDescription(type.getLabel());
 			lookups.add(lookupModel);
 		});
+		lookups.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookups)
 		{
@@ -149,9 +164,9 @@ public class ComponentTypeResource
 	@GET
 	@APIDescription("Gets component type")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentType.class)
 	@Path("/{type}")
 	public Response getComponentTypeById(
@@ -167,13 +182,13 @@ public class ComponentTypeResource
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Adds a new component type")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Consumes(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentType.class)
 	public Response createNewComponentType(
 			ComponentType componentType
@@ -186,13 +201,13 @@ public class ComponentTypeResource
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
 	@APIDescription("Updates a component type")
 	@Produces(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Consumes(
-	{
-		MediaType.APPLICATION_JSON
-	})
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{type}")
 	public Response updateComponentType(
 			@PathParam("type") String type,
@@ -204,8 +219,7 @@ public class ComponentTypeResource
 		ComponentType found = new ComponentType();
 		found.setComponentType(type);
 		found = found.find();
-		if (found != null)
-		{
+		if (found != null) {
 			componentType.setComponentType(type);
 			response = handleSaveComponentType(componentType, false);
 		}
@@ -217,15 +231,11 @@ public class ComponentTypeResource
 		ValidationModel validationModel = new ValidationModel(componentType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			componentType = service.getComponentService().saveComponentType(componentType);
-			if (post)
-			{
+			if (post) {
 				return Response.created(URI.create("v1/resource/componenttypes/" + componentType.getComponentType())).entity(componentType).build();
-			}
-			else
-			{
+			} else {
 				return sendSingleEntityResponse(componentType);
 			}
 		}
@@ -240,18 +250,8 @@ public class ComponentTypeResource
 			@PathParam("type") String type
 	)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-
-		ComponentType found = new ComponentType();
-		found.setComponentType(type);
-		found = found.find();
-		if (found != null)
-		{
-			service.getPersistenceService().setStatusOnEntity(ComponentType.class, type, StandardEntity.ACTIVE_STATUS);
-			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
-			response = sendSingleEntityResponse(found);
-		}
-		return response;
+		ComponentType changed = service.getComponentService().activateComponentType(type);
+		return sendSingleEntityResponse(changed);
 	}
 
 	@DELETE

@@ -649,41 +649,35 @@
 							}
 							
 							//get component type and determine review & q&a
+							componentTypeDetail = entry.componentTypeFull;
+
+							processTags(entry.tags);
+
+							var templateUrl;
+							if (entry.componentTemplateId) {
+								//load custom										
+								templateUrl= 'Template.action?LoadTemplate&templateId=' + entry.componentTemplateId;
+							} else if (entry.componentType === 'ARTICLE') {										
+								templateUrl= 'Router.action?page=template/article.jsp';
+							} else {
+								templateUrl= 'Router.action?page=template/standard.jsp';
+							}
+
+
+							//populate detail via template
 							Ext.Ajax.request({
-								url: 'api/v1/resource/componenttypes/' + entry.componentType,								
-								success: function(response, opts) {
-									componentTypeDetail = Ext.decode(response.responseText);
-																		
-									processTags(entry.tags);
-									
-									var templateUrl;
-									if (componentTypeDetail.componentTypeTemplate) {
-										//load custom										
-										templateUrl= 'Template.action?LoadTemplate&templateId=' + componentTypeDetail.componentTypeTemplate;
-									} else if (entry.componentType === 'ARTICLE') {										
-										templateUrl= 'Router.action?page=template/article.jsp';
-									} else {
-										templateUrl= 'Router.action?page=template/standard.jsp';
-									}
-									
-									
-									//populate detail via template
-									Ext.Ajax.request({
-										url: templateUrl,
-										callback: function(){
-											contentPanel.setLoading(false);
-										},										
-										success: function(response, opt) {
-											var text = response.responseText;											
-											Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
-												template.refresh(Ext.getCmp('detailPanel'), entry);
-											});
-										}
+								url: templateUrl,
+								callback: function(){
+									contentPanel.setLoading(false);
+								},										
+								success: function(response, opt) {
+									var text = response.responseText;											
+									Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
+										template.refresh(Ext.getCmp('detailPanel'), entry);
 									});
-									
-									
 								}
 							});
+									
 						},
 						failure: function(response, opts) {
 							window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
