@@ -386,8 +386,9 @@
 						text: 'Required',
 						dataIndex: 'requiredFlg',
 						flex: 1, 
-						tooltip: 'Is the attribute required upon adding a new component?',
+						tooltip: 'Attribute is required for 1 or more entry types',
 						align: 'center',
+						sortable: false,
 						renderer: function(value, meta, record) {							
 							var restricted = false;
 							if (record.get('requiredRestrictions') && 
@@ -415,7 +416,7 @@
 						text: 'Important',
 						dataIndex: 'importantFlg',
 						flex: 1, 
-						tooltip: 'Shows on main page browse categories?',
+						tooltip: 'Shows on main page browse categories',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -423,7 +424,7 @@
 						text: 'Architecture',
 						dataIndex: 'architectureFlg',
 						flex: 1, 
-						tooltip: 'Is the attribute an architecture?',
+						tooltip: 'Denotes attribute is an architecture',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -431,7 +432,7 @@
 						text: 'Allow Multiple',
 						dataIndex: 'allowMultipleFlg',
 						flex: 1, 
-						tooltip: 'Should a component be allowed to have more than one code for this attribute?',
+						tooltip: 'A component will be allowed to have more than one code for this attribute',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -439,7 +440,7 @@
 						text: 'Allow User Codes',
 						dataIndex: 'allowUserGeneratedCodes',
 						flex: 1,
-						tooltip: 'Should users be able to generate codes for this attribute?',
+						tooltip: 'Should users be able to generate codes for this attribute',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -447,7 +448,7 @@
 						text: 'Hide On Submission',
 						dataIndex: 'hideOnSubmission',
 						flex: 1, 
-						tooltip: 'Should the attribute type show on the submission form?',
+						tooltip: 'Should the attribute type show on the submission form',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
