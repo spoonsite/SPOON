@@ -725,7 +725,6 @@ public class ComponentRESTResource
 					//don't add required for the type; if missing (Allow the multiple requires to be removed)
 					AttributeType attributeType = service.getAttributeService().findType(componentAttribute.getComponentAttributePk().getAttributeType());
 					if (!(attributeType != null
-							&& attributeType.getRequiredFlg()
 							&& requiredTypeSet.contains(componentAttribute.getComponentAttributePk().getAttributeType()))) {
 						component.getAttributes().add(componentAttribute);
 					}

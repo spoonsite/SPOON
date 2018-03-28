@@ -67,12 +67,48 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			editable=true;
 			typeAhead=true;	
 		}			
+		
+		var numberVType = attributePanel.attributeTypeView.attributeValueType === 'NUMBER' ? 'AttributeNumber' : undefined;			
+			
+		var extraCfg = {};
 		var xtype = 'Ext.form.field.ComboBox';
 		if (attributePanel.attributeTypeView.allowMultipleFlg) {
-			xtype = 'Ext.form.field.Tag';
+			xtype = 'Ext.form.field.Tag';			
+			
+			
+			var validator = undefined;
+			if (numberVType){			
+				validator = function(valueRaw) {
+					var values = attributePanel.getValue();	
+					var valid = true;
+					
+					Ext.Array.each(values, function(value) {
+						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
+							//check percision; this will enforce max allowed
+							if (Ext.String.endsWith(value, ".")) {
+								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+							}
+							try {
+								var valueNumber = new Number(value);
+								if (isNaN(valueNumber)) {						
+									valid = 'Value must be a valid number';
+								}
+							} catch (e) {
+								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+							}
+						}
+					});	
+					return valid;	
+				};
+			} 
+			numberVType = undefined;
+			
+			extraCfg = {
+				createNewOnEnter: true,
+				createNewOnBlur: true,
+				validator: validator
+			};
 		} 
-
-		var numberVType = attributePanel.attributeTypeView.attributeValueType === 'NUMBER' ? 'AttributeNumber' : undefined;			
 
 		attributePanel.field = Ext.create(xtype, Ext.apply({
 				fieldLabel: attributePanel.attributeTypeView.description + requireType,
@@ -97,7 +133,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 						return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
 					}
 				}
-			}, attributePanel.fieldConfig));
+			}, attributePanel.fieldConfig, extraCfg));
 
 		attributePanel.add(attributePanel.field);		
 		
@@ -157,9 +193,14 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		var values = attributePanel.getValue();
 		
 		Ext.Array.each(values, function(value){
-			if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER' && 
-				Ext.String.endsWith(value, ".")) {			
+			if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
 			    //check percision; this will enforce max allowed
+				if (Ext.String.endsWith(value, ".")) {
+					valid = false;
+					form.getForm().markInvalid({
+						attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
+					});
+				}
 				try {
 					var valueNumber = new Number(value);
 					if (isNaN(valueNumber)) {						
