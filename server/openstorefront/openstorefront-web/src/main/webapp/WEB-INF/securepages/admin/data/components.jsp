@@ -649,7 +649,17 @@
 									});
 
 									Ext.Array.each(data, function(attribute) {
-										if (attribute.requiredFlg) {
+										var required = false;
+										
+										if (attribute.requiredRestrictions) {
+											Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
+												if (restriction.componentType === generalForm.componentRecord.get('componentType')) {
+													required = true;
+												}
+											});
+										}
+										
+										if (required) {
 
 											//group values of same type
 											var value = attribute.code;

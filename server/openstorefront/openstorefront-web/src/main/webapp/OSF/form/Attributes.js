@@ -49,20 +49,18 @@ Ext.define('OSF.form.Attributes', {
 
 					var optionalAttributes = [];
 					Ext.Array.each(data, function (attribute) {
-						if (!attribute.requiredFlg) {
-							optionalAttributes.push(attribute);
-						} else if (attribute.requiredRestrictions) {
-							var optFound = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
-								if (item.componentType === attributePanel.component.componentType) {
-									return true;
-								} else {
-									return false;
+						var required = false;
+						
+						if (attribute.requiredRestrictions) {
+							Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
+								if (restriction.componentType === attributePanel.component.componentType) {
+									required = true;
 								}
 							});
-							if (!optFound) {
-								optionalAttributes.push(attribute);
-							}
-						}
+						}						
+						if (!required) {
+							optionalAttributes.push(attribute);
+						} 
 					});
 					optionalAttributes.reverse();
 					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);

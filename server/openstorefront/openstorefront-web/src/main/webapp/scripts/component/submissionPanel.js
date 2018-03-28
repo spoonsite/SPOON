@@ -262,7 +262,18 @@ Ext.define('OSF.component.SubmissionPanel', {
 						var optionalAttributes = [];
 						Ext.Array.each(data, function (attribute) {
 							if (!attribute.hideOnSubmission) {
-								if (attribute.requiredFlg) {
+								
+								var required = false;
+										
+								if (attribute.requiredRestrictions) {
+									Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
+										if (restriction.componentType === submissionPanel.componentType) {
+											required = true;
+										}
+									});
+								}			
+								
+								if (required) {
 									var found = false;
 									
 									//group values of same type
