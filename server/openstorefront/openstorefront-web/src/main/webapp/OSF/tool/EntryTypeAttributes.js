@@ -51,9 +51,12 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 				{
 					xtype: 'grid',
 					itemId: 'entryTypeGrid',
-					title: 'Entry Types',
+					title: 'Entry Types <i class="fa fa-question-circle"  data-qtip="Select Entry Type and then assign attributes by draging and droping from required, optional and unassociated."></i>',
+					header: {
+						cls: 'entrytype-attribute-assignment-header'
+					},
 					columnLines: true,
-					border: true,
+					frame: true,					
 					width: '100%',
 					height: '50%',
 					store: {							

@@ -1784,3 +1784,7 @@ table.confluenceTable td.numberingColumn {
 .entry-topics-button:active {
 	background: rgba(112, 125, 150, 0.8);
 }
+
+.entrytype-attribute-assignment-header {
+	background: steelblue;
+}
