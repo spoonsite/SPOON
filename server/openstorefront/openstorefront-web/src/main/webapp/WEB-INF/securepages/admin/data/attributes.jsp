@@ -688,7 +688,10 @@
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
-				Ext.getCmp('editAttributeForm-defaultCode').show();			
+				Ext.getCmp('editAttributeForm-defaultCode').hide();
+				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
+				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();			
+				
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
@@ -2258,6 +2261,7 @@
 								},
 								{
 									xtype: 'panel',
+									id: 'editAttributeForm-entryTypeAssignment',
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
