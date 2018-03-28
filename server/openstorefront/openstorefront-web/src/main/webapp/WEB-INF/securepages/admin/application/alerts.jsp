@@ -24,6 +24,12 @@
 
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
+
+		<style>
+			.alert-entry-type-tree .x-tree-icon {
+				display: none;
+			}
+		</style>
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -300,7 +306,114 @@
 					}
 				});
 
+				var saveAlerts = function () {
+					var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
 
+					// Build PUT/POST Data
+					var data = {};
+
+					// Compile un-nested data
+					var flatData = Ext.getCmp('editAlertForm').getValues();
+					data.alertType = flatData.alertType;
+					data.name = flatData.name;
+
+					// Compile emailAddresses
+					var stringEmails = flatData.emailAddresses.split(";");
+					var emailAddresses = [];
+					stringEmails.forEach(function (currentValue, index, array) {
+						stringEmails[index] = currentValue.trim();
+						if (stringEmails[index] !== '') {
+							emailAddresses.push({ "email": stringEmails[index] });
+						}
+					});
+					data.emailAddresses = emailAddresses;
+
+
+					// Compile UserDataOptions
+					if (flatData.alertType === 'USERD') {
+						var ud = {};
+						ud.alertOnTags = (flatData.alertOnTags === "true");
+						ud.alertOnReviews = (flatData.alertOnReviews === "true");
+						ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
+						ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
+						ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
+						data.userDataAlertOption = ud;
+					}
+
+					// Compile SystemErrorAlertOptions
+					if (flatData.alertType === 'SYSERROR') {
+						var se = {};
+						se.alertOnSystem = (flatData.alertOnSystem === "true");
+						se.alertOnREST = (flatData.alertOnREST === "true");
+						se.alertOnReport = (flatData.alertOnReport === "true");
+						se.alertOnIntegration = (flatData.alertOnIntegration === "true");
+						data.systemErrorAlertOption = se;
+					}
+
+					if (flatData.alertType === 'USERMANG') {
+						data.userManagementAlertOption = {
+							alertOnUserRegistration: flatData.alertOnUserRegistration,
+							alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
+						};
+					}
+
+					if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
+						checkedComponents = Ext.getCmp("alertEntryForm-entryTypes").getChecked()
+						var componentTypes = [];
+						Ext.Array.forEach(checkedComponents, function (el) {
+							compID = el.data.componentType.componentType
+							componentTypes.push({ "componentType": compID });
+						});
+						data.componentTypeAlertOptions = componentTypes;
+					}
+
+
+					// Submit Data
+					var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
+					CoreUtil.submitForm({
+						url: url,
+						method: method,
+						data: data,
+						removeBlankDataItems: true,
+						form: Ext.getCmp('editAlertForm'),
+						success: function (response, opts) {
+							// Server responded OK
+							// Now we check for actual success based on
+							// the server's response object.
+							var errorResponse = Ext.decode(response.responseText);
+
+							// Confusingly, you will only see the "success"
+							// property in the response if the success
+							// is success = false. Therefore
+							// the appearance of the success property actually
+							// means there was a failure.
+
+							if (!errorResponse.hasOwnProperty('success')) {
+								// Validation succeeded.
+								Ext.toast('Saved Successfully', '', 'tr');
+								Ext.getCmp('editAlertForm').setLoading(false);
+								Ext.getCmp('editAlertForm').reset();
+								Ext.getCmp('alertAddEditWin').hide();
+								Ext.getCmp('alertGrid').getStore().load();
+								Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+								Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
+							} else {
+								// Validation failed
+
+								// Compile an object to pass to ExtJS Form
+								// that allows validation messages
+								// using the markInvalid() method.
+								var errorObj = {};
+								Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+									errorObj[item.key] = item.value;
+								});
+								var form = Ext.getCmp('editAlertForm').getForm();
+								form.markInvalid(errorObj);
+							}
+						}
+					});
+				};
 
 				var alertAddEditWin = Ext.create('Ext.window.Window', {
 					id: 'alertAddEditWin',
@@ -371,13 +484,20 @@
 									}
 								},
 								{
+									xtype: 'label',
+									html: 'Component Types:<span class="field-required" />',
+									cls: 'x-form-item-label x-form-item-label-default field-label-basic x-form-item-label-top x-unselectable'
+								},
+								{
 									xtype: 'treepanel',
-									fieldLabel: 'Select Component Types<span class="field-required" />',
 									id: 'alertEntryForm-entryTypes',
+									cls: 'alert-entry-type-tree',
 									name: 'entryTypeAlertOption',
 									allowBlank: false,
 									rootVisible: false,
-									checkPropagation: 'both',
+									checkPropagation: 'down',
+									canClickItem: true,
+									hasCheckedItem: false,
 
 									useArrows: true,
 									store: {
@@ -413,6 +533,27 @@
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/componenttypes/nested',
+										}
+									},
+									listeners: {
+
+										// both itemclick and checkchange events are to allow the
+										//	ability of checking an item via clicking the row
+										itemclick: function (treePanel, record, item) {
+
+											if (this.canClickItem && !this.hasCheckedItem) {
+												this.canClickItem = false;
+												item.querySelector('.x-tree-checkbox').click();
+												this.canClickItem = true;
+											}
+											this.hasCheckedItem = false;
+										},
+										checkchange: function () {
+
+											this.hasCheckedItem = true;
+										},
+										afterrender: function () {
+											this.expandAll();
 										}
 									}
 								},
@@ -524,112 +665,16 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
-												var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
 
-												// Build PUT/POST Data
-												var data = {};
+												var alertsTreePanel = this.up('#alertAddEditWin').queryById('alertEntryForm-entryTypes');
 
-												// Compile un-nested data
-												var flatData = Ext.getCmp('editAlertForm').getValues();
-												data.alertType = flatData.alertType;
-												data.name = flatData.name;
-
-												// Compile emailAddresses
-												var stringEmails = flatData.emailAddresses.split(";");
-												var emailAddresses = [];
-												stringEmails.forEach(function (currentValue, index, array) {
-													stringEmails[index] = currentValue.trim();
-													if (stringEmails[index] !== '') {
-														emailAddresses.push({"email": stringEmails[index]});
-													}
-												});
-												data.emailAddresses = emailAddresses;
-
-
-												// Compile UserDataOptions
-												if (flatData.alertType === 'USERD') {
-													var ud = {};
-													ud.alertOnTags = (flatData.alertOnTags === "true");
-													ud.alertOnReviews = (flatData.alertOnReviews === "true");
-													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
-													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
-													ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
-													data.userDataAlertOption = ud;
+												// component types are required
+												if (alertsTreePanel.getChecked().length > 0) {
+													saveAlerts();
 												}
-
-												// Compile SystemErrorAlertOptions
-												if (flatData.alertType === 'SYSERROR') {
-													var se = {};
-													se.alertOnSystem = (flatData.alertOnSystem === "true");
-													se.alertOnREST = (flatData.alertOnREST === "true");
-													se.alertOnReport = (flatData.alertOnReport === "true");
-													se.alertOnIntegration = (flatData.alertOnIntegration === "true");
-													data.systemErrorAlertOption = se;
+												else {
+													Ext.Msg.alert('Invalid Input', 'Specify at least one component type', Ext.emptyFn);
 												}
-												
-												if (flatData.alertType === 'USERMANG') {											
-													data.userManagementAlertOption = {
-														alertOnUserRegistration: flatData.alertOnUserRegistration,
-														alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
-													};
-												}
-
-												if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
-													checkedComponents = Ext.getCmp("alertEntryForm-entryTypes").getChecked()
-													var componentTypes = [];
-													Ext.Array.forEach(checkedComponents, function(el) {
-														compID = el.data.componentType.componentType
-														componentTypes.push({"componentType": compID});
-													});
-													data.componentTypeAlertOptions = componentTypes;
-												}
-
-
-												// Submit Data
-												var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
-												CoreUtil.submitForm({
-													url: url,
-													method: method,
-													data: data,
-													removeBlankDataItems: true,
-													form: Ext.getCmp('editAlertForm'),
-													success: function (response, opts) {
-														// Server responded OK
-														// Now we check for actual success based on
-														// the server's response object.
-														var errorResponse = Ext.decode(response.responseText);
-
-														// Confusingly, you will only see the "success"
-														// property in the response if the success
-														// is success = false. Therefore
-														// the appearance of the success property actually
-														// means there was a failure.
-
-														if (!errorResponse.hasOwnProperty('success')) {
-															// Validation succeeded.
-															Ext.toast('Saved Successfully', '', 'tr');
-															Ext.getCmp('editAlertForm').setLoading(false);
-															Ext.getCmp('editAlertForm').reset();
-															Ext.getCmp('alertAddEditWin').hide();
-															Ext.getCmp('alertGrid').getStore().load();
-															Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
-															Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
-															Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
-														} else {
-															// Validation failed
-
-															// Compile an object to pass to ExtJS Form
-															// that allows validation messages
-															// using the markInvalid() method.
-															var errorObj = {};
-															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-																errorObj[item.key] = item.value;
-															});
-															var form = Ext.getCmp('editAlertForm').getForm();
-															form.markInvalid(errorObj);
-														}
-													}
-												});
 											}
 										},
 										{
