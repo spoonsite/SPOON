@@ -419,7 +419,51 @@
 					rootVisible: false,
 					store: {
 						type: 'tree',
-						fields: ['componentType','label', 'description', 'templateName', 'activeStatus', 'updateUser', 'updateDts'],
+						fields: [{
+									'name': 'compID',
+								    'mapping': function(data) {
+										return data.componentType.componentType;
+								    }
+								},
+								{
+									'name': 'label',
+								    'mapping': function(data) {
+										return data.componentType.label;
+									}
+								},
+								{
+									'name': 'description',
+									'mapping': function(data) {
+										return data.componentType.description;
+									}
+								},
+								{
+									'name': 'templateName',
+									'mapping': function(data) {
+										if (data.componentType.template) {
+											return data.componentType.template.templateName;
+										}
+										return 'Default';
+									}
+								},
+								{
+									'name': 'activeStatus',
+									'mapping': function(data) {
+										return data.componentType.activeStatus;
+									}
+								},
+								{
+									'name': 'updateUser',
+									'mapping': function(data) {
+										return data.componentType.updateUser;
+									}
+								},
+								{
+									'name': 'updateDts',
+									'mapping': function(data) {
+										return data.componentType.updateDts;
+									}
+								}],
 						listeners: {
 
 							load: function (self, records) {
@@ -439,37 +483,24 @@
 					columns: [						
 						{ 
 							text: 'Type Code',
-							dataIndex: 'componentType',
+							dataIndex: 'compID',
 							xtype: 'treecolumn',
-							sortable: false,
-							flex: 20,
-							renderer: function (componentType) {
-								return componentType.componentType;
-							}
+							flex: 20
 						},
 						{ 
 							text: 'Label',
-							dataIndex: 'componentType',
-							sortable: false,
-							flex: 20,
-							renderer: function (componentType) {
-								return componentType.label;
-							}
+							dataIndex: 'label',
+							flex: 20
 						},
 						{ 
 							text: 'Description',
-							dataIndex: 'componentType',
-							sortable: false,
+							dataIndex: 'description',
 							flex: 30,
-							hidden: true,
-							renderer: function (componentType) {
-								return componentType.description;
-							}
+							hidden: true
 						},
 						{ 
 							text: 'Template Override',
-							dataIndex: 'componentType',
-							sortable: false,
+							dataIndex: 'templateName',
 							flex: 10,
 							renderer: function (componentType, rowData) {
 
@@ -494,10 +525,9 @@
 						{ 
 							text: 'Assigned User',
 							align: 'center',
-							dataIndex: 'componentType',
 							sortable: false,
 							flex: 15,
-							renderer: function (componentType, rowData, dataIndex, cell) {
+							renderer: function (componentType, rowData) {
 
 								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
 
@@ -511,7 +541,6 @@
 						{ 
 							text: 'Assigned Group',
 							align: 'center',
-							dataIndex: 'componentType',
 							sortable: false,
 							flex: 15,
 							renderer: function (componentType, rowData) {
@@ -523,39 +552,26 @@
 								groupData.type = 'roles';
 
 								return entryTypeAssignedCellTemplate.apply(groupData);
-
 							}
 						},
 						{ 
 							text: 'Active Status',
 							align: 'center',
-							dataIndex: 'componentType',
-							sortable: false,
-							flex: 10,
-							renderer: function (componentType) {
-								return componentType.activeStatus;
-							}
+							dataIndex: 'activeStatus',
+							flex: 10
 						},
 						{ 
 							text: 'Update User',
-							dataIndex: 'componentType',
-							sortable: false,
-							flex: 10,
-							renderer: function (componentType) {
-								return componentType.updateUser;
-							}
+							dataIndex: 'updateUser',
+							flex: 10
 						},
 						{ 
 							text: 'Update Date',
-							dataIndex: 'componentType',
-							sortable: false,
+							dataIndex: 'updateDts',
 							flex: 10,
 							hidden: true,
 							xtype: 'datecolumn',
-							format:'m/d/y H:i:s',
-							renderer: function (componentType) {
-								return componentType.updateDts;
-							}
+							format:'m/d/y H:i:s'
 						}
 					],
 					dockedItems: [
