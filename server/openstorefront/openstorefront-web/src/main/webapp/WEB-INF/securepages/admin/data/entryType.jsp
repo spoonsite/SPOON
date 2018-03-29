@@ -482,14 +482,14 @@
 					columnLines: true,
 					columns: [						
 						{ 
-							text: 'Type Code',
-							dataIndex: 'compID',
+							text: 'Label',
+							dataIndex: 'label',
 							xtype: 'treecolumn',
 							flex: 20
 						},
 						{ 
-							text: 'Label',
-							dataIndex: 'label',
+							text: 'Type Code',
+							dataIndex: 'compID',
 							flex: 20
 						},
 						{ 
