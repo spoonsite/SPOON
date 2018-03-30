@@ -906,7 +906,8 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: true }
+				{ text: 'Index Relevance', section: 'searchscore', display: true },
+				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){
@@ -1141,11 +1142,13 @@
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
-				'  <div style="display:block; font-size:14px; margin-top: 4px;">',
-				'    <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
-				'       <a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
-				'    </tpl>',
-				'  </div>',
+				'  <tpl if="show.breadcrumbs">',
+				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
+				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
+				'         <a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+				'      </tpl>',
+				'    </div>',
+				'  </tpl>',
 				' </div>',
 				'</tpl>',
 				{
