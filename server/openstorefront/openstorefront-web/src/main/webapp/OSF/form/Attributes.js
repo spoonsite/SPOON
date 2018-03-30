@@ -380,7 +380,9 @@ Ext.define('OSF.form.Attributes', {
 																			data: data,
 																			form: form,
 																			success: function (response, opts) {
-																				attributeTypeCb.getStore().load();
+																				attributeTypeCb.getStore().load({
+																					url: 'api/v1/resource/attributes/optional?componentType=' + encodeURIComponent(attributePanel.component.componentType)
+																				});
 																				addTypeWin.close();
 																			}
 																		});
