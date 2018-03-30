@@ -299,6 +299,16 @@ public interface AttributeService
 	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly);
 
 	/**
+	 * @See findRequiredAttributes(String componentType, boolean
+	 * submissionTypesOnly)
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @param skipFilterNoCodes
+	 * @return
+	 */
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes);
+
+	/**
 	 * gets the optional attributes giving a component type
 	 *
 	 * @param componentType

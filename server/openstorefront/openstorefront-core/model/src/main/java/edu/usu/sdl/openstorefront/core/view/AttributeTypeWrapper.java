@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import java.util.List;
 
 /**
@@ -25,42 +24,31 @@ import java.util.List;
 public class AttributeTypeWrapper
 {
 
-	private List<AttributeType> data;
+	private List<AttributeTypeAdminView> data;
 	private long totalNumber;
 
 	public AttributeTypeWrapper()
 	{
 	}
 
-	/**
-	 * @return the data
-	 */
-	public List<AttributeType> getData()
+	public List<AttributeTypeAdminView> getData()
 	{
 		return data;
 	}
 
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(List<AttributeType> data)
+	public void setData(List<AttributeTypeAdminView> data)
 	{
 		this.data = data;
 	}
 
-	/**
-	 * @return the totalNumber
-	 */
 	public long getTotalNumber()
 	{
 		return totalNumber;
 	}
 
-	/**
-	 * @param totalNumber the totalNumber to set
-	 */
 	public void setTotalNumber(long totalNumber)
 	{
 		this.totalNumber = totalNumber;
 	}
+
 }

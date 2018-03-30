@@ -437,7 +437,7 @@ Ext.define('OSF.tool.EntryTypeAttributes', {
 			
 			attributePanel.setLoading('Loading Required...');
 			Ext.Ajax.request({
-				url: 'api/v1/resource/attributes/required?componentType=' + componentType,
+				url: 'api/v1/resource/attributes/required?componentType=' + componentType + "&skipFilterNoCodes=true",
 				callback: function(response, opts) {
 					attributePanel.setLoading(false);
 				},

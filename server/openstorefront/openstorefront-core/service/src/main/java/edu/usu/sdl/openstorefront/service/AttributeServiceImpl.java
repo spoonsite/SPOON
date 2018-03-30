@@ -50,6 +50,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeAdminView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
@@ -955,8 +956,7 @@ public class AttributeServiceImpl
 		}
 
 		List<AttributeType> attributes = persistenceService.queryByExample(queryByExample);
-
-		result.setData(attributes);
+		result.setData(AttributeTypeAdminView.toView(attributes));
 
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setTotalNumber(persistenceService.countByExample(queryByExample));
@@ -1100,6 +1100,12 @@ public class AttributeServiceImpl
 	@Override
 	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly)
 	{
+		return findRequiredAttributes(componentType, submissionTypesOnly, false);
+	}
+
+	@Override
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes)
+	{
 		List<AttributeType> requiredAttributes = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
@@ -1112,9 +1118,13 @@ public class AttributeServiceImpl
 				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 					if (restriction.getComponentType().equals(componentType)) {
 
-						List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
-						if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+						if (skipFilterNoCodes) {
 							requiredAttributes.add(attributeType);
+						} else {
+							List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
+							if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+								requiredAttributes.add(attributeType);
+							}
 						}
 					}
 				}

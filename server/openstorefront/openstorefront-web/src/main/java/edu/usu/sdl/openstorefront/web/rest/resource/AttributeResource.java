@@ -195,10 +195,11 @@ public class AttributeResource
 	@Path("/required")
 	public List<AttributeTypeView> getRequiredAttributeTypes(
 			@QueryParam("componentType") String componentType,
-			@QueryParam("submissionOnly") boolean submissionOnly
+			@QueryParam("submissionOnly") boolean submissionOnly,
+			@QueryParam("skipFilterNoCodes") boolean skipFilterNoCodes
 	)
 	{
-		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly);
+		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly, skipFilterNoCodes);
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 		return createAttributeTypeViews(attributeCodesAll, requiredAttributes);
 	}

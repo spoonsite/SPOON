@@ -96,7 +96,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 		attributeCodes.add(code);
 
 		Mockito.when(attributeService.findCodesForType(Mockito.anyString())).thenReturn(attributeCodes);
-		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false)).thenCallRealMethod();
+		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false, false)).thenCallRealMethod();
 
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
 		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);

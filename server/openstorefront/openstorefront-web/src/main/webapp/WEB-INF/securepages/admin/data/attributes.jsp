@@ -380,7 +380,15 @@
 				},
 				columnLines: true,
 				columns: [
-					{text: 'Description', dataIndex: 'description', flex: 2},
+					{text: 'Description', dataIndex: 'description', flex: 2,
+						renderer: function(value, meta, record) {
+							var warning = '';
+							if (record.get('configurationWarning')) {
+								warning = ' <i class="fa fa-exclamation-triangle icon-button-color-warning" data-qtip="Missing code and does not allow user codes"></i>';
+							}
+							return value + warning;
+						}
+					},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Required',
