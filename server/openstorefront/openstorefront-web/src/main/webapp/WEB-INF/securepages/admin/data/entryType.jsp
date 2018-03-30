@@ -150,6 +150,7 @@
 								},																
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'parentComponentType',																		
+									id: 'parentComponentTypeId',
 									width: '100%',
 									margin: '0 0 15 0',
 									fieldLabel: 'Parent Type',
@@ -783,6 +784,7 @@
 				};
 				
 				var actionAddEntry = function() {
+					Ext.getCmp('parentComponentTypeId').getStore().load();
 					addEditWin.show();
 					
 					//reset form
@@ -811,6 +813,7 @@
 						});
 					}
 
+					Ext.getCmp('parentComponentTypeId').getStore().load();
 					addEditWin.show();
 					
 					Ext.getCmp('entryForm').reset(true);
