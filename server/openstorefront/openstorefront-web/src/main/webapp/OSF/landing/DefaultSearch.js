@@ -184,11 +184,19 @@ Ext.define('OSF.landing.DefaultSearch', {
 									beforeitemcollapse: function () {
 										return false;
 									},
-									itemclick: function (item, record) {
+									itemclick: function (view, record, element, index, e, opts) {										
+										if (e.target.className.indexOf('checkbox') === -1) {
+											if (record.get('checked')) {
+												record.set('checked', false);
+											} else {
+												record.set('checked', true);
+											}
+										}
 
-										var entryTypeButton = this.up('[itemId=entryType]');
+										var entryTypeButton = this.up('[itemId=entryType]');										
 										entryTypeButton.setCheckedDisplay(this.getStore());
 										entryTypeButton.setItemsSelected(this.getStore());
+										
 									}
 								},
 								store: {
