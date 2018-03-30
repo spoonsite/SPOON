@@ -318,7 +318,7 @@
 					data.name = flatData.name;
 
 					// Compile emailAddresses
-					var stringEmails = flatData.emailAddresses.split(";");
+					var stringEmails = flatData.emailAddresses.split(/[\s,;]+/);
 					var emailAddresses = [];
 					stringEmails.forEach(function (currentValue, index, array) {
 						stringEmails[index] = currentValue.trim();
