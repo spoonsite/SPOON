@@ -46,6 +46,12 @@ public class ServiceProxyFactory
 			}
 
 			Service service = context.getService(context.getServiceReference(Service.class));
+			if (service != null) {
+				//The lookup is shared so reset
+				service.reset();
+			} else {
+				LOG.log(Level.WARNING, "Service layer is not registered.");
+			}
 			return service;
 		}
 	}

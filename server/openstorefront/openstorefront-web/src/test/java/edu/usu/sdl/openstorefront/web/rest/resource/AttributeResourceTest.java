@@ -20,7 +20,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
-import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
@@ -32,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.service.AttributeServiceImpl;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 	{
 		//TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 
-		Service service = Mockito.mock(Service.class);
+		ServiceProxy service = Mockito.mock(ServiceProxy.class);
 
 		ComponentService componentService = Mockito.mock(ComponentService.class);
 
@@ -102,6 +102,9 @@ public class AttributeResourceTest extends JerseyShiroTest
 		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
 
 		ServiceProxyFactory.setTestService(service);
+		ServiceProxy.setProxyFactory((modType) -> {
+			return service;
+		});
 
 		//Arrange
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
@@ -269,7 +272,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 		//Arrange
 		//TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
 
-		Service service = Mockito.mock(Service.class);
+		ServiceProxy service = Mockito.mock(ServiceProxy.class);
 
 		ComponentService componentService = Mockito.mock(ComponentService.class);
 
@@ -289,6 +292,9 @@ public class AttributeResourceTest extends JerseyShiroTest
 		Mockito.when(lookupService.getLookupEnity(SecurityMarkingType.class, null)).thenReturn(null);
 
 		ServiceProxyFactory.setTestService(service);
+		ServiceProxy.setProxyFactory((modType) -> {
+			return service;
+		});
 
 		List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 		ComponentTypeRestriction comp = new ComponentTypeRestriction();

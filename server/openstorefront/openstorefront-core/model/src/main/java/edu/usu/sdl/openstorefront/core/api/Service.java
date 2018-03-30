@@ -11,6 +11,12 @@ public interface Service
 {
 
 	/**
+	 * Clear existing proxies and reset the persistence Persistence service is
+	 * not thread safe
+	 */
+	public void reset();
+
+	/**
 	 * Handles alert entities and services
 	 *
 	 * @return

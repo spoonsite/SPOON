@@ -16,12 +16,12 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 public abstract class BaseResource
 {
 
-	protected final Service service = ServiceProxyFactory.getServiceProxy();
+	protected final Service service = ServiceProxy.getProxy();
 
 	protected final FilterEngine filterEngine = new FilterEngine();
 

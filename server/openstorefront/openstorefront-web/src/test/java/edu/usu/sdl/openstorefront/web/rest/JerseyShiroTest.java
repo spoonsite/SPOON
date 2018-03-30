@@ -185,6 +185,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 			((TestPersistenceService) persistenceService).clear();
 		}
 		ServiceProxyFactory.setTestService(null);
+		ServiceProxy.setProxyFactory(null);
 		TestRealm.clearLogin();
 	}
 
