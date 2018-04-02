@@ -43,6 +43,12 @@ public class MappingController
 		this.mapperFactory = mapperFactory;
 	}
 
+	/**
+	 * Check the template to make sure it can be mapped
+	 *
+	 * @param template
+	 * @return
+	 */
 	public ValidationResult verifyTemplate(SubmissionFormTemplate template)
 	{
 		Objects.requireNonNull(template);
@@ -91,7 +97,26 @@ public class MappingController
 		return result;
 	}
 
-	//Add Map to User Submission
-	//public UserSubmission
-	//Add Entry to User Submission
+//	/**
+//	 * Create entries from submission
+//	 * @param template
+//	 * @param userSubmission
+//	 * @return All entries created
+//	 */
+//	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission)
+//	{
+//
+//	}
+//
+//
+//	/**
+//	 * Create a submission from a set of entries. It asum
+//	 * @param template
+//	 * @param userSubmission
+//	 * @return All entries created
+//	 */
+//	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, List<ComponentAll> fullComponents)
+//	{
+//
+//	}
 }
