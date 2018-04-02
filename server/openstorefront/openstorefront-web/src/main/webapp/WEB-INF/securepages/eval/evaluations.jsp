@@ -67,8 +67,7 @@
 							store.getProxy().extraParams = {
 								'assignedUser': Ext.getCmp('filterAssignedUser').getValue(),
 								'assignedGroup': Ext.getCmp('filterAssignedGroup').getValue(),
-								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
-								published: false
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
 							};
 						}
 					}						
