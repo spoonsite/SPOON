@@ -17,8 +17,8 @@
  * See NOTICE.txt for more information.
  */
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
+<%@include file="../../../../layout/includes.jsp" %>
+
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
@@ -89,10 +89,14 @@
 				//Sub Forms
 
 
-				var handleAttributes = function(componentType) {
-					
+				var handleAttributes = function(componentType, loadingForm) {
+										
+					loadingForm.setLoading(true);
 					Ext.Ajax.request({
 						url: 'api/v1/resource/attributes/required?componentType=' + componentType,
+						callback: function() {
+							loadingForm.setLoading(false);
+						},
 						success: function(response, opt) {
 							var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 							var data = Ext.decode(response.responseText);
@@ -510,7 +514,7 @@
 										},
 										listeners: {
 											change: function(field, newValue, oldValue, opts) {
-												handleAttributes(newValue);
+												handleAttributes(newValue, generalForm);
 											}
 										}
 									}),
@@ -2139,7 +2143,7 @@
 						checkFormTabs(mainAddEditWin, record);
 
 						mainAddEditWin.generalForm.loadRecord(record);
-						handleAttributes(record.get('componentType'));
+						handleAttributes(record.get('componentType'), mainAddEditWin.generalForm);
 						//Ext.defer(function(){
 					//		mainAddEditWin.generalForm.loadComponentAttributes();
 					//	}, 1000);

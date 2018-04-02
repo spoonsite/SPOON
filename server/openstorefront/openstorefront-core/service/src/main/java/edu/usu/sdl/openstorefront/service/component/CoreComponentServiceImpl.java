@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.LockSwitch;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -162,6 +163,7 @@ public class CoreComponentServiceImpl
 	private static final Logger LOG = Logger.getLogger(CoreComponentServiceImpl.class.getName());
 
 	private static final String COPY_MARKER = "- COPY";
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	public CoreComponentServiceImpl(ComponentServiceImpl componentService)
 	{
@@ -458,7 +460,10 @@ public class CoreComponentServiceImpl
 
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		componentService.getComponentServicePrivate().doSaveComponent(component);
+		//Because the last activity runs aync it can cause db conflicts
+		RetryUtil.retryAction(3, () -> {
+			componentService.getComponentServicePrivate().doSaveComponent(component);
+		});
 		updateComponentLastActivity(component.getComponent().getComponentId());
 
 		return component;
@@ -1661,8 +1666,7 @@ public class CoreComponentServiceImpl
 
 	public void processComponentUpdates()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
+		LOCK.lock();
 		try {
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
 			updateQueueExample.setNodeId(PropertiesManager.getNodeName());
@@ -1722,7 +1726,7 @@ public class CoreComponentServiceImpl
 				}
 			}
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
 
 	}
