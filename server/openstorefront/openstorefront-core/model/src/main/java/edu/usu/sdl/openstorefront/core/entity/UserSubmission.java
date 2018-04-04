@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
@@ -41,6 +42,12 @@ public class UserSubmission
 	@NotNull
 	@FK(SubmissionTemplateStatus.class)
 	private String templateId;
+
+	@NotNull
+	@ConsumeField
+	@APIDescription("Type of listing")
+	@FK(value = ComponentType.class, enforce = true)
+	private String componentType;
 
 	@FK(Component.class)
 	private String originalComponentId;
@@ -103,6 +110,16 @@ public class UserSubmission
 	public void setFields(List<UserSubmissionField> fields)
 	{
 		this.fields = fields;
+	}
+
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

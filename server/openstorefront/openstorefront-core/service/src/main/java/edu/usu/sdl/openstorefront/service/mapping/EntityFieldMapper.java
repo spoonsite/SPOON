@@ -15,11 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
+ * This mapper handles field to field mapping basically direct value to value.
  *
  * @author dshurtleff
  */
@@ -27,10 +38,58 @@ public class EntityFieldMapper
 		extends BaseMapper
 {
 
+	private static final Logger LOG = Logger.getLogger(EntityFieldMapper.class.getName());
+
 	@Override
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ComponentAll> childComponents = new ArrayList<>();
+
+		//only supports mapping of the component fields
+		if (Component.class.getSimpleName().equals(submissionField.getEntityName())) {
+			if (componentAll.getComponent() == null) {
+				componentAll.setComponent(new Component());
+			}
+
+			try {
+				BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), userSubmissionField.getRawValue());
+			} catch (IllegalAccessException | InvocationTargetException ex) {
+				LOG.log(Level.WARNING, () -> "Field cannot be mapped.  Check template for field label. Label: " + submissionField.getLabel());
+				if (LOG.isLoggable(Level.FINER)) {
+					LOG.log(Level.FINER, null, ex);
+				}
+
+			}
+			//handle any media (inline media)
+			componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
+
+		} else {
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, ()
+						-> "Unsupported Entity: " + submissionField.getEntityName()
+				);
+			}
+		}
+
+		return childComponents;
+	}
+
+	private List<ComponentMedia> createInlineMedia(List<UserSubmissionMedia> submissionMedia)
+	{
+		List<ComponentMedia> componentMediaList = new ArrayList<>();
+
+		if (submissionMedia != null) {
+			for (UserSubmissionMedia userSubmissionMedia : submissionMedia) {
+				ComponentMedia componentMedia = new ComponentMedia();
+				componentMedia.setMediaTypeCode(MediaType.typeFromMimeType(userSubmissionMedia.getFile().getMimeType()).getCode());
+				componentMedia.setFile(userSubmissionMedia.getFile());
+				componentMedia.setUsedInline(Boolean.TRUE);
+				componentMedia.setHideInDisplay(Boolean.TRUE);
+				componentMediaList.add(componentMedia);
+			}
+		}
+
+		return componentMediaList;
 	}
 
 }

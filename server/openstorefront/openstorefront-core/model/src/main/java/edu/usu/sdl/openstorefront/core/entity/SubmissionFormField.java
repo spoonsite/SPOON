@@ -117,6 +117,11 @@ public class SubmissionFormField
 	private Boolean allowHTMLInComment;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(TextSanitizer.class)
+	private String childEntryType;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	private String commentLabel;
@@ -333,6 +338,16 @@ public class SubmissionFormField
 	public void setStaticContent(String staticContent)
 	{
 		this.staticContent = staticContent;
+	}
+
+	public String getChildEntryType()
+	{
+		return childEntryType;
+	}
+
+	public void setChildEntryType(String childEntryType)
+	{
+		this.childEntryType = childEntryType;
 	}
 
 }

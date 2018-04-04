@@ -18,8 +18,11 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * This maps complex object back into entities; use for contacts, media etc.
  *
  * @author dshurtleff
  */
@@ -28,9 +31,11 @@ public class ComplexMapper
 {
 
 	@Override
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ComponentAll> childComponents = new ArrayList<>();
+
+		return childComponents;
 	}
 
 }

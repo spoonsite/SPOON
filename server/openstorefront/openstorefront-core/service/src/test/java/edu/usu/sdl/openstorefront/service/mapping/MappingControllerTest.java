@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
+import java.util.List;
 import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class MappingControllerTest
 				return new BaseMapper()
 				{
 					@Override
-					public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+					public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 					{
 						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}

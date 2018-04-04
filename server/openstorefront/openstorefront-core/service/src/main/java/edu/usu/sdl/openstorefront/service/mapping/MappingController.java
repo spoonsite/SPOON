@@ -18,11 +18,17 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,6 +36,8 @@ import java.util.Objects;
  */
 public class MappingController
 {
+
+	private static final Logger LOG = Logger.getLogger(MappingController.class.getName());
 
 	private MapperFactory mapperFactory;
 
@@ -59,12 +67,12 @@ public class MappingController
 		ComponentAll mainComponent = new ComponentAll();
 		allComponents.add(mainComponent);
 
-		verifySteps(template, mainComponent, allComponents);
+		verifySections(template, mainComponent, allComponents);
 		result.merge(validateComponents(allComponents));
 		return result;
 	}
 
-	private void verifySteps(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents)
+	private void verifySections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents)
 	{
 		if (template.getSections() != null) {
 			for (SubmissionFormSection section : template.getSections()) {
@@ -78,10 +86,7 @@ public class MappingController
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
-				ComponentAll newChildComponent = mapper.mapField(mainComponent, field);
-				if (newChildComponent != null) {
-					allComponents.add(newChildComponent);
-				}
+				allComponents.addAll(mapper.mapField(mainComponent, field));
 			}
 		}
 	}
@@ -97,26 +102,72 @@ public class MappingController
 		return result;
 	}
 
-//	/**
-//	 * Create entries from submission
-//	 * @param template
-//	 * @param userSubmission
-//	 * @return All entries created
-//	 */
-//	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission)
-//	{
-//
-//	}
-//
-//
-//	/**
-//	 * Create a submission from a set of entries. It asum
-//	 * @param template
-//	 * @param userSubmission
-//	 * @return All entries created
-//	 */
-//	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, List<ComponentAll> fullComponents)
-//	{
-//
-//	}
+	/**
+	 * Create entries from submission
+	 *
+	 * @param template
+	 * @param userSubmission
+	 * @return All entries created
+	 */
+	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission)
+	{
+		List<ComponentAll> componentAlls = new ArrayList<>();
+
+		List<ComponentAll> allComponents = new ArrayList<>();
+		ComponentAll mainComponent = new ComponentAll();
+		allComponents.add(mainComponent);
+
+		mapTemplateSections(template, mainComponent, allComponents, userSubmission);
+
+		return componentAlls;
+	}
+
+	private void mapTemplateSections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents, UserSubmission userSubmission)
+	{
+		if (template.getSections() != null) {
+
+			Map<String, UserSubmissionField> userFieldMap = new HashMap<>();
+			for (UserSubmissionField submissionField : userSubmission.getFields()) {
+				userFieldMap.put(userSubmission.getTemplateId(), submissionField);
+			}
+
+			for (SubmissionFormSection section : template.getSections()) {
+				mapTemplateFields(section.getFields(), mainComponent, allComponents, userFieldMap);
+			}
+		}
+	}
+
+	private void mapTemplateFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents, Map<String, UserSubmissionField> submissionFields)
+	{
+		if (fields != null) {
+			for (SubmissionFormField field : fields) {
+				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
+				UserSubmissionField userField = submissionFields.get(field.getFieldId());
+				if (userField != null) {
+
+					allComponents.addAll(mapper.mapField(mainComponent, field, userField));
+				} else {
+					if (LOG.isLoggable(Level.FINEST)) {
+						LOG.log(Level.FINEST, () -> "No user data for field: {0}" + field.getLabel());
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create a submission from a set of entries. It assumes all entries will be
+	 * related.
+	 *
+	 * @param template
+	 * @param userSubmission
+	 * @return userSubmission with all
+	 */
+	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, List<ComponentAll> fullComponents)
+	{
+		UserSubmission userSubmission = null;
+
+		return userSubmission;
+	}
+
 }

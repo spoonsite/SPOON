@@ -16,24 +16,23 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 /**
+ * This holds media and local resources for an user submission This basically
+ * need to just hold the pointer to file the other metadata should be held on
+ * the field
  *
  * @author dshurtleff
  */
-@APIDescription("This is part of the submission form")
+@APIDescription("This is part of the submission form field")
 @Embeddable
-public class UserSubmissionField
+public class UserSubmissionMedia
 		implements Serializable
 {
 
@@ -41,25 +40,27 @@ public class UserSubmissionField
 
 	@PK(generated = true)
 	@NotNull
+	private String submissionMediaId;
+
 	private String fieldId;
 
-	@NotNull
-	@FK(SubmissionTemplateStatus.class)
-	private String templateFieldId;
-
-	@ConsumeField
-	@APIDescription("This is a complex value;"
-			+ " It can be a String or JSON encode object;"
-			+ " The template field controls what is accepted here and the mapping")
-	private String rawValue;
-
-	@Embedded
-	@OneToMany(cascade = {CascadeType.ALL})
-	private List<UserSubmissionMedia> media;
+	@ManyToOne(cascade = {CascadeType.ALL})
+	@APIDescription("A local media file")
+	private MediaFile file;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-	public UserSubmissionField()
+	public UserSubmissionMedia()
 	{
+	}
+
+	public String getSubmissionMediaId()
+	{
+		return submissionMediaId;
+	}
+
+	public void setSubmissionMediaId(String submissionMediaId)
+	{
+		this.submissionMediaId = submissionMediaId;
 	}
 
 	public String getFieldId()
@@ -72,34 +73,14 @@ public class UserSubmissionField
 		this.fieldId = fieldId;
 	}
 
-	public String getTemplateFieldId()
+	public MediaFile getFile()
 	{
-		return templateFieldId;
+		return file;
 	}
 
-	public void setTemplateFieldId(String templateFieldId)
+	public void setFile(MediaFile file)
 	{
-		this.templateFieldId = templateFieldId;
-	}
-
-	public String getRawValue()
-	{
-		return rawValue;
-	}
-
-	public void setRawValue(String rawValue)
-	{
-		this.rawValue = rawValue;
-	}
-
-	public List<UserSubmissionMedia> getMedia()
-	{
-		return media;
-	}
-
-	public void setMedia(List<UserSubmissionMedia> media)
-	{
-		this.media = media;
+		this.file = file;
 	}
 
 }

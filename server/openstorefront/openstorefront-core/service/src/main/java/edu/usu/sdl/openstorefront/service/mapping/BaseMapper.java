@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import java.util.List;
 
 /**
  *
@@ -32,9 +33,9 @@ public abstract class BaseMapper
 	 *
 	 * @param componentAll
 	 * @param submissionField
-	 * @return new child component or null if no child was created.
+	 * @return new child components
 	 */
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField)
+	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField)
 	{
 		return mapField(componentAll, submissionField, null);
 	}
@@ -47,5 +48,5 @@ public abstract class BaseMapper
 	 * @param userSubmission
 	 * @return new child component or null if no child was created.
 	 */
-	public abstract ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField);
+	public abstract List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField);
 }
