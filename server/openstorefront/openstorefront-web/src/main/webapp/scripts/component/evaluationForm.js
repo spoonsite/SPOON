@@ -620,7 +620,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 	loadEval: function(evaluationId, componentId){
 		var evalPanel = this;
 		
-		evalPanel.setLoading(true);
+		evalPanel.setLoading('Loading Entry...');
 		evalPanel.evaluationId = evaluationId;
 		evalPanel.componentId = componentId;
 		
@@ -632,11 +632,13 @@ Ext.define('OSF.component.EvaluationPanel', {
 			success: function(response, opts) {
 				var componentFull = Ext.decode(response.responseText);
 				
+				evalPanel.setLoading('Loading Entry Type...');				
 				Ext.Ajax.request({
 					url: 'api/v1/resource/componenttypes/'+ componentFull.componentType,
 					callback: function() {				
+						evalPanel.setLoading(false);
 					},
-					success: function(response, opts) {
+					success: function(response, opts) {						
 						var entryType = Ext.decode(response.responseText);
 						var menuItems = [];
 						menuItems.push(
@@ -729,7 +731,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 
 						evalPanel.navigation.getComponent('entrymenu').removeAll();
 						evalPanel.navigation.getComponent('entrymenu').add(menuItems);
-
+						
+						
+						evalPanel.setLoading('Loading Evaluation...');
 						Ext.Ajax.request({
 							url: 'api/v1/resource/evaluations/' + evaluationId +'/details',
 							callback: function() {
