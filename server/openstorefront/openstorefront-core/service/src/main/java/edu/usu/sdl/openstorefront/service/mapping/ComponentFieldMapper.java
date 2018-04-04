@@ -34,42 +34,31 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
-public class EntityFieldMapper
+public class ComponentFieldMapper
 		extends BaseMapper
 {
 
-	private static final Logger LOG = Logger.getLogger(EntityFieldMapper.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentFieldMapper.class.getName());
 
 	@Override
 	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
-		//only supports mapping of the component fields
-		if (Component.class.getSimpleName().equals(submissionField.getEntityName())) {
-			if (componentAll.getComponent() == null) {
-				componentAll.setComponent(new Component());
-			}
+		if (componentAll.getComponent() == null) {
+			componentAll.setComponent(new Component());
+		}
 
-			try {
-				BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), userSubmissionField.getRawValue());
-			} catch (IllegalAccessException | InvocationTargetException ex) {
-				LOG.log(Level.WARNING, () -> "Field cannot be mapped.  Check template for field label. Label: " + submissionField.getLabel());
-				if (LOG.isLoggable(Level.FINER)) {
-					LOG.log(Level.FINER, null, ex);
-				}
-
-			}
-			//handle any media (inline media)
-			componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
-
-		} else {
-			if (LOG.isLoggable(Level.FINEST)) {
-				LOG.log(Level.FINEST, ()
-						-> "Unsupported Entity: " + submissionField.getEntityName()
-				);
+		try {
+			BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), userSubmissionField.getRawValue());
+		} catch (IllegalAccessException | InvocationTargetException ex) {
+			LOG.log(Level.WARNING, () -> "Field cannot be mapped.  Check template for field label. Label: " + submissionField.getLabel());
+			if (LOG.isLoggable(Level.FINER)) {
+				LOG.log(Level.FINER, null, ex);
 			}
 		}
+		//handle any media (inline media)
+		componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
 
 		return childComponents;
 	}

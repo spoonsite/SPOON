@@ -102,7 +102,7 @@ public class MappingControllerTest
 		formStep.setFields(new ArrayList<>());
 
 		SubmissionFormField submissionFormField = new SubmissionFormField();
-		submissionFormField.setMappingType(SubmissionFormFieldMappingType.FIELD);
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
 		formStep.getFields().add(submissionFormField);
 
 		template.getSections().add(new SubmissionFormSection());

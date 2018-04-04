@@ -36,8 +36,8 @@ public class MapperFactoryTest
 	public static Collection<Object[]> data()
 	{
 		return Arrays.asList(new Object[][]{
-			{SubmissionFormFieldMappingType.FIELD, EntityFieldMapper.class},
-			{SubmissionFormFieldMappingType.ATTRIBUTE, AttributeFormMapper.class},
+			{SubmissionFormFieldMappingType.COMPONENT, ComponentFieldMapper.class},
+			{SubmissionFormFieldMappingType.NONE, BaseMapper.class},
 			{SubmissionFormFieldMappingType.COMPLEX, ComplexMapper.class},
 			{SubmissionFormFieldMappingType.SUBMISSION, SubmissionMapper.class}
 		});

@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -64,12 +63,6 @@ public class SubmissionFormField
 	@ValidValueType(value = {}, lookupClass = SubmissionFormFieldMappingType.class)
 	@FK(SubmissionFormFieldMappingType.class)
 	private String mappingType;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@Sanitize(TextSanitizer.class)
-	@APIDescription("Typically should match existing entity name")
-	private String entityName;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
@@ -146,7 +139,6 @@ public class SubmissionFormField
 
 		this.setAllowHTMLInComment(submissionFormField.getAllowHTMLInComment());
 		this.setCommentLabel(submissionFormField.getCommentLabel());
-		this.setEntityName(submissionFormField.getEntityName());
 		this.setFieldName(submissionFormField.getFieldName());
 		this.setFieldOrder(submissionFormField.getFieldOrder());
 		this.setFieldType(submissionFormField.getFieldType());
@@ -178,16 +170,6 @@ public class SubmissionFormField
 	public void setMappingType(String mappingType)
 	{
 		this.mappingType = mappingType;
-	}
-
-	public String getEntityName()
-	{
-		return entityName;
-	}
-
-	public void setEntityName(String entityName)
-	{
-		this.entityName = entityName;
 	}
 
 	public String getFieldName()

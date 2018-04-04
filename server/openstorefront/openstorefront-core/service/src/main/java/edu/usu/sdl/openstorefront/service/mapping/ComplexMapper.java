@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import java.util.ArrayList;
@@ -35,7 +36,119 @@ public class ComplexMapper
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
+		String fieldType = submissionField.getFieldType();
+		switch (fieldType) {
+
+			case SubmissionFormFieldType.ATTRIBUTE:
+				addAttribute(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.ATTRIBUTE_MULTI:
+				addAttribute(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+				addAttribute(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
+				addAttribute(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.CONTACT:
+				addContact(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.CONTACT_MULTI:
+				addContact(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.EXT_DEPENDENCY:
+				addDependency(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.EXT_DEPENDENCY_MULTI:
+				addDependency(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.MEDIA:
+				addMedia(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.MEDIA_MULTI:
+				addMedia(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.RESOURCE:
+				addResource(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.RESOURCE_MULTI:
+				addResource(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.TAG:
+				addTag(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.TAG_MULTI:
+				addTag(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.RELATIONSHIPS:
+				addRelationships(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.RELATIONSHIPS_MULTI:
+				addRelationships(componentAll, fieldType, userSubmissionField);
+				break;
+
+			case SubmissionFormFieldType.CHILD_SUBMISSIONS:
+				addChildSubmission(componentAll, fieldType, userSubmissionField);
+				break;
+		}
+
 		return childComponents;
+	}
+
+	private void addAttribute(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addContact(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addDependency(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addMedia(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addResource(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addTag(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addRelationships(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
+	}
+
+	private void addChildSubmission(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField)
+	{
+
 	}
 
 }
