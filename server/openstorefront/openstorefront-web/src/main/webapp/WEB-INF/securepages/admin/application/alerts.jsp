@@ -455,9 +455,9 @@
 										change: function (combo, newValue, oldValue, opts) {
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
-											Ext.getCmp('userManagementOptions').hide();
-											Ext.getCmp('alertEntryForm-entryTypes').hide();
-											Ext.getCmp('alertEntryForm-entryTypes').allowBlank = true;
+											Ext.getCmp('userManagementOptions').hide();											
+											Ext.getCmp('alertEntryForm-entryTypes-label').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').hide();										
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -468,8 +468,8 @@
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
 													break;
-												case 'CHGREQ': case 'CMPSUB':
-													Ext.getCmp('alertEntryForm-entryTypes').allowBlank = false;
+												case 'CHGREQ': case 'CMPSUB':													
+													Ext.getCmp('alertEntryForm-entryTypes-label').show();
 													Ext.getCmp('alertEntryForm-entryTypes').show();
 													break;
 											}
@@ -485,15 +485,14 @@
 								},
 								{
 									xtype: 'label',
-									html: 'Component Types:<span class="field-required" />',
-									cls: 'x-form-item-label x-form-item-label-default field-label-basic x-form-item-label-top x-unselectable'
+									id: 'alertEntryForm-entryTypes-label',
+									html: '<b>Component Types:</b>  <span class="field-required" />'									
 								},
 								{
 									xtype: 'treepanel',
 									id: 'alertEntryForm-entryTypes',
 									cls: 'alert-entry-type-tree',
-									name: 'entryTypeAlertOption',
-									allowBlank: false,
+									name: 'entryTypeAlertOption',								
 									rootVisible: false,
 									checkPropagation: 'down',
 									canClickItem: true,
@@ -665,16 +664,31 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
+												//case 'CHGREQ': case 'CMPSUB':
+												var alertType = alertAddEditWin.queryById('alertEntryForm-Type').getValue();
+												
+												if (alertType === 'CHGREQ' || alertType === 'CMPSUB') {
+													var alertsTreePanel = alertAddEditWin.queryById('alertEntryForm-entryTypes');
 
-												var alertsTreePanel = this.up('#alertAddEditWin').queryById('alertEntryForm-entryTypes');
-
-												// component types are required
-												if (alertsTreePanel.getChecked().length > 0) {
+													// component types are required
+													if (alertsTreePanel.getChecked().length > 0) {
+														saveAlerts();
+													} else {														
+														Ext.Msg.show({
+															title:'Validation Error',
+															message: 'Specify at least one component type.',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {																
+															}
+														});
+													}
+													
+												} else {
 													saveAlerts();
 												}
-												else {
-													Ext.Msg.alert('Invalid Input', 'Specify at least one component type', Ext.emptyFn);
-												}
+
+												
 											}
 										},
 										{
