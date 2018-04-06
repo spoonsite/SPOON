@@ -146,6 +146,9 @@ public class ComponentTypeServiceImpl
 				break;
 			}
 		}
+		if (found == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find component Type: " + componentTypeId, "Check input");
+		}
 		return found;
 	}
 
@@ -221,7 +224,7 @@ public class ComponentTypeServiceImpl
 
 				if (newType != null) {
 					removeTypeMigrateData(newComponentType, componentType);
-					removeTypeCleanupAttributes(componentType, componentTypeFound, newComponentType);
+					removeTypeCleanupAttributes(componentType);
 					removeTypeUpdateChildren(componentTypeFound, newComponentType);
 
 					//remove
@@ -257,7 +260,7 @@ public class ComponentTypeServiceImpl
 		});
 	}
 
-	private void removeTypeCleanupAttributes(String componentType, ComponentType componentTypeFound, String newComponentType)
+	private void removeTypeCleanupAttributes(String componentType)
 	{
 		//remove restrictions
 		AttributeType attributeTypeExample = new AttributeType();
@@ -544,7 +547,7 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
 
-		if (componentTypeFull != null && componentTypeFull.getComponentTypeTemplate() != null) {
+		if (componentTypeFull.getComponentTypeTemplate() != null) {
 
 			templateResolution = new ComponentTypeTemplateResolution();
 
@@ -613,8 +616,7 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
 
-		if (componentTypeFull != null
-				&& componentTypeFull.getAssignedGroups() != null
+		if (componentTypeFull.getAssignedGroups() != null
 				&& !componentTypeFull.getAssignedGroups().isEmpty()) {
 
 			roleResolution = new ComponentTypeRoleResolution();
@@ -674,8 +676,7 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
 
-		if (componentTypeFull != null
-				&& componentTypeFull.getAssignedUsers() != null
+		if (componentTypeFull.getAssignedUsers() != null
 				&& !componentTypeFull.getAssignedUsers().isEmpty()) {
 
 			resolution = new ComponentTypeUserResolution();
