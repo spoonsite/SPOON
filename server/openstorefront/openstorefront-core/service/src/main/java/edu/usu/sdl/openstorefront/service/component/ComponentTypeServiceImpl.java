@@ -223,7 +223,6 @@ public class ComponentTypeServiceImpl
 					//remove restrictions
 					AttributeType attributeTypeExample = new AttributeType();
 					List<AttributeType> allAttributes = attributeTypeExample.findByExample();
-					List<AttributeType> updateAttributes = new ArrayList<>();
 					for (AttributeType attributeType : allAttributes) {
 
 						boolean addToUpdate = false;
@@ -248,23 +247,20 @@ public class ComponentTypeServiceImpl
 						}
 
 						if (addToUpdate) {
-							updateAttributes.add(attributeType);
+							componentService.getAttributeService().saveAttributeType(attributeType, false);
 						}
 
-						for (AttributeType attributeTypeUpdated : updateAttributes) {
-							componentService.getAttributeService().saveAttributeType(attributeTypeUpdated, false);
-						}
-
-						// Update children
-						ComponentType ctExample = new ComponentType();
-						ctExample.setParentComponentType(componentTypeFound.getComponentType());
-						List<ComponentType> ctChildren = ctExample.findByExampleProxy();
-
-						ctChildren.forEach(child -> {
-							child.setParentComponentType(newComponentType);
-							persistenceService.persist(child);
-						});
 					}
+
+					// Update children
+					ComponentType ctExample = new ComponentType();
+					ctExample.setParentComponentType(componentTypeFound.getComponentType());
+					List<ComponentType> ctChildren = ctExample.findByExampleProxy();
+
+					ctChildren.forEach(child -> {
+						child.setParentComponentType(newComponentType);
+						persistenceService.persist(child);
+					});
 
 					//remove
 					inactivate = false;

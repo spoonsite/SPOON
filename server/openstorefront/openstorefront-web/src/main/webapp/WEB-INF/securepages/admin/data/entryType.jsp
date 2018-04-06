@@ -904,7 +904,7 @@
 												handler: function(){
 													var form = this.up('form');
 													var data = form.getValues();
-													
+																										
 													Ext.getCmp('entryGrid').setLoading("Deleting entry type...");
 													Ext.Ajax.request({
 														url: 'api/v1/resource/componenttypes/' + typeToRemove + '?newtype=' + data.componentType,
@@ -912,11 +912,11 @@
 														callback: function(){
 															Ext.getCmp('entryGrid').setLoading(false);
 														},
-														success: function(response, opts){	
-															promptWindow.close();
+														success: function(response, opts){																
 															actionRefreshEntryGrid();
 														}
 													});													
+													promptWindow.close();
 												}
 											},
 											{
