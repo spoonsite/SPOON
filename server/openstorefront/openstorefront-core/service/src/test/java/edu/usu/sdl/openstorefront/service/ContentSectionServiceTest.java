@@ -68,9 +68,7 @@ public class ContentSectionServiceTest
 		persistenceService.addQuery(ContentSubSection.class, Arrays.asList(subsectionSpy1));
 		persistenceService.addObjectWithId(ContentSection.class, contentSectionId, section);
 
-		ContentSection sectionSpy = Mockito.mock(ContentSection.class);
-		sectionSpy.setContent("<html>\n <head></head>\n <body>\n  This is a test with no images\n </body>\n</html>");
-		Mockito.when(sectionSpy.save()).thenReturn(section);
+		ContentSection sectionSpy = Mockito.spy(section);
 
 		ContentSectionAll contentSectionAll = new ContentSectionAll();
 		contentSectionAll.setSection(sectionSpy);
@@ -96,10 +94,7 @@ public class ContentSectionServiceTest
 		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(), Mockito.any())).thenReturn(new ArrayList<>());
 		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
 
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
-		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
-		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
-		ServiceProxyFactory.setContext(bundleContext);
+		ServiceProxyFactory.setTestService(mockService);
 
 		//Arrange
 		ContentSection section = new ContentSection();
@@ -113,8 +108,7 @@ public class ContentSectionServiceTest
 		persistenceService.addQuery(ContentSubSection.class, Arrays.asList(subsectionSpy1));
 		persistenceService.addObjectWithId(ContentSection.class, contentSectionId, section);
 
-		ContentSection sectionSpy = Mockito.mock(ContentSection.class);
-		Mockito.when(sectionSpy.save()).thenReturn(section);
+		ContentSection sectionSpy = Mockito.spy(section);
 
 		ContentSectionAll contentSectionAll = new ContentSectionAll();
 
@@ -140,10 +134,7 @@ public class ContentSectionServiceTest
 		Mockito.when(changeLogService.findUpdateChanges(Mockito.any(), Mockito.any())).thenReturn(new ArrayList<>());
 		Mockito.when(mockService.getChangeLogService()).thenReturn(changeLogService);
 
-		BundleContext bundleContext = Mockito.mock(BundleContext.class);
-		Mockito.when(bundleContext.getServiceReference(Service.class)).thenReturn(null);
-		Mockito.when(bundleContext.getService(Mockito.any())).thenReturn(mockService);
-		ServiceProxyFactory.setContext(bundleContext);
+		ServiceProxyFactory.setTestService(mockService);
 
 		//Arrange
 		ContentSection section = new ContentSection();

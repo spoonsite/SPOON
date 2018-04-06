@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleWrapper;
@@ -30,7 +29,6 @@ import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -57,14 +55,12 @@ public class ComponentAttributeResource
 {
 
 	@GET
-	@APIDescription("Get the components which contain a specified attribute type and code (optional)")
+	@APIDescription("Get the components which contain a specified attribute type and code")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentSimpleWrapper.class)
 	public Response getComponentsWithAttributeCode(
 			@QueryParam("attributeType") String type,
 			@QueryParam("attributeCode") String code,
-			@APIDescription("Loads attributes for the components found. Requires extra processing time.")
-			@QueryParam("loadAttributes") boolean loadAttributes,
 			@BeanParam ComponentFilterParams filterParams)
 	{
 		ValidationResult validationResult = filterParams.validate();
@@ -78,13 +74,8 @@ public class ComponentAttributeResource
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		if (StringUtils.isNotBlank(type)) {
-			componentAttributePk.setAttributeType(type);
-		}
-		if (StringUtils.isNotBlank(code)) {
-			componentAttributePk.setAttributeCode(code);
-		}
-
+		componentAttributePk.setAttributeType(type);
+		componentAttributePk.setAttributeCode(code);
 		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
@@ -95,10 +86,10 @@ public class ComponentAttributeResource
 			ComponentSimpleAttributeView view = new ComponentSimpleAttributeView();
 			view.setComponentId(attributeComponent.getComponentId());
 			view.setName(service.getComponentService().getComponentName(attributeComponent.getComponentId()));
-			view.setComponentType(service.getComponentService().getComponentType(attributeComponent.getComponentId()));
+			view.setComponentType(service.getComponentService().getComponentTypeForComponent(attributeComponent.getComponentId()));
 			components.add(view);
 		}
-		int totalResults = 0;
+
 		components = components.stream().filter(c -> {
 			boolean keep = true;
 			if (StringUtils.isNotBlank(filterParams.getComponentName())) {
@@ -117,23 +108,9 @@ public class ComponentAttributeResource
 
 			return keep;
 		}).collect(Collectors.toList());
-		totalResults = components.size();
+		int totalResults = components.size();
 		components = filterParams.filter(components);
 
-		if (loadAttributes) {
-			ComponentAttribute attributeExample = new ComponentAttribute();
-			attributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			List<ComponentAttribute> allAttributes = attributeExample.findByExample();
-
-			Map<String, List<ComponentAttribute>> attributeMap = allAttributes.stream()
-					.collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
-
-			for (ComponentSimpleAttributeView view : components) {
-				List<ComponentAttribute> attributes = attributeMap.get(view.getComponentId());
-				List<ComponentAttributeView> attributeView = ComponentAttributeView.toViewList(attributes);
-				view.setAttributes(attributeView);
-			}
-		}
 		simpleWrapper.setData(components);
 		simpleWrapper.setResults(components.size());
 		simpleWrapper.setTotalNumber(totalResults);

@@ -178,6 +178,9 @@
 						var entry = Ext.decode(response.responseText);						
 						
 						entry = CoreUtil.processEntry(entry);
+						
+						root = entry.componentTypeNestedModel;
+						CoreUtil.traverseNestedModel(root, [], entry);
 
 						CoreUtil.calculateEvalutationScore({
 							fullEvaluations: entry.fullEvaluations,

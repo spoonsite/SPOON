@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
@@ -49,6 +50,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeAdminView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
@@ -92,19 +94,8 @@ public class AttributeServiceImpl
 
 	private static final Logger LOG = Logger.getLogger(AttributeServiceImpl.class.getName());
 
-	private static final int MAX_USERCODE_CONFLICTS = 100;
-
 	@Override
-	public List<AttributeType> getRequiredAttributes()
-	{
-		AttributeType example = new AttributeType();
-		example.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		example.setRequiredFlg(Boolean.TRUE);
-		List<AttributeType> required = persistenceService.queryByExample(new QueryByExample(example));
-		return required;
-	}
-
-	@Override
+	@SuppressWarnings("unchecked")
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus)
 	{
 		List<AttributeCode> attributeCodes;
@@ -146,6 +137,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<AttributeCode> findCodesForType(String type, boolean all)
 	{
 		List<AttributeCode> attributeCodes;
@@ -154,7 +146,7 @@ public class AttributeServiceImpl
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
-			attributeCodes = persistenceService.queryByExample(new QueryByExample(attributeCodeExample));
+			attributeCodes = persistenceService.queryByExample(new QueryByExample<>(attributeCodeExample));
 		} else {
 			Element element;
 			element = OSFCacheManager.getAttributeCache().get(type);
@@ -168,7 +160,7 @@ public class AttributeServiceImpl
 				attributeCodeExample.setAttributeCodePk(attributeCodePk);
 				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 
-				attributeCodes = persistenceService.queryByExample(new QueryByExample(attributeCodeExample));
+				attributeCodes = persistenceService.queryByExample(new QueryByExample<>(attributeCodeExample));
 				element = new Element(type, attributeCodes);
 				OSFCacheManager.getAttributeCache().put(element);
 			}
@@ -250,7 +242,7 @@ public class AttributeServiceImpl
 			ComponentAttribute example = new ComponentAttribute();
 			example.setComponentAttributePk(pk);
 
-			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(new QueryByExample(example));
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(new QueryByExample<>(example));
 
 			List<Component> components = new ArrayList<>();
 			componentAttributes.stream().forEach((attr) -> {
@@ -428,7 +420,7 @@ public class AttributeServiceImpl
 		componentAttributePk.setAttributeType(type);
 		componentAttributePk.setAttributeCode(code);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		QueryByExample queryByExample = new QueryByExample<>(componentAttributeExample);
 		queryByExample.setReturnNonProxied(false);
 		return persistenceService.queryByExample(queryByExample);
 	}
@@ -544,7 +536,7 @@ public class AttributeServiceImpl
 	public ValidationResult syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap)
 	{
 		AttributeType attributeTypeExample = new AttributeType();
-		List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
+		List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample<>(attributeTypeExample));
 		Map<String, AttributeType> existingAttributeMap = new HashMap<>();
 		attributeTypes.stream().forEach((attributeType) -> {
 			existingAttributeMap.put(attributeType.getAttributeType(), attributeType);
@@ -684,7 +676,7 @@ public class AttributeServiceImpl
 		} else {
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-			List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
+			List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample<>(attributeTypeExample));
 			for (AttributeType attributeTypeCheck : attributeTypes) {
 				if (attributeTypeCheck.getAttributeType().equals(type)) {
 					attributeType = attributeTypeCheck;
@@ -843,7 +835,7 @@ public class AttributeServiceImpl
 			persistenceService.persist(type);
 			AttributeXRefMap mapTemp = new AttributeXRefMap();
 			mapTemp.setAttributeType(type.getAttributeType());
-			List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(new QueryByExample(mapTemp));
+			List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(new QueryByExample<>(mapTemp));
 			for (AttributeXRefMap tempMap : tempMaps) {
 				mapTemp = persistenceService.findById(AttributeXRefMap.class, tempMap.getXrefId());
 				persistenceService.delete(mapTemp);
@@ -934,11 +926,11 @@ public class AttributeServiceImpl
 		if (filter.getAll() == null || filter.getAll() == false) {
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
-		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		QueryByExample<AttributeType> queryByExample = new QueryByExample<>(attributeExample);
 
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getAttributeTypeDescription())) {
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			SpecialOperatorModel<AttributeType> specialOperatorModel = new SpecialOperatorModel<>();
 			AttributeType attributeTypeLikeExample = new AttributeType();
 			attributeTypeLikeExample.setDescription("%" + filter.getAttributeTypeDescription().toLowerCase() + "%");
 
@@ -964,8 +956,7 @@ public class AttributeServiceImpl
 		}
 
 		List<AttributeType> attributes = persistenceService.queryByExample(queryByExample);
-
-		result.setData(attributes);
+		result.setData(AttributeTypeAdminView.toView(attributes));
 
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setTotalNumber(persistenceService.countByExample(queryByExample));
@@ -983,11 +974,11 @@ public class AttributeServiceImpl
 		if (filter.getAll() == null || filter.getAll() == false) {
 			attributeExample.setActiveStatus(filter.getStatus());
 		}
-		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeExample);
 
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getAttributeCodeLabel())) {
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			SpecialOperatorModel<AttributeCode> specialOperatorModel = new SpecialOperatorModel<>();
 			AttributeCode attributeCodeLikeExample = new AttributeCode();
 			attributeCodeLikeExample.setLabel("%" + filter.getAttributeCodeLabel().toLowerCase() + "%");
 
@@ -1076,17 +1067,14 @@ public class AttributeServiceImpl
 
 	private void warmAttributeCaches(List<AttributeCode> attributeCodes)
 	{
-		boolean warmCaches = true;
 		if (attributeCodes == null) {
 			Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
 			if (element == null) {
 				//warm caches (ignore return)
 				getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 			}
-			warmCaches = false;
-		}
+		} else {
 
-		if (warmCaches) {
 			//populate type->code cache
 			Map<String, List<AttributeCode>> codeMap = attributeCodes.stream()
 					.collect(Collectors.groupingBy(AttributeCode::typeField));
@@ -1099,13 +1087,86 @@ public class AttributeServiceImpl
 			//populate the type cache
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-			List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample(attributeTypeExample));
+			List<AttributeType> attributeTypes = persistenceService.queryByExample(new QueryByExample<>(attributeTypeExample));
 			for (AttributeType attributeTypeCheck : attributeTypes) {
 				Element element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
 				OSFCacheManager.getAttributeTypeCache().put(element);
 			}
+
 		}
 
+	}
+
+	@Override
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly)
+	{
+		return findRequiredAttributes(componentType, submissionTypesOnly, false);
+	}
+
+	@Override
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes)
+	{
+		List<AttributeType> requiredAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		for (AttributeType attributeType : attributeTypes) {
+
+			if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+					if (restriction.getComponentType().equals(componentType)) {
+
+						if (skipFilterNoCodes) {
+							requiredAttributes.add(attributeType);
+						} else {
+							List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
+							if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+								requiredAttributes.add(attributeType);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (submissionTypesOnly) {
+			requiredAttributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getHideOnSubmission());
+			});
+		}
+		return requiredAttributes;
+	}
+
+	@Override
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly)
+	{
+		List<AttributeType> optionalAttributes = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+
+		attributeTypes.forEach((attributeType) -> {
+
+			if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
+				for (ComponentTypeRestriction restriction : attributeType.getOptionalRestrictions()) {
+					if (restriction.getComponentType().equals(componentType)) {
+						optionalAttributes.add(attributeType);
+					}
+				}
+			}
+
+		});
+
+		if (submissionTypesOnly) {
+			optionalAttributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getHideOnSubmission());
+			});
+		}
+		return optionalAttributes;
 	}
 
 }

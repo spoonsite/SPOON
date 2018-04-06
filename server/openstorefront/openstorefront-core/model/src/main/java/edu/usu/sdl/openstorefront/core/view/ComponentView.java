@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class ComponentView
 	private String securityMarkingDescription;
 	private String componentIconId;
 	private String componentTypeIconUrl;
+	private ComponentTypeNestedModel componentTypeNestedModel;
 	private String currentDataOwner;
 
 	public ComponentView()
@@ -84,6 +87,7 @@ public class ComponentView
 		Service service = ServiceProxyFactory.getServiceProxy();
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		componentView.setComponentTypeNestedModel(service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType())));
 
 		return componentView;
 	}
@@ -214,6 +218,16 @@ public class ComponentView
 	public void setComponentTypeIconUrl(String componentTypeIconUrl)
 	{
 		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
+	public ComponentTypeNestedModel getComponentTypeNestedModel()
+	{
+		return componentTypeNestedModel;
+	}
+
+	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
+	{
+		this.componentTypeNestedModel = componentTypeNestedModel;
 	}
 
 	public String getCurrentDataOwner()

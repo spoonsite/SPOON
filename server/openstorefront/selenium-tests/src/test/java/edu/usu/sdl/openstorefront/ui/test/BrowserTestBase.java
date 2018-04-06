@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -43,7 +44,7 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	
+
 	// WebDriverUtil and Properties objects must stay in BrowserTestBase because there can only be one instance that all tests share
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
@@ -62,7 +63,54 @@ public class BrowserTestBase
 		webDriverUtil.closeDrivers();
 	}
 
-	// Making Thread.sleep "universal"
+	protected static void login()
+	{
+		String username = properties.getProperty("test.username");
+		String password = properties.getProperty("test.password");
+		login(username, password);
+	}
+
+	protected static void login(String userName, String passWord)
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+
+			WebDriverWait wait = new WebDriverWait(driver, 20);
+			// Make sure logged out before attempting login.
+			webDriverUtil.getPage(driver, "Login.action?Logout");
+
+			// Now log in
+			webDriverUtil.getPage(driver, "login.jsp");
+
+			WebElement userNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
+			userNameElement.sendKeys(userName);
+
+			// Enter password and hit ENTER since submit does not seem to work.
+			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+			userPassword.sendKeys(passWord, Keys.ENTER);
+
+			// Look for the titleText
+			try {
+				wait.until(ExpectedConditions.stalenessOf(userNameElement));
+				wait.until(ExpectedConditions.titleContains("Storefront"));  // Title has suffix of (dev), (Acceptance), etc.
+				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "--- EXCEPTION --- {0}", e);
+				String message = driver.findElement(By.cssSelector(".showError")).getText();
+				LOG.log(Level.WARNING, "--- Problem logging in as ''{0}'' ---\n Login Page MESSAGE is: --- ''{1}'' ---", new Object[]{userName, message});
+			}
+		}
+	}
+
+	protected static void logout()
+	{
+		for (WebDriver driver : webDriverUtil.getDrivers()) {
+			webDriverUtil.getPage(driver, "Login.action?Logout");
+
+			//TODO: confirm logout, return -1 or 0 or a boolean?
+		}
+	}
+
+	// Making Tread.sleep "universal"
 	protected static void sleep(int mills)
 	{
 		try {
@@ -91,7 +139,7 @@ public class BrowserTestBase
 			throw new WebDriverException("Browser failure");
 		}
 	}
-	
+
 	/**
 	 * Locates a WebElement from a String and a list of css selected WebElements
 	 *
@@ -146,7 +194,7 @@ public class BrowserTestBase
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
-					
+
 					if (cell.getText().equals(searchFor)) {
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();

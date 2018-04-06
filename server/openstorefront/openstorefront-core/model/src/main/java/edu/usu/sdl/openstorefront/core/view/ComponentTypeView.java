@@ -16,8 +16,12 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,51 +32,72 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class ComponentTypeView
-	extends ComponentType	
+		extends ComponentType
 {
-	
-	private String templateName;
+
+	private static final long serialVersionUID = 1L;
+
+	private ComponentTypeTemplateResolution template;
+	private ComponentTypeUserResolution users;
+	private ComponentTypeRoleResolution roles;
 
 	public ComponentTypeView()
 	{
 	}
 
-	public static ComponentTypeView toTemplateView(ComponentType componentType)
+	public static ComponentTypeView toView(ComponentType componentType)
 	{
 		ComponentTypeView view = new ComponentTypeView();
 		try {
 			BeanUtils.copyProperties(view, componentType);
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
-		}		
-		if (componentType.getComponentTypeTemplate()!= null) {
-			ComponentTypeTemplate template = new ComponentTypeTemplate();
-			template.setTemplateId(componentType.getComponentTypeTemplate());
-			template = template.find();
-			if (template != null) {
-				view.setTemplateName(template.getName());
-			}
 		}
+
+		Service service = ServiceProxyFactory.getServiceProxy();
+		view.setTemplate(service.getComponentService().findTemplateForComponentType(componentType.getComponentType()));
+		view.setUsers(service.getComponentService().findUserForComponentType(componentType.getComponentType()));
+		view.setRoles(service.getComponentService().findRoleGroupsForComponentType(componentType.getComponentType()));
 		return view;
 	}
 
-	public static List<ComponentTypeView> toTemplateView(List<ComponentType> componentTypes)
+	public static List<ComponentTypeView> toView(List<ComponentType> componentTypes)
 	{
 		List<ComponentTypeView> views = new ArrayList<>();
 		componentTypes.forEach(componentType -> {
-			views.add(toTemplateView(componentType));
+			views.add(ComponentTypeView.toView(componentType));
 		});
 		return views;
-	}	
-	
-	public String getTemplateName()
-	{
-		return templateName;
 	}
 
-	public void setTemplateName(String templateName)
+	public ComponentTypeTemplateResolution getTemplate()
 	{
-		this.templateName = templateName;
+		return template;
 	}
-		
+
+	public void setTemplate(ComponentTypeTemplateResolution template)
+	{
+		this.template = template;
+	}
+
+	public ComponentTypeUserResolution getUsers()
+	{
+		return users;
+	}
+
+	public void setUsers(ComponentTypeUserResolution users)
+	{
+		this.users = users;
+	}
+
+	public ComponentTypeRoleResolution getRoles()
+	{
+		return roles;
+	}
+
+	public void setRoles(ComponentTypeRoleResolution roles)
+	{
+		this.roles = roles;
+	}
+
 }

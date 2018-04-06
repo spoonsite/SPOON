@@ -38,6 +38,8 @@ public class ReportView
 		extends Report
 {
 
+	private static final long serialVersionUID = 1L;
+
 	private String reportTypeDescription;
 	private String reportFormatDescription;
 	private String runStatusDescription;
@@ -68,6 +70,7 @@ public class ReportView
 			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.REPORT_HISTORY_DAYS_TO_LIVE));
 		}
 
+		@SuppressWarnings("deprecation")
 		String format = report.getReportFormat();
 		if (StringUtils.isBlank(format)) {
 			for (ReportOutput output : report.getReportOutputs()) {

@@ -138,7 +138,7 @@ Ext.define('OSF.form.Contacts', {
 							handler: function(){
 								this.up('form').reset();
 							}									
-						}								
+						}
 					],
 					items: [
 						{

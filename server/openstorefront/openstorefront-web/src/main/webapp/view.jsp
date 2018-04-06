@@ -112,11 +112,9 @@
 				store.loadPage(1);				
 			}
 		};
-		
-		
-		
+
 		Ext.onReady(function(){		
-			
+
 			var componentId = '${param.id}';
 			var evaluationId = '${param.evalId}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
@@ -203,7 +201,7 @@
 					}				
 				]			
 			});		
-		
+
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
 				id: 'topNavPanel',
@@ -219,7 +217,12 @@
 						flex: 1,
 						minHeight: 125,						
 						tpl: new Ext.XTemplate(
-							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span></div>',
+							'<div class="details-title-name">{name}</div>',
+							'<div class="breadcrumbs" style="display: block; font-size: 14px; margin: 8px 0;">',
+							'<tpl for="parents" between="&nbsp; &gt; &nbsp;">',
+								'<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+							'</tpl>',
+							'</div>',
 							'<div class="details-title-info">',							
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
@@ -595,6 +598,9 @@
 							entry = Ext.decode(response.responseText);
 							componentId = entry.componentId;
 
+							root = entry.componentTypeNestedModel;
+							CoreUtil.traverseNestedModel(root, [], entry);
+
 							Ext.getCmp('titlePanel').update(entry);
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
@@ -649,41 +655,35 @@
 							}
 							
 							//get component type and determine review & q&a
+							componentTypeDetail = entry.componentTypeFull;
+
+							processTags(entry.tags);
+
+							var templateUrl;
+							if (entry.componentTemplateId) {
+								//load custom										
+								templateUrl= 'Template.action?LoadTemplate&templateId=' + entry.componentTemplateId;
+							} else if (entry.componentType === 'ARTICLE') {										
+								templateUrl= 'Router.action?page=template/article.jsp';
+							} else {
+								templateUrl= 'Router.action?page=template/standard.jsp';
+							}
+
+
+							//populate detail via template
 							Ext.Ajax.request({
-								url: 'api/v1/resource/componenttypes/' + entry.componentType,								
-								success: function(response, opts) {
-									componentTypeDetail = Ext.decode(response.responseText);
-																		
-									processTags(entry.tags);
-									
-									var templateUrl;
-									if (componentTypeDetail.componentTypeTemplate) {
-										//load custom										
-										templateUrl= 'Template.action?LoadTemplate&templateId=' + componentTypeDetail.componentTypeTemplate;
-									} else if (entry.componentType === 'ARTICLE') {										
-										templateUrl= 'Router.action?page=template/article.jsp';
-									} else {
-										templateUrl= 'Router.action?page=template/standard.jsp';
-									}
-									
-									
-									//populate detail via template
-									Ext.Ajax.request({
-										url: templateUrl,
-										callback: function(){
-											contentPanel.setLoading(false);
-										},										
-										success: function(response, opt) {
-											var text = response.responseText;											
-											Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
-												template.refresh(Ext.getCmp('detailPanel'), entry);
-											});
-										}
+								url: templateUrl,
+								callback: function(){
+									contentPanel.setLoading(false);
+								},										
+								success: function(response, opt) {
+									var text = response.responseText;											
+									Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
+										template.refresh(Ext.getCmp('detailPanel'), entry);
 									});
-									
-									
 								}
 							});
+									
 						},
 						failure: function(response, opts) {
 							window.parent.location.href = (user.isAnonymousUser) ? 'Login.action?gotoPage=' + encodeURIComponent('/view.jsp?id='+ componentId + '&fullPage=true') : '404-notfound.jsp'
