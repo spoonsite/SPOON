@@ -174,6 +174,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 						newValues.push(value);
 					}
 				});
+				newValues = values;
 			}
 			return values;
 		} else {

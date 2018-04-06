@@ -92,27 +92,38 @@ public class ComponentTypeNestedModel
 				//put on parent
 				componentMap.put(nestedModel.getComponentType().getComponentType(), nestedModel.getComponentType());
 			}
-			for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
-				if (child.getComponentType() != null
-						&& child.getComponentType().getComponentType().equals(componentTypeId)) {
-					componentMap.put(child.getComponentType().getComponentType(), child.getComponentType());
-					found = true;
-					break;
-				}
-			}
+			found = findFirstMatchingChild(nestedModel, componentTypeId, componentMap, found);
 			if (!found) {
-				//check children
-				for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
-					//make sure it is a child
-					if (childOfType(child, componentTypeId)) {
-						Map<String, ComponentType> childMap = findParents(child, componentTypeId);
-						componentMap.putAll(childMap);
-					}
-				}
+				checkRestOfChildren(nestedModel, componentTypeId, componentMap);
 			}
 		}
 
 		return componentMap;
+	}
+
+	private void checkRestOfChildren(ComponentTypeNestedModel nestedModel, String componentTypeId, Map<String, ComponentType> componentMap)
+	{
+		//check children
+		for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+			//make sure it is a child
+			if (childOfType(child, componentTypeId)) {
+				Map<String, ComponentType> childMap = findParents(child, componentTypeId);
+				componentMap.putAll(childMap);
+			}
+		}
+	}
+
+	private boolean findFirstMatchingChild(ComponentTypeNestedModel nestedModel, String componentTypeId, Map<String, ComponentType> componentMap, boolean found)
+	{
+		for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+			if (child.getComponentType() != null
+					&& child.getComponentType().getComponentType().equals(componentTypeId)) {
+				componentMap.put(child.getComponentType().getComponentType(), child.getComponentType());
+				found = true;
+				break;
+			}
+		}
+		return found;
 	}
 
 	private boolean childOfType(ComponentTypeNestedModel parent, String componentTypeId)

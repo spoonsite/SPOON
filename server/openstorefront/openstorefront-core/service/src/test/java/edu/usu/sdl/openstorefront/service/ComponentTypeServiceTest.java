@@ -120,7 +120,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
 		LOG.info(nestedModel.toString());
 
-		assertEquals(nestedModel.getComponentType().getLabel(), "Fruit");
+		assertEquals("Fruit", nestedModel.getComponentType().getLabel());
 		assertEquals(0, nestedModel.getChildren().size());
 	}
 
@@ -199,7 +199,7 @@ public class ComponentTypeServiceTest
 
 		ComponentTypeRoleResolution resolution = mockCore.findRoleGroupsForComponentType("C");
 
-		assertEquals(resolution.getAncestorComponentType(), "B");
+		assertEquals("B", resolution.getAncestorComponentType());
 		assertEquals(1, resolution.getRoles().size());
 
 	}
@@ -230,7 +230,7 @@ public class ComponentTypeServiceTest
 
 		ComponentTypeUserResolution resolution = mockCore.findUserForComponentType("C");
 
-		assertEquals(resolution.getAncestorComponentType(), "B");
+		assertEquals("B", resolution.getAncestorComponentType());
 		assertEquals(1, resolution.getUsernames().size());
 	}
 

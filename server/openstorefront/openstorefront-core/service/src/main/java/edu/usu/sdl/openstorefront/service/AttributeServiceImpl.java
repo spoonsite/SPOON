@@ -1115,19 +1115,7 @@ public class AttributeServiceImpl
 		for (AttributeType attributeType : attributeTypes) {
 
 			if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
-					if (restriction.getComponentType().equals(componentType)) {
-
-						if (skipFilterNoCodes) {
-							requiredAttributes.add(attributeType);
-						} else {
-							List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
-							if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
-								requiredAttributes.add(attributeType);
-							}
-						}
-					}
-				}
+				filterRequiredAttributes(attributeType, componentType, skipFilterNoCodes, requiredAttributes);
 			}
 		}
 
@@ -1137,6 +1125,23 @@ public class AttributeServiceImpl
 			});
 		}
 		return requiredAttributes;
+	}
+
+	private void filterRequiredAttributes(AttributeType attributeType, String componentType, boolean skipFilterNoCodes, List<AttributeType> requiredAttributes)
+	{
+		for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+			if (restriction.getComponentType().equals(componentType)) {
+
+				if (skipFilterNoCodes) {
+					requiredAttributes.add(attributeType);
+				} else {
+					List<AttributeCode> codes = findCodesForType(attributeType.getAttributeType());
+					if (!codes.isEmpty() || Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+						requiredAttributes.add(attributeType);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
