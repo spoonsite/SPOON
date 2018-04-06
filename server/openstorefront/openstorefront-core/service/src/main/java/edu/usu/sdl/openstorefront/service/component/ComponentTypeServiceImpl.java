@@ -85,19 +85,19 @@ public class ComponentTypeServiceImpl
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		if (componentTypeOptions.getComponentType() == null) {
-			typeModel = constructNestedModelNoParent(typeModel, componentTypes);
+			typeModel = constructNestedModelNoParent(componentTypes);
 		} else {
 			ComponentType found = findComponentTypeInList(componentTypes, componentTypeOptions);
 			if (found != null) {
-				typeModel = constructNestedModelWithParent(typeModel, componentTypeOptions, found, componentTypes);
+				typeModel = constructNestedModelWithParent(componentTypeOptions, found, componentTypes);
 			}
 		}
 		return typeModel;
 	}
 
-	private ComponentTypeNestedModel constructNestedModelWithParent(ComponentTypeNestedModel typeModel, ComponentTypeOptions componentTypeOptions, ComponentType found, List<ComponentType> componentTypes)
+	private ComponentTypeNestedModel constructNestedModelWithParent(ComponentTypeOptions componentTypeOptions, ComponentType found, List<ComponentType> componentTypes)
 	{
-		typeModel = new ComponentTypeNestedModel();
+		ComponentTypeNestedModel typeModel = new ComponentTypeNestedModel();
 		if (componentTypeOptions.getPullParents() && found.getParentComponentType() != null) {
 			found = findTopParentComponentType(componentTypes, found);
 		}
@@ -119,9 +119,9 @@ public class ComponentTypeServiceImpl
 		return found;
 	}
 
-	private ComponentTypeNestedModel constructNestedModelNoParent(ComponentTypeNestedModel typeModel, List<ComponentType> componentTypes)
+	private ComponentTypeNestedModel constructNestedModelNoParent(List<ComponentType> componentTypes)
 	{
-		typeModel = new ComponentTypeNestedModel();
+		ComponentTypeNestedModel typeModel = new ComponentTypeNestedModel();
 		List<ComponentType> roots = new ArrayList<>();
 		for (ComponentType componentType : componentTypes) {
 			if (componentType.getParentComponentType() == null) {
@@ -572,17 +572,18 @@ public class ComponentTypeServiceImpl
 		ComponentTypeTemplateResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			resolution = processFirstParentWithTemplate(componentTypes, child, resolution);
+			resolution = processFirstParentWithTemplate(componentTypes, child);
 		}
 		return resolution;
 	}
 
-	private ComponentTypeTemplateResolution processFirstParentWithTemplate(List<ComponentType> componentTypes, ComponentType child, ComponentTypeTemplateResolution resolution)
+	private ComponentTypeTemplateResolution processFirstParentWithTemplate(List<ComponentType> componentTypes, ComponentType child)
 	{
+		ComponentTypeTemplateResolution resolution = null;
 		for (ComponentType componentType : componentTypes) {
 			if (componentType.getComponentType().equals(child.getParentComponentType())) {
 				if (componentType.getComponentTypeTemplate() != null) {
-					resolution = constructTemplateResolution(resolution, componentType);
+					resolution = constructTemplateResolution(componentType);
 					break;
 				} else {
 					resolution = findFirstParentWithTemplate(componentTypes, componentType);
@@ -592,9 +593,9 @@ public class ComponentTypeServiceImpl
 		return resolution;
 	}
 
-	private ComponentTypeTemplateResolution constructTemplateResolution(ComponentTypeTemplateResolution resolution, ComponentType componentType)
+	private ComponentTypeTemplateResolution constructTemplateResolution(ComponentType componentType)
 	{
-		resolution = new ComponentTypeTemplateResolution();
+		ComponentTypeTemplateResolution resolution = new ComponentTypeTemplateResolution();
 		resolution.setCameFromAncestor(true);
 		resolution.setAncestorComponentType(componentType.getComponentType());
 		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
@@ -635,19 +636,20 @@ public class ComponentTypeServiceImpl
 		ComponentTypeRoleResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			resolution = processFirstParentWithRoles(componentTypes, child, resolution);
+			resolution = processFirstParentWithRoles(componentTypes, child);
 		}
 		return resolution;
 	}
 
-	private ComponentTypeRoleResolution processFirstParentWithRoles(List<ComponentType> componentTypes, ComponentType child, ComponentTypeRoleResolution resolution)
+	private ComponentTypeRoleResolution processFirstParentWithRoles(List<ComponentType> componentTypes, ComponentType child)
 	{
+		ComponentTypeRoleResolution resolution = null;
 		for (ComponentType componentType : componentTypes) {
 			if (componentType.getComponentType().equals(child.getParentComponentType())) {
 				if (componentType.getAssignedGroups() != null
 						&& !componentType.getAssignedGroups().isEmpty()) {
 
-					resolution = constructRoleResolution(resolution, componentType);
+					resolution = constructRoleResolution(componentType);
 					break;
 				} else {
 					resolution = findFirstParentWithRoles(componentTypes, componentType);
@@ -657,9 +659,9 @@ public class ComponentTypeServiceImpl
 		return resolution;
 	}
 
-	private ComponentTypeRoleResolution constructRoleResolution(ComponentTypeRoleResolution resolution, ComponentType componentType)
+	private ComponentTypeRoleResolution constructRoleResolution(ComponentType componentType)
 	{
-		resolution = new ComponentTypeRoleResolution();
+		ComponentTypeRoleResolution resolution = new ComponentTypeRoleResolution();
 		resolution.setCameFromAncestor(true);
 		resolution.setAncestorComponentType(componentType.getComponentType());
 		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
@@ -695,19 +697,20 @@ public class ComponentTypeServiceImpl
 		ComponentTypeUserResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			resolution = processFirstParentWithUser(componentTypes, child, resolution);
+			resolution = processFirstParentWithUser(componentTypes, child);
 		}
 		return resolution;
 	}
 
-	private ComponentTypeUserResolution processFirstParentWithUser(List<ComponentType> componentTypes, ComponentType child, ComponentTypeUserResolution resolution)
+	private ComponentTypeUserResolution processFirstParentWithUser(List<ComponentType> componentTypes, ComponentType child)
 	{
+		ComponentTypeUserResolution resolution = null;
 		for (ComponentType componentType : componentTypes) {
 			if (componentType.getComponentType().equals(child.getParentComponentType())) {
 				if (componentType.getAssignedUsers() != null
 						&& !componentType.getAssignedUsers().isEmpty()) {
 
-					resolution = constructUserResolution(resolution, componentType);
+					resolution = constructUserResolution(componentType);
 					break;
 				} else {
 					resolution = findFirstParentWithUser(componentTypes, componentType);
@@ -717,9 +720,9 @@ public class ComponentTypeServiceImpl
 		return resolution;
 	}
 
-	private ComponentTypeUserResolution constructUserResolution(ComponentTypeUserResolution resolution, ComponentType componentType)
+	private ComponentTypeUserResolution constructUserResolution(ComponentType componentType)
 	{
-		resolution = new ComponentTypeUserResolution();
+		ComponentTypeUserResolution resolution = new ComponentTypeUserResolution();
 		resolution.setCameFromAncestor(true);
 		resolution.setAncestorComponentType(componentType.getComponentType());
 		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
