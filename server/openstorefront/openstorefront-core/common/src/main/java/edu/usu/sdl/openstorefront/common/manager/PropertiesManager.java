@@ -287,49 +287,7 @@ public class PropertiesManager
 		return properties;
 	}
 
-	private static void init()
-	{
-		LOCK.lock();
-		try {
-			//Set defaults
-			defaults.put(KEY_NOTIFICATION_MAX_DAYS, "7");
-			defaults.put(KEY_FILE_HISTORY_KEEP_DAYS, "180");
-			defaults.put(KEY_MAX_ERROR_TICKETS, "5000");
-			defaults.put(KEY_JOB_WORKING_STATE_OVERRIDE, "30");
-			defaults.put(KEY_EXTERNAL_HOST_URL, "http://localhost:8080/openstorefront");
-			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
-			defaults.put(KEY_DBLOG_ON, "false");
-			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
-			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
-			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
-			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
-			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
-			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);
-			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
-			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
-
-			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
-
-			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
-				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
-			}
-			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(propertiesFilename))) {
-				properties = new SortedProperties();
-				properties.load(bin);
-			} catch (IOException e) {
-				throw new OpenStorefrontRuntimeException(e);
-			}
-
-			loadVersionProperties();
-
-		} catch (IOException e) {
-			throw new OpenStorefrontRuntimeException(e);
-		} finally {
-			LOCK.unlock();
-		}
-	}
-
-	private static void loadVersionProperties()
+	private void loadVersionProperties()
 	{
 		try (InputStream in = fileSystemManager.getApplicationResourceFile(getVersionFile())) {
 			Properties versionProperties = new Properties();
