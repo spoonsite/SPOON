@@ -50,9 +50,9 @@ public class ComponentTypeNestedModelTest
 		ComponentTypeNestedModel instance = getData();
 		Map<String, ComponentType> typeMap = instance.findParents(instance, "C");
 
-		assertEquals(typeMap.keySet().contains("A"), true);
-		assertEquals(typeMap.keySet().contains("B"), true);
-		assertEquals(typeMap.keySet().contains("C"), true);
+		assertEquals(true, typeMap.keySet().contains("A"));
+		assertEquals(true, typeMap.keySet().contains("B"));
+		assertEquals(true, typeMap.keySet().contains("C"));
 	}
 
 	/**

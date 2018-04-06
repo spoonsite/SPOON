@@ -15,12 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentTypeTemplateResolution
+		implements Serializable
 {
+
+	private static final long serialVersionUID = 1L;
 
 	private String templateId;
 	private String templateName;
@@ -28,6 +33,7 @@ public class ComponentTypeTemplateResolution
 	private String ancestorComponentTypeLabel;
 	private boolean cameFromAncestor;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeTemplateResolution()
 	{
 	}

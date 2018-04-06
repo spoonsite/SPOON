@@ -57,8 +57,8 @@ public class AttributeTypeTest
 		AttributeType instance = new AttributeType();
 		instance.updateFields(entity);
 
-		assertEquals(instance.getAttributeType(), null);
-		assertEquals(instance.getAllowMultipleFlg(), true);
+		assertEquals(null, instance.getAttributeType());
+		assertEquals(true, instance.getAllowMultipleFlg());
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class AttributeTypeTest
 		AttributeType instance = new AttributeType();
 		instance.addOptionalComponentType(componentType);
 
-		assertEquals(instance.getOptionalRestrictions().size(), 2);
+		assertEquals(2, instance.getOptionalRestrictions().size());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class AttributeTypeTest
 		AttributeType instance = new AttributeType();
 		instance.addOptionalComponentType(componentType);
 
-		assertEquals(instance.getOptionalRestrictions().size(), 1);
+		assertEquals(1, instance.getOptionalRestrictions().size());
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class AttributeTypeTest
 		AttributeType instance = new AttributeType();
 		instance.addRequiredComponentType(componentType);
 
-		assertEquals(instance.getRequiredRestrictions().size(), 1);
+		assertEquals(1, instance.getRequiredRestrictions().size());
 	}
 
 	private void setupMocks()

@@ -69,7 +69,7 @@ public class ComponentTypeServiceImpl
 			for (ODocument document : documents) {
 				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
 				if (document.field("componentId").equals(componentId)) {
-					componentType = (String) document.field("componentType");
+					componentType = document.field("componentType");
 				}
 				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
 			}
@@ -270,9 +270,9 @@ public class ComponentTypeServiceImpl
 					inactivate = false;
 					persistenceService.delete(componentTypeFound);
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{
-						newComponentType, componentType
-					}));
+					LOG.log(Level.WARNING, () -> MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}",
+							newComponentType, componentType
+					));
 				}
 			}
 

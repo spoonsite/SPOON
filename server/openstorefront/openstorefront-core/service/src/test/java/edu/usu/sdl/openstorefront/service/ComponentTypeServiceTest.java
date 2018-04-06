@@ -54,11 +54,11 @@ public class ComponentTypeServiceTest
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
 		LOG.info(nestedModel.toString());
 
-		assertEquals(nestedModel.getChildren().size(), 2);
-		assertEquals(nestedModel.getChildren().get(0).getChildren().size(), 2);
-		assertEquals(nestedModel.getChildren()
+		assertEquals(2, nestedModel.getChildren().size());
+		assertEquals(2, nestedModel.getChildren().get(0).getChildren().size());
+		assertEquals(1, nestedModel.getChildren()
 				.get(0).getChildren()
-				.get(0).getChildren().size(), 1);
+				.get(0).getChildren().size());
 	}
 
 	private ComponentTypeServiceImpl setupBaseMock()
@@ -88,7 +88,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
 		LOG.info(nestedModel.toString());
 
-		assertEquals(nestedModel.getChildren().size(), 1);
+		assertEquals(1, nestedModel.getChildren().size());
 	}
 
 	@Test
@@ -103,8 +103,8 @@ public class ComponentTypeServiceTest
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
 		LOG.info(nestedModel.toString());
 
-		assertEquals(nestedModel.getChildren().size(), 2);
-		assertEquals(nestedModel.getChildren().get(0).getChildren().size(), 1);
+		assertEquals(2, nestedModel.getChildren().size());
+		assertEquals(1, nestedModel.getChildren().get(0).getChildren().size());
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class ComponentTypeServiceTest
 		LOG.info(nestedModel.toString());
 
 		assertEquals(nestedModel.getComponentType().getLabel(), "Fruit");
-		assertEquals(nestedModel.getChildren().size(), 0);
+		assertEquals(0, nestedModel.getChildren().size());
 	}
 
 	@Test
@@ -137,8 +137,8 @@ public class ComponentTypeServiceTest
 		ComponentTypeNestedModel nestedModel = mockCore.getComponentType(options);
 		LOG.info(nestedModel.getComponentType().getLabel());
 
-		assertEquals(nestedModel.getComponentType().getLabel(), "Gala");
-		assertEquals(nestedModel.getChildren().size(), 0);
+		assertEquals("Gala", nestedModel.getComponentType().getLabel());
+		assertEquals(0, nestedModel.getChildren().size());
 	}
 
 	@Test
@@ -154,7 +154,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeTemplateResolution templateResolution = mockCore.findTemplateForComponentType("A");
 		LOG.info(templateResolution.toString());
 
-		assertEquals(templateResolution.getTemplateName(), "test");
+		assertEquals("test", templateResolution.getTemplateName());
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeTemplateResolution templateResolution = mockCore.findTemplateForComponentType("B");
 		LOG.info(templateResolution.toString());
 
-		assertEquals(templateResolution.getTemplateName(), "test");
+		assertEquals("test", templateResolution.getTemplateName());
 	}
 
 	@Test
@@ -184,7 +184,7 @@ public class ComponentTypeServiceTest
 		Mockito.when(mockCore.findRoleGroupsForComponentType("B")).thenCallRealMethod();
 
 		ComponentTypeRoleResolution resolution = mockCore.findRoleGroupsForComponentType("B");
-		assertEquals(resolution.getRoles().size(), 1);
+		assertEquals(1, resolution.getRoles().size());
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeRoleResolution resolution = mockCore.findRoleGroupsForComponentType("C");
 
 		assertEquals(resolution.getAncestorComponentType(), "B");
-		assertEquals(resolution.getRoles().size(), 1);
+		assertEquals(1, resolution.getRoles().size());
 
 	}
 
@@ -215,7 +215,7 @@ public class ComponentTypeServiceTest
 		Mockito.when(mockCore.findUserForComponentType("B")).thenCallRealMethod();
 
 		ComponentTypeUserResolution resolution = mockCore.findUserForComponentType("B");
-		assertEquals(resolution.getUsernames().size(), 1);
+		assertEquals(1, resolution.getUsernames().size());
 	}
 
 	@Test
@@ -231,7 +231,7 @@ public class ComponentTypeServiceTest
 		ComponentTypeUserResolution resolution = mockCore.findUserForComponentType("C");
 
 		assertEquals(resolution.getAncestorComponentType(), "B");
-		assertEquals(resolution.getUsernames().size(), 1);
+		assertEquals(1, resolution.getUsernames().size());
 	}
 
 	@Test
@@ -246,7 +246,7 @@ public class ComponentTypeServiceTest
 
 		String url = mockCore.resolveComponentTypeIcon("B");
 
-		assertEquals(url, "test.png");
+		assertEquals("test.png", url);
 	}
 
 	@Test
@@ -261,7 +261,7 @@ public class ComponentTypeServiceTest
 
 		String url = mockCore.resolveComponentTypeIcon("C");
 
-		assertEquals(url, "test.png");
+		assertEquals("test.png", url);
 	}
 
 	private List<ComponentType> getMockData()

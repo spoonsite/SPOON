@@ -1257,8 +1257,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample<>(componentAttributeExample));
-		return componentAttributes;
+		return service.getPersistenceService().queryByExample(new QueryByExample<>(componentAttributeExample));
 	}
 
 	@GET

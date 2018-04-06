@@ -56,8 +56,7 @@ Ext.define('OSF.landing.EntryTypeTopics', {
             success: function (response) {
 
                 var decodedResponse = Ext.decode(response.responseText);
-                var topicCount = decodedResponse.children.length;
-
+             
                 var topicTemplate = new Ext.XTemplate();
 
                 // query template for entry type topics buttons
@@ -66,7 +65,7 @@ Ext.define('OSF.landing.EntryTypeTopics', {
                     success: function (response, opts) {
 
                         // set the template and add the data view for entry type buttons
-                        var topicHtml = topicTemplate.set(response.responseText, true);
+						topicTemplate.set(response.responseText, true);
                         topicComponent.add({
                             xtype: 'dataview',
                             tpl: topicTemplate,
@@ -96,7 +95,7 @@ Ext.define('OSF.landing.EntryTypeTopics', {
                                         ]
                                     };
 
-                                    searchRequest = {
+                                    var searchRequest = {
                                         type: 'Advance',
                                         query: searchObj
                                     };

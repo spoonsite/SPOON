@@ -89,7 +89,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
 							}
 							try {
-								var valueNumber = new Number(value);
+								var valueNumber = Number(value);
 								if (isNaN(valueNumber)) {						
 									valid = 'Value must be a valid number';
 								}
@@ -202,7 +202,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					});
 				}
 				try {
-					var valueNumber = new Number(value);
+					var valueNumber = Number(value);
 					if (isNaN(valueNumber)) {						
 						valid = false;
 					}

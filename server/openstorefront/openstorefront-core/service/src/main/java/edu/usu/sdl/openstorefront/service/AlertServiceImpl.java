@@ -147,7 +147,7 @@ public class AlertServiceImpl
 							ErrorTicket errorTicket = (ErrorTicket) alertContext.getDataTrigger();
 
 							if (null == errorTicket.getErrorTypeCode()) {
-								LOG.log(Level.FINE, MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
+								LOG.log(Level.FINE, () -> MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
 							} else {
 								switch (errorTicket.getErrorTypeCode()) {
 									case ErrorTypeCode.INTEGRATION:
@@ -171,7 +171,7 @@ public class AlertServiceImpl
 										}
 										break;
 									default:
-										LOG.log(Level.FINE, MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
+										LOG.log(Level.FINE, () -> MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
 										break;
 								}
 							}

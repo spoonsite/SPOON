@@ -68,9 +68,9 @@ public class ComponentTypeResource
 	)
 	{
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false) {
+		if (status == null && !all) {
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		} else if (status != null && all == false) {
+		} else if (status != null && !all) {
 			componentType.setActiveStatus(status);
 		}
 
@@ -139,9 +139,9 @@ public class ComponentTypeResource
 		List<LookupModel> lookups = new ArrayList<>();
 
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false) {
+		if (status == null && !all) {
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		} else if (status != null && all == false) {
+		} else if (status != null && !all) {
 			componentType.setActiveStatus(status);
 		}
 

@@ -237,9 +237,6 @@ Ext.define('OSF.widget.EvaluationStats', {
 				];				
 
 				
-				var publishedChart = statPanel.queryById('publishedChart');
-				var publishedChartContainer = Ext.query('[data-componentid^=polar-][data-componentid$=-series]')[0].parentElement;
-				
 				if (totalRecords === 0) {
 					statPanel.queryById('publishedChart').setHidden(true);
 					statPanel.queryById('message').setHidden(false);

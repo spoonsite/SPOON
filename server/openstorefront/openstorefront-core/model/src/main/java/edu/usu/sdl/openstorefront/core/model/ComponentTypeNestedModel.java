@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.model;
 
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +29,15 @@ import java.util.Map;
  * @author dshurtleff
  */
 public class ComponentTypeNestedModel
+		implements Serializable
 {
+
+	private static final long serialVersionUID = 1L;
 
 	private ComponentTypeView componentType;
 	private List<ComponentTypeNestedModel> children = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeNestedModel()
 	{
 	}
@@ -53,7 +58,7 @@ public class ComponentTypeNestedModel
 		}
 
 		List<ComponentTypeNestedModel> childrenLocal = nestedModel.getChildren();
-		if (childrenLocal.size() <= 0) {
+		if (childrenLocal.isEmpty()) {
 			return childrenTypes;
 		}
 
