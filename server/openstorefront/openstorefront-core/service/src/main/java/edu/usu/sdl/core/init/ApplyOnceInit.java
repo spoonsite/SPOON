@@ -33,7 +33,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class ApplyOnceInit
 {
 
-	private static final Logger log = Logger.getLogger(ApplyOnceInit.class.getName());
+	private static final Logger LOG = Logger.getLogger(ApplyOnceInit.class.getName());
 
 	protected ServiceProxy service = new ServiceProxy();
 	protected String appliedKey;
@@ -51,14 +51,14 @@ public abstract class ApplyOnceInit
 	public void applyChanges()
 	{
 		SecurityUtil.initSystemUser();
-		log.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it's applied.", appliedKey));
+		LOG.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it's applied.", appliedKey));
 
 		String lastRunString = service.getSystemService().getPropertyValue(appliedKey + "_LASTRUN_DTS");
 		if (StringUtils.isNotBlank(lastRunString)) {
-			log.log(Level.INFO, MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
+			LOG.log(Level.INFO, MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
 		} else {
 			String results = internalApply();
-			log.log(Level.INFO, MessageFormat.format("Applied {0} changes", appliedKey));
+			LOG.log(Level.INFO, MessageFormat.format("Applied {0} changes", appliedKey));
 			service.getSystemService().saveProperty(appliedKey + "_LASTRUN_DTS", TimeUtil.dateToString(TimeUtil.currentDate()));
 			service.getSystemService().saveProperty(appliedKey + "_STATUS", results);
 		}

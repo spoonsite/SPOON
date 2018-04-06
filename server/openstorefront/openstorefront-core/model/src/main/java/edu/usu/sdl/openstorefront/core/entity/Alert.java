@@ -40,6 +40,8 @@ public class Alert
 		extends StandardEntity<Alert>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = true)
 	@NotNull
 	private String alertId;
@@ -78,6 +80,11 @@ public class Alert
 	@OneToOne(orphanRemoval = true)
 	private UserManagementAlertOption userManagementAlertOption;
 
+	@ConsumeField
+	@Embedded
+	@OneToMany(orphanRemoval = true)
+	private List<ComponentTypeAlertOption> componentTypeAlertOptions;
+
 	public Alert()
 	{
 	}
@@ -93,6 +100,7 @@ public class Alert
 		this.setName(alertUpdate.getName());
 		this.setSystemErrorAlertOption(alertUpdate.getSystemErrorAlertOption());
 		this.setUserDataAlertOption(alertUpdate.getUserDataAlertOption());
+		this.setComponentTypeAlertOptions(alertUpdate.getComponentTypeAlertOptions());
 	}
 
 	public String getAlertId()
@@ -163,6 +171,16 @@ public class Alert
 	public void setUserManagementAlertOption(UserManagementAlertOption userManagementAlertOption)
 	{
 		this.userManagementAlertOption = userManagementAlertOption;
+	}
+
+	public void setComponentTypeAlertOptions(List<ComponentTypeAlertOption> componentTypeAlertOptions)
+	{
+		this.componentTypeAlertOptions = componentTypeAlertOptions;
+	}
+
+	public List<ComponentTypeAlertOption> getComponentTypeAlertOptions()
+	{
+		return componentTypeAlertOptions;
 	}
 
 }

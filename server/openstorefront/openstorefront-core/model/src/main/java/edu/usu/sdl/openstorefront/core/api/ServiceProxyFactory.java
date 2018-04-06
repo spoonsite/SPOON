@@ -18,6 +18,7 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.osgi.framework.BundleContext;
 
@@ -29,23 +30,40 @@ import org.osgi.framework.BundleContext;
 public class ServiceProxyFactory
 {
 
-	private static final Logger log = Logger.getLogger(ServiceProxyFactory.class.getName());
+	private static final Logger LOG = Logger.getLogger(ServiceProxyFactory.class.getName());
 
 	private static BundleContext context;
+	private static Service testService;
 
 	public static Service getServiceProxy()
 	{
-		if (context == null) {
-			throw new OpenStorefrontRuntimeException("Unable to look up service; context is null");
-		}
+		if (testService != null) {
+			LOG.log(Level.FINEST, "Using test Service");
+			return testService;
+		} else {
+			if (context == null) {
+				throw new OpenStorefrontRuntimeException("Unable to look up service; context is null");
+			}
 
-		Service service = context.getService(context.getServiceReference(Service.class));
-		return service;
+			Service service = context.getService(context.getServiceReference(Service.class));
+			if (service != null) {
+				//The lookup is shared so reset
+				service.reset();
+			} else {
+				LOG.log(Level.WARNING, "Service layer is not registered.");
+			}
+			return service;
+		}
 	}
 
 	public static void setContext(BundleContext bundleContext)
 	{
 		context = bundleContext;
+	}
+
+	public static void setTestService(Service aTestService)
+	{
+		testService = aTestService;
 	}
 
 }

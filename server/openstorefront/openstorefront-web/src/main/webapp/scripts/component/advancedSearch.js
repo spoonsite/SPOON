@@ -484,6 +484,46 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 				}
 			},
 			{
+				searchType: 'ENTRYTYPE',
+				label: 'Entry Type',
+				options: function () {
+					var optPanel = Ext.create('Ext.panel.Panel', {
+						defaults: {
+							labelAlign: 'top',
+							labelSeparator: ''
+						},
+						items: [
+							{
+								xtype: 'combobox',
+								itemId: 'value',
+								name: 'value',
+								width: '100%',
+								displayField: 'description',
+								valueField: 'code',
+								fieldLabel: 'Value',
+								editable: false,
+								store: {
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/componenttypes/lookup',
+									},
+									autoLoad: true
+								}
+							},
+							{
+								xtype: 'checkbox',
+								itemId: 'searchChildren',
+								name: 'searchChildren',
+								fieldLabel: 'Search Children',
+								value: false
+							}
+						]
+					});
+
+					return optPanel;
+				}
+			},
+			{
 				searchType: 'INDEX',
 				label: 'Index',
 				options: function(){ 				

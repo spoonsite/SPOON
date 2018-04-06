@@ -49,8 +49,9 @@ Ext.define('OSF.form.MultipleAttributes', {
 					if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) { //check percision; this will enforce max allowed
 						try {
 							var valueNumber = new Number(value);
-							if (isNaN(valueNumber))
+							if (isNaN(valueNumber)) {
 								throw "Bad Format";
+							}
 							value = valueNumber.toString();
 						} catch (e) {
 							valid = false;
@@ -136,10 +137,10 @@ Ext.define('OSF.form.MultipleAttributes', {
 		attrForm.callParent();
 
 		if (!attrForm.componentId) {
-			console.error("OSF.form.MultipleAttributes : You must specific a component id (componentId)!")
+			console.error("OSF.form.MultipleAttributes : You must specific a component id (componentId)!");
 		}
 		if (!attrForm.componentType) {
-			console.error("OSF.form.MultipleAttributes : You must specific a component type (componentType)!")
+			console.error("OSF.form.MultipleAttributes : You must specific a component type (componentType)!");
 		}
 
 		attrForm.setLoading(true);

@@ -161,9 +161,10 @@ limitations under the License.
 	<div class="print-left-block print-general-block">
 		<tpl if="show.general">
 			<div class="print-section">
-				<b>Entry:</b> {componentName}<br>
+				<b>Entry:</b> {name}<br>
 				<b>Organization:</b> {organization}<br>
-				<b>Last Activity Date:</b> {lastActivityDate:date("m/d/Y H:i:s")}<br>
+				<tpl for="parents" between="&nbsp; &gt; &nbsp;">{label}</tpl><br>
+				<b>Last Activity Date:</b> {lastActivityDts:date("m/d/Y H:i:s")}<br>
 				<tpl if="show.views">
 					<b>Views:</b> {componentViews}<br>
 				</tpl>

@@ -620,442 +620,456 @@ Ext.define('OSF.component.EvaluationPanel', {
 	loadEval: function(evaluationId, componentId){
 		var evalPanel = this;
 		
-		evalPanel.setLoading(true);
+		evalPanel.setLoading('Loading Entry...');
 		evalPanel.evaluationId = evaluationId;
 		evalPanel.componentId = componentId;
 		
-		var entryType = 'COMP';		
 		Ext.Ajax.request({
-			url: 'api/v1/resource/componenttypes/'+ entryType,
+			url: 'api/v1/resource/components/' + evalPanel.componentId,
 			callback: function() {				
+				evalPanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var entryType = Ext.decode(response.responseText);
-				var menuItems = [];
-				menuItems.push(
-					{							
-						text: 'Summary',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'EntrySummary',
-								title: 'Entry Summary',
-								refreshCallback: evalPanel.externalRefreshCallback
-							});								
-						}							
-					}					
-				);
-				if (entryType.dataEntryAttributes){
-					menuItems.push({						
-						text: 'Attributes',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Attributes',
-								title: 'Entry Attributes'
-							});
-						}
-					});
-				}
-				if (entryType.dataEntryRelationships){
-					menuItems.push({						
-						text: 'Relationships',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Relationships',
-								title: 'Entry Relationships'
-							});
-						}
-					});					
-				}
-				if (entryType.dataEntryContacts){
-					menuItems.push({						
-						text: 'Contacts',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Contacts',
-								title: 'Entry Contacts'
-							});
-						}
-					});					
-				}
-				if (entryType.dataEntryResources){
-					menuItems.push({						
-						text: 'Resources',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Resources',
-								title: 'Entry Resources'
-							});	
-						}
-					});					
-				}
-				if (entryType.dataEntryMedia){
-					menuItems.push({						
-						text: 'Media',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Media',
-								title: 'Entry Media'
-							});
-						}
-					});						
-				}
-				if (entryType.dataEntryDependencies){
-					menuItems.push({						
-						text: 'Dependencies',							
-						handler: function(){
-							evalPanel.loadContentForm({
-								form: 'Dependencies',
-								title: 'Entry Dependencies'
-							});
-						}
-					});					
-				}
-				menuItems.push({						
-					text: 'Tags',							
-					handler: function(){
-						evalPanel.loadContentForm({
-							form: 'Tags',
-							title: 'Tags'
-						});
-					}
-				});					
+				var componentFull = Ext.decode(response.responseText);
 				
-				evalPanel.navigation.getComponent('entrymenu').removeAll();
-				evalPanel.navigation.getComponent('entrymenu').add(menuItems);
-				
+				evalPanel.setLoading('Loading Entry Type...');				
 				Ext.Ajax.request({
-					url: 'api/v1/resource/evaluations/' + evaluationId +'/details',
-					callback: function() {
-						evalPanel.setLoading(false);	
+					url: 'api/v1/resource/componenttypes/'+ componentFull.componentType,
+					callback: function() {				
+						evalPanel.setLoading(false);
 					},
-					success: function(response, opt) {
-						var evaluationAll = Ext.decode(response.responseText);
-
-						var questions = [];
-						
-						questions.push({							
-							text: 'Summary',							
-							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'ChecklistSummary',
-									title: 'Checklist Summary',
-									data: evaluationAll.checkListAll
-								});
-							}							
-						});
-						
-						var allQuestionButtonType = 'button';
-						var allQuestionMenu = null;
-						if (evaluationAll.evaluation.allowQuestionManagement) {
-							allQuestionButtonType = 'splitbutton';
-							allQuestionMenu = {
-								items: [
-									{
-										text: 'Manage Questions',
-										iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
-										handler: function() {
-											
-											var manageWin = Ext.create('OSF.form.ManageEvalQuestions', {
-												evaluationAll: evaluationAll,
-												successCallback: function() {
-													evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
-													allQuestionLoadAction();
-												}
-											});											
-											manageWin.show();
-										}
-									}
-								],
-								listeners: {
-									beforerender: function () {
-									 this.setWidth(this.up('button').getWidth());
-									}					
-								}								
-							};
-						}
-						
-						var allQuestionLoadAction = function() {
-							evalPanel.loadContentForm({
-								form: 'ChecklistAll',
-								title: 'Checklist Questions',
-								data: evaluationAll.checkListAll,
-								refreshCallback: function(updatedResponse) {
-									var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
-
-									var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
-									Ext.Array.each(checklistMenu.items.items, function(item){
-										if (item.questionId && updatedResponse.questionId === item.questionId) {
-											var itemStatus = item.getComponent('status');
-											itemStatus.setText(newStatusIcon);	
-											itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
-										}
-									});
-								}									
-							});
-						};
-						
-						questions.push({		
-							xtype: allQuestionButtonType,
-							text: 'All Questions',
-							menu: allQuestionMenu,
-							handler: function(){
-								allQuestionLoadAction();
-							}							
-						});
-						
-						var questionStatusIcon = function(workflowStatus) {
-							var statusIcon = '';
-							if (workflowStatus === 'COMPLETE') {
-								statusIcon = '<span class="fa fa-2x fa-check text-success"></span>';
-							} else if (workflowStatus === 'INPROGRESS') {
-								statusIcon = '<span class="fa fa-2x fa-refresh text-info"></span> ';
-							} else if (workflowStatus === 'HOLD') {
-								statusIcon = '<span class="fa fa-2x fa-close text-danger"></span> ';
-							} else if (workflowStatus === 'WAIT') {
-								statusIcon = ' - <span class="fa fa-2x fa-minus text-warning"></span> ';
-							}
-							return statusIcon;
-						};
-						
-						
-						Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
-														
-							var statusIcon = questionStatusIcon(chkresponse.workflowStatus);
-							
-							var questionHandler = function(btn) {
-								evalPanel.loadContentForm({
-									form: 'ChecklistQuestion',
-									title: 'Checklist Question',
-									data: chkresponse,
-									refreshCallback: function(updatedResponse) {
-										var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
-																				
-										var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
-										Ext.Array.each(checklistMenu.items.items, function(item){
-											if (item.questionId && updatedResponse.questionId === item.questionId) {
-												var itemStatus = item.getComponent('status');
-												itemStatus.setText(newStatusIcon);
-												itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
-											}
-										});
-									}
-								});
-							};
-							
-							questions.push({
-								xtype: 'segmentedbutton',
-								allowMultiple: false,
-								allowToggle: false,
-								allowDepress: false,
-								qid: chkresponse.question.qid,
-								questionId: chkresponse.question.questionId,
-								items: [
-									{
-										text: chkresponse.question.qid,
-										width: 50,
-										tooltip: chkresponse.question.question,
-										handler: questionHandler
-									},
-									{
-										text: chkresponse.question.evaluationSectionDescription,
-										tooltip: chkresponse.question.evaluationSectionDescription,
-										handler: questionHandler
-									},
-									{
-										text: statusIcon,
-										itemId: 'status',
-										tooltip: chkresponse.workflowStatusDescription,
-										cls: 'evaluation-nav-question-status',
-										width: 50,
-										handler: questionHandler
-									}
-								]							
-							});
-						});
-						evalPanel.navigation.getComponent('checklistmenu').removeAll();
-						evalPanel.navigation.getComponent('checklistmenu').add(questions);
-						
-						var sections = [];
-						Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
-							
-							var menu = null;
-							var buttonType = 'button';
-							if (evaluationAll.evaluation.allowNewSections) {
-								
-								buttonType = 'splitbutton';
-								menu = {
-									items: [
-										{
-											text: 'Delete Section',
-											iconCls: 'fa fa-lg fa-trash-o icon-button-color-warning icon-small-vertical-correction-book',
-											handler: function(){
-												Ext.Msg.show({
-													title:'Delete: ' + sectionAll.section.title + '?',													
-													message: 'Are you sure you want to remove this section?',
-													buttons: Ext.Msg.YESNO,
-													icon: Ext.Msg.QUESTION,
-													fn: function(btn) {
-														if (btn === 'yes') {
-															
-															evalPanel.setLoading('Deleting Section: ' + sectionAll.section.title);
-															Ext.Ajax.request({
-																url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionAll.section.contentSectionId,
-																method: 'DELETE',
-																callback: function() {
-																	evalPanel.setLoading(false);
-																},
-																success: function(response, opts) {
-																	evalPanel.loadContentForm({
-																		form: 'EvaluationInfo',
-																		title: 'Evaluation Info'
-																	});
-																	evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);																		
-																}
-															});
-														}
-													}
-												});												
-											}
-										}
-									]
-								};
-							}
-							
-							sections.push({	
-								xtype: buttonType,
-								text: sectionAll.section.title,
-								menu: menu,
+					success: function(response, opts) {						
+						var entryType = Ext.decode(response.responseText);
+						var menuItems = [];
+						menuItems.push(
+							{							
+								text: 'Summary',							
 								handler: function(){
 									evalPanel.loadContentForm({
-										form: 'Section',
-										title: sectionAll.section.title,
-										data: sectionAll										
-									});
+										form: 'EntrySummary',
+										title: 'Entry Summary',
+										refreshCallback: evalPanel.externalRefreshCallback
+									});								
 								}							
-							});							
-						});
-						
-						evalPanel.navigation.getComponent('sectionmenu').removeAll();
-						evalPanel.navigation.getComponent('sectionmenu').add(sections);
-						
-						if (evaluationAll.evaluation.allowNewSections) {
-							var dockedTools = evalPanel.navigation.getComponent('sectionmenu').getDockedComponent('tools');
-							if (!dockedTools) {							
-								evalPanel.navigation.getComponent('sectionmenu').addDocked({
-									xtype: 'toolbar',
-									itemId: 'tools',
-									dock: 'top',
-									items: [
-										{
-											iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-											text: 'Add Section',
-											handler: function() {
+							}					
+						);
+						if (entryType.dataEntryAttributes){
+							menuItems.push({						
+								text: 'Attributes',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Attributes',
+										title: 'Entry Attributes'
+									});
+								}
+							});
+						}
+						if (entryType.dataEntryRelationships){
+							menuItems.push({						
+								text: 'Relationships',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Relationships',
+										title: 'Entry Relationships'
+									});
+								}
+							});					
+						}
+						if (entryType.dataEntryContacts){
+							menuItems.push({						
+								text: 'Contacts',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Contacts',
+										title: 'Entry Contacts'
+									});
+								}
+							});					
+						}
+						if (entryType.dataEntryResources){
+							menuItems.push({						
+								text: 'Resources',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Resources',
+										title: 'Entry Resources'
+									});	
+								}
+							});					
+						}
+						if (entryType.dataEntryMedia){
+							menuItems.push({						
+								text: 'Media',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Media',
+										title: 'Entry Media'
+									});
+								}
+							});						
+						}
+						if (entryType.dataEntryDependencies){
+							menuItems.push({						
+								text: 'Dependencies',							
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Dependencies',
+										title: 'Entry Dependencies'
+									});
+								}
+							});					
+						}
+						menuItems.push({						
+							text: 'Tags',							
+							handler: function(){
+								evalPanel.loadContentForm({
+									form: 'Tags',
+									title: 'Tags'
+								});
+							}
+						});					
 
-												var sectionWindow = Ext.create('Ext.window.Window', {
-													title: 'Add Section',
-													modal: true,
-													closeAction: 'destroy',
-													width: 400,
-													height: 175,
-													layout: 'fit',
-													items: [
-														{
-															xtype: 'form',
-															bodyStyle: 'padding: 10px;',
+						evalPanel.navigation.getComponent('entrymenu').removeAll();
+						evalPanel.navigation.getComponent('entrymenu').add(menuItems);
+						
+						
+						evalPanel.setLoading('Loading Evaluation...');
+						Ext.Ajax.request({
+							url: 'api/v1/resource/evaluations/' + evaluationId +'/details',
+							callback: function() {
+								evalPanel.setLoading(false);	
+							},
+							success: function(response, opt) {
+								var evaluationAll = Ext.decode(response.responseText);
+
+								var questions = [];
+
+								questions.push({							
+									text: 'Summary',							
+									handler: function(){
+										evalPanel.loadContentForm({
+											form: 'ChecklistSummary',
+											title: 'Checklist Summary',
+											data: evaluationAll.checkListAll
+										});
+									}							
+								});
+
+								var allQuestionButtonType = 'button';
+								var allQuestionMenu = null;
+								if (evaluationAll.evaluation.allowQuestionManagement) {
+									allQuestionButtonType = 'splitbutton';
+									allQuestionMenu = {
+										items: [
+											{
+												text: 'Manage Questions',
+												iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+												handler: function() {
+
+													var manageWin = Ext.create('OSF.form.ManageEvalQuestions', {
+														evaluationAll: evaluationAll,
+														successCallback: function() {
+															evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
+															allQuestionLoadAction();
+														}
+													});											
+													manageWin.show();
+												}
+											}
+										],
+										listeners: {
+											beforerender: function () {
+											 this.setWidth(this.up('button').getWidth());
+											}					
+										}								
+									};
+								}
+
+								var allQuestionLoadAction = function() {
+									evalPanel.loadContentForm({
+										form: 'ChecklistAll',
+										title: 'Checklist Questions',
+										data: evaluationAll.checkListAll,
+										refreshCallback: function(updatedResponse) {
+											var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+
+											var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+											Ext.Array.each(checklistMenu.items.items, function(item){
+												if (item.questionId && updatedResponse.questionId === item.questionId) {
+													var itemStatus = item.getComponent('status');
+													itemStatus.setText(newStatusIcon);	
+													itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
+												}
+											});
+										}									
+									});
+								};
+
+								questions.push({		
+									xtype: allQuestionButtonType,
+									text: 'All Questions',
+									menu: allQuestionMenu,
+									handler: function(){
+										allQuestionLoadAction();
+									}							
+								});
+
+								var questionStatusIcon = function(workflowStatus) {
+									var statusIcon = '';
+									if (workflowStatus === 'COMPLETE') {
+										statusIcon = '<span class="fa fa-2x fa-check text-success"></span>';
+									} else if (workflowStatus === 'INPROGRESS') {
+										statusIcon = '<span class="fa fa-2x fa-refresh text-info"></span> ';
+									} else if (workflowStatus === 'HOLD') {
+										statusIcon = '<span class="fa fa-2x fa-close text-danger"></span> ';
+									} else if (workflowStatus === 'WAIT') {
+										statusIcon = ' - <span class="fa fa-2x fa-minus text-warning"></span> ';
+									}
+									return statusIcon;
+								};
+
+
+								Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
+
+									var statusIcon = questionStatusIcon(chkresponse.workflowStatus);
+
+									var questionHandler = function(btn) {
+										evalPanel.loadContentForm({
+											form: 'ChecklistQuestion',
+											title: 'Checklist Question',
+											data: chkresponse,
+											refreshCallback: function(updatedResponse) {
+												var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+
+												var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+												Ext.Array.each(checklistMenu.items.items, function(item){
+													if (item.questionId && updatedResponse.questionId === item.questionId) {
+														var itemStatus = item.getComponent('status');
+														itemStatus.setText(newStatusIcon);
+														itemStatus.setTooltip(updatedResponse.workflowStatusDescription);
+													}
+												});
+											}
+										});
+									};
+
+									questions.push({
+										xtype: 'segmentedbutton',
+										allowMultiple: false,
+										allowToggle: false,
+										allowDepress: false,
+										qid: chkresponse.question.qid,
+										questionId: chkresponse.question.questionId,
+										items: [
+											{
+												text: chkresponse.question.qid,
+												width: 50,
+												tooltip: chkresponse.question.question,
+												handler: questionHandler
+											},
+											{
+												text: chkresponse.question.evaluationSectionDescription,
+												tooltip: chkresponse.question.evaluationSectionDescription,
+												handler: questionHandler
+											},
+											{
+												text: statusIcon,
+												itemId: 'status',
+												tooltip: chkresponse.workflowStatusDescription,
+												cls: 'evaluation-nav-question-status',
+												width: 50,
+												handler: questionHandler
+											}
+										]							
+									});
+								});
+								evalPanel.navigation.getComponent('checklistmenu').removeAll();
+								evalPanel.navigation.getComponent('checklistmenu').add(questions);
+
+								var sections = [];
+								Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+
+									var menu = null;
+									var buttonType = 'button';
+									if (evaluationAll.evaluation.allowNewSections) {
+
+										buttonType = 'splitbutton';
+										menu = {
+											items: [
+												{
+													text: 'Delete Section',
+													iconCls: 'fa fa-lg fa-trash-o icon-button-color-warning icon-small-vertical-correction-book',
+													handler: function(){
+														Ext.Msg.show({
+															title:'Delete: ' + sectionAll.section.title + '?',													
+															message: 'Are you sure you want to remove this section?',
+															buttons: Ext.Msg.YESNO,
+															icon: Ext.Msg.QUESTION,
+															fn: function(btn) {
+																if (btn === 'yes') {
+
+																	evalPanel.setLoading('Deleting Section: ' + sectionAll.section.title);
+																	Ext.Ajax.request({
+																		url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionAll.section.contentSectionId,
+																		method: 'DELETE',
+																		callback: function() {
+																			evalPanel.setLoading(false);
+																		},
+																		success: function(response, opts) {
+																			evalPanel.loadContentForm({
+																				form: 'EvaluationInfo',
+																				title: 'Evaluation Info'
+																			});
+																			evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);																		
+																		}
+																	});
+																}
+															}
+														});												
+													}
+												}
+											]
+										};
+									}
+
+									sections.push({	
+										xtype: buttonType,
+										text: sectionAll.section.title,
+										menu: menu,
+										handler: function(){
+											evalPanel.loadContentForm({
+												form: 'Section',
+												title: sectionAll.section.title,
+												data: sectionAll										
+											});
+										}							
+									});							
+								});
+
+								evalPanel.navigation.getComponent('sectionmenu').removeAll();
+								evalPanel.navigation.getComponent('sectionmenu').add(sections);
+
+								if (evaluationAll.evaluation.allowNewSections) {
+									var dockedTools = evalPanel.navigation.getComponent('sectionmenu').getDockedComponent('tools');
+									if (!dockedTools) {							
+										evalPanel.navigation.getComponent('sectionmenu').addDocked({
+											xtype: 'toolbar',
+											itemId: 'tools',
+											dock: 'top',
+											items: [
+												{
+													iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+													text: 'Add Section',
+													handler: function() {
+
+														var sectionWindow = Ext.create('Ext.window.Window', {
+															title: 'Add Section',
+															modal: true,
+															closeAction: 'destroy',
+															width: 400,
+															height: 175,
+															layout: 'fit',
 															items: [
 																{
-																	xtype: 'combobox',
-																	name: 'templateId',
-																	fieldLabel: 'Section Template',
-																	displayField: 'name',
-																	valueField: 'templateId',								
-																	emptyText: 'Select',
-																	labelAlign: 'top',
-																	width: '100%',
-																	editable: false,
-																	forceSelection: true,
-																	allowBlank: false,
-																	store: {									
-																		autoLoad: true,
-																		proxy: {
-																			type: 'ajax',
-																			url: 'api/v1/resource/contentsectiontemplates'
-																		},
-																		listeners: {
-																			load: function(store, records, opts) {
-																				store.filterBy(function(record){
-																					var keep = true;
-																					Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
-																						if (record.get('templateId') === sectionAll.section.templateId) {
-																							keep = false;
-																						}
-																					});
-																					return keep;
-																				});
-																			}
-																		}
-																	}
-																}
-															],
-															dockedItems: [
-																{
-																	xtype: 'toolbar',
-																	dock: 'bottom',
+																	xtype: 'form',
+																	bodyStyle: 'padding: 10px;',
 																	items: [
 																		{
-																			text: 'Add',
-																			iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-																			formBind: true,
-																			handler: function() {
-																				var win = this.up('window');
-																				var form = this.up('form');
-																				var sectionData = form.getValues();
-
-																				evalPanel.setLoading('Adding Section...');
-																				Ext.Ajax.request({
-																					url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionData.templateId,
-																					method: 'POST',
-																					callback: function(response, opts) {
-																						evalPanel.setLoading(false);
-																					},
-																					success: function(response, opts) {
-																						evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
-																						win.close();
-																					}																		
-																				});
-
+																			xtype: 'combobox',
+																			name: 'templateId',
+																			fieldLabel: 'Section Template',
+																			displayField: 'name',
+																			valueField: 'templateId',								
+																			emptyText: 'Select',
+																			labelAlign: 'top',
+																			width: '100%',
+																			editable: false,
+																			forceSelection: true,
+																			allowBlank: false,
+																			store: {									
+																				autoLoad: true,
+																				proxy: {
+																					type: 'ajax',
+																					url: 'api/v1/resource/contentsectiontemplates'
+																				},
+																				listeners: {
+																					load: function(store, records, opts) {
+																						store.filterBy(function(record){
+																							var keep = true;
+																							Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+																								if (record.get('templateId') === sectionAll.section.templateId) {
+																									keep = false;
+																								}
+																							});
+																							return keep;
+																						});
+																					}
+																				}
 																			}
-																		},
+																		}
+																	],
+																	dockedItems: [
 																		{
-																			xtype: 'tbfill'
-																		},
-																		{
-																			text: 'Cancel',
-																			iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																			handler: function() {
-																				this.up('window').close();
-																			}
-																		}																	
+																			xtype: 'toolbar',
+																			dock: 'bottom',
+																			items: [
+																				{
+																					text: 'Add',
+																					iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+																					formBind: true,
+																					handler: function() {
+																						var win = this.up('window');
+																						var form = this.up('form');
+																						var sectionData = form.getValues();
+
+																						evalPanel.setLoading('Adding Section...');
+																						Ext.Ajax.request({
+																							url: 'api/v1/resource/evaluations/' + evalPanel.evaluationId + '/sections/' + sectionData.templateId,
+																							method: 'POST',
+																							callback: function(response, opts) {
+																								evalPanel.setLoading(false);
+																							},
+																							success: function(response, opts) {
+																								evalPanel.loadEval(evalPanel.evaluationId, evalPanel.componentId);
+																								win.close();
+																							}																		
+																						});
+
+																					}
+																				},
+																				{
+																					xtype: 'tbfill'
+																				},
+																				{
+																					text: 'Cancel',
+																					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																					handler: function() {
+																						this.up('window').close();
+																					}
+																				}																	
+																			]
+																		}
 																	]
 																}
 															]
-														}
-													]
-												});
-												sectionWindow.show();
-											}
-										}
-									]
-								});
+														});
+														sectionWindow.show();
+													}
+												}
+											]
+										});
+									}
+								}
+
 							}
-						}
-						
-					}
-				});				
+						});				
 				
 			}
 			
 		});
+				
+			}
+		});		
 		
 	},
 	loadContentForm: function(page) {
@@ -1151,7 +1165,7 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		beforeClose: function () {
 			var evalPanel = this.evalPanel;
 			return evalPanel.checkFormSaveStatus(this);
-		},
+		}
 	},	
 	initComponent: function () {
 		this.callParent();
