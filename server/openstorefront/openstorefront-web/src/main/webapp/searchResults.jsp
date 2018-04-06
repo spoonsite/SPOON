@@ -440,7 +440,7 @@
 						emptyText: 'Select Tags',
 	 					width: 300,
 						grow: true,
-	 					growMax: this.width,
+	 					growMax: 300,
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
 							proxy: {
