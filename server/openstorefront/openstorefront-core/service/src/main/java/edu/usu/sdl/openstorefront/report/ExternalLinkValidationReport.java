@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.LinkCheckModel;
 import edu.usu.sdl.openstorefront.report.model.LinkValidationReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -264,7 +265,7 @@ public class ExternalLinkValidationReport
 
 		ForkJoinPool forkJoinPool = new ForkJoinPool(MAX_CHECKPOOL_SIZE);
 
-		Map<String, LinkCheckModel> linkMap = new HashMap();
+		Map<String, LinkCheckModel> linkMap = new HashMap<>();
 		List<ForkJoinTask<LinkCheckModel>> tasks = new ArrayList<>();
 		for (LinkCheckModel link : links) {
 			linkMap.put(link.getId(), link);
@@ -308,6 +309,7 @@ public class ExternalLinkValidationReport
 			forkJoinPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException ex) {
 			LOG.log(Level.WARNING, "Check task shutdown was interrupted.  The application will recover and continue.", ex);
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -358,12 +360,15 @@ public class ExternalLinkValidationReport
 					} catch (SSLHandshakeException e) {
 						linkCheckModel.setStatus("Certificate Request/Error");
 						linkCheckModel.setCheckResults("Client Certificate Requested (CAC) or Server Certificate Error.  Actual error Message: " + e.getMessage());
-					} catch (Exception e) {
+					} catch (IOException e) {
 						LOG.log(Level.FINER, "Actual connection error: ", e);
 						linkCheckModel.setStatus("Timeout/Error Connecting");
 						linkCheckModel.setCheckResults("Error occur when trying to connect.  This may be a temporary case or the link may be bad. Actual error Message: " + e.getMessage());
 					}
-				} catch (Exception e) {
+				} catch (IOException e) {
+					if (LOG.isLoggable(Level.FINEST)) {
+						LOG.log(Level.FINEST, "URL error: ", e);
+					}
 					linkCheckModel.setStatus("URL is bad");
 					linkCheckModel.setCheckResults("Check link to make sure it's properly formatted");
 				}

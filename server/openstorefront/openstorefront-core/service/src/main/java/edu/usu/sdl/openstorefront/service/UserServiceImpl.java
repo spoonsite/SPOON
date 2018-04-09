@@ -243,9 +243,8 @@ public class UserServiceImpl
 			if (dupUsers.size() > 1) {
 				Date maxUpdateDate = null;
 				for (UserProfile userProfile : dupUsers) {
-					if (maxUpdateDate == null) {
-						maxUpdateDate = userProfile.getUpdateDts();
-					} else if (maxUpdateDate.before(userProfile.getUpdateDts())) {
+					if (maxUpdateDate == null
+							|| maxUpdateDate.before(userProfile.getUpdateDts())) {
 						maxUpdateDate = userProfile.getUpdateDts();
 					}
 				}
@@ -604,9 +603,8 @@ public class UserServiceImpl
 			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
-					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)) {
-						found = true;
-					} else if (StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
+					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)
+							|| StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
 						found = true;
 					}
 				}

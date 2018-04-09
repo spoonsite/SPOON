@@ -143,6 +143,7 @@ public class CoreSystem
 		return startedAllManagers;
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static boolean appyInits()
 	{
 		boolean allInitsCreated = true;

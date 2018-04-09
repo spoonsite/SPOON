@@ -22,10 +22,11 @@ import java.util.List;
 
 /**
  * Use to test the user syncing job
+ *
  * @author dshurtleff
  */
 public class MockUserManager
-	extends ExternalUserManager
+		extends ExternalUserManager
 {
 
 	@Override
@@ -42,36 +43,32 @@ public class MockUserManager
 	public List<UserRecord> findUsers(List<String> users)
 	{
 		UserProfile userProfileExample = new UserProfile();
-		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);		
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		List<UserProfile> UserProfile = userProfileExample.findByExample();
-		
+
 		List<UserRecord> userRecords = new ArrayList<>();
 		for (UserProfile userProfile : UserProfile) {
 			UserRecord userRecord = profileToRecord(userProfile);
 			if ("admin".equalsIgnoreCase(userRecord.getUsername())) {
-				userRecord.setOrganization("CHANGED");				
-				
+				userRecord.setOrganization("CHANGED");
+
 			}
 			userRecords.add(userRecord);
 		}
 		return userRecords;
 	}
-	
-	private UserRecord profileToRecord(UserProfile userProfile) 
+
+	private UserRecord profileToRecord(UserProfile userProfile)
 	{
-		UserRecord userRecord = null;
-		
-		if (userProfile != null) {
-			userRecord = new UserRecord();
-			userRecord.setFirstName(userProfile.getFirstName());
-			userRecord.setLastName(userProfile.getLastName());
-			userRecord.setEmail(userProfile.getEmail());
-			userRecord.setPhone(userProfile.getPhone());
-			userRecord.setOrganization(userProfile.getOrganization());
-			userRecord.setUsername(userProfile.getUsername());						
-		}
-		
+		UserRecord userRecord = new UserRecord();
+		userRecord.setFirstName(userProfile.getFirstName());
+		userRecord.setLastName(userProfile.getLastName());
+		userRecord.setEmail(userProfile.getEmail());
+		userRecord.setPhone(userProfile.getPhone());
+		userRecord.setOrganization(userProfile.getOrganization());
+		userRecord.setUsername(userProfile.getUsername());
+
 		return userRecord;
 	}
-	
+
 }

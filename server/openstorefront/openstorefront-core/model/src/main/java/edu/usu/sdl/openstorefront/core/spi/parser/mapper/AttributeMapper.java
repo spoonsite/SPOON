@@ -57,6 +57,7 @@ public class AttributeMapper
 		return mappedAttributes;
 	}
 
+	@SuppressWarnings("squid:S3923")
 	private void doMapping(
 			List<AttributeAll> mappedAttributes,
 			MapModel root,
@@ -142,6 +143,7 @@ public class AttributeMapper
 		return attributeAll;
 	}
 
+	@SuppressWarnings("squid:S3923")
 	private boolean mapField(
 			AttributeAll attributeAll,
 			Map<String, DataMapper> dataMappers,

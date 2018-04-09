@@ -30,6 +30,7 @@ public class SecurityMarkingType
 	{
 	}
 
+	@SuppressWarnings("squid:S3923")
 	public SecurityMarkingType highMarking(SecurityMarkingType... securityMarkingTypes)
 	{
 		SecurityMarkingType highestMarking = null;

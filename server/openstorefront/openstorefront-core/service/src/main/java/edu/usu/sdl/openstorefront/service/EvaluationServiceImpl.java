@@ -568,9 +568,8 @@ public class EvaluationServiceImpl
 		List<Evaluation> evaluations = evaluationExample.findByExample();
 		Evaluation latest = null;
 		for (Evaluation evaluation : evaluations) {
-			if (latest == null) {
-				latest = evaluation;
-			} else if (evaluation.getCreateDts().after(latest.getCreateDts())) {
+			if (latest == null
+					|| evaluation.getCreateDts().after(latest.getCreateDts())) {
 				latest = evaluation;
 			}
 		}

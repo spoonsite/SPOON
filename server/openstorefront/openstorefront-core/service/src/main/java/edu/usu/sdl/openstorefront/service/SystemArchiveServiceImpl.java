@@ -57,7 +57,9 @@ public class SystemArchiveServiceImpl
 				Path path = archive.pathToArchive();
 				if (path != null) {
 					if (path.toFile().exists()) {
-						path.toFile().delete();
+						if (!path.toFile().delete()) {
+							LOG.log(Level.WARNING, "");
+						}
 					}
 				}
 				SystemArchiveError systemArchiveError = new SystemArchiveError();

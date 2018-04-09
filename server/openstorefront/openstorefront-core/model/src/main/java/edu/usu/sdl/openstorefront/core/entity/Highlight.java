@@ -73,6 +73,7 @@ public class Highlight
 	{
 	}
 
+	@SuppressWarnings("squid:S3923")
 	public boolean hasChange(Highlight newHighlight)
 	{
 		boolean changed = false;

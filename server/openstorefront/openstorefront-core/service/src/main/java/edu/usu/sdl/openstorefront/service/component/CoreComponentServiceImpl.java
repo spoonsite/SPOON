@@ -1096,6 +1096,7 @@ public class CoreComponentServiceImpl
 		cascadeDeleteOfComponent(componentId, new ComponentDeleteOptions());
 	}
 
+	@SuppressWarnings("squid:S1872")
 	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option)
 	{
 		Objects.requireNonNull(componentId, "Component Id is required.");
@@ -2054,7 +2055,7 @@ public class CoreComponentServiceImpl
 				try {
 					TVFS.umount();
 				} catch (FsSyncException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to unable to unmount snapshot...it may be unreadable.", ex);
+					LOG.log(Level.SEVERE, "Unable to unable to unmount snapshot...it may be unreadable.", ex);
 				}
 			}
 			persistenceService.persist(versionHistory);
