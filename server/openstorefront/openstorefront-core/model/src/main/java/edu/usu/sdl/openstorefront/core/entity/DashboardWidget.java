@@ -29,42 +29,44 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Holds dashboard widget information for a user.")
 public class DashboardWidget
-	extends StandardEntity<DashboardWidget>		
+		extends StandardEntity<DashboardWidget>
 {
+
 	public static final String FIELD_WIDGET_ORDER = "widgetOrder";
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String widgetId;
-	
+
 	@FK(UserDashboard.class)
 	@NotNull
 	private String dashboardId;
-	
+
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String systemWidgetCode;	
-	
+	private String systemWidgetCode;
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String widgetName;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
 	private String widgetColor;
-	
+
 	@ConsumeField
 	private Integer widgetOrder;
-			
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	private String widgetState;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	private String optionalProperties;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public DashboardWidget()
 	{
 	}
@@ -72,8 +74,8 @@ public class DashboardWidget
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		DashboardWidget dashboardWidget = (DashboardWidget) entity;
 		this.setSystemWidgetCode(dashboardWidget.getSystemWidgetCode());
 		this.setWidgetName(dashboardWidget.getWidgetName());
@@ -81,7 +83,7 @@ public class DashboardWidget
 		this.setWidgetOrder(dashboardWidget.getWidgetOrder());
 		this.setWidgetState(dashboardWidget.getWidgetState());
 		this.setOptionalProperties(dashboardWidget.getOptionalProperties());
-				
+
 	}
 
 	public String getWidgetId()
@@ -163,5 +165,5 @@ public class DashboardWidget
 	{
 		this.widgetOrder = widgetOrder;
 	}
-		
+
 }

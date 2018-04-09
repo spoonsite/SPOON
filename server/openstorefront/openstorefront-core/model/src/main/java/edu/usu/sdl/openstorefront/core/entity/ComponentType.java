@@ -135,6 +135,7 @@ public class ComponentType
 	//Dummy Value for filtering
 	public static final String ALL = "ALL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentType()
 	{
 	}

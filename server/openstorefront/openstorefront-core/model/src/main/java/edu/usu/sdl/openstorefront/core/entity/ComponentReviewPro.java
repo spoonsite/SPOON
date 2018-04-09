@@ -38,6 +38,7 @@ public class ComponentReviewPro
 	@OneToOne(orphanRemoval = true)
 	private ComponentReviewProPk componentReviewProPk;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentReviewPro()
 	{
 	}

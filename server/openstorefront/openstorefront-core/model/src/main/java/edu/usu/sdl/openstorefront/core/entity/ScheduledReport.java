@@ -106,6 +106,7 @@ public class ScheduledReport
 	@OneToMany(orphanRemoval = true)
 	private List<ReportOutput> reportOutputs;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ScheduledReport()
 	{
 	}

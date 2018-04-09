@@ -25,10 +25,12 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 public class FaqCategoryType
 		extends LookupEntity<FaqCategoryType>
 {
+
 	public static final String GENERAL = "GEN";
-	
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FaqCategoryType()
 	{
-		
+
 	}
 }

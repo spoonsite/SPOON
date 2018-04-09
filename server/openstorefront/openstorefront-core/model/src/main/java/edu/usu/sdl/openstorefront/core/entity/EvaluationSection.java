@@ -26,6 +26,7 @@ public class EvaluationSection
 		extends LookupEntity<EvaluationSection>
 {
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationSection()
 	{
 	}

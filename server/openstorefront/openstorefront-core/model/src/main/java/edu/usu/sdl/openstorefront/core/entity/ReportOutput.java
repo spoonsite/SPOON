@@ -54,6 +54,7 @@ public class ReportOutput
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportOutput()
 	{
 	}

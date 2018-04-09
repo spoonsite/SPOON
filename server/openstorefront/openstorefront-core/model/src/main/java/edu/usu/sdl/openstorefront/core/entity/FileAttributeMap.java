@@ -31,27 +31,28 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Used to store the mapping between external attributes and internal")
 public class FileAttributeMap
-	extends StandardEntity<FileAttributeMap>
+		extends StandardEntity<FileAttributeMap>
 {
+
 	@PK(generated = true)
 	@NotNull
 	private String fileAttributeMapId;
-	
-	
+
 	@NotNull
 	@FK(FileDataMap.class)
 	private String fileDataMapId;
-	
+
 	@NotNull
-	@ConsumeField	
+	@ConsumeField
 	private Boolean addMissingAttributeTypeFlg;
-	
+
 	@ConsumeField
 	@Embedded
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeTypeXrefMap.class)
 	private List<FileAttributeTypeXrefMap> attributeTypeXrefMap;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileAttributeMap()
 	{
 	}
@@ -59,15 +60,14 @@ public class FileAttributeMap
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		FileAttributeMap fileAttributeMap = (FileAttributeMap) entity;
-		
+
 		fileAttributeMap.setAddMissingAttributeTypeFlg(fileAttributeMap.getAddMissingAttributeTypeFlg());
 		fileAttributeMap.setAttributeTypeXrefMap(fileAttributeMap.getAttributeTypeXrefMap());
-				
+
 	}
-	
 
 	public Boolean getAddMissingAttributeTypeFlg()
 	{

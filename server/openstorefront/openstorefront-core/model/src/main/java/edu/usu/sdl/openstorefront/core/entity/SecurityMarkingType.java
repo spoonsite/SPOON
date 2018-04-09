@@ -26,10 +26,6 @@ public class SecurityMarkingType
 		extends LookupEntity<SecurityMarkingType>
 {
 
-	public SecurityMarkingType()
-	{
-	}
-
 	@SuppressWarnings("squid:S3923")
 	public SecurityMarkingType highMarking(SecurityMarkingType... securityMarkingTypes)
 	{

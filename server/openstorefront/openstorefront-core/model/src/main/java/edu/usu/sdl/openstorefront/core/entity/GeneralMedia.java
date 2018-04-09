@@ -52,7 +52,7 @@ public class GeneralMedia
 	@OneToOne(cascade = {CascadeType.ALL}, optional = false, orphanRemoval = true)
 	@APIDescription("Stored file information")
 	private MediaFile file;
-	
+
 	@ConsumeField
 	private Boolean allowInBranding;
 
@@ -77,6 +77,7 @@ public class GeneralMedia
 	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
 	private String mimeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public GeneralMedia()
 	{
 	}

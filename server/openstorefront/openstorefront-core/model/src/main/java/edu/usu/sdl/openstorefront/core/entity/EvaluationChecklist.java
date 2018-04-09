@@ -68,6 +68,7 @@ public class EvaluationChecklist
 	@APIDescription("The whole checklist will not show")
 	private Boolean privateChecklistFlg;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationChecklist()
 	{
 	}

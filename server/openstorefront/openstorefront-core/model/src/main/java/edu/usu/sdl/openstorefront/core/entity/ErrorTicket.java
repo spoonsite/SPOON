@@ -56,6 +56,7 @@ public class ErrorTicket
 	@FK(ErrorTypeCode.class)
 	private String errorTypeCode;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ErrorTicket()
 	{
 	}

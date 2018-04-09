@@ -36,10 +36,6 @@ public class RunStatus
 	public static final String COMPLETE = "C";
 	public static final String ERROR = "E";
 
-	public RunStatus()
-	{
-	}
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

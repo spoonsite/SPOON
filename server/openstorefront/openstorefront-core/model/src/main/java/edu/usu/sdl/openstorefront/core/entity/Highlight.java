@@ -69,6 +69,7 @@ public class Highlight
 	public static final String TYPE_ARTICLE = "A";
 	public static final String TYPE_EXTERNAL_LINK = "EL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Highlight()
 	{
 	}

@@ -33,34 +33,35 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Hold security peferences for the application; note most of these only apply to the internal security.")
 public class SecurityPolicy
-	extends StandardEntity<SecurityPolicy>
+		extends StandardEntity<SecurityPolicy>
 {
+
 	@PK(generated = true)
 	@NotNull
 	private String policyId;
-	
+
 	@NotNull
 	@ConsumeField
 	private Boolean autoApproveUsers;
-	
-	@NotNull	
+
+	@NotNull
 	@ConsumeField
 	@Min(8)
 	@Max(OpenStorefrontConstant.FIELD_SIZE_80)
 	private Integer minPasswordLength;
-	
+
 	@NotNull
-	@ConsumeField	
+	@ConsumeField
 	@Min(0)
 	@Max(25)
 	private Integer loginLockoutMaxAttempts;
-	
+
 	@NotNull
 	@ConsumeField
-	@Min(1)	
+	@Min(1)
 	@Max(1440)
 	private Integer resetLockoutTimeMinutes;
-	
+
 	@NotNull
 	@ConsumeField
 	private Boolean requireAdminUnlock;
@@ -68,56 +69,56 @@ public class SecurityPolicy
 	@NotNull
 	@ConsumeField
 	private Boolean requiresProofOfCitizenship;
-	
+
 	@NotNull
 	@ConsumeField
 	private Boolean allowJSONPSupport;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String corsOrigins;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String corsMethods;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String corsHeaders;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String customHeaders;
-	
+
 	@NotNull
 	@ConsumeField
-	private Boolean csrfSupport;	
-	
+	private Boolean csrfSupport;
+
 	@NotNull
 	@ConsumeField
 	private Boolean allowRegistration;
-	
+
 	@ConsumeField
 	private Boolean disableUserInfoEdit;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(HTMLSanitizer.class)
 	private String externalUserManagementText;
-		
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SecurityPolicy()
 	{
 	}
 
-	
-	public SecurityPolicy copy() 
+	public SecurityPolicy copy()
 	{
 		SecurityPolicy newPolicy = new SecurityPolicy();
 		newPolicy.setAllowJSONPSupport(getAllowJSONPSupport());
 		newPolicy.setAllowRegistration(getAllowRegistration());
 		newPolicy.setAutoApproveUsers(getAutoApproveUsers());
 		newPolicy.setCorsHeaders(getCorsHeaders());
-		newPolicy.setCorsMethods(getCorsMethods());		
+		newPolicy.setCorsMethods(getCorsMethods());
 		newPolicy.setCorsOrigins(getCorsOrigins());
 		newPolicy.setCsrfSupport(getCsrfSupport());
 		newPolicy.setCustomHeaders(getCustomHeaders());
@@ -129,17 +130,17 @@ public class SecurityPolicy
 		newPolicy.setResetLockoutTimeMinutes(getResetLockoutTimeMinutes());
 		newPolicy.setDisableUserInfoEdit(getDisableUserInfoEdit());
 		newPolicy.setExternalUserManagementText(getExternalUserManagementText());
-				
+
 		return newPolicy;
 	}
-	
+
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		SecurityPolicy securityPolicy = (SecurityPolicy) entity;
-		
+
 		setAutoApproveUsers(Convert.toBoolean(securityPolicy.getAutoApproveUsers()));
 		setMinPasswordLength(securityPolicy.getMinPasswordLength());
 		setLoginLockoutMaxAttempts(securityPolicy.getLoginLockoutMaxAttempts());
@@ -155,9 +156,9 @@ public class SecurityPolicy
 		setAllowRegistration(Convert.toBoolean(securityPolicy.getAllowRegistration()));
 		setDisableUserInfoEdit(securityPolicy.getDisableUserInfoEdit());
 		setExternalUserManagementText(securityPolicy.getExternalUserManagementText());
-						
+
 	}
-	
+
 	public String getPolicyId()
 	{
 		return policyId;
@@ -317,5 +318,5 @@ public class SecurityPolicy
 	{
 		this.externalUserManagementText = externalUserManagementText;
 	}
-	
+
 }

@@ -45,6 +45,7 @@ public class FileHistoryError
 	@FK(value = FileHistoryErrorType.class)
 	private String fileHistoryErrorType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileHistoryError()
 	{
 	}

@@ -28,17 +28,19 @@ import javax.persistence.Version;
 @APIDescription("This is part of the alert entity")
 @Embeddable
 public class UserManagementAlertOption
-	implements Serializable
+		implements Serializable
 {
+
 	@ConsumeField
 	private Boolean alertOnUserRegistration;
-	
+
 	@ConsumeField
-	private Boolean alertOnUserNeedsApproval;		
+	private Boolean alertOnUserNeedsApproval;
 
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserManagementAlertOption()
 	{
 	}
@@ -72,7 +74,5 @@ public class UserManagementAlertOption
 	{
 		this.storageVersion = storageVersion;
 	}
-	
-	
-	
+
 }

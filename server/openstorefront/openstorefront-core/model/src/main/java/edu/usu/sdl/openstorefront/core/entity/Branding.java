@@ -249,6 +249,7 @@ public class Branding
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Branding()
 	{
 	}

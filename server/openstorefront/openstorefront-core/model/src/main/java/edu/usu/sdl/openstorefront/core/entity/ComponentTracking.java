@@ -58,6 +58,7 @@ public class ComponentTracking
 	@APIDescription("External resource url")
 	private String resourceLink;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTracking()
 	{
 	}

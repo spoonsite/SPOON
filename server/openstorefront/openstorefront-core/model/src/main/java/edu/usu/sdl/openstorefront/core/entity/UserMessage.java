@@ -59,6 +59,7 @@ public class UserMessage
 	@NotNull
 	private Integer retryCount;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserMessage()
 	{
 	}

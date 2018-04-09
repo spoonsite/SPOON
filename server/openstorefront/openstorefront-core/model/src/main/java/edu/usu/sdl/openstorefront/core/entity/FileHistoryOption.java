@@ -44,14 +44,15 @@ public class FileHistoryOption
 	private Boolean uploadIntegration;
 
 	@ConsumeField
-	private Boolean skipRequiredAttributes;	
-	
+	private Boolean skipRequiredAttributes;
+
 	@ConsumeField
 	private Boolean skipDuplicationCheck;
-	
+
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileHistoryOption()
 	{
 	}

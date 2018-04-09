@@ -36,7 +36,7 @@ public class UserRegistration
 {
 
 	public static final String VERIFICATION_CODE_FIELD = "verificationCode";
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String registrationId;
@@ -100,7 +100,8 @@ public class UserRegistration
 
 	@ConsumeField
 	private String userProfileId;
-	
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserRegistration()
 	{
 	}
@@ -234,7 +235,7 @@ public class UserRegistration
 	{
 		this.userProfileId = userProfileId;
 	}
-	
+
 	@Override
 	public void updateFields(StandardEntity entity)
 	{

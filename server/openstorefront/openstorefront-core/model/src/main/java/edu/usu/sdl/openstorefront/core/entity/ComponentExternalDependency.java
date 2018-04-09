@@ -61,6 +61,7 @@ public class ComponentExternalDependency
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String comment;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentExternalDependency()
 	{
 	}
@@ -68,13 +69,13 @@ public class ComponentExternalDependency
 	@Override
 	public String uniqueKey()
 	{
-		String key =  getDependencyName() 
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
-					+ getVersion()
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
-					+ getDependancyReferenceLink()
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
-					+ getComment();
+		String key = getDependencyName()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getVersion()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getDependancyReferenceLink()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getComment();
 		return key;
 	}
 

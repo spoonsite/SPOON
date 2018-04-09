@@ -91,6 +91,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void exportRecords()
 	{
 		for (SystemArchiveOption option : archive.getArchiveOptions()) {
@@ -164,6 +165,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void importRecords()
 	{
 

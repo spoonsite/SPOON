@@ -133,6 +133,7 @@ public class AttributeType
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeType()
 	{
 	}
