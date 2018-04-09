@@ -36,9 +36,12 @@ public class QueryByExample<T extends BaseEntity>
 
 	public static final String LIKE_SYMBOL = "%";
 
+	//Query Triggers; used to flag field that should be used in a query
 	public static final String STRING_FLAG = "X";
 	public static final int INT_FLAG = 1;
 	public static final Boolean BOOLEAN_FLAG = Boolean.TRUE;
+
+	@SuppressWarnings("squid:S2386")
 	public static final Date DATE_FLAG = new Date();
 
 	private QueryType queryType = QueryType.SELECT;

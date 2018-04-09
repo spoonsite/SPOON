@@ -41,17 +41,16 @@ public class JiraManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(JiraManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(JiraManager.class.getName());
 
 	private static final long CHECK_EXPIRATION_MILLI = 600000;
-	
+
 	private static BlockingQueue<JiraClient> clientPool;
 	private static int maxPoolSize;
-	
+
 	private static long lastCheckTime;
 	private static boolean ableToConnect;
 	private static AtomicBoolean started = new AtomicBoolean(false);
-	
 
 	public static void init()
 	{
@@ -59,14 +58,16 @@ public class JiraManager
 		maxPoolSize = Convert.toInteger(poolSize);
 		clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
-		log.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
+		LOG.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL));
 		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
 		connectionModel.setCredential(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_CREDENTIALS));
 
 		for (int i = 0; i < maxPoolSize; i++) {
-			clientPool.offer(new JiraClient(connectionModel));
+			if (!clientPool.offer(new JiraClient(connectionModel))) {
+				LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+			}
 		}
 	}
 
@@ -74,37 +75,38 @@ public class JiraManager
 	{
 		if (clientPool != null) {
 			if (getAvavilableConnections() != maxPoolSize) {
-				log.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
+				LOG.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
 			}
 		}
 	}
-	
+
 	/**
 	 * Check
+	 *
 	 * @return true the connect is good;
 	 */
-	public static boolean checkJiraConnection() 
+	public static boolean checkJiraConnection()
 	{
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
-		try {			
+		try {
 			if (System.currentTimeMillis() > (lastCheckTime + CHECK_EXPIRATION_MILLI)) {
-							
+
 				ableToConnect = false;
-				
+
 				try (JiraClient jiraClient = JiraManager.getClient()) {
-					
+
 					ServerInfo serverInfo = jiraClient.getServerInfo();
 					if (serverInfo != null) {
 						ableToConnect = true;
-					}			
-				} catch (Exception e){
-					//critical block (must catch all)				
-					log.log(Level.WARNING, "Unable to connect to Jira("+PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL)+")...Jira maybe down or there is a configuration issue.", e);					
+					}
+				} catch (Exception e) {
+					//critical block (must catch all)
+					LOG.log(Level.WARNING, "Unable to connect to Jira(" + PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL) + ")...Jira maybe down or there is a configuration issue.", e);
 				} finally {
 					lastCheckTime = System.currentTimeMillis();
-				}			
-			} 
+				}
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -128,7 +130,9 @@ public class JiraManager
 
 	public static void releaseClient(JiraClient jiraClient)
 	{
-		clientPool.offer(jiraClient);
+		if (!clientPool.offer(jiraClient)) {
+			LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+		}
 	}
 
 	public static int getMaxConnections()
@@ -159,6 +163,6 @@ public class JiraManager
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
-	
+	}
+
 }

@@ -213,14 +213,7 @@ public abstract class BaseTestAction
 		int failTestCount = 0;
 		int testCount = 0;
 		if (summary) {
-			for (BaseTestCase test : testSuiteModel.getTests()) {
-				String passed = "<span style='color: green'> PASSED </span>";
-				if (!test.isSuccess()) {
-					passed = "<span style='color: red'> FAILED </span>";
-				}
-
-				output.append("Test: <b>").append(test.getDescription()).append("</b>...").append(passed).append(" <br>");
-			}
+			printHtmlSummary(testSuiteModel, output);
 		} else {
 			StringBuilder testCase = new StringBuilder();
 			for (BaseTestCase test : testSuiteModel.getTests()) {
@@ -245,13 +238,8 @@ public abstract class BaseTestAction
 			}
 
 			output.append("<div class='test-suite ");
-			if (failTestCount == 0) {
-				output.append(PASSEDSTRING).append("'>");
-			} else if (failTestCount == testCount) {
-				output.append(FAILEDSTRING).append("'>");
-			} else {
-				output.append("").append("'>");
-			}
+			printHtmlSuccessFail(failTestCount, output, testCount);
+
 			output.append("<h2>").append(testSuiteModel.getName()).append("</h2>");
 			output.append("<div class='test-list'>");
 			output.append(testCase);
@@ -259,6 +247,29 @@ public abstract class BaseTestAction
 		}
 
 		return new TestResults(output, failTestCount, testCount, testSuiteModel.getRunTimeInMills());
+	}
+
+	private void printHtmlSuccessFail(int failTestCount, StringBuilder output, int testCount)
+	{
+		if (failTestCount == 0) {
+			output.append(PASSEDSTRING).append("'>");
+		} else if (failTestCount == testCount) {
+			output.append(FAILEDSTRING).append("'>");
+		} else {
+			output.append("").append("'>");
+		}
+	}
+
+	private void printHtmlSummary(TestSuiteModel testSuiteModel, StringBuilder output)
+	{
+		for (BaseTestCase test : testSuiteModel.getTests()) {
+			String passed = "<span style='color: green'> PASSED </span>";
+			if (!test.isSuccess()) {
+				passed = "<span style='color: red'> FAILED </span>";
+			}
+
+			output.append("Test: <b>").append(test.getDescription()).append("</b>...").append(passed).append(" <br>");
+		}
 	}
 
 	protected Resolution sendReport(String reportData)

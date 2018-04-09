@@ -144,7 +144,9 @@ public class ElasticSearchManager
 
 		for (int i = 0; i < maxPoolSize; i++) {
 			ElasticSearchClient client = createClient(host, port);
-			clientPool.offer(client);
+			if (!clientPool.offer(client)) {
+				LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+			}
 		}
 	}
 
@@ -221,7 +223,9 @@ public class ElasticSearchManager
 	@Override
 	public void releaseClient(ElasticSearchClient client)
 	{
-		clientPool.offer(client);
+		if (!clientPool.offer(client)) {
+			LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+		}
 	}
 
 	@Override
