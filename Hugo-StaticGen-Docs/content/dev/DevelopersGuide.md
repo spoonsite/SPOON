@@ -144,11 +144,11 @@ The following key libraries were used in the development:
   * Open the openstorefront folder to be added. You will notice git is integrated with VS Code to see files that are changing.
 8. **Open Maven Extension with openstorefont drop down**
     * You will likely need to set the JAVA_HOME environment variable and java and maven paths to the windows PATH system variables. 
-    * Right mouse click on the openstorefront-core package in the maven extension and click the install button to build the project. 
+    * Right mouse click on the openstorefront package in the maven extension and click the install button to build the project. 
 9. **After the build completes use the Tomcat Extension**
-    * The tomcat extension allows you to select where Tomcat is installed. 
+    * The tomcat extension allows you to select where Tomcat is installed. You should also set where the tomcat web folder is located in the settings. The extension will create a new folder structure. "tomcat.workspace": "F:\\sf"
     * Read the configuration information on the extension. 
-    * I had problems getting the the .war file to copy to the running tomcat instance so I had to use another extension to perform the copy. Hopefully, in the newer versions of the Tomcat extension this will not be a problem.  
+    * I had problems getting the the .war file to copy to the running tomcat instance so I had to use another extension to perform the copy. With the tomcat workspace defined you can now setup a copy script from maven build for the war file or you can use a copy file VSCode extension to copy the war file to the correct location. If tomcat is running it will unpack the war file and you should be able to access the running application in your browser at localhost://8080/openstorefront.  
 
 ## 1.5 Building with Maven CLI
 
