@@ -43,7 +43,7 @@ public class MaxValueRule
 				if (value != null) {
 					try {
 						BigDecimal numberValue = new BigDecimal(value);
-						if (numberValue.compareTo(BigDecimal.valueOf(max.value())) == 1) {
+						if (numberValue.compareTo(BigDecimal.valueOf(max.value())) > 0) {
 							valid = false;
 						}
 					} catch (NumberFormatException e) {

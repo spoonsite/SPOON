@@ -106,10 +106,10 @@ public class ResourceAction
 			length = path.toFile().length();
 		} else if (componentResource != null) {
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
-			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId());
 			throw new OpenStorefrontRuntimeException(message);
 		} else {
-			String message = MessageFormat.format("Resource not on disk: {0} Check Media File record: {1} ", new Object[]{componentResource.pathToResource(), resourceId});
+			String message = MessageFormat.format("Resource not on disk. Check Media File record: {1} ", resourceId);
 			throw new OpenStorefrontRuntimeException(message);
 		}
 

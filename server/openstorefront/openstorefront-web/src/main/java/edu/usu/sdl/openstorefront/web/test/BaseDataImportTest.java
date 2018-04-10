@@ -18,8 +18,9 @@ package edu.usu.sdl.openstorefront.web.test;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
-import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,6 +28,8 @@ import java.util.List;
  */
 public abstract class BaseDataImportTest extends BaseTestCase
 {
+
+	private static final Logger LOG = Logger.getLogger(BaseDataImportTest.class.getName());
 
 	protected void waitForImport(String fileHistoryId)
 	{
@@ -43,14 +46,22 @@ public abstract class BaseDataImportTest extends BaseTestCase
 			if (fileHistory.getCompleteDts() != null) {
 				isComplete = true;
 			} else {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException ex) {
-					// ignore exception
-				}
+				waitDelay();
 			}
 			count++;
 
+		}
+	}
+
+	public void waitDelay()
+	{
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException ex) {
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, null, ex);
+			}
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -75,7 +86,7 @@ public abstract class BaseDataImportTest extends BaseTestCase
 		if (errorCount != 0) {
 			for (FileHistoryError error : errors) {
 				addFailLines("Type: " + error.getFileHistoryErrorType() + " - " + error.getErrorMessage());
-			};
+			}
 		}
 	}
 }

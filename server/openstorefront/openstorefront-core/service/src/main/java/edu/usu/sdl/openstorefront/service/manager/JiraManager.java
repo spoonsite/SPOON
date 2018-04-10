@@ -124,6 +124,7 @@ public class JiraManager
 			jiraClient.initConnection();
 			return jiraClient;
 		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
 			throw new OpenStorefrontRuntimeException("Unable to retrieve Jira Connection - wait interrupted.  No resource available.", "Adjust jira pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}

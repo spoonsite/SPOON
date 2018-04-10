@@ -34,10 +34,6 @@ public class ChecklistRecommendationView
 
 	private String typeDescription;
 
-	public ChecklistRecommendationView()
-	{
-	}
-
 	public static ChecklistRecommendationView toView(EvaluationChecklistRecommendation recommendation)
 	{
 		ChecklistRecommendationView view = new ChecklistRecommendationView();

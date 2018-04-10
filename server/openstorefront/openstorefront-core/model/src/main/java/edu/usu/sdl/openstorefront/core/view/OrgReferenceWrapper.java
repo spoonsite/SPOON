@@ -31,10 +31,6 @@ public class OrgReferenceWrapper
 	@DataType(OrgReference.class)
 	private List<OrgReference> data = new ArrayList<>();
 
-	public OrgReferenceWrapper()
-	{
-	}
-
 	public List<OrgReference> getData()
 	{
 		return data;

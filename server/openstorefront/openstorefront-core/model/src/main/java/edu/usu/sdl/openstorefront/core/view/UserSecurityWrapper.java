@@ -24,15 +24,11 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserSecurityWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
-	
-	@DataType(UserSecurityView.class)
-	private List<UserSecurityView> data = new ArrayList<>();	
 
-	public UserSecurityWrapper()
-	{
-	}
+	@DataType(UserSecurityView.class)
+	private List<UserSecurityView> data = new ArrayList<>();
 
 	public List<UserSecurityView> getData()
 	{

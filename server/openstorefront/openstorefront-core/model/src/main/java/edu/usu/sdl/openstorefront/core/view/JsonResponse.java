@@ -27,18 +27,15 @@ import java.util.Map;
  * @param <T>
  */
 public class JsonResponse<T>
-	implements Serializable
+		implements Serializable
 {
+
 	private long results;
-	private boolean success = true;	
+	private boolean success = true;
 	private List<T> data = new ArrayList<>();
 	private String message;
 	private long totalResults;
 	private Map<String, String> errors = new HashMap<>();
-
-	public JsonResponse()
-	{
-	}	
 
 	public long getResults()
 	{
@@ -99,5 +96,5 @@ public class JsonResponse<T>
 	{
 		this.errors = errors;
 	}
-	
+
 }

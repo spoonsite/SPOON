@@ -240,6 +240,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public long getTotalRecords()
 	{
 		long records = 0;

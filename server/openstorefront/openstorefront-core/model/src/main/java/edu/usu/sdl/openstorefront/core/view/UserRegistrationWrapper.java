@@ -24,14 +24,11 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserRegistrationWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
+
 	@DataType(UserRegistrationView.class)
 	private List<UserRegistrationView> data = new ArrayList<>();
-
-	public UserRegistrationWrapper()
-	{
-	}
 
 	public List<UserRegistrationView> getData()
 	{
@@ -42,5 +39,5 @@ public class UserRegistrationWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

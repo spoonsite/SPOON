@@ -35,10 +35,6 @@ public class NotificationEventView
 	private String eventTypeDescription;
 	private boolean readMessage;
 
-	public NotificationEventView()
-	{
-	}
-
 	public static NotificationEventView toView(NotificationEvent notificationEvent)
 	{
 		NotificationEventView view = new NotificationEventView();

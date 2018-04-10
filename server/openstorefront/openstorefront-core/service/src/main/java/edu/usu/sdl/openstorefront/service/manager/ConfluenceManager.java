@@ -132,6 +132,7 @@ public class ConfluenceManager
 			}
 			return client;
 		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
 			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}

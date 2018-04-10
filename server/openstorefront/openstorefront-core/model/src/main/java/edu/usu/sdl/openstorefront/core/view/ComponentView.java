@@ -53,10 +53,6 @@ public class ComponentView
 	private ComponentTypeNestedModel componentTypeNestedModel;
 	private String currentDataOwner;
 
-	public ComponentView()
-	{
-	}
-
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
 		ComponentView componentView = toView(component);

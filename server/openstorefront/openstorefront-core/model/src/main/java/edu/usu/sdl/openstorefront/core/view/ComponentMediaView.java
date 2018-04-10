@@ -46,10 +46,6 @@ public class ComponentMediaView
 	private Boolean usedInline;
 	private Boolean iconFlag;
 
-	public ComponentMediaView()
-	{
-	}
-
 	public static ComponentMediaView toView(ComponentMedia media)
 	{
 		ComponentMediaView mediaView = new ComponentMediaView();

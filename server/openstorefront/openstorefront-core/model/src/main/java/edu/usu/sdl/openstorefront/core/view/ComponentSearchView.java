@@ -93,10 +93,6 @@ public class ComponentSearchView
 	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
-	public ComponentSearchView()
-	{
-	}
-
 	public static ComponentSearchView toView(Component component)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

@@ -1538,11 +1538,11 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 			if (entry.fullEvaluations.length > 0) {
 				//populate combo
 				var versions = [];
-				Ext.Array.each(entry.fullEvaluations, function (eval) {
+				Ext.Array.each(entry.fullEvaluations, function (evalLocal) {
 					versions.push({
-						code: eval.evaluation.evaluationId,
-						eval: eval,
-						description: "Version: " + eval.evaluation.version
+						code: evalLocal.evaluation.evaluationId,
+						eval: evalLocal,
+						description: "Version: " + evalLocal.evaluation.version
 					});
 				});
 

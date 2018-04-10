@@ -29,6 +29,7 @@ public class AttributeCodeWrapper
 	private List<AttributeCodeView> data;
 	private long totalNumber;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCodeWrapper()
 	{
 	}

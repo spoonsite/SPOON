@@ -64,6 +64,7 @@ public class AttributeSearchHandler
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<String> processSearch()
 	{
 		List<String> foundIds = new ArrayList<>();
@@ -128,14 +129,14 @@ public class AttributeSearchHandler
 			}
 
 			if (doRegularSearch) {
-				QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
+				QueryByExample<ComponentAttribute> queryByExample = new QueryByExample<>(componentAttribute);
 
 				if (StringUtils.isNotBlank(searchElement.getField())) {
 					Field field = ReflectionUtil.getField(new ComponentAttribute(), searchElement.getField());
 					field.setAccessible(true);
 
 					Class type = field.getType();
-					if (type.getSimpleName().equals(String.class.getSimpleName())) {
+					if (type.isAssignableFrom(String.class)) {
 						String likeValue = null;
 						try {
 							switch (searchElement.getStringOperation()) {

@@ -19,49 +19,54 @@ package edu.usu.sdl.openstorefront.core.view;
  *
  * @author gbagley
  */
-public class SolrAttributeCodeTypeModel {
+public class SolrAttributeCodeTypeModel
+{
 // private variables
 
-    private String type;
-    private String code;
-    private String typeDescription;
-    private String codeDescription;
+	private String type;
+	private String code;
+	private String typeDescription;
+	private String codeDescription;
 
-    // constructor 
-    public SolrAttributeCodeTypeModel() {
-    }
+	// public methods
+	public String getType()
+	{
+		return type;
+	}
 
-    // public methods
-    public String getType() {
-        return type;
-    }
+	public void setType(String type)
+	{
+		this.type = type;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public String getCode()
+	{
+		return code;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public void setCode(String code)
+	{
+		this.code = code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getTypeDescription()
+	{
+		return typeDescription;
+	}
 
-    public String getTypeDescription() {
-        return typeDescription;
-    }
+	public void setTypeDescription(String typeDescription)
+	{
+		this.typeDescription = typeDescription;
+	}
 
-    public void setTypeDescription(String typeDescription) {
-        this.typeDescription = typeDescription;
-    }
+	public String getCodeDescription()
+	{
+		return codeDescription;
+	}
 
-    public String getCodeDescription() {
-        return codeDescription;
-    }
-
-    public void setCodeDescription(String codeDescription) {
-        this.codeDescription = codeDescription;
-    }
+	public void setCodeDescription(String codeDescription)
+	{
+		this.codeDescription = codeDescription;
+	}
 
 }

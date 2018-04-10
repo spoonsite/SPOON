@@ -36,10 +36,6 @@ public class GeneralMediaView
 	private String updateUser;
 	private Boolean allowInBranding;
 
-	public GeneralMediaView()
-	{
-	}
-
 	public static GeneralMediaView toView(GeneralMedia generalMedia)
 	{
 		GeneralMediaView generalMediaView = new GeneralMediaView();

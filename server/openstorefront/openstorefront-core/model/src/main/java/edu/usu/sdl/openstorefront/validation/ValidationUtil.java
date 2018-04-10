@@ -43,9 +43,9 @@ import org.apache.commons.lang3.StringUtils;
 public class ValidationUtil
 {
 
-	private static final Logger log = Logger.getLogger(ValidationUtil.class.getName());
+	private static final Logger LOG = Logger.getLogger(ValidationUtil.class.getName());
 
-	private static final List<BaseRule> rules = Arrays.asList(
+	private static final List<BaseRule> RULES = Arrays.asList(
 			new MaxValueRule(),
 			new MinValueRule(),
 			new PatternRule(),
@@ -65,6 +65,7 @@ public class ValidationUtil
 		return validate(validateModel).valid();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static ValidationResult validate(ValidationModel validateModel)
 	{
 		Objects.requireNonNull(validateModel);
@@ -94,6 +95,7 @@ public class ValidationUtil
 		return validationResult;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static List<RuleResult> validateFields(final ValidationModel validateModel, Class dataClass, String parentFieldName, String parentType)
 	{
 		List<RuleResult> ruleResults = new ArrayList<>();
@@ -116,7 +118,7 @@ public class ValidationUtil
 					Class fieldClass = field.getType();
 					boolean process = true;
 					if (validateModel.isConsumeFieldsOnly()) {
-						ConsumeField consumeField = (ConsumeField) field.getAnnotation(ConsumeField.class);
+						ConsumeField consumeField = field.getAnnotation(ConsumeField.class);
 						if (consumeField == null) {
 							process = false;
 						}
@@ -125,13 +127,14 @@ public class ValidationUtil
 					if (process) {
 						if (ReflectionUtil.isComplexClass(fieldClass)) {
 							//composition class
-							if (Logger.class.getName().equals(fieldClass.getName()) == false
+							if (fieldClass.isAssignableFrom(Logger.class) == false
 									&& fieldClass.isEnum() == false) {
 								try {
 									Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 									boolean check = true;
 									if (returnObj == null) {
+										@SuppressWarnings("unchecked")
 										NotNull notNull = (NotNull) fieldClass.getAnnotation(NotNull.class);
 										if (notNull == null) {
 											check = false;
@@ -171,7 +174,7 @@ public class ValidationUtil
 													ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 												}
 											} else {
-												log.log(Level.WARNING, "There is a NULL item in a collection.  Check data passed in to validation.");
+												LOG.log(Level.WARNING, "There is a NULL item in a collection.  Check data passed in to validation.");
 											}
 										}
 									} else {
@@ -192,7 +195,7 @@ public class ValidationUtil
 
 						} else {
 							//simple case
-							for (BaseRule rule : rules) {
+							for (BaseRule rule : RULES) {
 								//Stanize if requested
 								if (validateModel.getSantize()) {
 									Sanitize santizers = field.getAnnotation(Sanitize.class);
@@ -201,6 +204,7 @@ public class ValidationUtil
 											try {
 												Sanitizer santizer = sanitizeClass.newInstance();
 
+												@SuppressWarnings("unchecked")
 												Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 												Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 

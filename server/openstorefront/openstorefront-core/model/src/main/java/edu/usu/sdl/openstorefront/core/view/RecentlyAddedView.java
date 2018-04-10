@@ -38,10 +38,6 @@ public class RecentlyAddedView
 	private String articleAttributeCode;
 	private Date addedDts;
 
-	public RecentlyAddedView()
-	{
-	}
-
 	public static RecentlyAddedView toView(Component component)
 	{
 		RecentlyAddedView recentlyAddedView = new RecentlyAddedView();

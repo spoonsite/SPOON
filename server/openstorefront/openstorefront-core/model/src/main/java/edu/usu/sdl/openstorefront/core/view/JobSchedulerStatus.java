@@ -24,10 +24,6 @@ public class JobSchedulerStatus
 
 	private String status;
 
-	public JobSchedulerStatus()
-	{
-	}
-
 	public String getStatus()
 	{
 		return status;

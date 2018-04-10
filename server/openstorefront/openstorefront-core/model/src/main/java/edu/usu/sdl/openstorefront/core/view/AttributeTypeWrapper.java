@@ -27,10 +27,6 @@ public class AttributeTypeWrapper
 	private List<AttributeTypeAdminView> data;
 	private long totalNumber;
 
-	public AttributeTypeWrapper()
-	{
-	}
-
 	public List<AttributeTypeAdminView> getData()
 	{
 		return data;

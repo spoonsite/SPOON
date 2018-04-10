@@ -41,10 +41,6 @@ public class ComponentTypeView
 	private ComponentTypeUserResolution users;
 	private ComponentTypeRoleResolution roles;
 
-	public ComponentTypeView()
-	{
-	}
-
 	public static ComponentTypeView toView(ComponentType componentType)
 	{
 		ComponentTypeView view = new ComponentTypeView();

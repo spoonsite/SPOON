@@ -39,6 +39,7 @@ public class AttributeCodeView
 	private String highlightStyle;
 	private String attachmentFileName;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCodeView()
 	{
 	}

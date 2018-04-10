@@ -27,13 +27,9 @@ public class UserProfileWrapper
 {
 
 	private long totalNumber;
-	
+
 	@DataType(UserProfileView.class)
 	private List<UserProfileView> data = new ArrayList<>();
-
-	public UserProfileWrapper()
-	{
-	}
 
 	public long getTotalNumber()
 	{

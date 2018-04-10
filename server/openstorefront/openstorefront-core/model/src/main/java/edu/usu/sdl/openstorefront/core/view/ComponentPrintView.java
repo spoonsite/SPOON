@@ -68,10 +68,6 @@ public class ComponentPrintView
 
 	private long componentViews = 0;
 
-	public ComponentPrintView()
-	{
-	}
-
 	public void setComponentDetails(Component component)
 	{
 		setComponentId(component.getComponentId());
