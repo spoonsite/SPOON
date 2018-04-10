@@ -117,7 +117,7 @@ public class LoggingAction
 					}
 				}
 			}
-			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}

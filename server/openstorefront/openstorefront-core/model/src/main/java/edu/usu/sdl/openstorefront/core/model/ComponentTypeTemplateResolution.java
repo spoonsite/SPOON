@@ -21,6 +21,7 @@ import java.io.Serializable;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ComponentTypeTemplateResolution
 		implements Serializable
 {

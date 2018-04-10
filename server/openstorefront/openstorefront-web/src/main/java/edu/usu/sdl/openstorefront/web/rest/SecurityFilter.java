@@ -51,7 +51,7 @@ public class SecurityFilter
 	HttpServletRequest httpServletRequest;
 
 	@Override
-	@SuppressWarnings("squid:S1872")
+	@SuppressWarnings({"squid:S1872", "squid:S3923"})
 	public void filter(ContainerRequestContext requestContext) throws IOException
 	{
 		boolean doAdminCheck = true;

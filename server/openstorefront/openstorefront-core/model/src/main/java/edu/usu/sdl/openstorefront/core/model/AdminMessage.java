@@ -43,11 +43,11 @@ public class AdminMessage
 	@APIDescription("email addresses to carbon-copy")
 	@ConsumeField
 	private List<String> ccEmails = new ArrayList<>();
-	
+
 	@APIDescription("email addresses to blind-carbon-copy")
 	@ConsumeField
 	private List<String> bccEmails = new ArrayList<>();
-	
+
 	@APIDescription("Sends messages to only user of a specific type. Defaults: to all users  (Setting this overrides any specfic users specified.")
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
@@ -64,10 +64,6 @@ public class AdminMessage
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String message;
-
-	public AdminMessage()
-	{
-	}
 
 	public String getSubject()
 	{

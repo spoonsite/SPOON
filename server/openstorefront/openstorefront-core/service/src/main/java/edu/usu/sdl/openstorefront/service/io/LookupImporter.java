@@ -118,7 +118,7 @@ public class LookupImporter
 	protected void processFile(File file)
 	{
 		//log
-		LOG.log(Level.INFO, MessageFormat.format("Syncing lookup: {0}", file));
+		LOG.log(Level.INFO, () -> MessageFormat.format("Syncing lookup: {0}", file));
 
 		//parse
 		List<LookupEntity> lookupEntities = new ArrayList<>();
@@ -137,7 +137,7 @@ public class LookupImporter
 						lookupEntity.importData(data);
 						lookupEntities.add(lookupEntity);
 					} catch (IllegalAccessException | InstantiationException e) {
-						LOG.log(Level.WARNING, MessageFormat.format(e.toString() + " -  Unable Process line: {0} in file: {1}", new Object[]{Arrays.toString(data), file}));
+						LOG.log(Level.WARNING, () -> MessageFormat.format("{0} -  Unable Process line: {1} in file: {2}", e.toString(), Arrays.toString(data), file));
 					}
 				}
 			} else {

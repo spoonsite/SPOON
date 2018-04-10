@@ -35,6 +35,7 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ComponentView
 		extends Component
 {

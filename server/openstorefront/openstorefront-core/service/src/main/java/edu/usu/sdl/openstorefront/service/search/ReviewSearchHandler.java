@@ -137,7 +137,7 @@ public class ReviewSearchHandler
 					field.set(componentReview, Convert.toInteger(searchElement.getValue()));
 					queryByExample.getFieldOptions().put(field.getName(),
 							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
-				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Date.class)) {
 
 					ComponentReview componentReviewStartExample = new ComponentReview();
 

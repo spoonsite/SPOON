@@ -105,7 +105,7 @@ public class QuestionResponseSearchHandler
 				QueryByExample<ComponentQuestionResponse> queryByExample = new QueryByExample<>(componentQuestionResponse);
 
 				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+				if (type.isAssignableFrom(String.class)) {
 					String likeValue = null;
 					switch (searchElement.getStringOperation()) {
 						case EQUALS:

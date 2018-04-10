@@ -154,7 +154,7 @@ public class QuestionSearchHandler
 					specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Boolean.class)) {
 					field.set(componentQuestion, Convert.toBoolean(searchElement.getValue()));
 				} else {
 					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");

@@ -58,7 +58,7 @@ public class JiraManager
 		maxPoolSize = Convert.toInteger(poolSize);
 		clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 
-		LOG.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
+		LOG.log(Level.FINE, () -> MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL));
 		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
@@ -75,7 +75,7 @@ public class JiraManager
 	{
 		if (clientPool != null) {
 			if (getAvavilableConnections() != maxPoolSize) {
-				LOG.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
+				LOG.log(Level.WARNING, () -> MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
 			}
 		}
 	}
