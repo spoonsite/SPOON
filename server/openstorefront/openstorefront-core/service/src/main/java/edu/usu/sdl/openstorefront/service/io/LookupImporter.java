@@ -137,7 +137,7 @@ public class LookupImporter
 						lookupEntity.importData(data);
 						lookupEntities.add(lookupEntity);
 					} catch (IllegalAccessException | InstantiationException e) {
-						LOG.log(Level.WARNING, () -> MessageFormat.format("{0} -  Unable Process line: {1} in file: {2}", e.toString(), Arrays.toString(data), file));
+						LOG.log(Level.WARNING, () -> MessageFormat.format("{0} -  Unable Process line: {1} in file: {2}", e, Arrays.toString(data), file));
 					}
 				}
 			} else {

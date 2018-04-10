@@ -107,7 +107,7 @@ public class ConfluenceManager
 	{
 		if (poolInstance != null) {
 			if (poolInstance.getAvailableConnections() != poolInstance.getMaxConnections()) {
-				LOG.log(Level.WARNING, MessageFormat.format("{0} confluence connections were in process. ", poolInstance.getAvailableConnections()));
+				LOG.log(Level.WARNING, () -> MessageFormat.format("{0} confluence connections were in process. ", poolInstance.getAvailableConnections()));
 			}
 			LOG.log(Level.FINE, "Stopping pool.");
 			poolInstance.shutdownPool();
