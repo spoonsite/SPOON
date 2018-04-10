@@ -50,6 +50,7 @@ public class ApplicationProperty
 	public static final String PLUGIN_LAST_LOAD_MAP = "PLUGINLASTDTS";
 	public static final String APPLICATION_CRYPT_KEY = "APPCRYPTKEY";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ApplicationProperty()
 	{
 	}

@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
 public abstract class AbstractParser<T>
 {
@@ -66,6 +67,7 @@ public abstract class AbstractParser<T>
 	 */
 	public abstract String checkFormat(String mimeType, InputStream input);
 
+	@SuppressWarnings("unchecked")
 	public void processData(FileHistoryAll fileHistoryAll)
 	{
 		this.fileHistoryAll = fileHistoryAll;
@@ -93,7 +95,7 @@ public abstract class AbstractParser<T>
 
 						if (parsed != null) {
 							if (validateRecord(parsed)) {
-								addRecordToStorage(parsed);
+								addRecordToStorage((T) parsed);
 							}
 						}
 					} catch (Exception e) {
@@ -135,7 +137,7 @@ public abstract class AbstractParser<T>
 		}
 	}
 
-	protected <T> void addMultipleRecords(List<T> records)
+	protected void addMultipleRecords(List<T> records)
 	{
 		for (T record : records) {
 			if (validateRecord(record)) {
@@ -229,7 +231,7 @@ public abstract class AbstractParser<T>
 		return validationResult.valid();
 	}
 
-	protected <T> void addRecordToStorage(T record)
+	protected void addRecordToStorage(T record)
 	{
 		getStorageBucket().add(record);
 
@@ -239,7 +241,7 @@ public abstract class AbstractParser<T>
 		}
 	}
 
-	protected abstract <T> List<T> getStorageBucket();
+	protected abstract List<T> getStorageBucket();
 
 	protected abstract int getMaxBucketSize();
 

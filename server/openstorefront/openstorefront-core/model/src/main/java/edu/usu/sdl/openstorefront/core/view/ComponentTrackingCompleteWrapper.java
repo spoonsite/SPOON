@@ -38,10 +38,6 @@ public class ComponentTrackingCompleteWrapper
 	private ComponentTracking data;
 	private String componentTypeLabel;
 
-	public ComponentTrackingCompleteWrapper()
-	{
-	}
-
 	public String getName()
 	{
 		return name;

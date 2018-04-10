@@ -46,6 +46,7 @@ public class IndexSearchResult
 	 * future).
 	 *
 	 */
+	@SuppressWarnings("squid:S3923")
 	public void applyDataFilter()
 	{
 

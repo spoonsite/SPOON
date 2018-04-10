@@ -66,29 +66,31 @@ import org.simpleframework.xml.core.Persister;
 
 /**
  * Parses a describe record
+ *
  * @author dshurtleff
  */
 public class ComponentDescribeParser
-	extends BaseComponentParser	
+		extends BaseComponentParser
 {
+
 	private static final Logger LOG = Logger.getLogger(ComponentDescribeParser.class.getName());
-	
+
 	private static final String ATTRIBUTE_TYPE_NETWORK = "DESCNETW";
 	private static final String ATTRIBUTE_TYPE_NETWORK_DESC = "Describe Network";
-		
-	private static final String ATTRIBUTE_TYPE_CONFORMANCE = "DESCCOMF";
-	private static final String ATTRIBUTE_TYPE_CONFORMANCE_DESC = "Describe Conformance";	
-	
-	private static final String ATTRIBUTE_TYPE_MIMETYPE = "DESCMIME";
-	private static final String ATTRIBUTE_TYPE_MIMETYPE_DESC = "Describe MIME Type";	
 
-	private static final String SERVICE_COMPONENT_TYPE = "DESCRIBE-S";	
-	private static final String CONTENT_COLLECTION_COMPONENT_TYPE = "DESCRIBE-CC";	
-	
+	private static final String ATTRIBUTE_TYPE_CONFORMANCE = "DESCCOMF";
+	private static final String ATTRIBUTE_TYPE_CONFORMANCE_DESC = "Describe Conformance";
+
+	private static final String ATTRIBUTE_TYPE_MIMETYPE = "DESCMIME";
+	private static final String ATTRIBUTE_TYPE_MIMETYPE_DESC = "Describe MIME Type";
+
+	private static final String SERVICE_COMPONENT_TYPE = "DESCRIBE-S";
+	private static final String CONTENT_COLLECTION_COMPONENT_TYPE = "DESCRIBE-CC";
+
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		String errorMessage = null;		
+		String errorMessage = null;
 		try {
 			TrustedDataCollection trustedDataCollection = DescribeParser.parse(input);
 		} catch (Exception ex) {
@@ -136,39 +138,39 @@ public class ComponentDescribeParser
 	protected <T> Object parseRecord(T record)
 	{
 		TrustedDataCollection dataCollection = (TrustedDataCollection) record;
-		
-		List<ComponentAll> allData = new ArrayList<>();		
+
+		List<ComponentAll> allData = new ArrayList<>();
 		for (TrustedDataObject dataObject : dataCollection.getTrustedDataObjects()) {
 			allData.addAll(processAssertions(dataObject.getAssertions()));
 		}
-		
+
 		for (ComponentAll componentAll : allData) {
 			ValidationResult validationResult = componentAll.validate();
 			if (validationResult.valid() == false) {
 				fileHistoryAll.addError(FileHistoryErrorType.VALIDATION, validationResult.toHtmlString(), currentRecordNumber);
-			} else {			
+			} else {
 				addRecordToStorage(componentAll);
 			}
-		}		
+		}
 
 		return null;
 	}
-	
-	private List<ComponentAll> processAssertions(List<Assertion> assertions) 
+
+	private List<ComponentAll> processAssertions(List<Assertion> assertions)
 	{
 		List<ComponentAll> componentAlls = new ArrayList<>();
-		
+
 		StructuredStatement resourceCollection = new StructuredStatement();
-		
+
 		ComponentType serviceEntryType = new ComponentType();
 		serviceEntryType.setComponentType(SERVICE_COMPONENT_TYPE);
 		serviceEntryType = serviceEntryType.find();
 		if (serviceEntryType == null) {
-			
+
 			serviceEntryType = new ComponentType();
 			serviceEntryType.setComponentType(SERVICE_COMPONENT_TYPE);
-			
-			serviceEntryType.setLabel("Describe Service");	
+
+			serviceEntryType.setLabel("Describe Service");
 			serviceEntryType.setDescription("Describe service record");
 			serviceEntryType.setDataEntryAttributes(Boolean.TRUE);
 			serviceEntryType.setDataEntryContacts(Boolean.TRUE);
@@ -180,18 +182,18 @@ public class ComponentDescribeParser
 			serviceEntryType.setDataEntryReviews(Boolean.TRUE);
 			serviceEntryType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 			serviceEntryType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
-			
+
 			service.getComponentService().saveComponentType(serviceEntryType);
 		}
-		
+
 		ComponentType contentCollectionType = new ComponentType();
 		contentCollectionType.setComponentType(CONTENT_COLLECTION_COMPONENT_TYPE);
 		contentCollectionType = contentCollectionType.find();
 		if (contentCollectionType == null) {
 			contentCollectionType = new ComponentType();
 			contentCollectionType.setComponentType(CONTENT_COLLECTION_COMPONENT_TYPE);
-			
-			contentCollectionType.setLabel("Describe Content Collection");	
+
+			contentCollectionType.setLabel("Describe Content Collection");
 			contentCollectionType.setDescription("Describe content collection record");
 			contentCollectionType.setDataEntryAttributes(Boolean.TRUE);
 			contentCollectionType.setDataEntryContacts(Boolean.TRUE);
@@ -202,101 +204,107 @@ public class ComponentDescribeParser
 			contentCollectionType.setDataEntryResources(Boolean.TRUE);
 			contentCollectionType.setDataEntryReviews(Boolean.TRUE);
 			serviceEntryType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
-			serviceEntryType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
-			
+			serviceEntryType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+
 			service.getComponentService().saveComponentType(contentCollectionType);
 		}
-		
-		
-		for (Assertion assertion : assertions)		
-		{
-			if (assertion.getStructuredStatement().getSearchProvider() != null)
-			{
-				ComponentAll componentAll= defaultComponentAll(SERVICE_COMPONENT_TYPE);
-				Component component = componentAll.getComponent();	
-				
+
+		for (Assertion assertion : assertions) {
+			if (assertion.getStructuredStatement().getSearchProvider() != null) {
+				ComponentAll componentAll = defaultComponentAll(SERVICE_COMPONENT_TYPE);
+				Component component = componentAll.getComponent();
+
 				SearchProvider searchProvider = assertion.getStructuredStatement().getSearchProvider();
-				
+
 				component.setName(searchProvider.getGeneralInfo().getName());
 				component.setDescription(searchProvider.getGeneralInfo().getDescription());
 				component.setGuid(searchProvider.getGeneralInfo().getGuid());
 				component.setSecurityMarkingType(getLookup(SecurityMarkingType.class, searchProvider.getGeneralInfo().getDescriptionClassification()));
-				component.setComponentType(serviceEntryType.getComponentType());				
-				
-				for (PointOfContact contact : searchProvider.getGeneralInfo().getContacts()) {					
+				component.setComponentType(serviceEntryType.getComponentType());
+
+				for (PointOfContact contact : searchProvider.getGeneralInfo().getContacts()) {
 					ComponentContact componentContact = new ComponentContact();
 					if (contact.getOrganization() != null) {
 						component.setOrganization(contact.getOrganization().getName());
-						
+
 						componentContact.setContactType(getLookup(ContactType.class, ContactType.GOVERNMENT));
-												
-						if (StringUtils.isNotBlank(contact.getOrganization().getSubOrganization())){
+
+						if (StringUtils.isNotBlank(contact.getOrganization().getSubOrganization())) {
 							componentContact.setOrganization(contact.getOrganization().getSubOrganization());
 						} else {
 							componentContact.setOrganization(OpenStorefrontConstant.NOT_AVAILABLE);
 						}
 						componentContact.setEmail(contact.getOrganization().getEmail());
-						componentContact.setPhone(contact.getOrganization().getPhone());						
+						componentContact.setPhone(contact.getOrganization().getPhone());
 						componentContact.setFirstName(contact.getOrganization().getName());
-						componentContact.setLastName(OpenStorefrontConstant.NOT_AVAILABLE);						
-						
+						componentContact.setLastName(OpenStorefrontConstant.NOT_AVAILABLE);
+
 					} else {
 						componentContact.setContactType(getLookup(ContactType.class, ContactType.TECHINCAL));
 						componentContact.setEmail(contact.getPerson().getEmail());
-						componentContact.setPhone(contact.getPerson().getPhone());						
+						componentContact.setPhone(contact.getPerson().getPhone());
 						componentContact.setFirstName(contact.getPerson().getName());
-						componentContact.setLastName(contact.getPerson().getSurname());								
-						componentContact.setOrganization(contact.getPerson().getAffiliation());						
+						componentContact.setLastName(contact.getPerson().getSurname());
+						componentContact.setOrganization(contact.getPerson().getAffiliation());
 					}
 					componentAll.getContacts().add(componentContact);
 				}
-				
+
 				handleRelatedResources(searchProvider.getRelatedResources(), componentAll);
-				
+
 				for (SearchInterface searchInterface : searchProvider.getSearchInterfaces()) {
 					handleRelatedResources(searchInterface.getRelatedResources(), componentAll);
-					
+
 					Service serviceResource = searchInterface.getService();
-					
+
 					for (Address address : serviceResource.getAddresses()) {
 						ComponentResource componentResource = new ComponentResource();
 						String description = serviceResource.getName();
 						if (StringUtils.isNotBlank(address.getNetwork())) {
-							description += " - Network: " +  address.getNetwork();
+							description += " - Network: " + address.getNetwork();
 						}
-						
+
 						componentResource.setDescription(description);
 						componentResource.setRestricted(Convert.toBoolean(serviceResource.getServiceType().getSecure()));
 						componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.SERVICE));
 						componentResource.setLink(address.getText());
-						componentAll.getResources().add(componentResource);													
+						componentAll.getResources().add(componentResource);
 					}
-					
-					for (Conformance conformance : serviceResource.getConformances())
-					{
+
+					for (Conformance conformance : serviceResource.getConformances()) {
 						handleRelatedResources(conformance.getRelatedResources(), componentAll);
-						
+
 						//add attributes
-						AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_CONFORMANCE, 
-								ATTRIBUTE_TYPE_CONFORMANCE_DESC, conformance.getId(), conformance.getName());
-						
+						AttributeCode attributeCode = getAttributeCode(
+								ATTRIBUTE_TYPE_CONFORMANCE,
+								ATTRIBUTE_TYPE_CONFORMANCE_DESC,
+								conformance.getId(),
+								conformance.getName(),
+								serviceEntryType.getComponentType()
+						);
+
 						if (attributeCode != null) {
 							ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 							componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 							componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-						
+
 							ComponentAttribute componentAttribute = new ComponentAttribute();
 							componentAttribute.setComponentAttributePk(componentAttributePk);
-						
+
 							componentAll.getAttributes().add(componentAttribute);
 						}
 					}
-										
+
 				}
-				
+
 				//add attributes
-				AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_NETWORK, 
-						ATTRIBUTE_TYPE_NETWORK_DESC, searchProvider.getGeneralInfo().getNetwork(), searchProvider.getGeneralInfo().getNetwork());
+				AttributeCode attributeCode = getAttributeCode(
+						ATTRIBUTE_TYPE_NETWORK,
+						ATTRIBUTE_TYPE_NETWORK_DESC,
+						searchProvider.getGeneralInfo().getNetwork(),
+						searchProvider.getGeneralInfo().getNetwork(),
+						serviceEntryType.getComponentType()
+				);
 
 				if (attributeCode != null) {
 					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
@@ -306,51 +314,50 @@ public class ComponentDescribeParser
 					ComponentAttribute componentAttribute = new ComponentAttribute();
 					componentAttribute.setComponentAttributePk(componentAttributePk);
 
-					componentAll.getAttributes().add(componentAttribute);								
+					componentAll.getAttributes().add(componentAttribute);
 				}
-				
-				componentAlls.add(componentAll);				
-				
+
+				componentAlls.add(componentAll);
+
 			} else if (assertion.getStructuredStatement().getResource() != null) {
-				resourceCollection.setResource(assertion.getStructuredStatement().getResource());				
-			} else if (assertion.getStructuredStatement().getContentCollection() != null) { 
-				resourceCollection.setContentCollection(assertion.getStructuredStatement().getContentCollection());	
+				resourceCollection.setResource(assertion.getStructuredStatement().getResource());
+			} else if (assertion.getStructuredStatement().getContentCollection() != null) {
+				resourceCollection.setContentCollection(assertion.getStructuredStatement().getContentCollection());
 			}
-		}		
-		
-		if (resourceCollection.getResource() != null &&
-			resourceCollection.getContentCollection() != null)
-		{
-			ComponentAll componentAll= defaultComponentAll(CONTENT_COLLECTION_COMPONENT_TYPE);
-			Component component = componentAll.getComponent();	
-		
+		}
+
+		if (resourceCollection.getResource() != null
+				&& resourceCollection.getContentCollection() != null) {
+			ComponentAll componentAll = defaultComponentAll(CONTENT_COLLECTION_COMPONENT_TYPE);
+			Component component = componentAll.getComponent();
+
 			//combine Resource and contentCollection into one record
 			String name = resourceCollection.getResource().getMetacardInfo().getIdentifierValue().replace("_", " ");
 			String description = resourceCollection.getResource().getTitle().getText();
-			
+
 			component.setName(name);
 			component.setDescription(description);
 			component.setSecurityMarkingType(getLookup(SecurityMarkingType.class, resourceCollection.getResource().getTitle().getClassification()));
 			component.setOrganization(resourceCollection.getResource().getCreatorName());
-			component.setComponentType(contentCollectionType.getComponentType());		
-			
+			component.setComponentType(contentCollectionType.getComponentType());
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			Date releaseDate = sdf.parse(resourceCollection.getResource().getCreateDate(), new ParsePosition(0));
 			component.setReleaseDate(releaseDate);
 			component.setGuid(resourceCollection.getResource().getGuid());
-			
+
 			ComponentMetadata metadata = new ComponentMetadata();
 			metadata.setLabel("Document Type");
-			metadata.setValue(resourceCollection.getResource().getType());			
+			metadata.setValue(resourceCollection.getResource().getType());
 			componentAll.getMetadata().add(metadata);
-			
+
 			if (resourceCollection.getResource().getContributor() == null) {
 				metadata = new ComponentMetadata();
 				metadata.setLabel("Contributor");
-				metadata.setValue(resourceCollection.getResource().getContributor().getOrganizationAcronym());							
-				componentAll.getMetadata().add(metadata);			
+				metadata.setValue(resourceCollection.getResource().getContributor().getOrganizationAcronym());
+				componentAll.getMetadata().add(metadata);
 			}
-			
+
 			if (resourceCollection.getResource().getSubjectCoverage() != null) {
 				for (String keyword : resourceCollection.getResource().getSubjectCoverage().getKeywords()) {
 					ComponentTag componentTag = new ComponentTag();
@@ -358,66 +365,70 @@ public class ComponentDescribeParser
 					componentAll.getTags().add(componentTag);
 				}
 			}
-			
-			if (resourceCollection.getResource().getGeospatialCoverage() != null)
-			{
-				for (BoundingGeometry boundingGeometry : resourceCollection.getResource().getGeospatialCoverage().getBoundingGeometries())
-				{
+
+			if (resourceCollection.getResource().getGeospatialCoverage() != null) {
+				for (BoundingGeometry boundingGeometry : resourceCollection.getResource().getGeospatialCoverage().getBoundingGeometries()) {
 					for (String point : boundingGeometry.getPoints()) {
 						metadata = new ComponentMetadata();
 						metadata.setLabel("Geospatial Coverage");
-						metadata.setValue(point);			
-						componentAll.getMetadata().add(metadata);									
+						metadata.setValue(point);
+						componentAll.getMetadata().add(metadata);
 					}
 				}
 			}
-			
+
 			//Content collection
 			if (resourceCollection.getContentCollection().getMetrics() != null) {
 				metadata = new ComponentMetadata();
 				metadata.setLabel("Record Count");
-				metadata.setValue(resourceCollection.getContentCollection().getMetrics().getCount());							
-				componentAll.getMetadata().add(metadata);					
+				metadata.setValue(resourceCollection.getContentCollection().getMetrics().getCount());
+				componentAll.getMetadata().add(metadata);
 
 				metadata = new ComponentMetadata();
-				metadata.setLabel("Record Rate");				
+				metadata.setLabel("Record Rate");
 				Integer rate = Convert.toInteger(resourceCollection.getContentCollection().getMetrics().getRecordRate().getText());
 				if (rate != null) {
-					metadata.setValue(rate + " " +  StringProcessor.puralize(rate, resourceCollection.getContentCollection().getMetrics().getRecordRate().getFrequency(), null));							
-					componentAll.getMetadata().add(metadata);									
+					metadata.setValue(rate + " " + StringProcessor.puralize(rate, resourceCollection.getContentCollection().getMetrics().getRecordRate().getFrequency(), null));
+					componentAll.getMetadata().add(metadata);
 				}
 			}
-			
+
 			metadata = new ComponentMetadata();
 			metadata.setLabel("Originator");
-			metadata.setValue(resourceCollection.getContentCollection().getOriginator());							
+			metadata.setValue(resourceCollection.getContentCollection().getOriginator());
 			componentAll.getMetadata().add(metadata);
-			
+
 			metadata = new ComponentMetadata();
 			metadata.setLabel("Collection Updated");
-			metadata.setValue(resourceCollection.getContentCollection().getUpdated());							
-			componentAll.getMetadata().add(metadata);			
-			
+			metadata.setValue(resourceCollection.getContentCollection().getUpdated());
+			componentAll.getMetadata().add(metadata);
+
 			for (MimeType mimeType : resourceCollection.getContentCollection().getMimeTypes()) {
-				AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_MIMETYPE, ATTRIBUTE_TYPE_MIMETYPE_DESC, mimeType.getText(), mimeType.getText());
-				
-				if  (attributeCode != null) {
+				AttributeCode attributeCode = getAttributeCode(
+						ATTRIBUTE_TYPE_MIMETYPE,
+						ATTRIBUTE_TYPE_MIMETYPE_DESC,
+						mimeType.getText(),
+						mimeType.getText(),
+						serviceEntryType.getComponentType()
+				);
+
+				if (attributeCode != null) {
 					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 					componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 					componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 
 					ComponentAttribute componentAttribute = new ComponentAttribute();
 					componentAttribute.setComponentAttributePk(componentAttributePk);
-					componentAll.getAttributes().add(componentAttribute);			
+					componentAll.getAttributes().add(componentAttribute);
 				}
 			}
-			
+
 			componentAlls.add(componentAll);
 		}
-				
-		return componentAlls;		
-	} 
-	
+
+		return componentAlls;
+	}
+
 	private void handleRelatedResources(List<RelatedResource> relatedResources, ComponentAll componentAll)
 	{
 		for (RelatedResource relatedResource : relatedResources) {
@@ -432,18 +443,16 @@ public class ComponentDescribeParser
 	@Override
 	protected void finishProcessing()
 	{
-		super.finishProcessing(); 
-		
+		super.finishProcessing();
+
 		//Put Relationships together
-		
 		Component componentExample = new Component();
 		componentExample.setFileHistoryId(fileHistoryAll.getFileHistory().getFileHistoryId());
-				
+
 		List<Component> components = componentExample.findByExample();
-		
+
 		//Assume one service record (We only example...not sure how they packing multiple records)
-		
-		Component serviceComponent  = null;
+		Component serviceComponent = null;
 		List<Component> collections = new ArrayList<>();
 		for (Component component : components) {
 			if (SERVICE_COMPONENT_TYPE.equals(component.getComponentType())) {
@@ -452,14 +461,14 @@ public class ComponentDescribeParser
 				collections.add(component);
 			}
 		}
-		
+
 		if (serviceComponent != null) {
 			for (Component contentCollection : collections) {
 				ComponentRelationship componentRelationship = new ComponentRelationship();
 				componentRelationship.setRelationshipType(getLookup(RelationshipType.class, "Provides"));
 				componentRelationship.setComponentId(serviceComponent.getComponentId());
 				componentRelationship.setRelatedComponentId(contentCollection.getComponentId());
-				
+
 				service.getComponentService().saveComponentRelationship(componentRelationship);
 			}
 		}

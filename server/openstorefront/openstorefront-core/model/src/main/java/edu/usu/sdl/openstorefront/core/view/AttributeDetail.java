@@ -25,7 +25,8 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
  * @author dshurtleff
  */
 public class AttributeDetail
-{	
+{
+
 	private String attributeType;
 	private String typeLabel;
 	private String typeDetailDescription;
@@ -34,21 +35,22 @@ public class AttributeDetail
 	private String codeDetailDescription;
 	private String badgeUrl;
 	private String highlightStyle;
-	
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeDetail()
 	{
 	}
-	
-	public static AttributeDetail toView(AttributeCode attributeCode) 
+
+	public static AttributeDetail toView(AttributeCode attributeCode)
 	{
-		Service service = ServiceProxyFactory.getServiceProxy();		
+		Service service = ServiceProxyFactory.getServiceProxy();
 		AttributeDetail detail = new AttributeDetail();
-		
+
 		AttributeType type = service.getAttributeService().findType(attributeCode.getAttributeCodePk().getAttributeType());
-		if (type == null) {			
+		if (type == null) {
 			type = service.getPersistenceService().findById(AttributeType.class, attributeCode.getAttributeCodePk().getAttributeType());
 		}
-		
+
 		detail.setAttributeType(type.getAttributeType());
 		detail.setTypeLabel(type.getDescription());
 		detail.setTypeDetailDescription(type.getDetailedDescription());
@@ -57,10 +59,10 @@ public class AttributeDetail
 		detail.setCodeDetailDescription(attributeCode.getDescription());
 		detail.setBadgeUrl(attributeCode.getBadgeUrl());
 		detail.setHighlightStyle(attributeCode.getHighlightStyle());
-				
+
 		return detail;
 	}
-	
+
 	public String getAttributeType()
 	{
 		return attributeType;
@@ -140,6 +142,5 @@ public class AttributeDetail
 	{
 		this.highlightStyle = highlightStyle;
 	}
-	
-	
+
 }

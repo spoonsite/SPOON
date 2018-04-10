@@ -43,6 +43,11 @@ import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -180,7 +185,58 @@ public interface ComponentService
 	 * @param componentId
 	 * @return ComponentType Code or null if not found
 	 */
-	public String getComponentType(String componentId);
+	public String getComponentTypeForComponent(String componentId);
+
+	/**
+	 * This will pull components type in a nested model according to options
+	 * Uses caches for better performance
+	 *
+	 * @param componentTypeOptions
+	 * @return Nested Model or null if the component cannot be found
+	 */
+	public ComponentTypeNestedModel getComponentType(ComponentTypeOptions componentTypeOptions);
+
+	/**
+	 * Activates a component; if needed.
+	 *
+	 * @param componentTypeId
+	 * @return Component Type changed or null if not found.
+	 */
+	public ComponentType activateComponentType(String componentTypeId);
+
+	/**
+	 * Resolves the template for a given type
+	 *
+	 * @param componentType
+	 * @return template or null if there is no override (meaning it should use
+	 * default)
+	 */
+	public ComponentTypeTemplateResolution findTemplateForComponentType(String componentType);
+
+	/**
+	 * Resolves the role groups for a given type
+	 *
+	 * @param componentType
+	 * @return roles or null if there is no assigned roles
+	 */
+	public ComponentTypeRoleResolution findRoleGroupsForComponentType(String componentType);
+
+	/**
+	 * Resolves the users for a given type
+	 *
+	 * @param componentType
+	 * @return users or null if there is no assigned users
+	 */
+	public ComponentTypeUserResolution findUserForComponentType(String componentType);
+
+	/**
+	 * Switches component type of an entry.
+	 *
+	 * @param componentId
+	 * @param newType
+	 * @return
+	 */
+	public Component changeComponentType(String componentId, String newType);
 
 	/**
 	 * High-speed check for approval
@@ -859,5 +915,13 @@ public interface ComponentService
 	 * @return
 	 */
 	public String resolveComponentTypeIcon(String componentType);
+
+	/**
+	 * Quick look up the include entry type icon
+	 *
+	 * @param componentType
+	 * @return boolean
+	 */
+	public Boolean resolveComponentTypeIncludeIconInSearch(String componentType);
 
 }

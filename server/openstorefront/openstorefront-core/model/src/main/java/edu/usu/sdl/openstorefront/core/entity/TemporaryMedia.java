@@ -68,6 +68,7 @@ public class TemporaryMedia
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String mimeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public TemporaryMedia()
 	{
 	}

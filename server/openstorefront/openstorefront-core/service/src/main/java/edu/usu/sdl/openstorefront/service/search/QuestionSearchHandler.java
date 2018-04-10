@@ -46,6 +46,7 @@ public class QuestionSearchHandler
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected ValidationResult internalValidate()
 	{
 		ValidationResult validationResult = new ValidationResult();
@@ -54,40 +55,41 @@ public class QuestionSearchHandler
 			if (StringUtils.isBlank(searchElement.getField())) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
 			}
-			boolean checkValue = true; 			
+			boolean checkValue = true;
 			Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
 			if (field == null) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on question"));
 			} else {
 				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+				if (type.isAssignableFrom(String.class)) {
 					//Nothing to check
-				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Integer.class)) {
 					if (StringUtils.isNumeric(searchElement.getValue()) == false) {
 						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 					}
-				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Date.class)) {
 					checkValue = false;
 					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
 						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
 						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
-					}					
-				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
+					}
+				} else if (type.isAssignableFrom(Boolean.class)) {
 					//Nothing to check
 				} else {
 					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 				}
 			}
-			
+
 			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
 				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
 		}
 
-		return validationResult;	
+		return validationResult;
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<String> processSearch()
 	{
 		List<String> foundIds = new ArrayList<>();
@@ -97,20 +99,20 @@ public class QuestionSearchHandler
 			try {
 				ComponentQuestion componentQuestion = new ComponentQuestion();
 				componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-				
+
 				Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
 				field.setAccessible(true);
-				QueryByExample queryByExample = new QueryByExample(componentQuestion);
+				QueryByExample<ComponentQuestion> queryByExample = new QueryByExample<>(componentQuestion);
 
 				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+				if (type.isAssignableFrom(String.class)) {
 					String likeValue = null;
 					switch (searchElement.getStringOperation()) {
 						case EQUALS:
 							String value = searchElement.getValue();
 							if (searchElement.getCaseInsensitive()) {
 								queryByExample.getFieldOptions().put(field.getName(),
-									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+										new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 								value = value.toLowerCase();
 							}
 							field.set(componentQuestion, value);
@@ -129,16 +131,16 @@ public class QuestionSearchHandler
 						field.set(componentQuestionLike, likeValue);
 						queryByExample.setLikeExample(componentQuestionLike);
 					}
-				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Integer.class)) {
 					field.set(componentQuestion, Convert.toInteger(searchElement.getValue()));
-					queryByExample.getFieldOptions().put(field.getName(),										
+					queryByExample.getFieldOptions().put(field.getName(),
 							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
-				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Date.class)) {
 
 					ComponentQuestion componentQuestionStartExample = new ComponentQuestion();
 
 					field.set(componentQuestionStartExample, searchElement.getStartDate());
-					SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+					SpecialOperatorModel<ComponentQuestion> specialOperatorModel = new SpecialOperatorModel<>();
 					specialOperatorModel.setExample(componentQuestionStartExample);
 					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
@@ -146,13 +148,13 @@ public class QuestionSearchHandler
 					ComponentQuestion componentQuestionEndExample = new ComponentQuestion();
 
 					field.set(componentQuestionEndExample, searchElement.getEndDate());
-					specialOperatorModel = new SpecialOperatorModel();
+					specialOperatorModel = new SpecialOperatorModel<>();
 					specialOperatorModel.setExample(componentQuestionEndExample);
 					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 					specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Boolean.class)) {
 					field.set(componentQuestion, Convert.toBoolean(searchElement.getValue()));
 				} else {
 					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
@@ -169,7 +171,7 @@ public class QuestionSearchHandler
 				throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
 			}
 		}
-		return foundIds;	
+		return foundIds;
 	}
-	
+
 }

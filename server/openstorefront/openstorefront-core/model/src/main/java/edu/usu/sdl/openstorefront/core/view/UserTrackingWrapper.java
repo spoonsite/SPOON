@@ -32,10 +32,6 @@ public class UserTrackingWrapper
 	@DataType(UserTracking.class)
 	private List<UserTracking> userTracking = new ArrayList<>();
 
-	public UserTrackingWrapper()
-	{
-	}
-
 	public UserTrackingWrapper(List<UserTracking> userTracking, long totalNumber)
 	{
 		this.totalNumber = totalNumber;

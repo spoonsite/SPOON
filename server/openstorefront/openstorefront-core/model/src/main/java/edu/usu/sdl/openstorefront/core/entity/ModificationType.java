@@ -35,6 +35,7 @@ public class ModificationType
 	public static final String EXTERNAL = "EXTERNAL";
 	public static final String MERGE = "MERGE";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ModificationType()
 	{
 	}

@@ -57,6 +57,7 @@ public class ComponentMetadata
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String value;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentMetadata()
 	{
 	}

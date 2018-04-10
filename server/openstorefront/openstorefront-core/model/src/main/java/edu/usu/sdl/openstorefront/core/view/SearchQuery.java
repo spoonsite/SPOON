@@ -39,10 +39,6 @@ public class SearchQuery
 	@QueryParam("listingType")
 	private String listingType;
 
-	public SearchQuery()
-	{
-	}
-
 	public String getQuery()
 	{
 		return query;

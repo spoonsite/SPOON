@@ -176,6 +176,7 @@ public class ImportServiceImpl
 		if (fileFormat == null) {
 			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 			if (element != null) {
+				@SuppressWarnings("unchecked")
 				List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 				for (ExternalFormat pluginFormat : extraFileFormats) {
 					if (fileFormatCode.equals(pluginFormat.getFileFormat().getCode())) {
@@ -313,11 +314,7 @@ public class ImportServiceImpl
 	public FileFormat findFileFormat(String fileFormatCode)
 	{
 		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode, false);
-		if (externalFormat != null) {
-			return externalFormat.getFileFormat();
-		} else {
-			return null;
-		}
+		return externalFormat.getFileFormat();
 	}
 
 	@Override
@@ -330,6 +327,7 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				if (externalFormat.getFileFormat().getFileType().equals(fileType)) {
@@ -357,6 +355,7 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				FileFormat translatedFileFormat = new FileFormat();
@@ -555,6 +554,7 @@ public class ImportServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void registerFormat(FileFormat newFormat, Class parserClass)
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
@@ -576,6 +576,7 @@ public class ImportServiceImpl
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> fileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (int i = fileFormats.size() - 1; i >= 0; i--) {
 				FileFormat fileFormat = fileFormats.get(i).getFileFormat();

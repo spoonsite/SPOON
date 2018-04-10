@@ -120,39 +120,6 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 				}
 			}
 		});
-//		changeRequestWindow.submissionPanel.cancelSubmissionHandler = function() {
-//			Ext.Msg.show({
-//				title:'Confirm Cancel?',
-//				message: 'Are you sure you want to cancel your change request? <br><br><b>Yes</b>, will remove change request<br> <b>No</b>, will cancel the form and will NOT remove existing change request',
-//				buttons: Ext.Msg.YESNOCANCEL,
-//				icon: Ext.Msg.QUESTION,
-//				fn: function(btn) {
-//					if (btn === 'yes') {
-//							changeRequestWindow.submissionPanel.setLoading('Canceling Change Request...');
-//							Ext.Ajax.request({
-//								url: 'api/v1/resource/components/' + changeRequestWindow.changeRequestId + '/cascade',
-//								method: 'DELETE',
-//								callback: function () {
-//									changeRequestWindow.submissionPanel.setLoading(false);
-//								},
-//								success: function (response, opts) {
-//									changeRequestWindow.submissionWindow.completeClose=true;
-//									changeRequestWindow.submissionWindow.close();
-//									changeRequestWindow.submissionWindow.completeClose=false;
-//									changeRequestWindow.changeGrid.getStore().reload();
-//									if (changeRequestWindow.successHandler) {
-//										changeRequestWindow.successHandler();
-//									}
-//								}
-//							});							
-//					} else if (btn === 'no') {
-//						changeRequestWindow.submissionWindow.completeClose=true;
-//						changeRequestWindow.submissionWindow.close();
-//						changeRequestWindow.submissionWindow.completeClose=false;
-//					} 
-//				}				
-//			});
-//		};		
 
 		changeRequestWindow.editChangeRequest = function(changeRequestId, record, editCallback) {
 			changeRequestWindow.changeRequestId = changeRequestId;
@@ -311,6 +278,8 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							},
 							success: function(response, opts) {
 								var data = Ext.decode(response.responseText);								
+								var root = data.componentTypeNestedModel;
+								CoreUtil.traverseNestedModel(root, [], data);
 								changeRequestWindow.changeViewPanel.update(data);								
 							}
 						});
@@ -505,6 +474,8 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			}, 
 			success: function(response, opts) {
 				var data = Ext.decode(response.responseText);				
+				var root = data.componentTypeNestedModel;
+				CoreUtil.traverseNestedModel(root, [], data);
 				changeRequestWindow.currentViewPanel.update(data);
 			}
 		});		

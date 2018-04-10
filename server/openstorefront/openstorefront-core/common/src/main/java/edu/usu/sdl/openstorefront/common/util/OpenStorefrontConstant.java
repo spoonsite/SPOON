@@ -171,13 +171,10 @@ public class OpenStorefrontConstant
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.image", ".odi");	//OpenDocument Image
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.image-template", ".oti");	//OpenDocument Image Template
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation", ".odp");	//OpenDocument Presentation
-		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation", ".odp");	//OpenDocument presentation document
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.presentation-template", ".otp");	//OpenDocument Presentation Template
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet", ".ods");	//OpenDocument Spreadsheet
-		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet", ".ods");	//OpenDocument spreadsheet document
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.spreadsheet-template", ".ots");	//OpenDocument Spreadsheet Template
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.text", ".odt");	//OpenDocument Text
-		mimeXrefLocal.put("application/vnd.oasis.opendocument.text", ".odt");	//OpenDocument text document
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-master", ".odm");	//OpenDocument Text Master
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-template", ".ott");	//OpenDocument Text Template
 		mimeXrefLocal.put("application/vnd.oasis.opendocument.text-web", ".oth");	//Open Document Text Web

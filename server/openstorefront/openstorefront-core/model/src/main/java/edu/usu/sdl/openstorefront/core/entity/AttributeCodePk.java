@@ -53,6 +53,7 @@ public class AttributeCodePk
 	@ConsumeField
 	private String attributeCode;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCodePk()
 	{
 	}

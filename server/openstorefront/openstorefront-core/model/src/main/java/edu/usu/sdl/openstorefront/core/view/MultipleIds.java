@@ -22,17 +22,15 @@ import java.util.List;
 
 /**
  * Use to consume multiple ids
+ *
  * @author dshurtleff
  */
 public class MultipleIds
 {
-	@ConsumeField
-	@DataType(String.class)		
-	private List<String> ids = new ArrayList<>();
 
-	public MultipleIds()
-	{
-	}
+	@ConsumeField
+	@DataType(String.class)
+	private List<String> ids = new ArrayList<>();
 
 	public List<String> getIds()
 	{
@@ -43,5 +41,5 @@ public class MultipleIds
 	{
 		this.ids = ids;
 	}
-	
+
 }

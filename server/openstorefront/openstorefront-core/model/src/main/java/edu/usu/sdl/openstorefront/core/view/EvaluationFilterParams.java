@@ -25,38 +25,32 @@ import javax.ws.rs.QueryParam;
  * @author dshurtleff
  */
 public class EvaluationFilterParams
-	extends  FilterQueryParams
+		extends FilterQueryParams
 {
-	
+
 	@QueryParam("workflowStatus")
 	@Size(min = 0, max = 255)
 	@Sanitize(TextSanitizer.class)
 	private String workflowStatus;
-	
+
 	@QueryParam("assignedUser")
 	@Size(min = 0, max = 255)
 	private String assignedUser;
-	
+
 	@QueryParam("assignedGroup")
-	@Size(min = 0, max = 255)	
+	@Size(min = 0, max = 255)
 	private String assignedGroup;
-	
+
 	@QueryParam("published")
 	private Boolean published;
-	
-			
+
 	@QueryParam("templateId")
-	@Size(min = 0, max = 255)	
+	@Size(min = 0, max = 255)
 	private String templateId;
-	
+
 	@QueryParam("checklistTemplateId")
-	@Size(min = 0, max = 255)	
+	@Size(min = 0, max = 255)
 	private String checklistTemplateId;
-	
-	
-	public EvaluationFilterParams()
-	{
-	}
 
 	public String getWorkflowStatus()
 	{

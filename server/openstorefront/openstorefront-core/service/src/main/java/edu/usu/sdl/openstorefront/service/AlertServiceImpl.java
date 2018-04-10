@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeAlertOption;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
@@ -57,7 +58,7 @@ public class AlertServiceImpl
 		implements AlertService
 {
 
-	private static final Logger log = Logger.getLogger(AlertServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(AlertServiceImpl.class.getName());
 
 	@Override
 	public Alert saveAlert(Alert alert)
@@ -145,33 +146,52 @@ public class AlertServiceImpl
 						if (alertContext.getDataTrigger() instanceof ErrorTicket) {
 							ErrorTicket errorTicket = (ErrorTicket) alertContext.getDataTrigger();
 
-							if (ErrorTypeCode.INTEGRATION.equals(errorTicket.getErrorTypeCode())) {
-								if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
-									createUserMessage = true;
-								}
-							} else if (ErrorTypeCode.SYSTEM.equals(errorTicket.getErrorTypeCode())) {
-								if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
-									createUserMessage = true;
-								}
-							} else if (ErrorTypeCode.REST_API.equals(errorTicket.getErrorTypeCode())) {
-								if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
-									createUserMessage = true;
-								}
-							} else if (ErrorTypeCode.REPORT.equals(errorTicket.getErrorTypeCode())) {
-								if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnReport())) {
-									createUserMessage = true;
-								}
+							if (null == errorTicket.getErrorTypeCode()) {
+								LOG.log(Level.FINE, () -> MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
 							} else {
-								log.log(Level.FINE, MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
+								switch (errorTicket.getErrorTypeCode()) {
+									case ErrorTypeCode.INTEGRATION:
+										if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
+											createUserMessage = true;
+										}
+										break;
+									case ErrorTypeCode.SYSTEM:
+										if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
+											createUserMessage = true;
+										}
+										break;
+									case ErrorTypeCode.REST_API:
+										if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnIntegration())) {
+											createUserMessage = true;
+										}
+										break;
+									case ErrorTypeCode.REPORT:
+										if (Convert.toBoolean(alert.getSystemErrorAlertOption().getAlertOnReport())) {
+											createUserMessage = true;
+										}
+										break;
+									default:
+										LOG.log(Level.FINE, () -> MessageFormat.format("Missing option for error type: {0}", errorTicket.getErrorTypeCode()));
+										break;
+								}
 							}
 						} else {
-							log.log(Level.FINE, "System error without a ticket...check alert.");
+							LOG.log(Level.FINE, "System error without a ticket...check alert.");
 						}
 					}
 					break;
 				case AlertType.COMPONENT_SUBMISSION:
-					userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
-					createUserMessage = true;
+					List<ComponentTypeAlertOption> options = alert.getComponentTypeAlertOptions();
+					if (options != null) {
+						Component component = (Component) alertContext.getDataTrigger();
+						for (ComponentTypeAlertOption option : options) {
+							if (option.getComponentType().equals(component.getComponentType())) {
+								userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
+								createUserMessage = true;
+								break;
+							}
+						}
+					}
 					break;
 				case AlertType.CHANGE_REQUEST:
 					userMessageType = UserMessageType.CHANGE_REQUEST_ALERT;
@@ -208,7 +228,7 @@ public class AlertServiceImpl
 					UserProfile userProfile = new UserProfile();
 					userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 					userProfile.setEmail(email.getEmail());
-					userProfile = (UserProfile) userProfile.find();
+					userProfile = userProfile.find();
 					if (userProfile != null) {
 						if (AlertType.CHANGE_REQUEST.equals(alert.getAlertType())) {
 

@@ -32,22 +32,24 @@ import javax.validation.constraints.Size;
 @APIDescription("Used to store code mapping between external attributes and internal")
 @Embeddable
 public class FileAttributeCodeXrefMap
-	implements Serializable
-{	
+		implements Serializable
+{
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@FK(AttributeCode.class)			
+	@FK(AttributeCode.class)
 	private String attributeCode;
-	
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String externalCode;
 
 	@Version
-	private String storageVersion;	
-	
+	private String storageVersion;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileAttributeCodeXrefMap()
 	{
 	}
@@ -70,7 +72,7 @@ public class FileAttributeCodeXrefMap
 	public void setExternalCode(String externalCode)
 	{
 		this.externalCode = externalCode;
-	}	
+	}
 
 	public String getStorageVersion()
 	{
@@ -81,5 +83,5 @@ public class FileAttributeCodeXrefMap
 	{
 		this.storageVersion = storageVersion;
 	}
-		
+
 }

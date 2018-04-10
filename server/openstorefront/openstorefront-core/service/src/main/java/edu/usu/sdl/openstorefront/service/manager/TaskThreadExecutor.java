@@ -54,7 +54,7 @@ public class TaskThreadExecutor
 		extends ThreadPoolExecutor
 {
 
-	private static final Logger log = Logger.getLogger(TaskThreadExecutor.class.getName());
+	private static final Logger LOG = Logger.getLogger(TaskThreadExecutor.class.getName());
 
 	private static final int MAX_DELAY_CHECK = 5;
 	private static final long MAX_DELAY_MILLIS = 10;
@@ -130,7 +130,7 @@ public class TaskThreadExecutor
 			}
 		}
 		if (t != null) {
-			log.log(Level.SEVERE, "Failure in background task", t);
+			LOG.log(Level.SEVERE, "Failure in background task", t);
 		}
 	}
 
@@ -166,15 +166,23 @@ public class TaskThreadExecutor
 						foundTask = true;
 					}
 				}
-				try {
-					Thread.sleep(MAX_DELAY_MILLIS);
-				} catch (InterruptedException ex) {
-					//**continue on interruption
-				}
+				checkDelay();
 
 			} while (!foundTask && checks <= MAX_DELAY_CHECK);
 		}
 		super.beforeExecute(t, r);
+	}
+
+	private void checkDelay()
+	{
+		try {
+			Thread.sleep(MAX_DELAY_MILLIS);
+		} catch (InterruptedException ex) {
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, null, ex);
+			}
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public List<TaskFuture> getTasks()

@@ -32,6 +32,7 @@ public class DataSource
 	public static final String DI2E = "DI2E";
 	public static final String ER2 = "ER2";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public DataSource()
 	{
 	}

@@ -28,11 +28,6 @@ public class UserTrackingResult
 	private List<UserTracking> result;
 	private long count;
 
-	public UserTrackingResult()
-	{
-
-	}
-
 	public List<UserTracking> getResult()
 	{
 		return result;

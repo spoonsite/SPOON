@@ -34,6 +34,7 @@ public class IODirectionType
 	public static final String EXPORT = "EXPORT";
 	public static final String IMPORT = "IMPORT";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public IODirectionType()
 	{
 	}

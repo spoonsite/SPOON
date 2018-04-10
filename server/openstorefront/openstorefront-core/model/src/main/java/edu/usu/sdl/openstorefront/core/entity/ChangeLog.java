@@ -65,6 +65,7 @@ public class ChangeLog
 	@FK(ChangeType.class)
 	private String changeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeLog()
 	{
 	}

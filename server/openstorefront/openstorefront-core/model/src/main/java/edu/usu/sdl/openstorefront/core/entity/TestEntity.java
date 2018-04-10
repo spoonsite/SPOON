@@ -28,8 +28,4 @@ public class TestEntity
 		extends LookupEntity<TestEntity>
 {
 
-	public TestEntity()
-	{
-	}
-
 }

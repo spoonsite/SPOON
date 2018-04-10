@@ -207,6 +207,7 @@ public abstract class BaseComponentParser
 	 * @param input
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected String getLookup(Class lookupClass, String input)
 	{
 		if (StringUtils.isNotBlank(input)) {
@@ -247,9 +248,15 @@ public abstract class BaseComponentParser
 	 * @param attributeTypeDescription
 	 * @param attributeCode
 	 * @param attributeCodeDescription
+	 * @param componentType (optional)
 	 * @return
 	 */
-	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)
+	protected AttributeCode getAttributeCode(
+			String attributeTypeCode,
+			String attributeTypeDescription,
+			String attributeCode,
+			String attributeCodeDescription,
+			String componentType)
 	{
 		if (StringUtils.isBlank(attributeCode)
 				|| StringUtils.isBlank(attributeCodeDescription)) {
@@ -267,6 +274,7 @@ public abstract class BaseComponentParser
 			attributeType.setRequiredFlg(Boolean.FALSE);
 			attributeType.setVisibleFlg(Boolean.FALSE);
 			attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
+			attributeType.addOptionalComponentType(componentType);
 
 			attributeType.setDescription(attributeTypeDescription);
 			attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
@@ -318,7 +326,7 @@ public abstract class BaseComponentParser
 			attributeCodePk.setAttributeType(attributeTypeCode);
 			attributeCode.setAttributeCodePk(attributeCodePk);
 
-			attributeCode = (AttributeCode) attributeCode.find();
+			attributeCode = attributeCode.find();
 			if (attributeCode == null) {
 				attributeCode = new AttributeCode();
 				attributeCode.setLabel(StringUtils.left(attributeCodeLabel, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));

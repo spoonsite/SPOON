@@ -77,6 +77,7 @@ public class ReportTransmissionOption
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportTransmissionOption()
 	{
 	}
@@ -160,7 +161,7 @@ public class ReportTransmissionOption
 	{
 		this.storageVersion = storageVersion;
 	}
-	
+
 	public Boolean getReportNotify()
 	{
 		return reportNotify;

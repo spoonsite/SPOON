@@ -72,10 +72,10 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		}
 	],	
 
-	updateNavList: function (templateRecord) {
+	updateNavList: function (templateRecordLocal) {
 		var sectionPanel = this;
 		var formBuilderPanel = sectionPanel.up('[itemId=formBuilderPanel]');
-		var templateRecord = templateRecord || formBuilderPanel.templateRecord;
+		var templateRecord = templateRecordLocal || formBuilderPanel.templateRecord;
 
 		// clear the current tree list, and build a new one
 		formBuilderPanel.sectionPanel.removeAll();

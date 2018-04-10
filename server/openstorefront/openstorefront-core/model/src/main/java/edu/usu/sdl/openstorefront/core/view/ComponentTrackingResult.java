@@ -30,11 +30,6 @@ public class ComponentTrackingResult
 	private List<ComponentTrackingCompleteWrapper> result = new ArrayList<>();
 	private long count;
 
-	public ComponentTrackingResult()
-	{
-
-	}
-
 	public List<ComponentTrackingCompleteWrapper> getResult()
 	{
 		return result;

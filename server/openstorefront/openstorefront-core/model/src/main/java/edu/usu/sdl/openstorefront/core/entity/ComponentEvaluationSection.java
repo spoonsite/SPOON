@@ -57,6 +57,7 @@ public class ComponentEvaluationSection
 	@ConsumeField
 	private Boolean notAvailable;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentEvaluationSection()
 	{
 	}
@@ -65,10 +66,10 @@ public class ComponentEvaluationSection
 	public String uniqueKey()
 	{
 		String key = getComponentEvaluationSectionPk().getEvaluationSection()
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
-					+ getActualScore()
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
-					+ getNotAvailable();
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getActualScore()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getNotAvailable();
 		return key;
 	}
 

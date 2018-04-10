@@ -65,6 +65,7 @@ public class ChecklistTemplate
 	@OneToMany(orphanRemoval = true)
 	private List<ChecklistTemplateQuestion> questions;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChecklistTemplate()
 	{
 	}

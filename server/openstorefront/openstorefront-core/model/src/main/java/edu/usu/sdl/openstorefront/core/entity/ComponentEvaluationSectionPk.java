@@ -46,6 +46,7 @@ public class ComponentEvaluationSectionPk
 	@FK(EvaluationSection.class)
 	private String evaluationSection;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentEvaluationSectionPk()
 	{
 	}

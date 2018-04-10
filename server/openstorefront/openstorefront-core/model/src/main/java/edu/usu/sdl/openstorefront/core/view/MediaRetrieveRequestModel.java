@@ -32,10 +32,6 @@ public class MediaRetrieveRequestModel
 	@Size(min = 1, max = 2000)
 	private String URL;
 
-	public MediaRetrieveRequestModel()
-	{
-	}
-
 	@Override
 	public String toString()
 	{

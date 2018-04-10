@@ -59,7 +59,7 @@ public class AsyncProxy<T>
 		AsyncProxyTask asyncProxyTask = new AsyncProxyTask(originalObject, proxy, method, args);
 		taskRequest.setTask(asyncProxyTask);
 		TaskFuture taskFuture = AsyncTaskManager.submitTask(taskRequest);
-		if (TaskFuture.class.getSimpleName().equals(method.getReturnType().getSimpleName())) {
+		if (TaskFuture.class.isAssignableFrom(method.getReturnType())) {
 			return taskFuture;
 		} else {
 			return null;

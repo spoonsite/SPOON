@@ -27,13 +27,9 @@ public class OrganizationWrapper
 {
 
 	private long totalNumber;
-	
+
 	@DataType(OrganizationView.class)
 	private List<OrganizationView> data = new ArrayList<>();
-
-	public OrganizationWrapper()
-	{
-	}
 
 	public long getTotalNumber()
 	{

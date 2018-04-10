@@ -25,10 +25,6 @@ public class ComponentAdminView
 	private ComponentView component;
 	private String integrationManagement;
 
-	public ComponentAdminView()
-	{
-	}
-
 	public ComponentView getComponent()
 	{
 		return component;

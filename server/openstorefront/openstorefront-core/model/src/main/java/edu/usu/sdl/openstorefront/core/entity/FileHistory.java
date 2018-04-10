@@ -74,6 +74,7 @@ public class FileHistory
 	@OneToOne(orphanRemoval = true)
 	private FileHistoryOption fileHistoryOption;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileHistory()
 	{
 	}

@@ -76,6 +76,7 @@ public class FeedbackTicket
 	@Embedded
 	private WebInformation webInformation;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FeedbackTicket()
 	{
 	}

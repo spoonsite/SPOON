@@ -24,6 +24,12 @@
 
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
+
+		<style>
+			.alert-entry-type-tree .x-tree-icon {
+				display: none;
+			}
+		</style>
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -132,6 +138,13 @@
 									}
 									if (option.alertOnUserNeedsApproval) {
 										listOfOptions.push('<span class="alerts-option-items"> User Need Approval </span>');
+									}
+								} else if (record.get('componentTypeAlertOptions')) {
+									labels = record.get('componentTypeAlertOptionLabels')
+									if (labels) {
+										Ext.Array.forEach(labels, function(element) {
+											listOfOptions.push('<span class="alerts-option-items"> ' + element + ' </span>');
+										})
 									}
 								}
 								return '<div style="height: 25px;">' + listOfOptions.join(' ') + '</div>';
@@ -293,7 +306,114 @@
 					}
 				});
 
+				var saveAlerts = function () {
+					var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
 
+					// Build PUT/POST Data
+					var data = {};
+
+					// Compile un-nested data
+					var flatData = Ext.getCmp('editAlertForm').getValues();
+					data.alertType = flatData.alertType;
+					data.name = flatData.name;
+
+					// Compile emailAddresses
+					var stringEmails = flatData.emailAddresses.split(/[\s,;]+/);
+					var emailAddresses = [];
+					stringEmails.forEach(function (currentValue, index, array) {
+						stringEmails[index] = currentValue.trim();
+						if (stringEmails[index] !== '') {
+							emailAddresses.push({ "email": stringEmails[index] });
+						}
+					});
+					data.emailAddresses = emailAddresses;
+
+
+					// Compile UserDataOptions
+					if (flatData.alertType === 'USERD') {
+						var ud = {};
+						ud.alertOnTags = (flatData.alertOnTags === "true");
+						ud.alertOnReviews = (flatData.alertOnReviews === "true");
+						ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
+						ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
+						ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
+						data.userDataAlertOption = ud;
+					}
+
+					// Compile SystemErrorAlertOptions
+					if (flatData.alertType === 'SYSERROR') {
+						var se = {};
+						se.alertOnSystem = (flatData.alertOnSystem === "true");
+						se.alertOnREST = (flatData.alertOnREST === "true");
+						se.alertOnReport = (flatData.alertOnReport === "true");
+						se.alertOnIntegration = (flatData.alertOnIntegration === "true");
+						data.systemErrorAlertOption = se;
+					}
+
+					if (flatData.alertType === 'USERMANG') {
+						data.userManagementAlertOption = {
+							alertOnUserRegistration: flatData.alertOnUserRegistration,
+							alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
+						};
+					}
+
+					if (flatData.alertType === 'CMPSUB' || flatData.alertType === 'CHGREQ') {
+						checkedComponents = Ext.getCmp("alertEntryForm-entryTypes").getChecked()
+						var componentTypes = [];
+						Ext.Array.forEach(checkedComponents, function (el) {
+							compID = el.data.componentType.componentType
+							componentTypes.push({ "componentType": compID });
+						});
+						data.componentTypeAlertOptions = componentTypes;
+					}
+
+
+					// Submit Data
+					var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
+					CoreUtil.submitForm({
+						url: url,
+						method: method,
+						data: data,
+						removeBlankDataItems: true,
+						form: Ext.getCmp('editAlertForm'),
+						success: function (response, opts) {
+							// Server responded OK
+							// Now we check for actual success based on
+							// the server's response object.
+							var errorResponse = Ext.decode(response.responseText);
+
+							// Confusingly, you will only see the "success"
+							// property in the response if the success
+							// is success = false. Therefore
+							// the appearance of the success property actually
+							// means there was a failure.
+
+							if (!errorResponse.hasOwnProperty('success')) {
+								// Validation succeeded.
+								Ext.toast('Saved Successfully', '', 'tr');
+								Ext.getCmp('editAlertForm').setLoading(false);
+								Ext.getCmp('editAlertForm').reset();
+								Ext.getCmp('alertAddEditWin').hide();
+								Ext.getCmp('alertGrid').getStore().load();
+								Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+								Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
+							} else {
+								// Validation failed
+
+								// Compile an object to pass to ExtJS Form
+								// that allows validation messages
+								// using the markInvalid() method.
+								var errorObj = {};
+								Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+									errorObj[item.key] = item.value;
+								});
+								var form = Ext.getCmp('editAlertForm').getForm();
+								form.markInvalid(errorObj);
+							}
+						}
+					});
+				};
 
 				var alertAddEditWin = Ext.create('Ext.window.Window', {
 					id: 'alertAddEditWin',
@@ -335,7 +455,9 @@
 										change: function (combo, newValue, oldValue, opts) {
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
-											Ext.getCmp('userManagementOptions').hide();
+											Ext.getCmp('userManagementOptions').hide();											
+											Ext.getCmp('alertEntryForm-entryTypes-label').hide();
+											Ext.getCmp('alertEntryForm-entryTypes').hide();										
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -345,6 +467,10 @@
 													break;
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
+													break;
+												case 'CHGREQ': case 'CMPSUB':													
+													Ext.getCmp('alertEntryForm-entryTypes-label').show();
+													Ext.getCmp('alertEntryForm-entryTypes').show();
 													break;
 											}
 										}
@@ -358,11 +484,85 @@
 									}
 								},
 								{
+									xtype: 'label',
+									id: 'alertEntryForm-entryTypes-label',
+									html: '<b>Component Types:</b>  <span class="field-required" />'									
+								},
+								{
+									xtype: 'treepanel',
+									id: 'alertEntryForm-entryTypes',
+									cls: 'alert-entry-type-tree',
+									name: 'entryTypeAlertOption',								
+									rootVisible: false,
+									checkPropagation: 'down',
+									canClickItem: true,
+									hasCheckedItem: false,
+
+									useArrows: true,
+									store: {
+										autoLoad: true,
+										type: 'tree',
+										fields: [{
+											name: 'text',
+											mapping: function(data) {
+												return data.componentType.label;
+												}
+										}],
+										sorters: [{
+											property: 'text',
+											direction: 'ASC'
+										}],
+										listeners: {
+											load: function(store, records, options) {
+												function traverse(node) {
+													node.set({checked: false});
+													if (node.childNodes.length === 0) {
+														node.set({leaf: true});
+														return;
+													}
+													Ext.Array.forEach(node.childNodes, function(element) {
+														traverse(element);
+													});
+												}
+												store.each(function(record) {
+													traverse(record);
+												});
+											}
+										},
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/componenttypes/nested',
+										}
+									},
+									listeners: {
+
+										// both itemclick and checkchange events are to allow the
+										//	ability of checking an item via clicking the row
+										itemclick: function (treePanel, record, item) {
+
+											if (this.canClickItem && !this.hasCheckedItem) {
+												this.canClickItem = false;
+												item.querySelector('.x-tree-checkbox').click();
+												this.canClickItem = true;
+											}
+											this.hasCheckedItem = false;
+										},
+										checkchange: function () {
+
+											this.hasCheckedItem = true;
+										},
+										afterrender: function () {
+											this.expandAll();
+										}
+									}
+								},
+								{
 									xtype: 'textfield',
 									fieldLabel: 'Email Addresses<span class="field-required"></span>',
 									// id is 'email' for validation purposes.
 									id: 'email',
-									name: 'emailAddresses'
+									name: 'emailAddresses',
+									allowBlank: false
 								},
 								{
 									xtype: 'fieldcontainer',
@@ -464,102 +664,31 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											formBind: true,
 											handler: function () {
-												var method = Ext.getCmp('editAlertForm').edit ? 'PUT' : 'POST';
-
-												// Build PUT/POST Data
-												var data = {};
-
-												// Compile un-nested data
-												var flatData = Ext.getCmp('editAlertForm').getValues();
-												data.alertType = flatData.alertType;
-												data.name = flatData.name;
-
-												// Compile emailAddresses
-												var stringEmails = flatData.emailAddresses.split(";");
-												var emailAddresses = [];
-												stringEmails.forEach(function (currentValue, index, array) {
-													stringEmails[index] = currentValue.trim();
-													if (stringEmails[index] !== '') {
-														emailAddresses.push({"email": stringEmails[index]});
-													}
-												});
-												data.emailAddresses = emailAddresses;
-
-
-												// Compile UserDataOptions
-												if (flatData.alertType === 'USERD') {
-													var ud = {};
-													ud.alertOnTags = (flatData.alertOnTags === "true");
-													ud.alertOnReviews = (flatData.alertOnReviews === "true");
-													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
-													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
-													ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
-													data.userDataAlertOption = ud;
-												}
-
-												// Compile SystemErrorAlertOptions
-												if (flatData.alertType === 'SYSERROR') {
-													var se = {};
-													se.alertOnSystem = (flatData.alertOnSystem === "true");
-													se.alertOnREST = (flatData.alertOnREST === "true");
-													se.alertOnReport = (flatData.alertOnReport === "true");
-													se.alertOnIntegration = (flatData.alertOnIntegration === "true");
-													data.systemErrorAlertOption = se;
-												}
+												//case 'CHGREQ': case 'CMPSUB':
+												var alertType = alertAddEditWin.queryById('alertEntryForm-Type').getValue();
 												
-												if (flatData.alertType === 'USERMANG') {											
-													data.userManagementAlertOption = {
-														alertOnUserRegistration: flatData.alertOnUserRegistration,
-														alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
-													};
+												if (alertType === 'CHGREQ' || alertType === 'CMPSUB') {
+													var alertsTreePanel = alertAddEditWin.queryById('alertEntryForm-entryTypes');
+
+													// component types are required
+													if (alertsTreePanel.getChecked().length > 0) {
+														saveAlerts();
+													} else {														
+														Ext.Msg.show({
+															title:'Validation Error',
+															message: 'Specify at least one component type.',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {																
+															}
+														});
+													}
+													
+												} else {
+													saveAlerts();
 												}
 
-
-												// Submit Data
-												var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
-												CoreUtil.submitForm({
-													url: url,
-													method: method,
-													data: data,
-													removeBlankDataItems: true,
-													form: Ext.getCmp('editAlertForm'),
-													success: function (response, opts) {
-														// Server responded OK
-														// Now we check for actual success based on
-														// the server's response object.
-														var errorResponse = Ext.decode(response.responseText);
-
-														// Confusingly, you will only see the "success"
-														// property in the response if the success
-														// is success = false. Therefore
-														// the appearance of the success property actually
-														// means there was a failure.
-
-														if (!errorResponse.hasOwnProperty('success')) {
-															// Validation succeeded.
-															Ext.toast('Saved Successfully', '', 'tr');
-															Ext.getCmp('editAlertForm').setLoading(false);
-															Ext.getCmp('editAlertForm').reset();
-															Ext.getCmp('alertAddEditWin').hide();
-															Ext.getCmp('alertGrid').getStore().load();
-															Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
-															Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
-															Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
-														} else {
-															// Validation failed
-
-															// Compile an object to pass to ExtJS Form
-															// that allows validation messages
-															// using the markInvalid() method.
-															var errorObj = {};
-															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-																errorObj[item.key] = item.value;
-															});
-															var form = Ext.getCmp('editAlertForm').getForm();
-															form.markInvalid(errorObj);
-														}
-													}
-												});
+												
 											}
 										},
 										{
@@ -585,6 +714,26 @@
 					alertAddEditWin.show();
 					Ext.getCmp('editAlertForm').edit = false;
 					Ext.getCmp('editAlertForm').reset(true);
+					/**
+					 * Traverse the check tree and check/uncheck the boxes
+					 * if no option then it will uncheck all boxes
+					 * @param {item in Store.getData().items} node - parent nodes in the tree
+					 * @param {Object{option string: true}} optionHash - the option string to compare
+					 */
+					function traverse(node, optionsHash) {
+						if (!optionsHash) {
+							node.set({checked: false});
+						} else if (optionsHash[node.data.text]) {
+							node.set({checked: true});
+						}
+						if (node.childNodes.length === 0) {
+							return;
+						}
+						Ext.Array.forEach(node.childNodes, function(element) {
+							traverse(element, optionsHash);
+						});
+					}
+
 					if (record) {
 						// This is an edit form.
 						alertAddEditWin.setTitle('<i class="fa fa-lg fa-edit"></i>' + '<span class="shift-window-text-right">Edit Attribute</span>');
@@ -620,11 +769,38 @@
 							});
 						}
 
+						// Process Check Tree
+						if (record.data.componentTypeAlertOptions) {
+							var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+							var items = treeView.store.getData().items;
 
+							//clear out the old check boxes
+							Ext.each(items, function(item){
+								traverse(item);
+							});
+
+							var alertOptions = record.data.componentTypeAlertOptionLabels;
+							//create hash of options
+							var hash = {};
+							Ext.each(alertOptions, function(option){
+								hash[option] = true;
+							})
+							//compare all the options and recursively check the boxes
+							Ext.each(items, function(item) {
+								traverse(item, hash);
+							});
+						}
 
 					} else {
 						// This is an add form.
 						alertAddEditWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Alert</span>');
+
+						//clear the check tree
+						var treeView = Ext.getCmp('alertEntryForm-entryTypes').query('treeview')[0];
+						var items = treeView.store.getData().items;
+						Ext.each(items, function(item){
+							traverse(item);
+						});
 					}
 				};
 

@@ -34,6 +34,7 @@ public class IntegrationType
 
 	public static final String JIRA = "JIRA";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public IntegrationType()
 	{
 	}

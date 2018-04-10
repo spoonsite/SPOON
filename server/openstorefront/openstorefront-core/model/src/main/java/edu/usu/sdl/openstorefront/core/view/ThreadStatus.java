@@ -27,10 +27,6 @@ public class ThreadStatus
 	private String status;
 	private String details;
 
-	public ThreadStatus()
-	{
-	}
-
 	public long getId()
 	{
 		return id;

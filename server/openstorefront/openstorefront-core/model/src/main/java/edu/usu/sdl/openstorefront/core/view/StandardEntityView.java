@@ -43,10 +43,6 @@ public abstract class StandardEntityView
 	private String dataSensitivityDescription;
 	private Map<String, String> dataSensitivityDescriptionMap = new HashMap<>();
 
-	public StandardEntityView()
-	{
-	}
-
 	public <T extends StandardEntity> void toStandardViewBaseEntities(List<T>... entities)
 	{
 		for (List<T> views : entities) {

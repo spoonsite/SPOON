@@ -28,18 +28,19 @@ import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
  */
 public class ComponentAnswerProvider
 {
+
 	ComponentRESTClient client;
-	
+
 	public ComponentAnswerProvider(ClientAPI apiClient)
 	{
 		client = new ComponentRESTClient(apiClient);
 	}
-	
+
 	public ComponentQuestionResponse addComponentQuestionAnswer(String answer, ComponentQuestion question, Component component)
 	{
 		ComponentQuestionResponse compAnswer = new ComponentQuestionResponse();
-		
-		//TODO: create compAnswer according to QuestionResponse
+
+		//create compAnswer according to QuestionResponse
 		compAnswer.setResponse(answer);
 		compAnswer.setOrganization(component.getOrganization());
 		compAnswer.setUserTypeCode(END_USER);

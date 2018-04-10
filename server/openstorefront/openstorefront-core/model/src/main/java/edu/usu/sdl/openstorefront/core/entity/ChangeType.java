@@ -37,6 +37,7 @@ public class ChangeType
 	public static final String SNAPSHOT = "SNAPSHOT";
 	public static final String RESTORE = "RESTORE";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeType()
 	{
 	}

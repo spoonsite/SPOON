@@ -66,10 +66,6 @@ public class ComponentAttributeView
 	private boolean privateFlag;
 	private String comment;
 
-	public ComponentAttributeView()
-	{
-	}
-
 	public static ComponentAttributeView toView(ComponentAttribute attribute)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

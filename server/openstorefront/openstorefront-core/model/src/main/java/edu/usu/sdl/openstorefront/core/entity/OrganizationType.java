@@ -26,8 +26,4 @@ public class OrganizationType
 		extends LookupEntity<OrganizationType>
 {
 
-	public OrganizationType()
-	{
-	}
-
 }

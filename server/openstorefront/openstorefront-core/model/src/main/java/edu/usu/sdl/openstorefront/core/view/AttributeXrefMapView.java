@@ -37,11 +37,6 @@ public class AttributeXrefMapView
 	@DataType(AttributeXRefMap.class)
 	private List<AttributeXRefMap> mapping;
 
-	public AttributeXrefMapView()
-	{
-
-	}
-
 	@Override
 	public int hashCode()
 	{

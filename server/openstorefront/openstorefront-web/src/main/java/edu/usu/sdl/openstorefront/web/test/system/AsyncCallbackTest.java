@@ -40,13 +40,15 @@ public class AsyncCallbackTest
 		extends BaseTestCase
 {
 
+	private static final Logger LOG = Logger.getLogger(AsyncCallbackTest.class.getName());
+
 	private List<String> taskIds = null;
 
 	@Override
 	protected void initializeTest()
 	{
 		super.initializeTest();
-		taskIds = new ArrayList();
+		taskIds = new ArrayList<>();
 	}
 
 	@Override
@@ -86,10 +88,9 @@ public class AsyncCallbackTest
 		try {
 			//wait for it to complete
 			taskFuture.getFuture().get();
-		} catch (InterruptedException ex) {
-			Logger.getLogger(AsyncCallbackTest.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (ExecutionException ex) {
-			Logger.getLogger(AsyncCallbackTest.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (InterruptedException | ExecutionException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+			Thread.currentThread().interrupt();
 		}
 		results.append("After Setting: ").append(lookupModel.getCode()).append("<br>");
 
@@ -104,10 +105,9 @@ public class AsyncCallbackTest
 		try {
 			//wait for it to complete
 			taskFuture.getFuture().get();
-		} catch (InterruptedException ex) {
-			Logger.getLogger(AsyncCallbackTest.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (ExecutionException ex) {
-			Logger.getLogger(AsyncCallbackTest.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (InterruptedException | ExecutionException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+			Thread.currentThread().interrupt();
 		}
 		results.append("After Fail: ").append(lookupModel.getCode()).append("<br>");
 

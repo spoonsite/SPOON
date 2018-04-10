@@ -25,8 +25,4 @@ public class GenericLookupEntity
 		extends LookupEntity
 {
 
-	public GenericLookupEntity()
-	{
-	}
-
 }

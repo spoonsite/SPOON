@@ -53,6 +53,7 @@ public class Faq
 	@APIDescription("Category of the FAQ")
 	private String category;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Faq()
 	{
 	}

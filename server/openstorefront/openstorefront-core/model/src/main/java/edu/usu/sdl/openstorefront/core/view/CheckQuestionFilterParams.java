@@ -30,10 +30,6 @@ public class CheckQuestionFilterParams
 	@QueryParam("tags")
 	private List<String> tags = new ArrayList<>();
 
-	public CheckQuestionFilterParams()
-	{
-	}
-
 	public List<String> getTags()
 	{
 		return tags;

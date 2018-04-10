@@ -29,24 +29,21 @@ import java.util.List;
  * @author dshurtleff
  */
 public class AttributeView
-	extends StandardEntityView
+		extends StandardEntityView
 {
+
 	private String type;
 	private String typeDescription;
 	private String code;
 	private String codeDescription;
 	private String ownerId;
 
-	public AttributeView()
-	{
-	}
-
 	public static <T extends Attribute> AttributeView toView(T attribute)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
 		AttributeView view = new AttributeView();
 		view.setOwnerId(attribute.ownerId());
-				
+
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getAttributeCode());
 		pk.setAttributeType(attribute.getAttributeType());
@@ -55,24 +52,24 @@ public class AttributeView
 			code = service.getPersistenceService().findById(AttributeCode.class, pk);
 		}
 		AttributeType type = service.getAttributeService().findType(attribute.getAttributeType());
-		if (type == null) {			
+		if (type == null) {
 			type = service.getPersistenceService().findById(AttributeType.class, attribute.getAttributeType());
 		}
-		
+
 		if (code != null && type != null) {
-			view.setCodeDescription(code.getLabel());			
-			view.setTypeDescription(type.getDescription());			
+			view.setCodeDescription(code.getLabel());
+			view.setTypeDescription(type.getDescription());
 			view.setType(type.getAttributeType());
 			view.setCode(code.getAttributeCodePk().getAttributeCode());
 			view.toStandardView(code, type);
 		} else {
-			//For snapshots which are frozen in time; attributes may not exist any more			
+			//For snapshots which are frozen in time; attributes may not exist any more
 			//create stub
 			view.setCodeDescription("Missing Code: " + attribute.getAttributeCode());
 			view.setTypeDescription("Missing Type: " + attribute.getAttributeType());
 			view.setType(attribute.getAttributeType());
-			view.setCode(attribute.getAttributeCode());			
-		}				
+			view.setCode(attribute.getAttributeCode());
+		}
 		return view;
 	}
 
@@ -84,7 +81,7 @@ public class AttributeView
 		}
 		return views;
 	}
-	
+
 	public String getOwnerId()
 	{
 		return ownerId;
@@ -134,5 +131,5 @@ public class AttributeView
 	{
 		this.codeDescription = codeDescription;
 	}
-	
+
 }

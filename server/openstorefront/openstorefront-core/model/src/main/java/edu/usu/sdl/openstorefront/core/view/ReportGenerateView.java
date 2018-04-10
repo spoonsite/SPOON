@@ -36,10 +36,6 @@ public class ReportGenerateView
 	@DataType(ReportDataId.class)
 	private List<ReportDataId> reportDataId = new ArrayList<>();
 
-	public ReportGenerateView()
-	{
-	}
-
 	public Report getReport()
 	{
 		return report;

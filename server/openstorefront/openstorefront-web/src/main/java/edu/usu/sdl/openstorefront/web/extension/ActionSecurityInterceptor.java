@@ -48,6 +48,7 @@ public class ActionSecurityInterceptor
 	private static final Logger LOG = Logger.getLogger(ActionSecurityInterceptor.class.getName());
 
 	@Override
+	@SuppressWarnings({"squid:S1872", "squid:S3923"})
 	public Resolution intercept(ExecutionContext context) throws Exception
 	{
 		RequireSecurity requireSecurity = context.getHandler().getAnnotation(RequireSecurity.class);

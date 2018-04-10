@@ -38,13 +38,6 @@ public interface AttributeService
 {
 
 	/**
-	 * Finds all Required Attributes
-	 *
-	 * @return
-	 */
-	public List<AttributeType> getRequiredAttributes();
-
-	/**
 	 * This is cached set of codes (post filters the status) This will be clear
 	 * upon data modification
 	 *
@@ -131,7 +124,7 @@ public interface AttributeService
 	 * Saves code
 	 *
 	 * @param attributeCode
-	 * @return 
+	 * @return
 	 */
 	public ValidationResult saveAttributeCode(AttributeCode attributeCode);
 
@@ -140,7 +133,7 @@ public interface AttributeService
 	 *
 	 * @param attributeCode
 	 * @param updateIndexes (For Searching)
-	 * @return 
+	 * @return
 	 */
 	public ValidationResult saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
@@ -208,6 +201,7 @@ public interface AttributeService
 	 * because of the multiple file imports It will remove/inactivate codes.
 	 *
 	 * @param attributeMap
+	 * @return validation results
 	 */
 	public ValidationResult syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
@@ -274,6 +268,7 @@ public interface AttributeService
 	 *
 	 * @param attributes
 	 * @param options
+	 * @return validation results
 	 */
 	public ValidationResult importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
 
@@ -291,4 +286,35 @@ public interface AttributeService
 	 * @param attributeCode
 	 */
 	public void removeAttributeCodeAttachment(AttributeCode attributeCode);
+
+	/**
+	 * gets the required attributes giving a component type The Attribute Type
+	 * must have codes or allow user generated code for this return the
+	 * attribute type.
+	 *
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @return
+	 */
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly);
+
+	/**
+	 * @See findRequiredAttributes(String componentType, boolean
+	 * submissionTypesOnly)
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @param skipFilterNoCodes
+	 * @return
+	 */
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes);
+
+	/**
+	 * gets the optional attributes giving a component type
+	 *
+	 * @param componentType
+	 * @param submissionTypesOnly
+	 * @return
+	 */
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly);
+
 }

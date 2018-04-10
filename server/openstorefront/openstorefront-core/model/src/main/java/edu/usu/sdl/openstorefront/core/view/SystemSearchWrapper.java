@@ -25,15 +25,11 @@ import java.util.List;
  * @author dshurtleff
  */
 public class SystemSearchWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
-	
+
 	@DataType(SystemSearch.class)
 	private List<SystemSearch> data = new ArrayList<>();
-
-	public SystemSearchWrapper()
-	{
-	}
 
 	public List<SystemSearch> getData()
 	{
