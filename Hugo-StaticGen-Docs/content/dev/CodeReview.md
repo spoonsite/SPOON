@@ -32,7 +32,7 @@ C-->D;
 D-->E;
 E-->F;
 {{< /mermaid >}}
-
+   
 1. Branch build is passed. (Green) and sonar qube! and other stuff passed   
 
 2. It's expected the formating and basic style is handled by the IDE setting.
