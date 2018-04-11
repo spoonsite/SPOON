@@ -37,7 +37,7 @@ E-->F;
 
 2. It's expected the formating and basic style is handled by the IDE setting.
 Check that those were applied. (quick scan) The netbeans configuration can be found [here](/files/nbformating.zip).
-
+   
 3. Check Coding Standards ([Front-end](/dev/front-end-code-standard) and [Server](/dev/server-code-standard))
 
 4. Check UI against [Style Guide](/dev/uiguide)
