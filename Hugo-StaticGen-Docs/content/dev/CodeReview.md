@@ -5,7 +5,10 @@ weight = 8
 +++
 
 Here are documented the steps and protocol to follow for code reviews. Before a code review takes place the developer is working 
-through a Jira ticket on the Kanban board. While they are working though this ticket they will be making 
+through a Jira ticket on the Kanban board. While they are working though this ticket they will be making commits to their development branch.
+The standard format make commits is shown in the image below.
+
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
 
 {{<mermaid align="left">}}
 graph LR;
