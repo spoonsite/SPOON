@@ -4,6 +4,9 @@ description = ""
 weight = 8
 +++
 
+Here are documented the steps and protocol to follow for code reviews. Before a code review takes place the developer is working 
+through a Jira ticket on the Kanban board. While they are working though this ticket they will be making 
+
 {{<mermaid align="left">}}
 graph LR;
 A[Build];
@@ -19,7 +22,7 @@ D-->E;
 E-->F;
 {{< /mermaid >}}
 
-1. Branch build is passed. (Green)
+1. Branch build is passed. (Green) and sonar qube! and other stuff passed
 
 2. It's expected the formating and basic style is handled by the IDE setting.
 Check that those were applied. (quick scan) The netbeans configuration can be found [here](/files/nbformating.zip).
