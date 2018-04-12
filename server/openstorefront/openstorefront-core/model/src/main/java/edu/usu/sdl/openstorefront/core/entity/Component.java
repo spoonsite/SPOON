@@ -54,6 +54,7 @@ public class Component
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_DESCRIPTION = "description";
 	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
 
 	@PK(generated = true)

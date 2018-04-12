@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
@@ -66,7 +67,13 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.requireNonNull(template);
 
-		ValidationResult validationResult = validateTemplate(template);
+		//Find type to verify against pick one
+		List<ComponentType> componentType = getComponentService().getAllComponentTypes();
+		if (componentType.isEmpty()) {
+			throw new OpenStorefrontRuntimeException("At least one component type needs to be defined and active", "Add Component Type");
+		}
+
+		ValidationResult validationResult = validateTemplate(template, componentType.get(0).getComponentType());
 		if (validationResult.valid()) {
 			template.setTemplateStatus(SubmissionTemplateStatus.VALID);
 		} else {
@@ -105,10 +112,10 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public ValidationResult validateTemplate(SubmissionFormTemplate template)
+	public ValidationResult validateTemplate(SubmissionFormTemplate template, String componentType)
 	{
 		Objects.requireNonNull(template);
-		return mappingController.verifyTemplate(template);
+		return mappingController.verifyTemplate(template, componentType);
 	}
 
 	@Override

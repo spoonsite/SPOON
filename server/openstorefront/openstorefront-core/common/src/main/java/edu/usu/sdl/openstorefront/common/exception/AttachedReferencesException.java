@@ -25,6 +25,8 @@ public class AttachedReferencesException
 		extends Exception
 {
 
+	private static final long serialVersionUID = 1L;
+
 	public AttachedReferencesException()
 	{
 		this("There are attached references to this entity.");

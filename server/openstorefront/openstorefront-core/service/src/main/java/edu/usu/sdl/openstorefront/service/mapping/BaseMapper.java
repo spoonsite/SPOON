@@ -29,13 +29,14 @@ public abstract class BaseMapper
 
 	/**
 	 * Updates the main component based on mapping This put in stub values which
-	 * is useful for template validation.	*
+	 * is useful for template validation.
 	 *
 	 * @param componentAll
 	 * @param submissionField
 	 * @return new child components
 	 */
 	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField)
+			throws MappingException
 	{
 		return mapField(componentAll, submissionField, null);
 	}
@@ -48,5 +49,6 @@ public abstract class BaseMapper
 	 * @param userSubmission
 	 * @return new child component or null if no child was created.
 	 */
-	public abstract List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField);
+	public abstract List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+			throws MappingException;
 }

@@ -119,7 +119,7 @@ public class SubmissionFormServiceImplTest
 			validationResult.getRuleResults().add(ruleResult);
 		}
 
-		Mockito.when(mappingController.verifyTemplate(Mockito.any())).thenReturn(validationResult);
+		Mockito.when(mappingController.verifyTemplate(Mockito.any(), Mockito.any())).thenReturn(validationResult);
 
 		SubmissionFormTemplate template = new SubmissionFormTemplate();
 		template.setName("Test");
@@ -169,6 +169,8 @@ public class SubmissionFormServiceImplTest
 	/**
 	 * Test of deleteSubmissionFormTemplate method, of class
 	 * SubmissionFormServiceImpl.
+	 *
+	 * @throws java.io.IOException
 	 */
 	@Test
 	public void testDeleteSubmissionFormTemplateWithResources() throws IOException
@@ -219,6 +221,8 @@ public class SubmissionFormServiceImplTest
 	/**
 	 * Test of saveSubmissionFormResource method, of class
 	 * SubmissionFormServiceImpl.
+	 *
+	 * @throws java.io.IOException
 	 */
 	@Test
 	public void testSaveSubmissionFormResource() throws IOException

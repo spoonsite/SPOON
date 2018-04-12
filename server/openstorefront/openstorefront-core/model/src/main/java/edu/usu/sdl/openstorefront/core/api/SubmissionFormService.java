@@ -64,8 +64,9 @@ public interface SubmissionFormService
 	 * mapping to a valid entry.
 	 *
 	 * @param template
+	 * @param componentType to verify against
 	 * @return
 	 */
-	public ValidationResult validateTemplate(SubmissionFormTemplate template);
+	public ValidationResult validateTemplate(SubmissionFormTemplate template, String componentType);
 
 }

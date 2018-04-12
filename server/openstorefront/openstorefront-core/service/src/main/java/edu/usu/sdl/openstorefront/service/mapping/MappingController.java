@@ -15,12 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +60,7 @@ public class MappingController
 	 * @param template
 	 * @return
 	 */
-	public ValidationResult verifyTemplate(SubmissionFormTemplate template)
+	public ValidationResult verifyTemplate(SubmissionFormTemplate template, String componentType)
 	{
 		Objects.requireNonNull(template);
 
@@ -65,23 +68,39 @@ public class MappingController
 
 		List<ComponentAll> allComponents = new ArrayList<>();
 		ComponentAll mainComponent = new ComponentAll();
+		Component component = new Component();
+		component.setComponentType(componentType);
+		component.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+		mainComponent.setComponent(component);
 		allComponents.add(mainComponent);
 
-		verifySections(template, mainComponent, allComponents);
+		try {
+			verifySections(template, mainComponent, allComponents);
+		} catch (MappingException ex) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setFieldName(ex.getFieldType());
+			ruleResult.setMessage(ex.getLocalizedMessage());
+			result.getRuleResults().add(ruleResult);
+		}
 		result.merge(validateComponents(allComponents));
 		return result;
 	}
 
-	private void verifySections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents)
+	private void verifySections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents) throws MappingException
 	{
 		if (template.getSections() != null) {
 			for (SubmissionFormSection section : template.getSections()) {
-				verifyFields(section.getFields(), mainComponent, allComponents);
+				try {
+					verifyFields(section.getFields(), mainComponent, allComponents);
+				} catch (MappingException ex) {
+					ex.setSectionName(section.getName());
+					throw ex;
+				}
 			}
 		}
 	}
 
-	private void verifyFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents)
+	private void verifyFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
@@ -109,42 +128,48 @@ public class MappingController
 	 * @param userSubmission
 	 * @return All entries created
 	 */
-	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission)
+	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission) throws MappingException
 	{
-		List<ComponentAll> componentAlls = new ArrayList<>();
 
 		List<ComponentAll> allComponents = new ArrayList<>();
 		ComponentAll mainComponent = new ComponentAll();
+		Component component = new Component();
+		component.setComponentType(userSubmission.getComponentType());
+		mainComponent.setComponent(component);
 		allComponents.add(mainComponent);
 
 		mapTemplateSections(template, mainComponent, allComponents, userSubmission);
 
-		return componentAlls;
+		return allComponents;
 	}
 
-	private void mapTemplateSections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents, UserSubmission userSubmission)
+	private void mapTemplateSections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents, UserSubmission userSubmission) throws MappingException
 	{
 		if (template.getSections() != null) {
 
 			Map<String, UserSubmissionField> userFieldMap = new HashMap<>();
 			for (UserSubmissionField submissionField : userSubmission.getFields()) {
-				userFieldMap.put(userSubmission.getTemplateId(), submissionField);
+				userFieldMap.put(submissionField.getFieldId(), submissionField);
 			}
 
 			for (SubmissionFormSection section : template.getSections()) {
-				mapTemplateFields(section.getFields(), mainComponent, allComponents, userFieldMap);
+				try {
+					mapTemplateFields(section.getFields(), mainComponent, allComponents, userFieldMap);
+				} catch (MappingException ex) {
+					ex.setSectionName(section.getName());
+					throw ex;
+				}
 			}
 		}
 	}
 
-	private void mapTemplateFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents, Map<String, UserSubmissionField> submissionFields)
+	private void mapTemplateFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents, Map<String, UserSubmissionField> submissionFields) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
 				UserSubmissionField userField = submissionFields.get(field.getFieldId());
 				if (userField != null) {
-
 					allComponents.addAll(mapper.mapField(mainComponent, field, userField));
 				} else {
 					if (LOG.isLoggable(Level.FINEST)) {

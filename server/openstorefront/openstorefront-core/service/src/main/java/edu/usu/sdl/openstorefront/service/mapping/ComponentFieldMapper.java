@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -40,25 +39,37 @@ public class ComponentFieldMapper
 
 	private static final Logger LOG = Logger.getLogger(ComponentFieldMapper.class.getName());
 
+	private static final String STUB_TEST = "TEST";
+
 	@Override
 	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+			throws MappingException
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
-		if (componentAll.getComponent() == null) {
-			componentAll.setComponent(new Component());
+		String value = STUB_TEST;
+		if (userSubmissionField != null) {
+			value = userSubmissionField.getRawValue();
 		}
 
 		try {
-			BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), userSubmissionField.getRawValue());
+			BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), value);
 		} catch (IllegalAccessException | InvocationTargetException ex) {
-			LOG.log(Level.WARNING, () -> "Field cannot be mapped.  Check template for field label. Label: " + submissionField.getLabel());
 			if (LOG.isLoggable(Level.FINER)) {
 				LOG.log(Level.FINER, null, ex);
 			}
+
+			MappingException mappingException = new MappingException("Field cannot be mapped.");
+			mappingException.setFieldLabel(submissionField.getLabel());
+			mappingException.setFieldName(submissionField.getFieldName());
+			mappingException.setMappingType(submissionField.getMappingType());
+			mappingException.setRawValue(value);
+			throw mappingException;
 		}
 		//handle any media (inline media)
-		componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
+		if (userSubmissionField != null) {
+			componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
+		}
 
 		return childComponents;
 	}
