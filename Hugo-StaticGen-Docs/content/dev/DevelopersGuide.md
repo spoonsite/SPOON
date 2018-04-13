@@ -15,7 +15,6 @@ developer on the latest practice followed.
 
 ## High Level Developer Workflow
 
-
 {{<mermaid align="center">}}
 graph TB;
     A[1 - Pickup Jira Ticket from Backlog];
