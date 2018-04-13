@@ -133,17 +133,21 @@
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 							}
 
-							if (selected.length > 0 && !selected[0].data.published) {									
-								tools.getComponent('assignUser').setDisabled(false);							
-
-								tools.getComponent('edit').setText('Edit');
-								tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
-							} else {															
-								// tools.getComponent('edit').setDisabled(true);														
+							if(selected.length > 0){
+								if(!selected[0].data.published){
+									tools.getComponent('assignUser').setDisabled(false);							
+									tools.getComponent('edit').setText('Edit');
+									tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
+								} 
+								else {
+									tools.getComponent('assignUser').setDisabled(true);
+									tools.getComponent('edit').setText('Details');
+									tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
+								}
+							}
+							else{
+								tools.getComponent('edit').setDisabled(true);
 								tools.getComponent('assignUser').setDisabled(true);
-
-								tools.getComponent('edit').setText('Details');
-								tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
 							}
 						}
 					},						
