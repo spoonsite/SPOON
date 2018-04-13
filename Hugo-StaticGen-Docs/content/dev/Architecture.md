@@ -4,7 +4,7 @@ title = "Architecture"
 description = ""
 weight = 2
 +++
- 
+
 # 1.  Client Architecture
 
 ## 1.1 Client Architecture Diagram
