@@ -15,11 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +78,7 @@ public class SubmissionMapper
 				LOG.log(Level.FINER, "Field Mapping exception", ex);
 			}
 
-			MappingException mappingException = new MappingException("Unable to mapping form field to entry.");
+			MappingException mappingException = new MappingException("Unable to map form field to entry.");
 			mappingException.setFieldLabel(submissionField.getLabel());
 			mappingException.setFieldName(submissionField.getFieldName());
 			mappingException.setMappingType(submissionField.getMappingType());
@@ -83,6 +87,61 @@ public class SubmissionMapper
 		}
 
 		return childComponents;
+	}
+
+	@Override
+	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	{
+		UserSubmissionField userSubmissionField = new UserSubmissionField();
+
+		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
+
+		try {
+			String childComponents = objectMapper.writeValueAsString(componentFormSet.getChildren());
+			userSubmissionField.setRawValue(childComponents);
+
+			//pull all media
+			userSubmissionField.setMedia(new ArrayList<>());
+			for (ComponentAll componentAll : componentFormSet.getChildren()) {
+				addComponentMedia(componentAll, userSubmissionField);
+				addComponentResources(componentAll, userSubmissionField);
+			}
+
+		} catch (IOException ex) {
+			if (LOG.isLoggable(Level.FINER)) {
+				LOG.log(Level.FINER, "Field Mapping exception", ex);
+			}
+
+			MappingException mappingException = new MappingException("Unable to map entry to form field.");
+			mappingException.setFieldLabel(submissionField.getLabel());
+			mappingException.setFieldName(submissionField.getFieldName());
+			mappingException.setMappingType(submissionField.getMappingType());
+			throw mappingException;
+		}
+
+		return userSubmissionField;
+	}
+
+	private void addComponentMedia(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	{
+		for (ComponentMedia media : componentAll.getMedia()) {
+			if (media.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(media.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
+			}
+		}
+	}
+
+	private void addComponentResources(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	{
+		for (ComponentResource resource : componentAll.getResources()) {
+			if (resource.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(resource.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
+			}
+		}
 	}
 
 }

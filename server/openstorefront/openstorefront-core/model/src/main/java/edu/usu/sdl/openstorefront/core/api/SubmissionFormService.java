@@ -17,8 +17,11 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  *
@@ -32,6 +35,7 @@ public interface SubmissionFormService
 	 * Saves a template and validates it to determine status
 	 *
 	 * @param template
+	 * @return submission form
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public SubmissionFormTemplate saveSubmissionFormTemplate(SubmissionFormTemplate template);
@@ -49,6 +53,7 @@ public interface SubmissionFormService
 	 *
 	 * @param resource
 	 * @param in
+	 * @return saved form resource metadata
 	 */
 	public SubmissionFormResource saveSubmissionFormResource(SubmissionFormResource resource, InputStream in);
 
@@ -68,5 +73,68 @@ public interface SubmissionFormService
 	 * @return
 	 */
 	public ValidationResult validateTemplate(SubmissionFormTemplate template, String componentType);
+
+	/**
+	 * Finds all user submission for a given user
+	 *
+	 * @param ownerUsername
+	 * @return
+	 */
+	public List<UserSubmission> getUserSubmissions(String ownerUsername);
+
+	/**
+	 * Saves a user submission (does not convert the submission at this time)
+	 *
+	 * @param userSubmission
+	 * @return
+	 */
+	public UserSubmission saveUserSubmission(UserSubmission userSubmission);
+
+	/**
+	 * Convert submission to Components but it does not save the results
+	 *
+	 * @param userSubmission
+	 * @return ComponentFormSet with the entries
+	 */
+	public ComponentFormSet verifySubmission(UserSubmission userSubmission);
+
+	/**
+	 * Convert and saves component The user submission is then removed.
+	 *
+	 * @param userSubmission
+	 */
+	public void submitUserSubmissionForApproval(UserSubmission userSubmission);
+
+	/**
+	 * Convert an Entry and related sub-entries into a UserSubmission This fill
+	 * in what it can based on the template.
+	 *
+	 * @param submissionTemplateId
+	 * @param componentId
+	 * @return
+	 */
+	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId);
+
+	/**
+	 * Creates a change request from a submission
+	 *
+	 * @param userSubmission
+	 */
+	public void submitChangeRequestForApproval(UserSubmission userSubmission);
+
+	/**
+	 * Ressign Ownership
+	 *
+	 * @param userSubmissionId
+	 * @param newOwnerUsername
+	 */
+	public void reassignUserSubmission(String userSubmissionId, String newOwnerUsername);
+
+	/**
+	 * Delete a submission and all media
+	 *
+	 * @param userSubmissionId
+	 */
+	public void deleteUserSubmission(String userSubmissionId);
 
 }

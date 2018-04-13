@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -24,6 +25,7 @@ import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import org.jsoup.helper.StringUtil;
 
 /**
  *
@@ -58,6 +60,9 @@ public class UserSubmission
 	@OneToMany(orphanRemoval = true)
 	private List<UserSubmissionField> fields;
 
+	@NotNull
+	private String ownerUsername;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSubmission()
 	{
@@ -70,6 +75,24 @@ public class UserSubmission
 
 		UserSubmission userSubmission = (UserSubmission) entity;
 		this.setFields(userSubmission.getFields());
+		if (getFields() != null) {
+			for (UserSubmissionField userSubmissionField : getFields()) {
+				if (StringUtil.isBlank(userSubmissionField.getFieldId())) {
+					userSubmissionField.setFieldId(StringProcessor.uniqueId());
+				}
+				linkMedia(userSubmissionField);
+			}
+		}
+	}
+
+	private void linkMedia(UserSubmissionField userSubmissionField)
+	{
+		for (UserSubmissionMedia media : userSubmissionField.getMedia()) {
+			media.setFieldId(userSubmissionField.getFieldId());
+			if (StringUtil.isBlank(media.getSubmissionMediaId())) {
+				media.setSubmissionMediaId(StringProcessor.uniqueId());
+			}
+		}
 	}
 
 	public String getUserSubmissionId()
@@ -120,6 +143,16 @@ public class UserSubmission
 	public void setComponentType(String componentType)
 	{
 		this.componentType = componentType;
+	}
+
+	public String getOwnerUsername()
+	{
+		return ownerUsername;
+	}
+
+	public void setOwnerUsername(String ownerUsername)
+	{
+		this.ownerUsername = ownerUsername;
 	}
 
 }

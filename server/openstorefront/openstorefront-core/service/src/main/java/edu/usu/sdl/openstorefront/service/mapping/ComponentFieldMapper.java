@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -90,6 +91,30 @@ public class ComponentFieldMapper
 		}
 
 		return componentMediaList;
+	}
+
+	@Override
+	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	{
+		UserSubmissionField userSubmissionField = new UserSubmissionField();
+
+		try {
+			userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
+			userSubmissionField.setRawValue(BeanUtils.getProperty(componentFormSet.getPrimary().getComponent(), submissionField.getFieldName()));
+
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+			if (LOG.isLoggable(Level.FINER)) {
+				LOG.log(Level.FINER, null, ex);
+			}
+
+			MappingException mappingException = new MappingException("Component Field cannot be mapped.");
+			mappingException.setFieldLabel(submissionField.getLabel());
+			mappingException.setFieldName(submissionField.getFieldName());
+			mappingException.setMappingType(submissionField.getMappingType());
+			throw mappingException;
+		}
+
+		return userSubmissionField;
 	}
 
 }

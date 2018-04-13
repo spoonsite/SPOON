@@ -175,7 +175,7 @@ public class ServiceProxy
 	@Override
 	public void reset()
 	{
-		persistenceService = getNewPersistenceService();
+		setPersistenceService(getNewPersistenceService());
 		lookupService = null;
 		attributeService = null;
 		attributeServicePrivate = null;
@@ -566,6 +566,11 @@ public class ServiceProxy
 		{
 			isTestPersistenceService.set(false);
 		}
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService)
+	{
+		this.persistenceService = persistenceService;
 	}
 
 }

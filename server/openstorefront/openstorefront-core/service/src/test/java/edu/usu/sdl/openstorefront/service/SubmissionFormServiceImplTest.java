@@ -16,16 +16,22 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -110,6 +116,20 @@ public class SubmissionFormServiceImplTest
 
 	private void handleSaveSubmissionTemplateTest(String expected, boolean addError)
 	{
+		Service mockService = Mockito.mock(Service.class);
+		SecurityService mockSecurityService = Mockito.mock(SecurityService.class);
+		Mockito.when(mockService.getSecurityService()).thenReturn(mockSecurityService);
+
+		UserContext userContext = new UserContext();
+		userContext.setGuest(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName("Guest");
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.ANONYMOUS_USER);
+		Mockito.when(mockSecurityService.getGuestContext()).thenReturn(userContext);
+
+		ServiceProxyFactory.setTestService(mockService);
+
 		MappingController mappingController = Mockito.mock(MappingController.class);
 		ValidationResult validationResult = new ValidationResult();
 		if (addError) {
@@ -129,7 +149,23 @@ public class SubmissionFormServiceImplTest
 		Mockito.when(persistenceService.persist(Mockito.any())).thenReturn(template);
 		Mockito.when(persistenceService.unwrapProxyObject(Mockito.any())).thenReturn(template);
 
-		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		ComponentService mockComponentService = Mockito.mock(ComponentService.class);
+
+		List<ComponentType> componentTypes = new ArrayList<>();
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType("TEST");
+		componentTypes.add(componentType);
+		Mockito.when(mockComponentService.getAllComponentTypes()).thenReturn(componentTypes);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService)
+		{
+			@Override
+			public ComponentService getComponentService()
+			{
+				return mockComponentService;
+			}
+		};
+
 		instance.setMappingController(mappingController);
 		String expResult = expected;
 		SubmissionFormTemplate result = instance.saveSubmissionFormTemplate(template);

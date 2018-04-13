@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
@@ -58,6 +59,12 @@ public class MapperFactory
 					{
 						//noop; for static content
 						return new ArrayList<>();
+					}
+
+					@Override
+					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					{
+						return new UserSubmissionField();
 					}
 
 				};

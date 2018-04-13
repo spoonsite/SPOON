@@ -24,6 +24,10 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -166,6 +170,110 @@ public class SubmissionFormServiceImpl
 	public void setMappingController(MappingController mappingController)
 	{
 		this.mappingController = mappingController;
+	}
+
+	@Override
+	public List<UserSubmission> getUserSubmissions(String ownerUsername)
+	{
+		UserSubmission userSubmissionExample = new UserSubmission();
+		userSubmissionExample.setActiveStatus(UserSubmission.ACTIVE_STATUS);
+		userSubmissionExample.setOwnerUsername(ownerUsername);
+		return userSubmissionExample.findByExample();
+	}
+
+	@Override
+	public UserSubmission saveUserSubmission(UserSubmission userSubmission)
+	{
+		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmission.getUserSubmissionId());
+		if (existing != null) {
+			existing.updateFields(userSubmission);
+			existing = persistenceService.persist(existing);
+		} else {
+			userSubmission.setUserSubmissionId(persistenceService.generateId());
+			userSubmission.populateBaseCreateFields();
+			existing = persistenceService.persist(userSubmission);
+		}
+		existing = persistenceService.unwrapProxyObject(existing);
+		return existing;
+	}
+
+	@Override
+	public ComponentFormSet verifySubmission(UserSubmission userSubmission)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void submitUserSubmissionForApproval(UserSubmission userSubmission)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId)
+	{
+		Objects.isNull(componentId);
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void submitChangeRequestForApproval(UserSubmission userSubmission)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void reassignUserSubmission(String userSubmissionId, String newOwnerUsername)
+	{
+		Objects.requireNonNull(userSubmissionId);
+
+		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		if (existing != null) {
+			existing.setOwnerUsername(newOwnerUsername);
+			existing.populateBaseUpdateFields();
+			persistenceService.persist(existing);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find user submission. Id: " + userSubmissionId, "Check Id and refresh");
+		}
+	}
+
+	@Override
+	public void deleteUserSubmission(String userSubmissionId)
+	{
+		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		if (existing != null) {
+
+			if (existing.getFields() != null) {
+				for (UserSubmissionField field : existing.getFields()) {
+					handleMediaDelete(field);
+				}
+			}
+
+			persistenceService.delete(existing);
+		}
+	}
+
+	private void handleMediaDelete(UserSubmissionField field)
+	{
+		if (field.getMedia() != null) {
+			for (UserSubmissionMedia media : field.getMedia()) {
+				if (media.getFile() != null) {
+					deleteSubmissionMedia(media.getFile());
+				}
+			}
+		}
+	}
+
+	private void deleteSubmissionMedia(MediaFile mediaFile)
+	{
+		Path path = mediaFile.path();
+		if (path != null
+				&& path.toFile().exists()
+				&& path.toFile().delete() == false) {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
+		}
 	}
 
 }

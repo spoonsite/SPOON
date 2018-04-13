@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -105,6 +106,12 @@ public class MappingControllerTest
 				{
 					@Override
 					public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+					{
+						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+					}
+
+					@Override
+					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
 					{
 						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}
@@ -366,14 +373,135 @@ public class MappingControllerTest
 		contact.setLastName("test");
 		contact.setEmail("bob@test.com");
 
+		List<ComponentContact> allContacts = new ArrayList<>();
+		allContacts.add(contact);
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		String contactJson = objectMapper.writeValueAsString(contact);
+		String contactJson = objectMapper.writeValueAsString(allContacts);
 
 		field.setRawValue(contactJson);
 		userSubmission.getFields().add(field);
 
 		List<ComponentAll> componentAlls = instance.mapUserSubmissionToEntry(template, userSubmission);
 		assertTrue(componentAlls.get(0).getContacts().get(0).getFirstName().equals("Bob"));
+	}
+
+	@Test
+	public void testEntryToUserSubmissionMapValid() throws MappingException
+	{
+		setupMockService();
+		MappingController instance = new MappingController();
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setSections(new ArrayList<>());
+		SubmissionFormSection section = new SubmissionFormSection();
+		section.setFields(new ArrayList<>());
+
+		SubmissionFormField submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName(Component.FIELD_NAME);
+		submissionFormField.setFieldId("NAME");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName(Component.FIELD_ORGANIZATION);
+		submissionFormField.setFieldId("ORG");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName(Component.FIELD_DESCRIPTION);
+		submissionFormField.setFieldId("DESCR");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPLEX);
+		submissionFormField.setFieldType(SubmissionFormFieldType.CONTACT);
+		submissionFormField.setFieldId("CONTACT");
+		section.getFields().add(submissionFormField);
+
+		template.getSections().add(section);
+
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+		ComponentAll componentAll = new ComponentAll();
+		Component component = new Component();
+		component.setComponentId("1");
+		component.setComponentType(TEST);
+		component.setName("Apple");
+		component.setOrganization("Org");
+		component.setDescription("description");
+		componentAll.setComponent(component);
+
+		ComponentContact componentContact = new ComponentContact();
+		componentContact.setFirstName("Bob");
+		componentContact.setLastName("test");
+		componentContact.setEmail("bob@test.com");
+		componentAll.getContacts().add(componentContact);
+		componentFormSet.setPrimary(componentAll);
+
+		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+
+		assertTrue(userSubmission.getFields().size() == 4);
+		assertTrue(userSubmission.getFields().get(0).getRawValue().equals("Apple"));
+
+	}
+
+	@Test(expected = MappingException.class)
+	public void testEntryToUserSubmissionMapInValid() throws MappingException
+	{
+		setupMockService();
+		MappingController instance = new MappingController();
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setSections(new ArrayList<>());
+		SubmissionFormSection section = new SubmissionFormSection();
+		section.setFields(new ArrayList<>());
+
+		SubmissionFormField submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName(Component.FIELD_NAME);
+		submissionFormField.setFieldId("NAME");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName(Component.FIELD_ORGANIZATION);
+		submissionFormField.setFieldId("ORG");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPONENT);
+		submissionFormField.setFieldName("badfield");
+		submissionFormField.setFieldId("DESCR");
+		section.getFields().add(submissionFormField);
+
+		submissionFormField = new SubmissionFormField();
+		submissionFormField.setMappingType(SubmissionFormFieldMappingType.COMPLEX);
+		submissionFormField.setFieldType(SubmissionFormFieldType.CONTACT);
+		submissionFormField.setFieldId("CONTACT");
+		section.getFields().add(submissionFormField);
+
+		template.getSections().add(section);
+
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+		ComponentAll componentAll = new ComponentAll();
+		Component component = new Component();
+		component.setComponentId("1");
+		component.setComponentType(TEST);
+		component.setName("Apple");
+		component.setOrganization("Org");
+		component.setDescription("description");
+		componentAll.setComponent(component);
+
+		ComponentContact componentContact = new ComponentContact();
+		componentContact.setFirstName("Bob");
+		componentContact.setLastName("test");
+		componentContact.setEmail("bob@test.com");
+		componentAll.getContacts().add(componentContact);
+		componentFormSet.setPrimary(componentAll);
+
+		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+
 	}
 
 }

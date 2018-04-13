@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -52,14 +53,12 @@ public class SubmissionFormField
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@ValidValueType(value = {}, lookupClass = SubmissionFormFieldType.class)
 	@FK(SubmissionFormFieldType.class)
 	private String fieldType;
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@ValidValueType(value = {}, lookupClass = SubmissionFormFieldMappingType.class)
 	@FK(SubmissionFormFieldMappingType.class)
 	private String mappingType;
@@ -73,6 +72,12 @@ public class SubmissionFormField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(CleanKeySanitizer.class)
 	private String attributeType;
+
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
+	@FK(RelationshipType.class)
+	@APIDescription("This is used with child entries to determine the type of relationsip")
+	private String relationshipType;
 
 	@ConsumeField
 	private String subSubmissionTemplateId;
@@ -330,6 +335,16 @@ public class SubmissionFormField
 	public void setChildEntryType(String childEntryType)
 	{
 		this.childEntryType = childEntryType;
+	}
+
+	public String getRelationshipType()
+	{
+		return relationshipType;
+	}
+
+	public void setRelationshipType(String relationshipType)
+	{
+		this.relationshipType = relationshipType;
 	}
 
 }

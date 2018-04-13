@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -186,13 +187,50 @@ public class MappingController
 	 *
 	 * @param template
 	 * @param userSubmission
-	 * @return userSubmission with all
+	 * @return userSubmission with all data possible mapped
 	 */
-	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, List<ComponentAll> fullComponents)
+	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet) throws MappingException
 	{
-		UserSubmission userSubmission = null;
+		Objects.requireNonNull(componentFormSet);
+		Objects.requireNonNull(componentFormSet.getPrimary(), "Must have at least a primary component");
+		Objects.requireNonNull(componentFormSet.getPrimary().getComponent());
+
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setTemplateId(template.getSubmissionTemplateId());
+		userSubmission.setComponentType(componentFormSet.getPrimary().getComponent().getComponentType());
+		userSubmission.setOriginalComponentId(componentFormSet.getPrimary().getComponent().getComponentId());
+		userSubmission.setFields(new ArrayList<>());
+
+		mapTemplateSectionsForSubmission(template, componentFormSet, userSubmission);
 
 		return userSubmission;
+	}
+
+	private void mapTemplateSectionsForSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet, UserSubmission userSubmission) throws MappingException
+	{
+		if (template.getSections() != null) {
+
+			for (SubmissionFormSection section : template.getSections()) {
+				try {
+					mapTemplateFieldsForSubmission(section.getFields(), componentFormSet, userSubmission);
+				} catch (MappingException ex) {
+					ex.setSectionName(section.getName());
+					throw ex;
+				}
+			}
+		}
+	}
+
+	private void mapTemplateFieldsForSubmission(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, UserSubmission userSubmission) throws MappingException
+	{
+		if (fields != null) {
+			for (SubmissionFormField field : fields) {
+				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
+				UserSubmissionField userSubmissionField = mapper.mapComponentToSubmission(field, componentFormSet);
+				userSubmission.getFields().add(userSubmissionField);
+
+			}
+		}
 	}
 
 }

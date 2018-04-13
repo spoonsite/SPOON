@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -72,67 +74,40 @@ public class ComplexMapper
 			switch (fieldType) {
 
 				case SubmissionFormFieldType.ATTRIBUTE:
-					addAttribute(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
-					addAttribute(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
-					addAttribute(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
-					addAttribute(componentAll, fieldType, userSubmissionField);
+					addAttribute(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.CONTACT:
-					addContact(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.CONTACT_MULTI:
-					addContact(componentAll, fieldType, userSubmissionField);
+					addContact(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.EXT_DEPENDENCY:
-					addDependency(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.EXT_DEPENDENCY_MULTI:
-					addDependency(componentAll, fieldType, userSubmissionField);
+					addDependency(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.MEDIA:
-					addMedia(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.MEDIA_MULTI:
-					addMedia(componentAll, fieldType, userSubmissionField);
+					addMedia(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.RESOURCE:
-					addResource(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.RESOURCE_MULTI:
-					addResource(componentAll, fieldType, userSubmissionField);
+					addResource(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.TAG:
-					addTag(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.TAG_MULTI:
-					addTag(componentAll, fieldType, userSubmissionField);
+					addTag(componentAll, userSubmissionField);
 					break;
 
 				case SubmissionFormFieldType.RELATIONSHIPS:
-					addRelationships(componentAll, fieldType, userSubmissionField);
-					break;
-
 				case SubmissionFormFieldType.RELATIONSHIPS_MULTI:
-					addRelationships(componentAll, fieldType, userSubmissionField);
+					addRelationships(componentAll, userSubmissionField);
 					break;
 
 				default:
@@ -157,75 +132,46 @@ public class ComplexMapper
 		return childComponents;
 	}
 
-	private void addAttribute(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addAttribute(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
-			//handling sub types
-			if (SubmissionFormFieldType.ATTRIBUTE.equals(fieldType)
-					|| SubmissionFormFieldType.ATTRIBUTE_RADIO.equals(fieldType)) {
-				ComponentAttribute componentAttribute = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentAttribute.class);
-				componentAll.getAttributes().add(componentAttribute);
-			} else if (SubmissionFormFieldType.ATTRIBUTE.equals(fieldType)
-					|| SubmissionFormFieldType.ATTRIBUTE_RADIO.equals(fieldType)) {
-				List<ComponentAttribute> componentAttributes = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAttribute>>()
-				{
-				});
-				componentAll.getAttributes().addAll(componentAttributes);
-			}
+			List<ComponentAttribute> componentAttributes = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAttribute>>()
+			{
+			});
+			componentAll.getAttributes().addAll(componentAttributes);
 		}
 	}
 
-	private void addContact(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addContact(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
-
-			if (SubmissionFormFieldType.CONTACT.equals(fieldType)) {
-				ComponentContact componentContact = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentContact.class);
-				componentAll.getContacts().add(componentContact);
-			} else if (SubmissionFormFieldType.CONTACT_MULTI.equals(fieldType)) {
-				List<ComponentContact> contacts = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentContact>>()
-				{
-				});
-				componentAll.getContacts().addAll(contacts);
-			}
+			List<ComponentContact> contacts = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentContact>>()
+			{
+			});
+			componentAll.getContacts().addAll(contacts);
 		}
 	}
 
-	private void addDependency(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addDependency(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
-
-			if (SubmissionFormFieldType.EXT_DEPENDENCY.equals(fieldType)) {
-				ComponentExternalDependency componentExternalDependency = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentExternalDependency.class);
-				componentAll.getExternalDependencies().add(componentExternalDependency);
-			} else if (SubmissionFormFieldType.EXT_DEPENDENCY_MULTI.equals(fieldType)) {
-				List<ComponentExternalDependency> dependencies = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentExternalDependency>>()
-				{
-				});
-				componentAll.getExternalDependencies().addAll(dependencies);
-			}
+			List<ComponentExternalDependency> dependencies = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentExternalDependency>>()
+			{
+			});
+			componentAll.getExternalDependencies().addAll(dependencies);
 		}
 	}
 
-	private void addMedia(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addMedia(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
 
-			if (SubmissionFormFieldType.MEDIA.equals(fieldType)) {
-				ComponentMedia media = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentMedia.class);
-				if (userSubmissionField.getMedia() != null
-						&& !userSubmissionField.getMedia().isEmpty()) {
-					media.setFile(userSubmissionField.getMedia().get(0).getFile());
-				}
-				componentAll.getMedia().add(media);
-			} else if (SubmissionFormFieldType.MEDIA_MULTI.equals(fieldType)) {
-				List<ComponentMedia> mediaRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentMedia>>()
-				{
-				});
-				mapMedia(userSubmissionField, mediaRecords);
+			List<ComponentMedia> mediaRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentMedia>>()
+			{
+			});
+			mapMedia(userSubmissionField, mediaRecords);
 
-				componentAll.getMedia().addAll(mediaRecords);
-			}
+			componentAll.getMedia().addAll(mediaRecords);
 		}
 
 	}
@@ -251,25 +197,17 @@ public class ComplexMapper
 		}
 	}
 
-	private void addResource(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addResource(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
 
-			if (SubmissionFormFieldType.RESOURCE.equals(fieldType)) {
-				ComponentResource resource = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentResource.class);
-				if (userSubmissionField.getMedia() != null
-						&& !userSubmissionField.getMedia().isEmpty()) {
-					resource.setFile(userSubmissionField.getMedia().get(0).getFile());
-				}
-				componentAll.getResources().add(resource);
-			} else if (SubmissionFormFieldType.RESOURCE_MULTI.equals(fieldType)) {
-				List<ComponentResource> resourceRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentResource>>()
-				{
-				});
-				mapResource(userSubmissionField, resourceRecords);
+			List<ComponentResource> resourceRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentResource>>()
+			{
+			});
+			mapResource(userSubmissionField, resourceRecords);
 
-				componentAll.getResources().addAll(resourceRecords);
-			}
+			componentAll.getResources().addAll(resourceRecords);
+
 		}
 
 	}
@@ -295,36 +233,149 @@ public class ComplexMapper
 		}
 	}
 
-	private void addTag(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void addTag(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
 	{
 		if (userSubmissionField != null) {
+			List<ComponentTag> tags = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentTag>>()
+			{
+			});
+			componentAll.getTags().addAll(tags);
+		}
+	}
 
-			if (SubmissionFormFieldType.TAG.equals(fieldType)) {
-				ComponentTag tag = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentTag.class);
-				componentAll.getTags().add(tag);
-			} else if (SubmissionFormFieldType.TAG_MULTI.equals(fieldType)) {
-				List<ComponentTag> tags = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentTag>>()
-				{
-				});
-				componentAll.getTags().addAll(tags);
+	private void addRelationships(ComponentAll componentAll, UserSubmissionField userSubmissionField) throws IOException
+	{
+		if (userSubmissionField != null) {
+			List<ComponentRelationship> relationships = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentRelationship>>()
+			{
+			});
+			componentAll.getRelationships().addAll(relationships);
+		}
+	}
+
+	@Override
+	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	{
+		UserSubmissionField userSubmissionField = new UserSubmissionField();
+
+		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
+		userSubmissionField.setMedia(new ArrayList<>());
+
+		String fieldType = submissionField.getFieldType();
+		try {
+			switch (fieldType) {
+
+				case SubmissionFormFieldType.ATTRIBUTE:
+				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
+				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
+					mapAttributes(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.CONTACT:
+				case SubmissionFormFieldType.CONTACT_MULTI:
+					mapContacts(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.EXT_DEPENDENCY:
+				case SubmissionFormFieldType.EXT_DEPENDENCY_MULTI:
+					mapDependencies(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.MEDIA:
+				case SubmissionFormFieldType.MEDIA_MULTI:
+					mapMediaForForm(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.RESOURCE:
+				case SubmissionFormFieldType.RESOURCE_MULTI:
+					mapResourcesForForm(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.TAG:
+				case SubmissionFormFieldType.TAG_MULTI:
+					mapTags(userSubmissionField, componentFormSet);
+					break;
+
+				case SubmissionFormFieldType.RELATIONSHIPS:
+				case SubmissionFormFieldType.RELATIONSHIPS_MULTI:
+					mapRelationships(userSubmissionField, componentFormSet);
+					break;
+
+				default:
+					throw new UnsupportedOperationException(fieldType + " not supported");
+			}
+		} catch (IOException ioe) {
+			if (LOG.isLoggable(Level.FINER)) {
+				LOG.log(Level.FINER, "Field Mapping exception", ioe);
+			}
+			MappingException mappingException = new MappingException("Unable to mapping entry to form field");
+			mappingException.setFieldLabel(submissionField.getLabel());
+			mappingException.setFieldType(fieldType);
+			mappingException.setMappingType(submissionField.getMappingType());
+			throw mappingException;
+		}
+
+		return userSubmissionField;
+	}
+
+	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getAttributes());
+		userSubmissionField.setRawValue(value);
+	}
+
+	private void mapContacts(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getContacts());
+		userSubmissionField.setRawValue(value);
+	}
+
+	private void mapDependencies(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getExternalDependencies());
+		userSubmissionField.setRawValue(value);
+	}
+
+	private void mapMediaForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getMedia());
+		userSubmissionField.setRawValue(value);
+
+		for (ComponentMedia media : componentFormSet.getPrimary().getMedia()) {
+			if (media.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(media.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
+			}
+		}
+
+	}
+
+	private void mapResourcesForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getResources());
+		userSubmissionField.setRawValue(value);
+
+		for (ComponentResource resource : componentFormSet.getPrimary().getResources()) {
+			if (resource.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(resource.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
 			}
 		}
 	}
 
-	private void addRelationships(ComponentAll componentAll, String fieldType, UserSubmissionField userSubmissionField) throws IOException
+	private void mapTags(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		if (userSubmissionField != null) {
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getTags());
+		userSubmissionField.setRawValue(value);
+	}
 
-			if (SubmissionFormFieldType.RELATIONSHIPS.equals(fieldType)) {
-				ComponentRelationship relationship = objectMapper.readValue(userSubmissionField.getRawValue(), ComponentRelationship.class);
-				componentAll.getRelationships().add(relationship);
-			} else if (SubmissionFormFieldType.RELATIONSHIPS_MULTI.equals(fieldType)) {
-				List<ComponentRelationship> relationships = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentRelationship>>()
-				{
-				});
-				componentAll.getRelationships().addAll(relationships);
-			}
-		}
+	private void mapRelationships(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	{
+		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getRelationships());
+		userSubmissionField.setRawValue(value);
 	}
 
 }
